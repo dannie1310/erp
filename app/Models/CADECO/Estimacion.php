@@ -280,16 +280,38 @@ class Estimacion extends Transaccion
 
     public function getMontoAPagarAttribute()
     {
-        return (
-            $this->monto
+        $configuracion = $this->obra->configuracionEstimaciones;
+        if($configuracion)
+        {
+            if($configuracion->ret_fon_gar_antes_iva == 0)
+            {
+                return $this->monto;
+            }else{
+                return (
+                    $this->monto
 
-            - ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteFondoGarantia : 0)
-            - (!in_array(Context::getDatabase(), ['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM']) ? $this->descuentos->sum('importe') : 0)
-            - $this->retenciones->sum('importe')
-            - $this->IVARetenido
-            + $this->liberaciones->sum('importe')
-            + ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar : 0)
-        );
+                    - ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteFondoGarantia : 0)
+                    - (!in_array(Context::getDatabase(), ['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM']) ? $this->descuentos->sum('importe') : 0)
+                    - $this->retenciones->sum('importe')
+                    - $this->IVARetenido
+                    + $this->liberaciones->sum('importe')
+                    + ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar : 0)
+                );
+            }
+
+        }else{
+            return (
+                $this->monto
+
+                - ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteFondoGarantia : 0)
+                - (!in_array(Context::getDatabase(), ['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM']) ? $this->descuentos->sum('importe') : 0)
+                - $this->retenciones->sum('importe')
+                - $this->IVARetenido
+                + $this->liberaciones->sum('importe')
+                + ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar : 0)
+            );
+        }
+
     }
 
     public function empresa()
