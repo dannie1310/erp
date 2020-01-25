@@ -299,8 +299,8 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Importes Estimación :'), 0, 0, 'R');
-        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->suma_importes, 2, '.', ','), 'B', 1, 'R');
+        $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Importe Estimación :'), 0, 0, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_importes_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
         $this->SetX(($this->w) * 0.45);
@@ -321,7 +321,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Subtotal :', 0, 0, 'R');
-        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->subtotal, 2, '.', ','), 'B', 1, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->subtotal_orden_pago_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
         $this->SetX(($this->w) * 0.45);
@@ -339,14 +339,14 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total :', 0, 0, 'R');
-        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->monto, 2, '.', ','), 'B', 1, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->total_orden_pago_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención de Fondo de Garantia Estimación :'), 0, 0, 'R');
         $this->CellFitScale(($this->w - 2) * 0.10, 0.4, round($this->estimacion->retencion, 2) . ' %', 'B', 0, 'L');
-        $this->CellFitScale(($this->w - 2) * 0.15, 0.4, number_format($this->estimacion->subcontratoEstimacion ? $this->estimacion->subcontratoEstimacion->ImporteFondoGarantia : 0, 2, '.', ','), 'B', 1, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.15, 0.4,$this->estimacion->retencion_fondo_garantia_orden_pago_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
         $this->SetX(($this->w) * 0.45);
