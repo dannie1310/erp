@@ -500,7 +500,8 @@ class GestionPagoService
             $transacciones_dispersion_partidas = Documento::whereIn('IDDocumento',$documentos)->pluck('IDTransaccionCDC');
 
             $transacicones_empresa = Transaccion::whereIn('tipo_transaccion', [65,72])->whereNotIn('id_transaccion',$transacciones_dispersion_partidas)
-                ->where('id_empresa', '=', $cuenta_abono->id_empresa)->orWhere('id_referente', '=', $cuenta_abono->id_empresa)->where('saldo', '<=', $pago['monto'])->where('saldo', '>', 0)->get();
+                ->where('id_empresa', '=', $cuenta_abono->id_empresa)->orWhere('id_referente', '=', $cuenta_abono->id_empresa)
+                ->where('saldo', '>=', $pago['monto'])->where('saldo', '>', 0)->get();
 
             if($transacicones_empresa->count() > 0){
                 $registros_bitacora[] = array(

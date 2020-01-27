@@ -30,12 +30,12 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="dispersion" class="col-lg-12 col-form-label">Seleccione Dispersión de recursos</label>
+                                    <label for="dispersion" class="col-lg-12 col-form-label">Seleccione Dispersión de Recursos</label>
                                     <div class="col-lg-12">
                                         <select
                                                 type="text"
                                                 name="dispersion"
-                                                data-vv-as="Inventario"
+                                                data-vv-as="Dispersion de Recursos"
                                                 v-validate="{required:true}"
                                                 class="form-control"
                                                 id="dispersion"
