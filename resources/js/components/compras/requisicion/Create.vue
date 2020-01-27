@@ -98,6 +98,11 @@
                                 <hr />
                                 <div class="d-flex flex-row-reverse">
                                     <div class="p-2">
+                                        <button  type="button" :disabled="cargando" class="btn btn-info" @click="lista">
+                                                <i v-show="!cargando" class="fa fa-list-ul "></i>
+                                                <i v-show="cargando" class="spinner-border spinner-border-sm"></i>
+                                                 Lista de Materiales</button>
+                                        &nbsp;
                                         <Layout v-model="partidas"></Layout>
                                     </div>
                                 </div>
@@ -413,6 +418,16 @@
             },
             destroy(index){
                 this.partidas.splice(index, 1);
+            },
+            lista()
+            {
+                 this.cargando = true;
+                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'requisicion'})
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.cargando = false;
+                    })
             },
             manual(index){
                 this.partidas[index].material = ""
