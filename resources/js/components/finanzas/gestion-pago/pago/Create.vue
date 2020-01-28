@@ -14,11 +14,12 @@
 
                         <div class="modal-body">
                             <div class="row justify-content-between">
-                                <div class="col-md-6">
+                                <div class="col-md-5">
                                      <label for="carga_bitacora" class="col-lg-12 col-form-label">Cargar Bitácora</label>
                                     <div class="col-lg-12">
                                         <input type="file" class="form-control" id="carga_bitacora"
                                                @change="onFileChange"
+                                               :disabled="bitacora.length > 0"
                                                row="3"
                                                v-validate="{required:true, ext: ['txt']}"
                                                name="carga_bitacora"
@@ -33,12 +34,14 @@
                                     <label for="dispersion" class="col-lg-12 col-form-label">Seleccione Dispersión de Recursos</label>
                                     <div class="col-lg-12">
                                         <select
+                                            :disabled="bitacora.length > 0"
                                                 type="text"
                                                 name="dispersion"
                                                 data-vv-as="Dispersion de Recursos"
                                                 v-validate="{required:true}"
                                                 class="form-control"
                                                 id="dispersion"
+                                                ref="dispersion"
                                                 v-model="id_dispersion"
                                                 :class="{'is-invalid': errors.has('dispersion')}"
                                             >
@@ -47,6 +50,13 @@
                                                         Año: {{ dispersion.remesa_liberada.remesa.año}} Semana: {{dispersion.remesa_liberada.remesa.semana}} Remesa: {{dispersion.remesa_liberada.remesa.tipo}} ({{dispersion.remesa_liberada.remesa.folio}})</option>
                                             </select>
                                             <div class="invalid-feedback" v-show="errors.has('dispersion')">{{ errors.first('dispersion') }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <!-- <br/>
+                                    <label for="botton1" class="col-lg-12 col-form-label"></label> -->
+                                    <div class="col-lg-12" style="margin-top:35px">
+                                    <button type="button"  id="botton1" class="btn btn-secondary float-right" @click="limpiar" :disabled="bitacora.length == 0">Limpiar</button>
                                     </div>
                                 </div>
                             </div>
@@ -223,6 +233,14 @@
                 };
                 reader.readAsDataURL(file);
 
+            },
+            limpiar(){
+                this.bitacora = [];
+                this.resumen = [];
+                this.id_dispersion = '';
+                this.$refs.carga_bitacora.value = '';
+                this.$refs.dispersion.value = '';
+                this.file_interbancario = null;
             },
 
             onFileChange(e){

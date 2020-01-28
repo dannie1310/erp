@@ -390,7 +390,6 @@ class GestionPagoService
                 }
 
                 else{
-                    
                     $data = array(
                         "id_cuenta" => $pago['cuenta_cargo']['id_cuenta_cargo'],
                         "id_empresa" => $pago['cuenta_abono']['id_empresa'],
@@ -420,7 +419,7 @@ class GestionPagoService
                 ]);
             
             }
-            dd('pardo stop');
+
             $archivo_bitacora->estado = 1;
             $archivo_bitacora->save();
             $this->guardar_bitacora($pagos->file_interbancario);
@@ -524,7 +523,6 @@ class GestionPagoService
                 $val = false;
                 foreach($dist_partidas as $dist_partida){
                     $documento = $dist_partida->documento->documentoProcesado->where('IDProceso', '=', 4)->first();
-                    // dd($documento->MontoAutorizadoPrimerEnvio , $documento->MontoAutorizadoSegundoEnvio , $pago['monto']);
                     if(($documento->MontoAutorizadoPrimerEnvio + $documento->MontoAutorizadoSegundoEnvio) == $pago['monto']){
                         $registros_bitacora[] = $this->bitacoraPago($dist_partida->documento, $pago);
                         $val = true;
@@ -537,12 +535,12 @@ class GestionPagoService
             $documentos = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $id_dispersion)->pluck('id_documento');
             $transacciones_dispersion_partidas = Documento::whereIn('IDDocumento',$documentos)->pluck('IDTransaccionCDC');
 
-            $transacicones_empresa = Transaccion::whereIn('tipo_transaccion', [65,72])->whereNotIn('id_transaccion',$transacciones_dispersion_partidas)
+            $transacciones_empresa = Transaccion::whereIn('tipo_transaccion', [65,72])->whereNotIn('id_transaccion',$transacciones_dispersion_partidas)
                 ->where('saldo', '>=', $pago['monto'])->where('saldo', '>', 0)
                 ->whereRaw('(id_empresa = '. $cuenta_abono->id_empresa . ' or id_referente = ' . $cuenta_abono->id_empresa . ')')
                 ->get();
 
-            if($transacicones_empresa->count() > 0){
+            if($transacciones_empresa->count() > 0){
                 $registros_bitacora[] = array(
                     'id_documento' => null,
                     'id_distribucion_recurso' => null,
@@ -806,7 +804,6 @@ class GestionPagoService
 
     private function transaccion_resumen($transacciones){
         $data_transacciones = [];
-        // dd($transacciones);
         foreach ($transacciones as $transaccion){
             $tipo = $transaccion->tipo_transaccion == 65 ? 'F': 'S';
             $data_transacciones[] = [
