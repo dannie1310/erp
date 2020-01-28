@@ -113,12 +113,13 @@
                                                 <thead>
                                                 <tr>
                                                     <th class="index_corto">#</th>
-                                                    <th>No. de Parte</th>
+                                                    <th style="width:130px;">No. de Parte</th>
                                                     <th>Descripción</th>
                                                     <th class="icono"></th>
                                                     <th class="cantidad_input">Cantidad</th>
-                                                    <th>Unidad</th>
-                                                    <th>Fecha Entrega</th>
+                                                    <th class="unidad">Unidad</th>
+                                                    <th style="width:140px;">Fecha Entrega</th>
+                                                    <th>Destino</th>
                                                     <th>Observaciones</th>
                                                     <th class="icono">
                                                         <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
@@ -129,10 +130,10 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr v-for="(partida, i) in partidas">
-                                                        <td style="text-align:center">{{i+1}}</td>
-                                                        <td style="width: 70px;" v-if="partida.i === 0 && partida.material === ''">
+                                                        <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
+                                                        <td v-if="partida.i === 0 && partida.material === ''">
                                                         </td>
-                                                        <td style="width: 70px;" v-else-if="partida.i === 1">
+                                                        <td v-else-if="partida.i === 1">
                                                             <input
                                                                 type="text"
                                                                 data-vv-as="Número Parte"
@@ -144,8 +145,8 @@
                                                                 :class="{'is-invalid': errors.has(`numero_parte[${i}]`)}">
                                                             <div class="invalid-feedback" v-show="errors.has(`numero_parte[${i}]`)">{{ errors.first(`numero_parte[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="width: 70px;" v-else>{{partida.material.numero_parte}}</td>
-                                                        <td style="width: 200px;" v-if="partida.i === 0 && partida.material === ''">
+                                                        <td v-else>{{partida.material.numero_parte}}</td>
+                                                        <td v-if="partida.i === 0 && partida.material === ''">
                                                             <model-list-select
                                                                 :name="`material[${i}]`"
                                                                 v-validate="{required: true}"
@@ -159,7 +160,7 @@
                                                             </model-list-select>
                                                                   <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                                         </td>
-                                                        <td style="width: 200px;" v-else-if="partida.i === 1">
+                                                        <td v-else-if="partida.i === 1">
                                                             <input
                                                                 type="text"
                                                                 data-vv-as="Descripción"
@@ -171,11 +172,11 @@
                                                                 :class="{'is-invalid': errors.has(`descripcion[${i}]`)}">
                                                             <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="width: 200px;" v-else>{{partida.material.descripcion}}</td>
-                                                        <td style="text-align:center" v-if="partida.i === 0">
+                                                        <td v-else>{{partida.material.descripcion}}</td>
+                                                        <td v-if="partida.i === 0">
                                                             <button  type="button" class="btn btn-outline-primary btn-sm" @click="manual(i)" title="Ingresar material manualmente"><i class="fa fa-hand-paper-o" /></button>
                                                         </td>
-                                                        <td style="text-align:center" v-else-if="partida.i === 1">
+                                                        <td v-else-if="partida.i === 1">
                                                             <button type="button" class="btn btn-outline-primary btn-sm" @click="busqueda(i)" title="Buscar material"><i class="fa fa-refresh" /></button>
                                                         </td>
                                                         <td style="width: 30px;" v-else></td>
@@ -191,7 +192,7 @@
                                                                    v-model="partida.cantidad"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="width: 100px;" v-if="partida.i === 1">
+                                                        <td style="width:120px;" v-if="partida.i === 1">
                                                             <select
                                                                 type="text"
                                                                 :name="`unidad[${i}]`"
@@ -206,9 +207,9 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="width: 100px;" v-else-if="partida.unidad">{{partida.unidad}}</td>
-                                                        <td style="width: 100px;" v-else>{{partida.material.unidad}}</td>
-                                                        <td style="width:110px;">
+                                                        <td style="width:120px;" v-else-if="partida.unidad">{{partida.unidad}}</td>
+                                                        <td style="width:120px;" v-else>{{partida.material.unidad}}</td>
+                                                        <td class="fecha">
                                                             <datepicker v-model="partida.fecha"
                                                                         :name="`fecha[${i}]`"
                                                                         :format = "formatoFecha"
@@ -221,7 +222,11 @@
                                                             ></datepicker>
                                                              <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="width: 120px;">
+                                                        <td style="width:140px;" v-if="partida.clave_concepto"><u>{{partida.clave_concepto.descripcion}}</u></td>
+                                                        <td style="width:140px; text-align:center;" v-else><small class="badge badge-secondary">
+                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)"></i>
+                                                            </small></td>
+                                                        <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
                                                                       data-vv-as="Observaciones"
@@ -230,7 +235,7 @@
                                                                       v-model="partida.observaciones"/>
                                                              <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:center">
+                                                        <td>
                                                             <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                         </td>
                                                     </tr>
@@ -263,7 +268,67 @@
                             </div>
                              <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Registrar</button>
+                                    <button type="submit" class="btn btn-primary">Registrar</button>
+                             </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <nav>
+            <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form role="form">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group row error-content">
+                                            <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
+                                            <div class="col-sm-10">
+                                                <concepto-select
+                                                        name="id_concepto"
+                                                        data-vv-as="Concepto"
+                                                        id="id_concepto"
+                                                        v-model="id_concepto_temporal"
+                                                        :error="errors.has('id_concepto')"
+                                                        ref="conceptoSelect"
+                                                        :disableBranchNodes="true"
+                                                ></concepto-select>
+                                                <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group row error-content">
+                                            <label for="id_almacen" class="col-sm-2 col-form-label">Activos:</label>
+                                            <div class="col-sm-10">
+                                                <model-list-select
+                                                        name="id_almacen"
+                                                        placeholder="Seleccionar o buscar descripción del almacén"
+                                                        data-vv-as="Almacén"
+                                                        v-model="id_almacen_temporal"
+                                                        option-value="id"
+                                                        option-text="descripcion"
+                                                        :list="almacenes"
+                                                        >
+                                                </model-list-select>
+                                                <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                            <div class="modal-footer">
+                                <button  type="button"  class="btn btn-secondary"><i class="fa fa-close"  ></i> Cerrar</button>
                              </div>
                         </form>
                     </div>
@@ -280,9 +345,10 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import Layout from "./CargaLayout";
     import {ModelListSelect} from 'vue-search-select';
+    import ConceptoSelect from "../../cadeco/concepto/Select";
     export default {
         name: "requisicion-create",
-        components: {MaterialSelect, Datepicker,NumeroParteSelect, Layout, ModelListSelect},
+        components: {MaterialSelect, Datepicker,NumeroParteSelect, Layout, ModelListSelect, ConceptoSelect},
         data() {
             return {
                 cargando: false,
@@ -296,6 +362,7 @@
                 areas_solicitantes : [],
                 tipos : [],
                 id_area_compradora : '',
+                id_concepto_temporal : '',
                 id_tipo : '',
                 materiales : [],
                 id_area_solicitante : '',
@@ -336,6 +403,7 @@
                 this.id_area_solicitante = '';
                 this.concepto = '';
                 this.observaciones = '';
+                this.id_concepto_temporal = '';
                 this.unidades = [];
                 this.partidas = [{
                     i : 0,
@@ -354,6 +422,29 @@
                 {
                     item.material = busqueda;
                 }
+            },
+            modalDestino(i) {
+                console.log('Modal', i);
+                // this.index_temporal = i;
+                // if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
+                //     this.destino_seleccionado.tipo_destino =  '';
+                //     this.destino_seleccionado.destino = '';
+                //     this.destino_seleccionado.id_destino = '';
+                // }else {
+                //     this.destino_seleccionado = this.partidas[this.index_temporal].destino;
+                // }
+
+                // if(this.almacenes.length == 0) {
+                //     this.getAlmacenes();
+                // }
+                // this.$validator.reset();
+                $(this.$refs.modal_destino).modal('show');
+            },
+            cerrarModalDestino(){
+                this.id_concepto_temporal = '';
+                this.id_almacen_temporal = '';
+                $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
             },
             idAndNumeroParteAndDescripcion (item) {
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
@@ -447,7 +538,8 @@
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
-                        scope: 'requisicion'
+                        scope: 'requisicion',
+                        limit: 15
                     }
                 })
                     .then(data => {
@@ -463,10 +555,12 @@
                 });
             },
             store() {
-                return this.$store.dispatch('compras/requisicion/store', this.$data)
-                    .then((data) => {
-                        this.$router.push({name: 'requisicion'});
-                    });
+                console.log(this.data);
+                
+                // return this.$store.dispatch('compras/requisicion/store', this.$data)
+                //     .then((data) => {
+                //         this.$router.push({name: 'requisicion'});
+                //     });
             },
         }
     }
