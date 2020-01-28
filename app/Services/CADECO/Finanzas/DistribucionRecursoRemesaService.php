@@ -41,6 +41,10 @@ class DistribucionRecursoRemesaService
         $this->repository = new Repository($model);
     }
 
+    public function index(){
+        return $this->repository->all();
+    }
+
     public function paginate($data)
     {
         return $this->repository->paginate($data);
