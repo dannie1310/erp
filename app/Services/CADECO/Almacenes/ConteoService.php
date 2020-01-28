@@ -133,8 +133,7 @@ class ConteoService
                 $linea++;
             }else{
                 if(count($renglon) != 9) {
-                    dd($renglon);
-                    abort(400,'No se pueden procesar los conteos');
+                    abort(400,'No se pueden procesar los conteos, revise que todas las filas tengan solamente 9 columnas, para asegurase de esto elimine todas las columnas posteriores a la columna I  ');
                 }else if(count($renglon) == 9 && $renglon[0] != '' && $renglon[1] != '' && $renglon[2] != '' && $renglon[4] != '' && $renglon[6] != ''){
                     if($renglon[3] == ''){
                         $renglon[3] = null;
@@ -153,8 +152,8 @@ class ConteoService
                         'cantidad_nuevo' =>  $renglon[4],
                         'cantidad_inservible' =>  $renglon[5],
                         'total' =>  $renglon[6],
-                        'iniciales' =>  $renglon[7],
-                        'observaciones' =>  $renglon[8],
+                        'iniciales' =>  iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $renglon[7]) ,
+                        'observaciones' =>  iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $renglon[8]) ,
                     );
                 }else if ($renglon[1] == ''){
                     $i++;
