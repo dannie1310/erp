@@ -8,9 +8,10 @@
 
 namespace App\Models\CADECO;
 
-
+use App\CSV\ListaMaterialesLayout;
 use App\Models\CADECO\Contabilidad\CuentaMaterial;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Material extends Model
 {
@@ -80,6 +81,14 @@ class Material extends Model
         return $this->belongsTo(Familia::class, 'tipo_material', 'tipo_material');
     }
 
+    public function lista_materiales($data)
+    {
+        Storage::disk('lista_insumos')->delete(Storage::disk('lista_insumos')->allFiles());
+        $nombre_archivo = 'Lista-Materiales' . date('dmYY_His') . '.csv';
+        (new ListaMaterialesLayout($this))->store($nombre_archivo, 'lista_insumos');
+        return Storage::disk('lista_insumos')->download($nombre_archivo);
+    }
+
     public function cuentaMaterial()
     {
         return $this->hasOne(CuentaMaterial::class, 'id_material');
@@ -93,6 +102,11 @@ class Material extends Model
     public function Almacenes(){
         return $this->belongsToMany(Almacen::class,'inventarios','id_material','id_almacen')
             ->distinct();
+    }
+
+    public function requisicionInsumos()
+    {
+        return $this->requisicion()->get();
     }
 
     public function hijos()
