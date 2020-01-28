@@ -467,6 +467,44 @@ class GestionPagoService
             if(!$cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->pagadora()->first()) {
                 continue;
             }
+
+            $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
+            if($transaccion_pagada){
+                $registros_bitacora[] = array(
+                    'id_documento' => null,
+                    'id_distribucion_recurso' => null,
+                    'id_transaccion' => null,
+                    'id_transaccion_tipo' => '   N/A   ',
+                    'pago_a_generar' => 'N/A',
+                    'aplicacion_manual' => true,
+                    'estado' => ['id' => 0, 'estado' => 3, 'descripcion' => 'Pagada'],
+                    'pagable' => false,
+                    'concepto' => $pago['concepto'],
+                    'beneficiario' => $pago['cuenta_abono'],
+                    'monto_format' => '$ ' . number_format($pago['monto'], 2),
+                    'monto' => $pago['monto'],
+                    'cuenta_cargo' => ['id_cuenta_cargo' => $cta_cargo->id_cuenta,
+                        'numero' => $cta_cargo->numero,
+                        'abreviatura' => $cta_cargo->abreviatura,
+                        'nombre' => $cta_cargo->empresa->razon_social,
+                        'id_empresa' => $cta_cargo->empresa->id_empresa,
+                        'id_moneda' => $cta_cargo->id_moneda],
+                    'cuenta_abono' => [
+                        'id_cuenta_abono' => $cuenta_abono?$cuenta_abono->id:null,
+                        'numero' => $cuenta_abono?$cuenta_abono->cuenta_clabe:null,
+                        'abreviatura' => $pago['cuenta_abono'],
+                        'nombre' => $cuenta_abono?$cuenta_abono->empresa->razon_social:'',
+                        'id_empresa' => $cuenta_abono?$cuenta_abono->empresa->id_empresa:''],
+                    'referencia' => $pago['referencia'],
+                    'referencia_docto' => '   N/A   ',
+                    'folio' => 'N/P',
+                    'saldo' => 'N/P',
+                    'origen_docto' => '   N/A   ',
+                    'fecha_pago' => $pago['fecha'],
+                    'select_transacciones' => null
+                );
+                continue;
+            }
             
             if (strlen($pago['concepto']) > 10 && is_numeric(substr($pago['concepto'], 1, 9))) {
                 if ($documento = Documento::where('IDDocumento', '=', substr($pago['concepto'], 1, 9))->first()) {
@@ -501,10 +539,8 @@ class GestionPagoService
 
             $transacicones_empresa = Transaccion::whereIn('tipo_transaccion', [65,72])->whereNotIn('id_transaccion',$transacciones_dispersion_partidas)
                 ->where('saldo', '>=', $pago['monto'])->where('saldo', '>', 0)
-                ->where('id_empresa', '=', $cuenta_abono->id_empresa)
-                ->orWhere('id_referente', '=', $cuenta_abono->id_empresa)->get();
-
-                // dd($transacicones_empresa);
+                ->whereRaw('(id_empresa = '. $cuenta_abono->id_empresa . ' or id_referente = ' . $cuenta_abono->id_empresa . ')')
+                ->get();
 
             if($transacicones_empresa->count() > 0){
                 $registros_bitacora[] = array(
@@ -542,42 +578,43 @@ class GestionPagoService
                 );
                 continue;
             }
-            $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
-            if($transaccion_pagada){
-                $registros_bitacora[] = array(
-                    'id_documento' => null,
-                    'id_distribucion_recurso' => null,
-                    'id_transaccion' => null,
-                    'id_transaccion_tipo' => '   N/A   ',
-                    'pago_a_generar' => 'N/A',
-                    'aplicacion_manual' => true,
-                    'estado' => ['id' => 0, 'estado' => 3, 'descripcion' => 'Pagada'],
-                    'pagable' => false,
-                    'concepto' => $pago['concepto'],
-                    'beneficiario' => $pago['cuenta_abono'],
-                    'monto_format' => '$ ' . number_format($pago['monto'], 2),
-                    'monto' => $pago['monto'],
-                    'cuenta_cargo' => ['id_cuenta_cargo' => $cta_cargo->id_cuenta,
-                        'numero' => $cta_cargo->numero,
-                        'abreviatura' => $cta_cargo->abreviatura,
-                        'nombre' => $cta_cargo->empresa->razon_social,
-                        'id_empresa' => $cta_cargo->empresa->id_empresa,
-                        'id_moneda' => $cta_cargo->id_moneda],
-                    'cuenta_abono' => [
-                        'id_cuenta_abono' => $cuenta_abono?$cuenta_abono->id:null,
-                        'numero' => $cuenta_abono?$cuenta_abono->cuenta_clabe:null,
-                        'abreviatura' => $pago['cuenta_abono'],
-                        'nombre' => $cuenta_abono?$cuenta_abono->empresa->razon_social:'',
-                        'id_empresa' => $cuenta_abono?$cuenta_abono->empresa->id_empresa:''],
-                    'referencia' => $pago['referencia'],
-                    'referencia_docto' => '   N/A   ',
-                    'folio' => 'N/P',
-                    'saldo' => 'N/P',
-                    'origen_docto' => '   N/A   ',
-                    'fecha_pago' => $pago['fecha'],
-                    'select_transacciones' => null
-                );
-            }else {
+            // $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
+            // if($transaccion_pagada){
+            //     $registros_bitacora[] = array(
+            //         'id_documento' => null,
+            //         'id_distribucion_recurso' => null,
+            //         'id_transaccion' => null,
+            //         'id_transaccion_tipo' => '   N/A   ',
+            //         'pago_a_generar' => 'N/A',
+            //         'aplicacion_manual' => true,
+            //         'estado' => ['id' => 0, 'estado' => 3, 'descripcion' => 'Pagada'],
+            //         'pagable' => false,
+            //         'concepto' => $pago['concepto'],
+            //         'beneficiario' => $pago['cuenta_abono'],
+            //         'monto_format' => '$ ' . number_format($pago['monto'], 2),
+            //         'monto' => $pago['monto'],
+            //         'cuenta_cargo' => ['id_cuenta_cargo' => $cta_cargo->id_cuenta,
+            //             'numero' => $cta_cargo->numero,
+            //             'abreviatura' => $cta_cargo->abreviatura,
+            //             'nombre' => $cta_cargo->empresa->razon_social,
+            //             'id_empresa' => $cta_cargo->empresa->id_empresa,
+            //             'id_moneda' => $cta_cargo->id_moneda],
+            //         'cuenta_abono' => [
+            //             'id_cuenta_abono' => $cuenta_abono?$cuenta_abono->id:null,
+            //             'numero' => $cuenta_abono?$cuenta_abono->cuenta_clabe:null,
+            //             'abreviatura' => $pago['cuenta_abono'],
+            //             'nombre' => $cuenta_abono?$cuenta_abono->empresa->razon_social:'',
+            //             'id_empresa' => $cuenta_abono?$cuenta_abono->empresa->id_empresa:''],
+            //         'referencia' => $pago['referencia'],
+            //         'referencia_docto' => '   N/A   ',
+            //         'folio' => 'N/P',
+            //         'saldo' => 'N/P',
+            //         'origen_docto' => '   N/A   ',
+            //         'fecha_pago' => $pago['fecha'],
+            //         'select_transacciones' => null
+            //     );
+            // }
+            // else {
                 $registros_bitacora[] = array(
                     'id_documento' => null,
                     'id_distribucion_recurso' => null,
@@ -612,7 +649,7 @@ class GestionPagoService
                     'fecha_pago' => $pago['fecha'],
                     'select_transacciones' => null
                 );
-            }           
+            // }           
         }
         return array(
             'data' => $registros_bitacora,
