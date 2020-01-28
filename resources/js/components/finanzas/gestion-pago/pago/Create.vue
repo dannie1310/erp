@@ -34,7 +34,7 @@
                                     <label for="dispersion" class="col-lg-12 col-form-label">Seleccione Dispersión de Recursos</label>
                                     <div class="col-lg-12">
                                         <select
-                                            :disabled="bitacora.length > 0"
+                                            :disabled="bitacora.length > 0 || cargando"
                                                 type="text"
                                                 name="dispersion"
                                                 data-vv-as="Dispersion de Recursos"
@@ -56,7 +56,8 @@
                                     <!-- <br/>
                                     <label for="botton1" class="col-lg-12 col-form-label"></label> -->
                                     <div class="col-lg-12" style="margin-top:35px">
-                                    <button type="button"  id="botton1" class="btn btn-secondary float-right" @click="limpiar" :disabled="bitacora.length == 0">Limpiar</button>
+                                    <button type="submit" class="btn btn-primary float-right" v-if="bitacora.length === 0"><i class="fa fa-spin fa-spinner" v-if="cargando"></i>Validar</button>
+                                    <button type="button"  id="botton1" class="btn btn-secondary float-right" @click="limpiar" v-else>Limpiar</button>
                                     </div>
                                 </div>
                             </div>
@@ -163,9 +164,12 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" v-if="bitacora.length === 0">Validar</button>
-                            <button type="button" class="btn btn-primary" @click="validate_pagos" v-if="bitacora.length > 0 && resumen.pagables > 0 && $root.can('registrar_pagos_bitacora')">Registrar</button>
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-primary float-right" style="margin-left:10px" @click="validate_pagos" v-if="bitacora.length > 0 && resumen.pagables > 0 && $root.can('registrar_pagos_bitacora')">Registrar</button>
+                                <button type="button" class="btn btn-secondary float-right" @click="salir">Cerrar</button>
+                                
+                            </div>
+                            
                         </div>
                     </form>
                 </div>
@@ -301,7 +305,7 @@
                         this.dispersiones = data.data;
                     })
                     .finally(() => {
-                        // this.cargando = false;
+                        this.cargando = false;
                     });
             },
 
