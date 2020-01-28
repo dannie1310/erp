@@ -11,7 +11,7 @@ namespace App\Services\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\Material;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Material\Repository;
 use Illuminate\Support\Facades\DB;
 
 class MaterialService
@@ -70,5 +70,11 @@ class MaterialService
         ];
 
         return $this->repository->create($datos);
+    }
+
+    public function catalogo_insumos($data)
+    {
+        $array = ['scope' => $data];
+        return $this->repository->list($data);
     }
 }
