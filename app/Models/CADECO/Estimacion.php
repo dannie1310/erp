@@ -482,8 +482,12 @@ class Estimacion extends Transaccion
 
     public function getRetencionFondoGarantiaOrdenPagoAttribute()
     {
-        if($this->configuracion->ret_fon_gar_antes_iva == 0 && $this->configuracion->ret_fon_gar_con_iva == 1){
-            return $this->suma_importes * ($this->retencion/100) * 1.16;
+        if($this->configuracion->ret_fon_gar_antes_iva == 0 ){
+            if($this->configuracion->ret_fon_gar_con_iva == 1){
+                return $this->total_orden_pago * ($this->retencion/100) * 1.16;
+            } else{
+                return $this->total_orden_pago * ($this->retencion/100) ;
+            }
         } else {
             return $this->suma_importes * ($this->retencion/100);
         }
