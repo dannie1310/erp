@@ -156,13 +156,13 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->SetX(6);
         $this->SetFont('Arial', '', 10);
-        $this->Cell(4, 0.4, 'Subcontrato No. :', 0, 0, 'R');
+        $this->Cell(4, 0.4, 'Subcontrato No.:', 0, 0, 'R');
         $this->CellFitScale(10, 0.4, $this->estimacion->subcontrato->referencia, 'B', 1, 'C');
         $this->Ln(0.1);
 
         $this->SetX(6);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(4, 1, 'Objeto del Contrato :', 0, 0, 'R');
+        $this->Cell(4, 1, 'Objeto del Contrato:', 0, 0, 'R');
         $this->MultiCell(10, 0.5, $this->objeto_contrato, 1, 'C');
         $this->Ln(0.1);
 
@@ -174,8 +174,8 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->SetX(6);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(4, 0.4, 'Monto del Contrato :', 0, 0, 'R');
-        $this->CellFitScale(10, 0.4,'$' . number_format($this->estimacion->subcontrato->monto_subcontrato, 2, '.', ','), 'B', 1, 'C');
+        $this->Cell(4, 0.4, 'Monto del Contrato:', 0, 0, 'R');
+        $this->CellFitScale(10, 0.4,$this->estimacion->subcontrato->monto_format, 'B', 1, 'C');
         $this->Ln(0.1);
 
         $this->SetX(6);
@@ -187,7 +187,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(6);
         $this->SetFont('Arial', '', 8);
         $this->Cell(4, 0.35, utf8_decode('Estimación :'), 0, 0, 'R');
-        $this->CellFitScale(10, 0.35, utf8_decode("#".$this->estimacion->numero_folio . " - " . $this->estimacion->observaciones), 'B', 1, 'C');
+        $this->multicell(10, 0.35, utf8_decode("#".$this->estimacion->numero_folio . " - " . $this->estimacion->observaciones), 'B', 'J', 0);
         $this->Ln(0.1);
 
         $this->SetX(6   );
