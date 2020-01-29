@@ -474,7 +474,7 @@ class Estimacion extends Transaccion
 
     public function getTotalOrdenPagoAttribute()
     {
-        $total = $this->subtotal_orden_pago + $this->impuesto;
+        $total = $this->subtotal_orden_pago + $this->iva_orden_pago;
         return $total;
     }
     # retencion_fondo_garantia_orden_pago_format
