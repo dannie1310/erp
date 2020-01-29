@@ -467,6 +467,16 @@ class GestionPagoService
                 continue;
             }
 
+            if (strlen($pago['concepto']) > 10 && is_numeric(substr($pago['concepto'], 1, 9))) {
+                if ($documento = Documento::where('IDDocumento', '=', substr($pago['concepto'], 1, 9))->first()) {
+                    $registros_bitacora[] = $this->bitacoraPago($documento, $pago);
+                    continue;
+                }
+            }
+                 
+            $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
+            $cuenta_abono?'':abort(403, 'El número de cuenta "' . $pago['cuenta_abono'] . '" no está registrado.' );
+
             $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
             if($transaccion_pagada){
                 $registros_bitacora[] = array(
@@ -504,16 +514,6 @@ class GestionPagoService
                 );
                 continue;
             }
-            
-            if (strlen($pago['concepto']) > 10 && is_numeric(substr($pago['concepto'], 1, 9))) {
-                if ($documento = Documento::where('IDDocumento', '=', substr($pago['concepto'], 1, 9))->first()) {
-                    $registros_bitacora[] = $this->bitacoraPago($documento, $pago);
-                    continue;
-                }
-            }
-                 
-            $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
-            $cuenta_abono?'':abort(403, 'El número de cuenta "' . $pago['cuenta_abono'] . '" no está registrado.' );
             
             $dist_partidas = DistribucionRecursoRemesaPartida::transaccionPago()->partidaVigente()->partidaPagable()
                                 ->where('id_cuenta_abono', '=', $cuenta_abono->id)
