@@ -289,7 +289,8 @@ class Estimacion extends Transaccion
                 'retenciones_antes_iva'=>1,
                 'ret_fon_gar_antes_iva'=>1,
                 'desc_pres_mat_antes_iva'=>1,
-                'desc_otros_prest_antes_iva'=>0
+                'desc_otros_prest_antes_iva'=>0,
+                'ret_fon_gar_con_iva'=>0,
             ]);
 
         }
@@ -474,14 +475,14 @@ class Estimacion extends Transaccion
 
     public function getTotalOrdenPagoAttribute()
     {
-        $total = $this->subtotal_orden_pago + $this->impuesto;
+        $total = $this->subtotal_orden_pago + $this->iva_orden_pago;
         return $total;
     }
     # retencion_fondo_garantia_orden_pago_format
 
     public function getRetencionFondoGarantiaOrdenPagoAttribute()
     {
-        if($this->configuracion->ret_fon_gar_antes_iva == 0){
+        if($this->configuracion->ret_fon_gar_antes_iva == 0 && $this->configuracion->ret_fon_gar_con_iva == 1){
             return $this->suma_importes * ($this->retencion/100) * 1.16;
         } else {
             return $this->suma_importes * ($this->retencion/100);
