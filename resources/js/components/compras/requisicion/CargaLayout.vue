@@ -11,7 +11,7 @@
                         </button>
                     </div>
                     <div class="col-md-12 info-box-content">
-                                    <label class="col-lg-12 col-form-label">Considera el siguiente orden de columnas para cargar tu archivo CSV, contemplando los campos sombreados obligados a ingresar.
+                                    <label class="col-lg-12 col-form-label">Considera el siguiente orden de columnas para cargar tu archivo CSV,  contempla que deben estar llenados los campos sombreados.
                                         &nbsp
                                         </label>
                                 </div>
