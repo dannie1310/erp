@@ -10,6 +10,30 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                    <div class="col-md-12 info-box-content">
+                                    <label class="col-lg-12 col-form-label">Considera el siguiente orden de columnas para cargar tu archivo CSV, contemplando los campos sombreados obligados a ingresar.
+                                        &nbsp
+                                        </label>
+                                </div>
+                                <br>
+                    <div class="row">
+                                            <div class="table-responsive col-md-12">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th style="background:darkgray;">No. de Parte</th>
+                                                            <th>No parte Equivalente</th>
+                                                            <th>Referencia</th>
+                                                            <th style="background:darkgray;">Unidad</th>
+                                                            <th style="background:darkgray;">Descripcíon</th>
+                                                            <th style="background:darkgray;">Cantidad</th>
+                                                            <th>Clave Concepto</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
                     <form role="form" @submit.prevent="validate">
 
                         <div class="modal-body">
