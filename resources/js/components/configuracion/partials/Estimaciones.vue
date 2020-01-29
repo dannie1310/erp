@@ -79,7 +79,7 @@
 
             <fieldset class="form-group">
                 <div class="row">
-                    <legend class="col-form-label col-sm-4 pt-0"><b>Retención de Fondo de Garantía (mas IVA)</b></legend>
+                    <legend class="col-form-label col-sm-4 pt-0"><b>Retención de Fondo de Garantía</b></legend>
                     <div class="col-sm-8" v-if="form && bandera == 0">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva1" value="1" v-model="form.ret_fon_gar_antes_iva" :disabled="!bandera">
@@ -89,17 +89,27 @@
                             <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva0" value="0" v-model="form.ret_fon_gar_antes_iva" :disabled="!bandera">
                             <label class="form-check-label"> Después de IVA</label>
                         </div>
+                        <div class="form-check form-check-inline" v-if="form.ret_fon_gar_antes_iva==0">
+                            <input class="form-check-input" type="checkbox" name="ret_fon_gar_antes_iva" v-model="form.ret_fon_gar_con_iva" :disabled="!bandera" >
+                            <label class="form-check-label"  >+ IVA</label>
+                        </div>
                     </div>
                     <div class="col-sm-8" v-else>
                         <div class="form-check form-check-inline">
                             <label class="form-check-label" style="cursor:pointer" >
-                                <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva1" v-model="data.ret_fon_gar_antes_iva" value="1" :disabled="!bandera">
+                                <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva1" v-model="data.ret_fon_gar_antes_iva" value="1" v-on:change="actualizaCheck" :disabled="!bandera">
                              Antes de IVA</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <label class="form-check-label" style="cursor:pointer" >
-                                <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva0" v-model="data.ret_fon_gar_antes_iva" value="0" :disabled="!bandera">
+                                <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva0" v-model="data.ret_fon_gar_antes_iva" value="0" v-on:change="actualizaCheck" :disabled="!bandera">
                              Después de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline" v-if="data.ret_fon_gar_antes_iva==0">
+                            <label class="form-check-label" style="cursor:pointer" >
+                                <input class="form-check-input" type="checkbox" name="ret_fon_gar_antes_iva" v-model="data.ret_fon_gar_con_iva" value="1" :disabled="!bandera" >
+                                + IVA
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -192,6 +202,7 @@
                     ret_fon_gar_antes_iva: '',
                     desc_pres_mat_antes_iva: '',
                     desc_otros_prest_antes_iva: '',
+                    ret_fon_gar_con_iva: '',
                 },
                 bandera: 1,
                 picked: 0,
@@ -203,8 +214,14 @@
                 this.bandera = 0;
             }
         },
-
         methods: {
+            actualizaCheck(){
+                if(this.data.ret_fon_gar_antes_iva == 1){
+                    this.data.ret_fon_gar_con_iva = false;
+                } else if(this.data.ret_fon_gar_antes_iva == 0){
+                    this.data.ret_fon_gar_con_iva = true;
+                }
+            },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
