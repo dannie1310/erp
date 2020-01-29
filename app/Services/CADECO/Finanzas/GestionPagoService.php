@@ -572,7 +572,7 @@ class GestionPagoService
                     'saldo' => 'N/P',
                     'origen_docto' => '   N/A   ',
                     'fecha_pago' => $pago['fecha'],
-                    'select_transacciones' => $this->transaccion_resumen($transacicones_empresa)
+                    'select_transacciones' => $this->transaccion_resumen($transacciones_empresa)
                 );
                 continue;
             }
