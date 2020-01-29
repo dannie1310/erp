@@ -462,6 +462,16 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->subtotal_orden_pago, 2);
     }
 
+    public function getIvaOrdenPagoAttribute()
+    {
+        return $this->subtotal_orden_pago * 0.16;
+    }
+
+    public function getIvaOrdenPagoFormatAttribute()
+    {
+        return '$ ' . number_format($this->iva_orden_pago, 2);
+    }
+
     public function getTotalOrdenPagoAttribute()
     {
         $total = $this->subtotal_orden_pago + $this->impuesto;
