@@ -119,6 +119,7 @@
                                                     <th class="cantidad_input">Cantidad</th>
                                                     <th class="unidad">Unidad</th>
                                                     <th style="width:140px;">Fecha Entrega</th>
+                                                    <th class="icono"></th>
                                                     <th>Destino</th>
                                                     <th>Observaciones</th>
                                                     <th class="icono">
@@ -222,10 +223,12 @@
                                                             ></datepicker>
                                                              <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="width:140px;" v-if="partida.clave_concepto"><u>{{partida.clave_concepto.descripcion}}</u></td>
-                                                        <td style="width:140px; text-align:center;" v-else><small class="badge badge-secondary">
+                                                        <td style="text-align:center;"><small class="badge badge-secondary">
                                                                 <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)"></i>
                                                             </small></td>
+                                                        <td style="width:140px;" v-if="partida.clave_concepto"><u>{{partida.clave_concepto.descripcion}}</u></td>
+                                                        <td style="width:140px; text-align:center;" v-else-if="partida.destino">{{partida.destino.descripcion}}</td>
+                                                            <td style="width:140px; text-align:center;" v-else></td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -299,36 +302,16 @@
                                                         v-model="id_concepto_temporal"
                                                         :error="errors.has('id_concepto')"
                                                         ref="conceptoSelect"
-                                                        :disableBranchNodes="true"
+                                                        :disableBranchNodes="false"
                                                 ></concepto-select>
                                                 <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group row error-content">
-                                            <label for="id_almacen" class="col-sm-2 col-form-label">Activos:</label>
-                                            <div class="col-sm-10">
-                                                <model-list-select
-                                                        name="id_almacen"
-                                                        placeholder="Seleccionar o buscar descripción del almacén"
-                                                        data-vv-as="Almacén"
-                                                        v-model="id_almacen_temporal"
-                                                        option-value="id"
-                                                        option-text="descripcion"
-                                                        :list="almacenes"
-                                                        >
-                                                </model-list-select>
-                                                <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
                             </div>
                             <div class="modal-footer">
-                                <button  type="button"  class="btn btn-secondary"><i class="fa fa-close"  ></i> Cerrar</button>
+                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
                              </div>
                         </form>
                     </div>
@@ -369,6 +352,12 @@
                 concepto : '',
                 observaciones : '',
                 unidades : [],
+                t: '',
+                destino_seleccionado: {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                },
                 partidas: [
                     {
                         i : 0,
@@ -379,6 +368,7 @@
                         cantidad : "",
                         fecha : "",
                         observaciones : "",
+                        concepto_temporal : ""
                     }
                 ],
             }
@@ -413,7 +403,8 @@
                     descripcion : "",
                     cantidad : "",
                     fecha : "",
-                    observaciones : ""
+                    observaciones : "",
+                    concepto_temporal : ""
                 }];
             },
             changeSelect(item){
@@ -424,25 +415,13 @@
                 }
             },
             modalDestino(i) {
-                console.log('Modal', i);
-                // this.index_temporal = i;
-                // if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
-                //     this.destino_seleccionado.tipo_destino =  '';
-                //     this.destino_seleccionado.destino = '';
-                //     this.destino_seleccionado.id_destino = '';
-                // }else {
-                //     this.destino_seleccionado = this.partidas[this.index_temporal].destino;
-                // }
-
-                // if(this.almacenes.length == 0) {
-                //     this.getAlmacenes();
-                // }
-                // this.$validator.reset();
+                this.partidas[i].clave_concepto = '';
+                this.destino_seleccionado.destino = '';
+                this.index_temporal = i;
                 $(this.$refs.modal_destino).modal('show');
             },
             cerrarModalDestino(){
                 this.id_concepto_temporal = '';
-                this.id_almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
@@ -482,6 +461,31 @@
                         this.disabled = false;
                     })
             },
+            seleccionarDestino() {
+                this.partidas[this.index_temporal].destino = this.destino_seleccionado.destino;
+                this.partidas[this.index_temporal].clave_concepto = this.destino_seleccionado.destino;
+                this.index_temporal = '';
+                this.destino_seleccionado = {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                };
+                this.id_concepto_temporal = '';
+                
+                $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
+            },
+            getConcepto() {
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: this.destino_seleccionado.id_destino,
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.destino_seleccionado.destino = data;
+                        this.seleccionarDestino();
+                    })
+            },
             getAreasSolicitantes() {
                 return this.$store.dispatch('configuracion/area-solicitante/index', {
                     params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
@@ -501,6 +505,7 @@
                     cantidad : "",
                     fecha : "",
                     observaciones : "",
+                    concepto_temporal : ""
                 });
                 this.index = this.index+1;
             },
@@ -538,8 +543,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
-                        scope: 'requisicion',
-                        limit: 15
+                        scope: 'requisicion'
                     }
                 })
                     .then(data => {
@@ -555,13 +559,32 @@
                 });
             },
             store() {
-                console.log(this.data);
-                
-                // return this.$store.dispatch('compras/requisicion/store', this.$data)
-                //     .then((data) => {
-                //         this.$router.push({name: 'requisicion'});
-                //     });
+                this.t = 0;
+                this.m = 0;
+                 while(this.t < this.partidas.length){
+                     if(typeof this.partidas[this.t].clave_concepto === 'undefined' || this.partidas[this.t].clave_concepto === '')
+                        {
+                            this.m ++;
+                            swal('¡Error!', 'Ingrese un destino válido en partida '+(this.t + 1) +'.', 'error');
+                        }
+                        this.t ++;
+                }if(this.m == 0)
+                {
+                    return this.$store.dispatch('compras/requisicion/store', this.$data)
+                    .then((data) => {
+                        this.$router.push({name: 'requisicion'});
+                    });
+
+                }
             },
+        },
+        watch: {
+            id_concepto_temporal(value){
+                if(value !== '' && value !== null && value !== undefined){
+                    this.destino_seleccionado.id_destino = value;
+                    this.getConcepto();
+                }
+                },
         }
     }
 </script>

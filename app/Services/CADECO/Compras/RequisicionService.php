@@ -39,27 +39,27 @@ class RequisicionService
     {
         $partidas = $this->getCsvData($file);
         $mensaje = array_pop($partidas);
-        // dd('partidas', $partidas, $mensaje);
-
         $materiales = array();
         foreach ($partidas as $partida)
         {
             if($partida['CLAVE CONCEPTO'])
             {
                 $destino = [];
-                $concepto = Concepto::where('clave_concepto', '=', 'prueba2')->where('concepto_medible', '=',0)->get()->first();
-                $concepto2 = Concepto::where('concepto_medible', '=',0)->where('nivel', 'LIKE', $concepto->nivel.'____')->get()->first();
-                // dd($concepto2);
-                if($concepto2)
+                $concepto = Concepto::where('clave_concepto', '=', $partida['CLAVE CONCEPTO'])->where('concepto_medible', '=',0)->get()->first();
+                if($concepto)
                 {
-                    dd('paso');
-                }
-                dd('no paso');
-                $destino = [
-                    'id' => $concepto->id_concepto,
-                    'descripcion' => $concepto->descripcion
-            ];
-                $partida['CLAVE CONCEPTO'] = $destino;
+                    $concepto2 = Concepto::where('concepto_medible', '=',3)->where('nivel', 'LIKE', $concepto->nivel.'____')->get()->first();
+                    if($concepto2)
+                    {
+                        $destino = [
+                            'id' => $concepto->id_concepto,
+                            'descripcion' => $concepto->descripcion
+                        ];
+                        $partida['CLAVE CONCEPTO'] = $destino;
+                    }else{
+                        $partida['CLAVE CONCEPTO'] = '';
+                    }
+                }else{$partida['CLAVE CONCEPTO'] = '';}
             }
             if($partida['No PARTE'] != null) {
                 $material = Material::query()->where('numero_parte', '=', $partida['No PARTE'])->get(['id_material','numero_parte','descripcion', 'unidad', 'FechaHoraRegistro'])->first();
@@ -119,7 +119,6 @@ class RequisicionService
                 );
             }
         }
-        // dd($materiales);
         return $materiales;
     }
 
@@ -136,7 +135,6 @@ class RequisicionService
             if($linea == 1){
                 $linea++;
             }else{
-                // dd($renglon);
                 if(count($renglon) != 9) {
                     abort(400,'No se puede procesar la Requisición');
                 }else if(count($renglon) == 9 && $renglon[7] != ''){
