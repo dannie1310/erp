@@ -131,6 +131,6 @@ class Almacen extends Model
             ->select(DB::raw('materiales.id_material, materiales.unidad, materiales.numero_parte,  materiales.descripcion, sum(inventarios.cantidad) as cantidad_almacen, round(sum(inventarios.saldo),2) as saldo_almacen'))
             ->orderBy('materiales.descripcion')
             ->groupBy('materiales.id_material', 'materiales.unidad', 'materiales.numero_parte', 'materiales.descripcion','inventarios.id_almacen','inventarios.id_material')
-            ->havingRaw('sum(inventarios.saldo) > 0');
+            ->havingRaw('sum(inventarios.saldo) > 0.01');
     }
 }

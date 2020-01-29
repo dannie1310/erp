@@ -4,7 +4,7 @@
             <router-link :to="{name: 'estimacion-create'}" v-if="$root.can('registrar_estimacion_subcontrato')" class="btn btn-app btn-info float-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
-                Registrar Estimación
+                Registrar
             </router-link>
         </div>
         <div class="col-12">
