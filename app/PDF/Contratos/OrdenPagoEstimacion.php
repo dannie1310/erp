@@ -156,13 +156,13 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->SetX(6);
         $this->SetFont('Arial', '', 10);
-        $this->Cell(4, 0.4, 'Subcontrato No. :', 0, 0, 'R');
+        $this->Cell(4, 0.4, 'Subcontrato No.:', 0, 0, 'R');
         $this->CellFitScale(10, 0.4, $this->estimacion->subcontrato->referencia, 'B', 1, 'C');
         $this->Ln(0.1);
 
         $this->SetX(6);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(4, 1, 'Objeto del Contrato :', 0, 0, 'R');
+        $this->Cell(4, 1, 'Objeto del Contrato:', 0, 0, 'R');
         $this->MultiCell(10, 0.5, $this->objeto_contrato, 1, 'C');
         $this->Ln(0.1);
 
@@ -174,8 +174,8 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->SetX(6);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(4, 0.4, 'Monto del Contrato :', 0, 0, 'R');
-        $this->CellFitScale(10, 0.4,'$' . number_format($this->estimacion->subcontrato->monto_subcontrato, 2, '.', ','), 'B', 1, 'C');
+        $this->Cell(4, 0.4, 'Monto del Contrato:', 0, 0, 'R');
+        $this->CellFitScale(10, 0.4,$this->estimacion->subcontrato->monto_format, 'B', 1, 'C');
         $this->Ln(0.1);
 
         $this->SetX(6);
@@ -187,7 +187,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(6);
         $this->SetFont('Arial', '', 8);
         $this->Cell(4, 0.35, utf8_decode('Estimación :'), 0, 0, 'R');
-        $this->CellFitScale(10, 0.35, utf8_decode("#".$this->estimacion->numero_folio . " - " . $this->estimacion->observaciones), 'B', 1, 'C');
+        $this->multicell(10, 0.35, utf8_decode("#".$this->estimacion->numero_folio . " - " . $this->estimacion->observaciones), 'B', 'J', 0);
         $this->Ln(0.1);
 
         $this->SetX(6   );
@@ -378,7 +378,13 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención de Fondo de Garantia Estimación :'), 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.10, 0.4, round($this->estimacion->retencion, 2) . ' % + IVA', 'B', 0, 'L');
+            if($this->estimacion->configuracion->ret_fon_gar_con_iva==1) {
+                $this->CellFitScale(($this->w - 2) * 0.10, 0.4, round($this->estimacion->retencion, 2) . ' % + IVA', 'B', 0, 'L');
+            }
+            if($this->estimacion->configuracion->ret_fon_gar_con_iva==0) {
+                $this->CellFitScale(($this->w - 2) * 0.10, 0.4, round($this->estimacion->retencion, 2) . ' %', 'B', 0, 'L');
+            }
+
             $this->CellFitScale(($this->w - 2) * 0.15, 0.4,$this->estimacion->retencion_fondo_garantia_orden_pago_format, 'B', 1, 'R');
             $this->Ln(0.1);
         }
