@@ -148,9 +148,7 @@
                 this.$router.push({ name:'estimacion-show', params: {id: this.value.id} });
             },
             edit(){
-                alert(this.value.id);
-                console.log(this.value);
-                // this.$router.push({ name:'estimacion-show', params: {id: this.value.id} });
+                this.$router.push({ name:'estimacion-edit', params: {id: this.value.id} });
             },
             eliminar() {
                 this.$router.push({name: 'estimacion-delete', params: {id: this.value.id}});
