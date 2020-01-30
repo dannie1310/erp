@@ -175,7 +175,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(6);
         $this->SetFont('Arial', '', 8);
         $this->Cell(4, 0.4, 'Monto del Contrato:', 0, 0, 'R');
-        $this->CellFitScale(10, 0.4,$this->estimacion->subcontrato->monto_format, 'B', 1, 'C');
+        $this->CellFitScale(10, 0.4,$this->estimacion->subcontrato->subtotal_format, 'B', 1, 'C');
         $this->Ln(0.1);
 
         $this->SetX(6);
