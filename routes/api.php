@@ -601,6 +601,7 @@ $api->version('v1', function ($api) {
          * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
          */
         $api->group(['prefix' => 'distribuir-recurso-remesa'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
             $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayout')->where(['id' => '[0-9]+']);
@@ -622,6 +623,7 @@ $api->version('v1', function ($api) {
             $api->get('autorizada', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@autorizadas');
             $api->get('{id}/pendientesPago', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pendientesPago');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@paginate');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@destroy')->where(['id' => '[0-9]+']);
             /**
              * FORMATO DE CONTRARECIBO
              */

@@ -11,6 +11,7 @@ namespace App\Repositories\CADECO\Finanzas\Facturas;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
+use App\Models\CADECO\Moneda;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\RepositoryInterface;
 USE Illuminate\Support\Facades\DB;
@@ -31,6 +32,26 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         if($obra){
             return $obra->rfc;
         }
+    }
+
+    public function getIdMoneda($moneda_sat)
+    {
+        switch($moneda_sat){
+            case 'MXN':
+                return 1;
+                break;
+            case 'USD':
+                return 2;
+                break;
+            case 'EUR':
+                return 3;
+                break;
+            default:
+                return 1;
+                break;
+        }
+
+
     }
 
     public function getEmpresa(Array $datos){
@@ -81,9 +102,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function validaExistenciaRepositorio($hash_file, $uuid)
     {
-        $factura_repositorio = FacturaRepositorio::where('hash_file', '=', $hash_file)
-            ->orWhere("uuid","=", $uuid)->first();
-
+        $factura_repositorio = FacturaRepositorio::whereNotNull("id_transaccion")
+            ->where("uuid","=", $uuid)->first();
         return $factura_repositorio;
     }
 }

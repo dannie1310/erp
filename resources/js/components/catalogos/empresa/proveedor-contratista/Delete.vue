@@ -43,7 +43,11 @@
                                                 <td>{{proveedorContratista.tipo}}</td>
                                             </tr>
                                             <tr>
-                                                <th class="align">Emite Factura:</th>
+                                                <th class="align">Es Proveedor Nacional:</th>
+                                                <td>{{proveedorContratista.es_nacional_format}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="align">Emite Factura (XML):</th>
                                                 <td>{{proveedorContratista.emite_factura_format}}</td>
                                             </tr>
                                             <tr v-if="proveedorContratista.efo">

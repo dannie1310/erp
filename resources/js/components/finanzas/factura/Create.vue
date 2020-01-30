@@ -23,13 +23,27 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input button" id="con_prestamo" v-model="dato.es_deducible" >
-                                <label class="custom-control-label" for="con_prestamo">Es Deducible</label>
+                                <input type="checkbox" class="custom-control-input button" id="es_nacional" v-model="dato.es_nacional" >
+                                <label class="custom-control-label" for="es_nacional">Proveedor Nacional</label>
+                            </div>
+
+                        </div>
+                        <div class="col-md-3">
+                            <div class="custom-control custom-switch" v-if="dato.es_nacional">
+                                <input type="checkbox" class="custom-control-input button" id="es_deducible" v-model="dato.es_deducible" >
+                                <label class="custom-control-label" for="es_deducible">Es Deducible</label>
                             </div>
                         </div>
+                    </div>
+                    <hr v-if="dato.es_deducible && dato.es_nacional" />
+                    <div class="row" v-if="dato.es_deducible && dato.es_nacional">
+                        <div class="col-md-3">
+                            <label for="archivo">Archivo de comprobante:</label>
+                        </div>
+
                         <div class="col-md-9">
-                            <div class="form-group error-content" v-if="dato.es_deducible">
-                                <label for="archivo">Archivo de comprobante:</label>
+                            <div class="form-group error-content" >
+
                                 <input type="file" class="form-control" id="archivo" @change="onFileChange"
                                        row="3"
                                        v-validate="{required: true,  ext: ['xml'], size: 3072}"
@@ -66,7 +80,7 @@
                         <div class="col-md-10">
                             <div class="form-group error-content">
                                 <label for="fecha">Empresa:</label>
-                                <model-list-select v-if="dato.es_deducible"
+                                <model-list-select v-if="dato.es_deducible && dato.es_nacional"
                                         name="id_empresa"
                                         placeholder="Seleccionar o buscar por RFC y razón social"
                                         data-vv-as="Empresa"
@@ -77,10 +91,21 @@
                                         :list="empresas"
                                         :isError="errors.has(`id_empresa`)">
                                 </model-list-select>
-                                <model-list-select
+                                <model-list-select v-if="!dato.es_nacional"
                                         v-else
                                         name="id_empresa"
-                                        placeholder="Seleccionar o buscar por razón social"
+                                        placeholder="Seleccionar o buscar por razón social de proveedor extranjero"
+                                        data-vv-as="Empresa"
+                                        v-validate="{required: true}"
+                                        v-model="dato.id_empresa"
+                                        option-value="id"
+                                        option-text="razon_social"
+                                        :list="empresas_extranjeras"
+                                        :isError="errors.has(`id_empresa`)">
+                                </model-list-select>
+                                <model-list-select v-if="!dato.es_deducible && dato.es_nacional"
+                                        name="id_empresa"
+                                        placeholder="Seleccionar o buscar por razón social de proveedor no deducible"
                                         data-vv-as="Empresa"
                                         v-validate="{required: true}"
                                         v-model="dato.id_empresa"
@@ -263,6 +288,7 @@
                 monedas:[],
                 dato:{
                     es_deducible:1,
+                    es_nacional:1,
                     fecha:'',
                     emision:'',
                     vencimiento:'',
@@ -297,6 +323,7 @@
                 this.dato.observaciones = '';
                 this.dato.archivo = '';
                 this.dato.es_deducible = 1;
+                this.dato.es_nacional = 1;
                 this.dato.total = '';
                 this.dato.id_empresa = '';
                 this.dato.id_rubro = '';
@@ -340,6 +367,18 @@
                 })
                     .then(data => {
                         this.empresas_no_deducibles = data.data;
+                    })
+                    .finally(()=>{
+                        this.getEmpresasExtranjeras();
+                    })
+
+            },
+            getEmpresasExtranjeras() {
+                return this.$store.dispatch('cadeco/empresa/index', {
+                    params: {sort: 'razon_social', order: 'asc', scope:'extranjeras' }
+                })
+                    .then(data => {
+                        this.empresas_extranjeras = data.data;
                         this.cargando = false;
                     })
 
@@ -403,6 +442,7 @@
                             this.dato.referencia = data.serie + data.folio;
                             this.dato.emision = data.fecha;
                             this.dato.id_empresa = data.empresa_bd.id_empresa;
+                            this.dato.id_moneda = data.moneda_bd.id_moneda;
                             this.empresas.push({id:data.empresa_bd.id_empresa,razon_social:data.empresa_bd.razon_social,rfc:data.empresa_bd.rfc});
 
                         }else{

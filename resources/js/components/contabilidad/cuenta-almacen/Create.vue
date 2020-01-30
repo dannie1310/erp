@@ -3,7 +3,7 @@
         <button @click="init" v-if="$root.can('registrar_cuenta_almacen')" class="btn btn-app btn-info float-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
-            Registrar Cuenta
+            Registrar
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">

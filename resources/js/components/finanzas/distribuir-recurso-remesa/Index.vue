@@ -4,7 +4,7 @@
             <button  @click="create" title="Crear" class="btn btn-app btn-info float-right" >
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
-                Registrar Dispersión
+                Registrar
             </button>
         </div>
         <div class="col-12">
