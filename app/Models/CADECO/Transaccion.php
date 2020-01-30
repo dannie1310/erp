@@ -162,6 +162,11 @@ class Transaccion extends Model
         return $this->monto - $this->impuesto;
     }
 
+    public function getSubtotalFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto - $this->impuesto,2);
+    }
+
     public function moneda()
     {
         return $this->hasOne(Moneda::class, 'id_moneda','id_moneda');
