@@ -601,6 +601,7 @@ $api->version('v1', function ($api) {
          * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
          */
         $api->group(['prefix' => 'distribuir-recurso-remesa'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
             $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayout')->where(['id' => '[0-9]+']);
