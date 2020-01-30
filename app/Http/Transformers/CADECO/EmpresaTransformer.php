@@ -9,6 +9,7 @@ use App\Http\Transformers\CADECO\Finanzas\CuentaBancariaEmpresaTransformer;
 use App\Models\CADECO\Empresa;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgEfosTransformer;
 
 class EmpresaTransformer extends TransformerAbstract
 {
@@ -22,7 +23,8 @@ class EmpresaTransformer extends TransformerAbstract
         'cuentas',
         'subcontratos',
         'ordenes_compra',
-        'cuentas_bancarias'
+        'cuentas_bancarias',
+        'efos'
     ];
 
     public function transform(Empresa $model)
@@ -45,6 +47,19 @@ class EmpresaTransformer extends TransformerAbstract
     {
         if ($cuentas = $model->cuentasEmpresa) {
             return $this->collection($cuentas, new CuentaEmpresaTransformer);
+        }
+        return null;
+    }
+    
+    /**
+     * @param Efos $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEfos(Empresa $model)
+    {
+        if($efos = $model->efo)
+        {
+            return $this->item($efos, new CtgEfosTransformer);
         }
         return null;
     }

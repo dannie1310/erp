@@ -53,4 +53,9 @@ class MaterialController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function descargar_lista_material(Request $request)
+    {
+        return $this->service->catalogo_insumos($request->scope);
+    }
 }

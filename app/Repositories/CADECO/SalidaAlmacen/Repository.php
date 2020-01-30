@@ -8,7 +8,6 @@
 
 namespace App\Repositories\CADECO\SalidaAlmacen;
 
-use App\Models\CADECO\Inventario;
 use App\Models\CADECO\SalidaAlmacen as Model;
 
 class Repository extends \App\Repositories\Repository implements RepositoryInterface

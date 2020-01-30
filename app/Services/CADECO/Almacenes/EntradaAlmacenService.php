@@ -11,7 +11,7 @@ namespace App\Services\CADECO\Almacenes;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EntradaMaterial;
-use App\PDF\EntradaAlmacenFormato;
+use App\PDF\Almacenes\EntradaAlmacenFormato;
 use App\Repositories\CADECO\EntradaAlmacen\Repository;
 
 class EntradaAlmacenService

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\v1\CADECO\Finanzas;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Finanzas\EliminarFacturaRequest;
 use App\Http\Transformers\CADECO\Finanzas\FacturaTransformer;
 use App\Services\CADECO\Finanzas\FacturaService;
 use App\Traits\ControllerTrait;
@@ -13,7 +14,9 @@ use League\Fractal\Manager;
 
 class FacturaController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        destroy as traitDestroy;
+    }
 
     /**
      * @var Manager
@@ -41,6 +44,7 @@ class FacturaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:consultar_factura')->only(['paginate']);
+        $this->middleware('permiso:eliminar_factura')->only(['destroy']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -52,12 +56,25 @@ class FacturaController extends Controller
         return response()->json($autorizadas);
     }
 
+    public function destroy(EliminarFacturaRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);
+    }
+
     public function pendientesPago($id){
         $pendientes = $this->service->pendientesPago($id);
         return $this->respondWithPaginator($pendientes);
     }
 
+    public function pdfCR($id)
+    {
+        return $this->service->pdfCR($id)->create();
+    }
 
-
+    public function cargaXML(Request $request)
+    {
+        $respuesta = $this->service->cargaXML($request->xml);
+        return response()->json($respuesta, 200);
+    }
 
 }
