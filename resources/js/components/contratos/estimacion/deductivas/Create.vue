@@ -1,7 +1,7 @@
 <template>
   <span>
-        <button type="button" @click="init()" class="btn btn-primary" title="Editar">
-            Deductivas
+        <button type="button" @click="init()" class="btn btn-primary float-right espacio" title="Editar">
+            Agregar
         </button>
         <div class="row">
             <div class="col-md-12">
@@ -96,18 +96,14 @@ export default {
             this.material = [];
             this.cantidad = '';
             this.precio_unitario = '';
+            this.$validator.reset();
             $(this.$refs.modalAgregar).modal('hide');
         },
-        emitir(id){
-            return this.$store.dispatch('subcontratosEstimaciones/descuento/find', {
-                    id: id,
-                    params: { include: 'material' }
-                }).then(data => {
-                    $(this.$refs.modalAgregar).modal('hide');
-                    this.$emit('created',data)
-                })
-        },
         init(){
+            this.material = [];
+            this.cantidad = '';
+            this.precio_unitario = '';
+            this.$validator.reset();
             $(this.$refs.modalAgregar).modal('show');
         },
         store() {
@@ -118,7 +114,8 @@ export default {
                 precio:this.precio_unitario
             })
             .then((data) => {
-                this.emitir(data.id);
+                this.$emit('created',data);
+                this.cerrar();
             })
         },
         validate() {
@@ -134,5 +131,8 @@ export default {
 </script>
 
 <style>
+.espacio {
+  margin-bottom: 25px;
+}
 
 </style>

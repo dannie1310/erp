@@ -8,6 +8,7 @@
 
 namespace App\Repositories\CADECO\SubcontratosEstimaciones\Descuento;
 
+
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 
 class Repository extends \App\Repositories\Repository implements RepositoryInterface
@@ -31,4 +32,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $this->sort();
         return $this->model->where('id_transaccion', '=', $id)->get();
     }
+
+    public function duplicado($id_transaccion, $id_material){
+        return $this->model->where('id_transaccion', '=', $id_transaccion)
+                ->where('id_material', '=', $id_material)->count();
+    }
+
+    
 }

@@ -31,7 +31,7 @@ class DescuentoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'material'
     ];
 
     public function transform(Descuento $model)

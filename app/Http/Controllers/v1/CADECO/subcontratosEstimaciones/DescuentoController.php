@@ -13,6 +13,7 @@ use App\Services\CADECO\SubcontratosEstimaciones\DescuentoService;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class DescuentoController extends Controller
 {
@@ -56,5 +57,10 @@ class DescuentoController extends Controller
     public function list($id){
         $lista = $this->service->list($id);
         return $this->respondWithCollection($lista);
+    }
+
+    public function updateList(Request $request){
+        $respuesta = $this->service->updateList($request->all());
+        return $this->respondWithCollection($respuesta);
     }
 }

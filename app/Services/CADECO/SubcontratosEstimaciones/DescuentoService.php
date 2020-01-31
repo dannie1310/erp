@@ -28,6 +28,11 @@ class DescuentoService
         $this->repository = new Repository($model);
     }
 
+    public function find($id)
+    {
+        return $this->repository->show($id);
+    }
+
     public function list($id)
     {  
         return $this->repository->list($id);
@@ -35,6 +40,25 @@ class DescuentoService
 
     public function store(array $data)
     {
+        $duplicado = $this->repository->duplicado($data['id_transaccion'], $data['id_material']);
+        if($duplicado > 0) abort(403, 'Material agregado previamente.');
         return $this->repository->create($data);
+    }
+
+    public function updateList($data){
+        $id_transaccion = '';
+        foreach($data as $descuento){
+            $id_transaccion = $descuento['id_transaccion'];
+            $desc = $this->repository->show($descuento['id']);
+            if($descuento['cantidad'] == 0){
+                $desc->delete();
+            }else{
+                $desc->update([
+                    'cantidad' => $descuento['cantidad'],
+                    'precio' => $descuento['precio'],
+                ]);
+            }
+        }
+        return $this->list($id_transaccion);
     }
 }
