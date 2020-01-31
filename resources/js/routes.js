@@ -1048,6 +1048,18 @@ export const routes = [
                             middleware: [auth, context,],
 
                         }
+                    },                    
+                    {
+                        path: ':id/editar',
+                        name: 'estimacion-edit',
+                        component: require('./components/contratos/estimacion/Edit').default,
+                        meta: {
+                            title: 'Editar Estimación',
+                            breadcrumb: {parent: 'estimacion', name: 'EDITAR ESTIMACIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_estimacion_subcontrato'
+
+                        }
                     },
                     {
                         path: 'formato-orden-pago',
