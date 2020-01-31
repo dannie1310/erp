@@ -5,7 +5,7 @@
                 <div class="card">
                     <div class="card-body" v-if="estimacion">
                       <div class="col-md-12">
-                        <Deductiva v-bind:id="id"></Deductiva>
+                        <DeductivaIndex v-bind:id="id"></DeductivaIndex>
                       </div>
                             <div class="row mt-5 mb-5">
 
@@ -208,10 +208,10 @@
 <script>
 
 
-import Deductiva from './partials/Deductivas'
+import DeductivaIndex from './deductivas/Index'
     export default {
         name: "estimacion-show",
-        components: {Deductiva},
+        components: {DeductivaIndex},
         // props: ['id'],
         data() {
             return {
