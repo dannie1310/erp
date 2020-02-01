@@ -819,8 +819,9 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@paginate');
             $api->post('rfc', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@rfc');
         });
-
-
+        $api->group(['prefix' => 'incidencia'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ControlInterno\IncidenciaController@paginate');
+        });
     });
 
     /** Ventas */
