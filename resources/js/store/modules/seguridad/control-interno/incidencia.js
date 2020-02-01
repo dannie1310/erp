@@ -15,7 +15,7 @@ export default {
         SET_INCIDENCIA(state,data){
             state.currentIncidencia = data;
         },
-        SET_META(state,meta){
+        SET_META(state,data){
             state.meta = data;
         }
     },
@@ -34,9 +34,6 @@ export default {
             });
         },
         paginate(context, payload) {
-            alert('Incidencia JS');
-
-
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', { params: payload.params })
@@ -55,8 +52,8 @@ export default {
         incidencias(state) {
             return state.incidencias;
         },
-        currentIncidencia(state) {
-            return state.currentIncidencia;
+        meta(state) {
+            return state.meta;
         }
     }
 }

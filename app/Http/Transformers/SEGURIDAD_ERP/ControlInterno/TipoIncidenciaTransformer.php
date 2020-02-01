@@ -12,7 +12,7 @@ class TipoIncidenciaTransformer extends TransformerAbstract
     public function transform(TipoIncidencia $model) {
         return [
             'id' => (int) $model->getKey(),
-            'description' => (string) $model->description
+            'description' => (string) $model->descripcion
         ];
     }
 }

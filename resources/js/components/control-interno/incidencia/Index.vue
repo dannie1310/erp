@@ -1,9 +1,6 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <create @created="paginate()"></create>
-        </div>
-        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -22,20 +19,20 @@
 <script>
     export default {
         name: "incidencia-index",
-        data(){
+        data() {
             return{
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Razón Social', field: 'razon_social',thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Nombre Corto', field: 'nombre_corto',thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Descripción Corta', field: 'descripcion_corta',thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Obra', field: 'obra', sortable: true},
+                    { title: 'Base de Datos', field: 'base_datos', sortable: false},
+                    { title: 'Tipo de Incidencia', field: 'id_tipo_incidencia',sortable: true},
+                    { title: 'Usuario', field: 'id_usuario', sortable: false}
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: 'ctg_banco', sort: 'id_empresa',  order: 'desc'
+                    include: ['tipo', 'usuario'], sort: 'id',  order: 'desc'
                 },
                 cargando: false
 
@@ -63,7 +60,7 @@
             }
         },
         computed: {
-            bancos(){
+            incidencias(){
                 return this.$store.getters['seguridad/control-interno/incidencia/incidencias'];
             },
             meta(){
@@ -81,14 +78,10 @@
                     incidencias.forEach(function (incidencia, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                           /* razon_social: banco.razon_social,
-                            descripcion_corta: banco.ctg_banco?banco.ctg_banco.descripcion_corta:'--',
-                            nombre_corto: banco.ctg_banco?banco.ctg_banco.nombre_corto:'--',
-                            buttons: $.extend({}, {
-                                show: true,
-                                edit: true,
-                                id: banco.id
-                            })*/
+                            obra: incidencia.obra,
+                            base_datos: incidencia.base_datos,
+                            id_tipo_incidencia: incidencia.tipo.description,
+                            id_usuario: incidencia.usuario.nombre                            
                         })
 
                     });

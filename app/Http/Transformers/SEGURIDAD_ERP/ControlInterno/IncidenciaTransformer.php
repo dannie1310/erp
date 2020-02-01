@@ -3,7 +3,7 @@
 
 namespace App\Http\Transformers\SEGURIDAD_ERP\ControlInterno;
 
-
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use League\Fractal\TransformerAbstract;
 
@@ -15,17 +15,17 @@ class IncidenciaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'tipo'
+        'tipo',
+        'usuario'
     ];
 
     public function transform(Incidencia $model) {
         return [
             'id' => (int) $model->getKey(),
-            'description' => (string) $model->description,
-            'display_name' => (string) $model->display_name,
-            'name' => (string) $model->name,
             'obra' => (string) $model->obra,
-            'sistema_id' => $model->sistema_id
+            'base_datos' => (string) $model->base_datos,
+            'tipo_incidencia' => $model->id_tipo_incidencia,
+            'usuario' => $model->id_usuario
         ];
     }
 
@@ -38,6 +38,19 @@ class IncidenciaTransformer extends TransformerAbstract
         if($tipo = $model->tipo)
         {
             return $this->item($tipo, new TipoIncidenciaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Incidencia $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuario(Incidencia $model)
+    {
+        if($usuario = $model->usuario)
+        {
+            return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }
