@@ -24,6 +24,7 @@ class IncidenciaTransformer extends TransformerAbstract
             'description' => (string) $model->description,
             'display_name' => (string) $model->display_name,
             'name' => (string) $model->name,
+            'obra' => (string) $model->obra,
             'sistema_id' => $model->sistema_id
         ];
     }

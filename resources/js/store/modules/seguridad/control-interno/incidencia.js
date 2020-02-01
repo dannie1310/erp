@@ -34,6 +34,9 @@ export default {
             });
         },
         paginate(context, payload) {
+            alert('Incidencia JS');
+
+
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', { params: payload.params })

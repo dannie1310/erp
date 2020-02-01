@@ -51,10 +51,10 @@
         methods: {
             paginate(){
                 this.cargando=true;
-                return this.$store.dispatch('seguridad/incidencia/paginate', {params: this.query})
+                return this.$store.dispatch('seguridad/control-interno/incidencia/paginate', {params: this.query})
                     .then(data=>{
-                        this.$store.commit('seguridad/incidencia/SET_INCIDENCIAS', data.data);
-                        this.$store.commit('seguridad/incidencia/SET_META',data.meta)
+                        this.$store.commit('seguridad/control-interno/incidencia/SET_INCIDENCIAS', data.data);
+                        this.$store.commit('seguridad/control-interno/incidencia/SET_META',data.meta)
                     })
                     .finally(()=>{
                         this.cargando=false;
@@ -64,10 +64,10 @@
         },
         computed: {
             bancos(){
-                return this.$store.getters['seguridad/incidencia/incidencias'];
+                return this.$store.getters['seguridad/control-interno/incidencia/incidencias'];
             },
             meta(){
-                return this.$store.getters['seguridad/incidencia/meta']
+                return this.$store.getters['seguridad/control-interno/incidencia/meta']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
