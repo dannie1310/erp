@@ -169,6 +169,26 @@ export const routes = [
         ]
     },
     {
+        path: '/control-interno/incidencias',
+        components: {
+            default: require('./components/control-interno/partials/Layout.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'incidencia',
+                component: require('./components/control-interno/incidencia/Index').default,
+                meta: {
+                    title: 'Incidencias',
+                    breadcrumb: {parent: 'control-interno', name: 'INCIDENCIAS'},
+                    middleware: [auth]
+
+                }
+            },
+        ]
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {

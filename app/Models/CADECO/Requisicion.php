@@ -86,6 +86,7 @@ class Requisicion extends Transaccion
                 {
                     $item = $requisicion->partidas()->create([
                         'id_transaccion' => $requisicion->id_transaccion,
+                        'id_concepto' => $partida['clave_concepto']['id'],
                         'id_material' => $partida['material'] ? $partida['material']['id'] : NULL,
                         'unidad' => $partida['material'] ? $partida['material']['unidad'] : NULL,
                         'cantidad' => $partida['cantidad']
@@ -106,6 +107,7 @@ class Requisicion extends Transaccion
                     {
                         $item = $requisicion->partidas()->create([
                             'id_transaccion' => $requisicion->id_transaccion,
+                            'id_concepto' => $partida['clave_concepto']['id'],
                             'id_material' => $material['id_material'],
                             'unidad' => $material['unidad'],
                             'cantidad' => $partida['cantidad']
@@ -123,6 +125,7 @@ class Requisicion extends Transaccion
                     {
                         $item = $requisicion->partidas()->create([
                             'id_transaccion' => $requisicion->id_transaccion,
+                            'id_concepto' => $partida['clave_concepto']['id'],
                             'id_material' => $partida['material'] ? $partida['material']['id'] : NULL,
                             'unidad' => $partida['material'] ? $partida['material']['unidad'] : NULL,
                             'cantidad' => $partida['cantidad']
