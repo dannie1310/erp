@@ -170,7 +170,6 @@ class Estimacion extends Transaccion
                 $retencion_fondo_garantia = new RetencionFondoGarantia();
                 $retencion_fondo_garantia->id_estimacion = $this->id_transaccion;
                 $retencion_fondo_garantia->importe = $this->importe_retencion;
-                $retencion_fondo_garantia->usuario_registra = $this->usuario_registra;
                 $retencion_fondo_garantia->save();
                 $this->refresh();
             } else {
@@ -213,7 +212,7 @@ class Estimacion extends Transaccion
 
     public function getImporteRetencionAttribute()
     {
-        return $this->monto * $this->retencion / 100;
+        return $this->suma_importes * $this->retencion / 100;
     }
 
     public function getSumaImportesAttribute()
@@ -560,6 +559,42 @@ class Estimacion extends Transaccion
                     $movimiento->save();
                 }
             }
+        }
+    }
+
+    public function getImporteRetencionConIva($retencion)
+    {
+        return $retencion * 1.16;
+    }
+
+    public function editarImportesRetencion()
+    {
+        if($this->retencion != 0)
+        {
+            $retencion = $this->items()->sum('importe') * ($this->retencion / 100);
+            /**
+             * Validar: SI es después de IVA se debe agregar el IVA al importe a registrar.
+             */
+            $configuracion_estimacion = ConfiguracionEstimacion::pluck('ret_fon_gar_antes_iva');
+
+            if(!is_null($configuracion_estimacion) && $configuracion_estimacion[0] == 0)
+            {
+                $retencion =  $this->getImporteRetencionConIva($retencion);
+            }
+
+            $this->retencion_fondo_garantia()->update(
+                [
+                    'importe' => $retencion
+                ]
+            );
+
+            $this->retencion_fondo_garantia->movimientos->movimiento_general()->update(
+                [
+                    'importe' => $retencion
+                ]
+            );
+
+            $this->subcontrato->fondo_garantia->actualizaSaldo();
         }
     }
 }

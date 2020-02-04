@@ -67,6 +67,8 @@ class EstimacionService
 
                 $estimacion->calculaImportes();
 
+                $estimacion->editarImportesRetencion();
+
                 DB::connection('cadeco')->commit();
 
                 return $estimacion;

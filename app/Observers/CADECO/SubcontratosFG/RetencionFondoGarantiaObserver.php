@@ -21,6 +21,7 @@ class RetencionFondoGarantiaObserver
     public function creating(RetencionFondoGarantia $retencionFondoGarantia)
     {
         $retencionFondoGarantia->created_at = date('Y-m-d h:i:s');
+        $retencionFondoGarantia->usuario_registra = auth()->id();
         $estimacion = Estimacion::find($retencionFondoGarantia->id_estimacion);
         if(!(float) $estimacion->retencion>0){
             throw New \Exception('La retención de fondo de garantía establecida en la estimacion no es mayor a 0, la retención no puede generarse');

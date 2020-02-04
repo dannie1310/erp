@@ -30,21 +30,16 @@ class RetencionFondoGarantia extends Model
 
     public function movimientos()
     {
-        return $this->hasMany(MovimientoRetencionFondoGarantia::class,"id_retencion");
-
+        return $this->hasOne(MovimientoRetencionFondoGarantia::class,"id_retencion", 'id');
     }
 
     public function generaMovimientoRegistro()
     {
-
-        MovimientoRetencionFondoGarantia::create(
+        $this->movimientos()->create(
             [ 'id_retencion'=>$this->id,
-               'id_tipo_movimiento'=>1,
-               'usuario_registra'=>$this->usuario_registra,
+               'id_tipo_movimiento'=>1
             ]
         );
-
-        $this->refresh();
     }
 
 }

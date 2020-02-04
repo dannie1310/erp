@@ -30,4 +30,9 @@ class MovimientoRetencionFondoGarantia extends Model
     {
         return $this->belongsTo(CtgTipoMovimientoRetencion::class,"id_tipo_movimiento");
     }
+
+    public function movimiento_general()
+    {
+        return $this->belongsTo(MovimientoFondoGarantia::class, 'id','id_movimiento_retencion');
+    }
 }

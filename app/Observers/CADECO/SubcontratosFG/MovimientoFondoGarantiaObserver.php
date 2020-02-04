@@ -19,6 +19,7 @@ class MovimientoFondoGarantiaObserver
     public function creating(MovimientoFondoGarantia $movimientoFondoGarantia)
     {
         $movimientoFondoGarantia->created_at = date('Y-m-d h:i:s');
+        $movimientoFondoGarantia->usuario_registra = auth()->id();
         $movimientoFondoGarantia->importe = ($movimientoFondoGarantia->tipo->naturaleza == 2)? abs($movimientoFondoGarantia->importe) * -1 : $movimientoFondoGarantia->importe;
     }
 

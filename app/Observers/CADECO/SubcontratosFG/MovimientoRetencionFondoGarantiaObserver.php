@@ -19,6 +19,7 @@ class MovimientoRetencionFondoGarantiaObserver
     public function creating(MovimientoRetencionFondoGarantia $movimiento)
     {
         $movimiento->created_at = date('Y-m-d h:i:s');
+        $movimiento->usuario_registra = auth()->id();
     }
 
     public function created(MovimientoRetencionFondoGarantia $movimiento)

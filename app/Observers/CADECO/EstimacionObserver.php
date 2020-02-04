@@ -23,7 +23,7 @@ class EstimacionObserver extends TransaccionObserver
     public function creating(Transaccion $estimacion)
     {
         parent::creating($estimacion);
-        $subcontrato = Subcontrato::query()->find($estimacion->id_antecedente);
+        $subcontrato = Subcontrato::find($estimacion->id_antecedente);
         $estimacion->tipo_transaccion = 52;
         $estimacion->id_empresa = $subcontrato->id_empresa;
         $estimacion->id_moneda = $subcontrato->id_moneda;
@@ -35,7 +35,13 @@ class EstimacionObserver extends TransaccionObserver
 
     public function created(Estimacion $estimacion)
     {
-        if ($estimacion->retencion > 0) {
+        if ($estimacion->retencion > 0)
+        {
+            $fondo_garantia = $estimacion->subcontrato->fondo_garantia;
+            if(is_null($fondo_garantia))
+            {
+                $estimacion->subcontrato->generaFondoGarantia();
+            }
             $estimacion->generaRetencion();
         }
         $estimacion->creaSubcontratoEstimacion();
