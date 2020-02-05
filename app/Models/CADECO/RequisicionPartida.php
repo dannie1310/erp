@@ -17,6 +17,7 @@ class RequisicionPartida extends Item
         'id_item',
         'id_transaccion',
         'id_material',
+        'id_concepto',
         'unidad',
         'cantidad'
     ];
@@ -29,5 +30,10 @@ class RequisicionPartida extends Item
     public function material()
     {
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
+    }
+
+    public function concepto()
+    {
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 }

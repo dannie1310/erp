@@ -11,6 +11,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Estimaciones\EstimacionEliminada;
 use App\Models\CADECO\Estimaciones\EstimacionPartidaEliminada;
+use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
@@ -220,6 +221,11 @@ class Estimacion extends Transaccion
         return $this->items->sum('importe');
     }
 
+    public function getSumaImportesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_importes, 2,".",",");
+    }
+
     public function items()
     {
         return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
@@ -253,38 +259,39 @@ class Estimacion extends Transaccion
 
     public function getRetenidoAnteriorAttribute()
     {
-        $estimaciones_anteriores = $this->subcontrato->estimaciones()->where('id_transaccion', '<', $this->id_transaccion)->get();
+        $estimaciones_anteriores = $this->subcontrato->estimaciones()
+            ->where('fecha', '<', $this->fecha)
+            ->where('estado', '>=', 1)
+            ->get();
 
         $sumatoria = 0;
         foreach ($estimaciones_anteriores as $estimacion) {
-            $sumatoria += $estimacion->SumMontoRetencion;
+            $sumatoria += $estimacion->retencion_fondo_garantia_orden_pago;
         }
         return $sumatoria;
     }
 
     public function getRetenidoOrigenAttribute()
     {
-        $estimaciones_anteriores = $this->subcontrato->estimaciones()->where('id_transaccion', '<', $this->id_transaccion)->get();
-
-        $sumatoria = 0;
-        foreach ($estimaciones_anteriores as $estimacion) {
-            $sumatoria += $estimacion->SumMontoRetencion;
-        }
-        return $sumatoria + $this->SumMontoRetencion;
+        return $this->retenido_anterior + $this->retencion_fondo_garantia_orden_pago;
     }
 
-    public function getMontoAPagarAttribute()
+    public function getConfiguracionAttribute()
     {
-        return (
-            $this->monto
+        $configuracion = $this->obra->configuracionEstimaciones;
+        if(!$configuracion)
+        {
+            $configuracion=ConfiguracionEstimacion::create([
+                'penalizacion_antes_iva'=>1,
+                'retenciones_antes_iva'=>1,
+                'ret_fon_gar_antes_iva'=>1,
+                'desc_pres_mat_antes_iva'=>1,
+                'desc_otros_prest_antes_iva'=>0,
+                'ret_fon_gar_con_iva'=>0,
+            ]);
 
-            - ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteFondoGarantia : 0)
-            - (!in_array(Context::getDatabase(), ['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM']) ? $this->descuentos->sum('importe') : 0)
-            - $this->retenciones->sum('importe')
-            - $this->IVARetenido
-            + $this->liberaciones->sum('importe')
-            + ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar : 0)
-        );
+        }
+        return $configuracion;
     }
 
     public function empresa()
@@ -431,9 +438,103 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->subtotal, 2);
     }
 
+    public function getSubtotalOrdenPagoAttribute()
+    {
+        $subtotal = $this->suma_importes- $this->monto_anticipo_aplicado;
+        if($this->configuracion->retenciones_antes_iva == 1){
+            $subtotal-=$this->retenciones->sum("importe");
+            $subtotal-=$this->IVARetenido;
+            $subtotal+=$this->liberaciones->sum("importe");
+        }
+        if($this->configuracion->desc_pres_mat_antes_iva == 1){
+            $subtotal-=$this->descuentos->sum("importe");
+        }
+        if($this->configuracion->ret_fon_gar_antes_iva == 1){
+            $subtotal-=$this->retencion_fondo_garantia_orden_pago;
+        }
+        return $subtotal;
+    }
+
+    public function getSubtotalOrdenPagoFormatAttribute()
+    {
+        return '$ ' . number_format($this->subtotal_orden_pago, 2);
+    }
+
+    public function getIvaOrdenPagoAttribute()
+    {
+        return $this->subtotal_orden_pago * 0.16;
+    }
+
+    public function getIvaOrdenPagoFormatAttribute()
+    {
+        return '$ ' . number_format($this->iva_orden_pago, 2);
+    }
+
+    public function getTotalOrdenPagoAttribute()
+    {
+        $total = $this->subtotal_orden_pago + $this->iva_orden_pago;
+        return $total;
+    }
+    # retencion_fondo_garantia_orden_pago_format
+
+    public function getRetencionFondoGarantiaOrdenPagoAttribute()
+    {
+        if($this->configuracion->ret_fon_gar_antes_iva == 0 ){
+            if($this->configuracion->ret_fon_gar_con_iva == 1){
+                return $this->suma_importes * ($this->retencion/100) * 1.16;
+            } else{
+                return $this->suma_importes * ($this->retencion/100) ;
+            }
+        } else {
+            return $this->suma_importes * ($this->retencion/100);
+        }
+    }
+
+    public function getRetencionFondoGarantiaOrdenPagoFormatAttribute()
+    {
+        return '$ ' . number_format($this->retencion_fondo_garantia_orden_pago, 2);
+    }
+
+    public function getAnticipoALiberarAttribute()
+    {
+        return $this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar:0;
+    }
+
+    public function getAnticipoALiberarFormatAttribute()
+    {
+        return '$ ' . number_format($this->anticipo_a_liberar, 2);
+    }
+
+    public function getTotalOrdenPagoFormatAttribute()
+    {
+        return '$ ' . number_format($this->total_orden_pago, 2);
+    }
+
     public function getImpuestoFormatAttribute()
     {
         return '$ ' . number_format($this->impuesto, 2);
+    }
+
+    public function getMontoAPagarAttribute()
+    {
+        $monto_pagar = $this->total_orden_pago + $this->anticipo_a_liberar;
+        if($this->configuracion->retenciones_antes_iva == 0){
+            $monto_pagar-=$this->retenciones->sum("importe");
+            $monto_pagar-=$this->IVARetenido;
+            $monto_pagar+=$this->liberaciones->sum("importe");
+        }
+        if($this->configuracion->desc_pres_mat_antes_iva == 0){
+            $monto_pagar-=$this->descuentos->sum("importe");
+        }
+        if($this->configuracion->ret_fon_gar_antes_iva == 0){
+            $monto_pagar-=$this->retencion_fondo_garantia_orden_pago;
+        }
+        return $monto_pagar;
+    }
+
+    public function getMontoAPagarFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_a_pagar, 2);
     }
 
     /**

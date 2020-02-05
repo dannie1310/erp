@@ -4,7 +4,7 @@
             <button  @click="create" title="Crear" class="btn btn-app btn-info float-right" v-if="$root.can('registrar_carga_layout_pago')" >
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
-                Registrar Carga Masiva
+                Registrar
             </button>
             <button  @click="descarga_layout" title="Crear" class="btn btn-app btn-info float-right"  v-if="$root.can('descargar_layout_pagos')" :disabled="cargando_csv" >
                 <i class="fa fa-spin fa-spinner" v-if="cargando_csv"></i>

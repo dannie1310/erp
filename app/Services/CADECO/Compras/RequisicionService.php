@@ -8,7 +8,7 @@
 
 namespace App\Services\CADECO\Compras;
 
-
+use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\Requisicion;
 use App\PDF\Compras\RequisicionFormato;
@@ -42,9 +42,28 @@ class RequisicionService
         $materiales = array();
         foreach ($partidas as $partida)
         {
+            if($partida['CLAVE CONCEPTO'])
+            {
+                $destino = [];
+                $concepto = Concepto::where('clave_concepto', '=', $partida['CLAVE CONCEPTO'])->where('concepto_medible', '=',0)->get()->first();
+                if($concepto)
+                {
+                    $concepto2 = Concepto::where('concepto_medible', '=',3)->where('nivel', 'LIKE', $concepto->nivel.'____')->get()->first();
+                    if($concepto2)
+                    {
+                        $destino = [
+                            'id' => $concepto->id_concepto,
+                            'descripcion' => $concepto->descripcion
+                        ];
+                        $partida['CLAVE CONCEPTO'] = $destino;
+                    }else{
+                        $partida['CLAVE CONCEPTO'] = '';
+                    }
+                }else{$partida['CLAVE CONCEPTO'] = '';}
+            }
             if($partida['No PARTE'] != null) {
                 $material = Material::query()->where('numero_parte', '=', $partida['No PARTE'])->get(['id_material','numero_parte','descripcion', 'unidad', 'FechaHoraRegistro'])->first();
-                if ($material['numero_parte'] == null)
+                 if ($material['numero_parte'] == null)
                 {
                     $materiales[] = array(
                         'i' => 1,
@@ -57,7 +76,8 @@ class RequisicionService
                         'ref' => $partida['REF.'],
                         'fecha' => date('Y-m-d H:i:s'),
                         'cantidad' => $partida['CANTIDAD'],
-                        'observaciones' => ''
+                        'observaciones' => '',
+                        'clave_concepto' => ($partida['CLAVE CONCEPTO'] == null) ? '' : $partida['CLAVE CONCEPTO']
                     );
                 }
                 else {
@@ -78,7 +98,8 @@ class RequisicionService
                         'ref' => $partida['REF.'],
                         'fecha' => date('Y-m-d H:i:s'),
                         'cantidad' => $partida['CANTIDAD'],
-                        'observaciones' => ''
+                        'observaciones' => '',
+                        'clave_concepto' => ($partida['CLAVE CONCEPTO'] == null) ? '' : $partida['CLAVE CONCEPTO']
                     );
                 }
             }else{
@@ -93,7 +114,8 @@ class RequisicionService
                     'ref' => $partida['REF.'],
                     'fecha' => date('Y-m-d H:i:s'),
                     'cantidad' => $partida['CANTIDAD'],
-                    'observaciones' => ''
+                    'observaciones' => '',
+                    'clave_concepto' => ($partida['CLAVE CONCEPTO'] == null) ? '' : $partida['CLAVE CONCEPTO']
                 );
             }
         }
@@ -113,9 +135,9 @@ class RequisicionService
             if($linea == 1){
                 $linea++;
             }else{
-                if(count($renglon) != 8) {
+                if(count($renglon) != 9) {
                     abort(400,'No se puede procesar la Requisición');
-                }else if(count($renglon) == 8 && substr($renglon[7],0,-2)   != ''){
+                }else if(count($renglon) == 9 && $renglon[7] != ''){
                     if($renglon[1] == '')
                     {
                         $renglon[1] = null;
@@ -132,7 +154,7 @@ class RequisicionService
                     {
                         $renglon[4] = null;
                     }
-                    $renglon[7] = substr($renglon[7],0,-2);
+                    $renglon[8] = substr($renglon[8],0,-2);
 
                     $content[] = array(
                         'PARTIDA' =>  $renglon[0],
@@ -142,7 +164,8 @@ class RequisicionService
                         'REF.' =>  $renglon[4],
                         'UNIDAD' =>  $renglon[5],
                         'DESCRIPCION' =>  $renglon[6],
-                        'CANTIDAD' =>  $renglon[7]
+                        'CANTIDAD' =>  $renglon[7],
+                        'CLAVE CONCEPTO' => ($renglon[8] == '') ? NULL : $renglon[8]
                     );
                 }else
                 {

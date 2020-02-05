@@ -4,7 +4,7 @@
             <router-link :to="{name: 'estimacion-create'}" v-if="$root.can('registrar_estimacion_subcontrato')" class="btn btn-app btn-info float-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
-                Registrar Estimación
+                Registrar
             </router-link>
         </div>
         <div class="col-12">
@@ -139,7 +139,8 @@
                             id: estimacion.id,
                             estimacion: estimacion,
                             estado: estimacion.estado,
-                            delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : true
+                            delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : true,
+                            edit: self.$root.can('editar_estimacion_subcontrato') ? true : false
                         })
 
                     }));

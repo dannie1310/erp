@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO\Finanzas;
 
+use App\Facades\Context;
 use App\Models\CADECO\Cuenta;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\Finanzas\CtgEstadoLayoutPago;
@@ -31,8 +32,18 @@ class LayoutPago extends Model
         'nombre_layout_pagos',
         'monto_layout_pagos',
         'hash_file_layout_pagos',
-        'estado'
+        'estado',
+        'id_obra'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->where('id_obra', '=', Context::getIdObra());
+        });
+    }
 
     public function partidas()
     {
