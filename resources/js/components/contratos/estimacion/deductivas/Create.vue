@@ -36,7 +36,7 @@
                                                         step="any"
                                                         name="cantidad"
                                                         data-vv-as="Cantidad"
-                                                        v-validate="{required: true, min_value:0.01, decimal:4}"
+                                                        v-validate="{required: true, min_value:0.01, decimal:5}"
                                                         class="form-control"
                                                         id="cantidad"
                                                         placeholder="Cantidad"

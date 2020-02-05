@@ -24,7 +24,7 @@
                                     <DeductivaCreate @created="updateDescuento" v-bind:id="id"></DeductivaCreate>
                                 </div>
                                 <div class="col-12 table-responsive" v-if="descuentos.length > 0">
-                                    <table class="table table-striped  table-fixed-suc">
+                                    <table class="table table-striped  table-fixed-suc fixed">
                                         <thead>
                                             <tr>
                                                 <th  rowspan="2">Concepto</th>
@@ -44,28 +44,28 @@
                                                 <th>Importe</th> -->
                                                 <th style="width:10%;">Unidad</th>
                                                 <th style="width:20%;">Cantidad</th>
-                                                <th style="width:20%;">P.U.</th>
-                                                <th style="width:15%;">Importe</th>
+                                                <th style="width:15%;">P.U.</th>
+                                                <th style="width:20%;">Importe</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                         <tr v-for="(descuento, i) in descuentos">
-                                            <td >{{descuento.material.descripcion}}</td>
-                                            <td style="width:10%;">{{descuento.material.unidad}}</td>
+                                            <td style="width:280px;">{{descuento.material.descripcion}}</td>
+                                            <td style="width:70px;">{{descuento.material.unidad}}</td>
                                             <!-- <td style="width:10%;">{{descuento.cantidad_format}}</td> -->
-                                            <td style="width:20%;"><input type="number" step="any" :name="`cantidad[${i}]`" style="width:95px;"
-                                                        data-vv-as="Cantidad"  v-validate="{required:true, min_value:0}" :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
-                                                        class="form-control float-right" id="cantidad" placeholder="Cantidad"
+                                            <td style="width:130px;"><input type="number" step="any" :name="`cantidad[${i}]`" 
+                                                        data-vv-as="Cantidad"  v-validate="{required:true, min_value:0, decimal:5}" :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                        class="form-control float-right align" id="cantidad" placeholder="Cantidad"
                                                         v-model="descuento.cantidad">
                                                 <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                             </td>
-                                            <td style="width:20%;" class="align"><input type="number" step="any" :name="`precio[${i}]`" style="width:95px;"
-                                                        data-vv-as="Precio"  v-validate="{required:true, min_value:0.01}"
-                                                        class="form-control float-right" id="precio" placeholder="Precio"
+                                            <td style="width:130px;" class="align"><input type="number" step="any" :name="`precio[${i}]`" 
+                                                        data-vv-as="Precio"  v-validate="{required:true, min_value:0.01, decimal:4}"
+                                                        class="form-control float-right align" id="precio" placeholder="Precio"
                                                         v-model="descuento.precio" :class="{'is-invalid': errors.has(`precio[${i}]`)}">
                                                 <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                             </td>
-                                            <td style="width:15%;" class="align">$ {{importe(descuento)}}</td>
+                                            <td style="width:140px;" class="align">$ {{importe(descuento)}}</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -115,7 +115,7 @@ export default {
             this.descuentos = [];
             return this.$store.dispatch('subcontratosEstimaciones/descuento/list', {
                 id: this.id,
-                params: {include: 'material', sort: 'id_descuento', order: 'desc'}
+                // params: {include: 'material', sort: 'id_descuento', order: 'desc'}
             }).then(data => {
                 this.descuentos = data.data;
             })
@@ -159,4 +159,6 @@ export default {
     width:100%;
     text-align: left;
 }
+table.fixed { table-layout:fixed; }
+table.fixed td { overflow: hidden; }
 </style>
