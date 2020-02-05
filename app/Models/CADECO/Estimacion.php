@@ -609,26 +609,32 @@ class Estimacion extends Transaccion
     {
         if($this->retencion != 0)
         {
-            $this->retencion_fondo_garantia()->update(
-                [
-                    'importe' => 0,
-                    'id_estimacion' => NULL
-                ]
-            );
 
-            $movimiento_retencion = $this->retencion_fondo_garantia->generaCancelacionMovimientoRetencion();
+            //Revisar si existe la retencion
 
-            $this->retencion_fondo_garantia->movimientos->movimiento_general()->create(
-                [
-                    'id_fondo_garantia'=>$this->id_antecedente,
-                    'id_tipo_movimiento'=>3,
-                    'id_movimiento_retencion' => $movimiento_retencion->id,
-                    'observaciones' => 'Eliminación de la estimación '.$this->numero_folio_format,
-                    'importe' => -$this->retencion_fondo_garantia->importe
-                ]
-            );
 
-            $this->subcontrato->fondo_garantia->actualizaSaldo();
+            //editar le movimiento FG
+
+//            $this->retencion_fondo_garantia()->update(
+//                [
+//                    'importe' => 0,
+//                    'id_estimacion' => NULL
+//                ]
+//            );
+//
+//            $movimiento_retencion = $this->retencion_fondo_garantia->generaCancelacionMovimientoRetencion();
+//
+//            $this->retencion_fondo_garantia->movimientos->movimiento_general()->create(
+//                [
+//                    'id_fondo_garantia'=>$this->id_antecedente,
+//                    'id_tipo_movimiento'=>3,
+//                    'id_movimiento_retencion' => $movimiento_retencion->id,
+//                    'observaciones' => 'Eliminación de la estimación '.$this->numero_folio_format,
+//                    'importe' => -$this->retencion_fondo_garantia->importe
+//                ]
+//            );
+//
+//            $this->subcontrato->fondo_garantia->actualizaSaldo();
         }
     }
 
