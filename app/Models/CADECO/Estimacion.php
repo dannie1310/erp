@@ -163,15 +163,20 @@ class Estimacion extends Transaccion
         $subcontratoEstimacion->save();
     }
 
+    /**
+     * Genera la Retención de Fondo de Garantía.
+     * @throws \Exception
+     */
     public function generaRetencion()
     {
         if (is_null($this->retencion_fondo_garantia)) {
             if ($this->retencion > 0) {
-                $retencion_fondo_garantia = new RetencionFondoGarantia();
-                $retencion_fondo_garantia->id_estimacion = $this->id_transaccion;
-                $retencion_fondo_garantia->importe = $this->importe_retencion;
-                $retencion_fondo_garantia->save();
-                $this->refresh();
+                $this->retencion_fondo_garantia()->create(
+                    [
+                        'id_estimacion' => $this->id_transaccion,
+                        'importe' => $this->importeRetencionFondoGarantia()
+                    ]
+                );
             } else {
                 throw New \Exception('La estimación no tiene establecido un porcentaje de retención de fondo de garantía, la retención no puede generarse');
             }
@@ -569,26 +574,10 @@ class Estimacion extends Transaccion
     }
 
     /**
-     * Edición de Importes al Registrar la Estimación.
-     */
-    public function registroImportesRetencion()
-    {
-        if($this->retencion != 0)
-        {
-            $retencion = $this->getImporteRetencionFondoGarantia();
-            $this->retencion_fondo_garantia->update(
-                [
-                    'importe' => $retencion
-                ]
-            );
-        }
-    }
-
-    /**
      * Obtener el valor del Importe para crear o editar la retención.
      * @return float|int
      */
-    private function getImporteRetencionFondoGarantia()
+    private function importeRetencionFondoGarantia()
     {
         $importe = $this->items()->sum('importe') * ($this->retencion / 100);
         /**
@@ -602,46 +591,28 @@ class Estimacion extends Transaccion
         }
         return $importe;
     }
-    /**
-     * Validaciones para la edición de la retención de los fondos de garantía cuando se edita la estimación.
-     */
-    public function editarImportesRetencion()
-    {
-        if($this->retencion != 0  && $this->retencion_fondo_garantia)
-        {
-            $retencion = $this->getImporteRetencionFondoGarantia();
-
-            $this->retencion_fondo_garantia->update(
-                [
-                    'importe' => $retencion
-                ]
-            );
-        }
-    }
 
     /**
-     * Validaciones para eliminar la retención del fondo de garantía al eliminar la estimación.
+     * Validaciones para revertir la retención del fondo de garantía al eliminar la estimación.
      */
-    public function eliminarImportesRetencion()
+    public function cancelarRetencion()
     {
-        if($this->retencion != 0 && $this->retencion_fondo_garantia)
-        {
-            $this->retencion_fondo_garantia()->update(
-                [
-                    'importe' => 0,
-                    'id_estimacion' => NULL
-                ]
-            );
-
+        if($this->retencion != 0 && $this->retencion_fondo_garantia) {
             $movimiento_retencion = $this->retencion_fondo_garantia->generaCancelacionMovimientoRetencion();
 
             $this->retencion_fondo_garantia->movimientos->movimiento_general()->create(
                 [
-                    'id_fondo_garantia'=>$this->id_antecedente,
-                    'id_tipo_movimiento'=>3,
+                    'id_fondo_garantia' => $this->id_antecedente,
+                    'id_tipo_movimiento' => 3,
                     'id_movimiento_retencion' => $movimiento_retencion->id,
-                    'observaciones' => 'Eliminación de la estimación '.$this->numero_folio_format,
-                    'importe' => -$this->retencion_fondo_garantia->importe
+                    'observaciones' => 'Eliminación de la estimación ' . $this->numero_folio_format,
+                    'importe' => $this->retencion_fondo_garantia->importe
+                ]
+            );
+            $this->retencion_fondo_garantia()->update(
+                [
+                    'importe' => 0,
+                    'id_estimacion' => NULL
                 ]
             );
         }

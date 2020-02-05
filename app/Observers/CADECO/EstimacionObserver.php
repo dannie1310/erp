@@ -42,7 +42,6 @@ class EstimacionObserver extends TransaccionObserver
             {
                 $estimacion->subcontrato->generaFondoGarantia();
             }
-            $estimacion->generaRetencion();
         }
         $estimacion->creaSubcontratoEstimacion();
     }
@@ -60,10 +59,5 @@ class EstimacionObserver extends TransaccionObserver
     {
         $estimacion->subcontratoEstimacion()->delete();
         $estimacion->subcontrato->cambioEstadoEliminarEstimacion();
-    }
-
-    public function updated(Estimacion $estimacion)
-    {
-        $estimacion->editarImportesRetencion();
     }
 }
