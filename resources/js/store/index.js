@@ -100,6 +100,7 @@ import rubro from './modules/finanzas/rubro';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
+import incidencia from './modules/seguridad/control-interno/incidencia'
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgEfos from './modules/seguridad/finanzas/ctg-efos';
@@ -227,6 +228,7 @@ export default new Vuex.Store({
         'sci/modelo': modelo,
 
 
+        'seguridad/control-interno/incidencia': incidencia,
         'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/finanzas/ctg-efos': ctgEfos,
         'seguridad/finanzas/ctg-plaza': ctgplaza,

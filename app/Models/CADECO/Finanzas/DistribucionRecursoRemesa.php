@@ -94,8 +94,16 @@ class DistribucionRecursoRemesa extends Model
         return $this->hasMany(DistribucionRecursoRemesaPartida::class, 'id_distribucion_recurso','id');
     }
 
+    public function partidasPendientes(){
+        return $this->hasMany(DistribucionRecursoRemesaPartida::class, 'id_distribucion_recurso','id')->where('estado', '=', 1);
+    }
+
     public function obra(){
         return $this->hasMany(Obra::class, 'id_obra', 'id_obra');
+    }
+
+    public function scopePendientes($query){
+        return $query->has('partidasPendientes', '>', 0)->whereHas('remesaLiberada');
     }
 
     public function remesaValidaEstado(){

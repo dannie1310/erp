@@ -101,7 +101,7 @@
             </li>
             <li class="nav-item" v-if="$root.can('consultar_factura')">
                 <router-link :to="{name: 'factura'}" class="nav-link">
-                    <i class="fas fa-file-invoice-dollar nav-icon"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>Facturas</p>
                 </router-link>
             </li>

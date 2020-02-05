@@ -172,6 +172,7 @@ use App\Observers\CADECO\Finanzas\CuentaBancariaEmpresaObserver;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaLogObserver;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaObserver;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
+use App\Models\CADECO\Finanzas\FacturaEliminada;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaPartidaObserver;
 use App\Observers\CADECO\Finanzas\LayoutPagoObserver;
 use App\Observers\CADECO\Finanzas\LayoutPagoPartidaObserver;
@@ -239,6 +240,7 @@ use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
+use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
 use Illuminate\Support\ServiceProvider;
 
@@ -315,6 +317,7 @@ class AppServiceProvider extends ServiceProvider
             DistribucionRecursoRemesa::observe(DistribucionRecursoRemesaObserver::class);
             DistribucionRecursoRemesaLog::observe(DistribucionRecursoRemesaLogObserver::class);
             DistribucionRecursoRemesaPartida::observe(DistribucionRecursoRemesaPartidaObserver::class);
+            FacturaEliminada::observe(FacturaEliminadaObserver::class);
             LayoutPago::observe(LayoutPagoObserver::class);
             LayoutPagoPartida::observe(LayoutPagoPartidaObserver::class);
 

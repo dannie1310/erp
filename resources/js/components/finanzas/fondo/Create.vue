@@ -1,7 +1,7 @@
 <template>
     <span>
         <button @click="init" v-if="$root.can('registrar_fondos')" class="btn btn-app btn-info float-right">
-            <i class="fa fa-plus"></i> Registrar Fondo
+            <i class="fa fa-plus"></i> Registrar
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">

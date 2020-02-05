@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12">
             <button @click="create_requisicion" v-if="$root.can('registrar_requisicion_compra')" class="btn btn-app btn-info pull-right">
-                <i class="fa fa-plus"></i> Registrar Requisición
+                <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
         <div class="col-12">

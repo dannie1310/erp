@@ -169,6 +169,26 @@ export const routes = [
         ]
     },
     {
+        path: '/control-interno/incidencias',
+        components: {
+            default: require('./components/control-interno/partials/Layout.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'incidencia',
+                component: require('./components/control-interno/incidencia/Index').default,
+                meta: {
+                    title: 'Incidencias',
+                    breadcrumb: {parent: 'control-interno', name: 'INCIDENCIAS'},
+                    middleware: [auth]
+
+                }
+            },
+        ]
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {
@@ -1048,6 +1068,18 @@ export const routes = [
                             middleware: [auth, context,],
 
                         }
+                    },                    
+                    {
+                        path: ':id/editar',
+                        name: 'estimacion-edit',
+                        component: require('./components/contratos/estimacion/Edit').default,
+                        meta: {
+                            title: 'Editar Estimación',
+                            breadcrumb: {parent: 'estimacion', name: 'EDITAR ESTIMACIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_estimacion_subcontrato'
+
+                        }
                     },
                     {
                         path: 'formato-orden-pago',
@@ -1283,7 +1315,7 @@ export const routes = [
                             title: 'Facturas',
                             breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
                             middleware: [auth, context, permission],
-                            permission: 'consultar_banco'
+                            permission: 'consultar_factura'
                         }
                     },
                     {

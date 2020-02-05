@@ -30,39 +30,24 @@ class ProveedorContratistaService
     {
         $this->repository = new Repository($model);
     }
-    
-    // public function paginate($data)
-    // {
-    //     if(isset($data['razon_social'])){
-    //         return $this->repository->where([['razon_social','like', '%'.$data['razon_social'].'%']])->paginate();
-    //     }else if(isset($data['rfc'])){
-    //         return $this->repository->where([['rfc','like', '%'.$data['rfc'].'%']])->paginate();
-    //     }else{
-    //         return $this->repository->paginate();
-    //     }
-    // }
 
     public function paginate($data)
     {
         $proveedorContratista = $this->repository;
 
-        if(isset($data['rfc']))
-        {
-            $proveedorContratista = $cliente->where([['rfc', 'LIKE', '%' . request('rfc') . '%']]);
-        }
-        if(isset($data['razon_social']))
-        {
-            $proveedorContratista = $cliente->where([['razon_social', 'LIKE', '%' . request('razon_social') . '%']]);
-        }
-        if(isset($data['efo']))
+        if(isset($data['razon_social'])){
+            return $this->repository->where([['razon_social','like', '%'.$data['razon_social'].'%']])->paginate();
+        }else if(isset($data['rfc'])){
+            return $this->repository->where([['rfc','like', '%'.$data['rfc'].'%']])->paginate();
+        }else if(isset($data['efo']))
         {
             $proveedor = ProveedorContratista::whereHas('efo.estadoEfo', function ($a){
                 return $a->where('descripcion', 'LIKE', '%'.request('efo').'%');
             })->pluck('id_empresa');
-
             $proveedorContratista->whereIn(['id_empresa',$proveedor]);
+            return $proveedorContratista->paginate($data);
         }
-        return $proveedorContratista->paginate($data);
+        return $this->repository->paginate();       
     }
 
     private function getValidacionLRFC($rfc, $razon_social, $tipo_incidencia)
@@ -97,6 +82,7 @@ class ProveedorContratistaService
     public function store(array $data)
     {
         if($data["emite_factura"] == 1){
+            if($data['rfc'] == 'XXXXXXXXXXXX') abort(403, 'El R.F.C. tiene formato inválido.');
             $this->getValidacionLRFC($data["rfc"], $data["razon_social"],7);
         }
         return $this->repository->create($data);
@@ -108,9 +94,11 @@ class ProveedorContratistaService
     }
 
     public function update(array $data, $id){
+        $this->repository->validarRegistroXml($id);
         $actual_rfc = $this->repository->getRFC($id);
         if($data["emite_factura"] == 1 && $data["rfc_nuevo"] != $actual_rfc)
         {
+            if($data['rfc_nuevo'] == 'XXXXXXXXXXXX') abort(403, 'El R.F.C. tiene formato inválido.');
             $this->getValidacionLRFC($data["rfc_nuevo"], $data["razon_social"],17);
         }
         return $this->repository->update($data, $id);

@@ -1,7 +1,7 @@
 <template>
     <span>
         <button @click="init" v-if="$root.can('registrar_banco')" class="btn btn-app btn-info float-right">
-            <i class="fa fa-plus"></i> Registrar Banco
+            <i class="fa fa-plus"></i> Registrar
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
