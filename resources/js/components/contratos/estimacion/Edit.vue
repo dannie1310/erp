@@ -1,10 +1,10 @@
 <template>
      <span>
        <div class="d-flex flex-row-reverse">
-                                    <div class="p-2">
-                                        <button @click="editar"  type="button" :disabled="cargando" class="btn btn-info" ><i class="fa fa-pencil"></i> &nbsp; Editar Estimación</button>
-                                    </div>
-                                </div>
+            <div class="p-2">
+                <DeductivaEdit v-bind:id="id"></DeductivaEdit>
+            </div>
+        </div>
         <div class="row">  
             <div class="col-12 mb-5" v-if="!cargando">
                 <div class="card">
@@ -188,9 +188,10 @@
 <script>
 
 
-
+import DeductivaEdit from './deductivas/Edit'
     export default {
         name: "estimacion-edit",
+        components: {DeductivaEdit},
         props: ['id'],
         data() {
             return {

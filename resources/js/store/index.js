@@ -113,6 +113,9 @@ import sistema from './modules/seguridad/sistema';
 import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
+//SUBCONTRATOSESTIMACIONES
+import descuento from './modules/subcontratosEstimaciones/descuento';
+
 //IGH
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
@@ -237,6 +240,8 @@ export default new Vuex.Store({
         'seguridad/sistema': sistema,
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
+
+        'subcontratosEstimaciones/descuento': descuento,
 
         'ventas/venta': venta,
     },
