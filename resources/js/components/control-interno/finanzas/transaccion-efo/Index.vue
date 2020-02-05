@@ -26,9 +26,10 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Transacción', field: 'tipo_transaccion', sortable: false},
-                    { title: 'RFC', field: 'rfc', sortable: false, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Referencia', field: 'referencia', sortable: false}
+                    { title: 'RFC', field: 'rfc', sortable: false},
+                    { title: 'Razón Social', field: 'razon_social', sortable: false},
+                    { title: 'Fecha', field: 'fecha', sortable: false},
+                    { title: 'Referencia', field: 'referencia', thClass: 'col-6', sortable: false}                    
                 ],
                 data: [],
                 total: 0,
@@ -80,7 +81,8 @@
                         tipo_transaccion: transaccion.tipo_transaccion,
                         rfc: transaccion.efo.rfc,
                         razon_social: transaccion.razon_social,
-                        referencia: transaccion.referencia 
+                        referencia: transaccion.referencia,
+                        fecha: transaccion.fecha 
                     }));
                 },
                 deep: true

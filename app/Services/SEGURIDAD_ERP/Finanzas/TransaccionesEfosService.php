@@ -26,8 +26,10 @@ class TransaccionesEfosService
 
      public function paginate($data)
     {
-        
-        // dd('Paginate transaccion efos', $data);
+
+        if(isset($data['numero_folio'])){
+            return $this->repository->where([['numero_folio','like', '%'.$data['numero_folio'].'%']])->paginate();
+        }
         return $this->repository->paginate($data);
     }
 }

@@ -37,10 +37,9 @@ class TransaccionesEfosController extends Controller
 
      public function __construct(TransaccionesEfosService $service, Manager $fractal, TransaccionesEfosTransformer $transformer)
      {
-         // dd('TransaccionesEfosController', $transformer, $fractal, $service);
          $this->middleware('auth:api');
-         // $this->middleware('context')->except('paginate');
          $this->middleware('context');
+         $this->middleware('permiso:consultar_transacciones_efos')->only(['paginate']);
 
 
         $this->service = $service;

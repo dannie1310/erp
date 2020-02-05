@@ -178,7 +178,7 @@ export const routes = [
                             title: 'Consulta de transacciones relacionadas con EFOS',
                             breadcrumb: {parent: 'control-finanzas', name: 'TRANSACCIONES CON EFOS'},
                             middleware: [auth, permission],
-                            permission: 'consultar_efos',
+                            permission: 'consultar_transacciones_efos',
                             general: true,
 
                         }
