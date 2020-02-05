@@ -192,7 +192,7 @@ import DeductivaEdit from './deductivas/Edit'
     export default {
         name: "estimacion-edit",
         components: {DeductivaEdit},
-        props: ['id'],
+        // props: ['id'],
         data() {
             return {
                 cargando: true,
