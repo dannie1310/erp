@@ -52,7 +52,7 @@
                     { title: 'Fecha de Prepóliza', field: 'fecha', sortable: true },
                     { title: 'Total', field: 'total', sortable: true },
                     { title: 'Cuadre', field: 'cuadre'},
-                    { title: 'Estatus', field: 'estatus', sortable: true, tdComp: require('./partials/EstatusLabel')},
+                    { title: 'Estatus', field: 'estatus', sortable: true, tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Poliza ContPaq', field: 'poliza_contpaq', sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
