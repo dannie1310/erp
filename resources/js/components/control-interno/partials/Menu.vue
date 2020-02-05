@@ -42,6 +42,14 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_efos',true)">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'transaccion-efos'}" class="nav-link" :class="{active: this.$route.name == 'transaccion-efos'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Consulta transacciones con EFOS</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_incidencias',true)">
                 <router-link :to="{name: 'incidencia'}" class="nav-link">
