@@ -24,6 +24,8 @@ class MovimientoRetencionFondoGarantiaObserver
 
     public function created(MovimientoRetencionFondoGarantia $movimiento)
     {
-        $movimiento->retencion->estimacion->subcontrato->fondo_garantia->generaMovimientoRetencion($movimiento);
+        if($movimiento->id_tipo_movimiento == 1) {
+            $movimiento->retencion->estimacion->subcontrato->fondo_garantia->generaMovimientoRetencion($movimiento);
+        }
     }
 }

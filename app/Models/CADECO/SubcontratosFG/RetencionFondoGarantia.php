@@ -42,4 +42,14 @@ class RetencionFondoGarantia extends Model
         );
     }
 
+    public function generaCancelacionMovimientoRetencion()
+    {
+        return $this->movimientos()->create(
+            [
+                'id_retencion' => $this->id,
+                'id_tipo_movimiento' => 2
+            ]
+        );
+    }
+
 }

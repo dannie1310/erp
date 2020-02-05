@@ -331,6 +331,7 @@ class Estimacion extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->respaldar($motivo);
+            $this->eliminarImportesRetencion();
             $this->partidas()->delete();
             $this->delete();
             DB::connection('cadeco')->commit();
@@ -567,7 +568,10 @@ class Estimacion extends Transaccion
         return $retencion * 1.16;
     }
 
-    public function editarImportesRetencion()
+    /**
+     * Edición de Importes al Registrar la Estimación.
+     */
+    public function registroImportesRetencion()
     {
         if($this->retencion != 0)
         {
@@ -591,6 +595,66 @@ class Estimacion extends Transaccion
             $this->retencion_fondo_garantia->movimientos->movimiento_general()->update(
                 [
                     'importe' => $retencion
+                ]
+            );
+
+            $this->subcontrato->fondo_garantia->actualizaSaldo();
+        }
+    }
+
+    /**
+     * Validaciones para la edición de la retención de los fondos de garantía cuando se edita la estimación.
+     */
+    public function editarImportesRetencion()
+    {
+        if($this->retencion != 0)
+        {
+            $this->retencion_fondo_garantia()->update(
+                [
+                    'importe' => 0,
+                    'id_estimacion' => NULL
+                ]
+            );
+
+            $movimiento_retencion = $this->retencion_fondo_garantia->generaCancelacionMovimientoRetencion();
+
+            $this->retencion_fondo_garantia->movimientos->movimiento_general()->create(
+                [
+                    'id_fondo_garantia'=>$this->id_antecedente,
+                    'id_tipo_movimiento'=>3,
+                    'id_movimiento_retencion' => $movimiento_retencion->id,
+                    'observaciones' => 'Eliminación de la estimación '.$this->numero_folio_format,
+                    'importe' => -$this->retencion_fondo_garantia->importe
+                ]
+            );
+
+            $this->subcontrato->fondo_garantia->actualizaSaldo();
+        }
+    }
+
+    /**
+     * Validaciones para eliminar la retención del fondo de garantía al eliminar la estimación.
+     */
+    public function eliminarImportesRetencion()
+    {
+        if($this->retencion != 0)
+        {
+            $this->retencion_fondo_garantia()->update(
+                [
+                    'importe' => 0,
+                    'id_estimacion' => NULL
+                ]
+            );
+
+            $movimiento_retencion = $this->retencion_fondo_garantia->generaCancelacionMovimientoRetencion();
+
+            $this->retencion_fondo_garantia->movimientos->movimiento_general()->create(
+                [
+                    'id_fondo_garantia'=>$this->id_antecedente,
+                    'id_tipo_movimiento'=>3,
+                    'id_movimiento_retencion' => $movimiento_retencion->id,
+                    'observaciones' => 'Eliminación de la estimación '.$this->numero_folio_format,
+                    'importe' => -$this->retencion_fondo_garantia->importe
                 ]
             );
 
