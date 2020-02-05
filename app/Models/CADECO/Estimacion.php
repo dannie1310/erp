@@ -607,10 +607,8 @@ class Estimacion extends Transaccion
      */
     public function editarImportesRetencion()
     {
-        if($this->retencion != 0)
+        if($this->retencion != 0  && $this->retencion_fondo_garantia)
         {
-
-            //Revisar si existe la retencion
 
 
             //editar le movimiento FG
@@ -643,7 +641,7 @@ class Estimacion extends Transaccion
      */
     public function eliminarImportesRetencion()
     {
-        if($this->retencion != 0)
+        if($this->retencion != 0 && $this->retencion_fondo_garantia)
         {
             $this->retencion_fondo_garantia()->update(
                 [
