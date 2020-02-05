@@ -1,7 +1,7 @@
 <template>
     <span>
         <button @click="init" v-if="$root.can('registrar_tipo_cuenta_contable')" class="btn btn-app btn-info float-right">
-            <i class="fa fa-plus"></i> Registrar Tipo de Cuenta Contable
+            <i class="fa fa-plus"></i> Registrar
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">

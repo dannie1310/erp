@@ -25,4 +25,11 @@ class SucursalObserver
         $sucursal->estado = mb_strtoupper($sucursal->estado);
         $sucursal->contacto = mb_strtoupper($sucursal->contacto);
     }
+
+    /**
+     * @param Sucursal $sucursal
+     */
+    public function deleting(Sucursal $sucursal){
+        $sucursal->validarEliminacionSucursal();
+    }
 }

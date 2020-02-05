@@ -62,6 +62,7 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Concepto</th>
+                                                <th></th>
                                                 <th>Beneficiario</th>
                                                <!-- <th>Importe Moneda Original</th>
                                                 <th>Moneda</th>
@@ -76,6 +77,8 @@
                                                 <tr v-for="(doc, i) in documentos">
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
+                                                    <td v-if="doc.empresa.efos" v-html="doc.empresa.efos.alert_icon"></td>
+                                                    <td v-else></td>
                                                     <td v-if="doc.beneficiario != null">{{doc.beneficiario}}</td>
                                                     <td class="text-danger" v-else>No registrado</td>
                                                     <!--<td class="text-right">{{doc.monto_total_format}}</td>-->
@@ -322,7 +325,7 @@
                             'documentosDisponibles.moneda',
                             'documentosDisponibles.montoProcesado',
                             'remesaLiberada',
-                            'documentosDisponibles.fondo.empresa.cuentas_bancarias.banco'],
+                            'documentosDisponibles.fondo.empresa.cuentas_bancarias.banco', 'documentosDisponibles.empresa.efos'],
                     }
                 })
                     .then(data => {

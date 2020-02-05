@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 class RemesaLiberada extends Model
 {
     protected $connection = 'modulosao';
-    protected $table = 'ControlRemesas.RemesasLiberadas';
+    protected $table = 'ModulosSAO.ControlRemesas.RemesasLiberadas';
     protected $primaryKey = 'IDRemesa';
 
     public function remesa(){
