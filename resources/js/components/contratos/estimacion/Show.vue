@@ -4,9 +4,9 @@
             <div class="col-12 mb-5">
                 <div class="card">
                     <div class="card-body" v-if="estimacion">
-                      <div class="col-md-12">
+                      <!-- <div class="col-md-12">
                         <DeductivaEdit v-bind:id="id"></DeductivaEdit>
-                      </div>
+                      </div> -->
                             <div class="row mt-5 mb-5">
 
                                                     <div class="col-8">

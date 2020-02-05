@@ -1,6 +1,6 @@
 <template>
   <span>
-        <button type="button" @click="init()" class="btn btn-primary float-right espacio" title="Editar">
+        <button type="button" @click="init()" class="btn btn-primary float-right espacio" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" title="Editar">
             Agregar
         </button>
         <div class="row">
