@@ -123,6 +123,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\MaterialController@store');
+            $api->get('/descargar_lista_material', 'App\Http\Controllers\v1\CADECO\MaterialController@descargar_lista_material');
         });
 
         // MONEDA
@@ -203,6 +204,10 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Compras\AreaSolicitanteController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Compras\AreaSolicitanteController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Compras\AreaSolicitanteController@show')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix'=>'ctg_tipo'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Compras\CtgTipoController@index');
         });
 
         /// NODOS TIPO
@@ -597,6 +602,7 @@ $api->version('v1', function ($api) {
          * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
          */
         $api->group(['prefix' => 'distribuir-recurso-remesa'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
             $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayout')->where(['id' => '[0-9]+']);
@@ -618,6 +624,7 @@ $api->version('v1', function ($api) {
             $api->get('autorizada', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@autorizadas');
             $api->get('{id}/pendientesPago', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pendientesPago');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@paginate');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@destroy')->where(['id' => '[0-9]+']);
             /**
              * FORMATO DE CONTRARECIBO
              */

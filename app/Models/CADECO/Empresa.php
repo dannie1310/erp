@@ -38,7 +38,8 @@ class Empresa extends Model
         'no_proveedor_virtual',
         'porcentaje',
         'tipo_cliente',
-        'emite_factura'
+        'emite_factura',
+        'es_nacional'
     ];
 
     public function cuentasEmpresa()
@@ -98,12 +99,21 @@ class Empresa extends Model
 
     public function scopeNoDeducibles($query)
     {
-        return $query->where('emite_factura', '=', 0);
+        return $query->where('emite_factura', '=', 0)
+            ->where('es_nacional', '=', 1)
+            ->whereIn('tipo_empresa', [1,2,3,4]);
     }
 
     public function scopeDeducibles($query)
     {
         return $query->where('emite_factura', '=', 1)
+            ->where('es_nacional', '=', 1)
+            ->whereIn('tipo_empresa', [1,2,3,4]);
+    }
+
+    public function scopeExtranjeras($query)
+    {
+        return $query->where('es_nacional', '=', 0)
             ->whereIn('tipo_empresa', [1,2,3,4]);
     }
 
@@ -220,7 +230,8 @@ class Empresa extends Model
                     "empresa"=>$this->efo->razon_social,
                 ]
             ));
-            abort(403, 'Esta empresa es un EFO.');
+            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
         }else if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 2)->first()))
         {
             event(new IncidenciaCI(
@@ -229,6 +240,8 @@ class Empresa extends Model
                     "empresa"=>$this->efo->razon_social,
                 ]
             ));
+            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
         }
     }
 

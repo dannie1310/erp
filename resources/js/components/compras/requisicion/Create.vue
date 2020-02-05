@@ -98,6 +98,11 @@
                                 <hr />
                                 <div class="d-flex flex-row-reverse">
                                     <div class="p-2">
+                                        <button  type="button" :disabled="cargando" class="btn btn-info" @click="lista">
+                                                <i v-show="!cargando" class="fa fa-list-ul "></i>
+                                                <i v-show="cargando" class="spinner-border spinner-border-sm"></i>
+                                                 Lista de Materiales</button>
+                                        &nbsp;
                                         <Layout v-model="partidas"></Layout>
                                     </div>
                                 </div>
@@ -124,7 +129,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr v-for="(partida, i) in partidas">
-                                                        <td>{{i+1}}</td>
+                                                        <td style="text-align:center">{{i+1}}</td>
                                                         <td style="width: 70px;" v-if="partida.i === 0 && partida.material === ''">
                                                         </td>
                                                         <td style="width: 70px;" v-else-if="partida.i === 1">
@@ -167,10 +172,10 @@
                                                             <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
                                                         </td>
                                                         <td style="width: 200px;" v-else>{{partida.material.descripcion}}</td>
-                                                        <td class="" v-if="partida.i === 0">
+                                                        <td style="text-align:center" v-if="partida.i === 0">
                                                             <button  type="button" class="btn btn-outline-primary btn-sm" @click="manual(i)" title="Ingresar material manualmente"><i class="fa fa-hand-paper-o" /></button>
                                                         </td>
-                                                        <td v-else-if="partida.i === 1">
+                                                        <td style="text-align:center" v-else-if="partida.i === 1">
                                                             <button type="button" class="btn btn-outline-primary btn-sm" @click="busqueda(i)" title="Buscar material"><i class="fa fa-refresh" /></button>
                                                         </td>
                                                         <td style="width: 30px;" v-else></td>
@@ -312,7 +317,7 @@
             }
         },
         mounted() {
-            this.$validator.reset()
+            this.$validator.reset();
             this.getAreasCompradoras();
             this.getAreasSolicitantes();
             this.getTipos();
@@ -413,6 +418,16 @@
             },
             destroy(index){
                 this.partidas.splice(index, 1);
+            },
+            lista()
+            {
+                 this.cargando = true;
+                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'requisicion'})
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.cargando = false;
+                    })
             },
             manual(index){
                 this.partidas[index].material = ""

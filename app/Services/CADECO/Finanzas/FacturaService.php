@@ -44,6 +44,11 @@ class FacturaService
         return $this->repository->show($id);
     }
 
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminarFactura($data['data'][0]);
+    }
+
     public function paginate($data)
     {
 
@@ -139,6 +144,7 @@ class FacturaService
             $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
             $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
+            $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["nombre"] = (string)$emisor["Nombre"][0];
@@ -177,6 +183,7 @@ class FacturaService
             ));
             abort(500, "El emisor del comprobante no esta dado de alta en el catálogo de proveedores / contratistas; la factura no puede ser registrada.");
         }
+        $this->arreglo_factura["moneda_bd"]["id_moneda"] = $this->repository->getIdMoneda($this->arreglo_factura["moneda"]);
     }
 
     private function getValidacionCFDI33($xml)
@@ -257,7 +264,7 @@ class FacturaService
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia"=>3,
                         "rfc"=>$this->arreglo_factura["emisor"]["rfc"],
-                        "empresa"=>$this->arreglo_factura["emisor"]["empresa"],
+                        "empresa"=>$this->arreglo_factura["emisor"]["nombre"],
                         "mensaje"=>$validacion_status_sat . " -" . $validacion_status_code_sat,
                         "xml"=>$xml
                     ]
@@ -271,7 +278,7 @@ class FacturaService
     {
         $datos_rfactura = null;
         $referencia = $data["referencia"];
-        if ($data["es_deducible"] == true) {
+        if ($data["es_deducible"] == true && $data["es_nacional"] == true) {
             $this->validaExistenciaRepositorio($data["archivo"]);
             $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
             $this->validaReceptor();
@@ -283,6 +290,8 @@ class FacturaService
                 "xml_file" => $this->repository->getArchivoSQL($data["archivo"]),
                 "hash_file" => hash_file('md5', $data["archivo"]),
                 "uuid" => $this->arreglo_factura["complemento"]["uuid"],
+                "rfc_emisor" => $this->arreglo_factura["emisor"]["rfc"],
+                "rfc_receptor" => $this->arreglo_factura["receptor"]["rfc"],
             ];
             $referencia = $this->arreglo_factura["serie"] . $this->arreglo_factura["folio"];
         }
@@ -348,7 +357,7 @@ class FacturaService
                 ["id_tipo_incidencia"=>4,
                 "id_factura_repositorio"=>$factura_repositorio->id]
             ));
-            abort(403, 'Archivo cargado previamente:
+            abort(403, 'Comprobante utilizado previamente:
             Registró: '.$factura_repositorio->usuario->nombre_completo.'
             BD: '.$factura_repositorio->proyecto->base_datos.'
             Proyecto: '.$factura_repositorio->obra.'
@@ -411,16 +420,18 @@ class FacturaService
                         "rfc"=>$this->arreglo_factura["empresa_bd"]["rfc"],
                         "empresa"=>$this->arreglo_factura["empresa_bd"]["razon_social"]]
                 ));
-                abort(500, "El emisor del comprobante es un EFO");
-            } /*else if ($efo->estado == 2) {
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            } else if ($efo->estado == 2) {
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia"=>9,
                         "id_empresa"=>$this->arreglo_factura["empresa_bd"]["id_empresa"],
                         "rfc"=>$this->arreglo_factura["empresa_bd"]["rfc"],
                         "empresa"=>$this->arreglo_factura["empresa_bd"]["razon_social"]]
                 ));
-                abort(500, "El emisor del comprobante es un presunto EFO");
-            }*/
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            }
 
         }
     }
@@ -432,9 +443,6 @@ class FacturaService
             if ($efo->estado == 2) {
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia"=>9,
-                        "id_transaccion"=>$transaccion->id_transaccion,
-                        "folio_transaccion"=>$transaccion->numero_folio_format,
-                        "tipo_transaccion"=>"Factura",
                         "id_empresa"=>$this->arreglo_factura["empresa_bd"]["id_empresa"],
                         "rfc"=>$this->arreglo_factura["empresa_bd"]["rfc"],
                         "empresa"=>$this->arreglo_factura["empresa_bd"]["razon_social"]]

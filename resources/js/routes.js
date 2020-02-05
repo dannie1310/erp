@@ -1283,7 +1283,7 @@ export const routes = [
                             title: 'Facturas',
                             breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
                             middleware: [auth, context, permission],
-                            permission: 'consultar_banco'
+                            permission: 'consultar_factura'
                         }
                     },
                     {
