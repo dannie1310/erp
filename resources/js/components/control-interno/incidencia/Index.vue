@@ -27,7 +27,8 @@
                     { title: 'Obra', field: 'obra', sortable: true},
                     { title: 'Base de Datos', field: 'base_datos', sortable: false},
                     { title: 'Tipo de Incidencia', field: 'id_tipo_incidencia',sortable: true},
-                    { title: 'Usuario', field: 'id_usuario', sortable: false}
+                    { title: 'Usuario', field: 'id_usuario', sortable: false},
+                    { title: 'Fecha y Hora de Registro', field: 'fecha_hora', sortable: false}
                 ],
                 data: [],
                 total: 0,
@@ -81,7 +82,8 @@
                             obra: incidencia.obra,
                             base_datos: incidencia.base_datos,
                             id_tipo_incidencia: incidencia.tipo.description,
-                            id_usuario: incidencia.usuario.nombre                            
+                            id_usuario: incidencia.usuario.nombre,
+                            fecha_hora: incidencia.fecha_hora
                         })
 
                     });

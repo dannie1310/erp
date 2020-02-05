@@ -182,7 +182,9 @@ export const routes = [
                 meta: {
                     title: 'Incidencias',
                     breadcrumb: {parent: 'control-interno', name: 'INCIDENCIAS'},
-                    middleware: [auth]
+                    middleware: [auth],
+                    permission: 'consultar_incidencias',
+                    general: true,
 
                 }
             },

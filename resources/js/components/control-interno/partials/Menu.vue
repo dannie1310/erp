@@ -43,7 +43,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_efos',true)">
+            <li class="nav-item"  v-if="$root.can('consultar_incidencias',true)">
                 <router-link :to="{name: 'incidencia'}" class="nav-link">
                     <i class="fa fa-circle nav-icon"></i>
                     <p>Incidencias</p>
