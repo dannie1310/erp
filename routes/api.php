@@ -595,6 +595,7 @@ $api->version('v1', function ($api) {
         // DATOS ESTIMACIONES
         $api->group(['prefix' => 'estimacion'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@index');
         });
 
         /**
