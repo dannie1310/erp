@@ -27,4 +27,14 @@ class MovimientoFondoGarantiaObserver
     {
         $movimientoFondoGarantia->fondo_garantia->actualizaSaldo();
     }
+
+    public function updating(MovimientoFondoGarantia $movimientoFondoGarantia)
+    {
+
+    }
+
+    public function updated(MovimientoFondoGarantia $movimientoFondoGarantia)
+    {
+        $movimientoFondoGarantia->fondo_garantia->actualizaSaldo();
+    }
 }

@@ -32,4 +32,17 @@ class RetencionFondoGarantiaObserver
     {
         $retencionFondoGarantia->generaMovimientoRegistro();
     }
+
+    public function updating(RetencionFondoGarantia $retencionFondoGarantia)
+    {
+
+    }
+
+    public function updated(RetencionFondoGarantia $retencionFondoGarantia)
+    {
+        if ($retencionFondoGarantia->importe > 0) // Edita la estimación.
+        {
+            $retencionFondoGarantia->movimientos->editarMovimientoGeneral();
+        }
+    }
 }

@@ -575,33 +575,33 @@ class Estimacion extends Transaccion
     {
         if($this->retencion != 0)
         {
-            $retencion = $this->items()->sum('importe') * ($this->retencion / 100);
-            /**
-             * Validar: SI es después de IVA se debe agregar el IVA al importe a registrar.
-             */
-            $configuracion_estimacion = ConfiguracionEstimacion::pluck('ret_fon_gar_antes_iva');
-
-            if(!is_null($configuracion_estimacion) && $configuracion_estimacion[0] == 0)
-            {
-                $retencion =  $this->getImporteRetencionConIva($retencion);
-            }
-
-            $this->retencion_fondo_garantia()->update(
+            $retencion = $this->getImporteRetencionFondoGarantia();
+            $this->retencion_fondo_garantia->update(
                 [
                     'importe' => $retencion
                 ]
             );
-
-            $this->retencion_fondo_garantia->movimientos->movimiento_general()->update(
-                [
-                    'importe' => $retencion
-                ]
-            );
-
-            $this->subcontrato->fondo_garantia->actualizaSaldo();
         }
     }
 
+    /**
+     * Obtener el valor del Importe para crear o editar la retención.
+     * @return float|int
+     */
+    private function getImporteRetencionFondoGarantia()
+    {
+        $importe = $this->items()->sum('importe') * ($this->retencion / 100);
+        /**
+         * Validar: SI es después de IVA se debe agregar el IVA al importe a registrar.
+         */
+        $configuracion_estimacion = ConfiguracionEstimacion::pluck('ret_fon_gar_antes_iva');
+
+        if(!is_null($configuracion_estimacion) && $configuracion_estimacion[0] == 0)
+        {
+            $importe =  $this->getImporteRetencionConIva($importe);
+        }
+        return $importe;
+    }
     /**
      * Validaciones para la edición de la retención de los fondos de garantía cuando se edita la estimación.
      */
@@ -609,30 +609,13 @@ class Estimacion extends Transaccion
     {
         if($this->retencion != 0  && $this->retencion_fondo_garantia)
         {
+            $retencion = $this->getImporteRetencionFondoGarantia();
 
-
-            //editar le movimiento FG
-
-//            $this->retencion_fondo_garantia()->update(
-//                [
-//                    'importe' => 0,
-//                    'id_estimacion' => NULL
-//                ]
-//            );
-//
-//            $movimiento_retencion = $this->retencion_fondo_garantia->generaCancelacionMovimientoRetencion();
-//
-//            $this->retencion_fondo_garantia->movimientos->movimiento_general()->create(
-//                [
-//                    'id_fondo_garantia'=>$this->id_antecedente,
-//                    'id_tipo_movimiento'=>3,
-//                    'id_movimiento_retencion' => $movimiento_retencion->id,
-//                    'observaciones' => 'Eliminación de la estimación '.$this->numero_folio_format,
-//                    'importe' => -$this->retencion_fondo_garantia->importe
-//                ]
-//            );
-//
-//            $this->subcontrato->fondo_garantia->actualizaSaldo();
+            $this->retencion_fondo_garantia->update(
+                [
+                    'importe' => $retencion
+                ]
+            );
         }
     }
 
@@ -661,8 +644,6 @@ class Estimacion extends Transaccion
                     'importe' => -$this->retencion_fondo_garantia->importe
                 ]
             );
-
-            $this->subcontrato->fondo_garantia->actualizaSaldo();
         }
     }
 }
