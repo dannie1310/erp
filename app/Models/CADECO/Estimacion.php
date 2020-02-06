@@ -260,12 +260,13 @@ class Estimacion extends Transaccion
     public function getRetenidoAnteriorAttribute()
     {
         $estimaciones_anteriores = $this->subcontrato->estimaciones()
-            ->where('fecha', '<', $this->fecha)
+            ->where('fecha', '<=', $this->fecha)
             ->where('estado', '>=', 1)
+            ->where("id_transaccion",'<>',$this->id_transaccion)
             ->get();
 
         $sumatoria = 0;
-        foreach ($estimaciones_anteriores as $estimacion) {
+        foreach ($estimaciones_anteriores as $estimacion) {git
             $sumatoria += $estimacion->retencion_fondo_garantia_orden_pago;
         }
         return $sumatoria;
