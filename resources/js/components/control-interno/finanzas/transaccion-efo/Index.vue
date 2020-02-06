@@ -23,17 +23,28 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: '#', field: 'index',sortable: false },
+                    { title: 'Base de Datos', field: 'base_datos', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Obra', field: 'obra', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Razón Social', field: 'razon_social', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'RFC', field: 'rfc', sortable: false, thComp: require('../../../globals/th-Filter').default},                 
                     { title: 'Transacción', field: 'tipo_transaccion', sortable: false},
-                    { title: 'RFC', field: 'rfc', sortable: false},
-                    { title: 'Razón Social', field: 'razon_social', sortable: false},
-                    { title: 'Fecha', field: 'fecha', sortable: false},
-                    { title: 'Referencia', field: 'referencia', thClass: 'col-6', sortable: false}                    
+                    { title: 'Folio', field: 'folio_transaccion', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Comentario', field: 'comentario', sortable: false},
+                    { title: 'Usuario', field: 'id_usuario', sortable: false},
+                    { title: 'Fecha Hora de Registro', field: 'fecha_hora_registro', sortable: false},
+                    { title: 'Fecha Transacción', field: 'fecha_transaccion', sortable: false},
+                    { title: 'Fecha Presunto', field: 'fecha_presunto', sortable: false},
+                    { title: 'Fecha Definitivo', field: 'fecha_definitivo', sortable: false},
+                    { title: 'Monto', field: 'monto', sortable: false},
+                    { title: 'Moneda', field: 'moneda', sortable: false},
+                    { title: 'T.C.', field: 'tipo_cambio', sortable: false},
+                    { title: 'Monto MXP', field: 'monto_mxp', sortable: false},
+                     { title: 'Grado de Alerta', field: 'grado_alerta', sortable: true}
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: { sort: 'grado_alerta', order: 'asc'},
                 estado: "",
                 cargando: false
             }
@@ -77,12 +88,23 @@
                     self.$data.data = []
                     self.$data.data = famls.map((transaccion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: transaccion.numero_folio,
-                        tipo_transaccion: transaccion.tipo_transaccion,
-                        rfc: transaccion.efo.rfc,
+                        base_datos: transaccion.base_datos,
+                        obra: transaccion.obra,
                         razon_social: transaccion.razon_social,
-                        referencia: transaccion.referencia,
-                        fecha: transaccion.fecha 
+                        rfc: transaccion.rfc,
+                        tipo_transaccion: transaccion.tipo_transaccion,
+                        folio_transaccion: transaccion.folio_transaccion,
+                        comentario: transaccion.comentario,
+                        id_usuario: transaccion.id_usuario,
+                        fecha_hora_registro: transaccion.fecha_hora_registro,
+                        fecha_transaccion: transaccion.fecha_transaccion,
+                        fecha_presunto: transaccion.fecha_presunto,
+                        fecha_definitivo: transaccion.fecha_definitivo,
+                        monto: transaccion.monto,
+                        moneda: transaccion.moneda,
+                        tipo_cambio: transaccion.tipo_cambio,
+                        monto_mxp: transaccion.monto_mxp,
+                        grado_alerta: transaccion.grado_alerta
                     }));
                 },
                 deep: true

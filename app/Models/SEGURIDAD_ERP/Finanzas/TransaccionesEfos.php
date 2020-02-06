@@ -5,23 +5,42 @@ namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Transaccion;
+use Illuminate\Database\Eloquent\Model;
 
-class TransaccionesEfos extends Transaccion
+class TransaccionesEfos extends Model
 {
         
-    protected static function boot()
-    {
-        parent::boot();
+    protected $connection = 'seguridad';
+    protected $table = 'SEGURIDAD_ERP.ControlInterno.efos_transacciones';
+    public $timestamps = false;
 
-        self::addGlobalScope(function ($query) {
-            return $query->has('efoTransaccion');
-        });
+
+    public function getMontoFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->monto),2);
     }
 
-    public function efoTransaccion()
+    public function getMontoFormatMxpAttribute()
     {
-        return $this->hasManyThrough(CtgEfos::class, Empresa::class, 'id_empresa', 'rfc', 'id_empresa', 'rfc');
+        return '$ ' . number_format(abs($this->monto_mxp),2);
     }
 
+    public function getAlertaEstadoDescripcionAttribute()
+    {
+        switch ($this->grado_alerta){
+            case(0):
+                return 'Definitivo';
+                break;
+            case(1):
+                    return 'Desvirtuado';
+                break;
+            case(2):
+                return 'Presunto';
+                break;
+            case(3):
+                return 'Sentencia Favorable';
+                break;
+        }
+    }
       
 }
