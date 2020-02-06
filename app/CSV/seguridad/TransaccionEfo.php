@@ -58,18 +58,19 @@ class TransaccionEfo implements FromCollection, WithHeadings
     public function headings(): array
     {
         // TODO: Implement headings() method.
+
         return array([
             'Identificador',
             'Base de Datos',
             'Obra',
-            'Razón Social',
+            'Razon Social',
             'RFC',
-            'Tipo Transacción',
+            'Tipo Transaccion',
             'Folio',
             'Comentario',
             'Usuario',
             'Fecha Hora de Registro',
-            'Fecha Transacción',
+            'Fecha Transaccion',
             'Fecha Presunto',
             'Fecha Definitivo',
             'Monto',

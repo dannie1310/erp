@@ -47,5 +47,4 @@ class TransaccionesEfos extends Model
                 break;
         }
     }
-
 }
