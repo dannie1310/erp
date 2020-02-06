@@ -91,33 +91,34 @@ class FondoGarantia extends Model
     }
 
 
-    private function generaMovimientoRegistro()
+    public function generaMovimientoRegistro()
     {
-        MovimientoFondoGarantia::create(
+        $this->movimientos()->create(
             [
-                'id_fondo_garantia'=>$this->id_subcontrato,
-                'id_tipo_movimiento'=>1,
-                'importe'=>0,
-                'usuario_registra'=>$this->usuario_registra,
+                'id_fondo_garantia' => $this->id_subcontrato,
+                'id_tipo_movimiento' => 1,
+                'importe' => 0,
+                'observaciones' => 'Registro de fondo de garantía'
             ]
         );
-        $this->refresh();
     }
+
+
     public function generaMovimientoRetencion(MovimientoRetencionFondoGarantia $movimiento_retencion)
     {
-
-        MovimientoFondoGarantia::create(
+        $this->movimientos()->create(
             [
                 'id_fondo_garantia'=>$this->id_subcontrato,
                 'id_tipo_movimiento'=>2,
-                'importe'=>$movimiento_retencion->retencion->importe,
-                'usuario_registra'=>$movimiento_retencion->usuario_registra,
+                'id_movimiento_retencion' => $movimiento_retencion->id,
+                'observaciones' => 'Retención generada en estimación '.$movimiento_retencion->retencion->estimacion->numero_folio_format,
+                'importe' => $movimiento_retencion->retencion->importe
             ]
         );
 
     }
     /*
-     * Función que permite ajustar el saldo del gondo de garantía
+     * Función que permite ajustar el saldo del fondo de garantía
      * */
     public function ajustarSaldo($datos)
     {
