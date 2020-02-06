@@ -27,8 +27,7 @@ class TransaccionEfo implements FromCollection, WithHeadings
         // TODO: Implement collection() method.
         $transacciones_efos = array();
         $transacciones = TransaccionesEfos::all();
-        foreach ($transacciones as $transaccion)
-        {
+        foreach ($transacciones as $transaccion) {
             $transacciones_efos[] = array(
                 'id_transaccion' => $transaccion->getKey(),
                 'base_datos' => $transaccion->base_datos,
@@ -36,12 +35,21 @@ class TransaccionEfo implements FromCollection, WithHeadings
                 'razon_social' => $transaccion->razon_social,
                 'rfc' => $transaccion->rfc,
                 'tipo_transaccion' => $transaccion->tipo_transaccion,
-                'folio_transaccion' => '#'.$transaccion->folio_transaccion,
+                'folio_transaccion' => '#' . $transaccion->folio_transaccion,
                 'comentario' => $transaccion->comentario,
-
+                'usuario' => $transaccion->usuario ? $transaccion->usuario->nombre_completo : '',
+                'fecha_hora_registro' => date('d/m/Y H:i', strtotime($transaccion->fecha_hora_registro)),
+                'fecha_transaccion' => date('d/m/Y', strtotime($transaccion->fecha_transaccion)),
+                'fecha_presunto' => date('d/m/Y', strtotime($transaccion->fecha_presunto)),
+                'fecha_definitivo' => ($transaccion->fecha_definitivo != NULL) ? date("d/m/Y", strtotime($transaccion->fecha_definitivo)) : '',
+                'monto' => $transaccion->monto_format,
+                'moneda' => $transaccion->moneda,
+                'tipo_cambio' => (int)$transaccion->tipo_cambio,
+                'monto_mxp' => $transaccion->monto_format_mxp,
+                'grado_alerta' => $transaccion->alerta_estado_descripcion
             );
         }
-        dd($transacciones);
+        return collect($transacciones_efos);
     }
 
     /**
@@ -56,7 +64,7 @@ class TransaccionEfo implements FromCollection, WithHeadings
             'Obra',
             'Razón Social',
             'RFC',
-            'Transacción',
+            'Tipo Transacción',
             'Folio',
             'Comentario',
             'Usuario',
