@@ -266,7 +266,7 @@ class Estimacion extends Transaccion
             ->get();
 
         $sumatoria = 0;
-        foreach ($estimaciones_anteriores as $estimacion) {git
+        foreach ($estimaciones_anteriores as $estimacion) {
             $sumatoria += $estimacion->retencion_fondo_garantia_orden_pago;
         }
         return $sumatoria;
