@@ -150,9 +150,9 @@ class TransaccionesEfosService
 
     public function descargarCSV()
     {
-      //  Storage::disk('layout_pagos_descarga')->delete(Storage::disk('layout_pagos_descarga')->allFiles());
+        Storage::disk('control_interno')->delete(Storage::disk('control_interno')->allFiles());
         $nombre_archivo = 'TransaccionEfos_' . date('dmYY_His') . '.csv';
-        (new TransaccionEfo())->store($nombre_archivo, 'layout_pagos_descarga');
-        return Storage::disk('layout_pagos_descarga')->download($nombre_archivo);
+        (new TransaccionEfo())->store($nombre_archivo, 'control_interno');
+        return Storage::disk('control_interno')->download($nombre_archivo);
     }
 }
