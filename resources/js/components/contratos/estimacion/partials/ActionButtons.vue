@@ -47,24 +47,24 @@
                                 </tr>
                                 <tr v-if="configuracion.ret_fon_gar_antes_iva == 1">
                                     <th style="text-align: left">Retención de Fondo de Garantia</th>
-                                    <td>{{valuee.estimacion.retencion}} %</td>
+                                    <td>{{value.estimacion.retencion}} %</td>
                                     <th style="text-align: right">{{value.estimacion.retencion_fondo_garantia}}</th>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 1">
                                     <th style="text-align: left" colspan="2">Total Retenciones</th>
-                                    <th style="text-align: right">{{value.estimacion.total_retenciones}}</th>
+                                    <th style="text-align: right">$ {{value.estimacion.total_retenciones}}</th>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 1">
                                     <th style="text-align: left" colspan="2">Retención de IVA</th>
-                                    <th style="text-align: right">{{value.estimacion.retencion_iva}}</th>
+                                    <th style="text-align: right">$ {{value.estimacion.retencion_iva}}</th>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 1">
                                     <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
-                                    <th style="text-align: right">{{value.estimacion.total_retencion_liberadas}}</th>
+                                    <th style="text-align: right">$ {{value.estimacion.total_retencion_liberadas}}</th>
                                 </tr>
                                 <tr v-if="configuracion.desc_pres_mat_antes_iva == 1">
                                     <th style="text-align: left" colspan="2">Total Deductivas</th>
-                                    <th style="text-align: right">{{value.estimacion.total_deductivas}}</th>
+                                    <th style="text-align: right">$ {{value.estimacion.total_deductivas}}</th>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Subtotal</th>
@@ -86,19 +86,19 @@
                                 </tr>
                                 <tr v-if="configuracion.desc_pres_mat_antes_iva == 0">
                                     <th style="text-align: left" colspan="2">Total Deductivas</th>
-                                    <th style="text-align: right">{{value.estimacion.total_deductivas}}</th>
+                                    <th style="text-align: right">$ {{value.estimacion.total_deductivas}}</th>
                                 </tr>
                                    <tr v-if="configuracion.retenciones_antes_iva == 0">
                                     <th style="text-align: left" colspan="2">Total Retenciones</th>
-                                    <th style="text-align: right">{{value.estimacion.total_retenciones}}</th>
+                                    <th style="text-align: right">$ {{value.estimacion.total_retenciones}}</th>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 0">
                                     <th style="text-align: left" colspan="2">Retención de IVA</th>
-                                    <th style="text-align: right">{{value.estimacion.retencion_iva}}</th>
+                                    <th style="text-align: right">$ {{value.estimacion.retencion_iva}}</th>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 0">
                                     <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
-                                    <th style="text-align: right">{{value.estimacion.total_retencion_liberadas}}</th>
+                                    <th style="text-align: right">$ {{value.estimacion.total_retencion_liberadas}}</th>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Total Anticipo a Liberar</th>
