@@ -238,8 +238,10 @@ use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
+use App\Models\CADECO\Unidad;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
+use App\Observers\CADECO\UnidadObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -419,6 +421,7 @@ class AppServiceProvider extends ServiceProvider
             Subcontrato::observe(SubcontratoObserver::class);
             Sucursal::observe(SucursalObserver::class);
             Transaccion::observe(TransaccionObserver::class);
+            Unidad::observe(UnidadObserver::class);
             Venta::observe(VentaObserver::class);
             VentaCancelacion::observe(VentaCancelacionObserver::class);
             VentaPartida::observe(VentaPartidaObserver::class);

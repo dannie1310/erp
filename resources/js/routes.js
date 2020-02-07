@@ -378,6 +378,23 @@ export const routes = [
                 }
             },
             {
+                path: 'unidad',
+                component: require('./components/catalogos/unidad/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'unidad',
+                        component: require('./components/catalogos/unidad/Index').default,
+                        meta: {
+                            title: 'Catálogo de Unidades',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE UNIDAD'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_unidad']
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'empresa',
                 component: require('./components/catalogos/empresa/Layout').default,
                 children: [
