@@ -1,7 +1,7 @@
 <template>
   <span>
         <button type="button" @click="itemsContratista()" class="btn btn-primary float-right espacio" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" title="Editar">
-            Agregar
+            <i class="fa fa-plus"></i> Agregar
         </button>
         <div class="row">
             <div class="col-md-12">
@@ -67,7 +67,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" @click="cerrar()">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary"  :disabled="items.length == 0"><i class="fa fa-plus"></i>  Registrar</button>
+                                    <button type="submit" class="btn btn-primary"  :disabled="items.length == 0"><i class="fa fa-save"></i>  Registrar</button>
                                 </div>
                             </form>
                         </div>
