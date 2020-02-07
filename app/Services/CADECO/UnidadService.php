@@ -42,4 +42,23 @@ class UnidadService
         return $this->repository->show($id);
     }
 
+    public function paginate($data)
+    {
+        if(isset($data['descripcion']))
+        {
+            return $this->repository->where([['descripcion','like', '%'.$data['descripcion'].'%']])->paginate();
+        }
+        return $this->repository->paginate();
+    }
+
+    public function store(array $data)
+    {
+        $datos = [
+            'unidad' => $data['unidad'],
+            'descripcion' => $data['descripcion']
+        ];
+        
+        return $this->repository->create($datos);
+    }
+
 }

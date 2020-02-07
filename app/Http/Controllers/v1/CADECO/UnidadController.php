@@ -39,6 +39,8 @@ class UnidadController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:registrar_unidad')->only(['store']);
+        $this->middleware('permiso:consultar_unidad')->only(['paginate']);
 
         $this->service = $service;
         $this->transformer = $transformer;
