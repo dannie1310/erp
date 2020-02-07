@@ -169,8 +169,8 @@ class Estimacion extends Transaccion
      */
     public function generaRetencion()
     {
-        if (is_null($this->retencion_fondo_garantia)) {
-            if ($this->retencion > 0) {
+        if ($this->retencion > 0) {
+            if (is_null($this->retencion_fondo_garantia)) {
                 $this->retencion_fondo_garantia()->create(
                     [
                         'id_estimacion' => $this->id_transaccion,
@@ -178,8 +178,14 @@ class Estimacion extends Transaccion
                     ]
                 );
             } else {
-                throw New \Exception('La estimación no tiene establecido un porcentaje de retención de fondo de garantía, la retención no puede generarse');
+                $this->retencion_fondo_garantia()->update(
+                    [
+                        'importe' => $this->importeRetencionFondoGarantia()
+                    ]
+                );
             }
+        }else{
+            throw New \Exception('La estimación no tiene establecido un porcentaje de retención de fondo de garantía, la retención no puede generarse');
         }
     }
 
@@ -609,8 +615,7 @@ class Estimacion extends Transaccion
             );
             $this->retencion_fondo_garantia()->update(
                 [
-                    'importe' => 0,
-                    'id_estimacion' => NULL
+                    'importe' => 0
                 ]
             );
         }
