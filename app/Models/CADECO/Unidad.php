@@ -20,7 +20,8 @@ class Unidad extends Model
     public $searchable = [
         'unidad',
         'tipo_unidad',
-        'descripcion'
+        'descripcion',
+        'IdUsuario'
     ];
 
     protected $fillable = [
