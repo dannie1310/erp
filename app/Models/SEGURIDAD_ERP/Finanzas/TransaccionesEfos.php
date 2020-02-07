@@ -3,7 +3,7 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
-use App\Models\CADECO\Empresa;
+
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
@@ -34,16 +34,13 @@ class TransaccionesEfos extends Model
     {
         switch ($this->grado_alerta){
             case(0):
-                return 'Definitivo';
+                return 'GRAVE';
                 break;
             case(1):
-                    return 'Desvirtuado';
-                break;
-            case(2):
-                return 'Presunto';
+                    return 'MEDIA';
                 break;
             case(3):
-                return 'Sentencia Favorable';
+                return 'BAJA';
                 break;
         }
     }

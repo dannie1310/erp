@@ -3,12 +3,16 @@
 
 namespace App\Http\Transformers\SEGURIDAD_ERP\Finanzas;
 
-use App\Http\Transformers\CADECO\EmpresaTransformer;
+
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\SEGURIDAD_ERP\Finanzas\TransaccionesEfos;
 use League\Fractal\TransformerAbstract;
 
 class TransaccionesEfosTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = [
+        'usuario'
+    ];
 
 
     public function transform(TransaccionesEfos $model)
@@ -33,5 +37,14 @@ class TransaccionesEfosTransformer extends TransformerAbstract
             'monto_mxp' => $model->monto_format_mxp,
             'grado_alerta' => $model->alerta_estado_descripcion            
         ];
+    }
+
+    public function includeUsuario(TransaccionesEfos $model)
+    {
+        if($usuario = $model->usuario)
+        {
+            return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
     }
 }

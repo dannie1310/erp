@@ -33,7 +33,6 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index',sortable: false },
-                    { title: 'Base de Datos', field: 'base_datos', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Obra', field: 'obra', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Razón Social', field: 'razon_social', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'RFC', field: 'rfc', sortable: false, thComp: require('../../../globals/th-Filter').default},
@@ -53,7 +52,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: { sort: 'grado_alerta', order: 'asc'},
+                query: { sort: 'grado_alerta', order: 'asc', include: 'usuario'},
                 estado: "",
                 cargando: false,
                 cargando_csv: false
@@ -109,14 +108,13 @@
                     self.$data.data = []
                     self.$data.data = famls.map((transaccion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        base_datos: transaccion.base_datos,
                         obra: transaccion.obra,
                         razon_social: transaccion.razon_social,
                         rfc: transaccion.rfc,
                         tipo_transaccion: transaccion.tipo_transaccion,
                         folio_transaccion: transaccion.folio_transaccion,
                         comentario: transaccion.comentario,
-                        id_usuario: transaccion.id_usuario,
+                        id_usuario: (transaccion.usuario) ? transaccion.usuario.nombre : '---',
                         fecha_hora_registro: transaccion.fecha_hora_registro,
                         fecha_transaccion: transaccion.fecha_transaccion,
                         fecha_presunto: transaccion.fecha_presunto,
