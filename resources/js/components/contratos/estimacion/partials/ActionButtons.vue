@@ -81,7 +81,7 @@
                                 <tr v-if="configuracion.ret_fon_gar_antes_iva == 0">
                                     <th style="text-align: left">Retención de Fondo de Garantia Estimación</th>
                                     <td v-if="configuracion.ret_fon_gar_con_iva == 1">{{value.estimacion.retencion}} % + IVA</td>
-                                    <td v-else>{{value.retencion}} %</td>
+                                    <td v-else>{{value.estimacion.retencion}} %</td>
                                     <th style="text-align: right">{{value.estimacion.retencion_fondo_garantia}}</th>
                                 </tr>
                                 <tr v-if="configuracion.desc_pres_mat_antes_iva == 0">
