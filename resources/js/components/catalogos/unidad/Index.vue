@@ -29,7 +29,7 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_icono', sortable: false },
                     { title: 'Unidad', field: 'unidad', thClass: 'td_unidad',  sortable: true },
-                    { title: 'Descripcion', field: 'descripcion', thClass: 'td_unidad', thComp: require('../../globals/th-Filter').default, sortable: true }
+                    { title: 'Descripción', field: 'descripcion', thClass: 'td_unidad', thComp: require('../../globals/th-Filter').default, sortable: true }
                 ],
                 data: [],
                 total: 0,
