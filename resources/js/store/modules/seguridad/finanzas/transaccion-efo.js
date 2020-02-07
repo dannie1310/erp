@@ -65,6 +65,19 @@ export default {
                     })
             })
         },
+
+        descarga_csv(context, payload){
+            var urr = URI + 'descarga-csv?db=' + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("CSV descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        }
     },
 
     getters: {

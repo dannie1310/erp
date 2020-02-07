@@ -1,11 +1,20 @@
 <template>
     <div class="row">
+        <div class="col-12" :disabled="cargando">
+            <button  @click="descarga_csv" title="Descargar" class="btn btn-app btn-info float-right"  >
+<!--                     v-if="$root.can('consultar_transacciones_efos')" :disabled="cargando_csv" >-->
+                <i class="fa fa-spin fa-spinner" v-if="cargando_csv"></i>
+                <i class="fa fa-download" v-else></i>
+                Descargar CSV
+            </button>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
+
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -27,7 +36,7 @@
                     { title: 'Base de Datos', field: 'base_datos', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Obra', field: 'obra', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Razón Social', field: 'razon_social', sortable: false, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'RFC', field: 'rfc', sortable: false, thComp: require('../../../globals/th-Filter').default},                 
+                    { title: 'RFC', field: 'rfc', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Transacción', field: 'tipo_transaccion', sortable: false},
                     { title: 'Folio', field: 'folio_transaccion', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Comentario', field: 'comentario', sortable: false},
@@ -46,7 +55,8 @@
                 total: 0,
                 query: { sort: 'grado_alerta', order: 'asc'},
                 estado: "",
-                cargando: false
+                cargando: false,
+                cargando_csv: false
             }
         },
         mounted() {
@@ -69,6 +79,17 @@
                         this.cargando = false;
                     })
             },
+            descarga_csv(){
+                this.cargando_csv = true;
+                return this.$store.dispatch('seguridad/finanzas/transaccion-efo/descarga_csv', {})
+                    .then(() => {
+                        this.$emit('success')
+
+                    })
+                    .finally(() => {
+                        this.cargando_csv = false;
+                    })
+            }
         },
         computed: {
             transacciones(){

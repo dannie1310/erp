@@ -5,15 +5,20 @@ namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Transaccion;
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class TransaccionesEfos extends Model
 {
-        
+
     protected $connection = 'seguridad';
     protected $table = 'SEGURIDAD_ERP.ControlInterno.efos_transacciones';
     public $timestamps = false;
 
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
+    }
 
     public function getMontoFormatAttribute()
     {
@@ -42,5 +47,4 @@ class TransaccionesEfos extends Model
                 break;
         }
     }
-      
 }
