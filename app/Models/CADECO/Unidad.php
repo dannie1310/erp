@@ -33,11 +33,11 @@ class Unidad extends Model
     {
         if($this->where('descripcion','=', $this->descripcion)->get()->toArray() != [])
         {
-            throw New \Exception('Esta descripción "'.$this->descripcion.'" ya existe.');
+            throw New \Exception('La descripción "'.$this->descripcion.'" ya se encuentra en el catálogo.');
         }
         if($this->where('unidad','=', $this->unidad)->get()->toArray() != [])
         {
-            throw New \Exception('Esta unidad "'.$this->unidad.'" ya existe.');
+            throw New \Exception('La unidad "'.$this->unidad.'" ya se encuentra en el catálogo.');
         }
     }
 }
