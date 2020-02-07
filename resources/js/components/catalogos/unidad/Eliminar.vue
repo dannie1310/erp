@@ -12,7 +12,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" v-if="factura">
+                    <div class="modal-body" v-if="facturaa.tipo_solicitud === 65">
                         <div class="row">
                             <div class="col-md-12">
                                     <div class="form-group row error-content">
@@ -50,6 +50,7 @@ export default {
         return {
             motivo:'',
             cargando: false,
+            facturaa: ''
         }
     },
     methods: {
@@ -78,6 +79,9 @@ export default {
                     id: 117337,
                 }).then(data => {
                     this.$store.commit('finanzas/factura/SET_FACTURA', data);
+                    this.facturaa = data;
+                    console.log('facturaa', this.facturaa);
+                    
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;
@@ -96,11 +100,11 @@ export default {
             });
         },
     },
-    computed:{
-        factura() {
-                return this.$store.getters['finanzas/factura/currentFactura']
-            }
-    }
+    // computed:{
+    //     facturaa() {
+    //             return this.$store.getters['finanzas/factura/currentFactura']
+    //         }
+    // }
 }
 </script>
 <style>

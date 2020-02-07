@@ -29,7 +29,9 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_icono', sortable: false },
                     { title: 'Unidad', field: 'unidad', thClass: 'td_unidad',  sortable: true },
-                    { title: 'Descripcion', field: 'descripcion', thClass: 'td_unidad', thComp: require('../../globals/th-Filter').default, sortable: true }
+                    { title: 'Descripcion', field: 'descripcion', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Acciones', field: 'buttons', thClass: 'td_unidad', tdComp: require('./partials/ActionButtons').default}
+
                 ],
                 data: [],
                 total: 0,
