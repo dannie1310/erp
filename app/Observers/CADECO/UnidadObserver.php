@@ -16,6 +16,6 @@ class UnidadObserver
          $unidad->validarUnidadExistente();
          $unidad->unidad = strtoupper($unidad->unidad);
          $unidad->descripcion = strtoupper($unidad->descripcion);
-         
+         $unidad->IdUsuario = auth()->id();
      }
 }
