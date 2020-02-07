@@ -1,10 +1,10 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Factura" v-show="borrar">
+        <button @click="find(unidad)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Factura" v-show="borrar">
             <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog " role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modal-unidad"> <i class="fas fa-trash-alt"></i> ELIMINAR UNIDAD</h5>
@@ -12,26 +12,17 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" v-if="facturaa.tipo_solicitud === 65">
+                    <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="unidad" class="col-sm-3" style="text-align:right;">Unidad: &nbsp;</label>
+                                        <label for="unidad" class="col-sm-2 offset-1" style="text-align:right;">Unidad: &nbsp;</label>
                                             eliminar
-                                    </div>
-                                    <div class="form-group row error-content">
                                         <label for="unidad" class="col-sm-3" style="text-align:right;">Descripción: &nbsp;</label>
-                                            descripcion de la unidad 
+                                        descripcion de la unidad
                                     </div>
                             </div>
-                        </div>
-                    
-
-                                         
-
-
-                    
-                        
+                        </div>    
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -45,7 +36,7 @@
 <script>
 export default {
     name: "eliminar-unidad",
-    props: ['id', 'borrar'],
+    props: ['unidad', 'borrar'],
     data() {
         return {
             motivo:'',
@@ -69,20 +60,23 @@ export default {
                 $(this.$refs.modal).modal('hide');
             });
         },
-        find(id) {
+        find(unidad) {
             this.motivo = '';
             this.cargando = true;
-            // $(this.$refs.modal).modal('show')
+            $(this.$refs.modal).modal('show')
+            this.facturaa = unidad.unidad;
+            console.log(unidad.unidad, unidad);
+            
 
                 this.$store.commit('finanzas/factura/SET_FACTURA', null);
                 return this.$store.dispatch('finanzas/factura/find', {
-                    id: 117337,
+                    id: this.facturaa,
                 }).then(data => {
                     this.$store.commit('finanzas/factura/SET_FACTURA', data);
                     this.facturaa = data;
                     console.log('facturaa', this.facturaa);
                     
-                    $(this.$refs.modal).modal('show')
+                    // $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;
                 })

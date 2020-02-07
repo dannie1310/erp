@@ -84,7 +84,6 @@
                         unidad: unidad.unidad,
                         descripcion: unidad.descripcion,
                         buttons: $.extend({}, {
-                                id: unidad.unidad,
                                 unidad: unidad,
                                 borrar: true,
                             })

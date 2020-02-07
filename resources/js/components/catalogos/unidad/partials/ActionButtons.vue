@@ -1,7 +1,7 @@
 <template>
     <span>
         <div class="btn-group">
-            <Eliminar  v-if="$root.can('eliminar_factura')" v-bind:id="value.id" v-bind:pagina="value.pagina" v-bind:borrar="value.borrar"></Eliminar>
+            <Eliminar  v-if="$root.can('eliminar_factura')" v-bind:unidad="value.unidad" v-bind:pagina="value.pagina" v-bind:borrar="value.borrar"></Eliminar>
         </div>
     </span>
 </template>

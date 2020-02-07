@@ -39,6 +39,7 @@ class UnidadService
     }
     public function show($id)
     {
+        dd('id', $id);
         return $this->repository->show($id);
     }
 
