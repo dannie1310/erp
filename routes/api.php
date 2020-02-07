@@ -169,6 +169,8 @@ $api->version('v1', function ($api) {
         $api->group(['prefix'=>'unidad'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\UnidadController@index');
             $api->post('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\UnidadController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\UnidadController@store');
         });
 
     });

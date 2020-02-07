@@ -20,6 +20,24 @@ class Unidad extends Model
     public $searchable = [
         'unidad',
         'tipo_unidad',
-        'descripcion'
+        'descripcion',
+        'IdUsuario'
     ];
+
+    protected $fillable = [
+        'descripcion',
+        'unidad'
+    ];
+
+    public function validarunidadExistente()
+    {
+        if($this->where('descripcion','=', $this->descripcion)->get()->toArray() != [])
+        {
+            throw New \Exception('La descripción "'.$this->descripcion.'" ya se encuentra en el catálogo.');
+        }
+        if($this->where('unidad','=', $this->unidad)->get()->toArray() != [])
+        {
+            throw New \Exception('La unidad "'.$this->unidad.'" ya se encuentra en el catálogo.');
+        }
+    }
 }
