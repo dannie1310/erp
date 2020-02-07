@@ -6,6 +6,13 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">CATÁLOGOS</li>
 
+            <li class="nav-item" v-if="$root.can('consultar_unidad')">
+                <router-link :to="{name: 'unidad'}" class="nav-link">
+                            <i class="fas fa-ruler-combined nav-icon"></i>
+                            <p>Catalogo de Unidades</p>
+                        </router-link>
+            </li>
+            
             <li class="nav-item" v-if="catalogo_maquinaria">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-tractor"></i>

@@ -22,4 +22,21 @@ class Unidad extends Model
         'tipo_unidad',
         'descripcion'
     ];
+
+    protected $fillable = [
+        'descripcion',
+        'unidad'
+    ];
+
+    public function validarunidadExistente()
+    {
+        if($this->where('descripcion','=', $this->descripcion)->get()->toArray() != [])
+        {
+            throw New \Exception('Esta descripción "'.$this->descripcion.'" ya existe.');
+        }
+        if($this->where('unidad','=', $this->unidad)->get()->toArray() != [])
+        {
+            throw New \Exception('Esta unidad "'.$this->unidad.'" ya existe.');
+        }
+    }
 }
