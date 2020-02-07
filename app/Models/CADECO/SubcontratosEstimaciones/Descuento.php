@@ -11,7 +11,10 @@ namespace App\Models\CADECO\SubcontratosEstimaciones;
 
 use App\Models\CADECO\Material;
 use App\Models\CADECO\Estimacion;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\SalidaAlmacenPartida;
+use App\Models\CADECO\Compras\ItemContratista;
 
 class Descuento extends Model
 {
@@ -44,5 +47,18 @@ class Descuento extends Model
 
     public function getImporteFormatAttribute(){
         return '$ ' . number_format($this->importe, 2, '.', ',');
+    }
+
+    public function validar_cantidad($descuento){
+        $estimacion_empresa = $this->estimacion->id_empresa;
+        $itemsContratista = ItemContratista::where('id_empresa', '=', $estimacion_empresa)->where('con_cargo', '=', 1)->pluck('id_item');
+        
+        $salidas = SalidaAlmacenPartida::itemContratista()->with('material')->whereIn('id_item', $itemsContratista)->where('id_material', '=', $descuento['id_material'])
+        ->select('id_material', DB::raw('sum(cantidad) as cantidad, (sum(importe) / sum(cantidad)) as precio_unitario '))
+        ->groupBy('id_material')
+        ->first();
+
+        if($descuento['cantidad'] > $salidas->cantidad) abort(403, 'La cantidad '.number_format($descuento['cantidad'], 2, '.', ',').' a descontar del material '.$this->material->descripcion.' es mayor a la permitida: '.number_format($salidas->cantidad, 2, '.', ',').'');
+
     }
 }

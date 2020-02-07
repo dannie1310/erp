@@ -17,9 +17,8 @@ class DescuentoObserver {
      * @param Descuento $descuento
      * @throws \Exception
      */
-    public function creating(Descuento $descuento)
+    public function updating(Descuento $descuento)
     {
-        
-
+        $descuento->validar_cantidad($descuento->toArray());
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <span>
-        <button type="button" @click="init()" class="btn btn-primary float-right espacio" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" title="Editar">
+        <button type="button" @click="itemsContratista()" class="btn btn-primary float-right espacio" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" title="Editar">
             Agregar
         </button>
         <div class="row">
@@ -20,14 +20,17 @@
                                         <div class="row">   
                                         <!-- <div class="col-12"> -->
                                             <div class="col-8" >
-                                                <MaterialSelect
-                                                    :scope="scope"
-                                                    :name="material"
-                                                    v-model="material"
-                                                    data-vv-as="Material"
-                                                    v-validate="{required: true}"
-                                                    ref="MaterialSelect"
-                                                    :disableBranchNodes="false"/>
+                                                <model-list-select
+                                                            :disabled="cargando"
+                                                            name="id_material"
+                                                            v-model="id_material"
+                                                            option-value="id_material"
+                                                            option-text="descripcion"
+                                                            :list="items"
+                                                            :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
+                                                            :isError="errors.has(`id_material`)">
+                                                    </model-list-select>
+                                                    <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                                     
                                             </div>
                                             <div class="col-2">
@@ -36,7 +39,7 @@
                                                         step="any"
                                                         name="cantidad"
                                                         data-vv-as="Cantidad"
-                                                        v-validate="{required: true, min_value:0.01, decimal:5}"
+                                                        v-validate="{required: true, min_value:0.01,max_value:cantidad_maxima, decimal:5}"
                                                         class="form-control"
                                                         id="cantidad"
                                                         placeholder="Cantidad"
@@ -64,7 +67,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" @click="cerrar()">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary"  :disabled="material.length == 0"><i class="fa fa-plus"></i>  Registrar</button>
+                                    <button type="submit" class="btn btn-primary"  :disabled="items.length == 0"><i class="fa fa-plus"></i>  Registrar</button>
                                 </div>
                             </form>
                         </div>
@@ -76,40 +79,33 @@
 </template>
 
 <script>
-import MaterialSelect from '../../../cadeco/material/SelectAutocomplete'
+import {ModelListSelect} from 'vue-search-select';
 export default {
     name: "deductiva-create",
-    components: {MaterialSelect},
-    props: ['id'],
+    components: {ModelListSelect},
+    props: ['id', 'id_empresa'],
     data() {
         return {
-            material:[],
+            items:[],
+            id_material:'',
             cantidad:'',
+            cantidad_maxima:'',
             precio_unitario:'',
             scope: ['insumos', 'suministrables'],
+            cargando:false,
         }
     },
     mounted() {
     },
     methods: {
         cerrar(){
-            this.material = [];
-            this.cantidad = '';
-            this.precio_unitario = '';
-            this.$validator.reset();
+            this.resetVals();
             $(this.$refs.modalAgregar).modal('hide');
-        },
-        init(){
-            this.material = [];
-            this.cantidad = '';
-            this.precio_unitario = '';
-            this.$validator.reset();
-            $(this.$refs.modalAgregar).modal('show');
         },
         store() {
             return this.$store.dispatch('subcontratosEstimaciones/descuento/store',  {
                 id_transaccion:this.id,
-                id_material:this.material.id,
+                id_material:this.id_material,
                 cantidad:this.cantidad,
                 precio:this.precio_unitario
             })
@@ -118,12 +114,53 @@ export default {
                 this.cerrar();
             })
         },
+        itemsContratista(){
+            this.items = [];
+            return this.$store.dispatch('subcontratosEstimaciones/descuento/listItems', {
+                id: this.id_empresa,
+                params: {include: 'material', id_estimacion:this.id}
+            }).then(data => {
+                if(data.length === 0){
+                    swal('Atención', 'No hay material disponible para agregar como deductiva.', 'warning');
+                }else{
+                    this.items = data;
+                    $(this.$refs.modalAgregar).modal('show');
+                }               
+            })
+            .finally(()=>{
+                this.cargando = false;
+            })
+        },
+        resetVals(){
+            this.items = [];
+            this.id_material = '';
+            this.cantidad = '';
+            this.cantidad_maxima = '';
+            this.precio_unitario = '';
+            this.$validator.reset();
+        },
+        setValores(){
+            this.items.map(item => {
+                if (this.id_material === item.id_material) {
+                    this.cantidad = item.cantidad_disponible;
+                    this.cantidad_maxima = item.cantidad_disponible;
+                    this.precio_unitario = item.precio;
+                }
+            });
+        },
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
                     this.store();
                 }
             });
+        },
+    },
+    watch: {
+        id_material(value){
+            if(value != ''){
+                this.setValores();
+            }
         },
     }
 

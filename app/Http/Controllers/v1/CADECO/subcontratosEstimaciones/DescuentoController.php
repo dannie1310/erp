@@ -60,8 +60,18 @@ class DescuentoController extends Controller
         return $this->respondWithCollection($lista);
     }
 
+    public function listItems(Request $request, $id){
+        $lista = $this->service->listItems($id, $request->all());
+        return response()->json($lista, 200);
+    }
+
     public function updateList(Request $request){
         $respuesta = $this->service->updateList($request->all());
+        return $this->respondWithCollection($respuesta);
+    }
+    
+    public function storeItem(Request $request){
+        $respuesta = $this->service->storeItem($request->all());
         return $this->respondWithCollection($respuesta);
     }
 }

@@ -2,7 +2,7 @@
      <span>
        <div class="d-flex flex-row-reverse">
             <div class="p-2">
-                <DeductivaEdit v-bind:id="id"></DeductivaEdit>
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.empresa.id_empresa:''"></DeductivaEdit>
             </div>
         </div>
         <div class="row">  
