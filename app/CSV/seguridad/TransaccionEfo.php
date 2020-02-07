@@ -34,7 +34,7 @@ class TransaccionEfo implements FromCollection, WithHeadings
                 'obra' => $transaccion->obra,
                 'razon_social' => $transaccion->razon_social,
                 'rfc' => $transaccion->rfc,
-                'tipo_transaccion' => $transaccion->tipo_transaccion,
+                'tipo_transaccion' => $this->limpiaCadena($transaccion->tipo_transaccion),
                 'folio_transaccion' => '#' . $transaccion->folio_transaccion,
                 'comentario' => $transaccion->comentario,
                 'usuario' => $transaccion->usuario ? $transaccion->usuario->nombre_completo : '',
@@ -79,5 +79,11 @@ class TransaccionEfo implements FromCollection, WithHeadings
             'Monto MXP',
             'Grado de Alerta'
         ]);
+    }
+
+    private function limpiaCadena($string)
+    {
+        $string = preg_replace("/[^0-9a-zA-Z\s]+/", "", $string);
+        return strtoupper($string);
     }
 }
