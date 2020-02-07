@@ -595,6 +595,7 @@ $api->version('v1', function ($api) {
         // DATOS ESTIMACIONES
         $api->group(['prefix' => 'estimacion'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@index');
         });
 
         /**
@@ -822,6 +823,7 @@ $api->version('v1', function ($api) {
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');
+            $api->get('descarga-csv', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@descargarCSV');
         });
 
 
