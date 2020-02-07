@@ -103,7 +103,7 @@ class DistribucionRecursoRemesa extends Model
     }
 
     public function scopePendientes($query){
-        return $query->has('partidasPendientes', '>', 0)->whereHas('remesaLiberada');
+        return $query->has('partidasPendientes', '>', 0);
     }
 
     public function remesaValidaEstado(){

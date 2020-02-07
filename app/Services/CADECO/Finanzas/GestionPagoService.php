@@ -523,7 +523,10 @@ class GestionPagoService
                 $val = false;
                 foreach($dist_partidas as $dist_partida){
                     $documento = $dist_partida->documento->documentoProcesado->where('IDProceso', '=', 4)->first();
+                    $index = array_keys($doctos_repetidos, $documento->IDDocumento);                   
+                    if(count($index) > 0) continue;
                     if(($documento->MontoAutorizadoPrimerEnvio + $documento->MontoAutorizadoSegundoEnvio) == $pago['monto']){
+                        $doctos_repetidos[] = $documento->IDDocumento;
                         $registros_bitacora[] = $this->bitacoraPago($dist_partida->documento, $pago);
                         $val = true;
                         break;

@@ -25,7 +25,8 @@ class IncidenciaTransformer extends TransformerAbstract
             'obra' => (string) $model->obra,
             'base_datos' => (string) $model->base_datos,
             'tipo_incidencia' => $model->id_tipo_incidencia,
-            'usuario' => $model->id_usuario
+            'usuario' => $model->id_usuario,
+            'fecha_hora' => date('d/m/Y H:i', strtotime($model->fecha_hora_registro))
         ];
     }
 
