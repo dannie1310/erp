@@ -21,7 +21,7 @@
                             <form role="form" @submit.prevent="validate">
                             <div class="modal-body" style="height:550px;">
                                 <div class="col-12">
-                                    <DeductivaCreate @created="updateDescuento" v-bind:id="id"></DeductivaCreate>
+                                    <DeductivaCreate @created="updateDescuento" v-bind:id="id" v-bind:id_empresa="id_empresa"></DeductivaCreate>
                                 </div>
                                 <div class="col-12 table-responsive" v-if="descuentos.length > 0">
                                     <table class="table table-striped  table-fixed-suc fixed">
@@ -88,9 +88,9 @@
 <script>
 import DeductivaCreate from './Create';
 export default {
-    name: "deductiva-index",
+    name: "deductiva-edit",
     components: {DeductivaCreate},
-    props: ['id'],
+    props: ['id', 'id_empresa'],
     data() {
         return {
             descuentos:[],
@@ -124,7 +124,7 @@ export default {
             })
         },
         updateDescuento(data){
-            this.descuentos.unshift(data);
+            this.descuentos = data.data;
         },
         updateLista(){
             return this.$store.dispatch('subcontratosEstimaciones/descuento/updateList', this.descuentos)

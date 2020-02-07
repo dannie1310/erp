@@ -45,7 +45,7 @@ class DescuentoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:registrar_descuento_estimacion_subcontrato')->only(['store']);
+        $this->middleware('permiso:registrar_descuento_estimacion_subcontrato')->only(['storeItem']);
         $this->middleware('permiso:editar_descuento_estimacion_subcontrato')->only(['updateList']);
         // $this->middleware('permiso:consultar_banco')->only(['paginate','index','show']);
         // $this->middleware('permiso:editar_banco')->only(['update']);
@@ -60,8 +60,18 @@ class DescuentoController extends Controller
         return $this->respondWithCollection($lista);
     }
 
+    public function listItems(Request $request, $id){
+        $lista = $this->service->listItems($id, $request->all());
+        return response()->json($lista, 200);
+    }
+
     public function updateList(Request $request){
         $respuesta = $this->service->updateList($request->all());
+        return $this->respondWithCollection($respuesta);
+    }
+    
+    public function storeItem(Request $request){
+        $respuesta = $this->service->storeItem($request->all());
         return $this->respondWithCollection($respuesta);
     }
 }
