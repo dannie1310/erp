@@ -60,7 +60,7 @@ class EstimacionTransformer extends TransformerAbstract
             'suma_importes' => $model->suma_importes_format,
             'anticipo' => $model->anticipo,
             'monto_anticipo_aplicado' => $model->monto_anticipo_aplicado,
-            'retencion' => $model->retencion,
+            'retencion' => $model->subcontrato->retencion,
             'retencion_fondo_garantia' => $model->retencion_fondo_garantia_orden_pago_format,
             'total_retenciones' => $model->retenciones->sum('importe'),
             'retencion_iva' => $model->IVARetenido ? $model->IVARetenido : 0,
