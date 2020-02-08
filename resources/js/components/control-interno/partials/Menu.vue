@@ -26,7 +26,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_efos',true)">
+            <li class="nav-item" v-if="$root.can('consultar_efos',true) || $root.can('consultar_transacciones_efos',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-circle"></i>
                     <p>
@@ -42,8 +42,16 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_transacciones_efos',true)">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'transaccion-efos'}" class="nav-link" :class="{active: this.$route.name == 'transaccion-efos'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Transacciones con EFOS</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_efos',true)">
+            <li class="nav-item"  v-if="$root.can('consultar_incidencias',true)">
                 <router-link :to="{name: 'incidencia'}" class="nav-link">
                     <i class="fa fa-circle nav-icon"></i>
                     <p>Incidencias</p>

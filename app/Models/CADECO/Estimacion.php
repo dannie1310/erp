@@ -183,6 +183,7 @@ class Estimacion extends Transaccion
                         'importe' => $this->importeRetencionFondoGarantia()
                     ]
                 );
+                $this->retencion_fondo_garantia->generaMovimientoRegistro();
             }
         }else{
             throw New \Exception('La estimación no tiene establecido un porcentaje de retención de fondo de garantía, la retención no puede generarse');
@@ -269,24 +270,22 @@ class Estimacion extends Transaccion
 
     public function getRetenidoAnteriorAttribute()
     {
-        $estimaciones_anteriores = $this->subcontrato->estimaciones()->where('id_transaccion', '<', $this->id_transaccion)->get();
+        $estimaciones_anteriores = $this->subcontrato->estimaciones()
+            ->where('fecha', '<=', $this->fecha)
+            ->where('estado', '>=', 1)
+            ->where("id_transaccion",'<>',$this->id_transaccion)
+            ->get();
 
         $sumatoria = 0;
         foreach ($estimaciones_anteriores as $estimacion) {
-            $sumatoria += $estimacion->SumMontoRetencion;
+            $sumatoria += $estimacion->retencion_fondo_garantia_orden_pago;
         }
         return $sumatoria;
     }
 
     public function getRetenidoOrigenAttribute()
     {
-        $estimaciones_anteriores = $this->subcontrato->estimaciones()->where('id_transaccion', '<', $this->id_transaccion)->get();
-
-        $sumatoria = 0;
-        foreach ($estimaciones_anteriores as $estimacion) {
-            $sumatoria += $estimacion->SumMontoRetencion;
-        }
-        return $sumatoria + $this->SumMontoRetencion;
+        return $this->retenido_anterior + $this->retencion_fondo_garantia_orden_pago;
     }
 
     public function getConfiguracionAttribute()
@@ -342,7 +341,6 @@ class Estimacion extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->respaldar($motivo);
-            $this->eliminarImportesRetencion();
             $this->partidas()->delete();
             $this->delete();
             DB::connection('cadeco')->commit();

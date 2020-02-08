@@ -166,6 +166,25 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'transaccion-efo',
+                component: require('./components/control-interno/finanzas/transaccion-efo/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'transaccion-efos',
+                        component: require('./components/control-interno/finanzas/transaccion-efo/Index').default,
+                        meta: {
+                            title: 'Consulta de transacciones relacionadas con EFOS',
+                            breadcrumb: {parent: 'control-finanzas', name: 'TRANSACCIONES CON EFOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_transacciones_efos',
+                            general: true,
+
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
@@ -182,7 +201,9 @@ export const routes = [
                 meta: {
                     title: 'Incidencias',
                     breadcrumb: {parent: 'control-interno', name: 'INCIDENCIAS'},
-                    middleware: [auth]
+                    middleware: [auth],
+                    permission: 'consultar_incidencias',
+                    general: true,
 
                 }
             },
@@ -396,6 +417,23 @@ export const routes = [
                     breadcrumb: {parent:'home', name: 'CATÁLOGOS'},
                     middleware: [auth, context, access]
                 }
+            },
+            {
+                path: 'unidad',
+                component: require('./components/catalogos/unidad/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'unidad',
+                        component: require('./components/catalogos/unidad/Index').default,
+                        meta: {
+                            title: 'Catálogo de Unidades',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE UNIDAD'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_unidad']
+                        }
+                    },
+                ]
             },
             {
                 path: 'empresa',

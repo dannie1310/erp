@@ -169,6 +169,8 @@ $api->version('v1', function ($api) {
         $api->group(['prefix'=>'unidad'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\UnidadController@index');
             $api->post('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\UnidadController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\UnidadController@store');
         });
 
     });
@@ -595,6 +597,7 @@ $api->version('v1', function ($api) {
         // DATOS ESTIMACIONES
         $api->group(['prefix' => 'estimacion'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@index');
         });
 
         /**
@@ -820,6 +823,12 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@paginate');
             $api->post('rfc', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@rfc');
         });
+        $api->group(['prefix' => 'transaccion-efo'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');
+            $api->get('descarga-csv', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@descargarCSV');
+        });
+
+
         $api->group(['prefix' => 'incidencia'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ControlInterno\IncidenciaController@paginate');
         });
