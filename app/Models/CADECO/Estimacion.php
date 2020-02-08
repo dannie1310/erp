@@ -207,7 +207,10 @@ class Estimacion extends Transaccion
         $this->save();
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_aprobar_transaccion] {$this->id_transaccion}");
-
+        if($this->subcontrato->retencion && $this->subcontrato->retencion > 0)
+        {
+            $this->generaRetencion();
+        }
         return $this;
     }
 

@@ -238,7 +238,6 @@ class EstimacionService
         try {
             DB::connection('cadeco')->beginTransaction();
             $estimacion->aprobar();
-            $estimacion->generaRetencion();
             DB::connection('cadeco')->commit();
             $estimacion->refresh();
             return $estimacion;
