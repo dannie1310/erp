@@ -183,6 +183,7 @@ class Estimacion extends Transaccion
                         'importe' => $this->importeRetencionFondoGarantia()
                     ]
                 );
+                $this->retencion_fondo_garantia->generaMovimientoRegistro();
             }
         }else{
             throw New \Exception('La estimación no tiene establecido un porcentaje de retención de fondo de garantía, la retención no puede generarse');
@@ -340,7 +341,6 @@ class Estimacion extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->respaldar($motivo);
-            $this->eliminarImportesRetencion();
             $this->partidas()->delete();
             $this->delete();
             DB::connection('cadeco')->commit();
