@@ -38,9 +38,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 ->where('id_material', '=', $id_material)->first();
     }
 
-    public function getDescuento($id_transaccion, $id_material){
-        return $this->model->where('id_transaccion', '=', $id_transaccion)
-                ->where('id_material', '=', $id_material)->first();
+    public function getDescuento($estimaciones, $id_material){
+        return $this->model->whereIn('id_transaccion',  $estimaciones)
+                ->where('id_material', '=', $id_material)->sum('cantidad');
     }
 
     

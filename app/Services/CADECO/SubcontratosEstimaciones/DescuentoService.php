@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\SubcontratosEstimaciones;
 
 
+use App\Models\CADECO\Estimacion;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SalidaAlmacenPartida;
 use App\Models\CADECO\Compras\ItemContratista;
@@ -43,6 +44,8 @@ class DescuentoService
 
     public function listItems($id, $data)
     { 
+        $estimaciones = Estimacion::where('id_empresa', '=', $id )->pluck('id_transaccion');
+        
         $itemsContratista = ItemContratista::where('id_empresa', '=', $id)->where('con_cargo', '=', 1)->pluck('id_item');
         
         $salidas = SalidaAlmacenPartida::itemContratista()->with('material')->whereIn('id_item', $itemsContratista)
@@ -53,8 +56,8 @@ class DescuentoService
         $lista = array();
         foreach($salidas as $salida){
             $disponible = $salida->cantidad;
-            if($descuento = $this->repository->getDescuento($data['id_estimacion'], $salida->id_material)){
-                $disponible -= $descuento->cantidad;
+            if($descuento = $this->repository->getDescuento($estimaciones, $salida->id_material)){
+                $disponible -= $descuento;
             }
             if($disponible > 0){
                 $lista[] = [
@@ -63,7 +66,7 @@ class DescuentoService
                     'cantidad' => number_format($salida->cantidad, 2, '.', ''),
                     'cantidad_disponible' => number_format($disponible, 2, '.', ''),
                     'precio' => number_format($salida->precio_unitario, 2, '.', ''),
-                    'cantidad_descontada' => $descuento?$descuento->cantidad:0,
+                    'cantidad_descontada' => $descuento?$descuento:0,
                 ];
             }
         }

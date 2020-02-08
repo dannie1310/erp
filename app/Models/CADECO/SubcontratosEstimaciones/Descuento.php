@@ -51,6 +51,8 @@ class Descuento extends Model
 
     public function validar_cantidad($descuento){
         $estimacion_empresa = $this->estimacion->id_empresa;
+        $estimaciones = Estimacion::where('id_empresa', '=', $estimacion_empresa )->whereNotIn('id_transaccion', [$this->id_transaccion])->pluck('id_transaccion');
+        $cant_descontada = $this->where('id_material', '=', $descuento['id_material'])->whereIn('id_transaccion', $estimaciones)->sum('cantidad');
         $itemsContratista = ItemContratista::where('id_empresa', '=', $estimacion_empresa)->where('con_cargo', '=', 1)->pluck('id_item');
         
         $salidas = SalidaAlmacenPartida::itemContratista()->with('material')->whereIn('id_item', $itemsContratista)->where('id_material', '=', $descuento['id_material'])
@@ -58,7 +60,10 @@ class Descuento extends Model
         ->groupBy('id_material')
         ->first();
 
-        if($descuento['cantidad'] > $salidas->cantidad) abort(403, 'La cantidad '.number_format($descuento['cantidad'], 2, '.', ',').' a descontar del material '.$this->material->descripcion.' es mayor a la permitida: '.number_format($salidas->cantidad, 2, '.', ',').'');
+        if($descuento['cantidad'] > ($salidas->cantidad - $cant_descontada)) 
+            abort(403, 'La cantidad '.number_format($descuento['cantidad'], 2, '.', ',').' a descontar del material '.
+                        $this->material->descripcion.' es mayor a la permitida para esta estimación: '.
+                        number_format(($salidas->cantidad - $cant_descontada), 2, '.', ',').'');
 
     }
 }
