@@ -66,11 +66,11 @@
               <tbody>
                 <tr>
                   <th>Contratista:</th>
-                  <th class="text-center" scope="row">{{ estimacion.empresa.razon_social }}</th>
+                  <th class="text-center" scope="row">{{ estimacion.razon_social }}</th>
                 </tr>
                 <tr>
                   <th>No. de Contrato:</th>
-                  <th class="text-center" scope="row">{{ estimacion.subcontrato.referencia }}</th>
+                  <th class="text-center" scope="row">{{ estimacion.referencia }}</th>
                 </tr>
               </tbody>
             </table>
@@ -142,41 +142,35 @@
                     <tr v-else>
                       <td>{{ identacionItem(index.length/4) }} {{ item.concepto }}</td>
                       <td class="text-center">{{ item.unidad }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.precioUnitario).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.cantidadContrato).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.importeContrato).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.cantidadEstimadoAnterior).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.importeEstimadoAnterior).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.cantidadEstimacion).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.importeEstimacion).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.cantidadAcumulado).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.importeAcumulado).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.cantidadPorEstimar).formatMoney(4,'.',',') }}</td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(item.importePorEstimar).formatMoney(4,'.',',') }}</td>
+                      <td class="text-right">{{ item.precioUnitario}}</td>
+                      <td class="text-right">{{ item.cantidadContrato}}</td>
+                      <td class="text-right">{{ item.importeContrato}}</td>
+                      <td class="text-right">{{ item.cantidadEstimadoAnterior}}</td>
+                      <td class="text-right">{{ item.importeEstimadoAnterior}}</td>
+                      <td class="text-right">{{ item.cantidadEstimacion}}</td>
+                      <td class="text-right">{{ item.importeEstimacion}}</td>
+                      <td class="text-right">{{ item.cantidadAcumulado}}</td>
+                      <td class="text-right">{{ item.importeAcumulado}}</td>
+                      <td class="text-right">{{ item.cantidadPorEstimar}}</td>
+                      <td class="text-right">{{ item.importePorEstimar}}</td>
                     </tr>
                   </template>
+                  <!--Sumas totales de la s partidas-->
+                  <tr class="bg-dark">
+                    <th class="text-right">Subtotales Obra Ejecutada</th>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-right">{{estimacion.suma_contrato }}</td>
+                      <td></td>
+                      <td class="text-right">{{ estimacion.suma_estimadoAnterior }}</td>
+                      <td></td>
+                      <td class="text-right">{{ estimacion.suma_estimacion }}</td>
+                      <td></td>
+                      <td class="text-right">{{ estimacion.suma_acumulado }}</td>
+                      <td> </td>
+                      <td class="text-right">{{ estimacion.suma_porEstimar }}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -186,43 +180,11 @@
     </div>
   </span>
 </template>
-<!--Sumas totales de la s partidas-->
-
-<tr class="bg-dark">
-<th class="text-right">Subtotales Obra Ejecutada</th>
-<td></td>
-<td></td>
-<td></td>
-<td class="text-right">{{estimacion.suma_contrato }}</td>
-<td></td>
-<td class="text-right"> {{ estimacion.suma_estimadoAnterior }}</td>
-<td></td>
-<td class="text-right"> {{ estimacion.suma_estimacion }}</td>
-<td></td>
-<td class="text-right"> {{ estimacion.suma_acumulado }}</td>
-<td> </td>
-<td class="text-right">{{ estimacion.suma_porEstimar }}</td>
-</tr>
-
-
-</tbody>
-</table>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-</span>
-</template>
-
 
 <script>
 export default {
   name: "estimacion-show",
-  props: ["id"],
+  // props: ["id"],
   data() {
     return {
       logo: "",

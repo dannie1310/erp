@@ -131,7 +131,7 @@ class EstimacionService
         $items=array();
         $nivel_ancestros = '';
         foreach ($partidas as $partida ){
-            /// Primera mejora
+            
             $nivel = substr($partida->nivel,0,strlen($partida->nivel)-4);
             if($nivel != $nivel_ancestros){
                 $nivel_ancestros = $nivel;
@@ -140,7 +140,7 @@ class EstimacionService
 
                 }
             }
-            //////
+            
             
            if($item = $partida->getEstimacionPartidaAttribute($id)) {
                $precioUnitario = $item->precio_unitario;
@@ -151,17 +151,17 @@ class EstimacionService
                $items[$item->contrato->nivel] = Array(
                    'concepto' => $item->contrato->descripcion,
                    'unidad' => $item->contrato->unidad,
-                   'precioUnitario' =>  number_format($precioUnitario,4),
-                   'cantidadContrato' => number_format($cantidadContrato,4) ,
-                   'importeContrato' => number_format($cantidadContrato * $precioUnitario,4),
-                   'cantidadEstimadoAnterior' => number_format($cantidadEstimadoAnterior,4),
-                   'importeEstimadoAnterior' => number_format($cantidadEstimadoAnterior * $precioUnitario,4),
-                   'cantidadEstimacion' => number_format($item->cantidad,4),
-                   'importeEstimacion' => number_format(($cantidadEstimacion * $precioUnitario),4),
-                   'cantidadAcumulado' => number_format(($cantidadEstimadoAnterior + $cantidadEstimacion),4),
-                   'importeAcumulado' => number_format(($cantidadEstimadoAnterior + $cantidadEstimacion) * $precioUnitario,4),
-                   'cantidadPorEstimar' => number_format($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion),4),
-                   'importePorEstimar' => number_format(($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion)) * $precioUnitario,4),
+                   'precioUnitario' =>  '$ ' . number_format($precioUnitario,2,'.',','),
+                   'cantidadContrato' => number_format($cantidadContrato,2,'.',',') ,
+                   'importeContrato' => '$ ' . number_format($cantidadContrato * $precioUnitario,2,'.',','),
+                   'cantidadEstimadoAnterior' => number_format($cantidadEstimadoAnterior,2,'.',','),
+                   'importeEstimadoAnterior' => '$ ' . number_format($cantidadEstimadoAnterior * $precioUnitario,2,'.',','),
+                   'cantidadEstimacion' => number_format($item->cantidad,2,'.',','),
+                   'importeEstimacion' => '$ ' . number_format(($cantidadEstimacion * $precioUnitario),2,'.',','),
+                   'cantidadAcumulado' => number_format(($cantidadEstimadoAnterior + $cantidadEstimacion),2,'.',','),
+                   'importeAcumulado' => '$ ' . number_format(($cantidadEstimadoAnterior + $cantidadEstimacion) * $precioUnitario,2,'.',','),
+                   'cantidadPorEstimar' => number_format($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion),2,'.',','),
+                   'importePorEstimar' => '$ ' . number_format(($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion)) * $precioUnitario,2,'.',','),
                );
 
                /*Totales */
@@ -180,17 +180,17 @@ class EstimacionService
                     'id_concepto' => $partida->contrato->id_concepto,
                     'concepto' => $partida->contrato->descripcion,
                     'unidad' => $partida->contrato->unidad,
-                    'precioUnitario' => number_format($precioUnitario,4),
-                    'cantidadContrato' => number_format($cantidadContrato,4),
-                    'importeContrato' => number_format($cantidadContrato * $precioUnitario,4),
-                    'cantidadEstimadoAnterior' => number_format($cantidadEstimadoAnterior,4),
-                    'importeEstimadoAnterior' => number_format($cantidadEstimadoAnterior * $precioUnitario,4),
-                    'cantidadEstimacion' => number_format(0,4),
-                    'importeEstimacion' => number_format(0,4),
-                    'cantidadAcumulado' => number_format(($cantidadEstimadoAnterior),4),
-                    'importeAcumulado' => number_format(($cantidadEstimadoAnterior ) * $precioUnitario,4),
-                    'cantidadPorEstimar' => number_format($cantidadContrato - ($cantidadEstimadoAnterior),4),
-                    'importePorEstimar' => number_format(($cantidadContrato - ($cantidadEstimadoAnterior)) * $precioUnitario,4),
+                    'precioUnitario' => '$ ' . number_format($precioUnitario,2,'.',','),
+                    'cantidadContrato' => number_format($cantidadContrato,2,'.',','),
+                    'importeContrato' => '$ ' . number_format($cantidadContrato * $precioUnitario,2,'.',','),
+                    'cantidadEstimadoAnterior' => number_format($cantidadEstimadoAnterior,2,'.',','),
+                    'importeEstimadoAnterior' => '$ ' . number_format($cantidadEstimadoAnterior * $precioUnitario,2,'.',','),
+                    'cantidadEstimacion' => number_format(0,2,'.',','),
+                    'importeEstimacion' => '$ ' . number_format(0,2,'.',','),
+                    'cantidadAcumulado' => number_format(($cantidadEstimadoAnterior),2,'.',','),
+                    'importeAcumulado' => '$ ' . number_format(($cantidadEstimadoAnterior ) * $precioUnitario,2,'.',','),
+                    'cantidadPorEstimar' => number_format($cantidadContrato - ($cantidadEstimadoAnterior),2,'.',','),
+                    'importePorEstimar' => '$ ' . number_format(($cantidadContrato - ($cantidadEstimadoAnterior)) * $precioUnitario,2,'.',','),
                 );
                 $suma_contrato += $cantidadContrato * $precioUnitario;
                 $suma_estimadoAnterior += $cantidadEstimadoAnterior * $precioUnitario;
@@ -200,8 +200,6 @@ class EstimacionService
         }
         
         $est = new EstimacionTransformer;
-        $emp = new EmpresaTransformer;
-        $sub = new SubcontratoTransformer;
         $mon = new MonedaTransformer;
         $result=array(
             'fecha_inicial'=>Carbon::parse($estimacion->cumplimiento)->format('d-m-Y'),
@@ -209,15 +207,15 @@ class EstimacionService
             'fecha'=>Carbon::parse($estimacion->fecha)->format('d-m-Y'),
             'estimacion'=> $est->transform($estimacion),
             'numEstimacion'=>$numEstimacion,
-            'empresa' => $emp->transform($estimacion->empresa),
-            'subcontrato' =>$sub->transform($estimacion->subcontrato),
+            'razon_social' => $estimacion->empresa->razon_social,
+            'referencia' => $estimacion->subcontrato->referencia,
             'moneda' =>$mon->transform($estimacion->moneda),
             'items'=>$items,
-            'suma_contrato'=>number_format($suma_contrato,4),
-            'suma_estimadoAnterior'=> number_format($suma_estimadoAnterior,4),
-            'suma_estimacion'=>number_format($suma_estimacion,4),
-            'suma_acumulado'=>number_format($suma_acumulado,4),
-            'suma_porEstimar'=>number_format($suma_porEstimar,4),
+            'suma_contrato'=>'$ ' . number_format($suma_contrato,2,'.',','),
+            'suma_estimadoAnterior'=> '$ ' . number_format($suma_estimadoAnterior,2,'.',','),
+            'suma_estimacion'=>'$ ' . number_format($suma_estimacion,2,'.',','),
+            'suma_acumulado'=>'$ ' . number_format($suma_acumulado,2,'.',','),
+            'suma_porEstimar'=>'$ ' . number_format($suma_porEstimar,2,'.',','),
         );
         return $result;
     }
