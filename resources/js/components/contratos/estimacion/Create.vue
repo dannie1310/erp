@@ -180,7 +180,7 @@
 						<td style="display: none" class="numerico avance-volumen">{{ concepto.EsActividad == '1' ? parseFloat(concepto.PctAvance).formatMoney(2) : '' }}</td>
 						<td style="display: none" class="numerico avance-importe"></td>
 						<td style="display: none" class="numerico avance-importe">{{ concepto.EsActividad == '1' ? parseFloat(concepto.MontoEstimadoTotal).formatMoney(2) : '' }}</td>
-						<td style="display: none" class="numerico saldo">{{ concepto.EsActividad == '1' ? concepto.CantidadSaldo : '' }}</td>
+						<td style="display: none" class="numerico saldo">{{ concepto.EsActividad == '1' ? parseFloat(concepto.CantidadSaldo).formatMoney(2) : '' }}</td>
 						<td style="display: none" class="numerico saldo">{{ concepto.EsActividad == '1' ? parseFloat(concepto.MontoSaldo).formatMoney(2) : '' }}</td>
 						<td class="editable-cell numerico">
 							<input v-on:change="changeCantidad(concepto)" class="text" v-if="concepto.EsActividad == '1'" v-model="concepto.CantidadEstimada"
