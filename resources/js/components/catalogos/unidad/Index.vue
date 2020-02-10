@@ -35,7 +35,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {sort: 'FechaHoraRegistro', order: 'desc'},
                 search: '',
                 cargando: false
             }
