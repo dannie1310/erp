@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Luis M. Valencia
- * Date: 06/08/2019
- * Time: 12:00 PM
- */
-
 
 namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Unidad;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Unidad\Repository;
 use Illuminate\Support\Facades\DB;
 
 class UnidadService
@@ -39,8 +32,7 @@ class UnidadService
     }
     public function show($id)
     {
-        dd('id', $id);
-        return $this->repository->show($id);
+        return $this->repository->buscar($id);
     }
 
     public function paginate($data)
@@ -62,4 +54,14 @@ class UnidadService
         return $this->repository->create($datos);
     }
 
+    public function update($data, $id)
+    {    
+        $this->show($id)->actualizarUnidad($data['params']);
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminarUnidad();
+
+    }
 }

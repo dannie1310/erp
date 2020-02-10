@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: Luis M. Valencia
- * Date: 06/08/2019
- * Time: 12:02 PM
- */
 
 
 namespace App\Http\Transformers\CADECO;

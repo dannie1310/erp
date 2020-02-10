@@ -84,12 +84,15 @@
                     this.dato.descripcion = '';
                 $(this.$refs.modal).modal('show');
             },
-            store() {
-                console.log(this.cargando, this.dato);
-                
+            store() {                
                 return this.$store.dispatch('cadeco/unidad/store', this.$data.dato)
                     .then(data => {
-                        this.$emit('created', data);
+                        
+                        this.$store.dispatch('cadeco/unidad/paginate', {params: {sort: 'fecha_hora_registro', order: 'desc'}})
+                       .then(data => {
+                           this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
+                           this.$store.commit('cadeco/unidad/SET_META', data.meta);
+                       })
                         $(this.$refs.modal).modal('hide');
                     }).finally( ()=>{
                         this.cargando = false;

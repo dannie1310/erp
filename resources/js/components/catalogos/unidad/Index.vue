@@ -86,6 +86,7 @@
                         buttons: $.extend({}, {
                                 unidad: unidad,
                                 borrar: true,
+                                editar: true
                             })
                         }));
                 },

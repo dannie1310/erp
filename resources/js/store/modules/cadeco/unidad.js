@@ -36,7 +36,7 @@ export default {
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id, { params: payload.params })
+                    .get(URI + payload.id + '/unidad', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -44,6 +44,45 @@ export default {
                     .catch(error => {
                         reject(error);
                     })
+            });
+        },
+        delete(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Unidad",
+                    text: "¿Está seguro/a de que desea eliminar unidad?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Unidad eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
             });
         },
         store(context, payload) {
@@ -74,12 +113,52 @@ export default {
                                         timer: 2000,
                                         buttons: false
                                     }).then(() => {
+                                        
                                         resolve(data);
                                     })
                                 })
                                 .catch(error => {
                                     reject(error);
                                 });
+                        }
+                    });
+            });
+        },
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Actualizar Unidad",
+                    text: "¿Deseas actualizar la unidad?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/update', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Unidad actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {                                            
+                                            resolve(payload.params);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
                         }
                     });
             });
