@@ -84,11 +84,12 @@
                     this.dato.descripcion = '';
                 $(this.$refs.modal).modal('show');
             },
-            store() {
-                console.log(this.cargando, this.dato);
-                
+            store() {                
                 return this.$store.dispatch('cadeco/unidad/store', this.$data.dato)
                     .then(data => {
+                        console.log(data);
+                        
+                        
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');
                     }).finally( ()=>{
