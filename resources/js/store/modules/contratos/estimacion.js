@@ -38,7 +38,6 @@ export default {
 
             state.estimaciones.forEach(estimacion => {
                 if(estimacion.id == id) {
-                    console.log('encontrata')
                     estimacion.estado = 0;
                 }
             })

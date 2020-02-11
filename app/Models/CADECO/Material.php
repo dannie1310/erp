@@ -48,7 +48,7 @@ class Material extends Model
     {
         switch ($this->tipo_material){
             case(1):
-                return 'Materiales';
+                return 'Material';
                 break;
             case(2):
                 if($this->marca ==0){
@@ -187,9 +187,10 @@ class Material extends Model
 
     public function validarExistente()
     {
-        if($this->where('numero_parte','=', $this->numero_parte)->get()->toArray() != [])
+        $articulo = $this->where('numero_parte','=', $this->numero_parte)->first();
+        if($articulo)
         {
-            throw New \Exception('El articulo con el número de parte:"'.$this->numero_parte.'" ya existe.');
+            throw New \Exception('El número de parte:"'.$this->numero_parte.'" esta asociado al artículo: '.$articulo->descripcion.'.');
         }
     }
 

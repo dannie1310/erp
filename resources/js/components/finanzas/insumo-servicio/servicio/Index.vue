@@ -30,14 +30,14 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                     { title: 'Familia', field: 'tipo_material',sortable: true},
-                    { title: 'Número de Parte', field: 'numero_parte',sortable: true,  thComp: require('../../../globals/th-Filter')},
-                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Unidad', field: 'unidad', thClass: 'th_unidad', tdClass: 'td_unidad', sortable: true},
+                    { title: 'Número de Parte', field: 'numero_parte',sortable: true,  thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Unidad', field: 'unidad', thClass: 'th_unidad', tdClass: 'td_unidad', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:['tipo:2','insumos'], sort: 'id_material', order: 'desc'},
+                query: {scope:['tipo:2','insumos'], sort: 'descripcion', order: 'asc'},
                 estado: "",
                 cargando: false
             }
