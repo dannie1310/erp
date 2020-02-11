@@ -76,22 +76,11 @@
                                             <div class="invalid-feedback" v-show="errors.has('nu_parte')">{{ errors.first('nu_parte') }}</div>
                                         </div>
                                         <label for="unidad" class="col-sm-1 col-form-label">Unidad: </label>
+                                        
                                         <div class="col-sm-2">
-                                            <select
-                                                :disabled="!dato.tipo"
-                                                type="text"
-                                                name="unidad"
-                                                data-vv-as="Unidad"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="unidad"
-                                                v-model="dato.unidad"
-                                                :class="{'is-invalid': errors.has('unidad')}"
-                                            >
-                                                    <option value>--Unidad--</option>
-                                                    <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
-                                            </select>
-                                            <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
+
+                                            <input disabled="disabled" class="form-control" value="JORNAL" />
+
                                         </div>
                                     </div>
 
@@ -123,7 +112,7 @@
                 familias_moys: [],
                 dato: {
                     tipo: '',
-                    unidad:'',
+                    unidad:'JOR',
                     descripcion: '',
                     nu_parte:'',
                     tipo_material:2,
@@ -141,7 +130,6 @@
             init() {
                 this.cargando = false;
                 this.dato.tipo = null;
-                this.dato.unidad = '';
                 this.dato.descripcion = '';
                 this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
