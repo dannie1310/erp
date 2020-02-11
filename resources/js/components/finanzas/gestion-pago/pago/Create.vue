@@ -97,7 +97,7 @@
                                                         <tbody>
                                                             <tr v-for="(pago, i) in bitacora">
                                                                 <td>{{i+1}}</td>
-                                                                <td>{{pago.concepto.substr(0,30)}}</td>
+                                                                <td>{{pago.concepto}}</td>
                                                                 <td>{{pago.beneficiario}}</td>
                                                                 <td class="text-right">{{pago.monto_format}}</td>
                                                                 <td>{{pago.cuenta_cargo.numero}} ({{pago.cuenta_cargo.abreviatura}})</td>

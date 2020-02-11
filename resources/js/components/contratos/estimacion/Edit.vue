@@ -104,10 +104,10 @@
 <script>
 
 
-
+import DeductivaEdit from './deductivas/Edit'
     export default {
         name: "estimacion-edit",
-        props: ['id'],
+        components: {DeductivaEdit},
         data() {
             return {
                 cargando: true,

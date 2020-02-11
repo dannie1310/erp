@@ -834,6 +834,16 @@ $api->version('v1', function ($api) {
         });
     });
 
+    /** SUBCONTRATOS ESTIMACIONES */
+    $api->group(['middleware' => 'api', 'prefix' => 'subcontratos-estimaciones'], function ($api){
+        $api->group(['prefix'=>'descuento'], function ($api){
+            $api->get('{id}/list', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@list');
+            $api->get('{id}/listItems', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@listItems')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@storeItem');
+            $api->post('updateList', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@updateList');
+        });
+    });
+
     /** Ventas */
     $api->group(['middleware' => 'api', 'prefix' => 'ventas'], function ($api){
 
