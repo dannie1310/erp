@@ -34,7 +34,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'tipo:2',  sort: 'id_material', order: 'desc'},
+                query: {scope:'tipo:2',  sort: 'descripcion', order: 'asc'},
                 estado: "",
                 cargando: false
             }
