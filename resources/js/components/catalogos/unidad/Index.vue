@@ -3,7 +3,7 @@
         <div class="col-12">
             <create @created="paginate()"></create>
         </div>
-        <div class="col-md-3 offset-4 centered">
+        <div class="col-md-5 offset-3 centered">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -29,11 +29,13 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_icono', sortable: false },
                     { title: 'Unidad', field: 'unidad', thClass: 'td_unidad',  sortable: true },
-                    { title: 'Descripción', field: 'descripcion', thClass: 'td_unidad', thComp: require('../../globals/th-Filter').default, sortable: true }
+                    { title: 'Descripción', field: 'descripcion', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Acciones', field: 'buttons', thClass: 'td_unidad', tdComp: require('./partials/ActionButtons').default}
+
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {sort: 'descripcion', order: 'asc'},
                 search: '',
                 cargando: false
             }
@@ -80,7 +82,12 @@
                     self.$data.data = unidades.map((unidad, i) => ({
                         index: (i + 1) + self.query.offset,
                         unidad: unidad.unidad,
-                        descripcion: unidad.descripcion
+                        descripcion: unidad.descripcion,
+                        buttons: $.extend({}, {
+                                unidad: unidad,
+                                borrar: true,
+                                editar: true
+                            })
                         }));
                 },
                 deep: true

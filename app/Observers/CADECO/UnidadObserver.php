@@ -18,4 +18,5 @@ class UnidadObserver
          $unidad->descripcion = strtoupper($unidad->descripcion);
          $unidad->IdUsuario = auth()->id();
      }
+
 }
