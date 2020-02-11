@@ -527,6 +527,20 @@ export const routes = [
                             permission: ['consultar_insumo_servicio']
                         }
                     },
+                    {
+                        path: 'mano-obra',
+                        name: 'cat-mano-obra',
+                        component: require('./components/finanzas/insumo-servicio/mano-obra/Index').default,
+                        meta: {
+                            title: 'Mano de Obra',
+                            breadcrumb: {
+                                parent: 'insumo-servicio',
+                                name: 'MANO DE OBRA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_mano_obra']
+                        }
+                    },
                 ]
             },
             {
