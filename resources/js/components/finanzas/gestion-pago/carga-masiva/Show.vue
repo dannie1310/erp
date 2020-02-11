@@ -95,7 +95,9 @@
                                 <td >{{doc.moneda.nombre}}</td>
                                 <td style="text-align:right">{{doc.monto_transaccion_format}}</td>
                                 <td style="text-align:right">{{doc.saldo_format}}</td>
-                                <td v-if="doc.factura.empresa.efos" v-html="doc.factura.empresa.efos.alert_icon"></td>
+                                <td v-if="doc.factura" >
+                                    <span v-if="doc.factura.empresa.efos" v-html="doc.factura.empresa.efos.alert_icon"></span>
+                                </td>
                                 <td v-else></td>
                                 <td>{{doc.beneficiario}}</td>
                                 <td>{{doc.cuenta_cargo}}</td>
