@@ -37,7 +37,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope:['tipo:4', 'insumos'], sort: 'id_material', order: 'desc'},
+                query: {scope:['tipo:4', 'insumos'], sort: 'descripcion', order: 'asc'},
                 estado: "",
                 cargando: false
             }
