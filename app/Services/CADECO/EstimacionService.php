@@ -253,8 +253,10 @@ class EstimacionService
         try {
             DB::connection('cadeco')->beginTransaction();
             $estimacion->revertirAprobacion();
+            $estimacion->cancelarRetencion();
             DB::connection('cadeco')->commit();
             $estimacion->refresh();
+
             return $estimacion;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
