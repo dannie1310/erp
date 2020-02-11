@@ -160,6 +160,10 @@ class Material extends Model
         return $query->where('tipo_material','=',2)->where('equivalencia', '=', 1)->where('marca', '=', 1);
     }
 
+    public function scopeManoObra($query){
+        return $query->where('tipo_material','=',2)->where('equivalencia', '=', 1)->where('marca', '=', 0);
+    }
+
     public function scopeHerramientas($query){
         return $query->where('tipo_material','=',4);
     }
