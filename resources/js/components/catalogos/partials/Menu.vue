@@ -9,7 +9,7 @@
             <li class="nav-item" v-if="$root.can('consultar_unidad')">
                 <router-link :to="{name: 'unidad'}" class="nav-link">
                             <i class="fas fa-ruler-combined nav-icon"></i>
-                            <p>Catalogo de Unidades</p>
+                            <p>Catálogo de Unidades</p>
                         </router-link>
             </li>
             
