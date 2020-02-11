@@ -75,7 +75,7 @@ class GestionPagoService
             'aplicacion_manual' => $aplicacion_manual,
             'estado' => $data->partidaVigente->estatus,
             'pagable' => $data->partidaVigente->pagable,
-            'concepto' => $data->Concepto?substr($data->Concepto, 0,30):'',
+            'concepto' => $data->Concepto?utf8_encode(substr($data->Concepto, 0,30)):'',
             'beneficiario' => $data->Destinatario,
             'monto_format' => '$ ' . number_format($pago['monto'], 2),
             'monto' => $pago['monto'],
@@ -208,7 +208,7 @@ class GestionPagoService
                                     "saldo" => -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute()),
                                     "referencia" => $pago['referencia'],
                                     "destino" => $partida_remesa->documento->Destinatario,
-                                    "observaciones" => $partida_remesa->documento->Observaciones,
+                                    "observaciones" => utf8_encode($partida_remesa->documento->Observaciones),
                                     "tipo_cambio" => $partida_remesa->documento->moneda->tipo_cambio
                                 );
                                 $pago_remesa = PagoACuentaPorAplicar::query()->create($data);
@@ -343,7 +343,7 @@ class GestionPagoService
                             "saldo" => -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute()),
                             "referencia" => $pago['referencia'],
                             "destino" => $partida_remesa->documento->Destinatario,
-                            "observaciones" => $partida_remesa->documento->Observaciones,
+                            "observaciones" => utf8_encode($partida_remesa->documento->Observaciones),
                             "tipo_cambio" => $partida_remesa->documento->moneda->tipo_cambio
                         );
                         $pago_remesa = PagoACuentaPorAplicar::query()->create($data);
