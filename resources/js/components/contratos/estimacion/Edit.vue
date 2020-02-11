@@ -3,6 +3,10 @@
        <div class="d-flex flex-row-reverse">
             <div class="p-2">
                 <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.empresa.id_empresa:''"></DeductivaEdit>
+                
+            </div>
+            <div class="p-2">
+                <RetencionCreate v-bind:id="id"></RetencionCreate>
             </div>
         </div>
         <div class="row">  
@@ -189,9 +193,10 @@
 
 
 import DeductivaEdit from './deductivas/Edit'
+import RetencionCreate from './retenciones/Create';
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit},
+        components: {DeductivaEdit, RetencionCreate},
         // props: ['id'],
         data() {
             return {
