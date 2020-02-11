@@ -117,9 +117,9 @@ class Subcontrato extends Transaccion
 
     public function partidasOrdenadas()
     {
-        return $this->partidas()->join('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
+        return $this->partidas()->leftJoin('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
             ->where('items.id_transaccion', '=', $this->id_transaccion)
-            ->orderBy('contratos.nivel', 'asc')->select('items.*');
+            ->orderBy('contratos.nivel', 'asc')->select('items.*', 'contratos.nivel', 'contratos.descripcion');
     }
 
     public function getSubtotalAttribute()

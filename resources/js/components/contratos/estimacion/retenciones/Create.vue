@@ -68,9 +68,21 @@ export default {
                 })
             
         },
+        getRetencionesTipo(){
+            this.cargando = true;
+             return this.$store.dispatch('subcontratosEstimaciones/retencion-tipo/index',{
+                params:{}})
+                .then(data => {
+                    this.$store.commit('subcontratosEstimaciones/retencion-tipo/SET_TIPOS', data.data);
+                })
+                .finally(() => {
+                    this.cargando = false;
+                })
+        },
         init(){
             this.getRetenciones();
             this.getLiberaciones();
+            this.getRetencionesTipo();
             $(this.$refs.modalRetenciones).modal('show');
         },
     },
@@ -80,6 +92,9 @@ export default {
         },
         liberaciones() {
             return this.$store.getters['subcontratosEstimaciones/retencion-liberacion/liberaciones']
+        },
+        tipos() {
+            return this.$store.getters['subcontratosEstimaciones/retencion-tipo/tipos']
         },
     }
 

@@ -9,16 +9,18 @@
 namespace App\Services\CADECO;
 
 
+use Carbon\Carbon;
 use App\Facades\Context;
-use App\Models\CADECO\Contrato;
-use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Item;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\Contrato;
+use App\Repositories\Repository;
+use App\Models\CADECO\Estimacion;
+use Illuminate\Support\Facades\DB;
 use App\PDF\Contratos\EstimacionFormato;
 use App\PDF\Contratos\OrdenPagoEstimacion;
-use App\Repositories\Repository;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use App\Http\Transformers\CADECO\ContratoTransformer;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 
 class EstimacionService
 {
@@ -127,7 +129,7 @@ class EstimacionService
         $items=array();
 
         foreach ($partidas as $partida ){
-
+            dd($partidas->toArray());
 
             foreach($partida->ancestros as $ancestro){
                 $items[$ancestro[1]]=$ancestro[0];
@@ -195,6 +197,7 @@ class EstimacionService
 
 
 
+      $cont_transf = new SubcontratoTransformer;
         $result=array(
             'fecha_inicial'=>Carbon::parse($estimacion->cumplimiento)->format('d-m-Y'),
             'fecha_final'=>Carbon::parse($estimacion->vencimiento)->format('d-m-Y'),
@@ -202,7 +205,7 @@ class EstimacionService
             'estimacion'=>$estimacion->toArray(),
             'numEstimacion'=>$numEstimacion,
             'empresa' => $estimacion->empresa->toArray(),
-            'subcontrato' =>$estimacion->subcontrato->toArray(),
+            'subcontrato' => $cont_transf->transform($estimacion->subcontrato),
             'moneda' =>$estimacion->moneda->toArray(),
             'items'=>$items,
             'suma_contrato'=>number_format($suma_contrato,4),

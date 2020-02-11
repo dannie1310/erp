@@ -856,6 +856,10 @@ $api->version('v1', function ($api) {
             $api->get('{id}/listLiberaciones', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionLiberacionController@list');
         });
 
+        $api->group(['prefix'=>'retencion-tipo'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionTipoController@index');
+        });
+
     });
 
     /** Ventas */
