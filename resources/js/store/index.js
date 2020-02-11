@@ -247,7 +247,7 @@ export default new Vuex.Store({
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/retencion': retencion,
-        'subcontratosEstimaciones/retencionLiberacion': retencionLiberacion,
+        'subcontratosEstimaciones/retencion-liberacion': retencionLiberacion,
 
         'ventas/venta': venta,
     },

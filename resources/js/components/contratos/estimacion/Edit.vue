@@ -1,13 +1,14 @@
 <template>
      <span>
        <div class="d-flex flex-row-reverse">
+           <div class="p-2">
+                <RetencionCreate v-bind:id="id"></RetencionCreate>
+            </div>
             <div class="p-2">
                 <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.empresa.id_empresa:''"></DeductivaEdit>
                 
             </div>
-            <div class="p-2">
-                <RetencionCreate v-bind:id="id"></RetencionCreate>
-            </div>
+            
         </div>
         <div class="row">  
             <div class="col-12 mb-5" v-if="!cargando">

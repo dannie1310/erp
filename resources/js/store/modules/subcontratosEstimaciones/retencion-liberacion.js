@@ -33,17 +33,17 @@ export default{
                 })
             });
         },
-        paginate(context, payload) {
+        listLiberaciones(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'paginate', { params: payload.params })
+                    .get(URI + payload.id + '/listLiberaciones', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
                     })
                     .catch(error => {
                         reject(error);
-                    })
+                    });
             });
         },
         store(context, payload) {

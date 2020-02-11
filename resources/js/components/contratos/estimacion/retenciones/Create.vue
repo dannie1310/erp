@@ -14,13 +14,11 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <!-- <form role="form" @submit.prevent="validate"> -->
                             <div class="modal-body">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @click="cerrar()">Cerrar</button>
                             </div>
-                            <!-- </form> -->
                         </div>
                     </div>
                 </div>
@@ -45,12 +43,43 @@ export default {
         cerrar(){
             $(this.$refs.modalRetenciones).modal('hide');
         },
+        getLiberaciones(){
+            this.cargando = true;
+             return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/listLiberaciones',{
+                id: this.id,
+                params:{}})
+                .then(data => {
+                    this.$store.commit('subcontratosEstimaciones/retencion-liberacion/SET_LIBERACIONES', data.data);
+                })
+                .finally(() => {
+                    this.cargando = false;
+                })
+        },
         getRetenciones(){
+            this.cargando = true;
+             return this.$store.dispatch('subcontratosEstimaciones/retencion/listRetenciones',{
+                id: this.id,
+                params:{}})
+                .then(data => {
+                    this.$store.commit('subcontratosEstimaciones/retencion/SET_RETENCIONES', data.data);
+                })
+                .finally(() => {
+                    this.cargando = false;
+                })
             
         },
         init(){
             this.getRetenciones();
+            this.getLiberaciones();
             $(this.$refs.modalRetenciones).modal('show');
+        },
+    },
+    computed: {
+        retenciones() {
+            return this.$store.getters['subcontratosEstimaciones/retencion/retenciones']
+        },
+        liberaciones() {
+            return this.$store.getters['subcontratosEstimaciones/retencion-liberacion/liberaciones']
         },
     }
 
