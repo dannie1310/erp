@@ -612,7 +612,7 @@ class Estimacion extends Transaccion
                     'id_fondo_garantia' => $this->id_antecedente,
                     'id_tipo_movimiento' => 3,
                     'id_movimiento_retencion' => $movimiento_retencion->id,
-                    'observaciones' => 'Eliminación de la estimación ' . $this->numero_folio_format,
+                    'observaciones' => 'Eliminación de retención en la estimación ' . $this->numero_folio_format,
                     'importe' => $this->retencion_fondo_garantia->importe
                 ]
             );
