@@ -29,8 +29,8 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                    { title: 'Familia', field: 'tipo_material',sortable: true},
-                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Tipo', field: 'tipo_material',sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
