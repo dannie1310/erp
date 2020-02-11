@@ -105,7 +105,6 @@ class Subcontrato extends Transaccion
             if ($this->retencion > 0) {
                 $fondo_garantia = new FondoGarantia();
                 $fondo_garantia->id_subcontrato = $this->id_transaccion;
-                $fondo_garantia->usuario_registra = $this->usuario_registra;
                 $fondo_garantia->save();
                 $this->refresh();
             } else {

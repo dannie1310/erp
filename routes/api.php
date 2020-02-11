@@ -597,6 +597,7 @@ $api->version('v1', function ($api) {
         // DATOS ESTIMACIONES
         $api->group(['prefix' => 'estimacion'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@index');
         });
 
         /**
@@ -822,8 +823,25 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@paginate');
             $api->post('rfc', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@rfc');
         });
+        $api->group(['prefix' => 'transaccion-efo'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');
+            $api->get('descarga-csv', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@descargarCSV');
+        });
 
 
+        $api->group(['prefix' => 'incidencia'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ControlInterno\IncidenciaController@paginate');
+        });
+    });
+
+    /** SUBCONTRATOS ESTIMACIONES */
+    $api->group(['middleware' => 'api', 'prefix' => 'subcontratos-estimaciones'], function ($api){
+        $api->group(['prefix'=>'descuento'], function ($api){
+            $api->get('{id}/list', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@list');
+            $api->get('{id}/listItems', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@listItems')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@storeItem');
+            $api->post('updateList', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@updateList');
+        });
     });
 
     /** Ventas */

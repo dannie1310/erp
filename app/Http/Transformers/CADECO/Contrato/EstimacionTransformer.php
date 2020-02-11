@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\Finanzas\ConfiguracionEstimacionTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\ItemTransformer;
 use App\Http\Transformers\CADECO\SubcontratosEstimaciones\SubcontratoEstimacionTrasnformer;
@@ -55,7 +56,21 @@ class EstimacionTransformer extends TransformerAbstract
             'fecha_inicial'=> $model->cumplimiento_format,
             'fecha_final' => $model->vencimiento_format,
             'subtotal' => $model->subtotal,
-            'subtotal_format' => $model->subtotal_format
+            'subtotal_format' => $model->subtotal_format,
+            'suma_importes' => $model->suma_importes_format,
+            'anticipo' => $model->anticipo,
+            'monto_anticipo_aplicado' => $model->monto_anticipo_aplicado,
+            'retencion' => $model->subcontrato->retencion,
+            'retencion_fondo_garantia' => $model->retencion_fondo_garantia_orden_pago_format,
+            'total_retenciones' => $model->retenciones->sum('importe'),
+            'retencion_iva' => $model->IVARetenido ? $model->IVARetenido : 0,
+            'total_retencion_liberadas' => $model->liberaciones->sum('importe'),
+            'total_deductivas' => $model->descuentos->sum('importe'),
+            'subtotal_orden_pago' => $model->subtotal_orden_pago_format,
+            'iva_orden_pago' => $model->iva_orden_pago_format,
+            'total_orden_pago' => $model->total_orden_pago_format,
+            'total_anticipo_liberar' => $model->anticipo_a_liberar_format,
+            'monto_pagar' => $model->monto_a_pagar
         ];
     }
 

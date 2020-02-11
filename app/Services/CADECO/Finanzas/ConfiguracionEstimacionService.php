@@ -26,4 +26,8 @@ class ConfiguracionEstimacionService
         return $this->repository->create($data['data']);
     }
 
+    public function index()
+    {
+        return  $this->repository->all();
+    }
 }
