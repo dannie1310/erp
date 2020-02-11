@@ -18,6 +18,7 @@ class CuentaCostoObserver
      */
     public function creating(CuentaCosto $cuentaCosto)
     {
+        $cuentaCosto->sinCuenta();
         $cuentaCosto->registro = auth()->id();
         $cuentaCosto->estatus = 1;
     }
