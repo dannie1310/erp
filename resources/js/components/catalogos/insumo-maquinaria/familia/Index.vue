@@ -28,13 +28,13 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: '#', field: 'index', thClass: 'th_index', sortable: false },
+                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'tipo:8',  sort: 'id_material', order: 'desc'},
+                query: {scope:'tipo:8',  sort: 'descripcion', order: 'asc'},
                 estado: "",
                 cargando: false
             }
