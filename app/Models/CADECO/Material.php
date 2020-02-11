@@ -198,6 +198,14 @@ class Material extends Model
         }
     }
 
+    public function validarUnidad()
+    {
+         if(!$this->belongsTo(Unidad::class, 'unidad', 'unidad'))
+         {
+            throw New \Exception('La unidad "'.$this->unidad.'" no esta dada de alta en el Catálogo Unidades');
+         }
+    }
+
     public function nivelConsecutivo()
     {
         $this->nivel = str_replace ( ".", "", $this->nivel);
