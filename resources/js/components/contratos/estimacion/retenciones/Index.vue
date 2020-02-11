@@ -1,0 +1,160 @@
+<template>
+    <span>
+        <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can('registrar_descuento_estimacion_subcontrato') || true" >
+             Retenciones
+        </button>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="modal fade" ref="modalRetenciones" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle"> Retenciones</h5>
+                                <button type="button" class="close" @click="cerrar()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="col-md-12 mt-2 text-left" >
+                                    <label class="text-secondary ">Aplicadas </label>
+                                    <AplicadasCreate v-bind:id="id"></AplicadasCreate>
+                                    <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
+                                </div>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:25%;">Tipo</th>
+                                            <th style="width:20%;">Importe</th>
+                                            <th style="width:45%;">Concepto</th>
+                                            <th style="width:10%;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody v-if="retenciones">
+                                        <tr v-for="(retencion,i) in retenciones">
+                                            <td>{{retencion.tipo_retencion}}</td>
+                                            <td class="text-right">{{retencion.importe_format}}</td>
+                                            <td>{{retencion.concepto}}</td>
+                                            <td class="icono">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" v-if="$root.can('eliminar_retencion_estimacion_subcontrato')">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="col-md-12" >
+                                       <hr style="color: #0056b2; margin-top:auto;" width="100%" size="20" />
+                                </div>
+                                <div class="col-md-12 mt-2 text-left" >
+                                    <label class="text-secondary ">Liberadas </label>
+                                    <button type="button" @click="nuevaLiberacion()" class="btn btn-primary float-right" v-if="$root.can('registrar_descuento_estimacion_subcontrato') || true" >
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
+                                </div>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:20%;">Importe</th>
+                                            <th style="width:70%;">Concepto</th>
+                                            <th style="width:10%;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody v-if="retenciones">
+                                        <tr v-for="(liberacion,i) in liberaciones">
+                                            <td class="text-right">{{liberacion.importe_format}}</td>
+                                            <td>{{liberacion.concepto}}</td>
+                                            <td class="icono">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" v-if="$root.can('eliminar_sucursal_proveedor')">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" @click="cerrar()">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </span>
+</template>
+
+<script>
+import AplicadasCreate from './Aplicadas';
+export default {
+    name: "retencion-index",
+    components: {AplicadasCreate},
+    props: ['id'],
+    data() {
+        return {
+            cargando:false,
+        }
+    },
+    mounted() {
+    },
+    methods: {
+        cerrar(){
+            $(this.$refs.modalRetenciones).modal('hide');
+        },
+        getLiberaciones(){
+            this.cargando = true;
+             return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/listLiberaciones',{
+                id: this.id,
+                params:{}})
+                .then(data => {
+                    this.$store.commit('subcontratosEstimaciones/retencion-liberacion/SET_LIBERACIONES', data.data);
+                })
+                .finally(() => {
+                    this.cargando = false;
+                })
+        },
+        getRetenciones(){
+            this.cargando = true;
+             return this.$store.dispatch('subcontratosEstimaciones/retencion/listRetenciones',{
+                id: this.id,
+                params:{}})
+                .then(data => {
+                    this.$store.commit('subcontratosEstimaciones/retencion/SET_RETENCIONES', data.data);
+                })
+                .finally(() => {
+                    this.cargando = false;
+                })
+            
+        },
+        
+        init(){
+            this.getRetenciones();
+            this.getLiberaciones();
+            $(this.$refs.modalRetenciones).modal('show');
+        },
+        nuevaRetencion(){
+            console.log('retencion');
+        },
+        nuevaLiberacion(){
+            console.log('retencion');
+        },
+    },
+    computed: {
+        retenciones() {
+            return this.$store.getters['subcontratosEstimaciones/retencion/retenciones']
+        },
+        liberaciones() {
+            return this.$store.getters['subcontratosEstimaciones/retencion-liberacion/liberaciones']
+        },
+        tipos() {
+            return this.$store.getters['subcontratosEstimaciones/retencion-tipo/tipos']
+        },
+    }
+
+}
+</script>
+
+<style>
+
+</style>

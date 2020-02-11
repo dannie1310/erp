@@ -129,7 +129,7 @@ class EstimacionService
         $items=array();
 
         foreach ($partidas as $partida ){
-            dd($partidas->toArray());
+            // dd($partidas->toArray());
 
             foreach($partida->ancestros as $ancestro){
                 $items[$ancestro[1]]=$ancestro[0];
