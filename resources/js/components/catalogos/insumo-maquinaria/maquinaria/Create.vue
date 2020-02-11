@@ -21,16 +21,16 @@
                                     <div class="form-group row error-content">
                                         <label for="tipo" class="col-sm-2 col-form-label">Familia: </label>
                                         <div class="col-sm-10">
-                                            <FamiliaSelect
-                                                :scope="'tipo:8'"
-                                                name="tipo"
-                                                id="tipo"
-                                                data-vv-as="Servicio"
-                                                v-validate="{required: true}"
-                                                v-model="dato.tipo"
-                                                :class="{'is-invalid': errors.has('tipo')}">
-
-                                            </FamiliaSelect>
+                                            <model-list-select
+                                                    :disabled="cargando"
+                                                    name="tipo"
+                                                    v-model="dato.tipo"
+                                                    option-value="nivel"
+                                                    option-text="descripcion"
+                                                    :list="familias_maq"
+                                                    :placeholder="!cargando?'Seleccionar o buscar familia por descripcion':'Cargando...'"
+                                                    :isError="errors.has(`tipo`)">
+                                            </model-list-select>
                                             <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                         </div>
                                     </div>
@@ -77,21 +77,9 @@
                                         </div>
                                         <label for="unidad" class="col-sm-1 col-form-label">Unidad: </label>
                                         <div class="col-sm-2">
-                                            <select
-                                                :disabled="!dato.tipo"
-                                                type="text"
-                                                name="unidad"
-                                                data-vv-as="Unidad"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="unidad"
-                                                v-model="dato.unidad"
-                                                :class="{'is-invalid': errors.has('unidad')}"
-                                            >
-                                                    <option value>--Unidad--</option>
-                                                    <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
-                                            </select>
-                                            <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
+
+                                            <input disabled="disabled" class="form-control" value="HORA" />
+
                                         </div>
                                     </div>
 
@@ -112,17 +100,18 @@
 </template>
 
 <script>
-    import FamiliaSelect from "../../../cadeco/familia/Select";
+    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "material-create",
-        components: {FamiliaSelect},
+        components: {ModelListSelect},
         data() {
             return {
                 cargando:false,
                 unidades: [],
+                familias_maq: [],
                 dato: {
                     tipo: '',
-                    unidad:'',
+                    unidad:'HORA',
                     descripcion: '',
                     nu_parte:'',
                     tipo_material:8,
@@ -132,24 +121,24 @@
             }
         },
         mounted() {
-            this.getUnidades()
+            this.getFamiliasMAQ();
         },
 
         methods: {
             init() {
                 this.cargando = false;
                 this.dato.tipo = null;
-                this.dato.unidad = '';
                 this.dato.descripcion = '';
                 this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
             },
-            getUnidades() {
-                return this.$store.dispatch('cadeco/unidad/index', {
-                    params: {sort: 'unidad',  order: 'asc'}
+
+            getFamiliasMAQ(){
+                return this.$store.dispatch('cadeco/familia/index', {
+                    params: {sort: 'descripcion',  order: 'asc', scope:'tipo:8'}
                 })
                     .then(data => {
-                        this.unidades= data.data;
+                        this.familias_maq= data.data;
                     })
             },
             store() {
