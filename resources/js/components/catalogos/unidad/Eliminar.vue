@@ -51,7 +51,7 @@ export default {
                 params: {data: [this.$data.motivo]}
             })
             .then(() => {
-                this.$store.dispatch('cadeco/unidad/paginate', {params: {sort: 'unidad', order: 'asc'}})
+                this.$store.dispatch('cadeco/unidad/paginate', {params: {sort: 'FechaHoraRegistro', order: 'desc'}})
                 .then(data => {
                     this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
                     this.$store.commit('cadeco/unidad/SET_META', data.meta);

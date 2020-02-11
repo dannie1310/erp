@@ -55,7 +55,7 @@ class Unidad extends Model
     public function actualizarUnidad($data)
     {
         $this->validarUsoItems();
-        $this->where('unidad', '=', $this->unidad)->update(['unidad' => $data['unidad'], 'descripcion' => $data['descripcion']]);
+        $this->where('unidad', '=', $this->unidad)->update(['unidad' => strtoupper($data['unidad']), 'descripcion' => strtoupper($data['descripcion'])]);
         dd('');
     }
 }
