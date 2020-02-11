@@ -130,8 +130,9 @@
         methods: {
             find() {
                 this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
-                return this.$store.dispatch('contratos/estimacion/showEstimacionTable', {
+                return this.$store.dispatch('contratos/estimacion/find', {
                     id: this.id,
+                    params: { include: ['subcontrato.partidas.contrato_conceptos'] }
                 }).then(data => {
                     this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
                     this.cargando = false;

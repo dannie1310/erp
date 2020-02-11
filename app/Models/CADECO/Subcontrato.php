@@ -86,7 +86,7 @@ class Subcontrato extends Transaccion
 
     public function partidas()
     {
-        return $this->hasMany(SubcontratoPartida::class, 'id_transaccion');
+        return $this->hasMany(ItemSubcontrato::class, 'id_transaccion');
     }
 
     public function fondo_garantia()
