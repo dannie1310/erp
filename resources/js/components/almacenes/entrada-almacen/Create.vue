@@ -46,26 +46,21 @@
                                                 </div>
                                             </div>
                                          </div>
-                                         <div class="col-md-2">
+                                         <div class="col-md-6">
                                              <div class="form-group error-content">
                                             <label for="id_orden_compra"  class="col-form-label">Orden de Compra: </label>
                                             <div >
-                                                <select
+                                                <model-list-select
                                                         :disabled="!bandera"
-                                                        type="text"
                                                         name="id_orden_compra"
+                                                        placeholder="Seleccionar o buscar por número de folio o por razón social de proveedor"
                                                         data-vv-as="Orden de Compra"
-                                                        v-validate="{required: true}"
-                                                        class="form-control"
-                                                        id="id_orden_compra"
                                                         v-model="id_orden_compra"
-                                                        :class="{'is-invalid': errors.has('id_orden_compra')}"
+                                                        option-value="id"
+                                                        :custom-text="numeroFolioAndEmpresaSucursal"
+                                                        :list="ordenes_compra"
                                                 >
-                                                    <option value v-if="bandera">- Seleccione -</option>
-                                                    <option value v-if="!bandera">Cargando...</option>
-                                                    <option v-for="orden in ordenes_compra" :value="orden.id">{{ orden.numero_folio_format }} </option>
-                                                </select>
-                                                <div class="error-label" v-show="errors.has('id_orden_compra')">{{ errors.first('id_orden_compra') }}</div>
+                                                </model-list-select>
                                             </div>
                                         </div>
                                          </div>
@@ -339,6 +334,9 @@
                 this.id_concepto_temporal = '';
                 this.almacenes = [];
                 this.partidas = [];
+            },
+            numeroFolioAndEmpresaSucursal (item) {
+                return `[${item.numero_folio_format}] - [${item.empresa_sucursal}]`
             },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
