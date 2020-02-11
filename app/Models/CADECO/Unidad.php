@@ -40,22 +40,25 @@ class Unidad extends Model
     {
         if(Material::where('unidad', '=', $this->unidad)->first())
             {
-                abort(403, "\n\n No se puede eliminar y/o editar la unidad '".$this->unidad."'.\n  La unidad ya esta siendo usada en algunos materiales");
+                return true;
             }
+        return false;
     }
 
     public function eliminarUnidad()
     {
-        
-        $this->validarUsoItems();
+        if($this->validarUsoItems()){
+            abort(403, "\n\n No se puede eliminar la unidad '".$this->unidad."'.\n  La unidad ya esta siendo usada en algunos materiales");
+        }
         $this->where('unidad', '=', $this->unidad)->delete();        
         
     }
 
     public function actualizarUnidad($data)
     {
-        $this->validarUsoItems();
+        if($this->validarUsoItems()){
+            abort(403, "\n\n No se puede editar la unidad '".$this->unidad."'.\n  La unidad ya esta siendo usada en algunos materiales");
+        }
         $this->where('unidad', '=', $this->unidad)->update(['unidad' => strtoupper($data['unidad']), 'descripcion' => strtoupper($data['descripcion'])]);
-        dd('');
     }
 }
