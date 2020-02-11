@@ -127,7 +127,9 @@
                             <tr v-for="(doc, i) in distribucion.partidas.data">
                                 <td>{{i+1}}</td>
                                 <td>{{doc.documento.concepto}}</td>
-                                <td v-if="doc.documento.empresa.efos" v-html="doc.documento.empresa.efos.alert_icon"></td>
+                                <td v-if="doc.factura" >
+                                    <span v-if="doc.factura.empresa.efos" v-html="doc.factura.empresa.efos.alert_icon"></span>
+                                </td>
                                 <td v-else></td>
                                 <td>{{doc.documento.beneficiario}}</td>
                                <!-- <td class="text-right">{{doc.documento.monto_total_format}}</td>
