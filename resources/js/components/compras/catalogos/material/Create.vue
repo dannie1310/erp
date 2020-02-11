@@ -112,11 +112,10 @@
 </template>
 
 <script>
-    import FamiliaSelect from "../../../cadeco/familia/Select";
     import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "material-create",
-        components: {FamiliaSelect,ModelListSelect},
+        components: {ModelListSelect},
         data() {
                 return {
                     cargando:false,

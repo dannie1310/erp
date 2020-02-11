@@ -21,16 +21,16 @@
                                     <div class="form-group row error-content">
                                         <label for="tipo" class="col-sm-2 col-form-label">Material: </label>
                                         <div class="col-sm-10">
-                                            <FamiliaSelect
-                                                    :scope="'tipo:4'"
+                                            <model-list-select
+                                                    :disabled="cargando"
                                                     name="tipo"
-                                                    id="tipo"
-                                                    data-vv-as="Material"
-                                                    v-validate="{required: true}"
                                                     v-model="dato.tipo"
-                                                    :class="{'is-invalid': errors.has('tipo')}">
-
-                                            </FamiliaSelect>
+                                                    option-value="nivel"
+                                                    option-text="descripcion"
+                                                    :list="familias_hye"
+                                                    :placeholder="!cargando?'Seleccionar o buscar familia por descripcion':'Cargando...'"
+                                                    :isError="errors.has(`tipo`)">
+                                            </model-list-select>
                                             <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                         </div>
                                     </div>
@@ -112,14 +112,15 @@
 </template>
 
 <script>
-    import FamiliaSelect from "../../../cadeco/familia/Select";
+    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "herramienta-create",
-        components: {FamiliaSelect},
+        components: {ModelListSelect},
         data() {
                 return {
                     cargando:false,
                     unidades: [],
+                    familias_hye:[],
                     dato: {
                         tipo: '',
                         unidad:'',
@@ -132,7 +133,8 @@
                 }
         },
         mounted() {
-            this.getUnidades()
+            this.getUnidades();
+            this.getFamiliasHyE();
         },
         methods: {
             init() {
@@ -149,6 +151,14 @@
                 })
                     .then(data => {
                         this.unidades= data.data;
+                    })
+            },
+            getFamiliasHyE(){
+                return this.$store.dispatch('cadeco/familia/index', {
+                    params: {sort: 'descripcion',  order: 'asc', scope:'tipo:4'}
+                })
+                    .then(data => {
+                        this.familias_hye= data.data;
                     })
             },
             store() {
