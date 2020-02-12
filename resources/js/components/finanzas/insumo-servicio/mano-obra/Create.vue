@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_insumo_material')" class="btn btn-app btn-info float-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_insumo_mano_obra')" class="btn btn-app btn-info float-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar
@@ -9,7 +9,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> REGISTRAR MATERIAL</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> REGISTRAR MANO DE OBRA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -23,16 +23,15 @@
                                         <div class="col-sm-10">
                                             <model-list-select
                                                     :disabled="cargando"
-                                                    v-validate="{required: true}"
                                                     name="tipo"
                                                     v-model="dato.tipo"
+                                                    v-validate="{required: true}"
                                                     option-value="nivel"
                                                     option-text="descripcion"
-                                                    :list="familias_material"
+                                                    :list="familias_moys"
                                                     :placeholder="!cargando?'Seleccionar o buscar familia por descripcion':'Cargando...'"
                                                     >
                                             </model-list-select>
-                                            <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -77,22 +76,11 @@
                                             <div class="invalid-feedback" v-show="errors.has('nu_parte')">{{ errors.first('nu_parte') }}</div>
                                         </div>
                                         <label for="unidad" class="col-sm-1 col-form-label">Unidad: </label>
+                                        
                                         <div class="col-sm-2">
-                                            <select
-                                                :disabled="!dato.tipo"
-                                                type="text"
-                                                name="unidad"
-                                                data-vv-as="Unidad"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="unidad"
-                                                v-model="dato.unidad"
-                                                :class="{'is-invalid': errors.has('unidad')}"
-                                            >
-                                                    <option value>--Unidad--</option>
-                                                    <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
-                                            </select>
-                                            <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
+
+                                            <input disabled="disabled" class="form-control" value="JORNAL" />
+
                                         </div>
                                     </div>
 
@@ -115,35 +103,35 @@
 <script>
     import {ModelListSelect} from 'vue-search-select';
     export default {
-        name: "material-create",
+        name: "mano-obra-create",
         components: {ModelListSelect},
         data() {
-                return {
-                    cargando:false,
-                    unidades: [],
-                    familias_material:[],
-                    dato: {
-                        tipo: '',
-                        unidad:'',
-                        descripcion: '',
-                        nu_parte:'',
-                        tipo_material:1,
-                        equivalencia:0,
-                        marca:0
-                    }
+            return {
+                cargando:false,
+                unidades: [],
+                familias_moys: [],
+                dato: {
+                    tipo: '',
+                    unidad:'JOR',
+                    descripcion: '',
+                    nu_parte:'',
+                    tipo_material:2,
+                    equivalencia:1,
+                    marca:0
                 }
+            }
         },
         mounted() {
             this.getUnidades();
-            this.getFamiliasMaterial();
+            this.getFamiliasMOyS();
         },
+
         methods: {
             init() {
-                  this.cargando = false;
-                    this.dato.tipo = null;
-                    this.dato.unidad = '';
-                    this.dato.descripcion = '';
-                    this.dato.nu_parte = '';
+                this.cargando = false;
+                this.dato.tipo = null;
+                this.dato.descripcion = '';
+                this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
             },
             getUnidades() {
@@ -154,12 +142,12 @@
                         this.unidades= data.data;
                     })
             },
-            getFamiliasMaterial(){
+            getFamiliasMOyS(){
                 return this.$store.dispatch('cadeco/familia/index', {
-                    params: {sort: 'descripcion',  order: 'asc', scope:'tipo:1'}
+                    params: {sort: 'descripcion',  order: 'asc', scope:'tipo:2'}
                 })
                     .then(data => {
-                        this.familias_material= data.data;
+                        this.familias_moys= data.data;
                     })
             },
             store() {
@@ -171,13 +159,12 @@
                         this.cargando = false;
                         this.tipo = '';
                         this.descripcion = '';
-
                     });
             },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                            this.store()
+                        this.store()
                     }
                 });
             },

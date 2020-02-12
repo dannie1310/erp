@@ -22,7 +22,7 @@
 <script>
     import Create from "./Create";
     export default {
-        name: "servicio-index",
+        name: "mano-obra-index",
         components:{Create},
         data() {
             return {
@@ -37,7 +37,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope:['servicios','insumos'], sort: 'descripcion', order: 'asc'},
+                query: {scope:['manoObra','insumos'], sort: 'descripcion', order: 'asc'},
                 estado: "",
                 cargando: false
             }
