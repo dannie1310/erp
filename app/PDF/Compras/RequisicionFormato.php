@@ -11,6 +11,7 @@ namespace App\PDF\Compras;
 
 use App\Models\CADECO\Requisicion;
 use Ghidev\Fpdf\Rotation;
+use Illuminate\Support\Facades\App;
 
 class RequisicionFormato extends Rotation
 {
@@ -288,6 +289,13 @@ class RequisicionFormato extends Rotation
 
     public function Footer()
     {
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',80);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,20,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,26,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $this->SetTextColor('0,0,0');
 
         // Firmas.
