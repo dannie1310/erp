@@ -25,13 +25,13 @@
                                                     :disabled="cargando"
                                                     name="tipo"
                                                     v-model="dato.tipo"
+                                                    v-validate="{required: true}"
                                                     option-value="nivel"
                                                     option-text="descripcion"
                                                     :list="familias_moys"
                                                     :placeholder="!cargando?'Seleccionar o buscar familia por descripcion':'Cargando...'"
-                                                    :isError="errors.has(`tipo`)">
+                                                    >
                                             </model-list-select>
-                                            <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                         </div>
                                     </div>
                                 </div>

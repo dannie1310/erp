@@ -200,10 +200,11 @@ class Material extends Model
 
     public function validarUnidad()
     {
-         if(!$this->belongsTo(Unidad::class, 'unidad', 'unidad'))
-         {
-            throw New \Exception('La unidad "'.$this->unidad.'" no esta dada de alta en el Catálogo Unidades');
-         }
+        $unidad = Unidad::where("unidad",$this->unidad)->first();
+        if(!$unidad)
+        {
+            throw New \Exception('La unidad "'.$this->unidad.'" no está dada de alta en el catálogo de unidades, favor de ingresarla.');
+        }
     }
 
     public function nivelConsecutivo()
