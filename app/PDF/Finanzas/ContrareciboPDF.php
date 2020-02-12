@@ -10,10 +10,9 @@ namespace App\PDF\Finanzas;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CADECO\TipoTransaccion;
 use Ghidev\Fpdf\Rotation;
-use App\Models\CADECO\ContraRecibo ;
 use App\Models\CADECO\Factura ;
+use Illuminate\Support\Facades\App;
 
 class ContrareciboPDF extends Rotation
 {
@@ -106,6 +105,13 @@ class ContrareciboPDF extends Rotation
     }
 
     function Footer(){
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',80);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,20,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,26,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $this->firmas();
         $this->SetY(-3.8);
         $this->SetY(-1);

@@ -4,10 +4,9 @@
 namespace App\PDF\Almacenes;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use Ghidev\Fpdf\Rotation;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 
 class InventarioMarbete extends Rotation
 {
@@ -34,6 +33,13 @@ class InventarioMarbete extends Rotation
 
     function Header()
     {
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',80);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,20,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,26,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $this->setY(0.73);
         $this->e = 1.47;
     }
