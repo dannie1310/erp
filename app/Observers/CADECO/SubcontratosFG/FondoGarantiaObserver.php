@@ -37,7 +37,7 @@ class FondoGarantiaObserver
         }
 
         $fondoGarantia->created_at = date('Y-m-d h:i:s');
-        $fondoGarantia->usuario_registra = $subcontrato->usuario_registra;
+        $fondoGarantia->usuario_registra = auth()->id();
     }
 
     public function created(FondoGarantia $fondoGarantia)

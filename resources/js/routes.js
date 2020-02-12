@@ -166,6 +166,47 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'transaccion-efo',
+                component: require('./components/control-interno/finanzas/transaccion-efo/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'transaccion-efos',
+                        component: require('./components/control-interno/finanzas/transaccion-efo/Index').default,
+                        meta: {
+                            title: 'Consulta de transacciones relacionadas con EFOS',
+                            breadcrumb: {parent: 'control-finanzas', name: 'TRANSACCIONES CON EFOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_transacciones_efos',
+                            general: true,
+
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        path: '/control-interno/incidencias',
+        components: {
+            default: require('./components/control-interno/partials/Layout.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'incidencia',
+                component: require('./components/control-interno/incidencia/Index').default,
+                meta: {
+                    title: 'Incidencias',
+                    breadcrumb: {parent: 'control-interno', name: 'INCIDENCIAS'},
+                    middleware: [auth],
+                    permission: 'consultar_incidencias',
+                    general: true,
+
+                }
+            },
         ]
     },
     {
@@ -1077,6 +1118,18 @@ export const routes = [
                             title: 'Información de Estimación',
                             breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
                             middleware: [auth, context,],
+
+                        }
+                    },                    
+                    {
+                        path: ':id/editar',
+                        name: 'estimacion-edit',
+                        component: require('./components/contratos/estimacion/Edit').default,
+                        meta: {
+                            title: 'Editar Estimación',
+                            breadcrumb: {parent: 'estimacion', name: 'EDITAR ESTIMACIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_estimacion_subcontrato'
 
                         }
                     },

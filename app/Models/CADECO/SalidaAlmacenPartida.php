@@ -148,4 +148,8 @@ class SalidaAlmacenPartida extends Item
             return $this->almacen;
         }
     }
+
+    public function scopeItemContratista($query){
+        return $this->whereHas('contratista');
+    }
 }

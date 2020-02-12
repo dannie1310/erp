@@ -113,7 +113,12 @@ return [
         'layout_pagos_descarga' =>[
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_LAYOUT_PAGOS')),
+        ],
+        'control_interno' => [
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_CONTROL_INTERNO')),
         ]
+
     ],
 
 ];

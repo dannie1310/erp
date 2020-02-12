@@ -245,6 +245,18 @@ class RequisicionFormato extends Rotation
 //                $this->encola = "observaciones_partida";
                 $this->Row([html_entity_decode(mb_convert_encoding($p->complemento->observaciones, 'HTML-ENTITIES', 'UTF-8'))]);
             }
+            if(!empty($p->concepto))
+                {
+                    $nivel=$p->concepto['nivel'];
+             
+                    /*Concepto*/
+                    $this->SetTextColors(['0,0,0']);
+                    $this->SetRounds(['4','','','','','','','','3']);
+                    $this->SetRadius([0,0,0,0,0,0,0,0,0]);
+                    $this->SetWidths([19.5]);
+                    $this->SetAligns(['L']);
+                    $this->Row([utf8_decode($p->concepto->getAncestrosAttribute($nivel))]);
+                 }
 //            $this->dim = $this->GetY();
 
 

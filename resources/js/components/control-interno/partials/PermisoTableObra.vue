@@ -31,10 +31,10 @@
                     { title: 'Nombre de Usuario', field: 'nombre_completo', sortable: true, thComp: require('../../globals/th-Filter').default },
                     { title: 'Ubicación', field: 'ubicacion', sortable: true , thComp: require('../../globals/th-Filter').default},
                     { title: 'Departamento', field: 'departamento', sortable: true, thComp: require('../../globals/th-Filter').default },
-                    { title: 'Usuario Corporativo', field: 'factor_es_corporativo', sortable: true, tdComp: require('./CorporativoEstatus') },
+                    { title: 'Usuario Corporativo', field: 'factor_es_corporativo', sortable: true, tdComp: require('./CorporativoEstatus').default },
                     { title: 'Cantidad de Permisos', field: 'cantidad_permisos', sortable: true },
                     { title: 'Cantidad de Proyectos', field: 'cantidad_obras', sortable: true },
-                    { title: 'Estatus', field: 'factor_orden', sortable: true, tdComp: require('./SemaforoEstatus') }
+                    { title: 'Estatus', field: 'factor_orden', sortable: true, tdComp: require('./SemaforoEstatus').default }
                 ],
                 data: [],
                 total: 0,
