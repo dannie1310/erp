@@ -409,10 +409,15 @@ class FacturaService
 
     private function validaFolio($folio)
     {
-        $pos = strpos($folio, $this->arreglo_factura["folio"]);
-        if ($pos === false) {
+        if($this->arreglo_factura["serie"]!= null){
+            $pos = strpos($folio, $this->arreglo_factura["folio"]);
+            if ($pos === false) {
+                abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $this->arreglo_factura["folio"] . ")");
+            }
+        } else if ($folio != $this->arreglo_factura["folio"]) {
             abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $this->arreglo_factura["folio"] . ")");
         }
+
     }
 
     private function validaEFO()
