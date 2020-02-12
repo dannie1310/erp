@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can('registrar_descuento_estimacion_subcontrato') || true" >
+        <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" >
              Retenciones
         </button>
         <div class="row">
@@ -43,7 +43,9 @@
                                     </tbody>
                                 </table>
                                 <div class="col-md-12" >
-                                       <hr style="color: #0056b2; margin-top:auto;" width="100%" size="20" />
+                                    <br> 
+                                    <hr style="margin-top:auto;border: 1px solid grey;" width="100%" size="20" />
+                                    <br>       
                                 </div>
                                 <div class="col-md-12 mt-2 text-left" >
                                     <label class="text-secondary ">Liberadas </label>

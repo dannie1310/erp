@@ -46,7 +46,7 @@
                                                         id="concepto"
                                                         class="form-control"
                                                         v-model="concepto"
-                                                        v-validate="{required: true}"
+                                                        v-validate="{required: true, max:1024}"
                                                         data-vv-as="Concepto"
                                                         :class="{'is-invalid': errors.has('concepto')}"
                                                     ></textarea>
@@ -63,7 +63,7 @@
                                                         step="any"
                                                         name="importe"
                                                         data-vv-as="Importe"
-                                                        v-validate="{required: true, numeric:true}"
+                                                        v-validate="{required: true, decimal:4, min_value:0.01}"
                                                         class="form-control"
                                                         id="importe"
                                                         placeholder="Importe"

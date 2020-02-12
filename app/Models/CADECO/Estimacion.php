@@ -560,4 +560,30 @@ class Estimacion extends Transaccion
             }
         }
     }
+
+    public function registrarRetencion($importe){
+        $monto_actualizado = $this->monto - $importe - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
+        $impuesto_actualizado = $this->impuesto - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
+        if($monto_actualizado < 0) abort(403, 'No se puede registar una retención mayor al monto de la estimación.');
+        $this->monto = $monto_actualizado;
+        $this->impuesto = $impuesto_actualizado;
+        $this->save();
+    }
+
+    public function actualizarRetencion(){
+        $porcentaje_iva = $this->impuesto / ($this->monto-$this->impuesto);
+
+        $subtotal = $this->suma_importes - $this->retencion_fondo_garantia_orden_pago - $this->monto_anticipo_aplicado;
+        $impuesto = $subtotal * $porcentaje_iva;
+        $total =  $subtotal + $impuesto;
+
+        $this->monto = $total;
+        $this->impuesto = $impuesto;
+        $this->save();
+
+        foreach($this->retenciones as $retencion){
+            $this->registrarRetencion($retencion->importe);
+        }
+
+    }
 }

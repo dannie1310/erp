@@ -17,6 +17,18 @@ class LiberacionObserver {
      */
     public function creating(Liberacion $liberacion)
     {
+        $liberacion->validarEstadoEstimacion('registrada');
+        $liberacion->validarLiberacionImporte($liberacion->importe);
         $liberacion->usuario = auth()->user()->usuario;
+    }
+    
+    /**
+     * @param Liberacion $liberacion
+     * @throws \Exception
+     */
+    public function deleting(Liberacion $liberacion)
+    {
+        $liberacion->validarEstadoEstimacion('eliminada');
+        $liberacion->validarLiberacionImporte($liberacion->importe);
     }
 }
