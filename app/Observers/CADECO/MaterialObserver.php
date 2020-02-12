@@ -14,6 +14,7 @@ class MaterialObserver
      */
     public function creating(Material $material)
     {
+        $material->validarUnidad();
         $material->validarExistente();
         $material->nivel = $material->nivelConsecutivo();
         $material->unidad_compra = $material->unidad;

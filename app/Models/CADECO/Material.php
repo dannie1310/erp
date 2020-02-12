@@ -160,6 +160,10 @@ class Material extends Model
         return $query->where('tipo_material','=',2)->where('equivalencia', '=', 1)->where('marca', '=', 1);
     }
 
+    public function scopeManoObra($query){
+        return $query->where('tipo_material','=',2)->where('equivalencia', '=', 1)->where('marca', '=', 0);
+    }
+
     public function scopeHerramientas($query){
         return $query->where('tipo_material','=',4);
     }
@@ -191,6 +195,15 @@ class Material extends Model
         if($articulo)
         {
             throw New \Exception('El número de parte:"'.$this->numero_parte.'" esta asociado al artículo: '.$articulo->descripcion.'.');
+        }
+    }
+
+    public function validarUnidad()
+    {
+        $unidad = Unidad::where("unidad",$this->unidad)->first();
+        if(!$unidad)
+        {
+            throw New \Exception('La unidad "'.$this->unidad.'" no está dada de alta en el catálogo de unidades, favor de ingresarla.');
         }
     }
 
