@@ -109,6 +109,21 @@ export default {
                     })
             });
         },
+
+        ordenarConceptos (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id+'/ordenarConceptos', { params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
         showEstimacionTable (context, payload) {
             return new Promise((resolve, reject) => {
                 axios

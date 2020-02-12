@@ -40,4 +40,14 @@ class ItemSubcontrato extends Item
         return EstimacionPartida::query()->where('id_antecedente', '=',$this->id_transaccion)->where('item_antecedente', '=', $this->id_concepto)
             ->where('id_transaccion','=', $id)->first();
     }
+
+    public function getPrecioUnitarioFormatAttribute()
+    {
+        return '$ ' . number_format($this->precio_unitario,2,'.',',');
+    }
+
+    public function getCantidadFormatAttribute()
+    {
+        return '$ ' . number_format($this->cantidad,2,'.',',');
+    }
 }

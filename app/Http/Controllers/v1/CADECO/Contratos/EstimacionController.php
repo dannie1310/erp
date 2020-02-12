@@ -115,4 +115,9 @@ class EstimacionController extends Controller
     {
         return $this->traitDestroy($request, $id);
     }
+
+    public function ordenarConceptos($id)
+    {
+        return $this->service->ordenado($id);
+    }
 }

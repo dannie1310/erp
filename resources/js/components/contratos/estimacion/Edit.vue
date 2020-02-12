@@ -130,9 +130,9 @@ import DeductivaEdit from './deductivas/Edit'
         methods: {
             find() {
                 this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
-                return this.$store.dispatch('contratos/estimacion/find', {
+                return this.$store.dispatch('contratos/estimacion/ordenarConceptos', {
                     id: this.id,
-                    params: { include: ['subcontrato.partidas_ordenadas.contrato_conceptos'] }
+                    params: {}
                 }).then(data => {
                     this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
                     this.cargando = false;

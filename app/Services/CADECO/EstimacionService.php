@@ -9,6 +9,9 @@
 namespace App\Services\CADECO;
 
 
+use App\Http\Transformers\CADECO\Contrato\EstimacionPartidaTransformer;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoPartidaTransformer;
+use App\Models\CADECO\ItemSubcontrato;
 use Carbon\Carbon;
 use App\Facades\Context;
 use App\Models\CADECO\Item;
@@ -43,11 +46,6 @@ class EstimacionService
     public function index($data)
     {
         return $this->repository->all($data);
-    }
-
-    public function find($id)
-    {
-        return $this->repository->where('id_transaccion', '=', $id);
     }
 
     public function pdfOrdenPago($id)
@@ -131,7 +129,7 @@ class EstimacionService
         $items=array();
         $nivel_ancestros = '';
         foreach ($partidas as $partida ){
-            
+
             $nivel = substr($partida->nivel,0,strlen($partida->nivel)-4);
             if($nivel != $nivel_ancestros){
                 $nivel_ancestros = $nivel;
@@ -140,8 +138,8 @@ class EstimacionService
 
                 }
             }
-            
-            
+
+
            if($item = $partida->getEstimacionPartidaAttribute($id)) {
                $precioUnitario = $item->precio_unitario;
                $cantidadContrato = $partida->cantidad;
@@ -198,7 +196,7 @@ class EstimacionService
                 $suma_porEstimar += ($cantidadContrato - ($cantidadEstimadoAnterior)) * $precioUnitario;
             }
         }
-        
+
         $est = new EstimacionTransformer;
         $mon = new MonedaTransformer;
         $result=array(
@@ -277,5 +275,36 @@ class EstimacionService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar($data['data']);
+    }
+
+    public function ordenado($id)
+    {
+        return $this->ordenarConcepto($this->show($id));
+    }
+
+    private function ordenarConcepto($estimacion)
+    {
+        $partidas=$estimacion->subcontrato->partidasOrdenadas;
+        $items=array();
+        $nivel_ancestros = '';
+        $items_subcontrato = new SubcontratoPartidaTransformer();
+        $items_estimacion = new EstimacionPartidaTransformer();
+        foreach ($partidas as $key => $partida) {
+            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
+            if ($nivel != $nivel_ancestros) {
+                $nivel_ancestros = $nivel;
+                foreach ($partida->ancestros as $ancestro) {
+                    $items[$ancestro[1]] = $ancestro[0];
+                }
+            }
+            $partida_estimacion = $estimacion->partidas->where('item_antecedente', '=',$partida->id_concepto)->first();
+            $items[$partida->nivel] = [
+                $partida->descripcion,
+                'subcontrato' => $items_subcontrato->transform($partida),
+                'estimacion' => $partida_estimacion ? $items_estimacion->transform($partida_estimacion) : NULL,
+                'unidad' => $partida->contrato->unidad,
+            ];
+        }
+       return $items;
     }
 }
