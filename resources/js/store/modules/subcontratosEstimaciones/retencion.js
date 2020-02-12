@@ -18,8 +18,55 @@ export default{
         SET_RETENCION(state, data){
             state.currentRetencion = data
         },
+        INSERT_RETENCION(state, data){
+            state.retenciones = state.retenciones.concat(data);
+        },
+        DELETE_RETENCION(state, id) {
+            state.retenciones = state.retenciones.filter(retencion => {
+                return retencion.id != id
+            });
+        }
     },
     actions: {
+        delete(context, id) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Retención",
+                    text: "¿Está seguro de que deseas eliminar la retención?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + id)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Retención eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

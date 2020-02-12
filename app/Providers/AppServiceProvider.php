@@ -97,6 +97,8 @@ use App\Models\CADECO\SolicitudReposicionFF;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
+use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
+use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\CADECO\SubcontratosFG\MovimientoFondoGarantia;
 use App\Models\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantia;
@@ -215,6 +217,8 @@ use App\Observers\CADECO\SolicitudReposicionFFObserver;
 use App\Observers\CADECO\SubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\DescuentoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
+use App\Observers\CADECO\SubcontratosEstimaciones\LiberacionObserver;
+use App\Observers\CADECO\SubcontratosEstimaciones\RetencionObserver;
 use App\Observers\CADECO\SubcontratosFG\FondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\MovimientoFondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantiaObserver;
@@ -354,7 +358,9 @@ class AppServiceProvider extends ServiceProvider
              */
             Descuento::observe(DescuentoObserver::class);
             FolioPorSubcontrato::observe(FolioPorSubcontratoObserver::class);
-
+            Liberacion::observe(LiberacionObserver::class);
+            Retencion::observe(RetencionObserver::class);
+            
             /**
              * SubcontratosFG
              */

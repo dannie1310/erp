@@ -28,9 +28,19 @@ class RetencionService
         $this->repository = new Repository($model);
     }
 
+    public function delete($data, $id)
+    {
+        return $this->repository->delete($data, $id);
+    }
+
     public function list($id)
     {
         $response = $this->repository->where([['id_transaccion', '=', $id]]);
         return $response->all();
+    }
+
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
     }
 }

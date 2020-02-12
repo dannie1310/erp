@@ -35,7 +35,7 @@
                                             <td class="text-right">{{retencion.importe_format}}</td>
                                             <td>{{retencion.concepto}}</td>
                                             <td class="icono">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" v-if="$root.can('eliminar_retencion_estimacion_subcontrato')">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="destroyRetencion(retencion.id)" v-if="$root.can('eliminar_retencion_estimacion_subcontrato')">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </td>
@@ -47,9 +47,7 @@
                                 </div>
                                 <div class="col-md-12 mt-2 text-left" >
                                     <label class="text-secondary ">Liberadas </label>
-                                    <button type="button" @click="nuevaLiberacion()" class="btn btn-primary float-right" v-if="$root.can('registrar_descuento_estimacion_subcontrato') || true" >
-                                        <i class="fa fa-plus"></i>
-                                    </button>
+                                    <LiberadasCreate v-bind:id="id"></LiberadasCreate>
                                     <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
                                 </div>
                                 <table class="table table-striped">
@@ -65,7 +63,7 @@
                                             <td class="text-right">{{liberacion.importe_format}}</td>
                                             <td>{{liberacion.concepto}}</td>
                                             <td class="icono">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" v-if="$root.can('eliminar_sucursal_proveedor')">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="destroyLiberacion(liberacion.id)" v-if="$root.can('eliminar_liberacion_estimacion_subcontrato')">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </td>
@@ -87,9 +85,10 @@
 
 <script>
 import AplicadasCreate from './Aplicadas';
+import LiberadasCreate from './Liberadas';
 export default {
     name: "retencion-index",
-    components: {AplicadasCreate},
+    components: {AplicadasCreate, LiberadasCreate},
     props: ['id'],
     data() {
         return {
@@ -101,6 +100,18 @@ export default {
     methods: {
         cerrar(){
             $(this.$refs.modalRetenciones).modal('hide');
+        },
+        destroyRetencion(id){
+            return this.$store.dispatch('subcontratosEstimaciones/retencion/delete', id)
+                .then(() => {
+                    this.$store.commit('subcontratosEstimaciones/retencion/DELETE_RETENCION', id)
+                })
+        },
+        destroyLiberacion(id){
+            return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/delete', id)
+                .then(() => {
+                    this.$store.commit('subcontratosEstimaciones/retencion-liberacion/DELETE_LIBERACION', id)
+                })
         },
         getLiberaciones(){
             this.cargando = true;

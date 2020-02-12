@@ -1,15 +1,15 @@
 <template>
   <span>
-        <button type="button" class="btn btn-primary float-right" title="Registrar" @click="getRetencionesTipo()" v-if="$root.can('registrar_retencion_estimacion_subcontrato')" >
+        <button type="button" class="btn btn-primary float-right" title="Registrar" @click="init()" v-if="$root.can('registrar_liberacion_estimacion_subcontrato')" >
             <i class="fa fa-plus"></i>
         </button>
         <div class="row">
             <div class="col-md-12">
-                <div class="modal fade" ref="modalAplicadas" role="dialog" aria-hidden="true">
+                <div class="modal fade" ref="modalLiberadas" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-md">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> Retención</h5>
+                                <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> Liberación</h5>
                                 <button type="button" class="close" @click="cerrar()" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -18,24 +18,7 @@
                                 <div class="modal-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="form-group row error-content">
-                                                <label for="id_tipo_retencion" class="col-sm-3 col-form-label">Tipo Retención: </label>
-                                                <div class="col-sm-9">
-                                                    <select
-                                                        type="text"
-                                                        name="id_tipo_retencion"
-                                                        data-vv-as="Tipo"
-                                                        class="form-control"
-                                                        id="id_tipo_retencion"
-                                                        v-model="id_tipo_retencion"
-                                                        v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('id_tipo_retencion')}" >
-                                                        <option value>-- Seleccione un Tipo --</option>
-                                                        <option v-for="tipo in tipos" :value="tipo.id">{{ tipo.tipo_retencion }}</option>
-                                                    </select>
-                                                    <div class="invalid-feedback" v-show="errors.has('id_tipo_retencion')">{{ errors.first('id_tipo_retencion') }}</div>
-                                                </div>
-                                            </div>
+                                            <label for="concepto" class="col-form-label float-right"><h3><b>POR LIBERAR</b></h3> </label>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
@@ -96,7 +79,6 @@ export default {
     props: ['id'],
     data() {
         return {
-            id_tipo_retencion:'',
             concepto:'',
             importe:'',
             cargando:false,
@@ -106,38 +88,24 @@ export default {
     },
     methods: {
         cerrar(){
-            $(this.$refs.modalAplicadas).modal('hide');
+            $(this.$refs.modalLiberadas).modal('hide');
         },
         init(){
-            this.id_tipo_retencion = '';
             this.concepto = '';
             this.importe = '';
             this.$validator.reset();
-        },
-        getRetencionesTipo(){
-            this.init();
-            this.cargando = true;
-             return this.$store.dispatch('subcontratosEstimaciones/retencion-tipo/index',{
-                params:{}})
-                .then(data => {
-                    this.$store.commit('subcontratosEstimaciones/retencion-tipo/SET_TIPOS', data.data);
-                })
-                .finally(() => {
-                    this.cargando = false;
-                    $(this.$refs.modalAplicadas).modal('show');
-                })
+            $(this.$refs.modalLiberadas).modal('show');
         },
         store(){
             this.cargando = true;
-            return this.$store.dispatch('subcontratosEstimaciones/retencion/store', {
-                id_tipo_retencion:this.id_tipo_retencion,
+            return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/store', {
                 id_transaccion:this.id,
                 concepto:this.concepto,
                 importe:this.importe,
             })
             .then(data => {
-                this.$store.commit('subcontratosEstimaciones/retencion/INSERT_RETENCION', data);
-                $(this.$refs.modalAplicadas).modal('hide');
+                this.$store.commit('subcontratosEstimaciones/retencion-liberacion/INSERT_LIBERACION', data);
+                $(this.$refs.modalLiberadas).modal('hide');
             }).finally( ()=>{
                 this.cargando = false;
             });
@@ -151,9 +119,6 @@ export default {
         },
     },
     computed: {
-        tipos() {
-            return this.$store.getters['subcontratosEstimaciones/retencion-tipo/tipos']
-        },
     }
 }
 </script>
