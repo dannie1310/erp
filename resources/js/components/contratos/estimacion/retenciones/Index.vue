@@ -1,7 +1,7 @@
 <template>
     <span>
         <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" >
-             Retenciones
+            Retenciones
         </button>
         <div class="row">
             <div class="col-md-12">
@@ -9,12 +9,12 @@
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle"> Retenciones</h5>
+                                <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-spin fa-spinner" v-if="cargando"></i> Retenciones</h5>
                                 <button type="button" class="close" @click="cerrar()" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body" v-if="retenciones && liberaciones">
                                 <div class="col-md-12 mt-2 text-left" >
                                     <label class="text-secondary ">Aplicadas </label>
                                     <AplicadasCreate v-bind:id="id"></AplicadasCreate>
@@ -72,7 +72,6 @@
                                         </tr>
                                     </tbody>
                                 </table>
-
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @click="cerrar()">Cerrar</button>
@@ -117,7 +116,8 @@ export default {
         },
         getLiberaciones(){
             this.cargando = true;
-             return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/listLiberaciones',{
+            this.$store.commit('subcontratosEstimaciones/retencion-liberacion/SET_LIBERACIONES', null);
+            return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/listLiberaciones',{
                 id: this.id,
                 params:{}})
                 .then(data => {
@@ -129,28 +129,18 @@ export default {
         },
         getRetenciones(){
             this.cargando = true;
-             return this.$store.dispatch('subcontratosEstimaciones/retencion/listRetenciones',{
+            this.$store.commit('subcontratosEstimaciones/retencion/SET_RETENCIONES', null);
+            return this.$store.dispatch('subcontratosEstimaciones/retencion/listRetenciones',{
                 id: this.id,
                 params:{}})
                 .then(data => {
                     this.$store.commit('subcontratosEstimaciones/retencion/SET_RETENCIONES', data.data);
-                })
-                .finally(() => {
-                    this.cargando = false;
-                })
-            
-        },
-        
+                })            
+        },        
         init(){
             this.getRetenciones();
             this.getLiberaciones();
             $(this.$refs.modalRetenciones).modal('show');
-        },
-        nuevaRetencion(){
-            console.log('retencion');
-        },
-        nuevaLiberacion(){
-            console.log('retencion');
         },
     },
     computed: {
@@ -160,11 +150,7 @@ export default {
         liberaciones() {
             return this.$store.getters['subcontratosEstimaciones/retencion-liberacion/liberaciones']
         },
-        tipos() {
-            return this.$store.getters['subcontratosEstimaciones/retencion-tipo/tipos']
-        },
     }
-
 }
 </script>
 
