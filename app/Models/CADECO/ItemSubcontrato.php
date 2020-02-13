@@ -6,13 +6,19 @@ namespace App\Models\CADECO;
 
 class ItemSubcontrato extends Item
 {
-    public function subcontrato(){
+    public function subcontrato()
+    {
         return $this->belongsTo(Subcontrato::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function contrato()
     {
         return $this->belongsTo(Contrato::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function partidaEstimacion()
+    {
+        return $this->belongsTo(ItemEstimacion::class, 'id_transaccion', 'id_antecedente');
     }
 
     public function getEstimadoAnteriorAttribute($id)
@@ -48,6 +54,6 @@ class ItemSubcontrato extends Item
 
     public function getCantidadFormatAttribute()
     {
-        return '$ ' . number_format($this->cantidad,2,'.',',');
+        return number_format($this->cantidad,2,'.',',');
     }
 }

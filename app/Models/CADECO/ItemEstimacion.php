@@ -75,6 +75,6 @@ class ItemEstimacion extends Item
 
     public function getCantidadFormatAttribute()
     {
-        return '$ ' . number_format($this->cantidad,2,'.',',');
+        return number_format($this->cantidad,2,'.',',');
     }
 }

@@ -16,7 +16,7 @@ class SubcontratoPartidaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'contrato_conceptos'
+        'partida_estimacion'
     ];
 
     /**
@@ -35,9 +35,7 @@ class SubcontratoPartidaTransformer extends TransformerAbstract
     public function transform(ItemSubcontrato $model)
     {
         return [
-            'id' => (int)$model->getKey(),
-            'id_antecedente' => $model->id_antecedente,
-            'item_antecedente' => $model->item_antecedente,
+            'id' => (int) $model->getKey(),
             'id_concepto' => $model->id_concepto,
             'cantidad' => $model->cantidad,
             'precio_unitario' => $model->precio_unitario,
@@ -51,11 +49,11 @@ class SubcontratoPartidaTransformer extends TransformerAbstract
      * @param ItemSubcontrato $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeContratoConceptos(ItemSubcontrato $model)
+    public function includePartidaEstimacion(ItemSubcontrato $model)
     {
-        if($contrato = $model->contrato)
+        if($partida = $model->partidaEstimacion)
         {
-            return $this->item($contrato, new ContratoTransformer);
+            return $this->item($partida, new EstimacionPartidaTransformer);
         }
         return null;
     }

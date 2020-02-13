@@ -10,7 +10,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 
 use App\Http\Transformers\CADECO\ConceptoTransformer;
-use App\Models\CADECO\EstimacionPartida;
+use App\Models\CADECO\ItemEstimacion;
 use League\Fractal\TransformerAbstract;
 
 class EstimacionPartidaTransformer extends TransformerAbstract
@@ -32,7 +32,7 @@ class EstimacionPartidaTransformer extends TransformerAbstract
     protected $defaultIncludes = [];
 
 
-    public function transform(EstimacionPartida $model)
+    public function transform(ItemEstimacion $model)
     {
         return [
             'id' => $model->getKey(),
@@ -52,7 +52,7 @@ class EstimacionPartidaTransformer extends TransformerAbstract
      * @param EstimacionPartida $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeConcepto(EstimacionPartida $model)
+    public function includeConcepto(ItemEstimacion $model)
     {
         if($concepto = $model->concepto) {
             return $this->item($concepto, new ConceptoTransformer);

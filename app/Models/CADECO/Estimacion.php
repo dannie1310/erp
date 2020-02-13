@@ -99,7 +99,7 @@ class Estimacion extends Transaccion
      */
     public function creaSubcontratoEstimacion()
     {
-        \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->create([
+        \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::create([
             'IDEstimacion' => $this->id_transaccion,
             'NumeroFolioConsecutivo' => $this->generaFolioConsecutivo()
         ]);
