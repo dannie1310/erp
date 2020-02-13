@@ -62,7 +62,8 @@ class SubcontratoTransformer extends TransformerAbstract
             'dato_transaccion'=>(string)$model->referencia,
             'monto_solicitado' => (float) $model->montoPagoAnticipado,
             'monto_facturado_oc' => (float) $model->montoFacturadoSubcontrato,
-            'monto_facturado_ea' => (float) $model->montoFacturadoEstimacion
+            'monto_facturado_ea' => (float) $model->montoFacturadoEstimacion,
+            'empresa'=>(string) $model->empresa->razon_social
         ];
     }
     /**

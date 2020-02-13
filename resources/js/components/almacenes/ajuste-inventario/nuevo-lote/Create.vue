@@ -201,34 +201,18 @@
             getMateriales(id_almacen){
                 this.cargando = true;
                 this.materiales = [];
-                if(this.tipo_almacen == 0){
-                    return this.$store.dispatch('cadeco/material/index', {
-                        params: {
-                            scope: ['tipos:1'],
-                            sort: 'descripcion',
-                            order: 'asc'
-                        }
+                return this.$store.dispatch('cadeco/material/index', {
+                    params: {
+                        scope: ['tipos:1,4'],
+                        sort: 'descripcion',
+                        order: 'asc'
+                    }
+                })
+                    .then(data => {
+                        this.materiales = data.data;
+                        this.bandera = 1;
+                        this.cargando = false;
                     })
-                        .then(data => {
-                            this.materiales = data.data;
-                            this.bandera = 1;
-                            this.cargando = false;
-                        })
-                }else if(this.tipo_almacen == 5){
-                    return this.$store.dispatch('cadeco/material/index', {
-                        params: {
-                            scope: ['tipos:4'],
-                            sort: 'descripcion',
-                            order: 'asc'
-                        }
-                    })
-                        .then(data => {
-                            this.materiales = data.data;
-                            this.bandera = 1;
-                            this.cargando = false;
-                        })
-                }
-
             },
             agregar() {
                 var array = {

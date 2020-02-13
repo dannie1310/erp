@@ -2,7 +2,27 @@
     <span>
         <div class="card">
 			<div class="card-body">
-				<subcontrato-select v-model="id_subcontrato"></subcontrato-select>
+				<div class="row">
+					<div class="col-md-12">
+						<label>
+							Seleccione el subcontrato deseado:
+						</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<model-list-select
+								:disabled="cargando"
+								name="id_subcontrato"
+								v-model="id_subcontrato"
+								option-value="id"
+								:custom-text="numeroFolioAndRefernciaAndEmpresa"
+								:list="subcontratos"
+								:placeholder="!cargando?'Seleccionar o buscar por número de folio o referencia de subcontrato o razón social de contratista':'Cargando...'"
+								:isError="errors.has(`id_subcontrato`)">
+						</model-list-select>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -219,10 +239,10 @@
 </template>
 
 <script>
-    import SubcontratoSelect from "../../cadeco/subcontrato/Select";
+	import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "estimacion-create",
-        components: {SubcontratoSelect},
+        components: {ModelListSelect},
         data() {
             return {
                 id_subcontrato: '',
@@ -233,7 +253,8 @@
 				fecha_inicio: '',
 				fecha_fin: '',
 				observaciones: '',
-                fecha: ''
+                fecha: '',
+				subcontratos: [],
             }
         },
 
@@ -241,9 +262,13 @@
         	this.fecha_inicio = new Date().toDate()
         	this.fecha_fin = new Date().toDate()
         	this.fecha = new Date().toDate()
+			this.getSubcontratos()
         },
 
 		methods: {
+			numeroFolioAndRefernciaAndEmpresa(item){
+				return `[${item.numero_folio_format}] - [${item.referencia}]- [${item.empresa}]`
+			},
         	changeCantidad(concepto) {
 				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100).toFixed(2);
 				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario).toFixed(4);
@@ -286,6 +311,22 @@
 				} else {
         		    swal('','Debe estimar al menos un concepto','warning');
 				}
+			},
+
+			getSubcontratos() {
+				this.subcontratos = [];
+				this.cargando = true;
+				return this.$store.dispatch('contratos/subcontrato/index', {
+					params: {
+						scope: 'Estimable',
+						sort: 'id',
+						order: 'desc'
+					}
+				})
+						.then(data => {
+							this.subcontratos = data;
+							this.cargando = false;
+						})
 			},
 
 			getConceptos() {
