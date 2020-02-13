@@ -138,6 +138,7 @@ class FacturaService
     private function setArregloFactura($archivo_xml)
     {
         try {
+            libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
             $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
             $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
@@ -162,6 +163,11 @@ class FacturaService
             $factura_xml->registerXPathNamespace('t', $ns['tfd']);
             $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
             $this->arreglo_factura["complemento"]["uuid"] = (string)$complemento["UUID"][0];
+            if(!$this->arreglo_factura["folio"]){
+                $factura_xml->registerXPathNamespace('rf', $ns['registrofiscal']);
+                $CFDI_RF = $factura_xml->xpath('//rf:CFDIRegistroFiscal')[0];
+                $this->arreglo_factura["folio"] = $CFDI_RF["Folio"];
+            }
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
         }
@@ -403,10 +409,15 @@ class FacturaService
 
     private function validaFolio($folio)
     {
-        $pos = strpos($folio, $this->arreglo_factura["folio"]);
-        if ($pos === false) {
+        if($this->arreglo_factura["serie"]!= null){
+            $pos = strpos($folio, $this->arreglo_factura["folio"]);
+            if ($pos === false) {
+                abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $this->arreglo_factura["folio"] . ")");
+            }
+        } else if ($folio != $this->arreglo_factura["folio"]) {
             abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $this->arreglo_factura["folio"] . ")");
         }
+
     }
 
     private function validaEFO()

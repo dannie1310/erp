@@ -6,11 +6,18 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">CATÁLOGOS</li>
 
+            <li class="nav-item" v-if="$root.can('consultar_unidad')">
+                <router-link :to="{name: 'unidad'}" class="nav-link">
+                            <i class="fas fa-ruler-combined nav-icon"></i>
+                            <p>Catálogo de Unidades</p>
+                        </router-link>
+            </li>
+            
             <li class="nav-item" v-if="catalogo_maquinaria">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-tractor"></i>
                     <p>
-                        Catálogo de Maquinaria
+                        Maquinaria
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -19,7 +26,7 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'familia-maq'}" class="nav-link" :class="{active: this.$route.name == 'familia-maq'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Familia de Maquinaria</p>
+                            <p>Familia</p>
                         </router-link>
                     </li>
                 </ul>
@@ -34,9 +41,9 @@
             </li>
             <li class="nav-item" v-if="catalogo_servicios">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-cogs"></i>
+                    <i class="nav-icon fa fa-hand-paper"></i>
                     <p>
-                        Catálogo de Servicios
+                        Mano de Obra y Servicios
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -45,7 +52,15 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'cat-familia-serv'}" class="nav-link" :class="{active: this.$route.name == 'cat-familia-serv'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Familia de Servicios</p>
+                            <p>Familia</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_mano_obra')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'cat-mano-obra'}" class="nav-link" :class="{active: this.$route.name == 'cat-mano-obra'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Mano de Obra</p>
                         </router-link>
                     </li>
                 </ul>
@@ -53,20 +68,20 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'cat-servicio'}" class="nav-link" :class="{active: this.$route.name == 'cat-servicio'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Insumo Servicios</p>
+                            <p>Servicio</p>
                         </router-link>
                     </li>
                 </ul>
             </li>
             <li class="nav-item" v-if="catalogo_insumo">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-boxes"></i>
                     <p>
-                        Catálogo de Insumos
+                        Material, Hta. y Equipo
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview" v-if="$root.can(['consultar_familia_material','consultar_familia_herramienta_equipo'])">
                     <li class="nav-item" >
                         <router-link :to="{name: 'cat-familia'}" class="nav-link" :class="{active: this.$route.name == 'cat-familia'}">
                             <i class="fa fa-circle-o nav-icon"></i>
@@ -144,7 +159,9 @@
             catalogo_insumo(){
                 return this.$root.can([
                     'consultar_insumo_material',
-                    'consultar_insumo_herramienta_equipo'
+                    'consultar_insumo_herramienta_equipo',
+                    'consultar_familia_material',
+                    'consultar_familia_herramienta_equipo'
                 ]);
             },
             catalogo_maquinaria(){
@@ -156,7 +173,9 @@
             catalogo_servicios(){
                 return this.$root.can([
                     'consultar_familia_servicio',
-                    'consultar_insumo_servicio'
+                    'consultar_insumo_servicio',
+                    'consultar_familia_mano_obra',
+                    'consultar_insumo_mano_obra'
                 ]);
             },
         },

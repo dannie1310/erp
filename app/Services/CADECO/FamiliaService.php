@@ -40,7 +40,15 @@ class FamiliaService
         $familia = $this->repository;
 
         if(isset($data['descripcion'])) {
-            $salida = $familia->where([['descripcion', 'LIKE', '%' . request('descripcion') . '%']]);
+            $familia = $familia->where([['descripcion', 'LIKE', '%' . request('descripcion') . '%']]);
+        }
+        if(isset($data['tipo_material'])) {
+            if (strpos('MATERIAL', strtoupper($data['tipo_material'])) !== FALSE) {
+                $familia = $familia->where([['tipo_material', '=', 1]]);
+            }
+            if (strpos('HERRAMIENTA Y EQUIPO', strtoupper($data['tipo_material'])) !== FALSE) {
+                $familia = $familia->where([['tipo_material', '=', 4]]);
+            }
         }
             return $familia->paginate($data);
 

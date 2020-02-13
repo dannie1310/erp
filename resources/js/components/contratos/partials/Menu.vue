@@ -32,7 +32,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_estimacion_subcontrato')">
-                        <router-link :to="{name: 'estimacion'}" class="nav-link" :class="{active: this.$route.name == 'estimacion'}">
+                        <router-link :to="{name: 'estimacion'}" class="nav-link" :class="{active: this.$route.name == 'estimacion' || this.$route.name == 'estimacion-edit'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Estimaciones</p>
                         </router-link>

@@ -95,6 +95,7 @@ use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\SolicitudReposicionFF;
 use App\Models\CADECO\Subcontrato;
+use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\CADECO\SubcontratosFG\MovimientoFondoGarantia;
@@ -212,6 +213,7 @@ use App\Observers\CADECO\SolicitudCompraObserver;
 use App\Observers\CADECO\SolicitudPagoAnticipadoObserver;
 use App\Observers\CADECO\SolicitudReposicionFFObserver;
 use App\Observers\CADECO\SubcontratoObserver;
+use App\Observers\CADECO\SubcontratosEstimaciones\DescuentoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
 use App\Observers\CADECO\SubcontratosFG\FondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\MovimientoFondoGarantiaObserver;
@@ -238,8 +240,10 @@ use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
+use App\Models\CADECO\Unidad;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
+use App\Observers\CADECO\UnidadObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -348,6 +352,7 @@ class AppServiceProvider extends ServiceProvider
             /**
              * SubcontratosEstimaciones
              */
+            Descuento::observe(DescuentoObserver::class);
             FolioPorSubcontrato::observe(FolioPorSubcontratoObserver::class);
 
             /**
@@ -419,6 +424,7 @@ class AppServiceProvider extends ServiceProvider
             Subcontrato::observe(SubcontratoObserver::class);
             Sucursal::observe(SucursalObserver::class);
             Transaccion::observe(TransaccionObserver::class);
+            Unidad::observe(UnidadObserver::class);
             Venta::observe(VentaObserver::class);
             VentaCancelacion::observe(VentaCancelacionObserver::class);
             VentaPartida::observe(VentaPartidaObserver::class);

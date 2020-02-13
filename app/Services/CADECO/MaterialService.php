@@ -46,13 +46,16 @@ class MaterialService
         $material = $this->repository;
 
         if(isset($data['descripcion'])) {
-            $salida = $material->where([['descripcion', 'LIKE', '%' . request('descripcion') . '%']]);
+            $material->where([['descripcion', 'LIKE', '%' . $data['descripcion'] . '%']]);
         }
 
         if(isset($data['numero_parte'])) {
-            $salida = $material->where([['numero_parte', 'LIKE', '%' . request('numero_parte') . '%']]);
+            $material->where([['numero_parte', 'LIKE', '%' . $data['numero_parte'] . '%']]);
         }
 
+        if(isset($data['unidad'])) {
+            $material->where([['unidad', 'LIKE', '%' . $data['unidad'] . '%']]);
+        }
 
         return $material->paginate($data);
     }

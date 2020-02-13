@@ -8,7 +8,7 @@
 
 namespace App\Observers\CADECO\Finanzas;
 
-
+use App\Facades\Context;
 use App\Models\CADECO\Finanzas\LayoutPago;
 
 class LayoutPagoObserver
@@ -22,5 +22,6 @@ class LayoutPagoObserver
         $layoutPago->id_usuario_carga = auth()->id();
         $layoutPago->fecha_hora_carga = date('Y-m-d H:i:s');
         $layoutPago->estado = 0;
+        $layoutPago->id_obra = Context::getIdObra();
     }
 }

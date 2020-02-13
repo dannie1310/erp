@@ -17,11 +17,11 @@ export default {
     },
 
     actions: {
-        index(context, payload = {}) {
+        index(context, payload) {
             return new Promise((resolve, reject) => {
 
                 axios
-                    .get(URI, payload.config)
+                    .get(URI, { params: payload.params })
                     .then(r => r.data)
                     .then((data) => {
                         resolve(data.data);

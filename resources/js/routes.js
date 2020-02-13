@@ -166,6 +166,47 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'transaccion-efo',
+                component: require('./components/control-interno/finanzas/transaccion-efo/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'transaccion-efos',
+                        component: require('./components/control-interno/finanzas/transaccion-efo/Index').default,
+                        meta: {
+                            title: 'Consulta de transacciones relacionadas con EFOS',
+                            breadcrumb: {parent: 'control-finanzas', name: 'TRANSACCIONES CON EFOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_transacciones_efos',
+                            general: true,
+
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        path: '/control-interno/incidencias',
+        components: {
+            default: require('./components/control-interno/partials/Layout.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'incidencia',
+                component: require('./components/control-interno/incidencia/Index').default,
+                meta: {
+                    title: 'Incidencias',
+                    breadcrumb: {parent: 'control-interno', name: 'INCIDENCIAS'},
+                    middleware: [auth],
+                    permission: 'consultar_incidencias',
+                    general: true,
+
+                }
+            },
         ]
     },
     {
@@ -378,6 +419,23 @@ export const routes = [
                 }
             },
             {
+                path: 'unidad',
+                component: require('./components/catalogos/unidad/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'unidad',
+                        component: require('./components/catalogos/unidad/Index').default,
+                        meta: {
+                            title: 'Catálogo de Unidades',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE UNIDAD'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_unidad']
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'empresa',
                 component: require('./components/catalogos/empresa/Layout').default,
                 children: [
@@ -431,8 +489,8 @@ export const routes = [
                         name: 'insumo-maquinaria',
                         component: require('./components/catalogos/insumo-maquinaria/Index').default,
                         meta: {
-                            title: 'Catálogo de Maquinaria',
-                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE MAQUINARIA'},
+                            title: 'Maquinaria',
+                            breadcrumb: {parent: 'catalogos', name: 'MAQUINARIA'},
                             middleware: [auth, context],
 
                         }
@@ -476,8 +534,8 @@ export const routes = [
                         name: 'insumo-servicio',
                         component: require('./components/finanzas/insumo-servicio/Index').default,
                         meta: {
-                            title: 'Catálogo de Servicio',
-                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE SERVICIO'},
+                            title: 'Mano de Obra y Servicios',
+                            breadcrumb: {parent: 'catalogos', name: 'MANO DE OBRA Y SERVICIOS'},
                             middleware: [auth, context],
 
                         }
@@ -501,13 +559,27 @@ export const routes = [
                         name: 'cat-servicio',
                         component: require('./components/finanzas/insumo-servicio/servicio/Index').default,
                         meta: {
-                            title: 'Servicios',
+                            title: 'Servicio',
                             breadcrumb: {
                                 parent: 'insumo-servicio',
-                                name: 'SERVICIOS'
+                                name: 'SERVICIO'
                             },
                             middleware: [auth, context, permission],
                             permission: ['consultar_insumo_servicio']
+                        }
+                    },
+                    {
+                        path: 'mano-obra',
+                        name: 'cat-mano-obra',
+                        component: require('./components/finanzas/insumo-servicio/mano-obra/Index').default,
+                        meta: {
+                            title: 'Mano de Obra',
+                            breadcrumb: {
+                                parent: 'insumo-servicio',
+                                name: 'MANO DE OBRA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_mano_obra']
                         }
                     },
                 ]
@@ -521,8 +593,8 @@ export const routes = [
                         name: 'catalogo-insumos',
                         component: require('./components/compras/catalogos/Index').default,
                         meta: {
-                            title: 'Catálogo de Insumos',
-                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE INSUMOS'},
+                            title: 'Material, Herramienta y Equipo',
+                            breadcrumb: {parent: 'catalogos', name: 'MATERIAL, HTA. Y EQUIPO'},
                             middleware: [auth, context],
 
                         }
@@ -560,10 +632,10 @@ export const routes = [
                         name: 'cat-herramienta',
                         component: require('./components/compras/catalogos/herramienta/Index').default,
                         meta: {
-                            title: 'Herramienta',
+                            title: 'Herramienta y Equipo',
                             breadcrumb: {
                                 parent: 'catalogo-insumos',
-                                name: 'HERRAMIENTA Y EQUIPOS'
+                                name: 'HERRAMIENTA Y EQUIPO'
                             },
                             middleware: [auth, context, permission],
                             permission: ['consultar_insumo_herramienta_equipo']
@@ -1046,6 +1118,18 @@ export const routes = [
                             title: 'Información de Estimación',
                             breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
                             middleware: [auth, context,],
+
+                        }
+                    },                    
+                    {
+                        path: ':id/editar',
+                        name: 'estimacion-edit',
+                        component: require('./components/contratos/estimacion/Edit').default,
+                        meta: {
+                            title: 'Editar Estimación',
+                            breadcrumb: {parent: 'estimacion', name: 'EDITAR ESTIMACIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_estimacion_subcontrato'
 
                         }
                     },

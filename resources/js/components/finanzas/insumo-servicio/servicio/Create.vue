@@ -9,7 +9,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR SERVICIO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> REGISTRAR SERVICIO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -21,16 +21,17 @@
                                     <div class="form-group row error-content">
                                         <label for="tipo" class="col-sm-2 col-form-label">Familia: </label>
                                         <div class="col-sm-10">
-                                            <FamiliaSelect
-                                                :scope="'tipo:2'"
-                                                name="tipo"
-                                                id="tipo"
-                                                data-vv-as="Servicio"
-                                                v-validate="{required: true}"
-                                                v-model="dato.tipo"
-                                                :class="{'is-invalid': errors.has('tipo')}">
-
-                                            </FamiliaSelect>
+                                            <model-list-select
+                                                    :disabled="cargando"
+                                                    name="tipo"
+                                                    v-validate="{required: true}"
+                                                    v-model="dato.tipo"
+                                                    option-value="nivel"
+                                                    option-text="descripcion"
+                                                    :list="familias_moys"
+                                                    :placeholder="!cargando?'Seleccionar o buscar familia por descripcion':'Cargando...'"
+                                                    >
+                                            </model-list-select>
                                             <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                         </div>
                                     </div>
@@ -112,14 +113,15 @@
 </template>
 
 <script>
-    import FamiliaSelect from "../../../cadeco/familia/Select";
+    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "material-create",
-        components: {FamiliaSelect},
+        components: {ModelListSelect},
         data() {
             return {
                 cargando:false,
                 unidades: [],
+                familias_moys: [],
                 dato: {
                     tipo: '',
                     unidad:'',
@@ -132,7 +134,8 @@
             }
         },
         mounted() {
-            this.getUnidades()
+            this.getUnidades();
+            this.getFamiliasMOyS();
         },
 
         methods: {
@@ -150,6 +153,14 @@
                 })
                     .then(data => {
                         this.unidades= data.data;
+                    })
+            },
+            getFamiliasMOyS(){
+                return this.$store.dispatch('cadeco/familia/index', {
+                    params: {sort: 'descripcion',  order: 'asc', scope:'tipo:2'}
+                })
+                    .then(data => {
+                        this.familias_moys= data.data;
                     })
             },
             store() {

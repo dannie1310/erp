@@ -100,6 +100,7 @@ import rubro from './modules/finanzas/rubro';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
+import incidencia from './modules/seguridad/control-interno/incidencia'
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgEfos from './modules/seguridad/finanzas/ctg-efos';
@@ -109,8 +110,12 @@ import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
 import sistema from './modules/seguridad/sistema';
+import transaccionEfo from './modules/seguridad/finanzas/transaccion-efo';
 import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
+
+//SUBCONTRATOSESTIMACIONES
+import descuento from './modules/subcontratosEstimaciones/descuento';
 
 //IGH
 import usuario from "./modules/igh/usuario";
@@ -224,10 +229,12 @@ export default new Vuex.Store({
         'sci/modelo': modelo,
 
 
+        'seguridad/control-interno/incidencia': incidencia,
         'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/finanzas/ctg-efos': ctgEfos,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
         'seguridad/finanzas/configuracion-remesa': configuracionRemesa,
+        'seguridad/finanzas/transaccion-efo': transaccionEfo,
         'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
@@ -235,6 +242,8 @@ export default new Vuex.Store({
         'seguridad/sistema': sistema,
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
+
+        'subcontratosEstimaciones/descuento': descuento,
 
         'ventas/venta': venta,
     },

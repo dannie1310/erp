@@ -10,6 +10,19 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                    <div class="col-md-12 info-box-content">
+                                    <label class="col-lg-12 col-form-label">Considera el siguiente orden de columnas para cargar tu archivo CSV.
+                                        &nbsp
+                                        </label>
+                                </div>
+                                <br>
+                    <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="text-center">
+                                                                <img src="../../../../img/requisicion/layout-requisicion.png" class="rounded" alt="Formato de carga de CSV">
+                                                      </div>                                                
+                                            </div>
+                                        </div>
                     <form role="form" @submit.prevent="validate">
 
                         <div class="modal-body">
