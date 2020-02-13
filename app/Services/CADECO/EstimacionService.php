@@ -21,8 +21,6 @@ use App\PDF\Contratos\EstimacionFormato;
 use App\PDF\Contratos\OrdenPagoEstimacion;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use League\Fractal\TransformerAbstract;
-use App\PDF\Contratos\EstimacionFormato;
-use App\PDF\Contratos\OrdenPagoEstimacion;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
@@ -211,6 +209,7 @@ class EstimacionService
             'estimacion'=> $est->transform($estimacion),
             'numEstimacion'=>$numEstimacion,
             'razon_social' => $estimacion->empresa->razon_social,
+            'id_empresa' => $estimacion->empresa->id_empresa,
             'referencia' => $estimacion->subcontrato->referencia,
             'moneda' =>$mon->transform($estimacion->moneda),
             'items'=>$items,

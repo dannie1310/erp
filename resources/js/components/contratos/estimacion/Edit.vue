@@ -5,7 +5,7 @@
                 <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
             <div class="p-2">
-                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.empresa.id_empresa:''"></DeductivaEdit>
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
                 
             </div>
             
@@ -67,11 +67,11 @@
                           <tbody>
                             <tr>
                               <th>Contratista: </th>
-                              <th class="text-center" scope="row">{{ estimacion.empresa.razon_social }}</th>
+                              <th class="text-center" scope="row">{{ estimacion.razon_social }}</th>
                             </tr>
                             <tr>
                               <th>No. de Contrato: </th>
-                              <th class="text-center" scope="row">{{ estimacion.subcontrato.referencia }}</th>
+                              <th class="text-center" scope="row">{{ estimacion.referencia }}</th>
                             </tr>
                           </tbody>
                         </table>
