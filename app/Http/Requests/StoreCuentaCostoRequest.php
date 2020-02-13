@@ -32,14 +32,14 @@ class StoreCuentaCostoRequest extends FormRequest
         } catch (\Exception $e) {
             $regex = "";
         }
-
-        Validator::extend('sin_cuenta', function ($attribute, $value, $parameters, $validator) {
-            return Costo::query()->sinCuenta()->find($value);
-        });
+//
+//        Validator::extend('sin_cuenta', function ($attribute, $value, $parameters, $validator) {
+//           return Costo::sinCuenta()->find($value);
+//        });
 
         return [
             'cuenta' => ['required', "regex:'{$regex}'"],
-            'id_costo' => ['required', 'integer', 'exists:cadeco.costos,id_costo,id_obra,' . Context::getIdObra(), 'sin_cuenta'],
+            'id_costo' => ['required', 'integer', 'exists:cadeco.costos,id_costo,id_obra,' . Context::getIdObra()],
         ];
     }
 

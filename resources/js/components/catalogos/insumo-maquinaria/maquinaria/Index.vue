@@ -30,13 +30,13 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Familia', field: 'tipo_material',sortable: true},
-                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Unidad', field: 'unidad', sortable: true},
+                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Unidad', field: 'unidad', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:['tipo:8','insumos'], sort: 'id_material', order: 'desc'},
+                query: {scope:['tipo:8','insumos'], sort: 'descripcion', order: 'asc'},
                 estado: "",
                 cargando: false
             }
@@ -81,7 +81,7 @@
                     materiales.forEach(function (material, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            tipo_material: material.descripcion_padre,
+                            tipo_material: material.descripcion_familia,
                             descripcion: material.descripcion,
                             unidad: material.unidad,
                         })

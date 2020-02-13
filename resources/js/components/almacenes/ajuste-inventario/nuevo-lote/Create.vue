@@ -156,6 +156,7 @@
                 id_material:'',
                 cargando: false,
                 id_almacen: this.$attrs.id_almacen,
+                tipo_almacen: this.$attrs.tipo_almacen,
                 referencia: '',
                 fecha: '',
                 observaciones: '',

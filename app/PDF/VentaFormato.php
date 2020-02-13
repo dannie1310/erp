@@ -8,7 +8,7 @@ use App\Facades\Context;
 use Ghidev\Fpdf\Rotation;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Venta;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 
 class VentaFormato extends Rotation
 {
@@ -263,6 +263,13 @@ class VentaFormato extends Rotation
 
     public function Footer()
     {
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',80);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,20,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,26,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         //Capturó
         $this->SetY(-2.5);
         $this->SetX(4);
