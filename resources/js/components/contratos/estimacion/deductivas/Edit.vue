@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-md-12">
-                 <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" title="Editar">
+                 <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can(['registrar_descuento_estimacion_subcontrato','eliminar_descuento_estimacion_subcontrato'])" title="Editar">
                     Deductivas
                 </button>
             </div>
