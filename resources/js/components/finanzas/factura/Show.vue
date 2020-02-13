@@ -112,12 +112,19 @@
                     </div>
                         <hr>
                         <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                {{factura.datos_registro}}
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {{factura.datos_registro}}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Comentario: {{factura.comentario}}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
