@@ -1,9 +1,14 @@
 <template>
      <span>
        <div class="d-flex flex-row-reverse">
-            <div class="p-2">
-                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.empresa.id_empresa:''"></DeductivaEdit>
+           <div class="p-2">
+                <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
+            <div class="p-2">
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
+                
+            </div>
+            
         </div>
         <div class="row">  
             <div class="col-12 mb-5" v-if="!cargando">
@@ -62,11 +67,11 @@
                           <tbody>
                             <tr>
                               <th>Contratista: </th>
-                              <th class="text-center" scope="row">{{ estimacion.empresa.razon_social }}</th>
+                              <th class="text-center" scope="row">{{ estimacion.razon_social }}</th>
                             </tr>
                             <tr>
                               <th>No. de Contrato: </th>
-                              <th class="text-center" scope="row">{{ estimacion.subcontrato.referencia }}</th>
+                              <th class="text-center" scope="row">{{ estimacion.referencia }}</th>
                             </tr>
                           </tbody>
                         </table>
@@ -189,9 +194,10 @@
 
 
 import DeductivaEdit from './deductivas/Edit'
+import RetencionIndex from './retenciones/Index';
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit},
+        components: {DeductivaEdit, RetencionIndex},
         // props: ['id'],
         data() {
             return {
