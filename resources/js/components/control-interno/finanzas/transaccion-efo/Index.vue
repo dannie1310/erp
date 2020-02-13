@@ -52,7 +52,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: { sort: 'grado_alerta', order: 'asc', include: 'usuario'},
+                query: { sort: 'fecha_transaccion', order: 'desc', include: 'usuario'},
                 estado: "",
                 cargando: false,
                 cargando_csv: false
