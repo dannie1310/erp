@@ -634,21 +634,21 @@ class Estimacion extends Transaccion
             switch ((int)round($porcentaje)){
                 case 4:
                     if($porcentaje <= 3.9999 || $porcentaje >= 4.0001){
-                        abort(403, 'La retencion de I.V.A. no es del 4%');
+                        abort(403, 'La retención de I.V.A. no es del 4%');
                     }
                 break;
                 case 6:
                     if($porcentaje <= 5.9999 || $porcentaje >= 6.0001){
-                        abort(403, 'La retencion de I.V.A. no es del 6%');
+                        abort(403, 'La retención de I.V.A. no es del 6%');
                     }
                 break;
                 case 10:
                     if($porcentaje <= 9.9999 || $porcentaje >= 10.0001){
-                        abort(403, 'La retencion de I.V.A. no es del 10%');
+                        abort(403, 'La retención de I.V.A. no es del 10%');
                     }
                 break;
                 default:
-                    abort(403, 'La retencion de I.V.A. no es valida');
+                    abort(403, 'La retención de I.V.A. no es valida');
                 break;
             }
         }
