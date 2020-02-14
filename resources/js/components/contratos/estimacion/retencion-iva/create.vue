@@ -19,13 +19,13 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
-                                                <label for="retencion" class="col-sm-4 col-form-label">Retención de I.V.A.: </label>
+                                                <label for="retencion" class="col-sm-4 col-form-label">Retención de IVA: </label>
                                                 <div class="col-sm-8">
                                                     <input
                                                         type="number"
                                                         step="any"
                                                         name="retencion"
-                                                        data-vv-as="Retencion I.V.A."
+                                                        data-vv-as="Retencion IVA"
                                                         v-validate="{required: true, decimal:4, min_value:0}"
                                                         class="form-control"
                                                         id="retencion"
