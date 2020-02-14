@@ -287,8 +287,8 @@ export default {
         registrarRetencionIva(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Retención I.V.A.",
-                    text: "¿Está seguro de que desea registrar esta retención de I.V.A.?",
+                    title: "Registrar Retención IVA",
+                    text: "¿Está seguro de que desea registrar esta retención de IVA?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -308,7 +308,7 @@ export default {
                                 .patch(URI + payload.id + '/registrarRetencionIva', payload.params)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Retención I.V.A. registrada correctamente", {
+                                    swal("Retención IVA registrada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
