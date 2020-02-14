@@ -219,13 +219,15 @@ class Estimacion extends Transaccion
         
         if($this->sumaImportes == 0 || $this->sumaImportes == null)     
         {
-            $this->anticipo = 0;
+            $this->anticipo = 0;        
             $this->save();          
         }else
         {
             $this->anticipo = ($data/$this->sumaImportes)*100;
             $this->save(); 
         }
+
+        $this->recalculaMontoImpuestoEstimacion();
         
         
         
@@ -641,6 +643,7 @@ class Estimacion extends Transaccion
 
     public function recalculaMontoImpuestoEstimacion(){
         $this->monto = $this->monto_a_pagar;
+        $this->saldo = $this->monto_a_pagar;
         $this->impuesto = $this->iva_orden_pago;
         $this->save();
     }
