@@ -14,7 +14,7 @@
             <button @click="show"  type="button" class="btn btn-sm btn-outline-secondary" title="Ver Estimación ">
                 <i class="fa fa-eye"></i>
             </button>
-            <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit" ><i class="fa fa-pencil"></i></button>
+            <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit && (value.estado == 0)"  ><i class="fa fa-pencil"></i></button>
             <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0)"  v-bind:id="value.id">
                 <i class="fa fa-trash"></i>
             </button>
@@ -55,10 +55,6 @@
                                     <th style="text-align: right">$ {{value.estimacion.total_retenciones}}</th>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 1">
-                                    <th style="text-align: left" colspan="2">Retención de IVA</th>
-                                    <th style="text-align: right">$ {{value.estimacion.retencion_iva}}</th>
-                                </tr>
-                                <tr v-if="configuracion.retenciones_antes_iva == 1">
                                     <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
                                     <th style="text-align: right">$ {{value.estimacion.total_retencion_liberadas}}</th>
                                 </tr>
@@ -71,8 +67,13 @@
                                     <td style="text-align: right">{{value.estimacion.subtotal_orden_pago}}</td>
                                 </tr>
                                 <tr>
-                                    <th style="text-align: left" colspan="2">I.V.A.</th>
+                                    <th style="text-align: left" colspan="2">IVA</th>
                                     <td style="text-align: right">{{value.estimacion.iva_orden_pago}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: left">Retención de IVA</th>
+                                    <td>{{value.estimacion.retencion_iva_porcentaje}}</td>
+                                    <th style="text-align: right">{{value.estimacion.retencion_iva_format}}</th>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Total</th>
@@ -91,10 +92,6 @@
                                    <tr v-if="configuracion.retenciones_antes_iva == 0">
                                     <th style="text-align: left" colspan="2">Total Retenciones</th>
                                     <th style="text-align: right">$ {{value.estimacion.total_retenciones}}</th>
-                                </tr>
-                                <tr v-if="configuracion.retenciones_antes_iva == 0">
-                                    <th style="text-align: left" colspan="2">Retención de IVA</th>
-                                    <th style="text-align: right">$ {{value.estimacion.retencion_iva}}</th>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 0">
                                     <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
