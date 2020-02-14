@@ -214,6 +214,13 @@ class Estimacion extends Transaccion
         return $this;
     }
 
+    public function anticipoAmortizacion($data)
+    {
+        dd('anticipoAmortizacion', $data, $this->suma_importes);
+        
+         $this->anticipo = (data);
+    }
+
     public function revertirAprobacion()
     {
         if ($this->estado == 2) {
@@ -268,8 +275,9 @@ class Estimacion extends Transaccion
 
     public function getMontoAnticipoAplicadoAttribute()
     {
-        return $this->suma_importes * ($this->anticipo / 100);
+        return str_replace(',', '.', number_format($this->suma_importes*(($this->anticipo)/100),4, ',',''));
     }
+
 
     public function getRetenidoAnteriorAttribute()
     {

@@ -1,6 +1,6 @@
 <template>
     <span>
-          <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can(['registrar_descuento_estimacion_subcontrato','eliminar_descuento_estimacion_subcontrato'])" title="Editar">
+          <button type="button" @click="find()" class="btn btn-primary float-right" :disabled="estado !== 0" title="Editar">
                     Amortización de Anticipo
                 </button>
              <div class="row">
@@ -14,27 +14,26 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <form role="form" @submit.prevent="validate">
+                            <form role="form" @submit.prevent="update">
                                 <div class="modal-body">
                                     <div class="row">
                                        
                                             <div class="form-group row error-content col-md-12">
                                                 <label for="campo" class="col-sm-5 col-form-label">Amortización de Anticipo </label>
-                                                 <label for="campo" class="col-sm-3 col-form-label">2.1601%</label>
+                                                 <label for="campo" class="col-sm-3 col-form-label">{{anticipo}}</label>
                                                 
                                                 <div class="col-sm-4" style="text-align:right;">
                                                     <input
                                                         type="number"
                                                         step="0.0001"
-                                                        v-model="campo"
                                                         name="campo"
+                                                        v-model="campo"
                                                         data-vv-as="Anticipo"
                                                         v-validate="{required: true, min_value:0}"
                                                         class="form-control"
                                                         id="campo"
                                                         placeholder="Anticipo"
                                                         :class="{'is-invalid': errors.has('campo')}">
-                                                    <div class="invalid-feedback" v-show="errors.has('campo')">{{ errors.first('campo') }}</div>
                                                 </div>
                                             </div>
                                             
@@ -44,7 +43,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" @click="cerrar()">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 ">Actualizar</button>
                                 </div>
                             </form>
                         </div>
@@ -58,13 +57,14 @@
 
 <script>
 export default {
-    name: "resumen-edit",
-    props: ['id', 'id_empresa'],
+    name: "amortizacion-edit",
+    props: ['id', 'estimacion_anticipo', 'estado'],
     data() {
         return {
             descuentos:[],
             cargando:false,
-            campo:0.001
+            campo:'',
+            anticipo:''
         }
     },
     mounted() {
@@ -73,68 +73,31 @@ export default {
         cerrar(){
             $(this.$refs.modalAmortizacion).modal('hide');
         },
-        importe(desc){
-            return parseFloat((desc.cantidad * desc.precio)).formatMoney(2, '.', ',');
+        update() {
+            if(this.campo == this.estimacion_anticipo.estimacion.monto_anticipo_aplicado)
+            {
+                swal('Atención', 'El valor de la Amortización de Anticipo es el mismo.', 'warning');
+            }
+            else{
+                return this.$store.dispatch('contratos/estimacion/update', {
+                    id: this.id,
+                    params: this.$data
+                })
+                    .then(data => {
+                        this.$store.commit('contratos/estimacion/UPDATE_AMORTIZACION', data);
+                        $(this.$refs.modalAmortizacion).modal('hide');
+                    })
+            }
         },
-        init(){
-            this.cargando = true;
-            this.lista();
-            $(this.$refs.modalAmortizacion).modal('show');
-        },
-        lista(){
-            this.descuentos = [];
-            return this.$store.dispatch('subcontratosEstimaciones/descuento/list', {
-                id: this.id,
-                // params: {include: 'material', sort: 'id_descuento', order: 'desc'}
-            }).then(data => {
-                this.descuentos = data.data;
-            })
-            .finally(()=>{
-                this.cargando = false;
-            })
-        },
-        updateDescuento(data){
-            this.descuentos = data.data;
-        },
-        updateLista(){
-            return this.$store.dispatch('subcontratosEstimaciones/descuento/updateList', this.descuentos)
-            .then((data) => {
-                this.descuentos = [];
-                this.descuentos = data.data;
-            })
-        },
-        validate() {
-            alert('Validate');
-            // this.$validator.validate().then(result => {
-            //     if (result) {
-            //         this.store();
-            //     }
-            // });
-        },
-    },
-    computed: {
-        tipos() {
-            return this.$store.getters['subcontratosEstimaciones/retencion-tipo/tipos']
+        
+        find() {
+            this.anticipo = this.estimacion_anticipo.estimacion.anticipo;
+            this.campo = this.estimacion_anticipo.estimacion.monto_anticipo_aplicado;
+            
+                    
+                    $(this.$refs.modalAmortizacion).modal('show');
         },
     }
 
 }
 </script>
-
-<style>
-.align{
-    text-align: right;
-}
-.table-fixed-suc tbody {
-    display:block;
-    height:380px;
-    overflow:auto;
-}
-.table-fixed-suc thead, .table-fixed tbody tr {
-    display:table;
-    width:100%;
-    text-align: left;
-}
-table.fixed { table-layout:fixed; }
-table.fixed td { overflow: hidden; }
-</style>

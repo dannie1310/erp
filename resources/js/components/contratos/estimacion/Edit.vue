@@ -2,7 +2,7 @@
      <span>
        <div class="d-flex flex-row-reverse">
            <div class="p-2">
-                <Amortizacion v-bind:id="id"></Amortizacion>
+                <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion" v-bind:estado="estado"></Amortizacion>
             </div>
            <div class="p-2">
                 <RetencionIndex v-bind:id="id"></RetencionIndex>
@@ -213,6 +213,8 @@ import Amortizacion from './amortizacion/Edit'
                 guiones:'\xa0\xa0',
                 identacion:'',
                 itemIdentacion:'',
+                estimacion_anticipo:'',
+                estado:''
 
             }
         },
@@ -231,6 +233,8 @@ import Amortizacion from './amortizacion/Edit'
                   
                     this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
                     this.cargando = false;
+                    this.estado = data.estimacion.estado;
+                    
                 })
             },
             editar(){
