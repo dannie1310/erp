@@ -65,6 +65,7 @@ class FacturaTransformer extends TransformerAbstract
             'empresa' => $model->empresa->razon_social,
             'rubro' => $model->rubro,
             'datos_registro' => $model->datos_registro,
+            'comentario' => $model->comentario,
         ];
     }
 

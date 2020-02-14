@@ -41,18 +41,18 @@
                     { title: 'Comentario', field: 'comentario', sortable: false},
                     { title: 'Usuario', field: 'id_usuario', sortable: false},
                     { title: 'Fecha Hora de Registro', field: 'fecha_hora_registro', sortable: false},
-                    { title: 'Fecha Transacción', field: 'fecha_transaccion', sortable: false},
-                    { title: 'Fecha Presunto', field: 'fecha_presunto', sortable: false},
-                    { title: 'Fecha Definitivo', field: 'fecha_definitivo', sortable: false},
+                    { title: 'Fecha Transacción', field: 'fecha_transaccion', sortable: true},
+                    { title: 'Fecha Presunto', field: 'fecha_presunto', sortable: true},
+                    { title: 'Fecha Definitivo', field: 'fecha_definitivo', sortable: true},
                     { title: 'Monto', field: 'monto', sortable: false},
                     { title: 'Moneda', field: 'moneda', sortable: false},
                     { title: 'T.C.', field: 'tipo_cambio', sortable: false},
                     { title: 'Monto MXP', field: 'monto_mxp', sortable: false},
-                     { title: 'Grado de Alerta', field: 'grado_alerta', sortable: true}
+                    { title: 'Grado de Alerta', field: 'grado_alerta', sortable: true}
                 ],
                 data: [],
                 total: 0,
-                query: { sort: 'grado_alerta', order: 'asc', include: 'usuario'},
+                query: { sort: 'fecha_transaccion', order: 'desc', include: 'usuario'},
                 estado: "",
                 cargando: false,
                 cargando_csv: false
