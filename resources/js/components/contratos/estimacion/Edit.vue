@@ -2,7 +2,10 @@
      <span>
        <div class="d-flex flex-row-reverse">
             <div class="p-2">
-                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.empresa.id_empresa:''"></DeductivaEdit>
+                <RetencionIvaCreate v-bind:id="id"></RetencionIvaCreate>
+            </div>
+            <div class="p-2">
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
             </div>
         </div>
         <div class="row">  
@@ -26,7 +29,7 @@
                                    <thead>
                                       <tr>
                                         <th scope="col">Folio SAO</th>
-                                        <th class="text-right" scope="col">#{{ estimacion.estimacion.numero_folio.padStart(5,"0") }}</th>
+                                        <th class="text-right" scope="col">{{ estimacion.estimacion.numero_folio_format}}</th>
                                       </tr>
                                    </thead>
                                    <tbody>
@@ -62,11 +65,11 @@
                           <tbody>
                             <tr>
                               <th>Contratista: </th>
-                              <th class="text-center" scope="row">{{ estimacion.empresa.razon_social }}</th>
+                              <th class="text-center" scope="row">{{ estimacion.razon_social }}</th>
                             </tr>
                             <tr>
                               <th>No. de Contrato: </th>
-                              <th class="text-center" scope="row">{{ estimacion.subcontrato.referencia }}</th>
+                              <th class="text-center" scope="row">{{ estimacion.referencia }}</th>
                             </tr>
                           </tbody>
                         </table>
@@ -138,17 +141,17 @@
 
                                     <td>{{ identacionItem(index.length/4) }} {{ item.concepto }}</td>
                                     <td class="text-center">{{ item.unidad }}</td>
-                                    <td class="text-right">{{ parseFloat(item.precioUnitario).formatMoney(4,'.',',') }} </td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadContrato).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.importeContrato).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadEstimadoAnterior).formatMoney(4,'.',',')  }}</td>
-                                    <td class="text-right">{{  parseFloat(item.importeEstimadoAnterior).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadEstimacion).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.importeEstimacion).formatMoney(4,'.',',')  }}</td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadAcumulado).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.importeAcumulado).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadPorEstimar).formatMoney(4,'.',',') }} </td>
-                                    <td class="text-right">{{  parseFloat(item.importePorEstimar).formatMoney(4,'.',',')  }}</td>
+                                    <td class="text-right">{{  item.precioUnitario}} </td>
+                                    <td class="text-right">{{  item.cantidadContrato }}</td>
+                                    <td class="text-right">{{  item.importeContrato }}</td>
+                                    <td class="text-right">{{  item.cantidadEstimadoAnterior }}</td>
+                                    <td class="text-right">{{  item.importeEstimadoAnterior }}</td>
+                                    <td class="text-right">{{  item.cantidadEstimacion }}</td>
+                                    <td class="text-right">{{  item.importeEstimacion }}</td>
+                                    <td class="text-right">{{  item.cantidadAcumulado }}</td>
+                                    <td class="text-right">{{  item.importeAcumulado }}</td>
+                                    <td class="text-right">{{  item.cantidadPorEstimar}} </td>
+                                    <td class="text-right">{{  item.importePorEstimar }}</td>
                                 </tr>
                           </template>
                         <!--Sumas totales de la s partidas-->
@@ -189,9 +192,10 @@
 
 
 import DeductivaEdit from './deductivas/Edit'
+import RetencionIvaCreate from './retencion-iva/create'
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit},
+        components: {DeductivaEdit, RetencionIvaCreate},
         // props: ['id'],
         data() {
             return {

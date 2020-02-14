@@ -14,7 +14,7 @@
             <button @click="show"  type="button" class="btn btn-sm btn-outline-secondary" title="Ver Estimación ">
                 <i class="fa fa-eye"></i>
             </button>
-            <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit" ><i class="fa fa-pencil"></i></button>
+            <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit && (value.estado == 0)"  ><i class="fa fa-pencil"></i></button>
             <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0)"  v-bind:id="value.id">
                 <i class="fa fa-trash"></i>
             </button>
