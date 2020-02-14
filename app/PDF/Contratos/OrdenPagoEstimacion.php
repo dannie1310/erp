@@ -307,7 +307,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Amortizacion de Anticipo :', 0, 0, 'R');
         $this->CellFitScale(($this->w - 2) * 0.10, 0.4, round($this->estimacion->anticipo, 2) . ' %', 'B', 0, 'L');
-        $this->CellFitScale(($this->w - 2) * 0.15, 0.4, "$ ".number_format($this->estimacion->monto_anticipo_aplicado, 2 ,'.', ','), 'B', 1, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.15, 0.4, $this->estimacion->monto_anticipo_aplicado_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
         if($this->estimacion->configuracion->ret_fon_gar_antes_iva==1) {
@@ -324,13 +324,13 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ".number_format($this->estimacion->retenciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_retenciones_format, 'B', 1, 'R');
             $this->Ln(0.1);
 
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones Liberadas :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ".number_format($this->estimacion->liberaciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_liberaciones_format, 'B', 1, 'R');
             $this->Ln(0.1);
 
         }
@@ -339,7 +339,7 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Deductivas :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ".number_format($this->estimacion->descuentos->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_deductivas_format, 'B', 1, 'R');
             $this->Ln(0.1);
         }
 
@@ -400,7 +400,7 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Deductivas :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ". number_format($this->estimacion->descuentos->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_deductivas_format, 'B', 1, 'R');
             $this->Ln(0.1);
         }
         if($this->estimacion->configuracion->retenciones_antes_iva==0) {
@@ -408,14 +408,14 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ". number_format($this->estimacion->retenciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_retenciones_format, 'B', 1, 'R');
             $this->Ln(0.1);
 
 
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones Liberadas :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ". number_format($this->estimacion->liberaciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_liberaciones_format, 'B', 1, 'R');
             $this->Ln(0.1);
         }
 
