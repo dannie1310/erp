@@ -203,7 +203,7 @@ import RetencionIndex from './retenciones/Index';
 import Amortizacion from './amortizacion/Edit'
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate},
+        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion},
         // props: ['id'],
         data() {
             return {

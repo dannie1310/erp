@@ -256,17 +256,7 @@ class EstimacionService
     public  function anticipo($data, $id)
     {
         $estimacion = $this->repository->show($id);
-        // dd('anticipo', $data, $estimacion);
-        try {
-            DB::connection('cadeco')->beginTransaction();
-            $estimacion->anticipoAmortizacion($data['campo']);
-            DB::connection('cadeco')->commit();
-            $estimacion->refresh();
-            return $estimacion;
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            throw $e;
-        }
+        $estimacion->anticipoAmortizacion($data['campo']);
     }
 
     public function revertirAprobacion($id)

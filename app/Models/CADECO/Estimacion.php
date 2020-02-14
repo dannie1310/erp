@@ -216,15 +216,26 @@ class Estimacion extends Transaccion
 
     public function anticipoAmortizacion($data)
     {
-        dd('anticipoAmortizacion', $data, $this->suma_importes);
         
-         $this->anticipo = (data);
+        if($this->sumaImportes == 0 || $this->sumaImportes == null)     
+        {
+            $this->anticipo = 0;
+            $this->save();          
+        }else
+        {
+            $this->anticipo = ($data/$this->sumaImportes)*100;
+            $this->save(); 
+        }
+        
+        
+        
+              
     }
 
     public function revertirAprobacion()
     {
         if ($this->estado == 2) {
-            throw new \Exception('La transacción no puede modificarse por que esta aprobada o revisada.');
+            
         }
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");

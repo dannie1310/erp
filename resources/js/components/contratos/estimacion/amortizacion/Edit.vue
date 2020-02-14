@@ -83,9 +83,18 @@ export default {
                     id: this.id,
                     params: this.$data
                 })
-                    .then(data => {
-                        this.$store.commit('contratos/estimacion/UPDATE_AMORTIZACION', data);
+                    .then(data => {                        
                         $(this.$refs.modalAmortizacion).modal('hide');
+                         this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
+                         return this.$store.dispatch('contratos/estimacion/showEstimacionTable', {
+                         id: this.id,
+                    }).then(data => {
+                  
+                        this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
+                        this.cargando = false;
+                        this.estado = data.estimacion.estado;
+                    
+                })
                     })
             }
         },
