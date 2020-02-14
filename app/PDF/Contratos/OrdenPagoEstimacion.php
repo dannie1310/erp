@@ -329,12 +329,6 @@ class OrdenPagoEstimacion extends Rotation
 
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
-            $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención de IVA :'), 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ".number_format($this->estimacion->IVARetenido, 2, '.', ','), 'B', 1, 'R');
-            $this->Ln(0.1);
-
-            $this->SetX(($this->w) * 0.45);
-            $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones Liberadas :', 0, 0, 'R');
             $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ".number_format($this->estimacion->liberaciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
             $this->Ln(0.1);
@@ -365,6 +359,12 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'I.V.A :', 0, 0, 'R');
         $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->iva_orden_pago_format, 'B', 1, 'R');
+        $this->Ln(0.1);
+
+        $this->SetX(($this->w) * 0.45);
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención I.V.A :'), 0, 0, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->iva_retenido_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
 

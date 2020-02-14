@@ -208,6 +208,7 @@ class EstimacionService
             'estimacion'=> $est->transform($estimacion),
             'numEstimacion'=>$numEstimacion,
             'razon_social' => $estimacion->empresa->razon_social,
+            'id_empresa' => $estimacion->empresa->id_empresa,
             'referencia' => $estimacion->subcontrato->referencia,
             'moneda' =>$mon->transform($estimacion->moneda),
             'items'=>$items,
@@ -277,5 +278,10 @@ class EstimacionService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar($data['data']);
+    }
+
+    public function registrarRetencionIva($data, $id){
+        $estimacion = $this->repository->show($id);
+        return $estimacion->registrarIVARetenido($data['IVARetenido']);
     }
 }
