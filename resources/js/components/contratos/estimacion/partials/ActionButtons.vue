@@ -92,7 +92,7 @@
                                     <th style="text-align: left" colspan="2">Total Retenciones</th>
                                     <th style="text-align: right">$ {{value.estimacion.total_retenciones}}</th>
                                 </tr>
-                                <tr v-if="configuracion.retenciones_antes_iva == 0">
+                                <tr>
                                     <th style="text-align: left" colspan="2">Retención de IVA</th>
                                     <th style="text-align: right">$ {{value.estimacion.retencion_iva}}</th>
                                 </tr>
