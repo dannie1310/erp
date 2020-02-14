@@ -55,10 +55,6 @@
                                     <th style="text-align: right">$ {{value.estimacion.total_retenciones}}</th>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 1">
-                                    <th style="text-align: left" colspan="2">Retención de IVA</th>
-                                    <th style="text-align: right">$ {{value.estimacion.retencion_iva}}</th>
-                                </tr>
-                                <tr v-if="configuracion.retenciones_antes_iva == 1">
                                     <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
                                     <th style="text-align: right">$ {{value.estimacion.total_retencion_liberadas}}</th>
                                 </tr>
@@ -73,6 +69,10 @@
                                 <tr>
                                     <th style="text-align: left" colspan="2">I.V.A.</th>
                                     <td style="text-align: right">{{value.estimacion.iva_orden_pago}}</td>
+                                </tr>
+                                <tr v-if="configuracion.retenciones_antes_iva == 1">
+                                    <th style="text-align: left" colspan="2">Retención de IVA</th>
+                                    <th style="text-align: right">{{value.estimacion.retencion_iva_format}}</th>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Total</th>
