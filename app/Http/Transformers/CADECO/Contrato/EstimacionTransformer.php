@@ -64,7 +64,7 @@ class EstimacionTransformer extends TransformerAbstract
             'retencion_fondo_garantia' => $model->retencion_fondo_garantia_orden_pago_format,
             'total_retenciones' => $model->retenciones->sum('importe'),
             'retencion_iva' => $model->IVARetenido ? $model->IVARetenido : 0,
-            'retencion_iva_format' => $model->IVARetenido ? $model->iva_retenido_format : 0.0,
+            'retencion_iva_format' => $model->IVARetenido ? $model->iva_retenido_format : '$ 0.00',
             'total_retencion_liberadas' => $model->liberaciones->sum('importe'),
             'total_deductivas' => $model->descuentos->sum('importe'),
             'subtotal_orden_pago' => $model->subtotal_orden_pago_format,
