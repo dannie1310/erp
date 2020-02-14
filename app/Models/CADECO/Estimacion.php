@@ -458,7 +458,7 @@ class Estimacion extends Transaccion
         $subtotal = $this->suma_importes- $this->monto_anticipo_aplicado;
         if($this->configuracion->retenciones_antes_iva == 1){
             $subtotal-=$this->retenciones->sum("importe");
-            $subtotal-=$this->IVARetenido;
+            // $subtotal-=$this->IVARetenido;
             $subtotal+=$this->liberaciones->sum("importe");
         }
         if($this->configuracion->desc_pres_mat_antes_iva == 1){
@@ -487,7 +487,7 @@ class Estimacion extends Transaccion
 
     public function getTotalOrdenPagoAttribute()
     {
-        $total = $this->subtotal_orden_pago + $this->iva_orden_pago;
+        $total = ($this->subtotal_orden_pago + $this->iva_orden_pago) - $this->IVARetenido;
         return $total;
     }
     # retencion_fondo_garantia_orden_pago_format
@@ -550,6 +550,18 @@ class Estimacion extends Transaccion
     public function getMontoAPagarFormatAttribute()
     {
         return '$ ' . number_format($this->monto_a_pagar, 2);
+    }
+
+    public function getIvaRetenidoFormatAttribute(){
+        return '$ ' . number_format($this->IVARetenido, 2);
+    }
+    public function getIvaRetenidoPorcentajeAttribute(){
+        if($this->subtotal_orden_pago>0){
+            return number_format($this->IVARetenido*100 / $this->subtotal_orden_pago, 2)." %";
+        } else {
+            return "0 %";
+        }
+
     }
 
     /**
@@ -647,5 +659,34 @@ class Estimacion extends Transaccion
                 ]
             );
         }
+    }
+
+    public function registrarIVARetenido($retencion){
+        if($retencion > 0){
+            $porcentaje = $retencion * 100 / $this->subtotal_orden_pago;
+            switch ((int)round($porcentaje)){
+                case 4:
+                    if($porcentaje <= 3.9999 || $porcentaje >= 4.0001){
+                        abort(403, 'La retención de I.V.A. no es del 4%');
+                    }
+                break;
+                case 6:
+                    if($porcentaje <= 5.9999 || $porcentaje >= 6.0001){
+                        abort(403, 'La retención de I.V.A. no es del 6%');
+                    }
+                break;
+                case 10:
+                    if($porcentaje <= 9.9999 || $porcentaje >= 10.0001){
+                        abort(403, 'La retención de I.V.A. no es del 10%');
+                    }
+                break;
+                default:
+                    abort(403, 'La retención de I.V.A. no es valida');
+                break;
+            }
+        }
+        $this->IVARetenido = $retencion;
+        $this->save();
+        return $this;
     }
 }

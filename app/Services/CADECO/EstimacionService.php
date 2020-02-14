@@ -280,4 +280,9 @@ class EstimacionService
     {
         return $this->show($id)->eliminar($data['data']);
     }
+
+    public function registrarRetencionIva($data, $id){
+        $estimacion = $this->repository->show($id);
+        return $estimacion->registrarIVARetenido($data['IVARetenido']);
+    }
 }
