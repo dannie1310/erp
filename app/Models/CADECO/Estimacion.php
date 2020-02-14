@@ -555,6 +555,14 @@ class Estimacion extends Transaccion
     public function getIvaRetenidoFormatAttribute(){
         return '$ ' . number_format($this->IVARetenido, 2);
     }
+    public function getIvaRetenidoPorcentajeAttribute(){
+        if($this->subtotal_orden_pago>0){
+            return number_format($this->IVARetenido*100 / $this->subtotal_orden_pago, 2)." %";
+        } else {
+            return "0 %";
+        }
+
+    }
 
     /**
      * Este método implementa la lógica actualización de control de obra del procedimiento almacenado sp_aplicar_pagos

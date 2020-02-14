@@ -65,7 +65,7 @@ class EstimacionTransformer extends TransformerAbstract
             'total_retenciones' => $model->retenciones->sum('importe'),
             'retencion_iva' => $model->IVARetenido,
             'retencion_iva_format' => $model->iva_retenido_format,
-            'retencion_iva_pocentaje' => $model->iva_retenido_porcentaje,
+            'retencion_iva_porcentaje' => $model->iva_retenido_porcentaje,
             'total_retencion_liberadas' => $model->liberaciones->sum('importe'),
             'total_deductivas' => $model->descuentos->sum('importe'),
             'subtotal_orden_pago' => $model->subtotal_orden_pago_format,
