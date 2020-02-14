@@ -1,7 +1,7 @@
 <template>
     <span>
         <button type="button" @click="init()" class="btn btn-primary float-right" >
-            Retencion IVA
+            Retención IVA
         </button>
         <div class="row">
             <div class="col-md-12">
@@ -9,7 +9,7 @@
                     <div class="modal-dialog modal-dialog-centered modal-md">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> Retencion IVA</h5>
+                                <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> Retención IVA</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -19,7 +19,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
-                                                <label for="retencion" class="col-sm-4 col-form-label">Retencion de I.V.A.: </label>
+                                                <label for="retencion" class="col-sm-4 col-form-label">Retención de I.V.A.: </label>
                                                 <div class="col-sm-8">
                                                     <input
                                                         type="number"
