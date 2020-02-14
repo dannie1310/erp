@@ -639,6 +639,12 @@ class Estimacion extends Transaccion
         }
     }
 
+    public function recalculaMontoImpuestoEstimacion(){
+        $this->monto = $this->monto_a_pagar;
+        $this->impuesto = $this->iva_orden_pago;
+        $this->save();
+    }
+
     public function registrarRetencion($importe){
         $monto_actualizado = $this->monto - $importe - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
         $impuesto_actualizado = $this->impuesto - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
@@ -646,22 +652,6 @@ class Estimacion extends Transaccion
         $this->monto = $monto_actualizado;
         $this->impuesto = $impuesto_actualizado;
         $this->save();
-    }
-
-    public function actualizarRetencion(){
-        $porcentaje_iva = $this->impuesto / ($this->monto-$this->impuesto);
-
-        $subtotal = $this->suma_importes - $this->retencion_fondo_garantia_orden_pago - $this->monto_anticipo_aplicado;
-        $impuesto = $subtotal * $porcentaje_iva;
-        $total =  $subtotal + $impuesto;
-
-        $this->monto = $total;
-        $this->impuesto = $impuesto;
-        $this->save();
-
-        foreach($this->retenciones as $retencion){
-            $this->registrarRetencion($retencion->importe);
-        }
     }
 
     public function getImporteRetencionConIva($retencion)
@@ -739,6 +729,7 @@ class Estimacion extends Transaccion
         }
         $this->IVARetenido = $retencion;
         $this->save();
+        $this->recalculaMontoImpuestoEstimacion();
         return $this;
     }
 }
