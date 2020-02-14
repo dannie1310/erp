@@ -271,6 +271,11 @@ class Estimacion extends Transaccion
         return $this->suma_importes * ($this->anticipo / 100);
     }
 
+    public function getMontoAnticipoAplicadoFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_anticipo_aplicado, 2);
+    }
+
     public function getRetenidoAnteriorAttribute()
     {
         $estimaciones_anteriores = $this->subcontrato->estimaciones()
@@ -458,7 +463,6 @@ class Estimacion extends Transaccion
         $subtotal = $this->suma_importes- $this->monto_anticipo_aplicado;
         if($this->configuracion->retenciones_antes_iva == 1){
             $subtotal-=$this->retenciones->sum("importe");
-            // $subtotal-=$this->IVARetenido;
             $subtotal+=$this->liberaciones->sum("importe");
         }
         if($this->configuracion->desc_pres_mat_antes_iva == 1){
@@ -483,6 +487,36 @@ class Estimacion extends Transaccion
     public function getIvaOrdenPagoFormatAttribute()
     {
         return '$ ' . number_format($this->iva_orden_pago, 2);
+    }
+
+    public function getSumaDeductivasAttribute()
+    {
+        return $this->descuentos->sum('importe');
+    }
+
+    public function getSumaDeductivasFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_deductivas, 2);
+    }
+
+    public function getSumaRetencionesAttribute()
+    {
+        return $this->retenciones->sum('importe');
+    }
+
+    public function getSumaRetencionesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_retenciones, 2);
+    }
+
+    public function getSumaLiberacionesAttribute()
+    {
+        return $this->liberaciones->sum('importe');
+    }
+
+    public function getSumaLiberacionesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_liberaciones, 2);
     }
 
     public function getTotalOrdenPagoAttribute()
