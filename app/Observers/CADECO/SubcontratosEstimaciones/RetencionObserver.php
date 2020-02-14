@@ -46,6 +46,6 @@ class RetencionObserver {
      */
     public function deleted(Retencion $retencion)
     {
-        $retencion->validarEliminacionRetencionesIva();
+        $retencion->estimacion->recalculaMontoImpuestoEstimacion();
     }
 }
