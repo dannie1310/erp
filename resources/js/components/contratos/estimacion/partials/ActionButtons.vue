@@ -72,6 +72,7 @@
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Retención de IVA</th>
+                                    <td>{{value.estimacion.retencion_iva_porcentaje}}%</td>
                                     <th style="text-align: right">{{value.estimacion.retencion_iva_format}}</th>
                                 </tr>
                                 <tr>
