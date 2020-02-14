@@ -67,7 +67,7 @@
                                     <td style="text-align: right">{{value.estimacion.subtotal_orden_pago}}</td>
                                 </tr>
                                 <tr>
-                                    <th style="text-align: left" colspan="2">I.V.A.</th>
+                                    <th style="text-align: left" colspan="2">IVA</th>
                                     <td style="text-align: right">{{value.estimacion.iva_orden_pago}}</td>
                                 </tr>
                                 <tr>
