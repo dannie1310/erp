@@ -1124,6 +1124,7 @@ export const routes = [
                     {
                         path: ':id/editar',
                         name: 'estimacion-edit',
+                        props: true,
                         component: require('./components/contratos/estimacion/Edit').default,
                         meta: {
                             title: 'Editar Estimación',

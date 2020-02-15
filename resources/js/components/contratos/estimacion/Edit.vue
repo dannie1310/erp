@@ -1,7 +1,7 @@
 <template>
-     <span>
-       <div class="d-flex flex-row-reverse">
-           <div class="p-2">
+    <span>
+        <div class="d-flex flex-row-reverse" v-if="estimacion">
+            <div class="p-2">
                 <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
             <div class="p-2">
@@ -10,12 +10,12 @@
             <div class="p-2">
                 <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
             </div>
-
         </div>
+
         <div class="row" v-if="estimacion">
-			<div class="col-md-6">
+            <div class="col-md-6">
 				<div class="card">
-					<div class="card-header">
+                    <div class="card-header">
 						<h6 class="card-title">Subcontrato</h6>
 					</div>
 					<div class="card-body">
@@ -190,15 +190,15 @@
 						    <td :title="concepto.item.clave">  {{ concepto.item.clave }}</td>
                             <td :title="concepto.item.descripcion_concepto">  {{concepto.item.descripcion_concepto}}</td>
                             <td class="centrado">{{concepto.item.unidad}}</td>
-                            <td style="display: none" class="numerico contratado">{{ concepto.item ? concepto.item.cantidad_subcontrato : '' }}</td>
-                            <td style="display: none" class="numerico contratado">{{ concepto.item ? concepto.item.precio_unitario_subcontrato : '' }}</td>
-                            <td style="display: none" class="numerico avance-volumen">{{ concepto.item ? concepto.item.cantidad_estimada_anterior : '' }}</td>
-                            <td style="display: none" class="numerico avance-volumen">{{ concepto.item ? concepto.item.cantidad_estimada_total : '' }}</td>
-                            <td style="display: none" class="numerico avance-volumen">{{ concepto.item ? concepto.item.porcentaje_avance : '' }}</td>
+                            <td style="display: none" class="numerico contratado">{{ concepto.item ? parseFloat(concepto.item.cantidad_subcontrato).formatMoney(2) : '' }}</td>
+                            <td style="display: none" class="numerico contratado">{{ concepto.item ? parseFloat(concepto.item.precio_unitario_subcontrato).formatMoney(2) : '' }}</td>
+                            <td style="display: none" class="numerico avance-volumen">{{ concepto.item ? parseFloat(concepto.item.cantidad_estimada_anterior).formatMoney(2) : '' }}</td>
+                            <td style="display: none" class="numerico avance-volumen">{{ concepto.item ? parseFloat(concepto.item.cantidad_estimada_total).formatMoney(2) : '' }}</td>
+                            <td style="display: none" class="numerico avance-volumen">{{ concepto.item ? parseFloat(concepto.item.porcentaje_avance).formatMoney(2) : '' }}</td>
                             <td style="display: none" class="numerico avance-importe"></td>
-                            <td style="display: none" class="numerico avance-importe">{{ concepto.item ? concepto.item.importe_estimado_anterior : '' }}</td>
-                            <td style="display: none" class="numerico saldo">{{ concepto.item ? concepto.item.cantidad_por_estimar : '' }}</td>
-                            <td style="display: none" class="numerico saldo">{{ concepto.item ? concepto.item.importe_por_estimar : '' }}</td>
+                            <td style="display: none" class="numerico avance-importe">{{ concepto.item ? parseFloat(concepto.item.importe_estimado_anterior).formatMoney(2) : '' }}</td>
+                            <td style="display: none" class="numerico saldo">{{ concepto.item ? parseFloat(concepto.item.cantidad_por_estimar).formatMoney(2) : '' }}</td>
+                            <td style="display: none" class="numerico saldo">{{ concepto.item ? parseFloat(concepto.item.importe_por_estimar).formatMoney(2) : '' }}</td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changeCantidad(concepto.item)" class="text" v-model="concepto.item.cantidad_estimacion"
                                        :name="'cantidad_estimacion' + i"
@@ -208,7 +208,7 @@
                             <td class="editable-cell numerico">
                                 <input v-on:change="changePorcentaje(concepto.item)" class="text" v-model="concepto.item.porcentaje_estimado" />
                             </td>
-                            <td class="numerico">{{ concepto.item.precio_unitario_subcontrato}}</td>
+                            <td class="numerico">{{ parseFloat(concepto.item.precio_unitario_subcontrato).formatMoney(2)}}</td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changeImporte(concepto.item)" class="text" v-model="concepto.item.importe_estimacion" />
                             </td>
@@ -229,11 +229,10 @@ import RetencionIndex from './retenciones/Index';
     export default {
         name: "estimacion-edit",
         components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate},
-        // props: ['id'],
+        props: ['id'],
         data() {
             return {
                 cargando: true,
-                conceptos: null,
                 columnas: [],
                 fecha_inicio: '',
                 fecha_fin: '',
@@ -241,15 +240,11 @@ import RetencionIndex from './retenciones/Index';
             }
         },
         mounted() {
-            console.log(this.id, id)
-            this.$Progress.start();
             this.find()
-                .finally(() => {
-                    this.$Progress.finish();
-                })
         },
         methods: {
             changeCantidad(concepto) {
+                console.log("aquui", concepto)
                 concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
                 concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
             },
@@ -266,7 +261,6 @@ import RetencionIndex from './retenciones/Index';
             },
             find() {
                 this.cargando = true;
-                console.log(id, this.id, this.$store.id);
                 this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
                 return this.$store.dispatch('contratos/estimacion/ordenarConceptos', {
                     id: this.id,
