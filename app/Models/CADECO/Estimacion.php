@@ -621,6 +621,21 @@ class Estimacion extends Transaccion
         }
     }
 
+    public function recalculaMontoImpuestoEstimacion(){
+        $this->monto = $this->monto_a_pagar;
+        $this->impuesto = $this->iva_orden_pago;
+        $this->save();
+    }
+
+    public function registrarRetencion($importe){
+        $monto_actualizado = $this->monto - $importe - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
+        $impuesto_actualizado = $this->impuesto - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
+        if($monto_actualizado < 0) abort(403, 'No se puede registar una retención mayor al monto de la estimación.');
+        $this->monto = $monto_actualizado;
+        $this->impuesto = $impuesto_actualizado;
+        $this->save();
+    }
+
     public function getImporteRetencionConIva($retencion)
     {
         return $retencion * 1.16;
@@ -696,6 +711,7 @@ class Estimacion extends Transaccion
         }
         $this->IVARetenido = $retencion;
         $this->save();
+        $this->recalculaMontoImpuestoEstimacion();
         return $this;
     }
 }
