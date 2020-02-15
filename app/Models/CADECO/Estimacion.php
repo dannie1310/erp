@@ -214,10 +214,28 @@ class Estimacion extends Transaccion
         return $this;
     }
 
+    public function anticipoAmortizacion($data)
+    {
+        if($this->sumaImportes == 0 || $this->sumaImportes == null)     
+        {
+            $this->anticipo = 0;        
+            $this->save();          
+        }else
+        {
+            if($this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->first()->anticipo != 0)
+            {
+                $this->anticipo = ($data/$this->sumaImportes)*100;
+                $this->save(); 
+            }
+            throw new \Exception('No se puede actualizar la amortización de anticipo.');            
+        }
+        $this->recalculaMontoImpuestoEstimacion(); 
+    }
+
     public function revertirAprobacion()
     {
         if ($this->estado == 2) {
-            throw new \Exception('La transacción no puede modificarse por que esta aprobada o revisada.');
+            
         }
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
@@ -268,7 +286,7 @@ class Estimacion extends Transaccion
 
     public function getMontoAnticipoAplicadoAttribute()
     {
-        return $this->suma_importes * ($this->anticipo / 100);
+        return str_replace(',', '.', number_format($this->suma_importes*(($this->anticipo)/100),4, ',',''));
     }
 
     public function getMontoAnticipoAplicadoFormatAttribute()
@@ -623,6 +641,7 @@ class Estimacion extends Transaccion
 
     public function recalculaMontoImpuestoEstimacion(){
         $this->monto = $this->monto_a_pagar;
+        $this->saldo = $this->monto_a_pagar;
         $this->impuesto = $this->iva_orden_pago;
         $this->save();
     }
