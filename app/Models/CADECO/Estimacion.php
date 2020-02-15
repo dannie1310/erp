@@ -623,4 +623,17 @@ class Estimacion extends Transaccion
             );
         }
     }
+
+    public function subcontratoAEstimar()
+    {
+        return [
+            'fecha_inicial' => $this->cumplimiento_format,
+            'fecha_final'   => $this->vencimiento_format,
+            'fecha'         => $this->fecha_format,
+            'razon_social'  => $this->empresa->razon_social,
+            'moneda'        => $this->moneda->nombre,
+            'observaciones' => $this->observaciones,
+            'subcontrato'   => $this->subcontrato->subcontratoEstimado($this->id_transaccion)
+        ];
+    }
 }

@@ -243,4 +243,28 @@ class Subcontrato extends Transaccion
             }
         }
     }
+
+
+    public function subcontratoEstimado($id_estimacion)
+    {
+        $respuesta = array();
+        $items = array();
+        $nivel_ancestros = '';
+
+        foreach ($this->partidasOrdenadas as $partida) {
+            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
+            if ($nivel != $nivel_ancestros) {
+                $nivel_ancestros = $nivel;
+                foreach ($partida->ancestros as $ancestro) {
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2]];
+                }
+            }
+            $items [$partida->nivel] = ["para_estimar" => 1, "item" => $partida->partidasEstimadas($id_estimacion, $this->id_antecedente)];
+        }
+        $respuesta = array(
+            'referencia' => $this->referencia,
+            'partidas' => $items
+        );
+        return $respuesta;
+    }
 }

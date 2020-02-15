@@ -42,50 +42,8 @@ class Contrato extends Model
         return $this->belongsTo(Destino::class, 'id_transaccion', 'id_transaccion')->where('id_concepto_contrato', '=', $this->id_concepto);
     }
 
-    public function itemsSubcontrato()
+    public function getRutaDestinoAttribute()
     {
-        return $this->belongsTo(SubcontratoPartida::class, 'id_concepto', 'id_concepto');
-    }
-
-    public function scopeConceptosEstimacionOrdenado($query, $id_subcontrato)
-    {
-        $items_subcontrato = $this->whereHas('itemsSubcontrato', function ($q) use ($id_subcontrato){
-            return $q->where('id_transaccion', '=', $id_subcontrato);
-        })->with('itemsSubcontrato')->orderBy('nivel', 'asc')->get();
-
-        $items=array();
-        $nivel_ancestros = '';
-
-        foreach ($items_subcontrato as $concepto) {
-            $nivel = substr($concepto->nivel, 0, strlen($concepto->nivel) - 4);
-            if ($nivel != $nivel_ancestros) {
-                $nivel_ancestros = $nivel;
-                foreach ($concepto->ancestros as $ancestro) {
-                    if(!in_array($ancestro, $items)) {
-                        array_push($items, $ancestro);
-                    }
-                }
-            }
-            array_push($items, $concepto->id_concepto);
-        }
-
-        return $query->whereIn('id_concepto', $items);
-    }
-
-    public function getAncestrosAttribute()
-    {
-        $lista = array();
-        for($i = 1; $i < strlen($this->nivel)/4; $i++)
-        {
-            $nivel = substr($this->nivel, 0, 4*$i);
-            $result = self::where('id_transaccion', '=', $this->id_transaccion)->where('nivel', '=', $nivel)->first();
-            array_push($lista,$result->id_concepto);
-        }
-        return $lista;
-    }
-
-    public function getParaEstimarAttribute()
-    {
-       return is_null($this->itemsSubcontrato) ? '0' : '1';
+        return $this->destino->ruta_destino;
     }
 }

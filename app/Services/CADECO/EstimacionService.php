@@ -284,27 +284,6 @@ class EstimacionService
 
     private function ordenarConcepto($estimacion)
     {
-        $partidas=$estimacion->subcontrato->partidasOrdenadas;
-        $items=array();
-        $nivel_ancestros = '';
-        $items_subcontrato = new SubcontratoPartidaTransformer();
-        $items_estimacion = new EstimacionPartidaTransformer();
-        foreach ($partidas as $key => $partida) {
-            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
-            if ($nivel != $nivel_ancestros) {
-                $nivel_ancestros = $nivel;
-                foreach ($partida->ancestros as $ancestro) {
-                    $items[$ancestro[1]] = $ancestro[0];
-                }
-            }
-            $partida_estimacion = $estimacion->partidas->where('item_antecedente', '=',$partida->id_concepto)->first();
-            $items[$partida->nivel] = [
-                $partida->descripcion,
-                'subcontrato' => $items_subcontrato->transform($partida),
-                'estimacion' => $partida_estimacion ? $items_estimacion->transform($partida_estimacion) : NULL,
-                'unidad' => $partida->contrato->unidad,
-            ];
-        }
-       return $items;
+       return $estimacion->subcontratoAEstimar();
     }
 }

@@ -45,7 +45,7 @@ class ItemEstimacion extends Item
         return $this->belongsTo(EstimacionPartidaEliminada::class, 'id_item');
     }
 
-    public function getEstimadoAnteriorAttribute($id)
+    public function getEstimadoAnteriorAttribute($id) //**eliminar
     {
         return Item::where('item_antecedente', '=', $this->item_antecedente)->where("id_transaccion", '<', $id)
             ->where("id_antecedente", '=', $this->id_antecedente)

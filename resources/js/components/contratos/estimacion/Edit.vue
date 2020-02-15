@@ -1,6 +1,104 @@
 <template>
     <span>
-        <div class="card">
+        <div class="row" v-if="estimacion">
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header">
+						<h6 class="card-title">Subcontrato</h6>
+					</div>
+					<div class="card-body">
+						<form>
+							<div class="form-group row">
+								<label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+								<div class="col-sm-10">
+									<input
+                                        readonly
+                                        name="fecha"
+                                        v-validate="{required: true}"
+                                        data-vv-as="Fecha"
+                                        :class="{'is-invalid': errors.has('fecha')}"
+                                        v-model="fecha"
+                                        type="date"
+                                        class="form-control"
+                                        id="fecha"
+                                        placeholder="Fecha">
+									<div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Objeto</label>
+								<div class="col-sm-10">
+									{{ estimacion.subcontrato.referencia }}
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Contratista</label>
+								<div class="col-sm-10">
+									{{ estimacion.razon_social }}
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">Observaciones</label>
+								<div class="col-sm-10">
+									<textarea
+                                        name="observaciones"
+                                        id="observaciones"
+                                        class="form-control"
+                                        v-model="estimacion.observaciones"
+                                    ></textarea>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="card" v-if="estimacion">
+					<div class="card-header">
+						<h6 class="card-title">Periodo de Estimación</h6>
+					</div>
+					<div class="card-body">
+						<form>
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label>Inicio</label>
+									<input
+                                        name="fecha_inicio"
+                                        v-validate="{required: true}"
+                                        data-vv-as="Inicio"
+                                        :class="{'is-invalid': errors.has('fecha_inicio')}"
+                                        v-model="fecha_inicio"
+                                        type="date"
+                                        class="form-control"
+                                        id="fecha_inicio"
+                                        placeholder="Inicio">
+									<div class="invalid-feedback" v-show="errors.has('fecha_inicio')">{{ errors.first('fecha_inicio') }}</div>
+
+								</div>
+								<div class="form-group col-md-6">
+									<label for="inicio">Término</label>
+									<input
+                                        name="fecha_fin"
+                                        v-validate="{required: true}"
+                                        data-vv-as="Término"
+                                        :class="{'is-invalid': errors.has('fecha_fin')}"
+                                        v-model="fecha_fin"
+                                        type="date"
+                                        class="form-control"
+                                        id="fecha_fin"
+                                        placeholder="Término">
+									<div class="invalid-feedback" v-show="errors.has('fecha_fin')">{{ errors.first('fecha_fin') }}</div>
+
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+        <div class="card" v-if="estimacion">
 			<div class="card-body">
 				<div class="form-check form-check-inline">
 					<input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
@@ -56,65 +154,61 @@
 							<th style="display: none" class="destino">Destino</th>
 						</tr>
 					</thead>
-					<tbody>
-					<tr v-for="(concepto, i) in conceptos" :data-iddestino="concepto.para_estimar ? concepto.destino ? concepto.destino.id_destino : null : null">
-						<td :title="concepto.clave">{{ concepto.clave }}</td>
-						<td :title="concepto.descripcion">
-							<span v-if="concepto.para_estimar == '1'">
-								-- {{ concepto.descripcion }}
-							</span>
-							<span v-else>
-                                <span v-if="i==1">- </span>
-								<b>{{ concepto.descripcion}}</b>
-							</span>
-						</td>
-						<td class="centrado">{{ concepto.unidad }}</td>
-
-                       <td v-if="concepto.para_estimar == '1'" v-for="partida_subcontrato in partidas_subcontrato" style="display: none" class="numerico contratado">
-                            {{ partida_subcontrato.id_concepto == concepto.id_concepto ? partida_subcontrato.cantidad_format : '' }}
-<!--						   <td v-if="partida_subcontrato.id_concepto == concepto.id_concepto"  style="display: none" class="numerico contratado">{{ partida_subcontrato.precio_unitario_format }}</td>-->
-                       </td>
-                    </tr>
-
-<!--						<td style="display: none" class="numerico avance-volumen">{{ concepto.para_estimar == '1' ? parseFloat(concepto.CantidadEstimadaTotal).formatMoney(2) : '' }}</td>-->
-<!--						<td style="display: none" class="numerico avance-volumen">{{ concepto.para_estimar == '1' ? parseFloat(concepto.PctAvance).formatMoney(2) : '' }}</td>-->
-<!--						<td style="display: none" class="numerico avance-importe"></td>-->
-<!--						<td style="display: none" class="numerico avance-importe">{{ concepto.para_estimar == '1' ? parseFloat(concepto.MontoEstimadoTotal).formatMoney(2) : '' }}</td>-->
-<!--						<td style="display: none" class="numerico saldo">{{ concepto.para_estimar == '1' ? parseFloat(concepto.CantidadSaldo).formatMoney(2) : '' }}</td>-->
-<!--						<td style="display: none" class="numerico saldo">{{ concepto.para_estimar == '1' ? parseFloat(concepto.MontoSaldo).formatMoney(2) : '' }}</td>-->
-<!--						<td class="editable-cell numerico">-->
-<!--							<input v-on:change="changeCantidad(concepto)" class="text" v-if="concepto.para_estimar == '1'" v-model="concepto.CantidadEstimada"-->
-<!--                                   :name="'CantidadEstimada' + i"-->
-<!--                                   v-validate="{max_value: parseFloat(concepto.CantidadSaldo)}"-->
-<!--                                   :class="{'is-invalid': errors.has('CantidadEstimada' + i)}"-->
-<!--                            >-->
-<!--							<p v-else></p></td>-->
-<!--						<td class="editable-cell numerico">-->
-<!--							<input v-on:change="changePorcentaje(concepto)" class="text" v-if="concepto.para_estimar == '1'" v-model="concepto.PctEstimado"-->
-
-<!--                            >-->
-<!--							<p v-else>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></td>-->
-<!--						<td class="numerico">{{ concepto.para_estimar == '1' ? parseFloat(concepto.PrecioUnitario).formatMoney(4) : '' }}</td>-->
-<!--						<td class="editable-cell numerico">-->
-<!--							<input v-on:change="changeImporte(concepto)" class="text" v-if="concepto.para_estimar == '1'" v-model="concepto.ImporteEstimado"-->
-
-<!--                            >-->
-<!--							<p v-else></p></td>-->
-<!--						<td style="display: none" class="destino" :title="concepto.RutaDestino">{{ concepto.RutaDestino }}</td>-->
-
-					</tbody>
+					<tbody v-for="(concepto, i) in estimacion.subcontrato.partidas">
+                        <tr v-if="concepto.para_estimar == 0">
+                            <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
+                            <td :title="concepto.descripcion"><b>{{concepto.descripcion}}</b></td>
+                            <td></td>
+                            <td style="display: none" class="numerico contratado"/>
+                            <td style="display: none" class="numerico contratado"/>
+                            <td style="display: none" class="numerico avance-volumen"/>
+                            <td style="display: none" class="numerico avance-volumen"/>
+                            <td style="display: none" class="numerico avance-volumen"/>
+                            <td style="display: none" class="numerico avance-importe"/>
+                            <td style="display: none" class="numerico avance-importe"/>
+                            <td style="display: none" class="numerico saldo"/>
+                            <td style="display: none" class="numerico saldo"/>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="display: none" class="destino"/>
+                        </tr>
+					    <tr v-else>
+						    <td :title="concepto.item.clave">  {{ concepto.item.clave }}</td>
+                            <td :title="concepto.item.descripcion_concepto">  {{concepto.item.descripcion_concepto}}</td>
+                            <td class="centrado">{{concepto.item.unidad}}</td>
+                            <td style="display: none" class="numerico contratado">{{ concepto.item ? concepto.item.cantidad_subcontrato : '' }}</td>
+                            <td style="display: none" class="numerico contratado">{{ concepto.item ? concepto.item.precio_unitario_subcontrato : '' }}</td>
+                            <td style="display: none" class="numerico avance-volumen">{{ concepto.item ? concepto.item.cantidad_estimada_anterior : '' }}</td>
+                            <td style="display: none" class="numerico avance-volumen">{{ concepto.item ? concepto.item.cantidad_estimada_total : '' }}</td>
+                            <td style="display: none" class="numerico avance-volumen">{{ concepto.item ? concepto.item.porcentaje_avance : '' }}</td>
+                            <td style="display: none" class="numerico avance-importe"></td>
+                            <td style="display: none" class="numerico avance-importe">{{ concepto.item ? concepto.item.importe_estimado_anterior : '' }}</td>
+                            <td style="display: none" class="numerico saldo">{{ concepto.item ? concepto.item.cantidad_por_estimar : '' }}</td>
+                            <td style="display: none" class="numerico saldo">{{ concepto.item ? concepto.item.importe_por_estimar : '' }}</td>
+                            <td class="editable-cell numerico">
+                                <input v-on:change="changeCantidad(concepto.item)" class="text" v-model="concepto.item.cantidad_estimacion"
+                                       :name="'cantidad_estimacion' + i"
+                                       v-validate="{max_value: parseFloat(concepto.item.cantidad_por_estimar)}"
+                                       :class="{'is-invalid': errors.has('cantidad_estimacion' + i)}" />
+                            </td>
+                            <td class="editable-cell numerico">
+                                <input v-on:change="changePorcentaje(concepto.item)" class="text" v-model="concepto.item.porcentaje_estimado" />
+                            </td>
+                            <td class="numerico">{{ concepto.item.precio_unitario_subcontrato}}</td>
+                            <td class="editable-cell numerico">
+                                <input v-on:change="changeImporte(concepto.item)" class="text" v-model="concepto.item.importe_estimacion" />
+                            </td>
+                            <td style="display: none" class="destino" :title="concepto.item.destino_path">{{ concepto.item.destino_path }}</td>
+                        </tr>
+                    </tbody>
 				</table>
 			</div>
         </div>
-
-
     </span>
 </template>
-
-
 <script>
-
-
 import DeductivaEdit from './deductivas/Edit'
     export default {
         name: "estimacion-edit",
@@ -124,42 +218,43 @@ import DeductivaEdit from './deductivas/Edit'
                 cargando: true,
                 conceptos: null,
                 columnas: [],
-                partidas_subcontrato : null,
-                partidas_estimacion : null
+                fecha_inicio: '',
+                fecha_fin: '',
+                fecha: ''
             }
         },
         mounted() {
             this.cargando = true;
-            this.obra = this.$session.get('obra');
-            this.id = this.$route.params.id;
             this.find();
         },
         methods: {
+            changeCantidad(concepto) {
+                concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
+                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
+            },
+            changePorcentaje(concepto) {
+                concepto.cantidad_estimacion = ((concepto.cantidad_subcontrato * concepto.porcentaje_estimado) / 100).toFixed(2);
+                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
+            },
+            changeImporte(concepto) {
+                concepto.cantidad_estimacion = (concepto.importe_estimacion / concepto.precio_unitario_subcontrato).toFixed(2);
+                concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
+            },
+            formatoFecha(date){
+                return moment(date).format('DD/MM/YYYY');
+            },
             find() {
                 this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
-                return this.$store.dispatch('contratos/estimacion/find', {
+                return this.$store.dispatch('contratos/estimacion/ordenarConceptos', {
                     id: this.id,
-                    params: {include : ['subcontrato.partidas', 'partidas']}
+                    params: {}
                 }).then(data => {
                     this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
-                    this.partidas_estimacion = data.partidas.data;
-                    this.partidas_subcontrato = data.subcontrato.partidas.data;
+                    this.fecha_inicio = data.fecha_inicial
+                    this.fecha_fin = data.fecha_final
+                    this.fecha = data.fecha
                     this.cargando = false;
-                    this.getConceptos();
                 })
-            },
-            getConceptos()
-            {
-                return this.$store.dispatch('contratos/contrato-concepto/index', {
-                    params: {
-                        include : ['destino'],
-                        scope: 'conceptosEstimacionOrdenado:' + this.estimacion.subcontrato.id,
-                        sort: 'nivel', order: 'asc'
-                    }
-                })
-                    .then(data => {
-                       this.conceptos = data
-                    })
             },
 
         },
@@ -182,14 +277,6 @@ import DeductivaEdit from './deductivas/Edit'
                     $('.' + v).removeAttr('style')
                 })
             },
-            conceptos: {
-                handler() {
-                    setTimeout(() => {
-                        this.$validator.validate()
-                    }, 500);
-                },
-                deep: true
-            }
         }
     }
 </script>

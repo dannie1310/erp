@@ -122,4 +122,18 @@ class Concepto extends Model
             ->whereNull('id_material')
             ->orderBy('nivel', 'ASC');
     }
+
+    /**
+     *  Se muestra la ruta desde 3er nivel (000.000.000.)
+     * @return mixed|string
+     */
+    public function getPathCortaAttribute()
+    {
+        if ((strlen($this->nivel_padre)/4) == 3) {
+            return $this->descripcion;
+        }
+        if ((strlen($this->nivel_padre)/4) >= 3) {
+            return self::find($this->id_padre)->path_corta . ' -> ' . $this->descripcion;
+        }
+    }
 }
