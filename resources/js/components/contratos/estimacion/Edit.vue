@@ -1,9 +1,19 @@
 <template>
      <span>
        <div class="d-flex flex-row-reverse">
-            <div class="p-2">
-                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.empresa.id_empresa:''"></DeductivaEdit>
+           <div class="p-2">
+                <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion" v-bind:estado="estado"></Amortizacion>
             </div>
+           <div class="p-2">
+                <RetencionIndex v-bind:id="id" v-bind:cargandoo="cargando"></RetencionIndex>
+            </div>
+            <div class="p-2">
+                <RetencionIvaCreate v-bind:id="id" v-bind:cargandoo="cargando"></RetencionIvaCreate>
+            </div>
+            <div class="p-2">
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''" v-bind:cargandoo="cargando"></DeductivaEdit>
+            </div>
+            
         </div>
         <div class="row">  
             <div class="col-12 mb-5" v-if="!cargando">
@@ -26,7 +36,7 @@
                                    <thead>
                                       <tr>
                                         <th scope="col">Folio SAO</th>
-                                        <th class="text-right" scope="col">#{{ estimacion.estimacion.numero_folio.padStart(5,"0") }}</th>
+                                        <th class="text-right" scope="col">{{ estimacion.estimacion.numero_folio_format}}</th>
                                       </tr>
                                    </thead>
                                    <tbody>
@@ -62,11 +72,11 @@
                           <tbody>
                             <tr>
                               <th>Contratista: </th>
-                              <th class="text-center" scope="row">{{ estimacion.empresa.razon_social }}</th>
+                              <th class="text-center" scope="row">{{ estimacion.razon_social }}</th>
                             </tr>
                             <tr>
                               <th>No. de Contrato: </th>
-                              <th class="text-center" scope="row">{{ estimacion.subcontrato.referencia }}</th>
+                              <th class="text-center" scope="row">{{ estimacion.referencia }}</th>
                             </tr>
                           </tbody>
                         </table>
@@ -138,17 +148,17 @@
 
                                     <td>{{ identacionItem(index.length/4) }} {{ item.concepto }}</td>
                                     <td class="text-center">{{ item.unidad }}</td>
-                                    <td class="text-right">{{ parseFloat(item.precioUnitario).formatMoney(4,'.',',') }} </td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadContrato).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.importeContrato).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadEstimadoAnterior).formatMoney(4,'.',',')  }}</td>
-                                    <td class="text-right">{{  parseFloat(item.importeEstimadoAnterior).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadEstimacion).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.importeEstimacion).formatMoney(4,'.',',')  }}</td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadAcumulado).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.importeAcumulado).formatMoney(4,'.',',') }}</td>
-                                    <td class="text-right">{{  parseFloat(item.cantidadPorEstimar).formatMoney(4,'.',',') }} </td>
-                                    <td class="text-right">{{  parseFloat(item.importePorEstimar).formatMoney(4,'.',',')  }}</td>
+                                    <td class="text-right">{{  item.precioUnitario}} </td>
+                                    <td class="text-right">{{  item.cantidadContrato }}</td>
+                                    <td class="text-right">{{  item.importeContrato }}</td>
+                                    <td class="text-right">{{  item.cantidadEstimadoAnterior }}</td>
+                                    <td class="text-right">{{  item.importeEstimadoAnterior }}</td>
+                                    <td class="text-right">{{  item.cantidadEstimacion }}</td>
+                                    <td class="text-right">{{  item.importeEstimacion }}</td>
+                                    <td class="text-right">{{  item.cantidadAcumulado }}</td>
+                                    <td class="text-right">{{  item.importeAcumulado }}</td>
+                                    <td class="text-right">{{  item.cantidadPorEstimar}} </td>
+                                    <td class="text-right">{{  item.importePorEstimar }}</td>
                                 </tr>
                           </template>
                         <!--Sumas totales de la s partidas-->
@@ -187,11 +197,13 @@
 
 <script>
 
-
+import RetencionIvaCreate from './retencion-iva/create'
 import DeductivaEdit from './deductivas/Edit'
+import RetencionIndex from './retenciones/Index';
+import Amortizacion from './amortizacion/Edit'
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit},
+        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion},
         // props: ['id'],
         data() {
             return {
@@ -203,6 +215,8 @@ import DeductivaEdit from './deductivas/Edit'
                 guiones:'\xa0\xa0',
                 identacion:'',
                 itemIdentacion:'',
+                estimacion_anticipo:'',
+                estado:''
 
             }
         },
@@ -221,6 +235,8 @@ import DeductivaEdit from './deductivas/Edit'
                   
                     this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
                     this.cargando = false;
+                    this.estado = data.estimacion.estado;
+                    
                 })
             },
             editar(){

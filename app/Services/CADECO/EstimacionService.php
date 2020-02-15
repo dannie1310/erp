@@ -17,9 +17,10 @@ use App\Models\CADECO\Contrato;
 use App\Repositories\Repository;
 use App\Models\CADECO\Estimacion;
 use Illuminate\Support\Facades\DB;
-use League\Fractal\TransformerAbstract;
 use App\PDF\Contratos\EstimacionFormato;
 use App\PDF\Contratos\OrdenPagoEstimacion;
+use App\Http\Transformers\CADECO\ContratoTransformer;
+use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
@@ -208,6 +209,7 @@ class EstimacionService
             'estimacion'=> $est->transform($estimacion),
             'numEstimacion'=>$numEstimacion,
             'razon_social' => $estimacion->empresa->razon_social,
+            'id_empresa' => $estimacion->empresa->id_empresa,
             'referencia' => $estimacion->subcontrato->referencia,
             'moneda' =>$mon->transform($estimacion->moneda),
             'items'=>$items,
@@ -251,6 +253,12 @@ class EstimacionService
         }
     }
 
+    public  function anticipo($data, $id)
+    {
+        $estimacion = $this->repository->show($id);
+        $estimacion->anticipoAmortizacion($data['campo']);
+    }
+
     public function revertirAprobacion($id)
     {
         $estimacion = $this->repository->show($id);
@@ -277,5 +285,10 @@ class EstimacionService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar($data['data']);
+    }
+
+    public function registrarRetencionIva($data, $id){
+        $estimacion = $this->repository->show($id);
+        return $estimacion->registrarIVARetenido($data['IVARetenido']);
     }
 }

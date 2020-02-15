@@ -6,6 +6,7 @@ export default {
         estimaciones: [],
         currentEstimacion: null,
         meta: {},
+        amortizacion: null
 
     },
 
@@ -20,6 +21,10 @@ export default {
 
         SET_META(state, data) {
             state.meta = data
+        },
+
+        UPDATE_AMORTIZACION(state, data){
+            state.amortizacion = data;
         },
 
         UPDATE_ATTRIBUTE(state, data) {
@@ -55,6 +60,47 @@ export default {
                 .then((data) => {
 
                 });
+        },
+
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar Amortización de Anticipo",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/amortizacion', payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Amortizacion de Anticipo actualizado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
         },
 
         store(context, payload) {
@@ -283,7 +329,48 @@ export default {
                         }
                     });
             });
-        }
+        },
+        registrarRetencionIva(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Retención IVA",
+                    text: "¿Está seguro de que desea registrar esta retención de IVA?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/registrarRetencionIva', payload.params)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Retención IVA registrada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
     getters: {
         estimaciones(state) {
