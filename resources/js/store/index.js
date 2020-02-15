@@ -118,6 +118,9 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
+import retencion from './modules/subcontratosEstimaciones/retencion';
+import retencionLiberacion from './modules/subcontratosEstimaciones/retencion-liberacion';
+import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 
 //IGH
 import usuario from "./modules/igh/usuario";
@@ -247,6 +250,9 @@ export default new Vuex.Store({
         'seguridad/tipo-proyecto': tipoProyecto,
 
         'subcontratosEstimaciones/descuento': descuento,
+        'subcontratosEstimaciones/retencion': retencion,
+        'subcontratosEstimaciones/retencion-liberacion': retencionLiberacion,
+        'subcontratosEstimaciones/retencion-tipo': retencionTipo,
 
         'ventas/venta': venta,
     },

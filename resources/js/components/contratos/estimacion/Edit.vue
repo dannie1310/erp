@@ -1,10 +1,16 @@
 <template>
-    <span>
-        <p>{{id}}</p>
-        <div class="d-flex flex-row-reverse"  v-if="estimacion">
-            <div class="p-2">
-                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.empresa.id_empresa:''"></DeductivaEdit>
+     <span>
+       <div class="d-flex flex-row-reverse">
+           <div class="p-2">
+                <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
+            <div class="p-2">
+                <RetencionIvaCreate v-bind:id="id"></RetencionIvaCreate>
+            </div>
+            <div class="p-2">
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
+            </div>
+
         </div>
         <div class="row" v-if="estimacion">
 			<div class="col-md-6">
@@ -212,14 +218,18 @@
 				</table>
 			</div>
         </div>
-    </span>
+     </span>
 </template>
+
 <script>
+
+import RetencionIvaCreate from './retencion-iva/create'
 import DeductivaEdit from './deductivas/Edit'
+import RetencionIndex from './retenciones/Index';
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit},
-        props: ['id'],
+        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate},
+        // props: ['id'],
         data() {
             return {
                 cargando: true,

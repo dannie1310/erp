@@ -99,7 +99,7 @@ class Estimacion extends Transaccion
      */
     public function creaSubcontratoEstimacion()
     {
-        \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::create([
+        \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->create([
             'IDEstimacion' => $this->id_transaccion,
             'NumeroFolioConsecutivo' => $this->generaFolioConsecutivo()
         ]);
@@ -269,6 +269,11 @@ class Estimacion extends Transaccion
     public function getMontoAnticipoAplicadoAttribute()
     {
         return $this->suma_importes * ($this->anticipo / 100);
+    }
+
+    public function getMontoAnticipoAplicadoFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_anticipo_aplicado, 2);
     }
 
     public function getRetenidoAnteriorAttribute()
@@ -458,7 +463,6 @@ class Estimacion extends Transaccion
         $subtotal = $this->suma_importes- $this->monto_anticipo_aplicado;
         if($this->configuracion->retenciones_antes_iva == 1){
             $subtotal-=$this->retenciones->sum("importe");
-            $subtotal-=$this->IVARetenido;
             $subtotal+=$this->liberaciones->sum("importe");
         }
         if($this->configuracion->desc_pres_mat_antes_iva == 1){
@@ -485,9 +489,39 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->iva_orden_pago, 2);
     }
 
+    public function getSumaDeductivasAttribute()
+    {
+        return $this->descuentos->sum('importe');
+    }
+
+    public function getSumaDeductivasFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_deductivas, 2);
+    }
+
+    public function getSumaRetencionesAttribute()
+    {
+        return $this->retenciones->sum('importe');
+    }
+
+    public function getSumaRetencionesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_retenciones, 2);
+    }
+
+    public function getSumaLiberacionesAttribute()
+    {
+        return $this->liberaciones->sum('importe');
+    }
+
+    public function getSumaLiberacionesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_liberaciones, 2);
+    }
+
     public function getTotalOrdenPagoAttribute()
     {
-        $total = $this->subtotal_orden_pago + $this->iva_orden_pago;
+        $total = ($this->subtotal_orden_pago + $this->iva_orden_pago) - $this->IVARetenido;
         return $total;
     }
     # retencion_fondo_garantia_orden_pago_format
@@ -552,6 +586,21 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->monto_a_pagar, 2);
     }
 
+    public function getIvaRetenidoFormatAttribute()
+    {
+        return '$ ' . number_format($this->IVARetenido, 2);
+    }
+
+    public function getIvaRetenidoPorcentajeAttribute()
+    {
+        if($this->subtotal_orden_pago>0)
+        {
+            return number_format($this->IVARetenido*100 / $this->subtotal_orden_pago, 2)." %";
+        } else {
+            return "0 %";
+        }
+    }
+
     /**
      * Este método implementa la lógica actualización de control de obra del procedimiento almacenado sp_aplicar_pagos
      * y se detona al registrar una orden de pago relacionada a una factura que ampara una estimación
@@ -573,6 +622,21 @@ class Estimacion extends Transaccion
                 }
             }
         }
+    }
+
+    public function recalculaMontoImpuestoEstimacion(){
+        $this->monto = $this->monto_a_pagar;
+        $this->impuesto = $this->iva_orden_pago;
+        $this->save();
+    }
+
+    public function registrarRetencion($importe){
+        $monto_actualizado = $this->monto - $importe - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
+        $impuesto_actualizado = $this->impuesto - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
+        if($monto_actualizado < 0) abort(403, 'No se puede registar una retención mayor al monto de la estimación.');
+        $this->monto = $monto_actualizado;
+        $this->impuesto = $impuesto_actualizado;
+        $this->save();
     }
 
     public function getImporteRetencionConIva($retencion)
@@ -622,6 +686,36 @@ class Estimacion extends Transaccion
                 ]
             );
         }
+    }
+
+    public function registrarIVARetenido($retencion){
+        if($retencion > 0){
+            $porcentaje = $retencion * 100 / $this->subtotal_orden_pago;
+            switch ((int)round($porcentaje)){
+                case 4:
+                    if($porcentaje <= 3.9999 || $porcentaje >= 4.0001){
+                        abort(403, 'La retención de I.V.A. no es del 4%');
+                    }
+                break;
+                case 6:
+                    if($porcentaje <= 5.9999 || $porcentaje >= 6.0001){
+                        abort(403, 'La retención de I.V.A. no es del 6%');
+                    }
+                break;
+                case 10:
+                    if($porcentaje <= 9.9999 || $porcentaje >= 10.0001){
+                        abort(403, 'La retención de I.V.A. no es del 10%');
+                    }
+                break;
+                default:
+                    abort(403, 'La retención de I.V.A. no es valida');
+                break;
+            }
+        }
+        $this->IVARetenido = $retencion;
+        $this->save();
+        $this->recalculaMontoImpuestoEstimacion();
+        return $this;
     }
 
     public function subcontratoAEstimar()

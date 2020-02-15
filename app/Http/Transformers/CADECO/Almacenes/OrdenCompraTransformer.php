@@ -34,11 +34,18 @@ class OrdenCompraTransformer extends TransformerAbstract
 
     public function transform(OrdenCompra $model)
     {
+        $empresa_sucursal = "";
+        if($model->empresa){
+            $empresa_sucursal.= (string) $model->empresa->razon_social;
+        }
+        if($model->sucursal){
+            $empresa_sucursal .= ' / '. (string)$model->sucursal->descripcion;
+        }
         return [
             'id' => (int)$model->getKey(),
             'numero_folio_format' => (string)$model->numero_folio_format,
             'observaciones' => (string)$model->observaciones,
-            'empresa_sucursal'=> (string)$model->empresa->razon_social .' / '. (string)$model->sucursal->descripcion,
+            'empresa_sucursal'=> $empresa_sucursal,
         ];
     }
 

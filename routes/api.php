@@ -547,6 +547,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-estimacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfEstimacion')->where(['id' => '[0-9]+']);
             $api->get('{id}/showEstimacionTable','App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@showEstimacionTable');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@destroy')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/registrarRetencionIva', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@registrarRetencionIva')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@ordenarConceptos')->where(['id' => '[0-9]+']);
 
             /**
@@ -850,6 +851,24 @@ $api->version('v1', function ($api) {
             $api->get('{id}/listItems', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@listItems')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@storeItem');
             $api->post('updateList', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@updateList');
+        });
+
+        $api->group(['prefix'=>'retencion'], function ($api){
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionController@store');
+            $api->get('{id}/listRetenciones', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionController@list');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix'=>'retencion-liberacion'], function ($api){
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionLiberacionController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionLiberacionController@store');
+            $api->get('{id}/listLiberaciones', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionLiberacionController@list');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionLiberacionController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix'=>'retencion-tipo'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\RetencionTipoController@index');
         });
     });
 

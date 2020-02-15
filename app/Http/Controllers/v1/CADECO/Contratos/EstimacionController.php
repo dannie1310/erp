@@ -116,6 +116,11 @@ class EstimacionController extends Controller
         return $this->traitDestroy($request, $id);
     }
 
+    public function registrarRetencionIva(Request $request, $id)
+    {
+        return $this->service->registrarRetencionIva($request->all(), $id);
+    }
+
     public function ordenarConceptos($id)
     {
         return $this->service->ordenado($id);

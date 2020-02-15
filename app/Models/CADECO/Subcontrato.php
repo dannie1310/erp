@@ -49,7 +49,7 @@ class Subcontrato extends Transaccion
         self::addGlobalScope('tipo', function ($query) {
             return $query->where('tipo_transaccion', '=', 51)
                 ->where('opciones', '=', 2)
-                ->whereIn('estado', [0, 1])
+                ->whereIn('estado', [0, 1, 2])
                 ->where(function ($q3) {
                     return $q3
                         ->whereHas('areasSubcontratantes', function ($q) {
@@ -116,7 +116,7 @@ class Subcontrato extends Transaccion
 
     public function partidasOrdenadas()
     {
-        return $this->partidas()->join('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
+        return $this->partidas()->leftJoin('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
             ->where('items.id_transaccion', '=', $this->id_transaccion)
             ->orderBy('contratos.nivel', 'asc')->select('items.*', 'contratos.nivel');
     }
@@ -124,6 +124,11 @@ class Subcontrato extends Transaccion
     public function getSubtotalAttribute()
     {
         return $this->monto - $this->impuesto;
+    }
+
+    public function scopeEstimable($query)
+    {
+        return $query->whereIn("estado",[0,1]);
     }
 
     public function scopeSinFondo($query)

@@ -50,6 +50,7 @@
                                                 <div class="col-sm-10">
                                                     <model-list-select
                                                             :disabled="cargando"
+                                                            :onchange="changeSelect()"
                                                             name="id_almacen"
                                                             v-model="id_almacen"
                                                             option-value="id"
@@ -89,7 +90,7 @@
                     <ajuste-negativo v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia" v-bind:fecha="fecha"></ajuste-negativo>
                 </div>
                 <div aria-labelledby="nav-contact-tab" class="tab-pane fade" id="nav-contact" role="tabpanel" style="display:block;">
-                    <nuevo-lote v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia" v-bind:fecha="fecha"></nuevo-lote>
+                    <nuevo-lote v-bind:id_almacen="id_almacen" v-bind:tipo_almacen="tipo_almacen" :key="id_almacen" v-bind:referencia="referencia" v-bind:fecha="fecha"></nuevo-lote>
                 </div>
             </div>
         </nav>
@@ -114,6 +115,8 @@
                 referencia: '',
                 fecha: '',
                 almacenes: [],
+                tipo_almacen: '',
+                almacen_seleccionado: []
             }
         },
         mounted(){
@@ -124,6 +127,14 @@
             this.cargando = true;
         },
         methods: {
+            changeSelect(){
+                var busqueda = this.almacenes.find(x=>x.id === this.id_almacen);
+                if(busqueda != undefined)
+                {
+                    this.almacen_seleccionado = busqueda;
+                    this.tipo_almacen = busqueda.tipo_almacen;
+                }
+            },
             formatoFecha(date){
                 return moment(date).format('DD-MM-YYYY');
             },

@@ -96,7 +96,6 @@
                                        <costo-select
                                                name="id_costo"
                                                data-vv-as="Costo"
-                                               v-validate="{required: true}"
                                                id="id_costo"
                                                v-model="id_costo"
                                                :error="errors.has('id_costo')"

@@ -37,7 +37,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope:['tipo:2','insumos'], sort: 'descripcion', order: 'asc'},
+                query: {scope:['servicios','insumos'], sort: 'descripcion', order: 'asc'},
                 estado: "",
                 cargando: false
             }

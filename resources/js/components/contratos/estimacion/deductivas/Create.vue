@@ -27,7 +27,7 @@
                                                             option-value="id_material"
                                                             option-text="descripcion"
                                                             :list="items"
-                                                            :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
+                                                            :placeholder="!cargando?'Seleccionar o buscar material por descripción':'Cargando...'"
                                                             :isError="errors.has(`id_material`)">
                                                     </model-list-select>
                                                     <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>

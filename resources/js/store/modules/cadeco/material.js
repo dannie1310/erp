@@ -102,7 +102,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Material",
+                    title: "Registrar",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -122,7 +122,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Material registrado correctamente", {
+                                    swal("Insumo registrado correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false

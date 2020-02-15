@@ -44,4 +44,12 @@ class CuentaCosto extends Model
     {
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
+
+    public function sinCuenta()
+    {
+        if(is_null($this->costo->sinCuenta()->find($this->id_costo)))
+        {
+            throw new \Exception("Este costo ya tiene una cuenta contable registrada.", 400);
+        }
+    }
 }

@@ -18,6 +18,7 @@ use App\Models\CADECO\Subcontratos\Contrato;
 use App\Models\CADECO\Subcontratos\Subcontratos;
 use App\Utils\NumberToLetterConverter;
 use Ghidev\Fpdf\Rotation;
+USE Illuminate\Support\Facades\App;
 
 class OrdenPagoEstimacion extends Rotation
 {
@@ -71,6 +72,7 @@ class OrdenPagoEstimacion extends Rotation
     }
 
     function Header() {
+
         $this->logo();
         $this->detalles();
         $this->Ln(1);
@@ -108,22 +110,20 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetHeights([0.35]);
             $this->SetAligns(['L', 'L', 'R', 'L', 'L', 'L']);
         }
-
-        if (trim(Context::getDatabase())== 'SAO1814_DEV_PISTA_AEROPUERTO')
-        {
-            $this->SetFont('Arial','B',60);
-            $this->SetTextColor(155,155,155);
-            $this->RotatedText(5,20,utf8_decode("MUESTRA SIN"),45);
-            $this->RotatedText(10,22,utf8_decode("VALOR"),45);
-            $this->SetTextColor('0,0,0');
-        }
     }
 
     function Footer() {
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',80);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,20,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,26,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $this->firmas();
         $this->SetY($this->GetPageHeight() - 1);
         $this->SetFont('Arial', '', 6);
-        $this->Cell(6.5, .4, utf8_decode('Formato generado desde SAO.'), 0, 0, 'L');
+        $this->Cell(6.5, .4, utf8_decode('Formato generado desde ERP SAO.'), 0, 0, 'L');
         $this->SetFont('Arial', 'B', 6);
         $this->Cell(6.5, .4, '', 0, 0, 'C');
         $this->Cell(6.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
@@ -307,7 +307,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Amortizacion de Anticipo :', 0, 0, 'R');
         $this->CellFitScale(($this->w - 2) * 0.10, 0.4, round($this->estimacion->anticipo, 2) . ' %', 'B', 0, 'L');
-        $this->CellFitScale(($this->w - 2) * 0.15, 0.4, "$ ".number_format($this->estimacion->monto_anticipo_aplicado, 2 ,'.', ','), 'B', 1, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.15, 0.4, $this->estimacion->monto_anticipo_aplicado_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
         if($this->estimacion->configuracion->ret_fon_gar_antes_iva==1) {
@@ -324,19 +324,13 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ".number_format($this->estimacion->retenciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
-            $this->Ln(0.1);
-
-            $this->SetX(($this->w) * 0.45);
-            $this->SetFont('Arial', '', 8);
-            $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención de IVA :'), 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ".number_format($this->estimacion->IVARetenido, 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_retenciones_format, 'B', 1, 'R');
             $this->Ln(0.1);
 
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones Liberadas :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ".number_format($this->estimacion->liberaciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_liberaciones_format, 'B', 1, 'R');
             $this->Ln(0.1);
 
         }
@@ -345,7 +339,7 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Deductivas :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ".number_format($this->estimacion->descuentos->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_deductivas_format, 'B', 1, 'R');
             $this->Ln(0.1);
         }
 
@@ -363,8 +357,15 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(($this->w - 2) * 0.30, 0.4, 'I.V.A :', 0, 0, 'R');
+        $this->Cell(($this->w - 2) * 0.30, 0.4, 'IVA :', 0, 0, 'R');
         $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->iva_orden_pago_format, 'B', 1, 'R');
+        $this->Ln(0.1);
+
+        $this->SetX(($this->w) * 0.45);
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención IVA :'), 0, 0, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.10, 0.4, $this->estimacion->iva_retenido_porcentaje, 'B', 0, 'L');
+        $this->CellFitScale(($this->w - 2) * 0.15, 0.4, $this->estimacion->iva_retenido_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
 
@@ -399,7 +400,7 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Deductivas :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ". number_format($this->estimacion->descuentos->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_deductivas_format, 'B', 1, 'R');
             $this->Ln(0.1);
         }
         if($this->estimacion->configuracion->retenciones_antes_iva==0) {
@@ -407,19 +408,14 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ". number_format($this->estimacion->retenciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_retenciones_format, 'B', 1, 'R');
             $this->Ln(0.1);
 
-            $this->SetX(($this->w) * 0.45);
-            $this->SetFont('Arial', '', 8);
-            $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención de IVA :'), 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ". number_format($this->estimacion->IVARetenido, 2, '.', ','), 'B', 1, 'R');
-            $this->Ln(0.1);
 
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones Liberadas :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, "$ ". number_format($this->estimacion->liberaciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_liberaciones_format, 'B', 1, 'R');
             $this->Ln(0.1);
         }
 
@@ -557,29 +553,35 @@ class OrdenPagoEstimacion extends Rotation
 
         else
         {
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Recibió'), 'TRLB', 1, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Recibió'), 'TRLB', 1, 'C', 1);
 
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 1, 'C');
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 1.2, '', 'TRLB', 1, 'C');
 
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'RESPONSABLE DE AREA', 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'GERENCIA DE AREA', 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'DIRECCION DE AREA', 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'ADMINISTRACION', 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('RESPONSABLE DE ÁREA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('GERENCIA DE ÁREA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('DIRECCIÓN TÉCNICA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('DIRECCIÓN DE AREA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.55);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
         }
     }
 
