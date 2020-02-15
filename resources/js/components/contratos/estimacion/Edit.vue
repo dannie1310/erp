@@ -5,13 +5,13 @@
                 <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion" v-bind:estado="estado"></Amortizacion>
             </div>
            <div class="p-2">
-                <RetencionIndex v-bind:id="id"></RetencionIndex>
+                <RetencionIndex v-bind:id="id" v-bind:cargandoo="cargando"></RetencionIndex>
             </div>
             <div class="p-2">
-                <RetencionIvaCreate v-bind:id="id"></RetencionIvaCreate>
+                <RetencionIvaCreate v-bind:id="id" v-bind:cargandoo="cargando"></RetencionIvaCreate>
             </div>
             <div class="p-2">
-                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''" v-bind:cargandoo="cargando"></DeductivaEdit>
             </div>
             
         </div>
