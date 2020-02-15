@@ -1,5 +1,11 @@
 <template>
     <span>
+        <p>{{id}}</p>
+        <div class="d-flex flex-row-reverse"  v-if="estimacion">
+            <div class="p-2">
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.empresa.id_empresa:''"></DeductivaEdit>
+            </div>
+        </div>
         <div class="row" v-if="estimacion">
 			<div class="col-md-6">
 				<div class="card">
@@ -213,6 +219,7 @@ import DeductivaEdit from './deductivas/Edit'
     export default {
         name: "estimacion-edit",
         components: {DeductivaEdit},
+        props: ['id'],
         data() {
             return {
                 cargando: true,
@@ -224,8 +231,12 @@ import DeductivaEdit from './deductivas/Edit'
             }
         },
         mounted() {
-            this.cargando = true;
-            this.find();
+            console.log(this.id, id)
+            this.$Progress.start();
+            this.find()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
         methods: {
             changeCantidad(concepto) {
@@ -244,6 +255,8 @@ import DeductivaEdit from './deductivas/Edit'
                 return moment(date).format('DD/MM/YYYY');
             },
             find() {
+                this.cargando = true;
+                console.log(id, this.id, this.$store.id);
                 this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
                 return this.$store.dispatch('contratos/estimacion/ordenarConceptos', {
                     id: this.id,
@@ -253,17 +266,15 @@ import DeductivaEdit from './deductivas/Edit'
                     this.fecha_inicio = data.fecha_inicial
                     this.fecha_fin = data.fecha_final
                     this.fecha = data.fecha
+                }).finally(() => {
                     this.cargando = false;
                 })
             },
-
         },
         computed: {
             estimacion() {
                 return this.$store.getters['contratos/estimacion/currentEstimacion']
             },
-
-
         },
         watch: {
             columnas(val) {
