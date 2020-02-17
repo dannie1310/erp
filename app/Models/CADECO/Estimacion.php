@@ -97,6 +97,46 @@ class Estimacion extends Transaccion
     /**
      * Acciones
      */
+    public function registrar($data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $estimacion = Estimacion::create($data);
+            $estimacion->estimaConceptos($data['conceptos']);
+            $estimacion->recalculaDatosGenerales();
+            DB::connection('cadeco')->commit();
+            return $estimacion;
+
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function estimaConceptos($conceptos)
+    {
+        foreach ($conceptos as $concepto)
+        {
+            $pu = Item::query()
+                ->where('id_transaccion', '=', $this->id_antecedente)
+                ->where('id_concepto', '=', $concepto['item_antecedente'])
+                ->first()->precio_unitario;
+
+            $this->Items()->create([
+                'id_transaccion' => $this->id_transaccion,
+                'id_antecedente' => $this->id_antecedente,
+                'item_antecedente' => $concepto['item_antecedente'],
+                'id_concepto' => $concepto['id_concepto'],
+                'cantidad' => $concepto['cantidad'],
+                'cantidad_material' => 0,
+                'cantidad_mano_obra' => 0,
+                'importe' => $concepto['importe'],
+                'precio_unitario' => $pu,
+                'precio_material' => 0,
+                'precio_mano_obra' => 0
+            ]);
+        }
+    }
     public function creaSubcontratoEstimacion()
     {
         \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->create([
@@ -174,15 +214,12 @@ class Estimacion extends Transaccion
                 $this->retencion_fondo_garantia()->create(
                     [
                         'id_estimacion' => $this->id_transaccion,
-                        'importe' => $this->importeRetencionFondoGarantia()
+                        'importe' => $this->retencion_fondo_garantia_orden_pago
                     ]
                 );
             } else {
-                $this->retencion_fondo_garantia()->update(
-                    [
-                        'importe' => $this->importeRetencionFondoGarantia()
-                    ]
-                );
+                $this->retencion_fondo_garantia->importe =$this->retencion_fondo_garantia_orden_pago;
+                $this->retencion_fondo_garantia->save();
                 $this->retencion_fondo_garantia->generaMovimientoRegistro();
             }
         }else{
@@ -233,7 +270,7 @@ class Estimacion extends Transaccion
                 }
                 
             }
-            $this->recalculaMontoImpuestoEstimacion(); 
+            $this->recalculaDatosGenerales();
         }else{
             throw new \Exception('El importe de la amortización no puede ser mayor al importe de la estimación.');
         }
@@ -646,44 +683,20 @@ class Estimacion extends Transaccion
         }
     }
 
-    public function recalculaMontoImpuestoEstimacion(){
+    public function recalculaDatosGenerales(){
         $this->monto = $this->monto_a_pagar;
         $this->saldo = $this->monto_a_pagar;
         $this->impuesto = $this->iva_orden_pago;
         $this->save();
-    }
 
-    public function registrarRetencion($importe){
-        $monto_actualizado = $this->monto - $importe - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
-        $impuesto_actualizado = $this->impuesto - ($importe * ($this->impuesto / ($this->monto - $this->impuesto)));
-        if($monto_actualizado < 0) abort(403, 'No se puede registar una retención mayor al monto de la estimación.');
-        $this->monto = $monto_actualizado;
-        $this->impuesto = $impuesto_actualizado;
-        $this->save();
+        $this->subcontratoEstimacion->PorcentajeFondoGarantia = ($this->retencion);
+        $this->subcontratoEstimacion->ImporteFondoGarantia = $this->retencion_fondo_garantia_orden_pago;
+        $this->subcontratoEstimacion->save();
     }
 
     public function getImporteRetencionConIva($retencion)
     {
         return $retencion * 1.16;
-    }
-
-    /**
-     * Obtener el valor del Importe para crear o editar la retención.
-     * @return float|int
-     */
-    private function importeRetencionFondoGarantia()
-    {
-        $importe = $this->items()->sum('importe') * ($this->retencion / 100);
-        /**
-         * Validar: SI es después de IVA se debe agregar el IVA al importe a registrar.
-         */
-        $configuracion_estimacion = ConfiguracionEstimacion::pluck('ret_fon_gar_antes_iva');
-
-        if(!is_null($configuracion_estimacion) && $configuracion_estimacion[0] == 0)
-        {
-            $importe =  $this->getImporteRetencionConIva($importe);
-        }
-        return $importe;
     }
 
     /**
@@ -703,11 +716,8 @@ class Estimacion extends Transaccion
                     'importe' => $this->retencion_fondo_garantia->importe
                 ]
             );
-            $this->retencion_fondo_garantia()->update(
-                [
-                    'importe' => 0
-                ]
-            );
+            $this->retencion_fondo_garantia->importe = 0;
+            $this->retencion_fondo_garantia->save();
         }
     }
 
@@ -717,27 +727,27 @@ class Estimacion extends Transaccion
             switch ((int)round($porcentaje)){
                 case 4:
                     if($porcentaje <= 3.9999 || $porcentaje >= 4.0001){
-                        abort(403, 'La retención de I.V.A. no es del 4%');
+                        abort(403, 'La retención de IVA no es del 4%');
                     }
                 break;
                 case 6:
                     if($porcentaje <= 5.9999 || $porcentaje >= 6.0001){
-                        abort(403, 'La retención de I.V.A. no es del 6%');
+                        abort(403, 'La retención de IVA no es del 6%');
                     }
                 break;
                 case 10:
                     if($porcentaje <= 9.9999 || $porcentaje >= 10.0001){
-                        abort(403, 'La retención de I.V.A. no es del 10%');
+                        abort(403, 'La retención de IVA no es del 10%');
                     }
                 break;
                 default:
-                    abort(403, 'La retención de I.V.A. no es valida');
+                    abort(403, 'La retención de IVA no es valida');
                 break;
             }
         }
         $this->IVARetenido = $retencion;
         $this->save();
-        $this->recalculaMontoImpuestoEstimacion();
+        $this->recalculaDatosGenerales();
         return $this;
     }
 }

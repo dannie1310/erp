@@ -44,12 +44,8 @@ class Retencion extends Model
     }
 
     public function validarRegistroRetencionesIva($retencion){
-        if($this->estimacion->configuracion->retenciones_antes_iva == 1){
-            $this->estimacion->registrarRetencion($retencion->importe);
-        }else{
-            if(($retencion->importe + $retencion->estimacion->retenciones->sum('importe')) > $this->estimacion->monto)
-                abort(403, 'No se puede registar una retención(es) mayor al monto de la estimación.');
-        }
+        if(($retencion->importe + $retencion->estimacion->retenciones->sum('importe')) > $this->estimacion->monto)
+            abort(403, 'La suma de retenciones no puede ser mayor al monto de la estimación.');
     }
 
     public function validarEstadoEstimacion($tipo){

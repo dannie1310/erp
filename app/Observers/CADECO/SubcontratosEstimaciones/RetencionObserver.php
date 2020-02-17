@@ -19,7 +19,6 @@ class RetencionObserver {
     public function creating(Retencion $retencion)
     {
         $retencion->validarEstadoEstimacion('registrada');
-        $retencion->validarRegistroRetencionesIva($retencion);
     }
     
     /**
@@ -28,7 +27,7 @@ class RetencionObserver {
      */
     public function created(Retencion $retencion)
     {
-        
+        $retencion->estimacion->recalculaDatosGenerales();
     }
     
     /**
@@ -46,6 +45,6 @@ class RetencionObserver {
      */
     public function deleted(Retencion $retencion)
     {
-        $retencion->estimacion->recalculaMontoImpuestoEstimacion();
+        $retencion->estimacion->recalculaDatosGenerales();
     }
 }
