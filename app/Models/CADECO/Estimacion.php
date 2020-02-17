@@ -216,22 +216,27 @@ class Estimacion extends Transaccion
 
     public function anticipoAmortizacion($data)
     {
-        if($this->sumaImportes == 0 || $this->sumaImportes == null)     
+        if($data <= $this->sumaImportes)
         {
-            $this->anticipo = 0;        
-            $this->save();          
-        }else
-        {
-            if($this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->first()->anticipo != 0)
+            if($this->sumaImportes == 0 || $this->sumaImportes == null)     
             {
-                $this->anticipo = ($data/$this->sumaImportes)*100;
-                $this->save(); 
-            }else{
-                throw new \Exception('No se puede actualizar la amortización de anticipo.');            
+                $this->anticipo = 0;        
+                $this->save();          
+            }else
+            {
+                if($this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->first()->anticipo != 0)
+                {
+                    $this->anticipo = ($data/$this->sumaImportes)*100;
+                    $this->save(); 
+                }else{
+                    throw new \Exception('No se puede actualizar la amortización de anticipo.');            
+                }
+                
             }
-            
+            $this->recalculaMontoImpuestoEstimacion(); 
+        }else{
+            throw new \Exception('El importe de la amortización no puede ser mayor al importe de la estimación.');
         }
-        $this->recalculaMontoImpuestoEstimacion(); 
     }
 
     public function revertirAprobacion()
