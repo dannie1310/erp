@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" >
+        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargandoo" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" >
             Retenciones
         </button>
         <div class="row">
@@ -90,7 +90,7 @@ import LiberadasCreate from './Liberadas';
 export default {
     name: "retencion-index",
     components: {AplicadasCreate, LiberadasCreate},
-    props: ['id'],
+    props: ['id', 'cargandoo'],
     data() {
         return {
             cargando:false,

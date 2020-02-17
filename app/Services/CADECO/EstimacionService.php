@@ -248,6 +248,12 @@ class EstimacionService
         }
     }
 
+    public  function anticipo($data, $id)
+    {
+        $estimacion = $this->repository->show($id);
+        $estimacion->anticipoAmortizacion($data['campo']);
+    }
+
     public function revertirAprobacion($id)
     {
         $estimacion = $this->repository->show($id);
