@@ -59,6 +59,7 @@ class EstimacionController extends Controller
         $this->middleware('permiso:aprobar_estimacion_subcontrato')->only('aprobar');
         $this->middleware('permiso:revertir_aprobacion_estimacion_subcontrato')->only('revertirAprobacion');
         $this->middleware('permiso:eliminar_estimacion_subcontrato')->only('destroy');
+        $this->middleware('permiso:actualizar_amortizacion_anticipo')->only('anticipo');
 
         $this->middleware('context');
 
@@ -109,6 +110,12 @@ class EstimacionController extends Controller
     public function showEstimacionTable($id)
     {
         return $this->service->showEstimacionTable($id);
+    }
+
+    public function anticipo(Request $request, $id)
+    {
+        $res = $this->service->anticipo($request->all(), $id);
+        return response()->json([], 200);
     }
 
     public function destroy(DeleteEstimacionRequest $request, $id)
