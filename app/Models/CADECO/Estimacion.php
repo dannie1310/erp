@@ -169,40 +169,6 @@ class Estimacion extends Transaccion
         return $folio->UltimoFolio;
     }
 
-    public function calculaImportes()
-    {
-        // Calculo del importe de amortizacion de anticipo
-        $amortizacion_anticipo = ($this->subcontrato->anticipo / 100) * $this->sumaImportes;
-
-        // Calculo del importe de fondo de garantia
-        $fondo_garantia = ($this->subcontrato->retencion / 100) * $this->sumaImportes;
-
-        // Calculo del subtotal
-        $subtotal = $this->sumaImportes;
-
-        // Descuento de amortizacion de anticipo antes de iva
-        $subtotal -= $amortizacion_anticipo;
-
-        // Se calcula el iva y total
-        $iva = $subtotal * ($this->subcontrato->impuesto / ($this->subcontrato->monto - $this->subcontrato->impuesto));
-        $total = $subtotal + $iva;
-
-        $this->impuesto = $iva;
-        $this->monto = $total;
-        $this->saldo = $total;
-        $this->retencion = ($this->subcontrato->retencion / 100) * 100;
-        $this->anticipo = ($this->subcontrato->anticipo / 100);
-        $this->save();
-
-        $subcontratoEstimacion = \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()
-            ->where('IDEstimacion', '=', $this->id_transaccion)
-            ->first();
-
-        $subcontratoEstimacion->PorcentajeFondoGarantia = ($this->subcontrato->retencion / 100);
-        $subcontratoEstimacion->ImporteFondoGarantia = $fondo_garantia;
-        $subcontratoEstimacion->save();
-    }
-
     /**
      * Genera la Retención de Fondo de Garantía.
      * @throws \Exception
@@ -694,11 +660,6 @@ class Estimacion extends Transaccion
         $this->subcontratoEstimacion->PorcentajeFondoGarantia = ($this->retencion);
         $this->subcontratoEstimacion->ImporteFondoGarantia = $this->retencion_fondo_garantia_orden_pago;
         $this->subcontratoEstimacion->save();
-    }
-
-    public function getImporteRetencionConIva($retencion)
-    {
-        return $retencion * 1.16;
     }
 
     /**
