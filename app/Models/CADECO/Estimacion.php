@@ -240,8 +240,9 @@ class Estimacion extends Transaccion
         $usuario = auth()->user()->usuario;
         $this->comentario = $this->comentario . "A;{$fecha};{$usuario}|";
         $this->impreso = 1;
-        $this->saldo = $this->monto;
         $this->save();
+
+        $this->recalculaDatosGenerales();
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_aprobar_transaccion] {$this->id_transaccion}");
         if($this->subcontrato->retencion && $this->subcontrato->retencion > 0)
@@ -279,10 +280,11 @@ class Estimacion extends Transaccion
     public function revertirAprobacion()
     {
         if ($this->estado == 2) {
-            
+            throw new \Exception('La estimacion se encuentra revisada contra factura, no es posible revertir la aprobación.');
         }
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
+        $this->recalculaDatosGenerales();
 
         return $this;
     }
