@@ -204,11 +204,16 @@
                                        :class="{'is-invalid': errors.has('cantidadEstimacion_' + concepto.id)}" />
                             </td>
                             <td class="editable-cell numerico">
-                                <input v-on:change="changePorcentaje(concepto)" class="text" v-model="concepto.porcentaje_estimado" />
+                                <input v-on:change="changePorcentaje(concepto)"  v-validate="{max_value: 100}" class="text"
+                                       :name="'porcentaje' + concepto.id"
+                                       v-model="concepto.porcentaje_estimado"
+                                       :class="{'is-invalid': errors.has('porcentaje' + concepto.id)}" />
                             </td>
                             <td class="numerico">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2)}}</td>
                             <td class="editable-cell numerico">
-                                <input v-on:change="changeImporte(concepto)" class="text" v-model="concepto.importe_estimacion" />
+                                <input v-on:change="changeImporte(concepto)" class="text" :name="'importe'+concepto.id" v-validate="{max_value: concepto.importe_por_estimar}"
+                                       v-model="concepto.importe_estimacion"
+                                       :class="{'is-invalid': errors.has('importe' + concepto.id)}" />
                             </td>
                             <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                         </tr>
