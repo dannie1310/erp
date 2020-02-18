@@ -543,7 +543,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
-                        scope: 'requisicion'
+                        scope: 'requisicion',
                     }
                 })
                     .then(data => {
