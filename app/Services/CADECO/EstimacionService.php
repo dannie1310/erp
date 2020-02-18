@@ -14,7 +14,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Item;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Contrato;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\EstimacionRepository as Repository;
 use App\Models\CADECO\Estimacion;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Contratos\EstimacionFormato;
@@ -55,56 +55,11 @@ class EstimacionService
     public function store($data)
     {
         try {
-            DB::connection('cadeco')->beginTransaction();
-            $antes_iva = Obra::query()->find(Context::getIdObra())->datosContables->retencion_antes_iva;
-
-                $estimacion = $this->repository->create($data);
-
-                $pct_anticipo = $estimacion->subcontrato->porcentaje_anticipo;
-                $pct_fondo_garantia = $estimacion->subcontrato->porcentaje_fondo_garantia;
-                $empresa = $estimacion->subcontrato->empresa;
-
-                $suma_importes = $this->estimaConceptos($estimacion, $data['conceptos']);
-
-                $estimacion->calculaImportes();
-
-                DB::connection('cadeco')->commit();
-
-                return $estimacion;
-
+            $estimacion = $this->repository->create($data);
+            return $estimacion;
         } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
             throw $e;
         }
-    }
-
-    public function estimaConceptos($estimacion, $conceptos)
-    {
-        $suma = 0;
-        foreach ($conceptos as $concepto)
-        {
-            $suma += $concepto['importe'];
-
-            $pu = Item::query()
-                ->where('id_transaccion', '=', $estimacion->id_antecedente)
-                ->where('id_concepto', '=', $concepto['item_antecedente'])
-                ->first()->precio_unitario;
-
-            Item::query()->create([
-                'id_transaccion' => $estimacion->id_transaccion,
-                'id_antecedente' => $estimacion->id_antecedente,
-                'item_antecedente' => $concepto['item_antecedente'],
-                'id_concepto' => $concepto['id_concepto'],
-                'cantidad' => $concepto['cantidad'],
-                'cantidad_material' => 0,
-                'cantidad_mano_obra' => 0,
-                'importe' => $concepto['importe'],
-                'precio_unitario' => $pu,
-                'precio_material' => 0,
-                'precio_mano_obra' => 0
-            ]);
-        }
-        return $suma;
     }
 
     public function show($id)
