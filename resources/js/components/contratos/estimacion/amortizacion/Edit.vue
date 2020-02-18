@@ -80,7 +80,7 @@ export default {
                 swal('Atención', 'El valor de la Amortización de Anticipo es el mismo.', 'warning');
             }
             else{
-                return this.$store.dispatch('contratos/estimacion/update', {
+                return this.$store.dispatch('contratos/estimacion/amortizacion', {
                     id: this.id,
                     params: this.$data
                 })
