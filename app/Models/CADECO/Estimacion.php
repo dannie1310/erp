@@ -97,6 +97,46 @@ class Estimacion extends Transaccion
     /**
      * Acciones
      */
+    public function registrar($data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $estimacion = Estimacion::create($data);
+            $estimacion->estimaConceptos($data['conceptos']);
+            $estimacion->recalculaDatosGenerales();
+            DB::connection('cadeco')->commit();
+            return $estimacion;
+
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function estimaConceptos($conceptos)
+    {
+        foreach ($conceptos as $concepto)
+        {
+            $pu = Item::query()
+                ->where('id_transaccion', '=', $this->id_antecedente)
+                ->where('id_concepto', '=', $concepto['item_antecedente'])
+                ->first()->precio_unitario;
+
+            $this->Items()->create([
+                'id_transaccion' => $this->id_transaccion,
+                'id_antecedente' => $this->id_antecedente,
+                'item_antecedente' => $concepto['item_antecedente'],
+                'id_concepto' => $concepto['id_concepto'],
+                'cantidad' => $concepto['cantidad'],
+                'cantidad_material' => 0,
+                'cantidad_mano_obra' => 0,
+                'importe' => $concepto['importe'],
+                'precio_unitario' => $pu,
+                'precio_material' => 0,
+                'precio_mano_obra' => 0
+            ]);
+        }
+    }
     public function creaSubcontratoEstimacion()
     {
         \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->create([
@@ -129,40 +169,6 @@ class Estimacion extends Transaccion
         return $folio->UltimoFolio;
     }
 
-    public function calculaImportes()
-    {
-        // Calculo del importe de amortizacion de anticipo
-        $amortizacion_anticipo = ($this->subcontrato->anticipo / 100) * $this->sumaImportes;
-
-        // Calculo del importe de fondo de garantia
-        $fondo_garantia = ($this->subcontrato->retencion / 100) * $this->sumaImportes;
-
-        // Calculo del subtotal
-        $subtotal = $this->sumaImportes;
-
-        // Descuento de amortizacion de anticipo antes de iva
-        $subtotal -= $amortizacion_anticipo;
-
-        // Se calcula el iva y total
-        $iva = $subtotal * ($this->subcontrato->impuesto / ($this->subcontrato->monto - $this->subcontrato->impuesto));
-        $total = $subtotal + $iva;
-
-        $this->impuesto = $iva;
-        $this->monto = $total;
-        $this->saldo = $total;
-        $this->retencion = ($this->subcontrato->retencion / 100) * 100;
-        $this->anticipo = ($this->subcontrato->anticipo / 100);
-        $this->save();
-
-        $subcontratoEstimacion = \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()
-            ->where('IDEstimacion', '=', $this->id_transaccion)
-            ->first();
-
-        $subcontratoEstimacion->PorcentajeFondoGarantia = ($this->subcontrato->retencion / 100);
-        $subcontratoEstimacion->ImporteFondoGarantia = $fondo_garantia;
-        $subcontratoEstimacion->save();
-    }
-
     /**
      * Genera la Retención de Fondo de Garantía.
      * @throws \Exception
@@ -174,15 +180,12 @@ class Estimacion extends Transaccion
                 $this->retencion_fondo_garantia()->create(
                     [
                         'id_estimacion' => $this->id_transaccion,
-                        'importe' => $this->importeRetencionFondoGarantia()
+                        'importe' => $this->retencion_fondo_garantia_orden_pago
                     ]
                 );
             } else {
-                $this->retencion_fondo_garantia()->update(
-                    [
-                        'importe' => $this->importeRetencionFondoGarantia()
-                    ]
-                );
+                $this->retencion_fondo_garantia->importe =$this->retencion_fondo_garantia_orden_pago;
+                $this->retencion_fondo_garantia->save();
                 $this->retencion_fondo_garantia->generaMovimientoRegistro();
             }
         }else{
@@ -203,8 +206,9 @@ class Estimacion extends Transaccion
         $usuario = auth()->user()->usuario;
         $this->comentario = $this->comentario . "A;{$fecha};{$usuario}|";
         $this->impreso = 1;
-        $this->saldo = $this->monto;
         $this->save();
+
+        $this->recalculaDatosGenerales();
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_aprobar_transaccion] {$this->id_transaccion}");
         if($this->subcontrato->retencion && $this->subcontrato->retencion > 0)
@@ -214,13 +218,39 @@ class Estimacion extends Transaccion
         return $this;
     }
 
+    public function anticipoAmortizacion($data)
+    {
+        if($data <= $this->sumaImportes)
+        {
+            if($this->sumaImportes == 0 || $this->sumaImportes == null)     
+            {
+                $this->anticipo = 0;        
+                $this->save();          
+            }else
+            {
+                if($this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->first()->anticipo != 0)
+                {
+                    $this->anticipo = ($data/$this->sumaImportes)*100;
+                    $this->save(); 
+                }else{
+                    throw new \Exception('No se puede actualizar la amortización de anticipo.');            
+                }
+                
+            }
+            $this->recalculaDatosGenerales();
+        }else{
+            throw new \Exception('El importe de la amortización no puede ser mayor al importe de la estimación.');
+        }
+    }
+
     public function revertirAprobacion()
     {
         if ($this->estado == 2) {
-            throw new \Exception('La transacción no puede modificarse por que esta aprobada o revisada.');
+            throw new \Exception('La estimacion se encuentra revisada contra factura, no es posible revertir la aprobación.');
         }
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
+        $this->recalculaDatosGenerales();
 
         return $this;
     }
@@ -268,7 +298,7 @@ class Estimacion extends Transaccion
 
     public function getMontoAnticipoAplicadoAttribute()
     {
-        return $this->suma_importes * ($this->anticipo / 100);
+        return $this->suma_importes*(($this->anticipo)/100);
     }
 
     public function getMontoAnticipoAplicadoFormatAttribute()
@@ -621,28 +651,15 @@ class Estimacion extends Transaccion
         }
     }
 
-    public function getImporteRetencionConIva($retencion)
-    {
-        return $retencion * 1.16;
-    }
+    public function recalculaDatosGenerales(){
+        $this->monto = $this->monto_a_pagar;
+        $this->saldo = $this->monto_a_pagar;
+        $this->impuesto = $this->iva_orden_pago;
+        $this->save();
 
-    /**
-     * Obtener el valor del Importe para crear o editar la retención.
-     * @return float|int
-     */
-    private function importeRetencionFondoGarantia()
-    {
-        $importe = $this->items()->sum('importe') * ($this->retencion / 100);
-        /**
-         * Validar: SI es después de IVA se debe agregar el IVA al importe a registrar.
-         */
-        $configuracion_estimacion = ConfiguracionEstimacion::pluck('ret_fon_gar_antes_iva');
-
-        if(!is_null($configuracion_estimacion) && $configuracion_estimacion[0] == 0)
-        {
-            $importe =  $this->getImporteRetencionConIva($importe);
-        }
-        return $importe;
+        $this->subcontratoEstimacion->PorcentajeFondoGarantia = ($this->retencion);
+        $this->subcontratoEstimacion->ImporteFondoGarantia = $this->retencion_fondo_garantia_orden_pago;
+        $this->subcontratoEstimacion->save();
     }
 
     /**
@@ -662,11 +679,8 @@ class Estimacion extends Transaccion
                     'importe' => $this->retencion_fondo_garantia->importe
                 ]
             );
-            $this->retencion_fondo_garantia()->update(
-                [
-                    'importe' => 0
-                ]
-            );
+            $this->retencion_fondo_garantia->importe = 0;
+            $this->retencion_fondo_garantia->save();
         }
     }
 
@@ -676,26 +690,27 @@ class Estimacion extends Transaccion
             switch ((int)round($porcentaje)){
                 case 4:
                     if($porcentaje <= 3.9999 || $porcentaje >= 4.0001){
-                        abort(403, 'La retención de I.V.A. no es del 4%');
+                        abort(403, 'La retención de IVA no es del 4%');
                     }
                 break;
                 case 6:
                     if($porcentaje <= 5.9999 || $porcentaje >= 6.0001){
-                        abort(403, 'La retención de I.V.A. no es del 6%');
+                        abort(403, 'La retención de IVA no es del 6%');
                     }
                 break;
                 case 10:
                     if($porcentaje <= 9.9999 || $porcentaje >= 10.0001){
-                        abort(403, 'La retención de I.V.A. no es del 10%');
+                        abort(403, 'La retención de IVA no es del 10%');
                     }
                 break;
                 default:
-                    abort(403, 'La retención de I.V.A. no es valida');
+                    abort(403, 'La retención de IVA no es valida');
                 break;
             }
         }
         $this->IVARetenido = $retencion;
         $this->save();
+        $this->recalculaDatosGenerales();
         return $this;
     }
 }

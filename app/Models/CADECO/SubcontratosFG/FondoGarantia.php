@@ -143,7 +143,6 @@ class FondoGarantia extends Model
     {
         $this->saldo = $this->movimientos()->sum('importe');
         $this->save();
-
     }
 
     private function validaNoSolicitudesPendientes()

@@ -55,11 +55,11 @@
                                 <tbody>
                                     <tr>
                                         <th>Contratista: </th>
-                                        <th class="text-center" scope="row">{{ estimacion.empresa.razon_social }}</th>
+                                        <th class="text-center" scope="row">{{ estimacion.razon_social }}</th>
                                     </tr>
                                     <tr>
                                         <th>No. de Contrato: </th>
-                                        <th class="text-center" scope="row">{{ estimacion.subcontrato.referencia }}</th>
+                                        <th class="text-center" scope="row">{{ estimacion.referencia }}</th>
                                     </tr>
                                 </tbody>
                             </table>

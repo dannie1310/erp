@@ -34,4 +34,13 @@ class MovimientoRetencionFondoGarantiaObserver
             $movimiento->retencion->estimacion->subcontrato->fondo_garantia->generaMovimientoRetencion($movimiento);
         }
     }
+
+    public function updated(MovimientoRetencionFondoGarantia $movimiento)
+    {
+        if ($movimiento->id_tipo_movimiento == 1)
+        {
+            $movimiento->retencion->estimacion->subcontrato->fondo_garantia->generaMovimientoRetencion($movimiento);
+        }
+    }
+
 }
