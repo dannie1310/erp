@@ -234,6 +234,7 @@ $api->version('v1', function ($api) {
         //AJUSTE INVENTARIOS
         $api->group(['prefix' => 'ajuste-inventario'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteController@paginate');
+            $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteController@cargaLayout');
 
         //AJUSTE POSITIVO (+)
             $api->group(['prefix' => 'positivo'], function ($api) {

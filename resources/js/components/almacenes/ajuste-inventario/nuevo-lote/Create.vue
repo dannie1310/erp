@@ -5,6 +5,16 @@
                 <div class="invoice p-3 mb-3">
                      <form role="form" @submit.prevent="validate">
                          <div class="modal-body">
+                             <div class="d-flex flex-row-reverse">
+                                    <div class="p-3">
+                                        <button  type="button" v-if="id_almacen" class="btn btn-info" @click="lista">
+                                                <i class="fa fa-list-ul "></i>
+                                                 Lista de Materiales</button>
+                                        &nbsp;
+                                        <Layout v-if="id_almacen"></Layout>
+                                    </div>
+                                </div>
+                             
                              <div class="row" v-if="id_almacen">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
@@ -14,7 +24,9 @@
                                                     <thead>
                                                     <tr>
                                                         <th class="bg-gray-light th_index">#</th>
+                                                        <th class="bg-gray-light">No. de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
+                                                        <th class="icono bg-gray-light"></th>
                                                         <th class="bg-gray-light th_unidad">Unidad</th>
                                                         <th class="bg-gray-light th_money_input">Cantidad</th>
                                                         <th class="bg-gray-light th_money_input">Monto Total</th>
@@ -30,6 +42,7 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
+                                                        <td>#FFFFF</td>
                                                         <td>
                                                               <model-list-select
                                                                       :name="`id_material[${i}]`"
@@ -48,8 +61,15 @@
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
                                                             </div>
                                                         </td>
+                                                        <td v-if="item.i === 0">
+                                                            <button  type="button" class="btn btn-outline-primary btn-sm" @click="manual(i)" title="Ingresar material manualmente"><i class="fa fa-hand-paper-o" /></button>
+                                                        </td>
+                                                         <td v-else-if="item.i === 1">
+                                                            <button type="button" class="btn btn-outline-primary btn-sm" @click="busqueda(i)" title="Buscar material"><i class="fa fa-refresh" /></button>
+                                                        </td>
+                                                        <td style="width: 30px;" v-else></td>
                                                         <td>
-                                                            {{item.material.unidad}}
+                                                            {{item.unidad}}
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
@@ -147,10 +167,11 @@
 <script>
     import MaterialSelect from "../../../cadeco/material/Select";
     import {ModelListSelect} from 'vue-search-select';
+    import Layout from "./CargaLayout";
     export default {
         name: "nuevo-lote",
         propos:['id_almacen', 'referencia', 'fecha'],
-        components: {MaterialSelect, ModelListSelect},
+        components: {MaterialSelect, ModelListSelect, Layout},
         data() {
             return {
                 id_material:'',
@@ -158,9 +179,21 @@
                 id_almacen: this.$attrs.id_almacen,
                 tipo_almacen: this.$attrs.tipo_almacen,
                 referencia: '',
+                items: [
+                    {
+                        i : 0,
+                        material : "",
+                        unidad : "",
+                        numero_parte : "",
+                        descripcion : "",
+                        cantidad : "",
+                        fecha : "",
+                        observaciones : "",
+                        concepto_temporal : ""
+                    }
+                ],
                 fecha: '',
                 observaciones: '',
-                items: [],
                 materiales: [],
                 bandera: 0,
                 tipos:[
@@ -184,6 +217,16 @@
                     item.material = busqueda;
                 }
             },
+            busqueda(index){
+                console.log(index);
+                
+                // this.partidas[index].unidad = ""
+                // this.partidas[index].descripcion = ""
+                // this.partidas[index].numero_parte = ""
+                // this.partidas[index].material = ""
+                // this.partidas[index].id_material = ""
+                // this.partidas[index].i = 0;
+            },
             getAlmacen(){
                 this.almacenes = [];
                 return this.$store.dispatch('cadeco/almacen/index', {
@@ -198,6 +241,23 @@
                         this.cargando = false;
                     })
             },
+            manual(index){
+                console.log(index);
+                
+                // this.partidas[index].material = ""
+                // this.partidas[index].id_material = ""
+                // this.partidas[index].i = 1;
+            },
+            lista()
+            {
+                 this.cargando = true;
+                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'requisicion'})
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.cargando = false;
+                    })
+            },
             getMateriales(id_almacen){
                 this.cargando = true;
                 this.materiales = [];
@@ -205,7 +265,8 @@
                     params: {
                         scope: ['tipos:1,4'],
                         sort: 'descripcion',
-                        order: 'asc'
+                        order: 'asc',
+                        limit:15
                     }
                 })
                     .then(data => {
@@ -216,6 +277,7 @@
             },
             agregar() {
                 var array = {
+                    'i': 0,
                     'material':'',
                     'id_material' : '',
                     'cantidad' : '',
