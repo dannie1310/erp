@@ -11,7 +11,7 @@
                                                 <i class="fa fa-list-ul "></i>
                                                  Lista de Materiales</button>
                                         &nbsp;
-                                        <Layout v-if="id_almacen"></Layout>
+                                        <Layout v-if="id_almacen" v-model="items"></Layout>
                                     </div>
                                 </div>
                              
@@ -42,7 +42,7 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
-                                                        <td>#FFFFF</td>
+                                                        <td>{{item.cantidad + item.material.label}}</td>
                                                         <td>
                                                               <model-list-select
                                                                       :name="`id_material[${i}]`"
@@ -179,19 +179,7 @@
                 id_almacen: this.$attrs.id_almacen,
                 tipo_almacen: this.$attrs.tipo_almacen,
                 referencia: '',
-                items: [
-                    {
-                        i : 0,
-                        material : "",
-                        unidad : "",
-                        numero_parte : "",
-                        descripcion : "",
-                        cantidad : "",
-                        fecha : "",
-                        observaciones : "",
-                        concepto_temporal : ""
-                    }
-                ],
+                items: [],
                 fecha: '',
                 observaciones: '',
                 materiales: [],
