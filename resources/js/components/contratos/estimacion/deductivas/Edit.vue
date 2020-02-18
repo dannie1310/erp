@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-md-12">
-                 <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can(['registrar_descuento_estimacion_subcontrato','eliminar_descuento_estimacion_subcontrato'])" title="Editar">
+                 <button type="button" @click="init()" class="btn btn-primary float-right" title="Editar">
                     Deductivas
                 </button>
             </div>
@@ -73,7 +73,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @click="cerrar()">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" v-if="$root.can('editar_descuento_estimacion_subcontrato')">Actualizar</button>
+                                <button type="submit" class="btn btn-primary"  v-if="$root.can(['registrar_descuento_estimacion_subcontrato','eliminar_descuento_estimacion_subcontrato'])">Actualizar</button>
                             </div>
                             </form>
                         </div>
