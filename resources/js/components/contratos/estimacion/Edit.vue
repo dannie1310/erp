@@ -1,21 +1,21 @@
 <template>
     <span>
-        <div class="d-flex flex-row-reverse" v-if="estimacion">
+        <div class="d-flex flex-row-reverse" v-if="!cargando">
             <div class="p-2">
-                <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion" v-bind:estado="estado"></Amortizacion>
+                <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
             </div>
             <div class="p-2">
                 <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
             <div class="p-2">
-                <RetencionIvaCreate v-bind:id="id" v-bind:cargandoo="cargando"></RetencionIvaCreate>
+                <RetencionIvaCreate v-bind:id="id"></RetencionIvaCreate>
             </div>
             <div class="p-2">
-                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''" v-bind:cargandoo="cargando"></DeductivaEdit>
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
             </div>
         </div>
 
-        <div class="row" v-if="estimacion">
+        <div class="row" v-if="!cargando">
             <div class="col-md-6">
 				<div class="card">
                     <div class="card-header">
@@ -39,21 +39,21 @@
                                     <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
 								</div>
 							</div>
-							<div class="form-group row" v-if="estimacion">
-								<label class="col-sm-2 col-form-label">Objeto</label>
-								<div class="col-sm-10">
+							<div class="form-group row" v-if="estimacion.subcontrato">
+								<label class="col-md-2 col-form-label">Objeto</label>
+								<div class="col-md-10">
 									{{ estimacion.subcontrato.referencia }}
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Contratista</label>
-								<div class="col-sm-10">
+								<label class="col-md-2 col-form-label">Contratista</label>
+								<div class="col-md-10">
 									{{ estimacion.razon_social }}
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Observaciones</label>
-								<div class="col-sm-10">
+								<label class="col-md-2 col-form-label">Observaciones</label>
+								<div class="col-md-10">
 									<textarea
                                         name="observaciones"
                                         id="observaciones"
@@ -68,7 +68,7 @@
 			</div>
 
 			<div class="col-md-6">
-				<div class="card" v-if="estimacion">
+				<div class="card" v-if="estimacion != []">
 					<div class="card-header">
 						<h6 class="card-title">Periodo de Estimación</h6>
 					</div>
@@ -108,7 +108,7 @@
 			</div>
 		</div>
 
-        <div class="card" v-if="estimacion">
+        <div class="card" v-if="!cargando">
 			<div class="card-body">
 				<div class="form-check form-check-inline">
 					<input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
@@ -132,7 +132,7 @@
 				</div>
 			</div>
 		</div>
-        <div class="card" v-if="estimacion">
+        <div class="card" v-if="!cargando">
 			<div class="card-body table-responsive">
 				<table id="tabla-conceptos">
 					<thead>
@@ -199,9 +199,9 @@
                             <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changeCantidad(concepto)" class="text" v-model="concepto.cantidad_estimacion"
-                                       :name="'cantidad_estimacion' + concepto.id"
+                                       :name="'cantidadEstimacion_' + concepto.id"
                                        v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar)}"
-                                       :class="{'is-invalid': errors.has('cantidad_estimacion' + concepto.id)}" />
+                                       :class="{'is-invalid': errors.has('cantidadEstimacion_' + concepto.id)}" />
                             </td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changePorcentaje(concepto)" class="text" v-model="concepto.porcentaje_estimado" />
@@ -215,28 +215,33 @@
                     </tbody>
 				</table>
 			</div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
+                <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0">Guardar </button>
+            </div>
         </div>
      </span>
 </template>
 
 <script>
-
-import RetencionIvaCreate from './retencion-iva/create'
-import DeductivaEdit from './deductivas/Edit'
-import RetencionIndex from './retenciones/Index';
-import Amortizacion from './amortizacion/Edit'
-import Datepicker from 'vuejs-datepicker';
-import {es} from 'vuejs-datepicker/dist/locale';
+    import RetencionIvaCreate from './retencion-iva/create'
+    import DeductivaEdit from './deductivas/Edit'
+    import RetencionIndex from './retenciones/Index';
+    import Amortizacion from './amortizacion/Edit'
+    import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
 
     export default {
         name: "estimacion-edit",
         components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es},
-        // props: ['id'],
+        props: ['id'],
         data() {
             return {
                 cargando: true,
                 es:es,
                 columnas: [],
+                estimacion : []
             }
         },
         mounted() {
@@ -244,7 +249,6 @@ import {es} from 'vuejs-datepicker/dist/locale';
         },
         methods: {
             changeCantidad(concepto) {
-                console.log("aquui", concepto.cantidad_estimacion, concepto.cantidad_subcontrato, concepto.porcentaje_estimado);
                 concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
                 concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
             },
@@ -261,21 +265,28 @@ import {es} from 'vuejs-datepicker/dist/locale';
             },
             find() {
                 this.cargando = true;
-                this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
                 return this.$store.dispatch('contratos/estimacion/ordenarConceptos', {
                     id: this.id,
                     params: {}
                 }).then(data => {
-                    this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
+                    this.estimacion = data;
                 }).finally(() => {
                     this.cargando = false;
                 })
             },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        console.log(result)
+                        //this.store()
+                    }
+                });
+            },
+            salir(){
+                this.$router.push({name: 'estimacion-index'});
+            },
         },
         computed: {
-            estimacion() {
-                return this.$store.getters['contratos/estimacion/currentEstimacion']
-            },
         },
         watch: {
             columnas(val) {

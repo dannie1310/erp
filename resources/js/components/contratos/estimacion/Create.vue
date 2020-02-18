@@ -270,6 +270,7 @@
 				return `[${item.numero_folio_format}] - [${item.referencia}]- [${item.empresa}]`
 			},
         	changeCantidad(concepto) {
+			    console.log(concepto)
 				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100).toFixed(2);
 				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario).toFixed(4);
 			},
