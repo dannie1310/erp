@@ -110,39 +110,42 @@
                         <div class="card-body">
                             <form>
                                 <div class="form-group row">
-                                    <label class="col-md-2 col-form-label">Subtotal</label>
-                                    <div class="col-md-10">
+                                    <label class="col-md-4 col-form-label">Subtotal</label>
+                                    <div class="col-md-8">
                                         <input
+                                            style="text-align:right;"
                                             :disabled="true"
                                             type="text"
                                             data-vv-as="Subtotal"
                                             class="form-control"
                                             placeholder="Subtotal"
-                                            v-model="estimacion.subtotal" />
+                                            v-model="parseFloat(estimacion.subtotal).formatMoney(2)" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-2 col-form-label">IVA</label>
-                                    <div class="col-md-10">
+                                    <label class="col-md-4 col-form-label">IVA</label>
+                                    <div class="col-md-8">
                                          <input
+                                             style="text-align:right;"
                                              :disabled="true"
                                              type="text"
                                              data-vv-as="IVA"
                                              class="form-control"
                                              placeholder="IVA"
-                                             v-model="estimacion.iva" />
+                                             v-model="parseFloat(estimacion.iva).formatMoney(2)" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-2 col-form-label">Total</label>
-                                    <div class="col-md-10">
+                                    <label class="col-md-4 col-form-label">Total</label>
+                                    <div class="col-md-8">
                                          <input
+                                             style="text-align:right;"
                                              :disabled="true"
                                              type="text"
                                              data-vv-as="total"
                                              class="form-control"
                                              placeholder="total"
-                                             v-model="estimacion.total" />
+                                             v-model="parseFloat(estimacion.total).formatMoney(2)" />
                                     </div>
                                 </div>
                             </form>
@@ -342,6 +345,15 @@
                         this.store()
                     }
                 });
+            },
+            store() {
+                return this.$store.dispatch('contratos/estimacion/store',  this.$data )
+                    .then((data) => {
+                        $(this.$refs.modal).modal('hide');
+                        this.$emit('created',data)
+
+                    })
+
             },
             salir(){
                 this.$router.push({name: 'estimacion'});
