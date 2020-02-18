@@ -88,14 +88,14 @@ class ItemSubcontrato extends Item
             'importe_estimacion' => $estimacion ? $estimacion->importe : 0,
             'cantidad_estimacion_format' => $estimacion ? $estimacion->cantidad_format: 0,
             'precio_unitario_estimacion_format' => $estimacion ? $estimacion->precio_unitario_format : 0,
-            'porcentaje_avance' => ($this->cantidad_total_estimada / $this->cantidad) * 100,
+            'porcentaje_avance' => ($cantidad_estimado_anterior / $this->cantidad) * 100,
             'cantidad_estimada_total' => $this->cantidad_total_estimada,
             'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
             'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
             'importe_acumulado' => $this->cantidad_total_estimada * $precio_unitario,
-            'cantidad_por_estimar' => $this->cantidad - $this->cantidad_total_estimada,
-            'importe_por_estimar' => ($this->cantidad - $this->cantidad_total_estimada) * $precio_unitario,
-            'porcentaje_estimado' => $this->cantidad ? ($estimacion ? $estimacion->cantidad : 0 / $this->cantidad) * 100 : 0,
+            'cantidad_por_estimar' => $this->cantidad -$cantidad_estimado_anterior,
+            'importe_por_estimar' => ($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario,
+            'porcentaje_estimado' => ((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100) ,
             'destino_path' => $contrato->ruta_destino
         );
     }

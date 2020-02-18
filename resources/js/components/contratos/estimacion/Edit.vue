@@ -26,17 +26,7 @@
 							<div class="form-group row">
 								<label for="fecha" class="col-md-2 col-form-label">Fecha</label>
 								<div class="col-md-10">
-                                    <datepicker v-model = "estimacion.fecha"
-                                                readonly="true"
-                                                name = "fecha"
-                                                :format = "formatoFecha"
-                                                :language = "es"
-                                                :bootstrap-styling = "true"
-                                                class = "form-control"
-                                                v-validate="{required: true}"
-                                                :class="{'is-invalid': errors.has('fecha')}"
-                                    ></datepicker>
-                                    <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                   {{estimacion.fecha}}
 								</div>
 							</div>
 							<div class="form-group row" v-if="estimacion.subcontrato">
@@ -164,7 +154,7 @@
 							<th style="display: none" class="destino">Destino</th>
 						</tr>
 					</thead>
-					<tbody v-for="(concepto, i) in estimacion.subcontrato.partidas">
+					<tbody v-for="(concepto, i) in partidas">
                         <tr v-if="concepto.para_estimar == 0">
                             <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                             <td :title="concepto.descripcion"><b>{{concepto.descripcion}}</b></td>
@@ -190,30 +180,40 @@
                             <td class="centrado">{{concepto.unidad}}</td>
                             <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
+                            <td style="display: none" class="numerico avance-volumen"></td>
                             <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_total).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-importe"></td>
                             <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
                             <td class="editable-cell numerico">
-                                <input v-on:change="changeCantidad(concepto)" class="text" v-model="concepto.cantidad_estimacion"
-                                       :name="'cantidadEstimacion_' + concepto.id"
+                                <input v-on:change="changeCantidad(concepto)"
+                                       class="text"
+                                       v-model="concepto.cantidad_estimacion"
+                                       :name="`cantidadEstimacion[${concepto.id}]`"
                                        v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar)}"
-                                       :class="{'is-invalid': errors.has('cantidadEstimacion_' + concepto.id)}" />
+                                       :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
+                                 <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
                             </td>
                             <td class="editable-cell numerico">
-                                <input v-on:change="changePorcentaje(concepto)"  v-validate="{max_value: 100}" class="text"
-                                       :name="'porcentaje' + concepto.id"
+                                <input v-on:change="changePorcentaje(concepto)"
+                                       v-validate="{max_value: 100 - concepto.porcentaje_avance }"
+                                       class="text"
+                                       :name="`porcentaje[${concepto.id}]`"
                                        v-model="concepto.porcentaje_estimado"
-                                       :class="{'is-invalid': errors.has('porcentaje' + concepto.id)}" />
+                                       :class="{'is-invalid': errors.has(`porcentaje[${concepto.id}]`)}" />
+                                 <div class="invalid-feedback" v-show="errors.has(`porcentaje[${concepto.id}]`)">{{ errors.first(`porcentaje[${concepto.id}]`) }}</div>
                             </td>
                             <td class="numerico">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2)}}</td>
                             <td class="editable-cell numerico">
-                                <input v-on:change="changeImporte(concepto)" class="text" :name="'importe'+concepto.id" v-validate="{max_value: concepto.importe_por_estimar}"
+                                <input v-on:change="changeImporte(concepto)"
+                                       class="text"
+                                       :name="`importe[${concepto.id}]`"
+                                       v-validate="{max_value: concepto.importe_por_estimar}"
                                        v-model="concepto.importe_estimacion"
-                                       :class="{'is-invalid': errors.has('importe' + concepto.id)}" />
+                                       :class="{'is-invalid': errors.has(`importe[${concepto.id}]`)}" />
+                                 <div class="invalid-feedback" v-show="errors.has(`importe[${concepto.id}]`)">{{ errors.first(`importe[${concepto.id}]`) }}</div>
                             </td>
                             <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                         </tr>
@@ -246,7 +246,8 @@
                 cargando: true,
                 es:es,
                 columnas: [],
-                estimacion : []
+                estimacion : [],
+                partidas : null
             }
         },
         mounted() {
@@ -275,6 +276,7 @@
                     params: {}
                 }).then(data => {
                     this.estimacion = data;
+                    this.partidas = data.subcontrato.partidas
                 }).finally(() => {
                     this.cargando = false;
                 })
@@ -304,6 +306,14 @@
                 val.forEach(v => {
                     $('.' + v).removeAttr('style')
                 })
+            },
+            partidas: {
+                handler() {
+                    setTimeout(() => {
+                        this.$validator.validate()
+                    }, 500);
+                },
+                deep: true
             }
         }
     }

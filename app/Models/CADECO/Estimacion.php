@@ -222,20 +222,20 @@ class Estimacion extends Transaccion
     {
         if($data <= $this->sumaImportes)
         {
-            if($this->sumaImportes == 0 || $this->sumaImportes == null)     
+            if($this->sumaImportes == 0 || $this->sumaImportes == null)
             {
-                $this->anticipo = 0;        
-                $this->save();          
+                $this->anticipo = 0;
+                $this->save();
             }else
             {
                 if($this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->first()->anticipo != 0)
                 {
                     $this->anticipo = ($data/$this->sumaImportes)*100;
-                    $this->save(); 
+                    $this->save();
                 }else{
-                    throw new \Exception('No se puede actualizar la amortización de anticipo.');            
+                    throw new \Exception('No se puede actualizar la amortización de anticipo.');
                 }
-                
+
             }
             $this->recalculaDatosGenerales();
         }else{
@@ -722,7 +722,7 @@ class Estimacion extends Transaccion
         return [
             'fecha_inicial' => $this->cumplimiento,
             'fecha_final'   => $this->vencimiento,
-            'fecha'         => $this->fecha,
+            'fecha'         => $this->fecha_format,
             'razon_social'  => $this->empresa->razon_social,
             'moneda'        => $this->moneda->nombre,
             'observaciones' => $this->observaciones,
