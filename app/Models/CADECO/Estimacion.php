@@ -726,6 +726,10 @@ class Estimacion extends Transaccion
             'razon_social'  => $this->empresa->razon_social,
             'moneda'        => $this->moneda->nombre,
             'observaciones' => $this->observaciones,
+            'folio'         => $this->numero_folio_format,
+            'subtotal'      => $this->subtotal_orden_pago,
+            'iva'           => $this->iva_orden_pago,
+            'total'         => $this->total_orden_pago,
             'subcontrato'   => $this->subcontrato->subcontratoEstimado($this->id_transaccion)
         ];
     }

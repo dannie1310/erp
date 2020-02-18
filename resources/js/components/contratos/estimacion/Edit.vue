@@ -24,26 +24,32 @@
 					<div class="card-body">
 						<form>
 							<div class="form-group row">
-								<label for="fecha" class="col-md-2 col-form-label">Fecha</label>
-								<div class="col-md-10">
+								<label for="fecha" class="col-md-3 col-form-label">Fecha de la Estimación</label>
+								<div class="col-md-9">
                                    {{estimacion.fecha}}
 								</div>
 							</div>
-							<div class="form-group row" v-if="estimacion.subcontrato">
-								<label class="col-md-2 col-form-label">Objeto</label>
-								<div class="col-md-10">
+                             <div class="form-group row">
+								<label class="col-md-3 col-form-label">Folio de la Estimación</label>
+								<div class="col-md-9">
+                                    {{estimacion.folio}}
+                                </div>
+                            </div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label">Objeto</label>
+								<div class="col-md-9">
 									{{ estimacion.subcontrato.referencia }}
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-md-2 col-form-label">Contratista</label>
-								<div class="col-md-10">
+								<label class="col-md-3 col-form-label">Contratista</label>
+								<div class="col-md-9">
 									{{ estimacion.razon_social }}
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-md-2 col-form-label">Observaciones</label>
-								<div class="col-md-10">
+								<label class="col-md-3 col-form-label">Observaciones</label>
+								<div class="col-md-9">
 									<textarea
                                         name="observaciones"
                                         id="observaciones"
@@ -56,46 +62,95 @@
 					</div>
 				</div>
 			</div>
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">Periodo de Estimación</h6>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="fecha_inicial" class="col-form-label">Inicio</label>
+                                        <datepicker v-model = "estimacion.fecha_inicial"
+                                                    name = "fecha_inicial"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :class="{'is-invalid': errors.has('fecha_inicial')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="fecha_final" class="col-form-label">Término</label>
+                                        <datepicker v-model = "estimacion.fecha_final"
+                                                    name = "fecha_final"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :class="{'is-invalid': errors.has('fecha_final')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+				    </div>
+			    </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">Totales</h6>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label">Subtotal</label>
+                                    <div class="col-md-10">
+                                        <input
+                                            :disabled="true"
+                                            type="text"
+                                            data-vv-as="Subtotal"
+                                            class="form-control"
+                                            placeholder="Subtotal"
+                                            v-model="estimacion.subtotal" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label">IVA</label>
+                                    <div class="col-md-10">
+                                         <input
+                                             :disabled="true"
+                                             type="text"
+                                             data-vv-as="IVA"
+                                             class="form-control"
+                                             placeholder="IVA"
+                                             v-model="estimacion.iva" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label">Total</label>
+                                    <div class="col-md-10">
+                                         <input
+                                             :disabled="true"
+                                             type="text"
+                                             data-vv-as="total"
+                                             class="form-control"
+                                             placeholder="total"
+                                             v-model="estimacion.total" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-6">
-				<div class="card" v-if="estimacion != []">
-					<div class="card-header">
-						<h6 class="card-title">Periodo de Estimación</h6>
-					</div>
-					<div class="card-body">
-						<form>
-							<div class="form-row">
-								<div class="form-group col-md-6">
-									<label for="fecha_inicial" class="col-form-label">Inicio</label>
-                                    <datepicker v-model = "estimacion.fecha_inicial"
-                                                name = "fecha_inicial"
-                                                :format = "formatoFecha"
-                                                :language = "es"
-                                                :bootstrap-styling = "true"
-                                                class = "form-control"
-                                                v-validate="{required: true}"
-                                                :class="{'is-invalid': errors.has('fecha_inicial')}"
-                                    ></datepicker>
-                                    <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
-								</div>
-								<div class="form-group col-md-6">
-									<label for="fecha_final" class="col-form-label">Término</label>
-                                    <datepicker v-model = "estimacion.fecha_final"
-                                                name = "fecha_final"
-                                                :format = "formatoFecha"
-                                                :language = "es"
-                                                :bootstrap-styling = "true"
-                                                class = "form-control"
-                                                v-validate="{required: true}"
-                                                :class="{'is-invalid': errors.has('fecha_final')}"
-                                    ></datepicker>
-                                    <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
 		</div>
 
         <div class="card" v-if="!cargando">
@@ -284,13 +339,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        console.log(result)
-                        //this.store()
+                        this.store()
                     }
                 });
             },
             salir(){
-                this.$router.push({name: 'estimacion-index'});
+                this.$router.push({name: 'estimacion'});
             },
         },
         computed: {
