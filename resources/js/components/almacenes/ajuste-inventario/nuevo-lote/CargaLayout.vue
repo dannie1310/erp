@@ -16,13 +16,13 @@
                                         </label>
                                 </div>
                                 <br>
-                    <!-- <div class="row">
+                    <div class="row">
                                             <div class="col-md-12">
                                                 <div class="text-center">
-                                                                <img src="../../../../img/requisicion/layout-requisicion.png" class="rounded" alt="Formato de carga de CSV">
+                                                                <img src="../../../../../img/ajuste-inventario/lote-nuevo.png" class="rounded" alt="Formato de carga de CSV">
                                                       </div>                                                
                                             </div>
-                                        </div> -->
+                                        </div>
                     <form role="form" @submit.prevent="validate">
 
                         <div class="modal-body">
@@ -58,10 +58,8 @@
 </template>
 
 <script>
-    // import Create from "./Create";
     export default {
         name: "carga-layout",
-        // components: {Create},
         data() {
             return {
                 cargando: false,
@@ -103,7 +101,7 @@
             cargarLayout(){
                 var formData = new FormData();
                 formData.append('file',  this.file);
-                return this.$store.dispatch('almacenes/ajuste-inventario/cargaLayout',
+                return this.$store.dispatch('almacenes/nuevo-lote/cargaLayout',
                     {
                         data: formData,
                         config: {
@@ -114,6 +112,7 @@
                         this.data = data;
                         this.$emit('input', this.data);
                         this.$emit('change');
+                        this.$emit('created', data);
                     }).finally(() => {
                         this.$refs.carga_layout.value = '';
                         this.file = null;

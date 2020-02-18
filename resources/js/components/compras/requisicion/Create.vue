@@ -544,7 +544,6 @@
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: 'requisicion',
-                        limit : 10
                     }
                 })
                     .then(data => {

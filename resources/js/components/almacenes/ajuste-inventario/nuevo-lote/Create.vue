@@ -11,7 +11,7 @@
                                                 <i class="fa fa-list-ul "></i>
                                                  Lista de Materiales</button>
                                         &nbsp;
-                                        <Layout v-if="id_almacen" v-model="items"></Layout>
+                                        <Layout @created="getMateriales()" v-if="id_almacen" v-model="items"></Layout>
                                     </div>
                                 </div>
                              
@@ -23,10 +23,9 @@
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
-                                                        <th class="bg-gray-light th_index">#</th>
-                                                        <th class="bg-gray-light">No. de Parte</th>
+                                                        <th class="bg-gray-light index_corto ">#</th>
+                                                        <th class="bg-gray-light" style="width:120px;">No. de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
-                                                        <th class="icono bg-gray-light"></th>
                                                         <th class="bg-gray-light th_unidad">Unidad</th>
                                                         <th class="bg-gray-light th_money_input">Cantidad</th>
                                                         <th class="bg-gray-light th_money_input">Monto Total</th>
@@ -42,13 +41,15 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
-                                                        <td>{{item.cantidad + item.material.label}}</td>
-                                                        <td>
+                                                        <td v-if="item.i === 2">{{item.material.numero_parte}}</td>
+                                                        <td v-else></td>
+                                                        <td v-if="item.i === 2">{{item.material.descripcion}}</td>
+                                                        <td v-else>
                                                               <model-list-select
                                                                       :name="`id_material[${i}]`"
                                                                       :disabled = "!bandera"
                                                                       :onchange="changeSelect(item)"
-                                                                      placeholder="Seleccionar o buscar id, número de parte o descripción del material"
+                                                                      :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
                                                                       data-vv-as="Material"
                                                                       v-validate="{required: true}"
                                                                       v-model="item.id_material"
@@ -61,19 +62,12 @@
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
                                                             </div>
                                                         </td>
-                                                        <td v-if="item.i === 0">
-                                                            <button  type="button" class="btn btn-outline-primary btn-sm" @click="manual(i)" title="Ingresar material manualmente"><i class="fa fa-hand-paper-o" /></button>
-                                                        </td>
-                                                         <td v-else-if="item.i === 1">
-                                                            <button type="button" class="btn btn-outline-primary btn-sm" @click="busqueda(i)" title="Buscar material"><i class="fa fa-refresh" /></button>
-                                                        </td>
-                                                        <td style="width: 30px;" v-else></td>
                                                         <td>
-                                                            {{item.unidad}}
+                                                            {{item.material.unidad}}
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.id_material"
+                                                                    :disabled = "!item.material" 
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`cantidad[${i}]`"
@@ -90,7 +84,7 @@
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.id_material"
+                                                                    :disabled ="!item.material"
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`monto_total[${i}]`"
@@ -107,7 +101,7 @@
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.id_material"
+                                                                    :disabled = "!item.material"
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`monto_pagado[${i}]`"
@@ -199,21 +193,14 @@
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
             },
             changeSelect(item){
+                
                 var busqueda = this.materiales.find(x=>x.id === item.id_material);
                 if(busqueda != undefined)
                 {
                     item.material = busqueda;
+                    item.i = 2;
+                    
                 }
-            },
-            busqueda(index){
-                console.log(index);
-                
-                // this.partidas[index].unidad = ""
-                // this.partidas[index].descripcion = ""
-                // this.partidas[index].numero_parte = ""
-                // this.partidas[index].material = ""
-                // this.partidas[index].id_material = ""
-                // this.partidas[index].i = 0;
             },
             getAlmacen(){
                 this.almacenes = [];
@@ -227,14 +214,8 @@
                     .then(data => {
                         this.almacenes = data.data;
                         this.cargando = false;
+
                     })
-            },
-            manual(index){
-                console.log(index);
-                
-                // this.partidas[index].material = ""
-                // this.partidas[index].id_material = ""
-                // this.partidas[index].i = 1;
             },
             lista()
             {
@@ -254,7 +235,6 @@
                         scope: ['tipos:1,4'],
                         sort: 'descripcion',
                         order: 'asc',
-                        limit:15
                     }
                 })
                     .then(data => {
@@ -295,7 +275,7 @@
                     }
                 });
             },
-            store() {
+            store() {                
                 return this.$store.dispatch('almacenes/nuevo-lote/store', this.$data)
                     .then((data) => {
                         this.$router.push({name: 'ajuste-inventario'});

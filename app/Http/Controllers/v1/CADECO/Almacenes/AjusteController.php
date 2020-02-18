@@ -13,7 +13,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Almacenes\AjusteTransformer;
 use App\Services\CADECO\Almacenes\AjusteService;
 use App\Traits\ControllerTrait;
-use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class AjusteController extends Controller
@@ -50,12 +49,5 @@ class AjusteController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;
-    }
-
-    public function cargaLayout(Request $request)
-    {
-        // dd('Cargar layout', $request->file);
-         $res = $this->service->cargaLayout($request->file);
-        return response()->json($res, 200);
     }
 }
