@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-md-12">
-                 <button type="button" @click="init()" :disabled="cargando" class="btn btn-primary float-right" title="Editar">
+                 <button type="button" @click="init()" :disabled="cargandoo" class="btn btn-primary float-right" title="Editar">
                     Deductivas
                 </button>
             </div>
