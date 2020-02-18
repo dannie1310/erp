@@ -298,7 +298,7 @@ class Estimacion extends Transaccion
 
     public function getMontoAnticipoAplicadoAttribute()
     {
-        return str_replace(',', '.', number_format($this->suma_importes*(($this->anticipo)/100),4, ',',''));
+        return $this->suma_importes*(($this->anticipo)/100);
     }
 
     public function getMontoAnticipoAplicadoFormatAttribute()
