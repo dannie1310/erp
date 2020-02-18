@@ -42,7 +42,7 @@
                                 </tr>
                                 <tr>
                                     <th style="text-align: left">Amortización de Anticipo</th>
-                                    <td>{{value.estimacion.anticipo}}%</td>
+                                    <td>{{value.estimacion.anticipo}}</td>
                                     <td style="text-align: right">{{ value.estimacion.monto_anticipo_aplicado_format }}</td>
                                 </tr>
                                 <tr v-if="configuracion.ret_fon_gar_antes_iva == 1">
