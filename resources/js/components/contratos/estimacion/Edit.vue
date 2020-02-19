@@ -2,16 +2,16 @@
     <span>
         <div class="d-flex flex-row-reverse" v-if="!cargando">
             <div class="p-2">
-                <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
+                <Amortizacion @created="find()" v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
             </div>
             <div class="p-2">
-                <RetencionIndex v-bind:id="id"></RetencionIndex>
+                <RetencionIndex @created="find()" v-bind:id="id"></RetencionIndex>
             </div>
             <div class="p-2">
-                <RetencionIvaCreate v-bind:id="id"></RetencionIvaCreate>
+                <RetencionIvaCreate @created="find()" v-bind:id="id"></RetencionIvaCreate>
             </div>
             <div class="p-2">
-                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
+                <DeductivaEdit @created="find()" v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
             </div>
         </div>
 
@@ -315,6 +315,7 @@
             }
         },
         mounted() {
+            this.cargando = true;
             this.find()
         },
         methods: {
@@ -334,7 +335,6 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             find() {
-                this.cargando = true;
                 return this.$store.dispatch('contratos/estimacion/ordenarConceptos', {
                     id: this.id,
                     params: {}

@@ -114,8 +114,7 @@ class EstimacionController extends Controller
 
     public function anticipo(Request $request, $id)
     {
-        $res = $this->service->anticipo($request->all(), $id);
-        return response()->json([], 200);
+        return $this->service->anticipo($request->all(), $id);
     }
 
     public function destroy(DeleteEstimacionRequest $request, $id)

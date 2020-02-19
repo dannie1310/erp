@@ -75,37 +75,25 @@ export default {
             $(this.$refs.modalAmortizacion).modal('hide');
         },
         update() {
-            if(this.campo == this.estimacion_anticipo.estimacion.monto_anticipo_aplicado)
+            if(this.campo == this.estimacion_anticipo.monto_anticipo_aplicado)
             {
                 swal('Atención', 'El valor de la Amortización de Anticipo es el mismo.', 'warning');
             }
-            else{
+            else {
                 return this.$store.dispatch('contratos/estimacion/amortizacion', {
                     id: this.id,
                     params: this.$data
                 })
                     .then(data => {
+                        this.$emit('created', data);
                         $(this.$refs.modalAmortizacion).modal('hide');
-                         this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
-                         return this.$store.dispatch('contratos/estimacion/showEstimacionTable', {
-                         id: this.id,
-                    }).then(data => {
-
-                        this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
-                        this.cargando = false;
-                        this.estado = data.estimacion.estado;
-
-                })
-                    })
+                    });
             }
         },
-
         find() {
-            this.anticipo = this.estimacion_anticipo.estimacion.anticipo;
-            this.campo = this.estimacion_anticipo.estimacion.monto_anticipo_aplicado;
-
-
-                    $(this.$refs.modalAmortizacion).modal('show');
+            this.anticipo = this.estimacion_anticipo.anticipo_format;
+            this.campo = this.estimacion_anticipo.monto_anticipo_aplicado.toFixed(2);
+            $(this.$refs.modalAmortizacion).modal('show');
         },
     }
 

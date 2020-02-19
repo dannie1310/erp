@@ -239,6 +239,7 @@ class Estimacion extends Transaccion
 
             }
             $this->recalculaDatosGenerales();
+            return $this->subcontratoAEstimar();
         }else{
             throw new \Exception('El importe de la amortización no puede ser mayor al importe de la estimación.');
         }
@@ -722,18 +723,21 @@ class Estimacion extends Transaccion
     public function subcontratoAEstimar()
     {
         return [
-            'fecha_inicial'     => $this->cumplimiento,
-            'fecha_final'       => $this->vencimiento,
-            'fecha'             => $this->fecha_format,
-            'razon_social'      => $this->empresa->razon_social,
-            'moneda'            => $this->moneda->nombre,
-            'observaciones'     => $this->observaciones,
-            'folio'             => $this->numero_folio_format,
-            'subtotal'          => $this->subtotal_orden_pago,
-            'iva'               => $this->iva_orden_pago,
-            'total'             => $this->total_orden_pago,
-            'folio_consecutivo' => $this->subcontratoEstimacion->folio_consecutivo_format,
-            'subcontrato'       => $this->subcontrato->subcontratoEstimado($this->id_transaccion)
+            'fecha_inicial'           => $this->cumplimiento,
+            'fecha_final'             => $this->vencimiento,
+            'fecha'                   => $this->fecha_format,
+            'razon_social'            => $this->empresa->razon_social,
+            'moneda'                  => $this->moneda->nombre,
+            'observaciones'           => $this->observaciones,
+            'folio'                   => $this->numero_folio_format,
+            'subtotal'                => $this->subtotal_orden_pago,
+            'iva'                     => $this->iva_orden_pago,
+            'total'                   => $this->total_orden_pago,
+            'folio_consecutivo'       => $this->subcontratoEstimacion->folio_consecutivo_format,
+            'id_empresa'              => $this->empresa->id_empresa,
+            'anticipo_format'         => $this->anticipo_format,
+            'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
+            'subcontrato'             => $this->subcontrato->subcontratoEstimado($this->id_transaccion)
         ];
     }
 
@@ -799,5 +803,10 @@ class Estimacion extends Transaccion
             abort(500, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function getAnticipoFormatAttribute()
+    {
+        return number_format(abs($this->anticipo),4).'%';
     }
 }
