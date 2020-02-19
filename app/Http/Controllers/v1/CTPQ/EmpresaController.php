@@ -14,6 +14,7 @@ use App\Http\Transformers\CTPQ\EmpresaTransformer;
 use App\Services\CTPQ\EmpresaService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
 
 class EmpresaController extends Controller
 {
@@ -44,10 +45,15 @@ class EmpresaController extends Controller
     public function __construct(Manager $fractal, EmpresaService $service, EmpresaTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function conectar(Request $request){
+        return $this->service->conectar($request->id);
+    }
+
+
 }

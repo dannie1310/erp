@@ -11,6 +11,7 @@ namespace App\Services\CTPQ;
 
 use App\Models\CTPQ\Empresa;
 use App\Repositories\Repository;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 class EmpresaService
 {
     /**
@@ -23,8 +24,9 @@ class EmpresaService
      *
      * @param Almacen $model
      */
-    public function __construct(Empresa $model)
+    public function __construct(ConfigRepository $config,Empresa $model)
     {
+        $this->config = $config;
         $this->repository = new Repository($model);
     }
 
@@ -36,6 +38,13 @@ class EmpresaService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function conectar($id)
+    {
+        $empresa = $this->repository->show($id);
+        $this->config->set('database.connections.cntpq.database', $empresa->AliasBDD);
+        return $this->config->get("database.connections.cntpq.database");
     }
 
 }

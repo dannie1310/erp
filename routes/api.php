@@ -192,6 +192,7 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad-general'], function ($api) {
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CTPQ\EmpresaController@store');
+            $api->post('/connect','App\Http\Controllers\v1\CTPQ\EmpresaController@conectar');
             $api->get('/', 'App\Http\Controllers\v1\CTPQ\EmpresaController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CTPQ\EmpresaController@show')->where(['id' => '[0-9]+']);
         });

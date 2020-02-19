@@ -84,6 +84,19 @@ export default {
                     })
             });
         },
+        conectar(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'connect', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
 
         update(context, payload) {
             return new Promise((resolve, reject) => {
