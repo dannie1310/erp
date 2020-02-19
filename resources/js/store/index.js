@@ -76,6 +76,7 @@ import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 //CONTABILIDAD GRAL
 
 import polizaGeneral from './modules/contabilidadGeneral/poliza';
+import empresaContabilidad from './modules/contabilidadGeneral/empresa';
 
 //CONTRATOS
 import estimacion from './modules/contratos/estimacion';
@@ -229,6 +230,7 @@ export default new Vuex.Store({
         'contabilidad/transaccion-interfaz': transaccionInterfaz,
 
         'contabilidadGeneral/poliza' :polizaGeneral,
+        'contabilidadGeneral/empresa' :empresaContabilidad,
 
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
