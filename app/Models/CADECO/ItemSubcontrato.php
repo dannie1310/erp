@@ -31,11 +31,6 @@ class ItemSubcontrato extends Item
         return ItemEstimacion::where('item_antecedente', '=', $this->id_concepto)->where("id_antecedente", '=', $this->id_transaccion)->sum('cantidad');
     }
 
-    public function getEstimadoAnteriorAttribute($id) // *eliminar
-    {
-        return ItemEstimacion::where('item_antecedente', '=', $this->id_concepto)->where("id_antecedente", '=', $this->id_transaccion)->sum('cantidad');
-    }
-
     public function getAncestrosAttribute()
     {
         $lista = array();
@@ -48,11 +43,6 @@ class ItemSubcontrato extends Item
             }
         }
         return $lista;
-    }
-
-    public function getEstimacionPartidaAttribute($id){
-        return EstimacionPartida::query()->where('id_antecedente', '=',$this->id_transaccion)->where('item_antecedente', '=', $this->id_concepto)
-            ->where('id_transaccion','=', $id)->first();
     }
 
     public function getPrecioUnitarioFormatAttribute()
@@ -103,7 +93,7 @@ class ItemSubcontrato extends Item
             'importe_acumulado' => $this->cantidad_total_estimada * $precio_unitario,
             'cantidad_por_estimar' => $this->cantidad -$cantidad_estimado_anterior,
             'importe_por_estimar' => ($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario,
-            'porcentaje_estimado' => (float)((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100),
+            'porcentaje_estimado' => (float) number_format(((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100), 3, '.', ''),
             'destino_path' => $destino->ruta_destino,
             'id_destino' => $destino->id_concepto,
             'nivel' => strlen($contrato->nivel)/4

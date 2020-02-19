@@ -64,6 +64,10 @@ class Subcontrato extends Transaccion
         });
     }
 
+    /**
+     * Relaciones Eloquent
+     */
+
     public function areasSubcontratantes()
     {
         return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante', 'id_antecedente');
@@ -99,6 +103,21 @@ class Subcontrato extends Transaccion
         return $this->hasOne(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
+    public function empresa()
+    {
+        return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function pago_anticipado()
+    {
+        return $this->hasOne(SolicitudPagoAnticipado::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function partidas_facturadas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function generaFondoGarantia()
     {
         if (is_null($this->fondo_garantia)) {
@@ -112,7 +131,6 @@ class Subcontrato extends Transaccion
             }
         }
     }
-
 
     public function partidasOrdenadas()
     {
@@ -141,24 +159,9 @@ class Subcontrato extends Transaccion
         return $query->whereHas('fondo_garantia');
     }
 
-    public function empresa()
-    {
-        return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
-    }
-
-    public function pago_anticipado()
-    {
-        return $this->hasOne(SolicitudPagoAnticipado::class, 'id_antecedente', 'id_transaccion');
-    }
-
     public function getNombre()
     {
         return 'SUBCONTRATO';
-    }
-
-    public function partidas_facturadas()
-    {
-        return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function getMontoFacturadoEstimacionAttribute()
@@ -248,7 +251,6 @@ class Subcontrato extends Transaccion
             }
         }
     }
-
 
     public function subcontratoEstimado($id_estimacion)
     {

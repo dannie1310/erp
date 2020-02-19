@@ -107,11 +107,6 @@ class EstimacionController extends Controller
         return $this->service->pdfEstimacion($id)->create();
     }
 
-    public function showEstimacionTable($id)
-    {
-        return $this->service->showEstimacionTable($id);
-    }
-
     public function anticipo(Request $request, $id)
     {
         return $this->service->anticipo($request->all(), $id);

@@ -7,18 +7,17 @@
  */
 
 namespace App\Models\CADECO;
-use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Estimaciones\EstimacionEliminada;
 use App\Models\CADECO\Estimaciones\EstimacionPartidaEliminada;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
+use App\Models\CADECO\Moneda;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
-use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Moneda;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
@@ -96,6 +95,46 @@ class Estimacion extends Transaccion
         return $this->hasMany(Retencion::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function items()
+    {
+        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function movimientos()
+    {
+        return $this->hasManyThrough(Movimiento::class, ItemEstimacion::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function partidas()
+    {
+        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function prepoliza()
+    {
+        return $this->belongsTo(Poliza::class, 'id_transaccion', 'id_transaccion_sao');
+    }
+
+    public function estimacionEliminada()
+    {
+        return $this->belongsTo(EstimacionEliminada::class, 'id_transaccion');
+    }
+
     /**
      * Acciones
      */
@@ -103,7 +142,7 @@ class Estimacion extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            $estimacion = Estimacion::create($data);
+            $estimacion = $this->create($data);
             $estimacion->estimaConceptos($data['conceptos']);
             $estimacion->recalculaDatosGenerales();
             DB::connection('cadeco')->commit();
@@ -119,7 +158,7 @@ class Estimacion extends Transaccion
     {
         foreach ($conceptos as $concepto)
         {
-            $pu = Item::where('id_transaccion', '=', $this->id_antecedente)
+            $pu =  Item::where('id_transaccion', '=', $this->id_antecedente)
                 ->where('id_concepto', '=', $concepto['item_antecedente'])
                 ->first()->precio_unitario;
 
@@ -148,21 +187,19 @@ class Estimacion extends Transaccion
 
     public static function calcularFolio()
     {
-        $est = Transaccion::query()->where('tipo_transaccion', '=', 52)->orderBy('numero_folio', 'DESC')->first();
+        $est = Transaccion::where('tipo_transaccion', '=', 52)->orderBy('numero_folio', 'DESC')->first();
         return $est ? $est->numero_folio + 1 : 1;
     }
 
     private function generaFolioConsecutivo()
     {
-        $folio = FolioPorSubcontrato::query()
-            ->where('IDSubcontrato', '=', $this->id_antecedente)
-            ->first();
+        $folio = FolioPorSubcontrato::where('IDSubcontrato', '=', $this->id_antecedente)->first();
 
         if ($folio) {
             $folio->UltimoFolio += 1;
             $folio->save();
         } else {
-            $folio = FolioPorSubcontrato::query()->create([
+            $folio = FolioPorSubcontrato::create([
                 'IDSubcontrato' => $this->id_antecedente,
                 'UltimoFolio' => 1
             ]);
@@ -229,7 +266,7 @@ class Estimacion extends Transaccion
                 $this->save();
             }else
             {
-                if($this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->first()->anticipo != 0)
+                if($this->subcontrato->first()->anticipo != 0)
                 {
                     $this->anticipo = ($data/$this->sumaImportes)*100;
                     $this->save();
@@ -270,16 +307,6 @@ class Estimacion extends Transaccion
     public function getSumaImportesFormatAttribute()
     {
         return '$ ' . number_format($this->suma_importes, 2,".",",");
-    }
-
-    public function items()
-    {
-        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
-    }
-
-    public function movimientos()
-    {
-        return $this->hasManyThrough(Movimiento::class, ItemEstimacion::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
     }
 
     public function getAmortizacionPendienteAttribute()
@@ -346,42 +373,12 @@ class Estimacion extends Transaccion
         return $configuracion;
     }
 
-    public function empresa()
-    {
-        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
-    }
-
-    public function moneda()
-    {
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
-    }
-
-    public function partidas()
-    {
-        return $this->hasMany(EstimacionPartida::class, 'id_transaccion', 'id_transaccion');
-    }
-
-    public function facturas()
-    {
-        return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
-    }
-
-    public function prepoliza()
-    {
-        return $this->belongsTo(Poliza::class, 'id_transaccion', 'id_transaccion_sao');
-    }
-
-    public function estimacionEliminada()
-    {
-        return $this->belongsTo(EstimacionEliminada::class, 'id_transaccion');
-    }
-
     public function eliminar($motivo)
     {
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->respaldar($motivo);
-            $this->partidas()->delete();
+            $this->items()->delete();
             $this->delete();
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
@@ -720,6 +717,10 @@ class Estimacion extends Transaccion
         return $this;
     }
 
+    /**
+     * Obtener estimación con las partidas ordenadas dependiendo los niveles de los contratos.
+     * @return array
+     */
     public function subcontratoAEstimar()
     {
         return [
@@ -743,12 +744,14 @@ class Estimacion extends Transaccion
 
     /**
      * Editar la estimación
+     * @param $datos
      * $datos = [
      *      fecha_inicial,
      *      fecha_final,
      *      observaciones,
      *      partidas ]
-     * @param $datos
+     * @return $this
+     * @throws \Exception
      */
     public function editar($datos)
     {
