@@ -1,6 +1,6 @@
 <template>
     <span>
-          <button type="button" @click="find()" class="btn btn-primary float-right" :disabled="estado !== 0" v-if="$root.can('actualizar_amortizacion_anticipo')"  title="Editar">
+          <button type="button" @click="find()" class="btn btn-primary float-right" v-if="$root.can('actualizar_amortizacion_anticipo')"  title="Editar">
                     Amortización de Anticipo
                 </button>
              <div class="row">

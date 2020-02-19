@@ -35,6 +35,12 @@
                                     {{estimacion.folio}}
                                 </div>
                             </div>
+                            <div class="form-group row">
+								<label class="col-md-3 col-form-label">Folio Consecutivo</label>
+								<div class="col-md-9">
+                                    {{estimacion.folio_consecutivo}}
+                                </div>
+                            </div>
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label">Objeto</label>
 								<div class="col-md-9">
@@ -314,11 +320,11 @@
         methods: {
             changeCantidad(concepto) {
                 concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
+                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
             },
             changePorcentaje(concepto) {
                 concepto.cantidad_estimacion = ((concepto.cantidad_subcontrato * concepto.porcentaje_estimado) / 100).toFixed(2);
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
+                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
             },
             changeImporte(concepto) {
                 concepto.cantidad_estimacion = (concepto.importe_estimacion / concepto.precio_unitario_subcontrato).toFixed(2);
@@ -359,8 +365,7 @@
                     data: datos
                 })
                 .then((data) => {
-                    this.$store.commit('contratos/estimacion/UPDATE_ESTIMACION', data);
-                    $(this.$refs.modal).modal('hide');
+                    this.$router.push({name: 'estimacion'});
                 })
             },
             salir(){

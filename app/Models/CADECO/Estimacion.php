@@ -722,17 +722,18 @@ class Estimacion extends Transaccion
     public function subcontratoAEstimar()
     {
         return [
-            'fecha_inicial' => $this->cumplimiento,
-            'fecha_final'   => $this->vencimiento,
-            'fecha'         => $this->fecha_format,
-            'razon_social'  => $this->empresa->razon_social,
-            'moneda'        => $this->moneda->nombre,
-            'observaciones' => $this->observaciones,
-            'folio'         => $this->numero_folio_format,
-            'subtotal'      => $this->subtotal_orden_pago,
-            'iva'           => $this->iva_orden_pago,
-            'total'         => $this->total_orden_pago,
-            'subcontrato'   => $this->subcontrato->subcontratoEstimado($this->id_transaccion)
+            'fecha_inicial'     => $this->cumplimiento,
+            'fecha_final'       => $this->vencimiento,
+            'fecha'             => $this->fecha_format,
+            'razon_social'      => $this->empresa->razon_social,
+            'moneda'            => $this->moneda->nombre,
+            'observaciones'     => $this->observaciones,
+            'folio'             => $this->numero_folio_format,
+            'subtotal'          => $this->subtotal_orden_pago,
+            'iva'               => $this->iva_orden_pago,
+            'total'             => $this->total_orden_pago,
+            'folio_consecutivo' => $this->subcontratoEstimacion->folio_consecutivo_format,
+            'subcontrato'       => $this->subcontrato->subcontratoEstimado($this->id_transaccion)
         ];
     }
 
@@ -790,6 +791,7 @@ class Estimacion extends Transaccion
                 'observaciones' => $datos['observaciones']
             ]);
 
+            $this->recalculaDatosGenerales();
             DB::connection('cadeco')->commit();
             return $this;
         }catch (\Exception $e) {
