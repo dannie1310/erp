@@ -47,6 +47,11 @@ class EstimacionObserver extends TransaccionObserver
         $estimacion->creaSubcontratoEstimacion();
     }
 
+    public function updated(Estimacion $estimacion)
+    {
+        $estimacion->recalculaDatosGenerales();
+    }
+
     public function deleting(Estimacion $estimacion)
     {
         $estimacion->validarParaEliminar();

@@ -41,9 +41,4 @@ class Contrato extends Model
     {
         return $this->belongsTo(Destino::class, 'id_transaccion', 'id_transaccion')->where('id_concepto_contrato', '=', $this->id_concepto);
     }
-
-    public function getRutaDestinoAttribute()
-    {
-        return $this->destino->ruta_destino;
-    }
 }

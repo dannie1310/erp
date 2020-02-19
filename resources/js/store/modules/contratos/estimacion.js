@@ -28,7 +28,17 @@ export default {
         },
 
         UPDATE_ATTRIBUTE(state, data) {
-            _.set(state.currentBanco, data.attribute, data.value);
+            _.set(state.currentEstimacion, data.attribute, data.value);
+        },
+
+        UPDATE_CUENTA(state, data) {
+            state.estimaciones = state.estimaciones.map(estimacion => {
+                if (estimacion.id === data.id) {
+                    return Object.assign({}, estimacion, data)
+                }
+                return estimacion
+            })
+            state.currentEstimacion = data;
         },
 
         APROBAR_ESTIMACION(state, id) {
@@ -40,7 +50,6 @@ export default {
         },
 
         REVERTIR_APROBACION(state, id) {
-
             state.estimaciones.forEach(estimacion => {
                 if(estimacion.id == id) {
                     estimacion.estado = 0;

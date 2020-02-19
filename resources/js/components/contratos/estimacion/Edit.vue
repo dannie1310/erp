@@ -342,18 +342,26 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        this.update()
                     }
                 });
             },
-            store() {
-                return this.$store.dispatch('contratos/estimacion/store',  this.$data )
-                    .then((data) => {
-                        $(this.$refs.modal).modal('hide');
-                        this.$emit('created',data)
+            update() {
+                var datos = {
+                    'fecha_inicial' : this.estimacion.fecha_inicial,
+                    'fecha_final' : this.estimacion.fecha_final,
+                    'observaciones' : this.estimacion.observaciones,
+                    'partidas' : this.partidas
+                }
 
-                    })
-
+                return this.$store.dispatch('contratos/estimacion/update', {
+                    id: this.id,
+                    data: datos
+                })
+                .then((data) => {
+                    this.$store.commit('contratos/estimacion/UPDATE_ESTIMACION', data);
+                    $(this.$refs.modal).modal('hide');
+                })
             },
             salir(){
                 this.$router.push({name: 'estimacion'});

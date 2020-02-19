@@ -16,6 +16,11 @@ class ItemSubcontrato extends Item
         return $this->belongsTo(Contrato::class, 'id_concepto', 'id_concepto');
     }
 
+    public function destino()
+    {
+        return $this->belongsTo(Destino::class, 'id_concepto','id_concepto_contrato');
+    }
+
     public function partidaEstimacion()
     {
         return $this->belongsTo(ItemEstimacion::class, 'id_transaccion', 'id_antecedente');
@@ -71,6 +76,7 @@ class ItemSubcontrato extends Item
         $precio_unitario = $estimacion ? $estimacion->precio_unitario : $this->precio_unitario;
         $cantidad_estimado_anterior = $estimacion ?  $this->cantidad_total_estimada - $estimacion->cantidad : $this->cantidad_total_estimada;
         $contrato = $this->contrato()->where('id_transaccion', '=', $id_contrato)->first();
+        $destino = $this->destino()->where('id_transaccion', '=', $id_contrato)->first();
 
         return array(
             'id' => $this->id_item,
@@ -96,7 +102,8 @@ class ItemSubcontrato extends Item
             'cantidad_por_estimar' => $this->cantidad -$cantidad_estimado_anterior,
             'importe_por_estimar' => ($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario,
             'porcentaje_estimado' => ((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100) ,
-            'destino_path' => $contrato->ruta_destino
+            'destino_path' => $destino->ruta_destino,
+            'id_destino' => $destino->id_concepto
         );
     }
 

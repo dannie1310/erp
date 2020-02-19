@@ -245,11 +245,11 @@ class EstimacionService
 
     public function ordenado($id)
     {
-        return $this->ordenarConcepto($this->show($id));
+        return $this->show($id)->subcontratoAEstimar();
     }
 
-    private function ordenarConcepto($estimacion)
+    public function update(array $data, $id)
     {
-       return $estimacion->subcontratoAEstimar();
+        return $this->repository->update($data, $id);
     }
 }
