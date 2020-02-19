@@ -43,7 +43,9 @@ class ItemSubcontrato extends Item
         {
             $nivel = substr($this->nivel, 0, 4*$i);
             $result = Contrato::where('id_transaccion', '=', $this->subcontrato->id_antecedente)->where('nivel', '=', $nivel)->first();
-            array_push($lista, [$result->descripcion, $result->nivel, $result->clave]);
+            if($result) {
+                array_push($lista, [$result->descripcion, $result->nivel, $result->clave, $i]);
+            }
         }
         return $lista;
     }
@@ -89,21 +91,22 @@ class ItemSubcontrato extends Item
             'cantidad_subcontrato_format' => $this->cantidad_format,
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_estimacion' =>  $estimacion ? $estimacion->id_item : 0,
-            'cantidad_estimacion' => $estimacion ? $estimacion->cantidad: 0,
+            'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 2, '.', '') : 0,
             'precio_unitario_estimacion' => $estimacion ? $estimacion->precio_unitario : 0,
-            'importe_estimacion' => $estimacion ? $estimacion->importe : 0,
+            'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
             'cantidad_estimacion_format' => $estimacion ? $estimacion->cantidad_format: 0,
             'precio_unitario_estimacion_format' => $estimacion ? $estimacion->precio_unitario_format : 0,
-            'porcentaje_avance' => ($cantidad_estimado_anterior / $this->cantidad) * 100,
+            'porcentaje_avance' => (float) number_format((($cantidad_estimado_anterior / $this->cantidad) * 100), 3, '.', ''),
             'cantidad_estimada_total' => $this->cantidad_total_estimada,
             'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
             'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
             'importe_acumulado' => $this->cantidad_total_estimada * $precio_unitario,
             'cantidad_por_estimar' => $this->cantidad -$cantidad_estimado_anterior,
             'importe_por_estimar' => ($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario,
-            'porcentaje_estimado' => ((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100) ,
+            'porcentaje_estimado' => (float)((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100),
             'destino_path' => $destino->ruta_destino,
-            'id_destino' => $destino->id_concepto
+            'id_destino' => $destino->id_concepto,
+            'nivel' => strlen($contrato->nivel)/4
         );
     }
 

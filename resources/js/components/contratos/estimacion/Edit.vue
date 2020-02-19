@@ -221,7 +221,9 @@
 					<tbody v-for="(concepto, i) in partidas">
                         <tr v-if="concepto.para_estimar == 0">
                             <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
-                            <td :title="concepto.descripcion"><b>{{concepto.descripcion}}</b></td>
+                            <td :title="concepto.descripcion">
+                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                <b>{{concepto.descripcion}}</b></td>
                             <td></td>
                             <td style="display: none" class="numerico contratado"/>
                             <td style="display: none" class="numerico contratado"/>
@@ -239,8 +241,11 @@
                             <td style="display: none" class="destino"/>
                         </tr>
 					    <tr v-else>
-						    <td :title="concepto.clave">  {{ concepto.clave }}</td>
-                            <td :title="concepto.descripcion_concepto">  {{concepto.descripcion_concepto}}</td>
+						    <td :title="concepto.clave">{{ concepto.clave }}</td>
+                            <td :title="concepto.descripcion_concepto">
+                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                {{concepto.descripcion_concepto}}
+                            </td>
                             <td class="centrado">{{concepto.unidad}}</td>
                             <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
@@ -256,7 +261,7 @@
                                        class="text"
                                        v-model="concepto.cantidad_estimacion"
                                        :name="`cantidadEstimacion[${concepto.id}]`"
-                                       v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar)}"
+                                       v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(2)}"
                                        :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
                                  <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
                             </td>
@@ -274,7 +279,7 @@
                                 <input v-on:change="changeImporte(concepto)"
                                        class="text"
                                        :name="`importe[${concepto.id}]`"
-                                       v-validate="{max_value: concepto.importe_por_estimar}"
+                                       v-validate="{max_value: parseFloat(concepto.importe_por_estimar).toFixed(2)}"
                                        v-model="concepto.importe_estimacion"
                                        :class="{'is-invalid': errors.has(`importe[${concepto.id}]`)}" />
                                  <div class="invalid-feedback" v-show="errors.has(`importe[${concepto.id}]`)">{{ errors.first(`importe[${concepto.id}]`) }}</div>

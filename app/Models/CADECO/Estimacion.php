@@ -766,7 +766,9 @@ class Estimacion extends Transaccion
                     {
                         if ($partida['id_item_estimacion'] != 0)
                         {
-                            $this->items()->where('id_item', '=', $partida['id_item_estimacion'])->update([
+                            $item = $this->items()->where('id_item', '=', $partida['id_item_estimacion'])->first();
+
+                            $item->update([
                                 'cantidad' => $partida['cantidad_estimacion'],
                                 'importe' => $partida['importe_estimacion']
                             ]);
@@ -790,8 +792,8 @@ class Estimacion extends Transaccion
             }
 
             $this->update([
-                'cumplimiento' => $fecha_inicial->format("Y-m-d 00:00:00.000"),
-                'vencimiento'  => $fecha_final->format("Y-m-d 00:00:00.000"),
+                'cumplimiento' => $fecha_inicial->format("Y-m-d"),
+                'vencimiento'  => $fecha_final->format("Y-m-d"),
                 'observaciones' => $datos['observaciones']
             ]);
 

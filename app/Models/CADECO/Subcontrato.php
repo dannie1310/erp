@@ -261,7 +261,7 @@ class Subcontrato extends Transaccion
             if ($nivel != $nivel_ancestros) {
                 $nivel_ancestros = $nivel;
                 foreach ($partida->ancestros as $ancestro) {
-                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2]];
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => $ancestro[3]];
                 }
             }
             $items [$partida->nivel] = $partida->partidasEstimadas($id_estimacion, $this->id_antecedente);
