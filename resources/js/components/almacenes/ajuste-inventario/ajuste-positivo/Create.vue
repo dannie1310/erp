@@ -5,6 +5,15 @@
                 <div class="invoice p-3 mb-3">
                      <form role="form" @submit.prevent="validate">
                          <div class="modal-body">
+                              <div class="d-flex flex-row-reverse">
+                                    <div class="p-3">
+                                        <button  type="button" v-if="id_almacen" class="btn btn-info" @click="lista">
+                                                <i class="fa fa-list-ul "></i>
+                                                 Lista de Materiales</button>
+                                        &nbsp;
+                                        <Layout @created="getMateriales()" v-if="id_almacen" v-model="items"></Layout>
+                                    </div>
+                                </div>
                              <div class="row" v-if="id_almacen">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
@@ -14,6 +23,7 @@
                                                     <thead>
                                                     <tr>
                                                         <th class="bg-gray-light index_corto">#</th>
+                                                        <th class="bg-gray-light" style="width:120px;">No. de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
                                                         <th class="bg-gray-light th_unidad">Unidad</th>
                                                         <th class="bg-gray-light th_money_input">Cantidad Ingresada</th>
@@ -30,6 +40,7 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
+                                                        <td> #00000</td>
                                                         <td>
                                                             <model-list-select
                                                                     :name="`id_material[${i}]`"
@@ -118,9 +129,10 @@
 
 <script>
     import {ModelListSelect} from 'vue-search-select';
+    import Layout from './CargaLayout'
     export default {
         name: "ajuste-positivo-create",
-        components:{ModelListSelect},
+        components:{ModelListSelect, Layout},
         propos:['id_almacen', 'referencia','fecha'],
 
         data() {
@@ -208,6 +220,16 @@
 
                     })
             },*/
+            lista()
+            {
+                 this.cargando = true;
+                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'requisicion'})
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.cargando = false;
+                    })
+            },
             agregar() {
                 var array = {
                     'material' : '',
