@@ -267,7 +267,7 @@ public function partidas(){
         $this->contrato_importe = $p->precio_unitario * $p->cantidad;
         $this->suma_contrato += $this->contrato_importe;
 
-        $this->tran_antecedentes = $p->getEstimadoAnteriorAttribute($this->id);
+        $this->tran_antecedentes = $p->cantidad_total_estimada;
 
 
         $this->importe_antecedentes = $this->tran_antecedentes * $p->precio_unitario;
