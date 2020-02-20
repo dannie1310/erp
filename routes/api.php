@@ -240,6 +240,7 @@ $api->version('v1', function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@show')->where(['id' => '[0-9]+']);
                 $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@destroy')->where(['id' => '[0-9]+']);
+                $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@cargaLayout');
             });
 
             //AJUSTE NEGATIVO (-)
@@ -254,6 +255,7 @@ $api->version('v1', function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@show')->where(['id' => '[0-9]+']);
                 $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@destroy')->where(['id' => '[0-9]+']);
+                $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@cargaLayout');
             });
 
         });

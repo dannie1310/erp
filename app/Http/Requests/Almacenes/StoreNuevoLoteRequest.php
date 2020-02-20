@@ -38,7 +38,7 @@ class StoreNuevoLoteRequest extends FormRequest
             'referencia' => ['required'],
             'observaciones' => ['required'],
             'items' => ['required', 'array'],
-            'items.*.id_material' => ['required'],
+            'items.*.material' => ['required'],
             'items.*.monto_pagado' => ['required'],
             'items.*.monto_total' => ['required'],
             'items.*.cantidad' => ['required'],

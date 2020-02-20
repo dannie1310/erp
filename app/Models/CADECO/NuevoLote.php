@@ -128,6 +128,11 @@ class NuevoLote extends Ajuste
 
     }
 
+    public function buscaMaterial($id)
+    {
+        return Material::find($id);
+    }
+
     public function respaldarAjuste($motivo)
     {
         $datos = [
