@@ -8,7 +8,6 @@
 
 namespace App\Services\CADECO\Almacenes;
 
-use App\Models\CADECO\Material;
 use App\Models\CADECO\NuevoLote;
 use App\Repositories\CADECO\NuevoLote\Repository;
 
@@ -57,14 +56,14 @@ class NuevoLoteService
         $partidas = $this->getCsvData($file);
         foreach ($partidas as $partida)
         {
-            if($partida['No PARTE'] != null) {
-                $material = Material::query()->where('numero_parte', '=', $partida['No PARTE'])->get(['id_material','numero_parte','descripcion', 'unidad', 'FechaHoraRegistro'])->first();
+            if($partida['ID MATERIAL'] != null) {
+                $material = $this->repository->busca($partida['ID MATERIAL']);
                  if ($material['numero_parte'] == null)
                 {
                     $materiales[] = array(
                         'i' => 1,
                         'material' => '',
-                        'numero_parte' => $partida['No PARTE'],
+                        'numero_parte' => NULL,
                         'descripcion' => $partida['DESCRIPCION'],
                         'unidad' => $partida['UNIDAD'],
                         'cantidad' => $partida['CANTIDAD'],
@@ -91,7 +90,7 @@ class NuevoLoteService
                 $materiales[] = array(
                     'i' => 1,
                     'material' => '',
-                    'numero_parte' => $partida['No PARTE'],
+                    'numero_parte' => NULL,
                     'descripcion' => $partida['DESCRIPCION'],
                     'unidad' => $partida['UNIDAD'],
                     'cantidad' => $partida['CANTIDAD'],
@@ -119,7 +118,7 @@ class NuevoLoteService
                     
                     $content[] = array(
                         'PARTIDA' =>  ($renglon[0] == '') ? null : $renglon[0],
-                        'No PARTE' =>  ($renglon[1] == '') ? null : $renglon[1],
+                        'ID MATERIAL' =>  ($renglon[1] == '') ? null : $renglon[1],
                         'DESCRIPCION' =>  ($renglon[2] == '') ? null : $renglon[2],
                         'UNIDAD' =>  ($renglon[3] == '') ? null : $renglon[3],
                         'CANTIDAD' =>  ($renglon[4] == '') ? null : $renglon[4],
