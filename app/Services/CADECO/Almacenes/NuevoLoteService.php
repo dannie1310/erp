@@ -58,7 +58,7 @@ class NuevoLoteService
         {
             if($partida['ID MATERIAL'] != null) {
                 $material = $this->repository->busca($partida['ID MATERIAL']);
-                 if ($material['numero_parte'] == null)
+                 if (!$material)
                 {
                     $materiales[] = array(
                         'i' => 1,
