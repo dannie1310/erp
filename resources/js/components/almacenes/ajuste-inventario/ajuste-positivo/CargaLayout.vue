@@ -5,7 +5,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-upload"></i> &nbsp; AGREGAR NUEVO LOTE CON LAYOUT</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-upload"></i> &nbsp; AGREGAR AJUSTE (+) CON LAYOUT</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -19,7 +19,7 @@
                     <div class="row">
                                             <div class="col-md-12">
                                                 <div class="text-center">
-                                                                <img src="../../../../../img/ajuste-inventario/lote-nuevo.png" class="rounded" alt="Formato de carga de CSV">
+                                                                <img src="../../../../../img/ajuste-inventario/ajuste-positivo.png" class="rounded" alt="Formato de carga de CSV">
                                                       </div>                                                
                                             </div>
                                         </div>
@@ -86,6 +86,7 @@
             },
             load() {
                 this.$refs.carga_layout.value = '';
+                this.$emit('created');
                 this.file = null;
                 this.data = null;
                 this.$validator.errors.clear();
@@ -101,7 +102,7 @@
             cargarLayout(){
                 var formData = new FormData();
                 formData.append('file',  this.file);
-                return this.$store.dispatch('almacenes/nuevo-lote/cargaLayout',
+                return this.$store.dispatch('almacenes/ajuste-positivo/cargaLayout',
                     {
                         data: formData,
                         config: {
@@ -112,7 +113,6 @@
                         this.data = data;
                         this.$emit('input', this.data);
                         this.$emit('change');
-                        this.$emit('created', data);
                     }).finally(() => {
                         this.$refs.carga_layout.value = '';
                         this.file = null;

@@ -14,6 +14,7 @@ use App\Http\Requests\Almacenes\StoreAjustePositivoRequest;
 use App\Http\Transformers\CADECO\Almacenes\AjustePositivoTransformer;
 use App\Services\CADECO\Almacenes\AjustePositivoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class AjustePositivoController extends Controller
@@ -61,5 +62,11 @@ class AjustePositivoController extends Controller
     public function store(StoreAjustePositivoRequest $request)
     {
         return $this->traitStore($request);
+    }
+
+    public function cargaLayout(Request $request)
+    {
+         $res = $this->service->cargaLayout($request->file);
+        return response()->json($res, 200);
     }
 }

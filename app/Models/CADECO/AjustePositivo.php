@@ -69,7 +69,7 @@ class AjustePositivo extends Ajuste
         $id_almacen = $data["id_almacen"];
         foreach ($data["items"] as $material){
             $partida = $material["material"];
-            $cantidad_total = $partida['cantidad'];
+            $cantidad_total = $material['cantidad'];
             $inventarios = Inventario::query()
                 ->where('id_material', '=', $partida['id_material'])
                 ->where('id_almacen', '=', $id_almacen)
@@ -86,7 +86,7 @@ class AjustePositivo extends Ajuste
                             'id_material' => $inventario->id_material,
                             'cantidad' => $disponible_inventario,
                             'importe' => ($inventario->monto_total/$inventario->cantidad)*($disponible_inventario),
-                            'referencia' => $partida['unidad']
+                            'referencia' => $cantidad_total
                         ];
                         $cantidad_total -= $disponible_inventario;
                         $disponible_inventario = 0;
@@ -97,7 +97,7 @@ class AjustePositivo extends Ajuste
                             'id_material' => $inventario->id_material,
                             'cantidad' => $cantidad_total,
                             'importe' => ($inventario->monto_total/$inventario->cantidad)*($cantidad_total),
-                            'referencia' => $partida['unidad']
+                            'referencia' => $cantidad_total
                         ];
                         $disponible_inventario -= $cantidad_total;
                         $cantidad_total -= $cantidad_total;
@@ -108,6 +108,11 @@ class AjustePositivo extends Ajuste
         $data["partidas_registro"] = $partidas_registro;
         return $data;
     }
+
+    public function buscaMaterial($id)
+    {
+        return Material::find($id);
+    }
     
     public function validaSoporteInventarios($data){
         $mensaje = "";
@@ -115,7 +120,7 @@ class AjustePositivo extends Ajuste
         foreach ($data["items"] as $i=>$material) {
             
             $partida = $material["material"];
-            $cantidad_total = $partida['cantidad'];
+            $cantidad_total = $data['items'][$i]['cantidad'];
             $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material'])
                 ->where('id_almacen', '=', $id_almacen)
                 ->whereRaw('inventarios.saldo != inventarios.cantidad')
