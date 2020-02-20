@@ -86,7 +86,7 @@ class AjustePositivo extends Ajuste
                             'id_material' => $inventario->id_material,
                             'cantidad' => $disponible_inventario,
                             'importe' => ($inventario->monto_total/$inventario->cantidad)*($disponible_inventario),
-                            'referencia' => $cantidad_total
+                            'referencia' => $material['material']['unidad']
                         ];
                         $cantidad_total -= $disponible_inventario;
                         $disponible_inventario = 0;
@@ -97,7 +97,7 @@ class AjustePositivo extends Ajuste
                             'id_material' => $inventario->id_material,
                             'cantidad' => $cantidad_total,
                             'importe' => ($inventario->monto_total/$inventario->cantidad)*($cantidad_total),
-                            'referencia' => $cantidad_total
+                            'referencia' => $material['material']['unidad']
                         ];
                         $disponible_inventario -= $cantidad_total;
                         $cantidad_total -= $cantidad_total;

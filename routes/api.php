@@ -248,6 +248,7 @@ $api->version('v1', function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@show')->where(['id' => '[0-9]+']);
                 $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@destroy')->where(['id' => '[0-9]+']);
+                $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@cargaLayout');
             });
 
             //NUEVO LOTE
