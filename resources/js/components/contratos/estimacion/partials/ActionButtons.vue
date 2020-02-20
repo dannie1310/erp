@@ -34,7 +34,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="table-responsive">
-                            <table style="width: 100%" class="table table-stripped small">
+                            <table style="width: 100%" class="table table-stripped">
                                 <tbody>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Importe Estimación</th>
