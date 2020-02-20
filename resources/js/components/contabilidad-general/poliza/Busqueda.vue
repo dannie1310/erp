@@ -1,6 +1,12 @@
 <template>
     <span>
         <div class="row">
+            <div class="col-12">
+                <show></show>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-md-12">
                 <h6><i class="fa fa-plug" ></i>Datos de Conexión:</h6>
             </div>
@@ -152,9 +158,10 @@
 
 <script>
     import {ModelListSelect} from 'vue-search-select';
+    import Show from "./Show";
     export default {
         name: "busqueda-poliza",
-        components: {ModelListSelect},
+        components: {ModelListSelect, Show},
         data() {
             return {
                 cargando: false,
@@ -181,6 +188,7 @@
                     { title: 'Folio', field: 'folio', tdClass: 'td_fecha', thClass: 'th_fecha',  sortable: true},
                     { title: 'Monto', field: 'monto', tdClass: 'td_money', thClass: 'th_money', sortable: true},
                     { title: 'Concepto', field: 'concepto', sortable: false},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -216,7 +224,10 @@
                         tipo: poliza.tipo,
                         folio: poliza.folio,
                         monto: poliza.cargos,
-                        concepto: poliza.concepto
+                        concepto: poliza.concepto,
+                        buttons: $.extend({}, {
+                            id: poliza.id,
+                        })
 
                     }));
                 },
@@ -243,6 +254,13 @@
             }
         },
         methods: {
+            tipos_polizas(){
+                return {
+                    1: "Ingresos",
+                    2: "Egresos",
+                    3: "Diario"
+                };
+            },
             changeSelect(){
                 this.conectando = false;
                 var busqueda = this.empresas.find(x=>x.id === this.id_empresa);
