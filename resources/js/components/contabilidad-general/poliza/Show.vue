@@ -10,7 +10,104 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        jj
+                        <span v-if="poliza" class="detalle_poliza">
+                            <div class="row">
+                                <div class="col-md-1 offset-9">
+                                     <div class="form-group row error-content">
+                                         <label for="ejercicio" class="col-md-12 col-form-label">Fecha:</label>
+                                     </div>
+                                 </div>
+                                <div class="col-md-2">
+                                     <input
+                                             type="text"
+                                             disabled="disabled"
+                                             name="texto"
+                                             class="form-control"
+                                             id="ejercicio"
+                                             v-model="poliza.fecha"
+                                     >
+                                </div>
+                            </div>
+                            <div class="row" >
+                                <div class="col-md-2">
+                                     <div class="form-group row error-content">
+                                         <label for="numero_poliza" class="col-md-12 col-form-label"># Poliza:</label>
+
+                                     </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                     <div class="form-group row error-content">
+                                         <label for="tipo_poliza" class="col-md-12 col-form-label">Tipo de Poliza:</label>
+
+                                     </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <label for="texto" class="col-md-12 col-form-label">Concepto:</label>
+                                </div>
+                            </div>
+                            <div class="row" >
+                                <div class="col-md-2">
+                                     <input
+                                             type="text"
+                                             disabled="disabled"
+                                             name="texto"
+                                             class="form-control"
+                                             id="numero_poliza"
+                                             v-model="poliza.folio"
+                                     >
+                                </div>
+                                <div class="col-md-2">
+                                     <input
+                                             type="text"
+                                             disabled="disabled"
+                                             name="texto"
+                                             class="form-control"
+                                             id="tipo_poliza"
+                                             v-model="poliza.tipo"
+                                     >
+                                </div>
+                                <div class="col-md-8">
+                                     <textarea
+                                             type="text"
+                                             disabled="disabled"
+                                             name="texto"
+                                             class="form-control"
+                                             id="concepto"
+                                             v-model="poliza.concepto"
+                                     ></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label ><i class="fa fa-th-list icon"></i>Movimientos</label>
+                                </div>
+                            </div>
+                            <div>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="bg-gray-light">#</th>
+                                            <th class="bg-gray-light">Cuenta</th>
+                                            <th class="bg-gray-light">Cargo</th>
+                                            <th class="bg-gray-light">Abono</th>
+                                            <th class="bg-gray-light">Referencia</th>
+                                            <th class="bg-gray-light">Concepto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(movimiento, i) in poliza.movimientos_poliza.data">
+                                            <td>{{ i + 1 }}</td>
+                                            <td>{{movimiento.cuenta}}</td>
+                                            <td class="money">{{movimiento.cargo_format}}</td>
+                                            <td class="money">{{movimiento.abono_format}}</td>
+                                            <td>{{movimiento.referencia}}</td>
+                                            <td>{{movimiento.concepto}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
@@ -40,9 +137,26 @@ export default {
     },
 
     computed: {
-        poliza() {
+        poliza(){
             return this.$store.getters['contabilidadGeneral/poliza/currentPoliza'];
         }
     },
+    watch:{
+        poliza : {
+            handler(poliza) {
+                if(poliza !== null){
+                    $(this.$refs.modalEditPoliza).modal('show');
+                }
+            }
+        },
+    }
 }
 </script>
+<style scoped>
+    .detalle_poliza{
+        font-size: 0.8em;
+    }
+     .form-control{
+        font-size: 1em;
+    }
+</style>

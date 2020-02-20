@@ -43,7 +43,7 @@ class PolizaTransformer extends TransformerAbstract
      * @return \League\Fractal\Resource\Collection
      */
     public function includeMovimientosPoliza(Poliza $model){
-        if ($movimientos = $model->movimientos) {
+        if ($movimientos = $model->movimientos()->orderBy("TipoMovto")->get()) {
             return $this->collection($movimientos, new PolizaMovimientoTransformer());
         }
         return null;

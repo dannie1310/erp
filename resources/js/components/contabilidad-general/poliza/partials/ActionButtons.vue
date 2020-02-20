@@ -19,6 +19,7 @@
                     params: {include: ['movimientos_poliza']}
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+                    $(this.$refs.modalEditPoliza).modal('show');
                 })
             },
         },
