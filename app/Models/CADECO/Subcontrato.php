@@ -269,8 +269,9 @@ class Subcontrato extends Transaccion
             $items [$partida->nivel] = $partida->partidasEstimadas($id_estimacion, $this->id_antecedente);
         }
         $respuesta = array(
-            'referencia' => $this->referencia,
-            'partidas' => $items
+            'folio'         => $this->numero_folio_format,
+            'referencia'    => $this->referencia,
+            'partidas'      => $items
         );
         return $respuesta;
     }

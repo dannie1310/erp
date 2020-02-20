@@ -724,8 +724,8 @@ class Estimacion extends Transaccion
     public function subcontratoAEstimar()
     {
         return [
-            'fecha_inicial'           => $this->cumplimiento,
-            'fecha_final'             => $this->vencimiento,
+            'fecha_inicial'           => $this->getCumplimientoAttribute($this->cumplimiento),
+            'fecha_final'             => $this->getCumplimientoAttribute($this->vencimiento),
             'fecha'                   => $this->fecha_format,
             'razon_social'            => $this->empresa->razon_social,
             'moneda'                  => $this->moneda->nombre,

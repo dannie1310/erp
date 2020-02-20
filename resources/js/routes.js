@@ -1113,11 +1113,12 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'estimacion-show',
+                        props: true,
                         component: require('./components/contratos/estimacion/Show').default,
                         meta: {
                             title: 'Información de Estimación',
                             breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
-                            middleware: [auth, context,],
+                            middleware: [auth, context],
 
                         }
                     },

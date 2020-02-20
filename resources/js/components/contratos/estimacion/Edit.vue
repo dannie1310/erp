@@ -14,7 +14,6 @@
                 <DeductivaEdit @created="find()" v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
             </div>
         </div>
-
         <div class="row" v-if="!cargando">
             <div class="col-md-6">
 				<div class="card">
@@ -44,7 +43,7 @@
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label">Objeto</label>
 								<div class="col-md-9">
-									{{ estimacion.subcontrato.referencia }}
+									({{estimacion.subcontrato.folio}}) {{ estimacion.subcontrato.referencia }}
 								</div>
 							</div>
 							<div class="form-group row">
@@ -161,7 +160,6 @@
             </div>
 
 		</div>
-
         <div class="card" v-if="!cargando">
 			<div class="card-body">
 				<div class="form-check form-check-inline">

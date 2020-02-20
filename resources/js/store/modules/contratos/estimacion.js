@@ -213,19 +213,6 @@ export default {
                     })
             });
         },
-        showEstimacionTable (context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + payload.id+ '/showEstimacionTable', { params: payload.params })
-                    .then(r => r.data)
-                    .then((data) => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error)
-                    })
-            });
-        },
         getConceptos(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -243,19 +230,6 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', { params: payload.params })
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
-        },
-        estimaAnterior (context, payload){
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + 'estimaAnterior', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
