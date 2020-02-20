@@ -9,11 +9,12 @@
 namespace App\Http\Transformers\CTPQ;
 
 
+use App\Models\CTPQ\PolizaMovimiento;
 use League\Fractal\TransformerAbstract;
 
 class PolizaMovimientoTransformer extends TransformerAbstract
 {
-    public function transform(Poliza $model) {
+    public function transform(PolizaMovimiento $model) {
         return [
             'id' => (int) $model->getKey(),
             'concepto' => (string) $model->Concepto,

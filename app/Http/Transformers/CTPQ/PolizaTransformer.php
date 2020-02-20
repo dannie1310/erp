@@ -19,7 +19,7 @@ class PolizaTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $defaultIncludes = [
+    protected $availableIncludes = [
         'movimientos_poliza',
     ];
 
@@ -27,9 +27,13 @@ class PolizaTransformer extends TransformerAbstract
         return [
             'id' => (int) $model->getKey(),
             'concepto' => (string) $model->Concepto,
-            'fecha' => (string) $model->Fecha,
-            'cargos' => (float) $model->Cargos,
-            'abonos' => (float) $model->Abonos
+            'folio' => (string) $model->Folio,
+            'ejercicio' => (string) $model->Ejercicio,
+            'periodo' => (string) $model->Periodo,
+            'fecha' => (string) $model->fecha_format,
+            'cargos' => (string) $model->cargos_format,
+            'abonos' => (float) $model->Abonos,
+            'tipo' => (string) $model->tipo_poliza->Nombre
         ];
     }
 
@@ -38,7 +42,7 @@ class PolizaTransformer extends TransformerAbstract
      * @param Poliza $model
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeMovimientos(Poliza $model){
+    public function includeMovimientosPoliza(Poliza $model){
         if ($movimientos = $model->movimientos) {
             return $this->collection($movimientos, new PolizaMovimientoTransformer());
         }

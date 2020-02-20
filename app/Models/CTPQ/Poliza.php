@@ -22,4 +22,20 @@ class Poliza extends Model
     {
         return $this->hasMany(PolizaMovimiento::class, 'IdPoliza', 'Id');
     }
+
+    public function tipo_poliza()
+    {
+        return $this->belongsTo(TipoPoliza::class, 'TipoPol', 'Id');
+    }
+
+    public function getCargosFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->Cargos),2);
+    }
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->Fecha);
+        return date_format($date,"d/m/Y");
+    }
+
 }

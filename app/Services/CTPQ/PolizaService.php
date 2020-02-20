@@ -7,6 +7,7 @@
  */
 
 namespace App\Services\CTPQ;
+use App\Models\CTPQ\Empresa;
 use App\Repositories\Repository;
 
 use App\Models\CTPQ\Poliza;
@@ -46,5 +47,44 @@ class PolizaService
     public function update(array $data, $id)
     {
         return $this->repository->update($data, $id);
+    }
+
+    public function paginate($data)
+    {
+        $empresa = Empresa::find($data["id_empresa"]);
+        \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
+        $poliza = $this->repository;
+
+        if (isset($data['ejercicio'])) {
+            if($data['ejercicio'] != ""){
+                $poliza->where([['Ejercicio', '=', $data['ejercicio']]]);
+            }
+        }
+
+        if (isset($data['periodo'])) {
+            if($data['periodo'] != ""){
+                $poliza->where([['Periodo', '=', $data['periodo']]]);
+            }
+        }
+
+        if (isset($data['numero_poliza'])) {
+            if($data['numero_poliza'] != ""){
+                $poliza->where([['Folio', '=', $data['numero_poliza']]]);
+            }
+        }
+
+        if (isset($data['tipo_poliza'])) {
+            if($data['tipo_poliza'] != ""){
+                $poliza->where([['TipoPol', '=', $data['tipo_poliza']]]);
+            }
+        }
+
+        if (isset($data['texto'])) {
+            if($data['texto'] != ""){
+                $poliza->where([['Concepto', 'LIKE', '%' . $data['texto'] . '%']]);
+            }
+        }
+
+        return $poliza->paginate($data);
     }
 }

@@ -44,6 +44,7 @@ class EmpresaService
     {
         $empresa = $this->repository->show($id);
         $this->config->set('database.connections.cntpq.database', $empresa->AliasBDD);
+        \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         return $this->config->get("database.connections.cntpq.database");
     }
 
