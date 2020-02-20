@@ -378,7 +378,10 @@ class Estimacion extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->respaldar($motivo);
-            $this->items()->delete();
+            foreach ($this->items()->get() as $item)
+            {
+                $item->delete();
+            }
             $this->delete();
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
@@ -418,6 +421,17 @@ class Estimacion extends Transaccion
                     $mensaje_fin = $mensaje_fin . $mensaje_item;
                 }
                 $mensaje = $mensaje . $mensaje_fin;
+            }
+        }
+
+        $item_relacionados = Item::where('id_antecedente', '=', $this->id_transaccion)->first();
+        if($item_relacionados)
+        {
+            $transaccion = Transaccion::where('id_transaccion', '=', $item_relacionados->id_transaccion)->withoutGlobalScopes()->first();
+            if($transaccion) {
+                $mensaje = $mensaje . "-Contiene items relacionados en ".$transaccion->tipo->Descripcion.". \n";
+            }else{
+                $mensaje = $mensaje . "-Contiene items relacionados a otra transacción \n";
             }
         }
 

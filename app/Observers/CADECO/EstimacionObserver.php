@@ -54,6 +54,11 @@ class EstimacionObserver extends TransaccionObserver
         {
             abort(400, "Error al eliminar, respaldo incorrecto.");
         }
+
+        if($estimacion->retencion_fondo_garantia)
+        {
+            $estimacion->retencion_fondo_garantia->eliminaEstimacion();
+        }
     }
 
     public function deleted(Estimacion $estimacion)
