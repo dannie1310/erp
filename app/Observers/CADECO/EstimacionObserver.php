@@ -30,7 +30,7 @@ class EstimacionObserver extends TransaccionObserver
         $estimacion->saldo = $estimacion->monto;
         $estimacion->retencion = $subcontrato->retencion;
         $estimacion->anticipo = $subcontrato->anticipo;
-        $estimacion->fecha = date('Y-m-d');
+        $estimacion->fecha = $estimacion->fecha;
         $estimacion->numero_folio = $estimacion->calcularFolio();
     }
 

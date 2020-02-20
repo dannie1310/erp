@@ -5,7 +5,7 @@
                 <Resumen v-bind:id="id" v-bind:cargando="cargando"></Resumen>
             </div>
            <div class="p-2">
-                <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion" v-bind:estado="estado"></Amortizacion>
+                <Amortizacion @created="find()" v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
             </div>
             <div class="p-2">
                 <RetencionIndex @created="find()" v-bind:id="id"></RetencionIndex>
@@ -354,7 +354,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.update()
+                        if(moment(this.estimacion.fecha_final).format('YYYY/MM/DD') < moment(this.estimacion.fecha_inicial).format('YYYY/MM/DD'))
+                        {
+                                swal('¡Error!', 'La fecha de inicio no puede ser posterior a la fecha de término.', 'error')
+                        }else{
+                            this.update()
+                        }
                     }
                 });
             },

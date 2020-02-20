@@ -37,16 +37,16 @@
 							<div class="form-group row">
 								<label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
 								<div class="col-sm-10">
-									<input
-											name="fecha"
-											v-validate="{required: true}"
-											data-vv-as="Fecha"
-											:class="{'is-invalid': errors.has('fecha')}"
-											v-model="fecha"
-											type="date"
-											class="form-control"
-											id="fecha"
-											placeholder="Fecha">
+									<datepicker v-model = "fecha"
+                                                name = "fecha"
+                                                :format = "formatoFecha"
+                                                :language = "es"
+                                                :bootstrap-styling = "true"
+                                                class = "form-control"
+                                                :disabled-dates="fechasDeshabilitadas"
+                                                v-validate="{required: true}"
+                                                :class="{'is-invalid': errors.has('fecha')}"
+                                    ></datepicker>
 									<div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
 								</div>
 							</div>
@@ -87,34 +87,30 @@
 						<form>
 							<div class="form-row">
 								<div class="form-group col-md-6">
-									<label for="inicio">Inicio</label>
-									<input
-											name="fecha_inicio"
-											v-validate="{required: true}"
-											data-vv-as="Inicio"
-											:class="{'is-invalid': errors.has('fecha_inicio')}"
-											v-model="fecha_inicio"
-											type="date"
-											class="form-control"
-											id="fecha_inicio"
-											placeholder="Inicio">
-									<div class="invalid-feedback" v-show="errors.has('fecha_inicio')">{{ errors.first('fecha_inicio') }}</div>
-
+									<label class="col-form-label">Inicio</label>
+                                    <datepicker v-model = "fecha_inicio"
+                                                    name = "fecha_inicio"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :class="{'is-invalid': errors.has('fecha_inicio')}"
+                                    ></datepicker>
+                                    <div class="invalid-feedback" v-show="errors.has('fecha_inicio')">{{ errors.first('fecha_inicio') }}</div>
 								</div>
 								<div class="form-group col-md-6">
-									<label for="inicio">Término</label>
-									<input
-											name="fecha_fin"
-											v-validate="{required: true}"
-											data-vv-as="Término"
-											:class="{'is-invalid': errors.has('fecha_fin')}"
-											v-model="fecha_fin"
-											type="date"
-											class="form-control"
-											id="fecha_fin"
-											placeholder="Término">
-									<div class="invalid-feedback" v-show="errors.has('fecha_fin')">{{ errors.first('fecha_fin') }}</div>
-
+                                    <label class="col-form-label">Término</label>
+                                    <datepicker v-model = "fecha_fin"
+                                                    name = "fecha_fin"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :class="{'is-invalid': errors.has('fecha_fin')}"
+                                    ></datepicker>
+                                    <div class="invalid-feedback" v-show="errors.has('fecha_fin')">{{ errors.first('fecha_fin') }}</div>
 								</div>
 							</div>
 						</form>
@@ -266,11 +262,14 @@
 
 <script>
 	import {ModelListSelect} from 'vue-search-select';
+    import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "estimacion-create",
-        components: {ModelListSelect},
+        components: {ModelListSelect, Datepicker, es},
         data() {
             return {
+                es:es,
                 id_subcontrato: '',
                 subcontrato: null,
                 conceptos: null,
@@ -281,13 +280,17 @@
 				observaciones: '',
                 fecha: '',
 				subcontratos: [],
+                fechasDeshabilitadas:{},
+                fecha_hoy : '',
             }
         },
 
 		mounted() {
         	this.fecha_inicio = new Date().toDate()
         	this.fecha_fin = new Date().toDate()
-        	this.fecha = new Date().toDate()
+        	this.fecha = new Date()
+            this.fecha_hoy = new Date().toDate();
+            this.fechasDeshabilitadas.from= new Date();
 			this.getSubcontratos()
         },
 
@@ -295,6 +298,9 @@
 			numeroFolioAndRefernciaAndEmpresa(item){
 				return `[${item.numero_folio_format}] - [${item.referencia}]- [${item.empresa}]`
 			},
+            formatoFecha(date){
+                return moment(date).format('DD/MM/YYYY');
+            },
             changeCantidad(concepto) {
                 concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
                 concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
@@ -310,7 +316,17 @@
 			validate() {
 				this.$validator.validate().then(result => {
 					if (result) {
-						this.store()
+                        if(moment(this.fecha_fin).format('YYYY/MM/DD') < moment(this.fecha_inicio).format('YYYY/MM/DD'))
+                        {
+                            swal('¡Error!', 'La fecha de inicio no puede ser posterior a la fecha de término.', 'error')
+                        }
+                        else if(moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(this.fecha).format('YYYY/MM/DD'))
+                        {
+                            swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
+                        }
+                        else {
+                            this.store()
+                        }
 					}
 				});
 			},
@@ -320,9 +336,9 @@
         		if(conceptos.length > 0) {
 					return this.$store.dispatch('contratos/estimacion/store', {
 						id_antecedente: this.id_subcontrato,
-                        fecha: this.fecha,
-						cumplimiento: this.fecha_inicio,
-						vencimiento: this.fecha_fin,
+                        fecha: moment(this.fecha).format('YYYY-MM-DD'),
+						cumplimiento: moment(this.fecha_inicio).format('YYYY-MM-DD'),
+						vencimiento:  moment(this.fecha_fin).format('YYYY-MM-DD'),
 						observaciones: this.observaciones,
 						conceptos: conceptos
 					})
