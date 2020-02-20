@@ -1102,6 +1102,7 @@ export const routes = [
                     {
                         path: ':id/eliminar',
                         name: 'estimacion-delete',
+                        props: true,
                         component: require('./components/contratos/estimacion/Delete').default,
                         meta: {
                             title: 'Eliminar Estimación',
