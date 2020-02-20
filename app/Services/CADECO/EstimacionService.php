@@ -9,22 +9,11 @@
 namespace App\Services\CADECO;
 
 
-use Carbon\Carbon;
-use App\Facades\Context;
-use App\Models\CADECO\Item;
-use App\Models\CADECO\Obra;
-use App\Models\CADECO\Contrato;
 use App\Repositories\CADECO\EstimacionRepository as Repository;
 use App\Models\CADECO\Estimacion;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Contratos\EstimacionFormato;
 use App\PDF\Contratos\OrdenPagoEstimacion;
-use App\Http\Transformers\CADECO\ContratoTransformer;
-use League\Fractal\TransformerAbstract;
-use App\Http\Transformers\CADECO\MonedaTransformer;
-use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
-use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 
 class EstimacionService
 {
@@ -55,8 +44,7 @@ class EstimacionService
     public function store($data)
     {
         try {
-            $estimacion = $this->repository->create($data);
-            return $estimacion;
+            return $this->repository->create($data);
         } catch (\Exception $e) {
             throw $e;
         }

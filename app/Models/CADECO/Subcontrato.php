@@ -252,7 +252,7 @@ class Subcontrato extends Transaccion
         }
     }
 
-    public function subcontratoEstimado($id_estimacion)
+    public function subcontratoParaEstimar($id_estimacion)
     {
         $respuesta = array();
         $items = array();

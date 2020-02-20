@@ -54,14 +54,13 @@ class EstimacionController extends Controller
 
         $this->middleware('auth:api');
         $this->middleware('context');
+
         $this->middleware('permiso:consultar_formato_orden_pago_estimacion')->only('pdfOrdenPago');
         $this->middleware('permiso:registrar_estimacion_subcontrato')->only('store');
         $this->middleware('permiso:aprobar_estimacion_subcontrato')->only('aprobar');
         $this->middleware('permiso:revertir_aprobacion_estimacion_subcontrato')->only('revertirAprobacion');
         $this->middleware('permiso:eliminar_estimacion_subcontrato')->only('destroy');
         $this->middleware('permiso:actualizar_amortizacion_anticipo')->only('anticipo');
-
-        $this->middleware('context');
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -76,14 +75,6 @@ class EstimacionController extends Controller
     public function store(StoreEstimacionRequest $request)
     {
         return $this->traitStore($request);
-    }
-
-    public function getConceptos(Request $request, $id_estimacion)
-    {
-        $estimacion = $this->service->show($id_estimacion);
-        $conceptos = DB::connection('cadeco')
-            ->select(DB::raw("EXEC [SubcontratosEstimaciones].[uspConceptosEstimacion] {$estimacion->id_antecedente}, {$id_estimacion}, 0, 0"));
-        return response()->json($conceptos);
     }
 
     /**

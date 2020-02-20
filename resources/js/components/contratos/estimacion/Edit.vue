@@ -23,7 +23,7 @@
 					<div class="card-body">
 						<form>
 							<div class="form-group row">
-								<label for="fecha" class="col-md-3 col-form-label">Fecha de la Estimación</label>
+								<label class="col-md-3 col-form-label">Fecha de la Estimación</label>
 								<div class="col-md-9">
                                    {{estimacion.fecha}}
 								</div>
@@ -77,7 +77,7 @@
                             <form>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label for="fecha_inicial" class="col-form-label">Inicio</label>
+                                        <label class="col-form-label">Inicio</label>
                                         <datepicker v-model = "estimacion.fecha_inicial"
                                                     name = "fecha_inicial"
                                                     :format = "formatoFecha"
@@ -90,7 +90,7 @@
                                         <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="fecha_final" class="col-form-label">Término</label>
+                                        <label class="col-form-label">Término</label>
                                         <datepicker v-model = "estimacion.fecha_final"
                                                     name = "fecha_final"
                                                     :format = "formatoFecha"
@@ -313,8 +313,7 @@
                 cargando: true,
                 es:es,
                 columnas: [],
-                estimacion : [],
-                partidas : null
+                estimacion : []
             }
         },
         mounted() {
