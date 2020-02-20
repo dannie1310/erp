@@ -1,5 +1,10 @@
 <template>
     <span>
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">
+                <Resumen v-bind:id="id"></Resumen>
+            </div>
+        </div>
         <div class="row" v-if="!cargando">
             <div class="col-md-6">
 				<div class="card">
@@ -248,9 +253,11 @@
 </template>
 
 <script>
+    import Resumen from './resumen/Show';
     export default {
         name: "estimacion-show",
         props: ["id"],
+        components: {Resumen},
         data() {
             return {
                 cargando: true,

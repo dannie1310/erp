@@ -1,8 +1,11 @@
 <template>
-    <span>
-        <div class="d-flex flex-row-reverse" v-if="!cargando">
-            <div class="p-2">
-                <Amortizacion @created="find()" v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
+     <span>
+       <div class="d-flex flex-row-reverse" v-if="!cargando">
+           <div class="p-2">
+                <Resumen v-bind:id="id" v-bind:cargando="cargando"></Resumen>
+            </div>
+           <div class="p-2">
+                <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion" v-bind:estado="estado"></Amortizacion>
             </div>
             <div class="p-2">
                 <RetencionIndex @created="find()" v-bind:id="id"></RetencionIndex>
@@ -303,10 +306,11 @@
     import Amortizacion from './amortizacion/Edit'
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import Resumen from './resumen/Show'
 
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es},
+        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es, Resumen},
         props: ['id'],
         data() {
             return {

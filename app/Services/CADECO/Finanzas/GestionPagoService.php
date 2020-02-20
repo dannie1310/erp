@@ -4,29 +4,33 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use DateTime;
+use stdClass;
+use App\Facades\Context;
+use Zend\Validator\Date;
+use App\Models\CADECO\Pago;
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
-use App\Models\CADECO\Finanzas\BitacoraSantander;
-use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
-use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
-use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
-use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\OrdenPago;
-use App\Models\CADECO\Pago;
-use App\Models\CADECO\PagoACuenta;
-use App\Models\CADECO\PagoACuentaPorAplicar;
 use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\Solicitud;
-use App\Models\CADECO\Transaccion;
-use App\Models\MODULOSSAO\ControlRemesas\Documento;
-use App\Models\MODULOSSAO\ControlRemesas\DocumentoProcesado;
 use App\Repositories\Repository;
-use DateTime;
+use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\Transaccion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use stdClass;
-use Zend\Validator\Date;
+use App\Models\MODULOSSAO\BaseDatosObra;
+use App\Models\MODULOSSAO\UnificacionObra;
+use App\Models\CADECO\PagoACuentaPorAplicar;
+use App\Models\MODULOSSAO\ControlRemesas\Remesa;
+use App\Models\CADECO\Finanzas\BitacoraSantander;
+use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
+use App\Models\MODULOSSAO\ControlRemesas\DocumentoProcesado;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 
 class GestionPagoService
 {
@@ -75,7 +79,7 @@ class GestionPagoService
             'aplicacion_manual' => $aplicacion_manual,
             'estado' => $data->partidaVigente->estatus,
             'pagable' => $data->partidaVigente->pagable,
-            'concepto' => $data->Concepto?utf8_encode(substr($data->Concepto, 0,30)):'',
+            'concepto' => $data->Concepto?utf8_encode($data->Concepto):'',
             'beneficiario' => $data->Destinatario,
             'monto_format' => '$ ' . number_format($pago['monto'], 2),
             'monto' => $pago['monto'],
@@ -455,6 +459,16 @@ class GestionPagoService
             abort(403, 'Archivo de bitácora procesado previamente.');
         }
 
+        $dispersion = DistribucionRecursoRemesa::where('id', '=',$id_dispersion)->first();
+
+        $proyectos = UnificacionObra::where('IDBaseDatos', '=',BaseDatosObra::first()->IDBaseDatos)->where('id_obra', '=', Context::getIdObra())->pluck('IDProyecto');
+
+        $remesas = Remesa::whereIn('IDProyecto', $proyectos)->liberada()
+                        ->where('Anio', '=', $dispersion->remesaLiberada->remesa->Anio) 
+                        ->where('NumeroSemana', $dispersion->remesaLiberada->remesa->NumeroSemana)->pluck('IDRemesa');
+
+        $disp_remesas = $dispersion->whereIn('id_remesa', $remesas)->pluck('id');
+
         $registros_bitacora = array();
         $doctos_repetidos = [];
         foreach ($this->getTxtData($bitacora) as $key => $pago){
@@ -488,7 +502,7 @@ class GestionPagoService
                     'aplicacion_manual' => true,
                     'estado' => ['id' => 0, 'estado' => 3, 'descripcion' => 'Pagada'],
                     'pagable' => false,
-                    'concepto' => substr($pago['concepto'], 0, 30),
+                    'concepto' => utf8_encode($pago['concepto']),
                     'beneficiario' => $pago['cuenta_abono'],
                     'monto_format' => '$ ' . number_format($pago['monto'], 2),
                     'monto' => $pago['monto'],
@@ -517,7 +531,7 @@ class GestionPagoService
             
             $dist_partidas = DistribucionRecursoRemesaPartida::transaccionPago()->partidaVigente()->partidaPagable()
                                 ->where('id_cuenta_abono', '=', $cuenta_abono->id)
-                                ->where('id_distribucion_recurso', '=', $id_dispersion)->get();
+                                ->whereIn('id_distribucion_recurso',$disp_remesas)->get();
 
             if($dist_partidas->count() > 0){
                 $val = false;
@@ -536,7 +550,7 @@ class GestionPagoService
             }
 
             $documentos = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $id_dispersion)->pluck('id_documento');
-            $transacciones_dispersion_partidas = Documento::whereIn('IDDocumento',$documentos)->pluck('IDTransaccionCDC');
+            $transacciones_dispersion_partidas = Documento::whereIn('IDDocumento',$documentos)->whereNotNull('IDTransaccionCDC')->pluck('IDTransaccionCDC');
 
             $transacciones_empresa = Transaccion::whereIn('tipo_transaccion', [65,72])->whereNotIn('id_transaccion',$transacciones_dispersion_partidas)
                 ->where('saldo', '>=', $pago['monto'])->where('saldo', '>', 0)
@@ -553,7 +567,7 @@ class GestionPagoService
                     'aplicacion_manual' => true,
                     'estado' => ['id' => 0, 'estado' => -3, 'descripcion' => '   N/A   '],
                     'pagable' => true,
-                    'concepto' => substr($pago['concepto'], 0,30),
+                    'concepto' => utf8_encode($pago['concepto']),
                     'beneficiario' => $pago['cuenta_abono'],
                     'monto_format' => '$ ' . number_format($pago['monto'], 2),
                     'monto' => $pago['monto'],
@@ -589,7 +603,7 @@ class GestionPagoService
                 'aplicacion_manual' => true,
                 'estado' => ['id' => 0, 'estado' => -3, 'descripcion' => '   N/A   '],
                 'pagable' => true,
-                'concepto' => substr($pago['concepto'], 0, 30),
+                'concepto' => utf8_encode($pago['concepto']),
                 'beneficiario' => $pago['cuenta_abono'],
                 'monto_format' => '$ ' . number_format($pago['monto'], 2),
                 'monto' => $pago['monto'],
