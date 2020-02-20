@@ -765,31 +765,37 @@ class Estimacion extends Transaccion
             foreach ($datos['partidas']  as $partida) {
 
                 if (array_key_exists('id', $partida)) {
-                    if ($partida['cantidad_estimacion'] > 0)
-                    {
-                        if ($partida['id_item_estimacion'] != 0)
-                        {
-                            $item = $this->items()->where('id_item', '=', $partida['id_item_estimacion'])->first();
 
-                            $item->update([
-                                'cantidad' => $partida['cantidad_estimacion'],
-                                'importe' => $partida['importe_estimacion']
-                            ]);
-                        } else { //Se crea un item nuevo
-                            $this->items()->create([
-                                'id_transaccion' => $this->id_transaccion,
-                                'id_antecedente' => $this->id_antecedente,
-                                'item_antecedente' => $partida['id_concepto'],
-                                'id_concepto' => $partida['id_destino'],
-                                'cantidad' => $partida['cantidad_estimacion'],
-                                'cantidad_material' => 0,
-                                'cantidad_mano_obra' => 0,
-                                'importe' => $partida['importe_estimacion'],
-                                'precio_unitario' => $partida['precio_unitario_subcontrato'],
-                                'precio_material' => 0,
-                                'precio_mano_obra' => 0
-                            ]);
-                        }
+                    /**
+                     * Se edita item existente.
+                     */
+                    if ($partida['id_item_estimacion'] != 0)
+                    {
+                        $item = $this->items()->where('id_item', '=', $partida['id_item_estimacion'])->first();
+
+                        $item->update([
+                            'cantidad' => $partida['cantidad_estimacion'],
+                            'importe' => $partida['importe_estimacion']
+                        ]);
+                    }
+
+                    /**
+                     * Se crea un item nuevo.
+                     */
+                    if ($partida['id_item_estimacion'] == 0 && $partida['cantidad_estimacion'] > 0) {
+                        $this->items()->create([
+                            'id_transaccion' => $this->id_transaccion,
+                            'id_antecedente' => $this->id_antecedente,
+                            'item_antecedente' => $partida['id_concepto'],
+                            'id_concepto' => $partida['id_destino'],
+                            'cantidad' => $partida['cantidad_estimacion'],
+                            'cantidad_material' => 0,
+                            'cantidad_mano_obra' => 0,
+                            'importe' => $partida['importe_estimacion'],
+                            'precio_unitario' => $partida['precio_unitario_subcontrato'],
+                            'precio_material' => 0,
+                            'precio_mano_obra' => 0
+                        ]);
                     }
                 }
             }

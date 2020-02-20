@@ -45,6 +45,11 @@ class ItemSubcontrato extends Item
         return $lista;
     }
 
+    public function getEstimacionPartidaAttribute($id){
+        return EstimacionPartida::where('id_antecedente', '=',$this->id_transaccion)->where('item_antecedente', '=', $this->id_concepto)
+            ->where('id_transaccion','=', $id)->first();
+    }
+
     public function getPrecioUnitarioFormatAttribute()
     {
         return '$ ' . number_format($this->precio_unitario, 2, '.', ',');
