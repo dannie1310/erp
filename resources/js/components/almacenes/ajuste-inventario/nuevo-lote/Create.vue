@@ -5,6 +5,16 @@
                 <div class="invoice p-3 mb-3">
                      <form role="form" @submit.prevent="validate">
                          <div class="modal-body">
+                             <div class="d-flex flex-row-reverse">
+                                    <div class="p-3">
+                                        <button  type="button" v-if="id_almacen" class="btn btn-info" @click="lista">
+                                                <i class="fa fa-list-ul "></i>
+                                                 Lista de Materiales</button>
+                                        &nbsp;
+                                        <Layout @created="getMateriales()" v-if="id_almacen" v-model="items"></Layout>
+                                    </div>
+                                </div>
+                             
                              <div class="row" v-if="id_almacen">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
@@ -13,7 +23,8 @@
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
-                                                        <th class="bg-gray-light th_index">#</th>
+                                                        <th class="bg-gray-light index_corto ">#</th>
+                                                        <th class="bg-gray-light" style="width:120px;">No. de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
                                                         <th class="bg-gray-light th_unidad">Unidad</th>
                                                         <th class="bg-gray-light th_money_input">Cantidad</th>
@@ -30,12 +41,15 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
-                                                        <td>
+                                                        <td v-if="item.i === 2">{{item.material.numero_parte}}</td>
+                                                        <td v-else></td>
+                                                        <td v-if="item.i === 2">{{item.material.descripcion}}</td>
+                                                        <td v-else>
                                                               <model-list-select
                                                                       :name="`id_material[${i}]`"
                                                                       :disabled = "!bandera"
                                                                       :onchange="changeSelect(item)"
-                                                                      placeholder="Seleccionar o buscar id, número de parte o descripción del material"
+                                                                      :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
                                                                       data-vv-as="Material"
                                                                       v-validate="{required: true}"
                                                                       v-model="item.id_material"
@@ -53,7 +67,7 @@
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.id_material"
+                                                                    :disabled = "!item.material" 
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`cantidad[${i}]`"
@@ -70,7 +84,7 @@
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.id_material"
+                                                                    :disabled ="!item.material"
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`monto_total[${i}]`"
@@ -87,7 +101,7 @@
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.id_material"
+                                                                    :disabled = "!item.material"
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`monto_pagado[${i}]`"
@@ -147,10 +161,11 @@
 <script>
     import MaterialSelect from "../../../cadeco/material/Select";
     import {ModelListSelect} from 'vue-search-select';
+    import Layout from "./CargaLayout";
     export default {
         name: "nuevo-lote",
         propos:['id_almacen', 'referencia', 'fecha'],
-        components: {MaterialSelect, ModelListSelect},
+        components: {MaterialSelect, ModelListSelect, Layout},
         data() {
             return {
                 id_material:'',
@@ -158,9 +173,9 @@
                 id_almacen: this.$attrs.id_almacen,
                 tipo_almacen: this.$attrs.tipo_almacen,
                 referencia: '',
+                items: [],
                 fecha: '',
                 observaciones: '',
-                items: [],
                 materiales: [],
                 bandera: 0,
                 tipos:[
@@ -178,10 +193,13 @@
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
             },
             changeSelect(item){
+                
                 var busqueda = this.materiales.find(x=>x.id === item.id_material);
                 if(busqueda != undefined)
                 {
                     item.material = busqueda;
+                    item.i = 2;
+                    
                 }
             },
             getAlmacen(){
@@ -196,6 +214,17 @@
                     .then(data => {
                         this.almacenes = data.data;
                         this.cargando = false;
+
+                    })
+            },
+            lista()
+            {
+                 this.cargando = true;
+                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'requisicion'})
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.cargando = false;
                     })
             },
             getMateriales(id_almacen){
@@ -205,7 +234,7 @@
                     params: {
                         scope: ['tipos:1,4'],
                         sort: 'descripcion',
-                        order: 'asc'
+                        order: 'asc',
                     }
                 })
                     .then(data => {
@@ -216,6 +245,7 @@
             },
             agregar() {
                 var array = {
+                    'i': 0,
                     'material':'',
                     'id_material' : '',
                     'cantidad' : '',
@@ -245,7 +275,7 @@
                     }
                 });
             },
-            store() {
+            store() {                
                 return this.$store.dispatch('almacenes/nuevo-lote/store', this.$data)
                     .then((data) => {
                         this.$router.push({name: 'ajuste-inventario'});
