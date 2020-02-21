@@ -2,7 +2,12 @@
     <span>
         <div class="row">
             <div class="col-12">
-                <show></show>
+                <show v-bind:tipo_modal="tipo_modal"></show>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <edit v-bind:tipo_modal="tipo_modal"></edit>
             </div>
         </div>
 
@@ -159,9 +164,10 @@
 <script>
     import {ModelListSelect} from 'vue-search-select';
     import Show from "./Show";
+    import Edit from "./Edit";
     export default {
         name: "busqueda-poliza",
-        components: {ModelListSelect, Show},
+        components: {Edit, ModelListSelect, Show},
         data() {
             return {
                 cargando: false,
@@ -177,6 +183,7 @@
                 ejercicio: '',
                 tipo_poliza: '',
                 texto:'',
+                tipo_modal:'',
 
                 HeaderSettings: false,
                 columns: [
@@ -203,6 +210,9 @@
             polizas(){
                 return this.$store.getters['contabilidadGeneral/poliza/polizas'];
             },
+            poliza() {
+                return this.$store.getters['contabilidadGeneral/poliza/currentPoliza'];
+            },
             meta(){
                 return this.$store.getters['contabilidadGeneral/poliza/meta'];
             },
@@ -228,11 +238,21 @@
                         buttons: $.extend({}, {
                             id: poliza.id,
                             id_empresa: this.id_empresa,
+                            editar:self.$root.can('editar_poliza',true) ? true : undefined,
                         })
 
                     }));
                 },
                 deep: true
+            },
+            poliza:{
+                handler(poliza) {
+                    if(poliza !== null){
+                        this.tipo_modal = poliza.tipo_modal;
+                    }else{
+                        this.tipo_modal = '';
+                    }
+                }
             },
             meta: {
                 handler (meta) {

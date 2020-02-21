@@ -1,10 +1,10 @@
 <template>
     <span>
-        <div class="modal fade" ref="modalShowPoliza" data-backdrop="static" data-keyboard="false">
+        <div class="modal fade" ref="modalEditPoliza" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> CONSULTA DE PÓLIZA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-pencil"></i> EDICIÓN DE PÓLIZA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -14,7 +14,7 @@
                             <div class="row">
                                 <div class="col-md-1 offset-9">
                                      <div class="form-group row error-content">
-                                         <label for="ejercicio" class="col-md-12 col-form-label">Fecha:</label>
+                                         <label for="fecha" class="col-md-12 col-form-label">Fecha:</label>
                                      </div>
                                  </div>
                                 <div class="col-md-2">
@@ -23,7 +23,7 @@
                                              disabled="disabled"
                                              name="texto"
                                              class="form-control"
-                                             id="ejercicio"
+                                             id="fecha"
                                              v-model="poliza.fecha"
                                      >
                                 </div>
@@ -31,14 +31,14 @@
                             <div class="row" >
                                 <div class="col-md-2">
                                      <div class="form-group row error-content">
-                                         <label for="numero_poliza" class="col-md-12 col-form-label"># Poliza:</label>
+                                         <label for="numero_poliza_edit" class="col-md-12 col-form-label"># Poliza:</label>
 
                                      </div>
                                 </div>
 
                                 <div class="col-md-2">
                                      <div class="form-group row error-content">
-                                         <label for="tipo_poliza" class="col-md-12 col-form-label">Tipo de Poliza:</label>
+                                         <label for="tipo_poliza_edit" class="col-md-12 col-form-label">Tipo de Poliza:</label>
 
                                      </div>
                                 </div>
@@ -53,7 +53,7 @@
                                              disabled="disabled"
                                              name="texto"
                                              class="form-control"
-                                             id="numero_poliza"
+                                             id="numero_poliza_edit"
                                              v-model="poliza.folio"
                                      >
                                 </div>
@@ -63,19 +63,24 @@
                                              disabled="disabled"
                                              name="texto"
                                              class="form-control"
-                                             id="tipo_poliza"
+                                             id="tipo_poliza_edit"
                                              v-model="poliza.tipo"
                                      >
                                 </div>
                                 <div class="col-md-8">
-                                     <textarea
-                                             type="text"
-                                             disabled="disabled"
-                                             name="concepto_show"
-                                             class="form-control"
-                                             id="concepto_show"
-                                             v-model="poliza.concepto"
-                                     ></textarea>
+                                    <div class="form-group row error-content">
+                                         <textarea
+                                                 type="text"
+                                                 v-validate="{required: true}"
+                                                 name="concepto_edit"
+                                                 class="form-control"
+                                                 id="concepto_edit"
+                                                 v-model="poliza.concepto"
+                                                 placeholder="CONCEPTO DE PÓLIZA"
+                                                 :class="{'is-invalid': errors.has('concepto_edit')}"
+                                         ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('concepto_edit')">{{ errors.first('concepto_edit') }}</div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -122,7 +127,7 @@
 
 export default {
     name: "poliza-show",
-    props : ["tipo_modal"],
+    props: ['tipo_modal'],
     data(){
         return {
         }
@@ -130,10 +135,10 @@ export default {
     methods: {
         closeModal(){
             this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
-            $(this.$refs.modalShowPoliza).modal('hide');
+            $(this.$refs.modalEditPoliza).modal('hide');
         },
         init(){
-            $(this.$refs.modalShowPoliza).modal('show');
+            $(this.$refs.modalEditPoliza).modal('show');
         }
     },
 
@@ -143,10 +148,9 @@ export default {
         }
     },
     watch:{
-
         tipo_modal : {
             handler(tipo_modal) {
-                if(tipo_modal !== '' && tipo_modal === 1){
+                if(tipo_modal !== '' && tipo_modal === 2){
                     this.init();
                 }
             }
