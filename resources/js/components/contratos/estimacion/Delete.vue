@@ -1,5 +1,11 @@
 <template>
-    <div class="row">
+    <span>
+    <div class="d-flex flex-row-reverse">
+        <div class="p-2">
+            <Resumen v-bind:id="id_estimacion"></Resumen>
+        </div>
+    </div>
+    <div class="row">  
         <div class="col-md-12">
             <div class="invoice p-3 mb-3">
                 <form role="form" @submit.prevent="validate">
@@ -188,11 +194,14 @@
             </div>
         </div>
     </div>
+    </span>
 </template>
 
 <script>
+import Resumen from './resumen/Show';
     export default {
         name: "estimacion-delete",
+         components: {Resumen},
         props: ['id'],
         data() {
             return {
