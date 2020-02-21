@@ -53,8 +53,8 @@ class AjustePositivoService
         foreach ($partidas as $partida)
         {
             if($partida['ID MATERIAL'] != null) {
-                $material = $this->repository->busca($partida['ID MATERIAL']);
-                 if ($material['numero_parte'] == null)
+                $material = is_numeric($partida['ID MATERIAL']) ? $this->repository->busca(intval($partida['ID MATERIAL'])) : null;
+                 if (!$material)
                 {
                     $materiales[] = array(
                         'i' => 1,
