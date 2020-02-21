@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-md-12">
-                 <button type="button" @click="init()" :disabled="cargandoo" class="btn btn-primary float-right" v-if="$root.can(['registrar_descuento_estimacion_subcontrato','eliminar_descuento_estimacion_subcontrato'])" title="Editar">
+                 <button type="button" @click="init()" class="btn btn-primary float-right" v-if="$root.can(['registrar_descuento_estimacion_subcontrato','eliminar_descuento_estimacion_subcontrato'])" title="Editar">
                     Deductivas
                 </button>
             </div>
@@ -11,7 +11,7 @@
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle"> 
+                                <h5 class="modal-title" id="exampleModalLongTitle">
                                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                     <i class="fa fa-edit" v-else></i>Editar Deductivas</h5>
                                 <button type="button" class="close" @click="cerrar()" aria-label="Close">
@@ -53,13 +53,13 @@
                                             <td style="width:280px;">{{descuento.material.descripcion}}</td>
                                             <td style="width:70px;">{{descuento.material.unidad}}</td>
                                             <!-- <td style="width:10%;">{{descuento.cantidad_format}}</td> -->
-                                            <td style="width:130px;"><input type="number" step="any" :name="`cantidad[${i}]`" 
+                                            <td style="width:130px;"><input type="number" step="any" :name="`cantidad[${i}]`"
                                                         data-vv-as="Cantidad"  v-validate="{required:true, min_value:0, decimal:5}" :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                         class="form-control float-right align" id="cantidad" placeholder="Cantidad"
                                                         v-model="descuento.cantidad">
                                                 <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                             </td>
-                                            <td style="width:130px;" class="align"><input type="number" step="any" :name="`precio[${i}]`" 
+                                            <td style="width:130px;" class="align"><input type="number" step="any" :name="`precio[${i}]`"
                                                         data-vv-as="Precio"  v-validate="{required:true, min_value:0.01, decimal:4}"
                                                         class="form-control float-right align" id="precio" placeholder="Precio"
                                                         v-model="descuento.precio" :class="{'is-invalid': errors.has(`precio[${i}]`)}">
@@ -90,7 +90,7 @@ import DeductivaCreate from './Create';
 export default {
     name: "deductiva-edit",
     components: {DeductivaCreate},
-    props: ['id', 'id_empresa', 'cargandoo'],
+    props: ['id', 'id_empresa'],
     data() {
         return {
             descuentos:[],
@@ -101,6 +101,7 @@ export default {
     },
     methods: {
         cerrar(){
+            this.$emit('created', data);
             $(this.$refs.modalIndex).modal('hide');
         },
         importe(desc){

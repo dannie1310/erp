@@ -52,4 +52,10 @@ class RetencionFondoGarantia extends Model
         );
     }
 
+    public function eliminaEstimacion()
+    {
+        return $this->update([
+                'id_estimacion' => NULL
+            ]);
+    }
 }

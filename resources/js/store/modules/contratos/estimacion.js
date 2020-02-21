@@ -28,7 +28,17 @@ export default {
         },
 
         UPDATE_ATTRIBUTE(state, data) {
-            _.set(state.currentBanco, data.attribute, data.value);
+            _.set(state.currentEstimacion, data.attribute, data.value);
+        },
+
+        UPDATE_CUENTA(state, data) {
+            state.estimaciones = state.estimaciones.map(estimacion => {
+                if (estimacion.id === data.id) {
+                    return Object.assign({}, estimacion, data)
+                }
+                return estimacion
+            })
+            state.currentEstimacion = data;
         },
 
         APROBAR_ESTIMACION(state, id) {
@@ -40,7 +50,6 @@ export default {
         },
 
         REVERTIR_APROBACION(state, id) {
-
             state.estimaciones.forEach(estimacion => {
                 if(estimacion.id == id) {
                     estimacion.estado = 0;
@@ -61,10 +70,9 @@ export default {
 
                 });
         },
-
-        update(context, payload) {
+        amortizacion(context, payload) {
             return new Promise((resolve, reject) => {
-                
+
                 swal({
                     title: "¿Está seguro?",
                     text: "Actualizar Amortización de Anticipo",
@@ -102,7 +110,45 @@ export default {
                     });
             });
         },
-
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar la Estimación",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Estimación actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -141,7 +187,6 @@ export default {
                     });
             });
         },
-
         find (context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -155,23 +200,10 @@ export default {
                     })
             });
         },
-        showEstimacionTable (context, payload) {
+        ordenarConceptos (context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id+ '/showEstimacionTable', { params: payload.params })
-                    .then(r => r.data)
-                    .then((data) => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error)
-                    })
-            });
-        },
-        getConceptos(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + payload.id + '/getConceptos')
+                    .get(URI + payload.id+'/ordenarConceptos', { params: payload.params })
                     .then(r => r.data)
                     .then((data) => {
                         resolve(data);
@@ -185,19 +217,6 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', { params: payload.params })
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
-        },
-        estimaAnterior (context, payload){
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + 'estimaAnterior', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);

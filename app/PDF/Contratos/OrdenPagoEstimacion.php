@@ -220,22 +220,24 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->Row(['Partida',utf8_decode('Descripción'),'Importe', utf8_decode('Aplicación de Costo'), '%','Cuenta']);
         foreach ($this->estimacion->partidas as $item) {
-            $this->SetFont('Arial', '', 7);
-            $this->SetWidths([
-                ($this->w - 2) * 0.07,
-                ($this->w - 2) * 0.30,
-                ($this->w - 2) * 0.15,
-                ($this->w - 2) * 0.28,
-                ($this->w - 2) * 0.05,
-                ($this->w - 2) * 0.15,
-            ]);
+            if($item->importe != 0) {
+                $this->SetFont('Arial', '', 7);
+                $this->SetWidths([
+                    ($this->w - 2) * 0.07,
+                    ($this->w - 2) * 0.30,
+                    ($this->w - 2) * 0.15,
+                    ($this->w - 2) * 0.28,
+                    ($this->w - 2) * 0.05,
+                    ($this->w - 2) * 0.15,
+                ]);
 
-            $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
-            $this->SetHeights([0.35]);
-            $this->SetAligns(['L', 'L', 'R', 'L', 'L', 'L']);
-            $this->encola = 'partidas';
-            $this->Row(['', utf8_decode($item->contrato->descripcion), '$ ' . number_format($item->importe, 2, '.', ','), utf8_decode($item->concepto && strlen($item->concepto->nivel)/4 > 1 ? $item->concepto->padre() : $item->concepto->nivel_padre()),'', '']);
+                $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+                $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+                $this->SetHeights([0.35]);
+                $this->SetAligns(['L', 'L', 'R', 'L', 'L', 'L']);
+                $this->encola = 'partidas';
+                $this->Row(['', utf8_decode($item->contrato->descripcion), '$ ' . number_format($item->importe, 2, '.', ','), utf8_decode($item->concepto && strlen($item->concepto->nivel) / 4 > 1 ? $item->concepto->padre() : $item->concepto->nivel_padre()), '', '']);
+            }
         }
 
         $this->SetFont('Arial', '', 7);
