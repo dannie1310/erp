@@ -15,6 +15,7 @@ use App\Http\Requests\Almacenes\StoreNuevoLoteRequest;
 use App\Http\Transformers\CADECO\Almacenes\NuevoLoteTransformer;
 use App\Services\CADECO\Almacenes\NuevoLoteService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class NuevoLoteController extends Controller
@@ -61,5 +62,11 @@ class NuevoLoteController extends Controller
     public function store(StoreNuevoLoteRequest $request)
     {
         return $this->traitStore($request);
+    }
+
+    public function cargaLayout(Request $request)
+    {
+         $res = $this->service->cargaLayout($request->file);
+        return response()->json($res, 200);
     }
 }
