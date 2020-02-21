@@ -30,4 +30,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         return $this->model->registrar($data);
     }
+
+    public function busca($data)
+    {
+        return $this->model->buscaMaterial($data);
+    }
 }

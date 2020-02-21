@@ -14,6 +14,7 @@ use App\Http\Requests\Almacenes\StoreAjusteNegativoRequest;
 use App\Http\Transformers\CADECO\Almacenes\AjusteNegativoTransformer;
 use App\Services\CADECO\Almacenes\AjusteNegativoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class AjusteNegativoController extends Controller
@@ -61,5 +62,11 @@ class AjusteNegativoController extends Controller
     public function store(StoreAjusteNegativoRequest $request)
     {
         return $this->traitStore($request);
+    }
+
+    public function cargaLayout(Request $request)
+    {
+         $res = $this->service->cargaLayout($request->file);
+        return response()->json($res, 200);
     }
 }
