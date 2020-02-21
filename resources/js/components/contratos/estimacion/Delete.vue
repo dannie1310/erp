@@ -267,8 +267,10 @@
 </template>
 
 <script>
+import Resumen from './resumen/Show';
     export default {
         name: "estimacion-delete",
+         components: {Resumen},
         props: ['id'],
         data() {
             return {
