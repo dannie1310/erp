@@ -16,7 +16,7 @@
                 this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
                 return this.$store.dispatch('contabilidadGeneral/poliza/find', {
                     id: id,
-                    params: {include: ['movimientos_poliza']}
+                    params: {include: ['movimientos_poliza'], id_empresa : this.value.id_empresa}
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
                     $(this.$refs.modalEditPoliza).modal('show');

@@ -14,6 +14,7 @@ use App\Http\Transformers\CTPQ\PolizaTransformer;
 use App\Services\CTPQ\PolizaService;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 
 class PolizaController extends Controller
 {
@@ -44,11 +45,16 @@ class PolizaController extends Controller
     public function __construct(Manager $fractal, PolizaService $service, PolizaTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function show(Request $request, $id)
+    {
+        $item = $this->service->show($request->all(), $id);
+        return $this->respondWithItem($item);
     }
 
 }

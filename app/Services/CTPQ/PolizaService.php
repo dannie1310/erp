@@ -34,8 +34,10 @@ class PolizaService
         return $this->repository->all($data);
     }
 
-    public function show($id)
+    public function show(array $data, $id)
     {
+        $empresa = Empresa::find($data["id_empresa"]);
+        \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         return $this->repository->show($id);
     }
 
