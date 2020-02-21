@@ -45,6 +45,18 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'cntpq' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_CNTPQ', 'localhost'),
+            //'port' => env('DB_PORT_CADECO', '1433'),
+            'database' => env('DB_DATABASE_CNTPQ', 'forge'),
+            'username' => env('DB_USERNAME_CNTPQ', 'forge'),
+            'password' => env('DB_PASSWORD_CNTPQ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
         'igh' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_IGH', '127.0.0.1'),

@@ -187,6 +187,25 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * CONTABILIDAD GENERAL
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'contabilidad-general'], function ($api) {
+        $api->group(['prefix' => 'empresa'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CTPQ\EmpresaController@store');
+            $api->post('/connect','App\Http\Controllers\v1\CTPQ\EmpresaController@conectar');
+            $api->get('/', 'App\Http\Controllers\v1\CTPQ\EmpresaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CTPQ\EmpresaController@show')->where(['id' => '[0-9]+']);
+        });
+        $api->group(['prefix' => 'poliza'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CTPQ\PolizaController@store');
+            $api->get('/', 'App\Http\Controllers\v1\CTPQ\PolizaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CTPQ\PolizaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CTPQ\PolizaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CTPQ\Contabilidad\PolizaController@update')->where(['id' => '[0-9]+']);
+        });
+    });
+
+    /**
      * CONFIGURACION
      */
     $api->group(['middleware' => 'api', 'prefix' => 'configuracion'], function ($api) {

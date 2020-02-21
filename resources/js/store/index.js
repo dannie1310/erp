@@ -73,6 +73,11 @@ import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 
+//CONTABILIDAD GRAL
+
+import polizaGeneral from './modules/contabilidadGeneral/poliza';
+import empresaContabilidad from './modules/contabilidadGeneral/empresa';
+
 //CONTRATOS
 import contratoConcepto from './modules/contratos/contrato-concepto';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
@@ -226,6 +231,9 @@ export default new Vuex.Store({
         'contabilidad/tipo-cuenta-material': tipoCuentaMaterial,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
         'contabilidad/transaccion-interfaz': transaccionInterfaz,
+
+        'contabilidadGeneral/poliza' :polizaGeneral,
+        'contabilidadGeneral/empresa' :empresaContabilidad,
 
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,

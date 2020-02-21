@@ -57,6 +57,43 @@ export const routes = [
         }
     },
     {
+        path: '/contabilidad-general',
+        components:  {
+            default: require('./components/contabilidad-general/partials/Layout.vue').default,
+            menu: require('./components/contabilidad-general/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'contabilidad-general',
+                meta: {
+                    title: 'CONTABILIDAD GENERAL',
+                    middleware: [auth, permission],
+                    permission: 'editar_poliza',
+                    general: true
+                }
+            },
+            {
+                path: 'editar-poliza',
+                component: require('./components/contabilidad-general/poliza/Busqueda.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"editar-poliza",
+                        component: require('./components/contabilidad-general/poliza/Busqueda.vue').default,
+                        meta: {
+                            title: 'Editar Póliza',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'EDITAR PÓLIZA'},
+                            middleware: [auth, permission],
+                            permission: 'editar_poliza',
+                            general: true
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
         path: '/control-interno',
         name: 'control-interno',
         components:  {
