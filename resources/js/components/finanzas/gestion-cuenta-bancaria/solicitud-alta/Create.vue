@@ -357,7 +357,8 @@
             getFondoFijo(){
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
-                        scope: 'responsableFondoFijo'
+                        scope: 'responsableFondoFijo',
+                        sort: 'razon_social', order: 'asc'
                     }
                 })
                     .then(data => {
@@ -368,7 +369,8 @@
             getDestajistas(){
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
-                        scope: 'destajistas'
+                        scope: 'destajistas',
+                        sort: 'razon_social', order: 'asc'
                     }
                 })
                     .then(data => {
