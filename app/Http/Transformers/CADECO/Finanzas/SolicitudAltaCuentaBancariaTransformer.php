@@ -32,7 +32,8 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
         'plaza',
         'usuario',
         'movimientos',
-        'movimiento_solicitud'
+        'movimiento_solicitud',
+        'tipo_cuenta'
 
     ];
 
@@ -51,8 +52,6 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'cuenta' => $model->cuenta_clabe,
             'sucursal' => $model->sucursal,
-            'tipos' => $model->tipos_cuentas,
-            'tipo_cuenta' => $model->tipo_cuenta,
             'fecha' => $model->fecha,
             'observaciones' => $model->observaciones,
             'fecha_format' => $model->fecha_format,
@@ -75,6 +74,19 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
             return $this->item($tipo, new CtgTipoSolicitudTransformer);
         }
         return null;
+    }
+
+    /**
+     * @param TipoCuenta $model
+     * Include Tipo de Cuenta
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipoCuenta(SolicitudAlta $model)
+    {
+        if($cuenta = $model->tipoCuenta)
+        {
+            return $this->item($cuenta, new CtgTipoCuentaTransformer);
+        }
     }
 
     /**

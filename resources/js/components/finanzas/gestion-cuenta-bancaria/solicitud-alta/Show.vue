@@ -50,7 +50,7 @@
                                                         </tr>
                                                         <tr>
                                                             <th>Tipo:</th>
-                                                            <td>{{solicitudAlta.tipos}}</td>
+                                                            <td>{{solicitudAlta.tipo_cuenta.descripcion}}</td>
                                                         </tr>
                                                         <tr>
                                                             <th>Observaciones:</th>
@@ -125,7 +125,7 @@
                 this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/find', {
                     id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
+                    params: { include: ['moneda', 'tipo_cuenta', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).draggable();
