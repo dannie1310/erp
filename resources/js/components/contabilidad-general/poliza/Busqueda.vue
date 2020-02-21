@@ -7,7 +7,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <edit v-bind:tipo_modal="tipo_modal"></edit>
+                <edit v-bind:tipo_modal="tipo_modal" v-bind:id_empresa="id_empresa"></edit>
             </div>
         </div>
 
