@@ -8,8 +8,10 @@
 
 namespace App\Models\CTPQ;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+
 
 class Poliza extends Model
 {
@@ -27,6 +29,11 @@ class Poliza extends Model
     public function tipo_poliza()
     {
         return $this->belongsTo(TipoPoliza::class, 'TipoPol', 'Id');
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(LogEdicion::class, 'id_poliza', 'Id');
     }
 
     public function getCargosFormatAttribute()
