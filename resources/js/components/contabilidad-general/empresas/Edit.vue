@@ -21,7 +21,7 @@
                                                     <div class="col-sm-6">
                                                         <div class="btn-group btn-group-toggle">
                                                             <label class="btn btn-outline-secondary" :class="Visible === Number(1) ? 'active': ''"  :key="1">
-                                                                <input type="radio" :disabled="!$root.can('configurar_visibilidad_empresa_ctpq')"
+                                                                <input type="radio" :disabled="!$root.can('configurar_visibilidad_empresa_ctpq', true)"
                                                                     class="btn-group-toggle"
                                                                     name="Visible"
                                                                     :id="'Visible' + 1"
@@ -31,7 +31,7 @@
                                                                 Si
                                                             </label>
                                                             <label class="btn btn-outline-secondary" :class="Visible === Number(0) ? 'active': ''"  :key="0">
-                                                                <input type="radio" :disabled="!$root.can('configurar_visibilidad_empresa_ctpq')"
+                                                                <input type="radio" :disabled="!$root.can('configurar_visibilidad_empresa_ctpq', true)"
                                                                     class="btn-group-toggle"
                                                                     name="Visible"
                                                                     :id="'Visible' + 0"
@@ -50,7 +50,7 @@
                                                     <div class="col-sm-6">
                                                         <div class="btn-group btn-group-toggle">
                                                             <label class="btn btn-outline-secondary" :class="Editable === Number(1) ? 'active': ''"  :key="1">
-                                                                <input type="radio" :disabled="!$root.can('configurar_editabilidad_empresa_ctpq')"
+                                                                <input type="radio" :disabled="!$root.can('configurar_editabilidad_empresa_ctpq', true)"
                                                                     class="btn-group-toggle"
                                                                     name="Editable"
                                                                     :id="'Editable' + 1"
@@ -60,7 +60,7 @@
                                                                 Si
                                                             </label>
                                                             <label class="btn btn-outline-secondary" :class="Editable === Number(0) ? 'active': ''"  :key="0">
-                                                                <input type="radio" :disabled="!$root.can('configurar_editabilidad_empresa_ctpq')"
+                                                                <input type="radio" :disabled="!$root.can('configurar_editabilidad_empresa_ctpq', true)"
                                                                     class="btn-group-toggle"
                                                                     name="Editable"
                                                                     :id="'Editable' + 0"
@@ -77,7 +77,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <button type="button" class="btn btn-primary" @click="update()" v-if="$root.can('configurar_editabilidad_empresa_ctpq') || $root.can('configurar_visibilidad_empresa_ctpq')">Actualizar</button>
+                                    <button type="button" class="btn btn-primary" @click="update()" v-if="$root.can('configurar_editabilidad_empresa_ctpq', true) || $root.can('configurar_visibilidad_empresa_ctpq', true)">Actualizar</button>
                                 </div>
                             <!-- </form> -->
                         </div>

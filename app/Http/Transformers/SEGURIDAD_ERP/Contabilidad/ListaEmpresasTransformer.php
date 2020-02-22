@@ -22,6 +22,7 @@ class ListaEmpresasTransformer extends TransformerAbstract
             'id' => (int) $model->Id,
             'nombre' => $model->Nombre,
             'alias' => $model->AliasBDD,
+            'alias_bdd' => $model->AliasBDD,
             'visible' => $model->Visible?(int)$model->Visible:0,
             'editable' => $model->Editable?(int)$model->Editable:0,
         ];

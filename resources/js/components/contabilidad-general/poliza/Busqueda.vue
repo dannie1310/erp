@@ -27,7 +27,7 @@
                                  name="id_empresa"
                                  v-model="id_empresa"
                                  option-value="id"
-                                 option-text="descripcion"
+                                 option-text="nombre"
                                  :list="empresas"
                                  :placeholder="!cargando?'Seleccionar o buscar empresa':'Cargando...'"
                                  :isError="errors.has(`id_empresa`)">
@@ -332,10 +332,11 @@
             getEmpresas() {
                 this.empresas = [];
                 this.cargando = true;
-                return this.$store.dispatch('contabilidadGeneral/empresa/index', {
+                return this.$store.dispatch('seguridad/lista-empresas/index', {
                     params: {
                         sort: 'Nombre',
-                        order: 'asc'
+                        order: 'asc',
+                        scope:'editable',
                     }
                 })
                     .then(data => {

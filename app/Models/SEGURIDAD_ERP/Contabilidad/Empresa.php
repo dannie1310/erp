@@ -27,4 +27,9 @@ class Empresa extends Model
         'AliasBDD'
     ];
 
+    public function scopeEditable($query)
+    {
+        return $query->where('Visible',1)->where('Editable', 1);
+    }
+
 }

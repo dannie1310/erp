@@ -91,10 +91,10 @@
                         index: (i + 1) + self.query.offset,
                         nombre: empresa.nombre,
                         alias: empresa.alias,
-                        visible: empresa.visible == 1?'Si':'NO',
-                        editable: empresa.editable == 1?'Si':'NO',
+                        visible: empresa.visible == 1?'SI':'NO',
+                        editable: empresa.editable == 1?'SI':'NO',
                         buttons: $.extend({}, {
-                            edit: self.$root.can('configurar_visibilidad_empresa_ctpq') || self.$root.can('configurar_editabilidad_empresa_ctpq') ? true : false,
+                            edit: self.$root.can('configurar_visibilidad_empresa_ctpq', true) || self.$root.can('configurar_editabilidad_empresa_ctpq', true) ? true : false,
                             empresa: empresa,
                         })
                     }));
