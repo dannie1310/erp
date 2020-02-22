@@ -48,7 +48,7 @@ class Poliza extends Model
 
     public function actualiza($datos)
     {
-        if($this->Ejercicio>2015){
+        if($this->Ejercicio!=2015){
             try {
                 DB::connection('cntpq')->beginTransaction();
                 $this->Concepto = $datos["concepto"];
