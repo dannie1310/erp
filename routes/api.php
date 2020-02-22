@@ -201,7 +201,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CTPQ\PolizaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CTPQ\PolizaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CTPQ\PolizaController@show')->where(['id' => '[0-9]+']);
-            $api->patch('{id}', 'App\Http\Controllers\v1\CTPQ\Contabilidad\PolizaController@update')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CTPQ\PolizaController@update')->where(['id' => '[0-9]+']);
         });
     });
 
