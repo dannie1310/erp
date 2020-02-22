@@ -116,6 +116,7 @@ use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
 use App\Models\SEGURIDAD_ERP\Compras\AreaSolicitanteUsuario;
+use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
@@ -232,6 +233,7 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
+use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
 use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
@@ -260,6 +262,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        /*
+         * CTPQ
+         * */
+        \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
+        \App\Models\CTPQ\PolizaMovimiento::observe(\App\Observers\CTPQ\PolizaMovimientoObserver::class);
+
         /**
          * CADECO
          */
@@ -446,6 +454,10 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
         UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
         FacturaRepositorio::observe(FacturaRepositorioObserver::class);
+        /*
+         * Contabilidad
+         * */
+        LogEdicion::observe(LogEdicionObserver::class);
     }
 
     /**
