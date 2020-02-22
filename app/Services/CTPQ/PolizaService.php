@@ -53,7 +53,7 @@ class PolizaService
         \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         $poliza = $this->repository->show($id);
         if($poliza->Ejercicio == 2015){
-            abort(500,"No se pueden editar pólizas de años anteriores a 2016");
+            abort(500,"No se pueden editar pólizas del año 2015");
         }
         return $this->repository->update($data, $id);
     }
