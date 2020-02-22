@@ -8,7 +8,7 @@
 
 namespace App\Services\CTPQ;
 use App\Models\CTPQ\Empresa;
-use App\Repositories\Repository;
+use App\Repositories\CTPQ\PolizaRepository as Repository;
 
 use App\Models\CTPQ\Poliza;
 
@@ -48,6 +48,8 @@ class PolizaService
 
     public function update(array $data, $id)
     {
+        $empresa = Empresa::find($data["id_empresa"]);
+        \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         return $this->repository->update($data, $id);
     }
 

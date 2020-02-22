@@ -2,7 +2,12 @@
     <span>
         <div class="row">
             <div class="col-12">
-                <show></show>
+                <show v-bind:tipo_modal="tipo_modal"></show>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <edit v-bind:tipo_modal="tipo_modal" v-bind:id_empresa="id_empresa"></edit>
             </div>
         </div>
 
@@ -50,6 +55,7 @@
                          <div class="col-md-6">
                              <input
                                      type="text"
+                                     v-validate="{numeric:true, digits: 4}"
                                      name="ejercicio"
                                      data-vv-as="ejercicio"
                                      class="form-control"
@@ -68,6 +74,7 @@
                          <div class="col-md-6">
                              <input
                                      type="text"
+                                     v-validate="'between:1,12'"
                                      name="periodo"
                                      data-vv-as="Periodo"
                                      class="form-control"
@@ -84,17 +91,19 @@
                      <div class="form-group row error-content">
                          <label for="tipo_poliza" class="col-md-6 col-form-label">Tipo de Poliza:</label>
                          <div class="col-md-6">
-                             <input
-                                     type="text"
-                                     name="tipo_poliza"
-                                     data-vv-as="Tipo de Póliza"
+                             <select
                                      class="form-control"
+                                     name="tipo_poliza"
+                                     data-vv-as="Tipo Póliza"
                                      id="tipo_poliza"
-                                     placeholder="I, E, D"
                                      v-model="tipo_poliza"
-                                     :class="{'is-invalid': errors.has('tipo_poliza')}">
+                                     >
+                                    <option value>--Seleccione--</option>
+                                    <option  v-for="(tipo_poliza, index) in tipos_poliza" :value="tipo_poliza.id">
+                                        {{ tipo_poliza.descripcion }}
+                                    </option>
+                             </select>
                              <div class="invalid-feedback" v-show="errors.has('tipo_poliza')">{{ errors.first('tipo_poliza') }}</div>
-
                          </div>
                      </div>
                  </div>
@@ -105,6 +114,7 @@
                              <input
                                      type="text"
                                      name="numero_poliza"
+                                     v-validate="{numeric:true}"
                                      data-vv-as="Número de Póliza"
                                      class="form-control"
                                      id="numero_poliza"
@@ -159,11 +169,13 @@
 <script>
     import {ModelListSelect} from 'vue-search-select';
     import Show from "./Show";
+    import Edit from "./Edit";
     export default {
         name: "busqueda-poliza",
-        components: {ModelListSelect, Show},
+        components: {Edit, ModelListSelect, Show},
         data() {
             return {
+                tipos_poliza : [{id : 1, descripcion: "Ingreso"},{id : 2, descripcion: "Egreso"},{id : 3, descripcion: "Diario"}],
                 cargando: false,
                 conectando:false,
                 conectado:false,
@@ -177,6 +189,7 @@
                 ejercicio: '',
                 tipo_poliza: '',
                 texto:'',
+                tipo_modal:'',
 
                 HeaderSettings: false,
                 columns: [
@@ -203,6 +216,9 @@
             polizas(){
                 return this.$store.getters['contabilidadGeneral/poliza/polizas'];
             },
+            poliza() {
+                return this.$store.getters['contabilidadGeneral/poliza/currentPoliza'];
+            },
             meta(){
                 return this.$store.getters['contabilidadGeneral/poliza/meta'];
             },
@@ -228,11 +244,21 @@
                         buttons: $.extend({}, {
                             id: poliza.id,
                             id_empresa: this.id_empresa,
+                            editar:self.$root.can('editar_poliza',true) ? true : undefined,
                         })
 
                     }));
                 },
                 deep: true
+            },
+            poliza:{
+                handler(poliza) {
+                    if(poliza !== null){
+                        this.tipo_modal = poliza.tipo_modal;
+                    }else{
+                        this.tipo_modal = '';
+                    }
+                }
             },
             meta: {
                 handler (meta) {
@@ -255,13 +281,6 @@
             }
         },
         methods: {
-            tipos_polizas(){
-                return {
-                    1: "Ingresos",
-                    2: "Egresos",
-                    3: "Diario"
-                };
-            },
             changeSelect(){
                 this.conectando = false;
                 var busqueda = this.empresas.find(x=>x.id === this.id_empresa);
