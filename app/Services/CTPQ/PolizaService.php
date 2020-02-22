@@ -49,6 +49,7 @@ class PolizaService
     public function update(array $data, $id)
     {
         $empresa = Empresa::find($data["id_empresa"]);
+        $data["empresa"] = $empresa->AliasBDD;
         \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         return $this->repository->update($data, $id);
     }

@@ -24,6 +24,24 @@ class PolizaRepository extends Repository implements RepositoryInterface
     {
         $item = $this->show($id);
         $item->actualiza($datos);
+        $logs = $item->logs()->where("id_empresa","=","666")->get();
+        foreach($logs as $log)
+        {
+            $log->id_empresa = $datos["id_empresa"];
+            $log->empresa = $datos["empresa"];
+            $log->save();
+        }
+        $movimientos = $item->movimientos;
+        foreach ($movimientos as $movimiento)
+        {
+            $logs = $movimiento->logs()->where("id_empresa","=","666")->get();
+            foreach($logs as $log)
+            {
+                $log->id_empresa = $datos["id_empresa"];
+                $log->empresa = $datos["empresa"];
+                $log->save();
+            }
+        }
         return $item;
     }
 
