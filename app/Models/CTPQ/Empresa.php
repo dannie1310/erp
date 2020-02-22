@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
 {
-    protected $connection = 'cntpqg';
+    protected $connection = 'seguridad';
     protected $table = 'ListaEmpresas';
     protected $primaryKey = 'Id';
     public $timestamps = false;

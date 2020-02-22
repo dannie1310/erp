@@ -111,6 +111,7 @@ import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgEfos from './modules/seguridad/finanzas/ctg-efos';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
 import ctgtipo from './modules/configuracion/ctg-tipo';
+import listaEmpresas from './modules/seguridad/contabilidad/lista-empresa';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -253,6 +254,7 @@ export default new Vuex.Store({
         'seguridad/sistema': sistema,
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
+        'seguridad/lista-empresas': listaEmpresas,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/retencion': retencion,
