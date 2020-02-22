@@ -9,6 +9,7 @@
 namespace App\Models\CTPQ;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 
 class PolizaMovimiento extends Model
 {
@@ -20,6 +21,11 @@ class PolizaMovimiento extends Model
     public function cuenta()
     {
         return $this->belongsTo(Cuenta::class, 'IdCuenta', 'Id');
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(LogEdicion::class, 'id_movimiento', 'Id');
     }
 
     public function  getCargoAttribute(){
