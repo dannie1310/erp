@@ -32,7 +32,8 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
         'plaza',
         'usuario',
         'movimientos',
-        'mov_estado'
+        'mov_estado',
+        'tipo_cuenta'
     ];
 
     /**
@@ -56,7 +57,6 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
             'folio' => $model->numero_folio,
             'numero_folio_format' => $model->numero_folio_format,
             'sucursal_format' => $model->sucursal_format,
-            'tipo_cuenta' => $model->tiposCuentas,
         ];
     }
 
@@ -72,6 +72,19 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
             return $this->item($tipo, new CtgTipoSolicitudTransformer);
         }
         return null;
+    }
+
+    /**
+     * @param TipoCuenta $model
+     * Include Tipo de Cuenta
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipoCuenta(SolicitudBaja $model)
+    {
+        if($cuenta = $model->tipoCuenta)
+        {
+            return $this->item($cuenta, new CtgTipoCuentaTransformer);
+        }
     }
 
     /**

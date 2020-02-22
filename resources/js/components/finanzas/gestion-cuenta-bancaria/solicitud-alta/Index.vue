@@ -34,7 +34,7 @@
                     { title: 'Beneficiario', field: 'empresa', sortable: false},
                     { title: 'Tipo Beneficiaro', field: 'tipo_empresa'},
                     { title: 'Banco', field: 'banco', sortable: false},
-                    { title: 'Cuenta/CLABE', field: 'cuenta', sortable: false },
+                    { title: 'Cuenta/CLABE/No Tarjeta', field: 'cuenta', sortable: false },
                     { title: 'Estatus', field: 'estado'},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
