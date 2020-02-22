@@ -48,21 +48,23 @@ class Poliza extends Model
 
     public function actualiza($datos)
     {
-        try {
-            DB::connection('cntpq')->beginTransaction();
-            $this->Concepto = $datos["concepto"];
-            $this->update();
-            foreach($datos["movimientos"] as $datos_movimiento){
-                $movimiento = PolizaMovimiento::find($datos_movimiento["id"]);
-                $movimiento->Referencia = $datos_movimiento["referencia"];
-                $movimiento->Concepto = $datos_movimiento["concepto"];
-                $movimiento->update();
+        if($this->Ejercicio>2015){
+            try {
+                DB::connection('cntpq')->beginTransaction();
+                $this->Concepto = $datos["concepto"];
+                $this->update();
+                foreach($datos["movimientos"] as $datos_movimiento){
+                    $movimiento = PolizaMovimiento::find($datos_movimiento["id"]);
+                    $movimiento->Referencia = $datos_movimiento["referencia"];
+                    $movimiento->Concepto = $datos_movimiento["concepto"];
+                    $movimiento->update();
+                }
+                DB::connection('cntpq')->commit();
+            }catch (\Exception $e) {
+                DB::connection('cntpq')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
             }
-            DB::connection('cntpq')->commit();
-        }catch (\Exception $e) {
-            DB::connection('cntpq')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
         }
     }
 

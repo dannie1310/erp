@@ -43,6 +43,7 @@ class EmpresaService
     public function conectar($id)
     {
         $empresa = $this->repository->show($id);
+        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($id);
         $this->config->set('database.connections.cntpq.database', $empresa->AliasBDD);
         \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         return $this->config->get("database.connections.cntpq.database");

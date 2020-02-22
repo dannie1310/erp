@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
 {
-    protected $connection = 'cntpqg';
-    protected $table = 'ListaEmpresas';
+    protected $connection = 'seguridad';
+    protected $table = 'Contabilidad.ListaEmpresas';
     protected $primaryKey = 'Id';
     public $timestamps = false;
 }
