@@ -55,6 +55,7 @@
                          <div class="col-md-6">
                              <input
                                      type="text"
+                                     v-validate="{numeric:true, digits: 4}"
                                      name="ejercicio"
                                      data-vv-as="ejercicio"
                                      class="form-control"
@@ -73,6 +74,7 @@
                          <div class="col-md-6">
                              <input
                                      type="text"
+                                     v-validate="'between:1,12'"
                                      name="periodo"
                                      data-vv-as="Periodo"
                                      class="form-control"
@@ -89,17 +91,19 @@
                      <div class="form-group row error-content">
                          <label for="tipo_poliza" class="col-md-6 col-form-label">Tipo de Poliza:</label>
                          <div class="col-md-6">
-                             <input
-                                     type="text"
-                                     name="tipo_poliza"
-                                     data-vv-as="Tipo de Póliza"
+                             <select
                                      class="form-control"
+                                     name="tipo_poliza"
+                                     data-vv-as="Tipo Póliza"
                                      id="tipo_poliza"
-                                     placeholder="I, E, D"
                                      v-model="tipo_poliza"
-                                     :class="{'is-invalid': errors.has('tipo_poliza')}">
+                                     >
+                                    <option value>--Seleccione--</option>
+                                    <option  v-for="(tipo_poliza, index) in tipos_poliza" :value="tipo_poliza.id">
+                                        {{ tipo_poliza.descripcion }}
+                                    </option>
+                             </select>
                              <div class="invalid-feedback" v-show="errors.has('tipo_poliza')">{{ errors.first('tipo_poliza') }}</div>
-
                          </div>
                      </div>
                  </div>
@@ -110,6 +114,7 @@
                              <input
                                      type="text"
                                      name="numero_poliza"
+                                     v-validate="{numeric:true}"
                                      data-vv-as="Número de Póliza"
                                      class="form-control"
                                      id="numero_poliza"
@@ -170,6 +175,7 @@
         components: {Edit, ModelListSelect, Show},
         data() {
             return {
+                tipos_poliza : [{id : 1, descripcion: "Ingreso"},{id : 2, descripcion: "Egreso"},{id : 3, descripcion: "Diario"}],
                 cargando: false,
                 conectando:false,
                 conectado:false,
@@ -275,13 +281,6 @@
             }
         },
         methods: {
-            tipos_polizas(){
-                return {
-                    1: "Ingresos",
-                    2: "Egresos",
-                    3: "Diario"
-                };
-            },
             changeSelect(){
                 this.conectando = false;
                 var busqueda = this.empresas.find(x=>x.id === this.id_empresa);

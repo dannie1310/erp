@@ -72,7 +72,7 @@
                                         <div class="form-group row error-content">
                                              <textarea
                                                      type="text"
-                                                     v-validate="{required: true}"
+                                                     v-validate="{required: true, max:100}"
                                                      name="concepto_edit"
                                                      class="form-control"
                                                      id="concepto_edit"
@@ -97,7 +97,7 @@
                                                 <th class="bg-gray-light">Cuenta</th>
                                                 <th class="bg-gray-light">Cargo</th>
                                                 <th class="bg-gray-light">Abono</th>
-                                                <th class="bg-gray-light">Referencia</th>
+                                                <th class="bg-gray-light no_parte">Referencia</th>
                                                 <th class="bg-gray-light">Concepto</th>
                                             </tr>
                                         </thead>
@@ -111,7 +111,7 @@
                                                     <div class="form-group row error-content">
                                                         <input
                                                                 type="text"
-                                                                v-validate="{required: true}"
+                                                                v-validate="{required: true, max:30}"
                                                                 :name="`referencia[${i}]`"
                                                                 class="form-control"
                                                                 :id="`referencia[${i}]`"
@@ -126,7 +126,7 @@
                                                     <div class="form-group row error-content">
                                                         <textarea
                                                             type="text"
-                                                            v-validate="{required: true}"
+                                                            v-validate="{required: true, max:100}"
                                                             :name="`concepto_movto_edit[${i}]`"
                                                             class="form-control"
                                                             :id="`concepto_movto_edit[${i}]`"
@@ -204,7 +204,7 @@ export default {
                 .then(data => {
                     this.$store.commit('contabilidadGeneral/poliza/UPDATE_POLIZA', data);
                 }).finally(()=>{
-
+                    $(this.$refs.modalEditPoliza).modal('hide');
                 })
         },
     },
