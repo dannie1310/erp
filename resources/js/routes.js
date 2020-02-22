@@ -90,6 +90,24 @@ export const routes = [
                         }
                     }
                 ]
+            },
+            {
+                path: 'lista-empresa',
+                component: require('./components/contabilidad-general/empresas/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"lista-empresa",
+                        component: require('./components/contabilidad-general/empresas/Index.vue').default,
+                        meta: {
+                            title: 'Empresas',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'EMPRESAS'},
+                            middleware: [auth, permission],
+                            permission: 'editar_poliza',
+                            general: true
+                        }
+                    }
+                ]
             }
         ]
     },
