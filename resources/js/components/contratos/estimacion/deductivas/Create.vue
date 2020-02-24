@@ -110,6 +110,7 @@ export default {
                 precio:this.precio_unitario
             })
             .then((data) => {
+                this.$emit('created',data);
                 this.cerrar();
             })
         },
