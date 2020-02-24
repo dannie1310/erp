@@ -83,14 +83,9 @@ class ItemSubcontrato extends Item
             'descripcion_concepto' => $contrato->descripcion,
             'cantidad_subcontrato' => $this->cantidad,
             'precio_unitario_subcontrato' => $this->precio_unitario,
-            'cantidad_subcontrato_format' => $this->cantidad_format,
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_estimacion' =>  $estimacion ? $estimacion->id_item : 0,
             'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 2, '.', '') : 0,
-            'precio_unitario_estimacion' => $estimacion ? $estimacion->precio_unitario : 0,
-            'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
-            'cantidad_estimacion_format' => $estimacion ? $estimacion->cantidad_format: 0,
-            'precio_unitario_estimacion_format' => $estimacion ? $estimacion->precio_unitario_format : 0,
             'porcentaje_avance' => (float) number_format((($cantidad_estimado_anterior / $this->cantidad) * 100), 3, '.', ''),
             'cantidad_estimada_total' => $this->cantidad_total_estimada,
             'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
@@ -99,9 +94,9 @@ class ItemSubcontrato extends Item
             'cantidad_por_estimar' => $this->cantidad -$cantidad_estimado_anterior,
             'importe_por_estimar' => ($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario,
             'porcentaje_estimado' => (float) number_format(((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100), 3, '.', ''),
+            'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
             'destino_path' => $destino->ruta_destino,
-            'id_destino' => $destino->id_concepto,
-            'nivel' => strlen($contrato->nivel)/4
+            'id_destino' => $destino->id_concepto
         );
     }
 

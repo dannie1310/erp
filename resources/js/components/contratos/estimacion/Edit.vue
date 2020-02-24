@@ -5,16 +5,16 @@
                 <Resumen v-bind:id="id" v-bind:cargando="cargando"></Resumen>
             </div>
            <div class="p-2">
-                <Amortizacion @created="find()" v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
+                <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
             </div>
             <div class="p-2">
-                <RetencionIndex @created="find()" v-bind:id="id"></RetencionIndex>
+                <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
             <div class="p-2">
-                <RetencionIvaCreate @created="find()" v-bind:id="id"></RetencionIvaCreate>
+                <RetencionIvaCreate v-bind:id="id"></RetencionIvaCreate>
             </div>
             <div class="p-2">
-                <DeductivaEdit @created="find()" v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
+                <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
             </div>
         </div>
         <div class="row" v-if="!cargando">
@@ -110,58 +110,7 @@
                         </div>
 				    </div>
 			    </div>
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h6 class="card-title">Totales</h6>
-                        </div>
-                        <div class="card-body">
-                            <form>
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Subtotal</label>
-                                    <div class="col-md-8">
-                                        <input
-                                            style="text-align:right;"
-                                            :disabled="true"
-                                            type="text"
-                                            data-vv-as="Subtotal"
-                                            class="form-control"
-                                            placeholder="Subtotal"
-                                            v-model="parseFloat(estimacion.subtotal).formatMoney(2)" />
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">IVA</label>
-                                    <div class="col-md-8">
-                                         <input
-                                             style="text-align:right;"
-                                             :disabled="true"
-                                             type="text"
-                                             data-vv-as="IVA"
-                                             class="form-control"
-                                             placeholder="IVA"
-                                             v-model="parseFloat(estimacion.iva).formatMoney(2)" />
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Total</label>
-                                    <div class="col-md-8">
-                                         <input
-                                             style="text-align:right;"
-                                             :disabled="true"
-                                             type="text"
-                                             data-vv-as="total"
-                                             class="form-control"
-                                             placeholder="total"
-                                             v-model="parseFloat(estimacion.total).formatMoney(2)" />
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
             </div>
-
 		</div>
         <div class="card" v-if="!cargando">
 			<div class="card-body">
@@ -223,7 +172,7 @@
                         <tr v-if="concepto.para_estimar == 0">
                             <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                             <td :title="concepto.descripcion">
-                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                <span v-for="n in concepto.nivel">&nbsp;</span>
                                 <b>{{concepto.descripcion}}</b></td>
                             <td></td>
                             <td style="display: none" class="numerico contratado"/>
@@ -244,7 +193,7 @@
 					    <tr v-else>
 						    <td :title="concepto.clave">{{ concepto.clave }}</td>
                             <td :title="concepto.descripcion_concepto">
-                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 {{concepto.descripcion_concepto}}
                             </td>
                             <td class="centrado">{{concepto.unidad}}</td>
@@ -264,7 +213,6 @@
                                        :name="`cantidadEstimacion[${concepto.id}]`"
                                        v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(2)}"
                                        :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
                             </td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changePorcentaje(concepto)"
@@ -273,9 +221,8 @@
                                        :name="`porcentaje[${concepto.id}]`"
                                        v-model="concepto.porcentaje_estimado"
                                        :class="{'is-invalid': errors.has(`porcentaje[${concepto.id}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`porcentaje[${concepto.id}]`)">{{ errors.first(`porcentaje[${concepto.id}]`) }}</div>
                             </td>
-                            <td class="numerico">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2)}}</td>
+                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format }}</td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changeImporte(concepto)"
                                        class="text"
@@ -283,7 +230,6 @@
                                        v-validate="{max_value: parseFloat(concepto.importe_por_estimar).toFixed(2)}"
                                        v-model="concepto.importe_estimacion"
                                        :class="{'is-invalid': errors.has(`importe[${concepto.id}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`importe[${concepto.id}]`)">{{ errors.first(`importe[${concepto.id}]`) }}</div>
                             </td>
                             <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                         </tr>

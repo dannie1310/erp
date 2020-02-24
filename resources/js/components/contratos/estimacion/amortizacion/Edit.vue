@@ -85,7 +85,6 @@ export default {
                     params: this.$data
                 })
                     .then(data => {
-                        this.$emit('created', data);
                         $(this.$refs.modalAmortizacion).modal('hide');
                     });
             }

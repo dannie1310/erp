@@ -100,7 +100,6 @@ export default {
     },
     methods: {
         cerrar(){
-            this.$emit('created', '');
             $(this.$refs.modalRetenciones).modal('hide');
         },
         destroyRetencion(id){

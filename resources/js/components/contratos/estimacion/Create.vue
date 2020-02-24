@@ -180,7 +180,7 @@
                         <tr v-if="concepto.para_estimar == 0">
                             <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                             <td :title="concepto.descripcion">
-                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                <span v-for="n in concepto.nivel">&nbsp;</span>
                                 <b>{{concepto.descripcion}}</b></td>
                             <td></td>
                             <td style="display: none" class="numerico contratado"/>
@@ -201,7 +201,7 @@
 					    <tr v-else>
 						    <td :title="concepto.clave">{{ concepto.clave }}</td>
                             <td :title="concepto.descripcion_concepto">
-                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 {{concepto.descripcion_concepto}}
                             </td>
                             <td class="centrado">{{concepto.unidad}}</td>
@@ -232,7 +232,7 @@
                                        :class="{'is-invalid': errors.has(`porcentaje[${concepto.id}]`)}" />
                                  <div class="invalid-feedback" v-show="errors.has(`porcentaje[${concepto.id}]`)">{{ errors.first(`porcentaje[${concepto.id}]`) }}</div>
                             </td>
-                            <td class="numerico">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2)}}</td>
+                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changeImporte(concepto)"
                                        class="text"
@@ -286,10 +286,10 @@
         },
 
 		mounted() {
-        	this.fecha_inicio = new Date().toDate()
-        	this.fecha_fin = new Date().toDate()
+        	this.fecha_inicio = new Date()
+        	this.fecha_fin = new Date()
         	this.fecha = new Date()
-            this.fecha_hoy = new Date().toDate();
+            this.fecha_hoy = new Date()
             this.fechasDeshabilitadas.from= new Date();
 			this.getSubcontratos()
         },
