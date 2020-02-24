@@ -33,7 +33,7 @@
                     { title: 'Número Parte', field: 'numero_parte',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Unidad', field: 'unidad', thClass: 'th_unidad', tdClass: 'td_unidad', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -86,6 +86,10 @@
                             descripcion: material.descripcion,
                             unidad: material.unidad,
                             numero_parte: material.numero_parte,
+                            buttons: $.extend({}, {
+                                edit: self.$root.can('editar_insumo_material') ? true : undefined,
+                                id: material.id
+                            })
                         })
                     });
                 },

@@ -168,11 +168,11 @@ $api->version('v1', function ($api) {
         //UNIDAD
         $api->group(['prefix'=>'unidad'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\UnidadController@index');
-            $api->get('{id}/unidad', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\UnidadController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\UnidadController@store');
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@destroy');
-            $api->patch('{id}/update', 'App\Http\Controllers\v1\CADECO\UnidadController@update');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@destroy')->where(['id' => '[0-9]+']);;
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@update')->where(['id' => '[0-9]+']);
         });
 
     });
@@ -563,7 +563,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@aprobar')->where(['id' => '[0-9]+']);
             $api->patch('{id}/revertirAprobacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@revertirAprobacion')->where(['id' => '[0-9]+']);
-            $api->patch('{id}/amortizacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@anticipo')->where(['id' => '[0-9]+']);            
+            $api->patch('{id}/amortizacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@anticipo')->where(['id' => '[0-9]+']);
             $api->get('{id}/getConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@getConceptos')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@paginate');
             $api->get('{id}/formato-estimacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfEstimacion')->where(['id' => '[0-9]+']);
@@ -867,7 +867,7 @@ $api->version('v1', function ($api) {
 
     /** SUBCONTRATOS ESTIMACIONES */
     $api->group(['middleware' => 'api', 'prefix' => 'subcontratos-estimaciones'], function ($api){
-        
+
         $api->group(['prefix'=>'descuento'], function ($api){
             $api->get('{id}/list', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@list');
             $api->get('{id}/listItems', 'App\Http\Controllers\v1\CADECO\subcontratosEstimaciones\DescuentoController@listItems')->where(['id' => '[0-9]+']);
