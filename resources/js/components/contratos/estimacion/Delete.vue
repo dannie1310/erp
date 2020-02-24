@@ -2,7 +2,7 @@
     <span>
         <div class="d-flex flex-row-reverse">
             <div class="p-2">
-                <Resumen v-bind:id="id_estimacion"></Resumen>
+                <Resumen v-bind:id="id"></Resumen>
             </div>
         </div>
         <div class="row" v-if="!cargando">
@@ -201,7 +201,7 @@
                         <tr v-if="concepto.para_estimar == 0">
                             <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                             <td :title="concepto.descripcion">
-                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                <span v-for="n in concepto.nivel">&nbsp;</span>
                                 <b>{{concepto.descripcion}}</b></td>
                             <td></td>
                             <td style="display: none" class="numerico contratado"/>
@@ -222,7 +222,7 @@
 					    <tr v-else>
 						    <td :title="concepto.clave">{{ concepto.clave }}</td>
                             <td :title="concepto.descripcion_concepto">
-                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 {{concepto.descripcion_concepto}}
                             </td>
                             <td class="centrado">{{concepto.unidad}}</td>
