@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="modal fade" ref="modalEditPoliza" data-backdrop="static" data-keyboard="false">
+        <div class="modal fade" ref="modalShowPoliza" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -71,9 +71,9 @@
                                      <textarea
                                              type="text"
                                              disabled="disabled"
-                                             name="texto"
+                                             name="concepto_show"
                                              class="form-control"
-                                             id="concepto"
+                                             id="concepto_show"
                                              v-model="poliza.concepto"
                                      ></textarea>
                                 </div>
@@ -122,6 +122,7 @@
 
 export default {
     name: "poliza-show",
+    props : ["tipo_modal"],
     data(){
         return {
         }
@@ -129,10 +130,10 @@ export default {
     methods: {
         closeModal(){
             this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
-            $(this.$refs.modalEditPoliza).modal('hide');
+            $(this.$refs.modalShowPoliza).modal('hide');
         },
         init(){
-            $(this.$refs.modalEditPoliza).modal('show');
+            $(this.$refs.modalShowPoliza).modal('show');
         }
     },
 
@@ -142,10 +143,11 @@ export default {
         }
     },
     watch:{
-        poliza : {
-            handler(poliza) {
-                if(poliza !== null){
-                    $(this.$refs.modalEditPoliza).modal('show');
+
+        tipo_modal : {
+            handler(tipo_modal) {
+                if(tipo_modal !== '' && tipo_modal === 1){
+                    this.init();
                 }
             }
         },

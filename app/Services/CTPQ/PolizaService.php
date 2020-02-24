@@ -8,7 +8,7 @@
 
 namespace App\Services\CTPQ;
 use App\Models\CTPQ\Empresa;
-use App\Repositories\Repository;
+use App\Repositories\CTPQ\PolizaRepository as Repository;
 
 use App\Models\CTPQ\Poliza;
 
@@ -48,6 +48,13 @@ class PolizaService
 
     public function update(array $data, $id)
     {
+        $empresa = Empresa::find($data["id_empresa"]);
+        $data["empresa"] = $empresa->AliasBDD;
+        \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
+        $poliza = $this->repository->show($id);
+        if($poliza->Ejercicio == 2015){
+            abort(500,"No se pueden editar pólizas del año 2015");
+        }
         return $this->repository->update($data, $id);
     }
 

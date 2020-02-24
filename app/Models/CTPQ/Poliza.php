@@ -8,7 +8,10 @@
 
 namespace App\Models\CTPQ;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
 
 class Poliza extends Model
 {
@@ -28,6 +31,11 @@ class Poliza extends Model
         return $this->belongsTo(TipoPoliza::class, 'TipoPol', 'Id');
     }
 
+    public function logs()
+    {
+        return $this->hasMany(LogEdicion::class, 'id_poliza', 'Id');
+    }
+
     public function getCargosFormatAttribute()
     {
         return '$ ' . number_format(abs($this->Cargos),2);
@@ -36,6 +44,28 @@ class Poliza extends Model
     {
         $date = date_create($this->Fecha);
         return date_format($date,"d/m/Y");
+    }
+
+    public function actualiza($datos)
+    {
+        if($this->Ejercicio!=2015){
+            try {
+                DB::connection('cntpq')->beginTransaction();
+                $this->Concepto = $datos["concepto"];
+                $this->update();
+                foreach($datos["movimientos"] as $datos_movimiento){
+                    $movimiento = PolizaMovimiento::find($datos_movimiento["id"]);
+                    $movimiento->Referencia = $datos_movimiento["referencia"];
+                    $movimiento->Concepto = $datos_movimiento["concepto"];
+                    $movimiento->update();
+                }
+                DB::connection('cntpq')->commit();
+            }catch (\Exception $e) {
+                DB::connection('cntpq')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        }
     }
 
 }

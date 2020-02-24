@@ -15,6 +15,5 @@ class Empresa extends Model
     protected $connection = 'seguridad';
     protected $table = 'Contabilidad.ListaEmpresas';
     protected $primaryKey = 'Id';
-
-   public $timestamps = false;
+    public $timestamps = false;
 }

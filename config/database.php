@@ -48,10 +48,20 @@ return [
         'cntpq' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST_CNTPQ', 'localhost'),
-            //'port' => env('DB_PORT_CADECO', '1433'),
             'database' => env('DB_DATABASE_CNTPQ', 'forge'),
             'username' => env('DB_USERNAME_CNTPQ', 'forge'),
             'password' => env('DB_PASSWORD_CNTPQ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
+        'cntpqg' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_GCNTPQ', 'localhost'),
+            'database' => env('DB_DATABASE_GCNTPQ', 'forge'),
+            'username' => env('DB_USERNAME_GCNTPQ', 'forge'),
+            'password' => env('DB_PASSWORD_GCNTPQ', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
