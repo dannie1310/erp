@@ -101,7 +101,6 @@ export default {
     },
     methods: {
         cerrar(){
-            this.$emit('created', data);
             $(this.$refs.modalIndex).modal('hide');
         },
         importe(desc){

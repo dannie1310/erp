@@ -88,7 +88,6 @@ export default {
                     id: this.id,
                     params:{IVARetenido:this.IVARetenido}
                 }).then(data => {
-                    this.$emit('created', data);
                     $(this.$refs.modal).modal('hide');
                 })
         },

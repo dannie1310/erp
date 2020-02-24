@@ -201,7 +201,7 @@
                         <tr v-if="concepto.para_estimar == 0">
                             <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                             <td :title="concepto.descripcion">
-                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                <span v-for="n in concepto.nivel">&nbsp;</span>
                                 <b>{{concepto.descripcion}}</b></td>
                             <td></td>
                             <td style="display: none" class="numerico contratado"/>
@@ -222,7 +222,7 @@
 					    <tr v-else>
 						    <td :title="concepto.clave">{{ concepto.clave }}</td>
                             <td :title="concepto.descripcion_concepto">
-                                <span v-for="n in parseInt(concepto.nivel)">&nbsp;</span>
+                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 {{concepto.descripcion_concepto}}
                             </td>
                             <td class="centrado">{{concepto.unidad}}</td>
@@ -237,7 +237,7 @@
                             <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
                             <td class="numerico">{{parseFloat(concepto.cantidad_estimacion).formatMoney(2)}}</td>
                             <td class="numerico">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2)}}</td>
-                            <td class="numerico">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2)}}</td>
+                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
                             <td class="numerico">{{parseFloat(concepto.importe_estimacion).formatMoney(2)}}</td>
                             <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                         </tr>
