@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteMaterialRequest;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Services\CADECO\MaterialService;
 use App\Traits\ControllerTrait;
@@ -18,7 +19,9 @@ use League\Fractal\Manager;
 
 class MaterialController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        destroy as traitDestroy;
+    }
 
     /**
      * @var Manager
@@ -57,5 +60,11 @@ class MaterialController extends Controller
     public function descargar_lista_material(Request $request)
     {
         return $this->service->catalogo_insumos($request->scope);
+    }
+
+    public function destroy(DeleteMaterialRequest $request, $id)
+    {
+        // dd('Jorge Destroy', $id);
+        return $this->traitDestroy($request, $id);      
     }
 }

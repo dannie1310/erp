@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 use App\CSV\ListaMaterialesLayout;
 use App\Models\CADECO\Contabilidad\CuentaMaterial;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class Material extends Model
@@ -66,6 +67,11 @@ class Material extends Model
         }
     }
 
+    public function getNivelPadreAttribute()
+    {
+        return substr($this->nivel, 0, -4);
+    }
+
     public function getDescripcionFamiliaAttribute()
     {
         $nivel = substr($this->nivel, 0,4);
@@ -94,6 +100,11 @@ class Material extends Model
         return $this->hasOne(CuentaMaterial::class, 'id_material');
     }
 
+    public function items()
+    {
+        return $this->hasMany(Item::class, 'id_material', 'id_material');
+    }
+
     public function inventarios()
     {
         return $this->hasMany(Inventario::class, 'id_material','id_material');
@@ -113,6 +124,21 @@ class Material extends Model
     {
         return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
             ->where('nivel', 'LIKE',  '009.___.');
+    }
+
+    public function eliminarInsumo()
+    {
+        // dd('Eliminar insumo modelo');
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            // dd('listo para borrar');
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        } catch(\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 
     public function scopeRoots($query)
@@ -204,6 +230,19 @@ class Material extends Model
         if(!$unidad)
         {
             throw New \Exception('La unidad "'.$this->unidad.'" no está dada de alta en el catálogo de unidades, favor de ingresarla.');
+        }
+    }
+
+    public function validarUso()
+    {
+        return ($this->items()->count() > 0) ? TRUE : FALSE;
+    }
+
+    public function validarEliminacion()
+    {
+        if($this->validarUso())
+        {
+            abort(403, "\n\n No se puede eliminar el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunas partidas.");
         }
     }
 

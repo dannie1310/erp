@@ -75,9 +75,20 @@ class MaterialService
         return $this->repository->create($datos);
     }
 
+    public function delete($data, $id)
+    {
+        // dd('Delete dervice', $id, $data);
+        return $this->show($id)->eliminarInsumo();        
+    }
+
     public function catalogo_insumos($data)
     {
         $array = ['scope' => $data];
         return $this->repository->list($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        dd('update', $data, $id);
     }
 }

@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal-unidad"> <i class="fas fa-trash-alt"></i> ELIMINAR UNIDAD</h5>
+                        <h5 class="modal-title" id="modal-unidad"> <i class="fas fa-trash-alt"></i> ELIMINAR SERVICIO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -16,10 +16,16 @@
                         <div class="row">
                             <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="unidad" class="col-sm-2 offset-1" style="text-align:right;">Unidad: &nbsp;</label>
-                                            {{res.unidad}}
-                                        <label for="unidad" class="col-sm-3" style="text-align:right;">Descripción: &nbsp;</label>
+                                        <!-- <label for="unidad" class="col-sm-2 offset-1" style="text-align:right;">Unidad: &nbsp;</label>
+                                            {{res.unidad}} -->
+                                        <label for="unidad" class="col-sm-3" style="text-align:right;">Servicio: &nbsp;</label>
                                         {{res.descripcion}}
+                                    </div>
+                                    <div class="form-group row error-content">
+                                        <label for="unidad" class="col-sm-2 offset-1" style="text-align:right;">No Parte: &nbsp;</label>
+                                            {{res.numero_parte}}
+                                        <label for="unidad" class="col-sm-2 offset-2" style="text-align:right;">Unidad: &nbsp;</label>
+                                        {{res.unidad}}
                                     </div>
                             </div>
                         </div>    
@@ -35,7 +41,7 @@
 </template>
 <script>
 export default {
-    name: "eliminar-servicio",
+    name: "servicio-eliminar",
     props: ['servicio', 'borrar'],
     data() {
         return {
@@ -46,15 +52,15 @@ export default {
     },
     methods: {
         destroy() {
-            return this.$store.dispatch('cadeco/unidad/delete', {
-                id: this.res.unidad,
-                params: {data: [this.$data.motivo]}
+            
+            return this.$store.dispatch('cadeco/material/delete', {
+                id: this.res.id
             })
             .then(() => {
-                this.$store.dispatch('cadeco/unidad/paginate', {params: {sort: 'FechaHoraRegistro', order: 'desc'}})
+                this.$store.dispatch('cadeco/material/paginate', {params: {scope:['servicios','insumos'], sort: 'descripcion', order: 'asc'}})
                 .then(data => {
-                    this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
-                    this.$store.commit('cadeco/unidad/SET_META', data.meta);
+                    this.$store.commit('cadeco/material/SET_MATERIAL', data.data);
+                    this.$store.commit('cadeco/material/SET_META', data.meta);
                 })
             }).finally( ()=>{
                 $(this.$refs.modal).modal('hide');
@@ -64,17 +70,15 @@ export default {
             this.cargando = true;
             this.res = '';
             this.id = servicio
-            console.log(servicio);
                       
 
-                this.$store.commit('cadeco/unidad/SET_UNIDAD', null);
+                this.$store.commit('cadeco/material/SET_MATERIAL', null);
                 return this.$store.dispatch('cadeco/material/find', {
                     id: servicio,
                     params: {scope: 'servicios'}
                 }).then(data => {
                     this.$store.commit('cadeco/material/SET_MATERIAL', data);
                     this.res = data;
-                    console.log(this.res);
                     
                     
                     $(this.$refs.modal).modal('show')
