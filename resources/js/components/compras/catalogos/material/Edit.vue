@@ -131,7 +131,22 @@
                     }
                 });
             },
-
+            update() {
+                return this.$store.dispatch('cadeco/material/update', {
+                    id: this.id,
+                    data: this.material
+                })
+                    .then(data => {
+                        this.$store.dispatch('cadeco/material/find', {
+                            id: data.id,
+                            params: { }
+                        })
+                            .then(data => {
+                                $(this.$refs.modal).modal('hide');
+                                this.$store.commit('cadeco/material/UPDATE_MATERIAL', data);
+                            });
+                    })
+            },
             updateAttribute(e) {
                 return this.$store.commit('cadeco/material/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
             }

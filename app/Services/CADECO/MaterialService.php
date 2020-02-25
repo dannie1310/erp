@@ -80,4 +80,9 @@ class MaterialService
         $array = ['scope' => $data];
         return $this->repository->list($data);
     }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
+    }
 }
