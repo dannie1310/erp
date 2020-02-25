@@ -1,10 +1,10 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-item"  v-if="$root.can('editar_poliza',true)">
-                <router-link :to="{name: 'editar-poliza'}" class="nav-link" :class="{active: this.$route.name == 'editar-poliza'}">
-                    <i class="fa fa-edit nav-icon"></i>
-                    <p>Editar Póliza</p>
+            <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
+                <router-link :to="{name: 'poliza-contpaq'}" class="nav-link" :class="{active: this.$route.name == 'poliza-contpaq'}">
+                    <i class="fa fa-file-powerpoint nav-icon"></i>
+                    <p>Pólizas</p>
                 </router-link>
             </li>
 

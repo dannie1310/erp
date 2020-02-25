@@ -145,7 +145,7 @@
                      </div>
                  </div>
                 <div class="col-md-1">
-                    <button @click="getPolizas" v-if="$root.can('editar_poliza',true)" class="btn btn-primary float-right">
+                    <button @click="getPolizas" v-if="$root.can(['editar_poliza','consultar_poliza'],true)" class="btn btn-primary float-right">
                         <i class="fa fa-search"></i> Buscar
                     </button>
                 </div>
