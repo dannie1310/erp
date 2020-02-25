@@ -90,8 +90,10 @@
         data() {
             return {
                 cargando: false,
-               // unidades: [],
             }
+        },
+        mounted() {
+            this.getUnidades();
         },
         computed: {
             material() {
@@ -111,19 +113,15 @@
                     .then(data => {
                         this.$store.commit('cadeco/material/SET_MATERIAL', data)
                         $(this.$refs.modal).modal('show');
-                        this.getUnidades()
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
             },
             getUnidades() {
-                this.cargando = true;
                 return this.$store.dispatch('cadeco/unidad/index',{})
                     .then(data => {
                         this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
-                    }).finally(() => {
-                        this.cargando = false;
                     })
             },
             validate() {
