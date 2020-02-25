@@ -30,6 +30,9 @@ export default {
             })
             state.currentMaterial = state.currentMaterial ? data : null;
         },
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentMaterial[data.attribute] = data.value
+        }
     },
 
     actions: {

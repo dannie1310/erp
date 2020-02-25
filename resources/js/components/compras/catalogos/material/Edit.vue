@@ -19,7 +19,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="tipo" class="col-md-3 col-form-label">Familia: </label>
+                                        <label class="col-md-3 col-form-label">Familia: </label>
                                         <div class="col-md-9">
                                             <p class="form-control">{{ material.descripcion_familia}}</p>
                                         </div>
@@ -39,7 +39,8 @@
                                                 class="form-control"
                                                 id="descripcion"
                                                 placeholder="Descripcion"
-                                                v-model="material.descripcion"
+                                                :value="material.descripcion"
+                                                @input="updateAttribute"
                                                 :class="{'is-invalid': errors.has('descripcion')}">
                                             <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
                                         </div>
@@ -52,16 +53,18 @@
                                         <label for="unidad" class="col-md-3 col-form-label">Unidad:</label>
                                         <div class="col-md-9">
                                             <select
-                                                type="text"
-                                                data-vv-as="Unidad"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="unidad"
-                                                v-model="material.unidad">
-                                                <option value>--Unidad--</option>
+                                                  class="form-control"
+                                                  name="unidad"
+                                                  id="unidad"
+                                                  :value="material.unidad"
+                                                  @input="updateAttribute"
+                                                  data-vv-as="Unidad"
+                                                  v-validate="{required: true}"
+                                                  :class="{'is-invalid': errors.has('unidad')}">
+                                                <option value>-- Unidad --</option>
                                                 <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
                                             </select>
-                                             <div class="invalid-feedback" v-show="errors.has('material.unidad')">{{ errors.first('material.unidad') }}</div>
+                                            <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -87,14 +90,16 @@
         data() {
             return {
                 cargando: false,
-                unidades: [],
-                id_unidad: ''
+               // unidades: [],
             }
         },
         computed: {
             material() {
                 return this.$store.getters['cadeco/material/currentMaterial']
-            }
+            },
+            unidades() {
+                return this.$store.getters['cadeco/unidad/unidades']
+            },
         },
         methods: {
             find() {
@@ -114,12 +119,9 @@
             },
             getUnidades() {
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/unidad/index',{
-
-                })
+                return this.$store.dispatch('cadeco/unidad/index',{})
                     .then(data => {
-                        this.unidades = data.data
-                        this.$emit('success')
+                        this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
                     }).finally(() => {
                         this.cargando = false;
                     })
