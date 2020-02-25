@@ -4,9 +4,6 @@
             <create @created="paginate()"></create>
         </div>
         <div class="col-12">
-            <edit v-bind:id="id"></edit>
-        </div>
-        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -24,10 +21,9 @@
 
 <script>
     import Create from "./Create";
-    import Edit from "./Edit";
     export default {
          name: "material-index",
-        components:{Create, Edit},
+        components:{Create},
         data() {
             return {
                 HeaderSettings: false,
