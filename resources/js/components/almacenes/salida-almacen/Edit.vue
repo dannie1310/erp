@@ -60,12 +60,14 @@
                                             <div class="form-group row">
                                                 <div class="col-md-2">
                                                     <div class="custom-control custom-switch">
-                                                        <input type="checkbox" class="custom-control-input button" id="con_prestamo" v-model="con_prestamo" >
+                                                        <input type="checkbox" class="custom-control-input button" id="con_prestamo" v-model="con_prestamo" :value="con_prestamo" @input="updateAttribute">
                                                         <label class="custom-control-label" for="con_prestamo">Entrega a contratista</label>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-7" v-if="con_prestamo">
                                                     <model-list-select
+                                                        :value="salida.entrega_contratista.id_empresa"
+                                                        @input="updateAttribute"
                                                         name="id_empresa"
                                                         :disabled="!con_prestamo"
                                                         placeholder="Seleccionar o buscar por RFC y razón social del contratista"
@@ -87,7 +89,7 @@
                                                                name="opcion_cargo"
                                                                :id="'opcion_cargo' + key"
                                                                :value="key"
-
+                                                                @input="updateAttribute"
                                                                v-validate="{required: true}"
                                                                v-model.number="salida.entrega_contratista.tipo_cargo">
                                                             {{ cargo }}
@@ -209,6 +211,9 @@
                         this.contratistas = data.data;
                     })
             },
+            updateAttribute(e) {
+                return this.$store.commit('almacenes/salida-almacen/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
+            }
         },
         computed: {
             salida() {
