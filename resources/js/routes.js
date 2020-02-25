@@ -74,18 +74,18 @@ export const routes = [
                 }
             },
             {
-                path: 'editar-poliza',
-                component: require('./components/contabilidad-general/poliza/Busqueda.vue').default,
+                path: 'polizas',
+                component: require('./components/contabilidad-general/poliza/Index.vue').default,
                 children:[
                     {
                         path:"/",
-                        name:"editar-poliza",
-                        component: require('./components/contabilidad-general/poliza/Busqueda.vue').default,
+                        name:"poliza-contpaq",
+                        component: require('./components/contabilidad-general/poliza/Index.vue').default,
                         meta: {
-                            title: 'Editar Póliza',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'EDITAR PÓLIZA'},
+                            title: 'Pólizas',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'PÓLIZAS'},
                             middleware: [auth, permission],
-                            permission: 'editar_poliza',
+                            permission: ['editar_poliza','consultar_poliza'],
                             general: true
                         }
                     }
