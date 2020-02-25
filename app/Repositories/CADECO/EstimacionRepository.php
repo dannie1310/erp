@@ -25,4 +25,8 @@ class EstimacionRepository extends Repository implements RepositoryInterface
         return $this->model->registrar($datos);
     }
 
+    public function update(array $data, $id)
+    {
+        return $this->show($id)->editar($data);;
+    }
 }
