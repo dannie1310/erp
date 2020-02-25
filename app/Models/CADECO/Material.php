@@ -39,6 +39,38 @@ class Material extends Model
         'numero_parte'
     ];
 
+
+    public function familia()
+    {
+        return $this->belongsTo(Familia::class, 'tipo_material', 'tipo_material');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(Item::class, 'id_material', 'id_material');
+    }
+
+    public function cuentaMaterial()
+    {
+        return $this->hasOne(CuentaMaterial::class, 'id_material');
+    }
+
+    public function inventarios()
+    {
+        return $this->hasMany(Inventario::class, 'id_material','id_material');
+    }
+
+    public function Almacenes(){
+        return $this->belongsToMany(Almacen::class,'inventarios','id_material','id_almacen')
+            ->distinct();
+    }
+
+    public function hijos()
+    {
+        return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
+            ->where('nivel', 'LIKE',  '009.___.');
+    }
+
     public function getTieneHijosAttribute()
     {
         return $this->hijos()->count() ? true : false;
@@ -76,11 +108,6 @@ class Material extends Model
         return $regreso;
     }
 
-    public function familia()
-    {
-        return $this->belongsTo(Familia::class, 'tipo_material', 'tipo_material');
-    }
-
     public function lista_materiales($data)
     {
         Storage::disk('lista_insumos')->delete(Storage::disk('lista_insumos')->allFiles());
@@ -89,30 +116,10 @@ class Material extends Model
         return Storage::disk('lista_insumos')->download($nombre_archivo);
     }
 
-    public function cuentaMaterial()
-    {
-        return $this->hasOne(CuentaMaterial::class, 'id_material');
-    }
-
-    public function inventarios()
-    {
-        return $this->hasMany(Inventario::class, 'id_material','id_material');
-    }
-
-    public function Almacenes(){
-        return $this->belongsToMany(Almacen::class,'inventarios','id_material','id_almacen')
-            ->distinct();
-    }
 
     public function requisicionInsumos()
     {
         return $this->requisicion()->get();
-    }
-
-    public function hijos()
-    {
-        return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
-            ->where('nivel', 'LIKE',  '009.___.');
     }
 
     public function scopeRoots($query)
@@ -169,7 +176,7 @@ class Material extends Model
     }
 
     public function scopeSuministrables($query){
-        
+
         return $query->whereIn('tipo_material',[1,2,4])->where('equivalencia', '=', 1);
     }
 
@@ -250,5 +257,10 @@ class Material extends Model
     {
         return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')
             ->whereRaw('inventarios.saldo > 0')->select('materiales.*')->distinct();
+    }
+
+    public function getEditableAttribute()
+    {
+       // if($this->items()->)
     }
 }

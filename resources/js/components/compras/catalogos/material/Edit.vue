@@ -29,6 +29,16 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
+                                        <label class="col-md-3 col-form-label">Número de Parte: </label>
+                                        <div class="col-md-9">
+                                            <p class="form-control">{{ material.numero_parte}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
                                         <label for="descripcion" class="col-md-3 col-form-label">Descripción:</label>
                                         <div class="col-md-9">
                                             <input
@@ -93,7 +103,7 @@
             }
         },
         mounted() {
-            this.getUnidades();
+            //this.getUnidades();
         },
         computed: {
             material() {
@@ -118,12 +128,12 @@
                         this.cargando = false;
                     })
             },
-            getUnidades() {
-                return this.$store.dispatch('cadeco/unidad/index',{})
-                    .then(data => {
-                        this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
-                    })
-            },
+            // getUnidades() {
+            //     return this.$store.dispatch('cadeco/unidad/index',{})
+            //         .then(data => {
+            //             this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
+            //         })
+            // },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {

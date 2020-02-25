@@ -44,6 +44,7 @@
         },
         mounted() {
             this.$Progress.start();
+            this.getUnidades()
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
@@ -61,7 +62,13 @@
                     .finally(() => {
                         this.cargando = false;
                     })
-            }
+            },
+            getUnidades() {
+                return this.$store.dispatch('cadeco/unidad/index',{})
+                    .then(data => {
+                        this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
+                    })
+            },
         },
         computed: {
             materiales(){
