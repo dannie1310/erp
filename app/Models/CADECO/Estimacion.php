@@ -749,6 +749,7 @@ class Estimacion extends Transaccion
             'iva'                     => $this->iva_orden_pago,
             'total'                   => $this->total_orden_pago,
             'folio_consecutivo'       => $this->subcontratoEstimacion->folio_consecutivo_format,
+            'folio_consecutivo_num'   => $this->subcontratoEstimacion->NumeroFolioConsecutivo,
             'id_empresa'              => $this->empresa->id_empresa,
             'anticipo_format'         => $this->anticipo_format,
             'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
