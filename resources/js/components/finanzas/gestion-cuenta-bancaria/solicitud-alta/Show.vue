@@ -33,7 +33,7 @@
                                                             <td>{{solicitudAlta.banco.razon_social}}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Cuenta / CLABE / Núm Tarjeta:</th>
+                                                            <th>Cuenta / CLABE / Núm. Tarjeta:</th>
                                                             <td>{{solicitudAlta.cuenta}}</td>
                                                         </tr>
                                                         <tr>
