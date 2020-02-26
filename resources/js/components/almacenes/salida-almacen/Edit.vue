@@ -66,8 +66,6 @@
                                                 </div>
                                                 <div class="col-md-7" v-if="con_prestamo">
                                                     <model-list-select
-                                                        :value="salida.entrega_contratista.id_empresa"
-                                                        @input="updateAttribute"
                                                         name="id_empresa"
                                                         :disabled="!con_prestamo"
                                                         placeholder="Seleccionar o buscar por RFC y razón social del contratista"
@@ -82,7 +80,7 @@
                                                 </div>
                                                 <div class="col-md-3" v-if="con_prestamo">
                                                     <div class="btn-group btn-group-toggle">
-                                                        <label class="btn btn-outline-primary" :class="salida.entrega_contratista.tipo_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                        <label class="btn btn-outline-primary" :class="res.tipo_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
                                                         <input type="radio"
                                                                :disabled="!con_prestamo"
                                                                class="btn-group-toggle "
@@ -91,7 +89,7 @@
                                                                :value="key"
                                                                 @input="updateAttribute"
                                                                v-validate="{required: true}"
-                                                               v-model.number="salida.entrega_contratista.tipo_cargo">
+                                                               v-model.number="res.tipo_cargo">
                                                             {{ cargo }}
                                                         </label>
                                                     </div>
@@ -176,17 +174,21 @@
                     0: "A Consignación"
                 },
                 con_prestamo : false,
-                contratistas : []
+                contratistas : [],
+                salida: '',
+                res:[
+                    {
+                        tipo_cargo: 0
+                    }
+                ]
             }
-        },
-        mounted() {
-            this.getContratista();
         },
         methods: {
             rfcAndRazonSocial (item){
                 return `[${item.rfc}] - ${item.razon_social}`
             },
             find() {
+                this.getContratista();
                 $(this.$refs.modal).modal('show');
                 this.cargando = true;
                 this.$store.commit('almacenes/salida-almacen/SET_SALIDA', null);
@@ -199,27 +201,46 @@
                         this.con_prestamo = true
                     }
                     this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
+                    this.salida = data;
+                    // this.res.tipo_cargo = this.salida.entrega_contratista.tipo_cargo
+                    console.log('Res', this.res);                    
+
                 }).finally(() => {
                     this.cargando = false;
                 })
+                console.log(this.con_prestamo);
+                
             },
-            getContratista() {
+            getContratista() {                
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {sort: 'razon_social', order: 'asc', scope:'Contratista' }
                 })
                     .then(data => {
                         this.contratistas = data.data;
-                    })
+                    })                    
             },
             updateAttribute(e) {
                 return this.$store.commit('almacenes/salida-almacen/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.update()
+                    }
+                });
+            },
+            update()
+            {
+                alert('Update');
+                console.log('Con_prestamo', this.con_prestamo, this.salida);
+                
             }
         },
-        computed: {
-            salida() {
-                return this.$store.getters['almacenes/salida-almacen/currentSalida'];
-            }
-        }
+        // computed: {
+        //     salida() {
+        //         return this.$store.getters['almacenes/salida-almacen/currentSalida'];
+        //     }
+        // }
     }
 </script>
 
