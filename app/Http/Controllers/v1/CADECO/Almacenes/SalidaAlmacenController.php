@@ -69,9 +69,13 @@ class SalidaAlmacenController extends Controller
 
     public function entregaContratista(Request $request, $id)
     {
-        // dd('controller, salida de almacen', $id, $request);
-        $res = $this->service->entregaContratista($request->all(), $id);
-        return response()->json([], 200);
+        if(auth()->user()->can('editar_salida_almacen'))
+        {
+            $res = $this->service->entregaContratista($request->all(), $id);
+            return response()->json([], 200);
+        }       
+
+        throw New \Exception('No cuentas con los permisos necesarios para realizar la acción solicitada.');
     }
 
 }

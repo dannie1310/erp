@@ -73,9 +73,7 @@ export default {
             });
         },
 
-        tipo(context, payload) {
-            console.log(payload);
-            
+        tipo(context, payload) {            
             return new Promise((resolve, reject) => {
                 
                 swal({

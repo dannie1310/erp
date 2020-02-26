@@ -60,7 +60,6 @@ class SalidaAlmacenService
 
     public function store($data)
     {
-        // dd('crear', $data);
         return $this->repository->create($data);
     }
 

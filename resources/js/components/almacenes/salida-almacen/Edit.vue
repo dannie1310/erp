@@ -241,8 +241,7 @@
                        params: this.res
                    })
                    .then(() => {
-                    //    this.$store.commit('almacenes/salida-almacen/UPDATE_CLIENTE', data);
-                    //    $(this.$refs.modal).modal('hide');
+                       $(this.$refs.modal).modal('hide');
                    })
                 
             }
