@@ -60,7 +60,13 @@ class SalidaAlmacenService
 
     public function store($data)
     {
+        // dd('crear', $data);
         return $this->repository->create($data);
+    }
+
+    public function entregaContratista($data, $id)
+    {    
+        $this->show($id)->editarEntregasContratista($data['params']);
     }
 
     public function pdfSalidaAlmacen($id)

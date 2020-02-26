@@ -73,6 +73,51 @@ export default {
             });
         },
 
+        tipo(context, payload) {
+            console.log(payload);
+            
+            return new Promise((resolve, reject) => {
+                
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar Tipo de  Entrega a Contratista",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/entrega', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Tipo de entrega a contratista actualizado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+                    // console.log('fin', payload);
+                    
+            });
+        },
+
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

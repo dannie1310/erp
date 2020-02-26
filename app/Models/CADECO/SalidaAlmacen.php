@@ -133,6 +133,11 @@ class SalidaAlmacen extends Transaccion
         };
     }
 
+    public function editarEntregasContratista($data)
+    {
+        dd('editarEntregasContratista', $data, $this);
+    }
+
     public function getEstadoFormatAttribute()
     {
         switch ($this->estado) {

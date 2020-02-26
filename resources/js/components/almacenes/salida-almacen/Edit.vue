@@ -20,7 +20,7 @@
                             </div>
                         </div>
                     <form role="form" v-if="salida" @submit.prevent="validate">
-                        <div class="modal-body">
+                        <div class="modal-body" v-if="!cargando">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="invoice p-3 mb-3">
@@ -71,7 +71,7 @@
                                                         placeholder="Seleccionar o buscar por RFC y razón social del contratista"
                                                         data-vv-as="Empresa"
                                                         v-validate="{required: true}"
-                                                        v-model="salida.entrega_contratista.id_empresa"
+                                                        v-model="id_empresa"
                                                         option-value="id"
                                                         :custom-text="rfcAndRazonSocial"
                                                         :list="contratistas"
@@ -80,16 +80,16 @@
                                                 </div>
                                                 <div class="col-md-3" v-if="con_prestamo">
                                                     <div class="btn-group btn-group-toggle">
-                                                        <label class="btn btn-outline-primary" :class="res.tipo_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                        <label class="btn btn-outline-primary" :class="tipo_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
                                                         <input type="radio"
                                                                :disabled="!con_prestamo"
                                                                class="btn-group-toggle "
-                                                               name="opcion_cargo"
+                                                               name="tipo_cargo"
                                                                :id="'opcion_cargo' + key"
                                                                :value="key"
-                                                                @input="updateAttribute"
+                                                               autocomplete="on"
                                                                v-validate="{required: true}"
-                                                               v-model.number="res.tipo_cargo">
+                                                               v-model.number="tipo_cargo">
                                                             {{ cargo }}
                                                         </label>
                                                     </div>
@@ -176,11 +176,14 @@
                 con_prestamo : false,
                 contratistas : [],
                 salida: '',
-                res:[
+                tipo_cargo: '',
+                id_empresa:'',
+                res:
                     {
-                        tipo_cargo: 0
+                        tipo_cargo: '',
+                        id_empresa:''
                     }
-                ]
+                
             }
         },
         methods: {
@@ -188,9 +191,10 @@
                 return `[${item.rfc}] - ${item.razon_social}`
             },
             find() {
+                this.cargando = true;
                 this.getContratista();
                 $(this.$refs.modal).modal('show');
-                this.cargando = true;
+                
                 this.$store.commit('almacenes/salida-almacen/SET_SALIDA', null);
                 return this.$store.dispatch('almacenes/salida-almacen/find', {
                     id: this.id,
@@ -202,14 +206,12 @@
                     }
                     this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
                     this.salida = data;
-                    // this.res.tipo_cargo = this.salida.entrega_contratista.tipo_cargo
-                    console.log('Res', this.res);                    
+                    this.id_empresa = this.salida.entrega_contratista.id_empresa;
+                    this.tipo_cargo = this.salida.entrega_contratista.tipo_cargo;                    
 
                 }).finally(() => {
                     this.cargando = false;
-                })
-                console.log(this.con_prestamo);
-                
+                })                
             },
             getContratista() {                
                 return this.$store.dispatch('cadeco/empresa/index', {
@@ -231,16 +233,20 @@
             },
             update()
             {
-                alert('Update');
-                console.log('Con_prestamo', this.con_prestamo, this.salida);
+                this.res.id_empresa = this.id_empresa;
+                this.res.tipo_cargo = this.tipo_cargo;              
+
+                 return this.$store.dispatch('almacenes/salida-almacen/tipo', {
+                       id: this.id,
+                       params: this.res
+                   })
+                   .then(() => {
+                    //    this.$store.commit('almacenes/salida-almacen/UPDATE_CLIENTE', data);
+                    //    $(this.$refs.modal).modal('hide');
+                   })
                 
             }
         },
-        // computed: {
-        //     salida() {
-        //         return this.$store.getters['almacenes/salida-almacen/currentSalida'];
-        //     }
-        // }
     }
 </script>
 
