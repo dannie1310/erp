@@ -1,15 +1,15 @@
-const URI = '/api/contabilidad-general/lista-empresa/';
+const URI = '/api/contabilidad-general/empresa-sat/';
 export default {
     namespaced: true,
     state: {
-        listaEmpresas: [],
-        currentEmpresa: null,
+        empresasSAT: [],
+        currentEmpresaSAT: null,
         meta: {},
     },
 
     mutations: {
         SET_EMPRESAS(state, data) {
-            state.listaEmpresas = data;
+            state.empresasSAT = data;
         },
 
         SET_META(state, data) {
@@ -17,16 +17,16 @@ export default {
         },
 
         SET_EMPRESA(state, data) {
-            state.currentEmpresa = data;
+            state.currentEmpresaSAT = data;
         },
         UPDATE_EMPRESA(state, data) {
-            state.listaEmpresas = state.listaEmpresas.map(empresa => {
+            state.empresasSAT = state.empresasSAT.map(empresa => {
                 if (empresa.id === data.id) {
                     return Object.assign({}, empresa, data)
                 }
                 return empresa
             })
-            state.currentEmpresa = state.currentEmpresa ? data : null;
+            state.currentEmpresaSAT = state.currentEmpresaSAT ? data : null;
         },
     },
 
@@ -114,7 +114,7 @@ export default {
 
     getters: {
         empresas(state) {
-            return state.listaEmpresas
+            return state.empresasSAT
         },
 
         meta(state) {
@@ -122,7 +122,7 @@ export default {
         },
 
         currentEmpresa(state) {
-            return state.currentEmpresa
+            return state.currentEmpresaSAT
         }
     }
 }
