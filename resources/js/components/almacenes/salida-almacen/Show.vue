@@ -173,10 +173,6 @@
         props: ['id','pagina'],
         data() {
             return {
-                data: [],
-                motivo: '',
-                indice: '',
-                cargo: '',
                 cargando: false,
             }
         },
@@ -184,7 +180,6 @@
             find() {
                 $(this.$refs.modal).modal('show');
                 this.cargando = true;
-                this.motivo = '';
                 this.$store.commit('almacenes/salida-almacen/SET_SALIDA', null);
                 return this.$store.dispatch('almacenes/salida-almacen/find', {
                     id: this.id,

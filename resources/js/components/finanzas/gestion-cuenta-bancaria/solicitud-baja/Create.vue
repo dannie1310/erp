@@ -42,7 +42,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="cuenta" class="col-sm-2 col-form-label">Cuenta / Clabe: </label>
+                                        <label for="cuenta" class="col-sm-2 col-form-label">Cuenta / Clabe / No Tarjeta: </label>
                                         <div class="col-sm-10">
                                             <select
                                                     :disabled="!bandera_empresa"
@@ -94,7 +94,7 @@
                                                              </tr>
                                                             <tr>
                                                                 <td><b>Tipo:</b></td>
-                                                                <td>{{cuenta.tipo}}</td>
+                                                                <td>{{cuenta.tipo_cuenta.descripcion}}</td>
                                                              </tr>
 
                                                         </tbody>
@@ -207,7 +207,7 @@
                 this.detalle = 0;
                 return this.$store.dispatch('cadeco/empresa/find', {
                     id: this.id_empresa,
-                    params: {include: ['cuentas_bancarias', 'cuentas_bancarias.moneda', 'cuentas_bancarias.plaza', 'cuentas_bancarias.banco']}
+                    params: {include: ['cuentas_bancarias', 'cuentas_bancarias.tipo_cuenta', 'cuentas_bancarias.moneda', 'cuentas_bancarias.plaza', 'cuentas_bancarias.banco']}
                 }).then(data => {
                     this.cuentas = data.cuentas_bancarias.data;
                     this.bandera_empresa = 1;
