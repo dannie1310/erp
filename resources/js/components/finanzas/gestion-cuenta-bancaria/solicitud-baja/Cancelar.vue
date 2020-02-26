@@ -25,7 +25,7 @@
                                                             <td>{{solicitudBaja.empresa.razon_social}}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Cuenta / CLABE / No Tarjeta:</th>
+                                                            <th>Cuenta / CLABE / Núm Tarjeta:</th>
                                                             <td>{{solicitudBaja.cuenta}}</td>
                                                         </tr>
                                                     </tbody>

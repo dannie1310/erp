@@ -42,7 +42,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="cuenta" class="col-sm-2 col-form-label">Cuenta / Clabe / No Tarjeta: </label>
+                                        <label for="cuenta" class="col-sm-2 col-form-label">Cuenta / Clabe / Núm Tarjeta: </label>
                                         <div class="col-sm-10">
                                             <select
                                                     :disabled="!bandera_empresa"
