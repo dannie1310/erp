@@ -130,7 +130,6 @@ class EstimacionFormato extends Rotation
         $this->SetFont('Arial', 'B', '#' . 10);
         $this->Cell(0.757 * $this->WidthTotal, 0.5,utf8_decode($this->conceptos_ordenados['subcontrato']['referencia']), 'RB, LT', 1, 'C');
 
-        $this->tableHeader();
         $currentPage = $this->PageNo();
         if($currentPage>1){
             $this->Ln();
@@ -140,11 +139,11 @@ class EstimacionFormato extends Rotation
     public function tableHeader()
     {
         $this->Ln();
-
         $this->SetFills(180,180,180);
         $this->SetFont('Arial', 'B', 7);
         $this->SetFillColor(180,180,180);
-        $this->Cell(0.250 * $this->WidthTotal,0.8,'Concepto','RTLB',0,'C',180);   // empty cell with left,top, and right borders
+
+        $this->Cell(0.250 * $this->WidthTotal,0.8,'Concepto','RTLB',0,'C',180);
         $this->Cell(0.05 * $this->WidthTotal,0.8,'U.M.','RTLB',0,'C',180);
         $this->Cell(0.06 * $this->WidthTotal,0.8,'P.U.','RTLB',0,'C',180);
         $this->Cell(0.130 * $this->WidthTotal,0.4,'Contrato y Aditamentos ','BTLR',0,'C',180);
@@ -210,7 +209,7 @@ class EstimacionFormato extends Rotation
         $this->Ln();
         $this->SetFont('Arial', '', 5);
         $this->SetFillColor(180, 180, 180);
-        $this->SetWidths([6.92, 1.39, 1.67, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.78, 1.78]);
+        $this->SetWidths([6.925, 1.385, 1.662, 1.8005, 1.8005, 1.8005,1.8005, 1.8005, 1.8005, 1.8005, 1.8005, 1.7728,  1.7728]);
         $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
         $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '2']);
         $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
@@ -250,19 +249,19 @@ class EstimacionFormato extends Rotation
         $this->SetFont('Arial', 'B', 5);
         $this->SetFillColor(180, 180, 180);
 
-        $this->Cell(6.92, 0.3, "Sub-totales Obra Ejecutada", 'RTLB', 0, 'R', 180);   // empty cell with left,top, and right borders
-        $this->Cell(1.39, 0.3, "", 'RTLB', 0, 'C', 180);
-        $this->Cell(1.67, 0.3, '', 'RTLB', 0, 'R', 180);
-        $this->Cell(1.80, 0.3, ' ', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.80, 0.3, number_format($this->suma_contrato, 3, ".", ","), 'BTLR', 0, 'R', 180);
-        $this->Cell(1.80, 0.3, '', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.80, 0.3, number_format($this->suma_estimacionAnterior, 3, ".", ","), 'BTLR', 0, 'R', 180);
-        $this->Cell(1.80, 0.3, ' ', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.80, 0.3, number_format($this->suma_estimacion, 3, ".", ","), 'BTLR', 0, 'R', 180);
-        $this->Cell(1.80, 0.3, ' ', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.80, 0.3, number_format($this->suma_acumulada, 3, ".", ","), 'BTLR', 0, 'R', 180);
-        $this->Cell(1.78, 0.3, '', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.78, 0.3, number_format($this->estimacion->suma_importes, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(6.925, 0.3, "Sub-totales Obra Ejecutada", 'RTLB', 0, 'R', 180);   // empty cell with left,top, and right borders
+        $this->Cell(1.385, 0.3, "", 'RTLB', 0, 'C', 180);
+        $this->Cell(1.662, 0.3, '', 'RTLB', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, ' ', 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, number_format($this->suma_contrato, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, '', 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, number_format($this->suma_estimacionAnterior, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, ' ', 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, number_format($this->suma_estimacion, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, ' ', 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, number_format($this->suma_acumulada, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(1.7728, 0.3, '', 'BTLR', 0, 'R', 180);
+        $this->Cell(1.7728, 0.3, number_format($this->estimacion->suma_importes, 3, ".", ","), 'BTLR', 0, 'R', 180);
     }
 
     public function tablaDeductivaDescuentos()
@@ -271,7 +270,7 @@ class EstimacionFormato extends Rotation
         $this->SetFills(180, 180, 180);
         $this->SetFont('Arial', 'B', 7);
         $this->SetFillColor(180, 180, 180);
-        $this->Ln(.5);
+        $this->Ln(.3);
 
         $this->Cell(0.250 * $this->WidthTotal, 0.4, 'DEDUCTIVAS Y DESCUENTOS', '', 0, 'L', 0);
         $this->Cell(0.24 * $this->WidthTotal, 0.4, 'DEDUCTIVAS', 'RTLB', 0, 'C', 1);
@@ -279,7 +278,6 @@ class EstimacionFormato extends Rotation
 
        $this->partidaDeductiva();
 
-       // $this->Ln();
         $this->SetFills(180, 180, 180);
         $this->SetFont('Arial', 'B', 5);
         $this->SetFillColor(180, 180, 180);
@@ -303,14 +301,14 @@ class EstimacionFormato extends Rotation
         $this->Ln();
         $this->SetFont('Arial', '', 5);
         $this->SetFillColor(180, 180, 180);
-        $this->SetWidths([6.92, 1.39, 1.67, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.78, 1.78]);
+        $this->SetWidths([6.925, 1.385, 1.662, 1.8005, 1.8005, 1.8005,1.8005, 1.8005, 1.8005, 1.8005, 1.8005, 1.7728,  1.7728]);
         $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
         $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '2']);
         $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
         $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
         $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
         $this->SetHeights([0.4]);
-        $this->SetAligns(['L', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+        $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
         //imprimir descuentos cuando existan: for***
 
         $this->Row([
@@ -327,24 +325,6 @@ class EstimacionFormato extends Rotation
             'panda',
             'panda', 'panda',
         ]);
-
-//        $this->Ln();
-//        $this->SetFills(180, 180, 180);
-//        $this->SetFont('Arial', '', 5);
-//        $this->SetFillColor(180, 180, 180);
-//        $this->Cell(0.250 * $this->WidthTotal, 0.4, 'nombre material', 'RTLB', 0, 'L', 0);
-//        $this->Cell(0.05 * $this->WidthTotal, 0.4, 'Unidad', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.06 * $this->WidthTotal, 0.4, 'panda2', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda3', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda4', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda5', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda6', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda1', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda2', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda3', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda4', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.064 * $this->WidthTotal, 0.4, 'panda5', 'BTLR', 0, 'R', 0);
-//        $this->Cell(0.064 * $this->WidthTotal, 0.4, 'panda6', 'BTLR', 0, 'R', 0);
     }
 
     public function tablaRetenciones()
@@ -353,32 +333,12 @@ class EstimacionFormato extends Rotation
         $this->SetFills(180, 180, 180);
         $this->SetFont('Arial', 'B', 7);
         $this->SetFillColor(180, 180, 180);
-        $this->Ln(.5);
+        $this->Ln(.3);
 
         $this->Cell(0.250 * $this->WidthTotal, 0.4, 'RETENCIONES', '', 0, 'L', 0);
 
-        //imprimir RETENCIONES cuando existan: for***
-
-        $this->Ln();
-        $this->SetFills(180, 180, 180);
-        $this->SetFont('Arial', '', 5);
-        $this->SetFillColor(180, 180, 180);
-        $this->Cell(0.250 * $this->WidthTotal, 0.4, 'dfgdfgdfg', 'RTLB', 0, 'L', 0);
-        $this->Cell(0.05 * $this->WidthTotal, 0.4, 'TIPO', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.06 * $this->WidthTotal, 0.4, 'panda2', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda3', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda4', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda5', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda6', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda1', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda2', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda3', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda4', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.064 * $this->WidthTotal, 0.4, 'panda5', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.064 * $this->WidthTotal, 0.4, 'panda6', 'BTLR', 0, 'R', 0);
-
-
-        $this->Ln();
+        $this->partidaRetenciones();
+       // $this->Ln();
         $this->SetFills(180, 180, 180);
         $this->SetFont('Arial', 'B', 5);
         $this->SetFillColor(180, 180, 180);
@@ -398,6 +358,37 @@ class EstimacionFormato extends Rotation
 
     }
 
+    public function partidaRetenciones()
+    {
+        $this->Ln();
+        $this->SetFont('Arial', '', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->SetWidths([6.925, 1.385, 1.662, 1.8005, 1.8005, 1.8005,1.8005, 1.8005, 1.8005, 1.8005, 1.8005, 1.7728,  1.7728]);
+        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+        $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '2']);
+        $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+        //imprimir retenciones cuando existan: for***
+
+        $this->Row([
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda', 'panda',
+        ]);
+    }
+
     public function tablaLiberaciones()
     {
         $this->Ln();
@@ -408,28 +399,8 @@ class EstimacionFormato extends Rotation
 
         $this->Cell(0.250 * $this->WidthTotal, 0.4, 'LIBERACIONES', '', 0, 'L', 0);
 
-        //imprimir RETENCIONES cuando existan: for***
+        $this->partidaLiberaciones();
 
-        $this->Ln();
-        $this->SetFills(180, 180, 180);
-        $this->SetFont('Arial', '', 5);
-        $this->SetFillColor(180, 180, 180);
-        $this->Cell(0.250 * $this->WidthTotal, 0.4, 'dfgdfgdfg', 'RTLB', 0, 'L', 0);
-        $this->Cell(0.05 * $this->WidthTotal, 0.4, 'TgdgdfgIPO', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.06 * $this->WidthTotal, 0.4, 'panda2', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda3', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda4', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda5', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda6', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda1', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda2', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda3', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.065 * $this->WidthTotal, 0.4, 'panda4', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.064 * $this->WidthTotal, 0.4, 'panda5', 'BTLR', 0, 'R', 0);
-        $this->Cell(0.064 * $this->WidthTotal, 0.4, 'panda6', 'BTLR', 0, 'R', 0);
-
-
-        $this->Ln();
         $this->SetFills(180, 180, 180);
         $this->SetFont('Arial', 'B', 5);
         $this->SetFillColor(180, 180, 180);
@@ -467,9 +438,72 @@ class EstimacionFormato extends Rotation
 
     }
 
+    public function partidaLiberaciones()
+    {
+        $this->Ln();
+        $this->SetFont('Arial', '', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->SetWidths([6.925, 1.385, 1.662, 1.8005, 1.8005, 1.8005,1.8005, 1.8005, 1.8005, 1.8005, 1.8005, 1.7728,  1.7728]);
+        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+        $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '2']);
+        $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+        //imprimir liberaciones cuando existan: for***
+
+        $this->Row([
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+            'panda',
+        ]);
+    }
+
     public function tablaResumen()
     {
+        $this->Ln();
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 7);
+        $this->SetFillColor(180, 180, 180);
+        $this->Ln(.3);
 
+        $this->Cell(0.250 * $this->WidthTotal, 0.4, 'RESUMEN', '', 0, 'L', 0);
+
+        $this->Ln();
+        $this->SetFont('Arial', '', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->SetWidths([6.925, 1.385, 1.662, 1.8005, 1.8005, 1.8005,1.8005, 1.8005, 1.8005, 1.8005, 1.8005, 1.7728,  1.7728]);
+        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+        $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '2']);
+        $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+
+        $this->Row(['Importe asociado a trabajos ejecutados', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda']);
+        $this->Row(['Deductivas y Descuentos', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda']);
+        $this->Row(['Penalizaciones', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda']);
+        $this->Row(['Anticipo Solicitado', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda']);
+        $this->Row([utf8_decode('Amortización Anticipo'), 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda']);
+        $this->Row([utf8_decode('Fondo de Garantía'), 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda']);
+        $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
+        $this->Row(['Sub-total valor de los trabajos', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda']);
+        $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->Row(['IVA', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda']);
+        $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
+        $this->Row(['Total', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda', 'panda']);
     }
 
     function pixelsToCM($val)
@@ -498,17 +532,17 @@ class EstimacionFormato extends Rotation
             $this->SetFont('Arial', 'B', 4.5);
             $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode(''), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('ELABORÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Avaló'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('REVISÓ'), 'TRLB', 1, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Revisó'), 'TRLB', 1, 'C', 1);
 
 
             $this->SetXY(14.75, -3.5);
             $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Vo.Bo.'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('REVISÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('AUTORIZÓ'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
@@ -570,9 +604,9 @@ class EstimacionFormato extends Rotation
             $this->SetFillColor(180, 180, 180);
 
             $this->SetFont('Arial', 'B', 4.2);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('ELABORÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('REVISÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
@@ -701,9 +735,9 @@ class EstimacionFormato extends Rotation
             $this->SetFillColor(180, 180, 180);
 
             $this->SetFont('Arial', 'B', 4.2);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('ELABORÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('REVISÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
@@ -816,10 +850,12 @@ class EstimacionFormato extends Rotation
         $this->AliasNbPages();
         $this->AddPage();
         $this->SetAutoPageBreak(true,3.75);
+        $this->tableHeader();
         $this->partidas();
         $this->tablaDeductivaDescuentos();
         $this->tablaRetenciones();
         $this->tablaLiberaciones();
+        $this->tablaResumen();
         try {
             $this->Output('I', "Formato - Estimacion_".$this->conceptos_ordenados['folio'].".pdf", 1);
         } catch (\Exception $ex) {
