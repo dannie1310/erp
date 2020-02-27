@@ -454,12 +454,12 @@
 
             validaCumplimiento(partida){
                 var diferencia;
-                diferencia = Math.abs(parseFloat(Math.round(partida.cantidad_pendiente).toFixed(2)) - parseFloat(Math.round(partida.cantidad_ingresada).toFixed(2)));
-                if(diferencia<0.01)
+                diferencia = Math.abs(parseFloat(partida.cantidad_pendiente).toFixed(3) - parseFloat(partida.cantidad_ingresada).toFixed(3));
+                if(diferencia<0.001)
                 {
                     partida.cumplido = true;
                 }
-                else if(parseFloat(Math.round(partida.cantidad_ingresada).toFixed(2)) == parseFloat(0) || partida.cantidad_ingresada==='' || partida.cantidad_ingresada  === undefined){
+                else if(parseFloat(Math.round(partida.cantidad_ingresada).toFixed(3)) == parseFloat(0) || partida.cantidad_ingresada==='' || partida.cantidad_ingresada  === undefined){
                     partida.cumplido = false;
                 }
             },
