@@ -57,7 +57,9 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0"><i class="fa fa-upload"></i> Cargar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">
+                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                <i class="fa fa-upload" v-else></i> Cargar</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
@@ -144,16 +146,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result){
-                        console.log("1");
                         if(this.$refs.carga_zip.value === ''){
                             swal('¡Error!', 'Seleccione un archivo.', 'warning');
-                            console.log("2");
                         }else{
-                            console.log("3");
                             this.cargarZIP()
                         }
                     }else{
-                        console.log("4");
                         if(this.$refs.carga_zip.value !== ''){
                             this.$refs.carga_zip.value = '';
                             this.file_zip = null;
@@ -163,13 +161,12 @@
                 });
             },
             cargarZIP(){
-                console.log("6");
                 this.cargando = true;
                 var formData = new FormData();
                 formData.append('archivo_zip',  this.file_zip);
                 formData.append('nombre_archivo',  this.file_zip_name);
                 formData.append('id_empresa',  this.id_empresa);
-                return this.$store.dispatch('contabilidadGeneral/empresa-sat/cargarZIPCFD',
+                return this.$store.dispatch('contabilidadGeneral/cfd-sat/cargarZIP',
                 {
                     data: formData,
                     config: {

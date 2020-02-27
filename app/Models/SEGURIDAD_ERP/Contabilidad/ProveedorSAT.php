@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: EMartinez
- * Date: 26/02/2020
- * Time: 03:27 PM
+ * Date: 27/02/2020
+ * Time: 11:54 AM
  */
 
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
@@ -11,10 +11,15 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FacturaSATRepositorio extends Model
+class ProveedorSAT extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.Contabilidad.repositorio_facturas_sat';
+    protected $table = 'SEGURIDAD_ERP.Contabilidad.ProveedoresSAT';
     public $timestamps = false;
+
+    public $fillable = [
+        'razon_social',
+        'rfc'
+    ];
 
 }

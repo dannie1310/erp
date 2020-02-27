@@ -120,7 +120,7 @@ return [
         ],
         'xml_sat' => [
             'driver' => 'local',
-            'root' => storage_path(env('STORAGE_XML_SAT')),
+            'root' => public_path(env('STORAGE_XML_SAT')),
         ]
     ],
 ];

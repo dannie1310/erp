@@ -1,0 +1,51 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: EMartinez
+ * Date: 27/02/2020
+ * Time: 04:20 PM
+ */
+
+namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad;
+
+use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CFDSATTransformer as Transformer;
+use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService as Service;
+use App\Traits\ControllerTrait;
+use App\Http\Controllers\Controller;
+use League\Fractal\Manager;
+use Illuminate\Http\Request;
+
+class CFDSATController extends Controller
+{
+    use ControllerTrait;
+
+    /**
+     * @var Manager
+     */
+    protected $fractal;
+
+    /**
+     * @var Service
+     */
+    protected $service;
+
+    /**
+     * @var Transformer
+     */
+    protected $transformer;
+
+    public function __construct(Manager $fractal, Service $service, Transformer $transformer)
+    {
+        $this->middleware( 'auth:api');
+
+        $this->fractal = $fractal;
+        $this->service = $service;
+        $this->transformer = $transformer;
+    }
+
+    public function cargaZIP(Request $request)
+    {
+        $this->service->procesaZIPCFD($request->archivo_zip);
+    }
+
+}
