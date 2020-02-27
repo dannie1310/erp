@@ -849,10 +849,9 @@ class Estimacion extends Transaccion
         $importe_descuento = 0;
         $importe_descuento_anterior = 0;
         $importe_porEstimar = 0;
+        $importe_acumulado = 0;
         $itemxcontratistas = $this->itemsXContratistas()->pluck('id_item');
-        // dd($itemxcontratistas);
-        $items = Item::whereIn('id_item', $itemxcontratistas)->selectRaw('id_material, sum(cantidad) as cantidad,  sum(importe) as importe ')->groupBy('id_material')->get();
-        //  dd($items->get()->toArray());
+        $items = Item::whereIn('id_item', $itemxcontratistas)->selectRaw('id_material, sum(cantidad) as cantidad,  sum(importe) as importe, sum(importe)/sum(cantidad) as precio_unitario')->groupBy('id_material')->get();
 
         foreach ($items as $k => $a) {
             $importe_total_original += $a->importe;
@@ -864,15 +863,18 @@ class Estimacion extends Transaccion
                 ->where('descuento.id_material', '=', $a->id_material)
                 ->where('id_obra', '=', $this->id_obra)
                 ->where('estado', '>', 0)
-                ->selectRaw('sum(descuento.cantidad) as cantidad,  sum(descuento.importe) as importe ')->first();
+                ->selectRaw('sum(descuento.cantidad) as cantidad,  sum(descuento.importe) as importe')->first();
 
             $importe_descuento += $descuento ? $descuento->importe : 0;
             $importe_descuento_anterior += $descuento_antertior->importe ? $descuento_antertior->importe : 0;
             $importe_porEstimar += ($a->importe - (($descuento_antertior->importe ? $descuento_antertior->importe : 0) + ($descuento ? $descuento->importe : 0)));
+            $importe_acumulado += ($descuento_antertior->importe ? $descuento_antertior->importe : 0) + ($descuento ? $descuento->importe : 0);
 
             $array[$k] = [
                 'id_material' => $a->id_material,
+                'unidad' => $a->material->unidad,
                 'descripcion' => $a->material->descripcion,
+                'precio_unitario' => $a->precio_unitario,
                 'cantidad_original' => $a->cantidad,
                 'importe_original' => $a->importe,
                 'cantidad_descuento' => $descuento ? $descuento->cantidad : 0,
@@ -890,8 +892,14 @@ class Estimacion extends Transaccion
             'importe_total_original' => $importe_total_original,
             'importe_descuento' => $importe_descuento,
             'importe_descuento_anterior' => $importe_descuento_anterior,
+            '$importe_acumulado' => $importe_acumulado,
             'importe_porEstimar' => $importe_porEstimar,
             'partidas_descuento' => $array
         );
+    }
+
+    public function getAnticipoAnteriorAttribute()
+    {
+        return $this->suma_importes * (1- $this->retencion / 100) - $this->monto + $this->impuesto;
     }
 }
