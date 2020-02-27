@@ -11,6 +11,8 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\EmpresaSATRepository as Repository;
+use Illuminate\Support\Facades\Storage;
+use Chumper\Zipper\Zipper;
 
 class EmpresaSATService
 {
@@ -37,6 +39,22 @@ class EmpresaSATService
     public function paginate($data)
     {
         return $this->repository->paginate($data);
+    }
+
+    public function procesaZIPCFD($archivo_zip)
+    {
+        /*Storage::disk('portal_zip')->delete();
+        Storage::disk('portal_zip')->allFiles()*/
+
+
+        $zipper = new Zipper;
+        $contenido = $zipper->getFileContent($archivo_zip);
+        dd($contenido);
+        /*$files = glob($files_global);
+        $zipper->make($zip_file_path . '/' . $file_zip . '.zip')->add($files)->close();*/
+
+      /*  Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());*/
+
     }
 
 }

@@ -1,34 +1,16 @@
 <template>
     <span>
-         <div class="row">
-             <div class="col-md-6">
-                 <div class="form-group row error-content">
-                     <label for="id_empresa" class="col-md-2 col-form-label">Empresa:</label>
-                     <div class="col-md-10">
-                         <model-list-select
-                                 :disabled="cargando"
-                                 :onchange="changeSelect()"
-                                 name="id_empresa"
-                                 v-model="id_empresa"
-                                 option-value="id"
-                                 :custom-text="rfcAndRazonSocial"
-                                 :list="empresas"
-                                 :placeholder="!cargando?'Seleccionar o buscar empresa por razón social o rfc':'Cargando...'"
-                                 :isError="errors.has(`id_empresa`)">
-                         </model-list-select>
-                     </div>
-                 </div>
-             </div>
-
-         </div>
+        <RegistroMasivo/>
     </span>
 </template>
 
 <script>
-    import {ModelListSelect} from 'vue-search-select';
+    import RegistroMasivo from './RegistroMasivo'
+
     export default {
         name: "cfd-sat-index",
-        components: {ModelListSelect},
+        components:{RegistroMasivo},
+
         data() {
             return {
                 cargando: false,

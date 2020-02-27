@@ -14,6 +14,7 @@ use App\Services\SEGURIDAD_ERP\Contabilidad\EmpresaSATService;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
 
 class EmpresaSATController extends Controller
 {
@@ -47,5 +48,14 @@ class EmpresaSATController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function cargaZIP(Request $request)
+    {
+        /*dd($request->nombre_archivo,
+            $request->id_empresa,
+            $request->archivo_zip,
+            $request->file("archivo_zip"));*/
+        $this->service->procesaZIPCFD($request->file("archivo_zip"));
     }
 }
