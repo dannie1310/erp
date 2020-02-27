@@ -56,6 +56,8 @@ class EmpresaSATController extends Controller
             $request->id_empresa,
             $request->archivo_zip,
             $request->file("archivo_zip"));*/
-        $this->service->procesaZIPCFD($request->file("archivo_zip"));
+        $file = $request->file("archivo_zip");
+       // dd($file["name"]);
+        $this->service->procesaZIPCFD($request->archivo_zip);
     }
 }
