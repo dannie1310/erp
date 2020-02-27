@@ -256,32 +256,31 @@ class EstimacionFormato extends Rotation
         $this->SetAligns(['L', 'C', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
         $this->encola = 'obra_ejecutada';
 
-        foreach ($this->conceptos_ordenados['subcontrato']['partidas'] as $i => $p) {
+        foreach ( $this->estimacion->subcontrato->partidas as $i => $p) {
+            $array = $p->partidasFormatoEstimacion($this->estimacion->id_transaccion);
+            $this->suma_contrato += $array['importe_subcontrato'];
+            $this->suma_estimacionAnterior += $array['importe_acumulado_anterior'];
+            $this->suma_estimacion += $array['importe_estimacion'];
+            $this->suma_acumulada += $array['importe_acumulado_a_esta_estimacion'];
+            $this->suma_porEstimar += $array['importe_porEstimar'];
 
-            if (array_key_exists('id', $p)) {
-                $this->suma_contrato += $p['importe_subcontrato'];
-                $this->suma_estimacionAnterior += $p['importe_estimado_anterior']; //
-                $this->suma_estimacion += $p['importe_estimacion'];
-                $this->suma_acumulada += $p['importe_acumulado'];//
-                $this->suma_porEstimar += $p['importe_por_estimar'] - $p['importe_estimacion'];//
+            $this->Row([
+                mb_strtoupper($array['descripcion_concepto']),
+                mb_strtoupper($array['clave']),
+                mb_strtoupper($array['unidad']),
+                number_format($array['precio_unitario_subcontrato'], 4, ".", ","),
+                number_format($array['cantidad_subcontrato'], 4, ".", ","),
+                number_format($array['importe_subcontrato'], 4, ".", ","),
+                number_format($array['cantidad_acumulado_anterior'], 4, ".", ","),
+                number_format($array['importe_acumulado_anterior'], 4, ".", ","),
+                number_format($array['cantidad_estimacion'], 4, ".", ","),
+                number_format($array['importe_estimacion'], 4, ".", ","),
+                number_format($array['cantidad_acumulado_a_esta_estimacion'], 4, ".", ","),
+                number_format($array['importe_acumulado_a_esta_estimacion'], 4, ".", ","),
+                number_format($array['cantidad_porEstimar'], 4, ".", ","),
+                number_format($array['importe_porEstimar'], 4, ".", ",")
+            ]);
 
-                $this->Row([
-                    mb_strtoupper($p['descripcion_concepto']),
-                    mb_strtoupper($p['clave']),
-                    mb_strtoupper($p['unidad']),
-                    number_format($p['precio_unitario_subcontrato'], 4, ".", ","),
-                    number_format($p['cantidad_subcontrato'], 4, ".", ","),
-                    number_format($p['importe_subcontrato'], 4, ".", ","),
-                    number_format($p['cantidad_estimada_anterior'], 4, ".", ","),
-                    number_format($p['importe_estimado_anterior'], 4, ".", ","),
-                    number_format($p['cantidad_estimacion'], 4, ".", ","),
-                    number_format($p['importe_estimacion'], 4, ".", ","),
-                    number_format($p['cantidad_estimada_total'], 4, ".", ","),
-                    number_format($p['importe_acumulado'], 4, ".", ","),
-                    number_format(($p['cantidad_por_estimar'] - $p['cantidad_estimacion']), 4, ".", ","),
-                    number_format(($p['importe_por_estimar'] - $p['importe_estimacion']), 4, ".", ",")
-                ]);
-            }
         }
 
         /*Footer partidas*/
