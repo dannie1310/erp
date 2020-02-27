@@ -100,6 +100,31 @@ class ItemSubcontrato extends Item
         );
     }
 
+    public function partidasFormatoEstimacion($id_estimacion, $id_contrato)
+    {
+        $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
+            ->where('id_antecedente', $this->id_transaccion)
+            ->where('item_antecedente', $this->id_concepto)->first();
+
+        $contrato = $this->contrato()->where('id_transaccion', '=', $id_contrato)->first();
+        $cantidad_estimacion_anterior = $estimacion ?  $this->cantidad_total_estimada - $estimacion->cantidad : $this->cantidad_total_estimada;
+
+        return array(
+            'id' => $this->id_item,
+            'id_concepto' => $this->id_concepto,
+            'unidad' => $contrato->unidad,
+            'clave' => $contrato->clave,
+            'descripcion_concepto' => $contrato->descripcion,
+            'cantidad_subcontrato' => $this->cantidad,
+            'precio_unitario_subcontrato' => $this->precio_unitario,
+            'importe_subcontrato' => ($this->cantidad * $this->precio_unitario),
+            'cantidad_estimacion_anterior' => $cantidad_estimacion_anterior,
+            'importe_estimacion_anterior' =>  ($cantidad_estimacion_anterior * $this->precio_unitario),
+
+        );
+
+    }
+
     private function importe_total($precio_unitario)
     {
         return  '$ ' . number_format($this->cantidad * $precio_unitario,2,'.',',');

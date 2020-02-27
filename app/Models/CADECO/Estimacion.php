@@ -7,6 +7,7 @@
  */
 
 namespace App\Models\CADECO;
+use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Estimaciones\EstimacionEliminada;
@@ -73,6 +74,11 @@ class Estimacion extends Transaccion
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function itemsXContratistas()
+    {
+        return $this->hasMany(ItemContratista::class, 'id_empresa',  'id_empresa');
     }
 
     public function descuentos()
@@ -834,5 +840,58 @@ class Estimacion extends Transaccion
     public function getAnticipoFormatAttribute()
     {
         return number_format(abs($this->anticipo),4).'%';
+    }
+
+    public function descuentosPartidas()
+    {
+        $array = array();
+        $importe_total_original = 0;
+        $importe_descuento = 0;
+        $importe_descuento_anterior = 0;
+        $importe_porEstimar = 0;
+        $itemxcontratistas = $this->itemsXContratistas()->pluck('id_item');
+        // dd($itemxcontratistas);
+        $items = Item::whereIn('id_item', $itemxcontratistas)->selectRaw('id_material, sum(cantidad) as cantidad,  sum(importe) as importe ')->groupBy('id_material')->get();
+        //  dd($items->get()->toArray());
+
+        foreach ($items as $k => $a) {
+            $importe_total_original += $a->importe;
+            $descuento = Descuento::where('id_transaccion', '=', $this->id_transaccion)->where('id_material', '=', $a->id_material)->first();
+            $descuento_antertior = Descuento::join('transacciones', 'transacciones.id_transaccion', 'descuento.id_transaccion')
+                ->where('transacciones.id_transaccion', '!=', $this->id_transaccion)
+                ->where('id_antecedente', '=', $this->id_antecedente)
+                ->where('id_empresa', '=', $this->id_empresa)
+                ->where('descuento.id_material', '=', $a->id_material)
+                ->where('id_obra', '=', $this->id_obra)
+                ->where('estado', '>', 0)
+                ->selectRaw('sum(descuento.cantidad) as cantidad,  sum(descuento.importe) as importe ')->first();
+
+            $importe_descuento += $descuento ? $descuento->importe : 0;
+            $importe_descuento_anterior += $descuento_antertior->importe ? $descuento_antertior->importe : 0;
+            $importe_porEstimar += ($a->importe - (($descuento_antertior->importe ? $descuento_antertior->importe : 0) + ($descuento ? $descuento->importe : 0)));
+
+            $array[$k] = [
+                'id_material' => $a->id_material,
+                'descripcion' => $a->material->descripcion,
+                'cantidad_original' => $a->cantidad,
+                'importe_original' => $a->importe,
+                'cantidad_descuento' => $descuento ? $descuento->cantidad : 0,
+                'importe_descuento' => $descuento ? $descuento->importe : 0,
+                'precio_descuento' => $descuento ? $descuento->precio : 0,
+                'cantidad_descuento_anterior' => $descuento_antertior->cantidad ? $descuento_antertior->cantidad : 0,
+                'importe_descuento_anterior' => $descuento_antertior->importe ? $descuento_antertior->importe : 0,
+                'cantidad_a_esta_estimacion' => ($descuento_antertior->cantidad ? $descuento_antertior->cantidad : 0) + ($descuento ? $descuento->cantidad : 0),
+                'importe_a_esta_estimacion' => ($descuento_antertior->importe ? $descuento_antertior->importe : 0) + ($descuento ? $descuento->importe : 0),
+                'cantidad_descuento_porEstimar' => ($a->cantidad - (($descuento_antertior->cantidad ? $descuento_antertior->cantidad : 0) + ($descuento ? $descuento->cantidad : 0))),
+                'importe_descuento_porEstimar' => ($a->importe - (($descuento_antertior->importe ? $descuento_antertior->importe : 0) + ($descuento ? $descuento->importe : 0)))
+            ];
+        }
+        return array(
+            'importe_total_original' => $importe_total_original,
+            'importe_descuento' => $importe_descuento,
+            'importe_descuento_anterior' => $importe_descuento_anterior,
+            'importe_porEstimar' => $importe_porEstimar,
+            'partidas_descuento' => $array
+        );
     }
 }

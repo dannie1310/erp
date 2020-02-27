@@ -222,25 +222,27 @@ class EstimacionFormato extends Rotation
 
             if(array_key_exists('id', $p))
             {
+               // $this->suma_contrato += $p['importe_subcontrato'];
+                $this->suma_estimacionAnterior += $p['importe_estimado_anterior']; //
                 $this->suma_estimacion += $p['importe_estimacion'];
-                $this->suma_acumulada += $p['importe_acumulado'];
-                $this->suma_porEstimar += $p['precio_unitario_subcontrato'] * ($p['cantidad_estimacion']- $p['cantidad_estimada_total']);
-                $this->suma_contrato += $p['precio_unitario_subcontrato'];
+                $this->suma_acumulada += $p['importe_acumulado'];//
+                $this->suma_porEstimar += $p['importe_por_estimar'] - $p['importe_estimacion'];//
 
+               //  dd( $this->suma_contrato, $this->suma_estimacionAnterior, $this->suma_estimacion,  $this->suma_acumulada, $this->suma_porEstimar );
                 $this->Row([
                     mb_strtoupper($p['descripcion_concepto']),
                     mb_strtoupper($p['unidad']),
-                    number_format($p['precio_unitario_subcontrato'], 3, ".", ","),
-                    number_format($p['cantidad_subcontrato'], 3, ".", ","),
-                    number_format($p['precio_unitario_subcontrato'], 3, ".", ","),
-                    number_format($p['cantidad_estimada_anterior'], 3, ".", ","),
-                    number_format($p['importe_estimado_anterior'], 3, ".", ","),
-                    number_format($p['cantidad_estimacion'], 3, ".", ","),
-                    number_format($p['importe_estimacion'], 3, ".", ","),
-                    number_format($p['cantidad_estimada_total'], 3, ".", ","),
-                    number_format($p['importe_acumulado'], 3, ".", ","),
-                    number_format($p['cantidad_estimada_total'], 3, ".", ","),
-                    number_format($p['importe_acumulado'], 3, ".", ","),
+                    number_format($p['precio_unitario_subcontrato'], 4, ".", ","),
+                    number_format($p['cantidad_subcontrato'], 4, ".", ","),
+                  //  number_format($p['importe_subcontrato'], 4, ".", ","),
+                    number_format($p['cantidad_estimada_anterior'], 4, ".", ","),
+                    number_format($p['importe_estimado_anterior'], 4, ".", ","),
+                    number_format($p['cantidad_estimacion'], 4, ".", ","),
+                    number_format($p['importe_estimacion'], 4, ".", ","),
+                    number_format($p['cantidad_estimada_total'], 4, ".", ","),
+                    number_format($p['importe_acumulado'], 4, ".", ","),
+                    number_format($p['cantidad_por_estimar'] - $p['cantidad_estimacion'], 4, ".", ","),
+                    number_format($p['importe_por_estimar'] - $p['importe_estimacion'], 4, ".", ","),
                 ]);
             }
         }
@@ -253,15 +255,15 @@ class EstimacionFormato extends Rotation
         $this->Cell(1.385, 0.3, "", 'RTLB', 0, 'C', 180);
         $this->Cell(1.662, 0.3, '', 'RTLB', 0, 'R', 180);
         $this->Cell(1.8005, 0.3, ' ', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.8005, 0.3, number_format($this->suma_contrato, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, number_format($this->suma_contrato, 4, ".", ","), 'BTLR', 0, 'R', 180);
         $this->Cell(1.8005, 0.3, '', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.8005, 0.3, number_format($this->suma_estimacionAnterior, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, number_format($this->suma_estimacionAnterior, 4, ".", ","), 'BTLR', 0, 'R', 180);
         $this->Cell(1.8005, 0.3, ' ', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.8005, 0.3, number_format($this->suma_estimacion, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, number_format($this->suma_estimacion, 4, ".", ","), 'BTLR', 0, 'R', 180);
         $this->Cell(1.8005, 0.3, ' ', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.8005, 0.3, number_format($this->suma_acumulada, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(1.8005, 0.3, number_format($this->suma_acumulada, 4, ".", ","), 'BTLR', 0, 'R', 180);
         $this->Cell(1.7728, 0.3, '', 'BTLR', 0, 'R', 180);
-        $this->Cell(1.7728, 0.3, number_format($this->estimacion->suma_importes, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(1.7728, 0.3, number_format( $this->suma_porEstimar, 4, ".", ","), 'BTLR', 0, 'R', 180);
     }
 
     public function tablaDeductivaDescuentos()
@@ -276,7 +278,9 @@ class EstimacionFormato extends Rotation
         $this->Cell(0.24 * $this->WidthTotal, 0.4, 'DEDUCTIVAS', 'RTLB', 0, 'C', 1);
         $this->Cell(0.518 * $this->WidthTotal, 0.4, 'DESCUENTOS', 'RTLB', 0, 'C', 1);
 
-       $this->partidaDeductiva();
+        $descuentos = $this->estimacion->descuentosPartidas();
+
+        $this->partidaDeductiva($descuentos['partidas_descuento']);
 
         $this->SetFills(180, 180, 180);
         $this->SetFont('Arial', 'B', 5);
@@ -296,7 +300,7 @@ class EstimacionFormato extends Rotation
         $this->Cell(0.064 * $this->WidthTotal, 0.4, 'panda6', 'BTLR', 0, 'R', 1);
     }
 
-    public function partidaDeductiva()
+    public function partidaDeductiva($partidas)
     {
         $this->Ln();
         $this->SetFont('Arial', '', 5);
@@ -311,20 +315,24 @@ class EstimacionFormato extends Rotation
         $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
         //imprimir descuentos cuando existan: for***
 
-        $this->Row([
-            'panda',
-            'panda',
-            'panda',
-            'panda',
-            'panda',
-            'panda',
-            'panda',
-            'panda',
-            'panda',
-            'panda',
-            'panda',
-            'panda', 'panda',
-        ]);
+        foreach ($partidas as $partida)
+        {
+//dd($partida);
+            $this->Row([
+                'panda',
+                'panda',
+                'panda',
+                'panda',
+                'panda',
+                'panda',
+                'panda',
+                'panda',
+                'panda',
+                'panda',
+                'panda',
+                'panda', 'panda',
+            ]);
+        }
     }
 
     public function tablaRetenciones()

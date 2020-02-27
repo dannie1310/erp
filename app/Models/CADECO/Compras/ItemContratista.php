@@ -6,6 +6,7 @@ namespace App\Models\CADECO\Compras;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EntradaMaterialPartida;
+use App\Models\CADECO\Item;
 use Illuminate\Database\Eloquent\Model;
 
 class ItemContratista extends Model
@@ -30,5 +31,10 @@ class ItemContratista extends Model
     public function entradaMaterialPartida()
     {
         return $this->belongsTo(EntradaMaterialPartida::class,'id_item','id_item');
+    }
+
+    public function item()
+    {
+        return $this->hasMany(Item::class, 'id_item', 'id_item');
     }
 }
