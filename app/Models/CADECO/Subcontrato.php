@@ -146,7 +146,7 @@ class Subcontrato extends Transaccion
 
     public function scopeEstimable($query)
     {
-        return $query->whereIn("estado",[0,1]);
+        return $query->whereIn("estado", [0, 1]);
     }
 
     public function scopeSinFondo($query)
@@ -263,16 +263,34 @@ class Subcontrato extends Transaccion
             if ($nivel != $nivel_ancestros) {
                 $nivel_ancestros = $nivel;
                 foreach ($partida->ancestros as $ancestro) {
-                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int) $ancestro[3]];
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
                 }
             }
             $items [$partida->nivel] = $partida->partidasEstimadas($id_estimacion, $this->id_antecedente);
         }
         $respuesta = array(
-            'folio'         => $this->numero_folio_format,
-            'referencia'    => $this->referencia,
-            'partidas'      => $items
+            'folio' => $this->numero_folio_format,
+            'referencia' => $this->referencia,
+            'partidas' => $items
         );
         return $respuesta;
+    }
+
+    public function getAcumuladoRetencionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        foreach ($this->estimaciones as $estimacion) {
+            $acumulado += $estimacion->retenciones->sum('importe');
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoLiberacionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        foreach ($this->estimaciones as $estimacion) {
+            $acumulado += $estimacion->liberaciones->sum('importe');
+        }
+        return $acumulado;
     }
 }
