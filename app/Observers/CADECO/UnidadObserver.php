@@ -4,6 +4,7 @@
 namespace App\Observers\CADECO;
 
 use App\Models\CADECO\Unidad;
+use App\Models\CADECO\UnidadComplemento;
 
 class UnidadObserver
 {
@@ -16,7 +17,9 @@ class UnidadObserver
          $unidad->validarUnidadExistente();
          $unidad->unidad = strtoupper($unidad->unidad);
          $unidad->descripcion = strtoupper($unidad->descripcion);
-         $unidad->IdUsuario = auth()->id();
+         UnidadComplemento::create([
+             'unidad' => strtoupper($unidad->unidad)
+         ]);
      }
 
 }

@@ -11,6 +11,7 @@ namespace App\Models\CADECO\Finanzas;
 
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\FinanzasCBE\CtgTipoCuenta;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\Moneda;
@@ -76,6 +77,11 @@ class CuentaBancariaEmpresa extends Model
     public function moneda()
     {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function tipoCuenta()
+    {
+        return $this->belongsTo(CtgTipoCuenta::class, 'tipo_cuenta', 'id');
     }
 
     public function plaza()
