@@ -274,7 +274,8 @@ class EstimacionFormato extends Rotation
                     mb_strtoupper($p['unidad']),
                     number_format($p['precio_unitario_subcontrato'], 4, ".", ","),
                     number_format($p['cantidad_subcontrato'], 4, ".", ","),
-                  //  number_format($p['importe_subcontrato'], 4, ".", ","),
+                   number_format(0.01, 4, ".", ","), //// validar importe subcontrato
+                //    number_format($p['importe_subcontrato'], 4, ".", ","),
                     number_format($p['cantidad_estimada_anterior'], 4, ".", ","),
                     number_format($p['importe_estimado_anterior'], 4, ".", ","),
                     number_format($p['cantidad_estimacion'], 4, ".", ","),
@@ -326,9 +327,9 @@ class EstimacionFormato extends Rotation
         $this->SetFont('Arial', '', 5);
 
 
-        $descuentos = $this->estimacion->descuentosPartidas();
+        // $descuentos = $this->estimacion->descuentosPartidas();
 
-        $this->partidaDeductiva($descuentos['partidas_descuento']);
+        // $this->partidaDeductiva($descuentos['partidas_descuento']);
 
         $this->SetFills(180, 180, 180);
         $this->SetFont('Arial', 'B', 5);
@@ -602,7 +603,7 @@ class EstimacionFormato extends Rotation
 
     function firmas()
     {
-        if (Context::getDatabase() == "SAO1814_PISTA_AEROPUERTOs") {
+        if (Context::getDatabase() == "SAO1814_PISTA_AEROPUERTO") {
             $this->SetY(-3.5);
             $this->SetTextColor('0', '0', '0');
             $this->SetFillColor(180, 180, 180);
@@ -934,7 +935,7 @@ class EstimacionFormato extends Rotation
         $this->SetAutoPageBreak(true,3.75);
         
         $this->partidas();
-        $this->partidaDeductiva();
+        $this->partidaDeductiva($this->estimacion->descuentosPartidas()['partidas_descuento']);
         $this->partidaRetenciones();
         $this->partidaLiberaciones();
         $this->tablaResumen();
