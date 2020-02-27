@@ -167,7 +167,6 @@ class EmpresaSATService
         $this->arreglo_factura["subtotal"] = (float)$factura_xml["subTotal"];
         $this->arreglo_factura["descuento"] = (float)$factura_xml["descuento"];
         $this->arreglo_factura["total"] = (float)$factura_xml["total"];
-        $this->arreglo_factura["total"] = (float)$factura_xml["total"];
         $this->arreglo_factura["serie"] = (string)$factura_xml["serie"];
         $this->arreglo_factura["folio"] = (string)$factura_xml["folio"];
         $this->arreglo_factura["fecha"] = (string)$factura_xml["fecha"];
@@ -179,9 +178,19 @@ class EmpresaSATService
         $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["nombre"][0];
         $ns = $factura_xml->getNamespaces(true);
         try{
-            $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos')[0];
-            $this->arreglo_factura["impuestos"]["totalImpuestosTrasladados"] = (string)$impuestos["totalImpuestosTrasladados"][0];
-            dd($factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslados')[0]["importe"]);
+            $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
+            $traslados =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslado');
+            //dd($traslados);
+            $this->arreglo_factura["impuestos"]["totalImpuestosTrasladados"] = (string)$impuestos[0]["totalImpuestosTrasladados"][0];
+            foreach($traslados as $traslado)
+            {
+                if($traslado["impuesto"] == "IVA")
+                {
+                    $this->arreglo_factura["iva"] = (float)$traslado["importe"];
+                    $this->arreglo_factura["tasa_iva"] = (float)$traslado["tasa"];
+
+                }
+            }
 
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer la ruta de impuestos: " . $e->getMessage());
@@ -205,6 +214,18 @@ class EmpresaSATService
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
         }
+        /*$this->arreglo_factura["empresa_bd"] = $this->repository->getEmpresa(
+            [
+                "rfc" => $this->arreglo_factura["receptor"]["rfc"],
+                "razon_social" => $this->arreglo_factura["receptor"]["nombre"]
+            ]
+        );
+        $this->arreglo_factura["proveedor_bd"] = $this->repository->getProveedor(
+            [
+                "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                "razon_social" => $this->arreglo_factura["emisor"]["nombre"]
+            ]
+        );*/
         dd($factura_xml, $this->arreglo_factura);
 
     }
