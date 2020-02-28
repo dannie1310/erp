@@ -902,4 +902,9 @@ class Estimacion extends Transaccion
     {
         return $this->suma_importes * (1- $this->retencion / 100) - $this->monto + $this->impuesto;
     }
+
+    public function  getPorcentajeIvaAttribute()
+    {
+        return ($this->impuesto / ($this->monto - $this->impuesto))* 100;
+    }
 }

@@ -293,15 +293,15 @@ class EstimacionFormato extends Rotation
         $this->Cell(0.060 * $w_t, 0.3, "", 'RTLB', 0, 'C', 180);
         $this->Cell(0.050 * $w_t, 0.3, '', 'RTLB', 0, 'R', 180);
         $this->Cell(0.050 * $w_t, 0.3, ' ', 'BTLR', 0, 'R', 180);
-        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_contrato, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_contrato, 4, ".", ","), 'BTLR', 0, 'R', 180);
         $this->Cell(0.050 * $w_t, 0.3, '', 'BTLR', 0, 'R', 180);
-        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_estimacionAnterior, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_estimacionAnterior, 4, ".", ","), 'BTLR', 0, 'R', 180);
         $this->Cell(0.050 * $w_t, 0.3, ' ', 'BTLR', 0, 'R', 180);
-        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_estimacion, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_estimacion, 4, ".", ","), 'BTLR', 0, 'R', 180);
         $this->Cell(0.050 * $w_t, 0.3, ' ', 'BTLR', 0, 'R', 180);
-        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_acumulada, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_acumulada, 4, ".", ","), 'BTLR', 0, 'R', 180);
         $this->Cell(0.050 * $w_t, 0.3, '', 'BTLR', 0, 'R', 180);
-        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_porEstimar, 3, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_porEstimar, 4, ".", ","), 'BTLR', 0, 'R', 180);
         $this->encola = '';
     }
 
@@ -542,16 +542,19 @@ class EstimacionFormato extends Rotation
         $this->SetHeights([0.4]);
         $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
 
+        $subtotal_contrato = $this->suma_contrato - ($this->deductivas['importe_total_original'] + $this->estimacion->subcontrato->anticipo_monto);
+        $subtotal_acum_estimado_anterior = $this->suma_estimacionAnterior - ($this->deductivas['importe_descuento_anterior'] + $this->estimacion->anticipo_anterior);
+
         $this->Row(['Importe asociado a trabajos ejecutados', '', '', '', '',  number_format($this->suma_contrato, 4, ".", ","), '', number_format($this->suma_estimacionAnterior, 4, ".", ","), '', number_format($this->suma_estimacion, 4, ".", ","), '',number_format($this->suma_acumulada, 4, ".", ","), '', number_format($this->suma_porEstimar, 4, ".", ",")]);
         $this->Row(['Deductivas y Descuentos', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","),'', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '', number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
-        $this->Row(['Penalizaciones', '', '', '', '', ' ', '', ' ', '', ' ', '', ' ', '', ' ']);
+        $this->Row(['Penalizaciones', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '',  number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
         $this->Row(['Anticipo Solicitado', '', '%', $this->estimacion->subcontrato->anticipo, '', number_format($this->estimacion->subcontrato->anticipo_monto, 4, ".", ","), '', '', '', '', '', '', '', '']);
         $this->Row([utf8_decode('Amortización Anticipo'), '', '%',  number_format($this->estimacion->anticipo/100, 4, ".", ","), '', '', '', number_format($this->estimacion->anticipo_anterior, 4, ".", ","), '', number_format($this->estimacion->suma_importes*$this->estimacion->anticipo/100, 4, ".", ","), ' ', ' ', ' ', ' ']);
         $this->Row([utf8_decode('Fondo de Garantía'), ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']);
         $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
-        $this->Row(['Sub-total valor de los trabajos', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']);
+        $this->Row(['Sub-total valor de los trabajos', ' ', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($subtotal_contrato, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior, 4, ".", ","), ' ', $this->estimacion->subtotal, $this->estimacion->subtotal_orden_pago, ' ', ' ', ' ']);
         $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-        $this->Row(['IVA', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']);
+        $this->Row(['IVA', ' ', '%', number_format($this->estimacion->porcentaje_iva, 4, ".", ","), ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']);
         $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
         $this->Row(['Total', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']);
     }
@@ -854,13 +857,13 @@ class EstimacionFormato extends Rotation
 
     function Footer()
     {
-        if (!App::environment('production')) {
-            $this->SetFont('Arial','B',90);
-            $this->SetTextColor(155,155,155);
-            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
-            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
-            $this->SetTextColor('0,0,0');
-        }
+//        if (!App::environment('production')) {
+//            $this->SetFont('Arial','B',90);
+//            $this->SetTextColor(155,155,155);
+//            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+//            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
+//            $this->SetTextColor('0,0,0');
+//        }
         $this->firmas();
 
         $this->SetY($this->GetPageHeight() - 1);
