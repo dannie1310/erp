@@ -54,17 +54,14 @@
                                     </div>
                                 </div>
                                 <!--Entrega a contratista-->
-                                <div class="col-md-12" v-if="salida.entrega_contratista">
+                                <div class="col-md-12">
                                     <div class="invoice p-3 mb-3">
                                         <div role="form">
                                             <div class="form-group row">
                                                 <div class="col-md-2">
-                                                    <div class="custom-control custom-switch">
-                                                        <input type="checkbox" class="custom-control-input button" id="con_prestamo" v-model="con_prestamo" :value="con_prestamo" @input="updateAttribute">
                                                         <label class="custom-control-label" for="con_prestamo">Entrega a contratista</label>
-                                                    </div>
                                                 </div>
-                                                <div class="col-md-7" v-if="con_prestamo">
+                                                <div class="col-md-7" v-if="salida.partidas">
                                                     <model-list-select
                                                         name="id_empresa"
                                                         :disabled="!con_prestamo"
@@ -78,7 +75,7 @@
                                                         :isError="errors.has(`id_empresa`)">
                                                     </model-list-select>
                                                 </div>
-                                                <div class="col-md-3" v-if="con_prestamo">
+                                                <div class="col-md-3" v-if="salida.partidas">
                                                     <div class="btn-group btn-group-toggle">
                                                         <label class="btn btn-outline-primary" :class="tipo_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
                                                         <input type="radio"
@@ -151,7 +148,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            <button type="submit" class="btn btn-primary" >Guardar Cambios</button>
                         </div>
                     </form>
                 </div>
@@ -200,14 +197,16 @@
                     id: this.id,
                     params: {include: ['partidas', 'entrega_contratista']}
                 }).then(data => {
+                    this.salida = data;
+                    this.con_prestamo = true;
                     if(data.entrega_contratista)
                     {
-                        this.con_prestamo = true
-                    }
-                    this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
-                    this.salida = data;
-                    this.id_empresa = this.salida.entrega_contratista.id_empresa;
+                        this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
+                        this.id_empresa = this.salida.entrega_contratista.id_empresa;
+                        this.tipo_cargo = this.salida.entrega_contratista.tipo_cargo;    
                     this.tipo_cargo = this.salida.entrega_contratista.tipo_cargo;                    
+                        this.tipo_cargo = this.salida.entrega_contratista.tipo_cargo;    
+                    }                                    
 
                 }).finally(() => {
                     this.cargando = false;
@@ -221,9 +220,6 @@
                         this.contratistas = data.data;
                     })                    
             },
-            updateAttribute(e) {
-                return this.$store.commit('almacenes/salida-almacen/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
-            },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
@@ -234,8 +230,7 @@
             update()
             {
                 this.res.id_empresa = this.id_empresa;
-                this.res.tipo_cargo = this.tipo_cargo;              
-
+                this.res.tipo_cargo = this.tipo_cargo; 
                  return this.$store.dispatch('almacenes/salida-almacen/tipo', {
                        id: this.id,
                        params: this.res

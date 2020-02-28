@@ -140,9 +140,14 @@ class SalidaAlmacen extends Transaccion
             DB::connection('cadeco')->beginTransaction();
             $this->id_empresa = $data['id_empresa'];
             $this->save();
-            $this->entrega_contratista->tipo = $data['tipo_cargo'];
-            $this->entrega_contratista->save();
-
+            if($this->entrega_contratista)
+            {
+                $this->entrega_contratista->tipo = $data['tipo_cargo'];
+                $this->entrega_contratista->save();
+            }else
+            {
+                $this->entrega_contratista()->create(['tipo' => $data['tipo_cargo']]);
+            }
             foreach( $items as $item)
             {
                 if(ItemContratista::find($item))
