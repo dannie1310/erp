@@ -293,4 +293,8 @@ class Subcontrato extends Transaccion
         }
         return $acumulado;
     }
+
+    public function getImporteFondoGarantiaAttribute(){
+        return ($this->monto - $this->impuesto) * $this->retencion / 100;
+    }
 }

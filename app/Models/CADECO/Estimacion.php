@@ -903,6 +903,18 @@ class Estimacion extends Transaccion
         return $this->suma_importes * (1- $this->retencion / 100) - $this->monto + $this->impuesto;
     }
 
+    public function getFondoGarantiaAcumuladoAnteriorAttribute(){
+        $fondo = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $fondo += $estimacion->suma_importes * $estimacion->retencion / 100;
+        }
+        return $fondo;
+    }
+
     public function  getPorcentajeIvaAttribute()
     {
         return ($this->impuesto / ($this->monto - $this->impuesto))* 100;
