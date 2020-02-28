@@ -57,7 +57,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">
+                            <button type="submit" class="btn btn-primary" :disabled="cargando || errors.count() > 0">
                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                 <i class="fa fa-upload" v-else></i> Cargar</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>

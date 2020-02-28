@@ -50,7 +50,7 @@ class CFDSATService
     public function storeZIPCFD($archivo_zip)
     {
         $paths = $this->generaDirectorios();
-        $exp = explode("base64,",$archivo_zip);
+        $exp = explode("base64,", $archivo_zip);
         $data = base64_decode($exp[1]);
         $file = public_path($paths["path_zip"]);
         file_put_contents($file, $data);
@@ -63,33 +63,32 @@ class CFDSATService
     private function generaDirectorios()
     {
         $nombre = date("Ymdhis");
-        $nombre_zip = $nombre.".zip";
+        $nombre_zip = $nombre . ".zip";
         $dir_zip = "uploads/contabilidad/cfd/zip/";
         $dir_xml = "uploads/contabilidad/cfd/xml/";
         $path_xml = $dir_xml . $nombre;
         $path_zip = $dir_zip . $nombre_zip;
-        if ( !file_exists($dir_zip) && !is_dir($dir_zip) ) {
-            mkdir($dir_zip,777,true);
+        if (!file_exists($dir_zip) && !is_dir($dir_zip)) {
+            mkdir($dir_zip, 777, true);
         }
-        if ( !file_exists($dir_xml) && !is_dir($dir_xml) ) {
-            mkdir($dir_xml,777,true);
+        if (!file_exists($dir_xml) && !is_dir($dir_xml)) {
+            mkdir($dir_xml, 777, true);
         }
-        return ["path_zip"=>$path_zip,"path_xml"=>$path_xml,"dir_xml"=>$dir_xml];
+        return ["path_zip" => $path_zip, "path_xml" => $path_xml, "dir_xml" => $dir_xml];
     }
 
     private function procesaCFD($path)
     {
         $dir = opendir($path);
-        while ($current = readdir($dir))
-        {
-            if($current!="." && $current!=".."){
-                $ruta_archivo = $path."/".$current;
+        while ($current = readdir($dir)) {
+            if (strpos($current,".xml")) {
+                $ruta_archivo = $path . "/" . $current;
                 $contenido_archivo_xml = file_get_contents($ruta_archivo);
                 $this->setArregloFactura($ruta_archivo);
-                if(!$this->repository->validaExistencia($this->arreglo_factura["uuid"]) && $this->arreglo_factura["id_empresa_sat"]>0){
+                if (!$this->repository->validaExistencia($this->arreglo_factura["uuid"]) && $this->arreglo_factura["id_empresa_sat"] > 0) {
                     $this->arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
-                    if($this->store()){
-                        Storage::disk('xml_sat')->put($current,fopen($ruta_archivo,"r"));
+                    if ($this->store()) {
+                        Storage::disk('xml_sat')->put($current, fopen($ruta_archivo, "r"));
                     }
                 }
             }
@@ -104,15 +103,13 @@ class CFDSATService
             $factura_xml = simplexml_load_file($archivo_xml);
 
         } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
+            abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
         }
         //$factura_simple_xml = new \SimpleXMLElement(file_get_contents($archivo_xml));
-        if((string)$factura_xml["version"] == "3.2")
-        {
+        if ((string)$factura_xml["version"] == "3.2") {
             $this->arreglo_factura["version"] = (string)$factura_xml["version"];
             $this->setArreglo32($factura_xml);
-        } else if($factura_xml["Version"] == "3.3")
-        {
+        } else if ($factura_xml["Version"] == "3.3") {
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
             $this->setArreglo33($factura_xml);
         }
@@ -120,38 +117,41 @@ class CFDSATService
 
     private function setArreglo33($factura_xml)
     {
-        $this->arreglo_factura["descuento"] = null;
-        $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
-        $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
-        $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
-        $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
-        $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
-        $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
-        $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
-        $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
-        $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
-        $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$emisor["RegimenFiscal"][0];
-        $this->arreglo_factura["rfc_emisor"] = $this->arreglo_factura["emisor"]["rfc"];
-        $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
-        $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
-        $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
-        $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
-        $ns = $factura_xml->getNamespaces(true);
-        try{
+        try {
+            $this->arreglo_factura["descuento"] = null;
+            $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
+            $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
+            $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
+            $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
+            $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
+            $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
+            $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
+            $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
+            $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
+            $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$emisor["RegimenFiscal"][0];
+            $this->arreglo_factura["rfc_emisor"] = $this->arreglo_factura["emisor"]["rfc"];
+            $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
+            $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
+            $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
+            $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
+        } catch (\Exception $e) {
+            abort(500, "Hubo un error al generar arreglo para CFD versión 3.3. Ln." . $e->getLine() . ' Msg. ' . $e->getMessage());
+        }
+
+        try {
+            $ns = $factura_xml->getNamespaces(true);
             $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
-            if(count($impuestos)>=1){
-                $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[count($impuestos)-1]["TotalImpuestosTrasladados"];
-            } else{
-                $this->arreglo_factura["total_impuestos_trasladados"] = "";
+            if (count($impuestos) >= 1) {
+                $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosTrasladados"];
+            } else {
+                $this->arreglo_factura["total_impuestos_trasladados"] = (float)0;
             }
-            $traslados =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslado');
+            $traslados = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslado');
 
             $i = 0;
-            foreach($traslados as $traslado)
-            {
-                if(!(float)$traslado["Base"]>0){
-                    if($traslado["Impuesto"] == "002")
-                    {
+            foreach ($traslados as $traslado) {
+                if (!(float)$traslado["Base"] > 0) {
+                    if ($traslado["Impuesto"] == "002") {
                         $this->arreglo_factura["importe_iva"] = (float)$traslado["Importe"];
                         $this->arreglo_factura["tasa_iva"] = (float)$traslado["TasaOCuota"];
                     }
@@ -162,10 +162,9 @@ class CFDSATService
                     $i++;
                 }
             }
-            $conceptos =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
+            $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
-            foreach($conceptos as $concepto)
-            {
+            foreach ($conceptos as $concepto) {
                 $this->arreglo_factura["conceptos"][$i]["clave_prod_serv"] = (string)$concepto["ClaveProdServ"];
                 $this->arreglo_factura["conceptos"][$i]["no_identificacion"] = (string)$concepto["NoIdentificacion"];
                 $this->arreglo_factura["conceptos"][$i]["cantidad"] = (float)$concepto["Cantidad"];
@@ -174,20 +173,17 @@ class CFDSATService
                 $this->arreglo_factura["conceptos"][$i]["descripcion"] = (string)$concepto["Descripcion"];
                 $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (float)$concepto["ValorUnitario"];
                 $this->arreglo_factura["conceptos"][$i]["importe"] = (float)$concepto["Importe"];
-
-                $traslados_concepto =$factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto[".$i."]/cfdi:Impuestos/cfdi:Traslados/cfdi:Traslado");
+                $traslados_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto[" . $i . "]/cfdi:Impuestos/cfdi:Traslados/cfdi:Traslado");
                 $itc = 0;
-                foreach($traslados_concepto as $traslado_concepto)
-                {
+                foreach ($traslados_concepto as $traslado_concepto) {
                     $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["base"] = (float)$traslado_concepto["Base"];
                     $itc++;
                 }
-
                 $i++;
             }
 
         } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer la ruta de impuestos o conceptos: " . $e->getMessage());
+            abort(500, "Hubo un error al generar arreglo para CFD versión 3.3. Ln." . $e->getLine() . ' Msg. ' . $e->getMessage());
         }
 
         try {
@@ -205,11 +201,11 @@ class CFDSATService
                 }
             }
         } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
+            abort(500, "Hubo un error al generar arreglo para CFD versión 3.3. Ln." . $e->getLine() . ' Msg. ' . $e->getMessage());
         }
-        $this->arreglo_factura["subtotal"] =  $this->arreglo_factura["total"]-$this->arreglo_factura["total_impuestos_trasladados"];
+        $this->arreglo_factura["subtotal"] = $this->arreglo_factura["total"] - $this->arreglo_factura["total_impuestos_trasladados"];
         $this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]["rfc"]);
-        $this->arreglo_factura["id_proveedor_sat"] = $this->repository->getIdProveedorSAT($this->arreglo_factura["emisor"],$this->arreglo_factura["id_empresa_sat"]);
+        $this->arreglo_factura["id_proveedor_sat"] = $this->repository->getIdProveedorSAT($this->arreglo_factura["emisor"], $this->arreglo_factura["id_empresa_sat"]);
     }
 
     private function setArreglo32($factura_xml)
@@ -230,15 +226,13 @@ class CFDSATService
         $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
         $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["nombre"][0];
         $ns = $factura_xml->getNamespaces(true);
-        try{
+        try {
             $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
             $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[0]["totalImpuestosTrasladados"][0];
-            $traslados =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslado');
+            $traslados = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslado');
             $i = 0;
-            foreach($traslados as $traslado)
-            {
-                if($traslado["impuesto"] == "IVA")
-                {
+            foreach ($traslados as $traslado) {
+                if ($traslado["impuesto"] == "IVA") {
                     $this->arreglo_factura["importe_iva"] = (float)$traslado["importe"];
                     $this->arreglo_factura["tasa_iva"] = (float)$traslado["tasa"];
                 }
@@ -247,10 +241,9 @@ class CFDSATService
                 $this->arreglo_factura["traslados"][$i]["importe"] = (string)$traslado["importe"];
                 $i++;
             }
-            $conceptos =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
+            $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
-            foreach($conceptos as $concepto)
-            {
+            foreach ($conceptos as $concepto) {
                 $this->arreglo_factura["conceptos"][$i]["cantidad"] = (float)$concepto["cantidad"];
                 $this->arreglo_factura["conceptos"][$i]["descripcion"] = (string)$concepto["descripcion"];
                 $this->arreglo_factura["conceptos"][$i]["importe"] = (float)$concepto["importe"];
@@ -259,7 +252,6 @@ class CFDSATService
                 $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (float)$concepto["valorUnitario"];
                 $i++;
             }
-
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer la ruta de impuestos o conceptos: " . $e->getMessage());
         }
@@ -281,6 +273,6 @@ class CFDSATService
             abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
         }
         $this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]["rfc"]);
-        $this->arreglo_factura["id_proveedor_sat"] = $this->repository->getIdProveedorSAT($this->arreglo_factura["emisor"],$this->arreglo_factura["id_empresa_sat"]);
+        $this->arreglo_factura["id_proveedor_sat"] = $this->repository->getIdProveedorSAT($this->arreglo_factura["emisor"], $this->arreglo_factura["id_empresa_sat"]);
     }
 }
