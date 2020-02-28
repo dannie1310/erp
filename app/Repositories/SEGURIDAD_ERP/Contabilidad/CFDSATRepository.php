@@ -61,6 +61,26 @@ class CFDSATRepository extends Repository implements RepositoryInterface
 
         }
     }
+
+    public function getProveedorSAT($datos, $id_empresa){
+
+        $proveedor = ProveedorSAT::where("rfc","=",$datos["rfc"])
+            ->first();
+        if($proveedor){
+            return ["id_proveedor" => $proveedor->id, "nuevo" => 0];
+        }  else{
+            if($id_empresa>0){
+                $proveedor = ProveedorSAT::create(
+                    $datos
+                );
+                return ["id_proveedor" => $proveedor->id, "nuevo" => 1];
+            }else{
+                return null;
+            }
+
+        }
+    }
+
     public function getEstadoEFO($rfc)
     {
         $efo = DB::connection("seguridad")->table("Finanzas.ctg_efos")

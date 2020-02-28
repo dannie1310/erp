@@ -45,7 +45,8 @@ class CFDSATController extends Controller
 
     public function cargaZIP(Request $request)
     {
-        $this->service->storeZIPCFD($request->archivo_zip);
+        $respuesta =$this->service->storeZIPCFD($request->nombre_archivo, $request->archivo_zip);
+        return response()->json($respuesta, 200);
     }
 
 }

@@ -27,13 +27,11 @@
                     <li class="nav-item" v-if="$root.can('configurar_visibilidad_empresa_ctpq', true ) || $root.can('configurar_editabilidad_empresa_ctpq', true ) ">
                         <router-link :to="{name: 'lista-empresa'}" class="nav-link" :class="{active: this.$route.name == 'lista-empresa'}">
                             &nbsp;<i class="fa fa-building nav-icon"></i>
-                            <p>Empresas</p>
+                            <p>Empresas Contpaq</p>
                         </router-link>
                     </li>
                 </ul>
             </li>
-
-            
         </ul>
     </nav>
 </template>
