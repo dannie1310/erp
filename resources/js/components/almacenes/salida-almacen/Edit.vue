@@ -173,7 +173,7 @@
                 con_prestamo : false,
                 contratistas : [],
                 salida: '',
-                tipo_cargo: '',
+                tipo_cargo: 1,
                 id_empresa:'',
                 res:
                     {
