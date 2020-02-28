@@ -59,7 +59,7 @@
                                         <div role="form">
                                             <div class="form-group row">
                                                 <div class="col-md-2">
-                                                        <label class="custom-control-label" for="con_prestamo">Entrega a contratista</label>
+                                                        <label class="col-form-label" for="con_prestamo">Entrega a contratista</label>
                                                 </div>
                                                 <div class="col-md-7" v-if="salida.partidas">
                                                     <model-list-select
