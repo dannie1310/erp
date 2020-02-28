@@ -66,7 +66,6 @@ class CFDSATService
         file_put_contents($file, $data);
         $zipper = new Zipper;
         $contenido = $zipper->make(public_path($paths["path_zip"]))->listFiles();
-        dd($contenido);
         $zipper->make(public_path($paths["path_zip"]))->extractTo(public_path($paths["path_xml"]));
         $this->procesaCFD($paths["path_xml"]);
     }
@@ -91,7 +90,7 @@ class CFDSATService
             {
                 $this->arreglo_factura["version"] = (string)$factura_xml["version"];
                 $this->setArreglo32($factura_xml);
-            } else if($factura_xml["version"] == "3.3")
+            } else if($factura_xml["Version"] == "3.3")
             {
                 $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
                 $this->setArreglo33($factura_xml);
@@ -115,9 +114,60 @@ class CFDSATService
         $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
         $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
         $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
+        $ns = $factura_xml->getNamespaces(true);
+        try{
+            $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
+            $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[0]["TotalImpuestosTrasladados"][0];
+            $traslados =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslado');
+
+            $i = 0;
+            foreach($traslados as $traslado)
+            {
+                if(!(float)$traslado["Base"]>0){
+                    if($traslado["Impuesto"] == "002")
+                    {
+                        $this->arreglo_factura["importe_iva"] = (float)$traslado["Importe"];
+                        $this->arreglo_factura["tasa_iva"] = (float)$traslado["TasaOCuota"];
+                    }
+                    $this->arreglo_factura["traslados"][$i]["impuesto"] = (float)$traslado["Impuesto"];
+                    $this->arreglo_factura["traslados"][$i]["tipo_factor"] = (string)$traslado["TipoFactor"];
+                    $this->arreglo_factura["traslados"][$i]["tasa_o_cuota"] = (float)$traslado["TasaOCuota"];
+                    $this->arreglo_factura["traslados"][$i]["importe"] = (float)$traslado["Importe"];
+                    $i++;
+                }
+            }
+
+            //dd($traslados_concepto);
+            $conceptos =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
+            $i = 0;
+            foreach($conceptos as $concepto)
+            {
+                $this->arreglo_factura["conceptos"][$i]["clave_prod_serv"] = (string)$concepto["ClaveProdServ"];
+                $this->arreglo_factura["conceptos"][$i]["no_identificacion"] = (string)$concepto["NoIdentificacion"];
+                $this->arreglo_factura["conceptos"][$i]["cantidad"] = (float)$concepto["Cantidad"];
+                $this->arreglo_factura["conceptos"][$i]["clave_unidad"] = (string)$concepto["ClaveUnidad"];
+                $this->arreglo_factura["conceptos"][$i]["unidad"] = (string)$concepto["Unidad"];
+                $this->arreglo_factura["conceptos"][$i]["descripcion"] = (string)$concepto["Descripcion"];
+                $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (float)$concepto["ValorUnitario"];
+                $this->arreglo_factura["conceptos"][$i]["importe"] = (float)$concepto["Importe"];
+
+                $traslados_concepto =$factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto[".$i."]/cfdi:Impuestos/cfdi:Traslados/cfdi:Traslado");
+                $itc = 0;
+                foreach($traslados_concepto as $traslado_concepto)
+                {
+                    $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["base"] = (float)$traslado_concepto["Base"];
+                    $itc++;
+                }
+
+                $i++;
+            }
+
+        } catch (\Exception $e) {
+            abort(500, "Hubo un error al leer la ruta de impuestos o conceptos: " . $e->getMessage());
+        }
 
         try {
-            $ns = $factura_xml->getNamespaces(true);
+            //$ns = $factura_xml->getNamespaces(true);
             $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
             $factura_xml->registerXPathNamespace('t', $ns['tfd']);
             $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
@@ -134,16 +184,7 @@ class CFDSATService
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
         }
-
-        /*$this->arreglo_factura["empresa_bd"] = $this->repository->getEmpresa(
-            [
-                "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                "razon_social" => $this->arreglo_factura["emisor"]["nombre"]
-            ]
-        );*/
-
-
-        dd($factura_xml, $this->arreglo_factura);
+        dd($this->arreglo_factura);
 
     }
 
@@ -164,36 +205,38 @@ class CFDSATService
         $ns = $factura_xml->getNamespaces(true);
         try{
             $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
-            $this->arreglo_factura["impuestos"]["totalImpuestosTrasladados"] = (string)$impuestos[0]["totalImpuestosTrasladados"][0];
+            $this->arreglo_factura["total_impuestos_trasladados"] = (string)$impuestos[0]["totalImpuestosTrasladados"][0];
             $traslados =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslado');
-
+            $i = 0;
             foreach($traslados as $traslado)
             {
                 if($traslado["impuesto"] == "IVA")
                 {
-                    $this->arreglo_factura["iva"] = (float)$traslado["importe"];
+                    $this->arreglo_factura["importe_iva"] = (float)$traslado["importe"];
                     $this->arreglo_factura["tasa_iva"] = (float)$traslado["tasa"];
                 }
+                $this->arreglo_factura["traslados"][$i]["impuesto"] = (string)$traslado["impuesto"];
+                $this->arreglo_factura["traslados"][$i]["tasa_o_cuota"] = (string)$traslado["tasa"];
+                $this->arreglo_factura["traslados"][$i]["importe"] = (string)$traslado["importe"];
+                $i++;
             }
             $conceptos =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
             foreach($conceptos as $concepto)
             {
-                $this->arreglo_factura["conceptos"][$i]["cantidad"] = (string)$concepto["cantidad"];
+                $this->arreglo_factura["conceptos"][$i]["cantidad"] = (float)$concepto["cantidad"];
                 $this->arreglo_factura["conceptos"][$i]["descripcion"] = (string)$concepto["descripcion"];
-                $this->arreglo_factura["conceptos"][$i]["importe"] = (string)$concepto["descripcion"];
+                $this->arreglo_factura["conceptos"][$i]["importe"] = (float)$concepto["importe"];
                 $this->arreglo_factura["conceptos"][$i]["no_identificacion"] = (string)$concepto["noIdentificacion"];
                 $this->arreglo_factura["conceptos"][$i]["unidad"] = (string)$concepto["unidad"];
-                $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (string)$concepto["valorUnitario"];
+                $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (float)$concepto["valorUnitario"];
                 $i++;
             }
 
         } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer la ruta de impuestos: " . $e->getMessage());
+            abort(500, "Hubo un error al leer la ruta de impuestos o conceptos: " . $e->getMessage());
         }
-
         try {
-
             $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
             $factura_xml->registerXPathNamespace('t', $ns['tfd']);
             $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
@@ -210,19 +253,5 @@ class CFDSATService
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
         }
-        /*$this->arreglo_factura["empresa_bd"] = $this->repository->getEmpresa(
-            [
-                "rfc" => $this->arreglo_factura["receptor"]["rfc"],
-                "razon_social" => $this->arreglo_factura["receptor"]["nombre"]
-            ]
-        );
-        $this->arreglo_factura["proveedor_bd"] = $this->repository->getProveedor(
-            [
-                "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                "razon_social" => $this->arreglo_factura["emisor"]["nombre"]
-            ]
-        );*/
-        dd($factura_xml, $this->arreglo_factura);
-
     }
 }
