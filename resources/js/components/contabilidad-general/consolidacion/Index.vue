@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div>
-                <button class="btn btn-outline-success float-right" :disabled="!areas_desasignados.length && !areas_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
+                <button class="btn btn-outline-success float-right" :disabled="!desasignados.length && !nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
                 </div>
             </div>
 
@@ -61,7 +61,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Detalle de Asignación/Desasignación</h5>
+                        <h5 class="modal-title">Detalle de Asignación de Empresa Consolidadora</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -70,22 +70,22 @@
                         <div class="table-responsive">
                             <table class="table">
                                 <tr>
-                                    <th>Usuario:</th>
-                                    <td>{{ usuario_seleccionado }}</td>
+                                    <th>Empresa Consolidadora:</th>
+                                    <td>{{ nombre }}</td>
                                 </tr>
-                                 <tr  v-if="areas_nuevos_asignados.length">
+                                 <tr  v-if="nuevos_asignados.length">
                                     <th>Areas Subcontratantes a Asignar:</th>
                                     <td>
                                         <ul>
-                                            <li v-for="area in areas_nuevos_asignados">{{ area.descripcion }}</li>
+                                            <li v-for="nuevo in nuevos_asignados">{{ nuevo.nombre }}</li>
                                         </ul>
                                     </td>
                                 </tr>
-                                <tr v-if="areas_desasignados.length">
+                                <tr v-if="desasignados.length">
                                     <th>Areas Subcontratantes a Desasignar:</th>
                                     <td>
                                         <ul>
-                                            <li v-for="area in areas_desasignados">{{ area.descripcion }}</li>
+                                            <li v-for="desa in desasignados">{{ desa.nombre }}</li>
                                         </ul>
                                     </td>
                                 </tr>
@@ -126,6 +126,7 @@
                 cargando: false,
                 guardando: false,
                 empresas: [],
+                nombre: [],
                 disponibles: [],
                 asignados: [],
                 originales: [],
@@ -181,7 +182,7 @@
             },
 
             getEmpresasAsociadadas(id) {
-                
+                this.originales = [];
                 return this.$store.dispatch('seguridad/lista-empresas/find', {
                     id: id,
                     params: {sort: 'Nombre', order: 'asc', include: 'consolida'}
@@ -189,7 +190,8 @@
                     .then(data => {
                         this.asignados = data.consolida.data;
                         this.originales = data.consolida.data;
-                        console.log('asignados', this.asignados);
+                        this.nombre = data.nombre
+                        console.log('nombre', this.nombre);
                         this.getEmpresasDisponibles();
                         
                         // this.asignados = this.empresas.diff(this.asignados );
@@ -315,6 +317,16 @@
 
             nuevos_asignados() {
                 return this.asignados.filter(areas => {
+                    return $.inArray(areas.id, this.areas_originales) == -1;
+                })
+            },
+            areas_desasignados() {
+                return this.areas_disponibles.filter(areas => {
+                    return $.inArray(areas.id, this.areas_originales) > -1;
+                })
+            },
+            areas_nuevos_asignados() {
+                return this.areas_asignados.filter(areas => {
                     return $.inArray(areas.id, this.areas_originales) == -1;
                 })
             }
