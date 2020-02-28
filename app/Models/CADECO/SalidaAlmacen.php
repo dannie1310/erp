@@ -133,6 +133,36 @@ class SalidaAlmacen extends Transaccion
         };
     }
 
+    public function editarEntregasContratista($data)
+    {
+            $items = $this->items->pluck('id_item');
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->id_empresa = $data['id_empresa'];
+            $this->save();
+            $this->entrega_contratista->tipo = $data['tipo_cargo'];
+            $this->entrega_contratista->save();
+
+            foreach( $items as $item)
+            {
+                if(ItemContratista::find($item))
+                {
+                    ItemContratista::where('id_item', '=', $item)->update(['id_empresa' => $data['id_empresa'], 'con_cargo' => $data['tipo_cargo']]);
+                }else{
+                    ItemContratista::query()->create(['id_item' => $item,
+                            'id_empresa' => $data['id_empresa'],
+                            'con_cargo' => $data['tipo_cargo']]);
+                }
+            }
+            DB::connection('cadeco')->commit();
+            
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function getEstadoFormatAttribute()
     {
         switch ($this->estado) {

@@ -33,7 +33,7 @@
                                                             <td>{{solicitudAlta.banco.razon_social}}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Cuenta / CLABE:</th>
+                                                            <th>Cuenta / CLABE / Núm. Tarjeta:</th>
                                                             <td>{{solicitudAlta.cuenta}}</td>
                                                         </tr>
                                                         <tr>
@@ -50,7 +50,7 @@
                                                         </tr>
                                                         <tr>
                                                             <th>Tipo:</th>
-                                                            <td>{{solicitudAlta.tipos}}</td>
+                                                            <td>{{solicitudAlta.tipo_cuenta.descripcion}}</td>
                                                         </tr>
                                                         <tr>
                                                             <th>Observaciones:</th>
@@ -100,7 +100,7 @@
                 this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/find', {
                     id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
+                    params: { include: ['moneda', 'subcontrato', 'tipo_cuenta', 'empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).draggable();

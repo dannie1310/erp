@@ -32,7 +32,8 @@ class ListaEmpresasService{
         return $this->repository->paginate();
     }
 
-    public function update(array $data, $id){
+    public function update(array $data, $id)
+    {
         return $this->repository->update($data, $id);
     }
 }

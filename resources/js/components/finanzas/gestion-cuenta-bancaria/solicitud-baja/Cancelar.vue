@@ -25,7 +25,7 @@
                                                             <td>{{solicitudBaja.empresa.razon_social}}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Cuenta / CLABE:</th>
+                                                            <th>Cuenta / CLABE / Núm. Tarjeta:</th>
                                                             <td>{{solicitudBaja.cuenta}}</td>
                                                         </tr>
                                                     </tbody>
@@ -66,7 +66,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td><b>Tipo:</b></td>
-                                                                <td>{{solicitudBaja.tipo_cuenta}}</td>
+                                                                <td>{{solicitudBaja.tipo_cuenta.descripcion}}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -155,7 +155,7 @@
                 this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/find', {
                     id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos.usuario','movimiento_solicitud'] }
+                    params: { include: ['moneda', 'subcontrato', 'tipo_cuenta', 'empresa','banco','tipo','plaza','movimientos.usuario','movimiento_solicitud'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).draggable();
