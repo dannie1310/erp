@@ -38,6 +38,8 @@
                     { title: 'Alias', field: 'alias', sortable: true },
                     { title: 'Visible', field: 'visible', sortable: true },
                     { title: 'Editable', field: 'editable', sortable: true },
+                    { title: 'Histórica', field: 'historica', sortable: true },
+                    { title: 'Consolidadora ', field: 'consolidadora', sortable: true },
                     { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -93,8 +95,10 @@
                         alias: empresa.alias,
                         visible: empresa.visible == 1?'SI':'NO',
                         editable: empresa.editable == 1?'SI':'NO',
+                        historica: empresa.historica == 1?'SI':'NO',
+                        consolidadora: empresa.consolidadora == 1?'SI':'NO',
                         buttons: $.extend({}, {
-                            edit: self.$root.can('configurar_visibilidad_empresa_ctpq', true) || self.$root.can('configurar_editabilidad_empresa_ctpq', true) ? true : false,
+                            edit: self.$root.can('configurar_visibilidad_empresa_ctpq', true) || self.$root.can('configurar_editabilidad_empresa_ctpq', true) || self.$root.can('configurar_tipo_empresa_ctpq', true) ? true : false,
                             empresa: empresa,
                         })
                     }));

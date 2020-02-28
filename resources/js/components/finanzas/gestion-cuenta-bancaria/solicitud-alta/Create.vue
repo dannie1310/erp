@@ -278,7 +278,7 @@
                 cuenta: '',
                 id_tipo: '',
                 tipos: {
-                    3: "Tarjeta Bancaria",
+                    3: "Tarjeta Mismo Banco",
                     2: "Interbancaria",
                     1: "Mismo Banco"
                 },

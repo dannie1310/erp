@@ -9,6 +9,7 @@ use App\Http\Requests\Almacenes\DeleteSalidaAlmacenRequest;
 use App\Http\Transformers\CADECO\Compras\SalidaAlmacenTransformer;
 use App\Services\CADECO\Almacenes\SalidaAlmacenService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class SalidaAlmacenController extends Controller
@@ -64,6 +65,17 @@ class SalidaAlmacenController extends Controller
         }
         dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
 
+    }
+
+    public function entregaContratista(Request $request, $id)
+    {
+        if(auth()->user()->can('editar_salida_almacen'))
+        {
+            $res = $this->service->entregaContratista($request->all(), $id);
+            return response()->json([], 200);
+        }       
+
+        throw New \Exception('No cuentas con los permisos necesarios para realizar la acción solicitada.');
     }
 
 }
