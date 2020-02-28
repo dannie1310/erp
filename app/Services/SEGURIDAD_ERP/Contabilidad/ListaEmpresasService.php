@@ -36,4 +36,9 @@ class ListaEmpresasService{
     {
         return $this->repository->update($data, $id);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

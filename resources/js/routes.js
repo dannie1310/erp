@@ -108,6 +108,24 @@ export const routes = [
                         }
                     }
                 ]
+            },
+            {
+                path: 'consolidacion',
+                component: require('./components/contabilidad-general/consolidacion/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"consolidacion",
+                        component: require('./components/contabilidad-general/consolidacion/Index.vue').default,
+                        meta: {
+                            title: 'Consolidación',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CONSOLIDACIÓN'},
+                            middleware: [auth, permission],
+                            permission: ['configurar_visibilidad_empresa_ctpq','configurar_editabilidad_empresa_ctpq'],
+                            general: true
+                        }
+                    }
+                ]
             }
         ]
     },

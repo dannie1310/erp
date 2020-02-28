@@ -24,6 +24,14 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('configurar_visibilidad_empresa_ctpq', true ) || $root.can('configurar_editabilidad_empresa_ctpq', true ) ">
+                        <router-link :to="{name: 'consolidacion'}" class="nav-link" :class="{active: this.$route.name == 'consolidacion'}">
+                            &nbsp;<i class="fas fa-handshake nav-icon"></i>
+                            <p>Consolidación</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
 
             

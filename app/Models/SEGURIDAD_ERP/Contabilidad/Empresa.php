@@ -28,10 +28,25 @@ class Empresa extends Model
         'Nombre',
         'AliasBDD'
     ];
+    
+    public function consolida()
+    {
+        return $this->hasMany(self::class, 'IdConsolidadora', 'Id');
+    }
 
     public function scopeEditable($query)
     {
         return $query->where('Visible',1)->where('Editable', 1);
+    }
+
+    public function scopeConsolidadora($query)
+    {
+        return $query->where('Consolidadora', '=', 1);
+    }
+
+    public function scopeDisponibles($query)
+    {
+        return $query->whereNull('IdConsolidadora')->whereNull('Consolidadora')->orWhereRaw('Consolidadora = 0');
     }
 
 }
