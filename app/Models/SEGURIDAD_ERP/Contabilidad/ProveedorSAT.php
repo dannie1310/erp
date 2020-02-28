@@ -14,12 +14,13 @@ use Illuminate\Database\Eloquent\Model;
 class ProveedorSAT extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.Contabilidad.ProveedoresSAT';
+    protected $table = 'SEGURIDAD_ERP.Contabilidad.proveedores_sat';
     public $timestamps = false;
 
     public $fillable = [
         'razon_social',
-        'rfc'
+        'rfc',
+        'regimen_fiscal',
     ];
 
 }

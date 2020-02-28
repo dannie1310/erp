@@ -10,16 +10,41 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class CFDSAT extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'SEGURIDAD_ERP.Contabilidad.cfd_sat';
     public $timestamps = false;
+    protected $fillable =[
+        "version"
+        ,"rfc_emisor"
+        ,"rfc_receptor"
+        ,"xml_file"
+        ,"uuid"
+        ,"serie"
+        ,"folio"
+        ,"fecha"
+        ,"total_impuestos_trasladados"
+        ,"tasa_iva"
+        ,"importe_iva"
+        ,"descuento"
+        ,"subtotal"
+        ,"total"
+        ,"id_empresa_sat"
+        ,"id_proveedor_sat"
+        ,"moneda"
+    ];
 
     public function conceptos()
     {
         return $this->hasMany(CFDSATConceptos::class, 'id_cfd_sat', 'id');
+    }
+
+    public function traslados()
+    {
+        return $this->hasMany(CFDSATTraslados::class, 'id_cfd_sat', 'id');
     }
 
     public function proveedor()
@@ -30,6 +55,28 @@ class CFDSAT extends Model
     public function empresa()
     {
         return $this->belongsTo(EmpresaSAT::class, 'id_empresa_sat', 'id');
+    }
+
+    public function registrar($data)
+    {
+        $factura = null;
+        try {
+            DB::connection('seguridad')->beginTransaction();
+
+            $cfd = $this->create($data);
+            foreach($data["conceptos"] as $concepto){
+                $cfd->conceptos()->create($concepto);
+            }
+            foreach($data["traslados"] as $traslado){
+                $cfd->traslados()->create($traslado);
+            }
+            DB::connection('seguridad')->commit();
+            return $cfd;
+
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 
 }
