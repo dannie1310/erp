@@ -150,9 +150,11 @@ class CFDSATService
         $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
         $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
         $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$emisor["RegimenFiscal"][0];
+        $this->arreglo_factura["rfc_emisor"] = $this->arreglo_factura["emisor"]["rfc"];
         $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
         $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
         $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
+        $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
         $ns = $factura_xml->getNamespaces(true);
         try{
             $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
