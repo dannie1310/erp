@@ -18,7 +18,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label class="col-form-label">Archivo ZIP:</label>
+                                        <label class="col-form-label"><i class="fa fa-file-archive"></i> Archivo ZIP:</label>
                                     </div>
                                 </div>
                             </div>
@@ -42,43 +42,44 @@
                                 <hr/>
                                 <h6><i class="fa fa-arrow-circle-right"></i><b>Resultado del procesamiento</b></h6>
                                 <div class="table-responsive">
-                            <table style="width: 100%" class="table table-stripped">
-                                <tbody>
-                                    <tr>
-                                        <th style="text-align: left" >Nombre de archivo zip:</th>
-                                        <td style="text-align: right">{{resultado.nombre_archivo_zip}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left" >Núm. archivos leidos:</th>
-                                        <td style="text-align: right">{{resultado.archivos_leidos}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left" >Núm. archivos cargados:</th>
-                                        <td style="text-align: right">{{resultado.archivos_cargados}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left" >Núm. archivos no cargados:</th>
-                                        <td style="text-align: right">{{resultado.archivos_no_cargados}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left" >Núm. archivos preexistentes:</th>
-                                        <td style="text-align: right">{{resultado.archivos_preexistentes}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left" >Núm. archivos receptor no válido:</th>
-                                        <td style="text-align: right">{{resultado.archivos_receptor_no_valido}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left" >Núm. archivos error app:</th>
-                                        <td style="text-align: right">{{resultado.archivos_no_cargados_error_app}}</td>
-                                    </tr>
-                                </tbody>
-
-                                </table>
+                                    <table style="width: 100%" class="table table-stripped">
+                                        <tbody>
+                                            <tr>
+                                                <th style="text-align: left" >Nombre de archivo zip:</th>
+                                                <td style="text-align: right">{{resultado.nombre_archivo_zip}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th style="text-align: left" >Núm. archivos leidos:</th>
+                                                <td style="text-align: right">{{resultado.archivos_leidos}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th style="text-align: left" >Núm. archivos cargados:</th>
+                                                <td style="text-align: right">{{resultado.archivos_cargados}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th style="text-align: left" >Núm. proveedores cargados:</th>
+                                                <td style="text-align: right">{{resultado.proveedores_nuevos}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th style="text-align: left" >Núm. archivos no cargados:</th>
+                                                <td style="text-align: right">{{resultado.archivos_no_cargados}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: left" >-Núm. archivos preexistentes:</td>
+                                                <td style="text-align: right">{{resultado.archivos_preexistentes}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: left" >-Núm. archivos receptor no válido:</td>
+                                                <td style="text-align: right">{{resultado.archivos_receptor_no_valido}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: left" >-Núm. archivos error app:</td>
+                                                <td style="text-align: right">{{resultado.archivos_no_cargados_error_app}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                </div>
-
                             </span>
-
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary" :disabled="cargando || errors.count() > 0">
@@ -89,7 +90,7 @@
                                     <i class="fa fa-upload"></i> Cargar
                                 </span>
                             </button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-secondary" @click="close">Cerrar</button>
                         </div>
                     </div>
 
@@ -98,13 +99,9 @@
         </form>
     </span>
 </template>
-
 <script>
-
     export default {
         name: "cfd-sat-registro-masivo",
-
-
         data() {
             return {
                 cargando: false,
@@ -128,7 +125,6 @@
                     vm.file_zip = e.target.result;
                 };
                 reader.readAsDataURL(file);
-
             },
 
             onFileChange(e){
@@ -138,9 +134,6 @@
                     return;
                 this.file_zip_name = files[0].name;
                 this.createImage(files[0]);
-                /*setTimeout(() => {
-                    this.validate()
-                }, 500);*/
             },
 
             validate() {
@@ -173,26 +166,7 @@
                     }
                 })
                 .then(data => {
-                    /*this.resultado.nombre_archivo_zip = data.nombre_archivo_zip;*/
                     this.resultado = data;
-                   /* console.log(data);*/
-                    /*if(data.data.length > 0){
-                        this.pagos = data.data;
-                        this.cuentas_cargo = data.cuentas_cargo;
-                        this.fechas_validacion = data.fechas_validacion;
-                        this.resumen = data.resumen;
-                        this.fechasDeshabilitadas.from=new Date(this.fechas_validacion.from);
-                        this.fechasDeshabilitadas.to=new Date(this.fechas_validacion.to);
-                        this.id_moneda_obra = data.id_moneda_obra;
-
-                    }else{
-                        if(this.$refs.carga_layout.value !== ''){
-                            this.$refs.carga_layout.value = '';
-                            this.file_pagos = null;
-                        }
-                        this.pagos = [];
-                        swal('Carga Masiva', 'Archivo de layout sin pagos válidos.', 'warning')
-                    }*/
                 }).finally(() => {
                     this.cargando = false;
                 });
@@ -200,6 +174,12 @@
             open(){
                 $(this.$refs.modal_carga_masiva).modal('show');
             },
+            close(){
+                $(this.$refs.modal_carga_masiva).modal('hide');
+                this.$refs.carga_zip.value = '';
+                this.file_zip = null;
+                this.resultado = [];
+            }
         }
     }
 </script>
