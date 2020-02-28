@@ -541,6 +541,13 @@ class EstimacionFormato extends Rotation
         $this->SetHeights([0.4]);
         $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
 
+        //Penalizaciones
+        $penalizacion_subcontrato = 0;
+        $penalizacion_acum_estim_anterior = ($this->estimacion->subcontrato->acumulado_retencion_anteriores+$this->estimacion->subcontrato->acumulado_liberacion_anteriores)-($this->estimacion->retenciones->sum('importe')+$this->estimacion->liberaciones->sum('importe'));
+        $penalizacion_estimacion = ($this->estimacion->retenciones->sum('importe')+$this->estimacion->liberaciones->sum('importe'));
+        $penalizacion_a_esta_estimacion = $this->deductivas['$importe_acumulado'] + $this->estimacion->subcontrato->acumulado_retencion_anteriores+$this->estimacion->subcontrato->acumulado_liberacion_anteriores;
+        $penalizacion_porEstimar = $penalizacion_subcontrato - $penalizacion_estimacion;
+
         /// Calculos Resumen Amortizacion Anticpo
         $amort_anticipo_anterior = $this->estimacion->anticipo_anterior;
         $amortizacion_anticipo =  $this->estimacion->suma_importes*$this->estimacion->anticipo/100;
@@ -554,12 +561,12 @@ class EstimacionFormato extends Rotation
         $fondo_garantia_actual = $fondo_garantia_anterior + $fondo_garantia;
         $fondo_garantia_saldo = $fondo_garantia_contrato - $fondo_garantia_actual;
 
-        $subtotal_contrato = $this->suma_contrato - ($this->deductivas['importe_total_original'] + $this->estimacion->subcontrato->anticipo_monto);
+        $subtotal_contrato = $this->suma_contrato - ($this->deductivas['importe_total_original'] + $penalizacion_subcontrato + $this->estimacion->subcontrato->anticipo_monto + $fondo_garantia_contrato);
         $subtotal_acum_estimado_anterior = $this->suma_estimacionAnterior - ($this->deductivas['importe_descuento_anterior'] + $this->estimacion->anticipo_anterior);
 
         $this->Row(['Importe asociado a trabajos ejecutados', '', '', '', '',  number_format($this->suma_contrato, 4, ".", ","), '', number_format($this->suma_estimacionAnterior, 4, ".", ","), '', number_format($this->suma_estimacion, 4, ".", ","), '',number_format($this->suma_acumulada, 4, ".", ","), '', number_format($this->suma_porEstimar, 4, ".", ",")]);
         $this->Row(['Deductivas y Descuentos', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","),'', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '', number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
-        $this->Row(['Penalizaciones', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '',  number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
+        $this->Row(['Penalizaciones', '', '', '', '', number_format($penalizacion_subcontrato, 4, ".", ","), '', number_format($penalizacion_acum_estim_anterior, 4, ".", ","), '', number_format($penalizacion_estimacion, 4, ".", ","), '',  number_format($penalizacion_a_esta_estimacion, 4, ".", ","), '', number_format($penalizacion_porEstimar, 4, ".", ",")]);
         $this->Row(['Anticipo Solicitado', '', '%', $this->estimacion->subcontrato->anticipo, '', number_format($this->estimacion->subcontrato->anticipo_monto, 4, ".", ","), '', '', '', '', '', '', '', '']);
         $this->Row([utf8_decode('Amortización Anticipo'), '', '%',  number_format($this->estimacion->anticipo/100, 4, ".", ","), '', '', '',number_format($amort_anticipo_anterior, 4, ".", ",") , '', number_format($amortizacion_anticipo, 4, ".", ","), ' ',number_format($anticipo_actual, 4, ".", ","), ' ',number_format($anticipo_saldo, 4, ".", ",")]);
         $this->Row([utf8_decode('Fondo de Garantía'), ' ', '%', $this->estimacion->subcontratoEstimacion->PorcentajeFondoGarantia, ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
