@@ -42,26 +42,6 @@ class CFDSATService
 
     private function store()
     {
-        $datos_cfd = [
-            "version" => $this->arreglo_factura["version"],
-            "rfc_emisor" => $this->arreglo_factura["emisor"]["rfc"],
-            "rfc_receptor" => $this->arreglo_factura["receptor"]["rfc"],
-            //"xml_file" => $this->repository->getArchivoSQL(base64_encode($this->arreglo_factura[""])),
-            //"hash_file" => hash_file('md5', base64_encode($contenido_archivo)),
-            "uuid" => $this->arreglo_factura["uuid"],
-            "fecha" => $this->arreglo_factura["fecha"],
-            "serie" => $this->arreglo_factura["serie"],
-            "folio" => $this->arreglo_factura["folio"],
-            "total_impuestos_trasladados" => $this->arreglo_factura["total_impuestos_trasladados"],
-            "tasa_iva" => $this->arreglo_factura["tasa_iva"],
-            "importe_iva" => $this->arreglo_factura["importe_iva"],
-            "descuento" => $this->arreglo_factura["descuento"],
-            "subtotal" => $this->arreglo_factura["subtotal"],
-            "total" => $this->arreglo_factura["total"],
-            "traslados" =>$this->arreglo_factura["traslados"],
-            "conceptos" =>$this->arreglo_factura["conceptos"],
-        ];
-
         $transaccion_cfd = $this->repository->registrar($this->arreglo_factura);
         return $transaccion_cfd;
     }
@@ -122,18 +102,19 @@ class CFDSATService
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
-            $factura_simple_xml = new \SimpleXMLElement(file_get_contents($archivo_xml));
-            if((string)$factura_xml["version"] == "3.2")
-            {
-                $this->arreglo_factura["version"] = (string)$factura_xml["version"];
-                $this->setArreglo32($factura_xml);
-            } else if($factura_xml["Version"] == "3.3")
-            {
-                $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
-                $this->setArreglo33($factura_xml);
-            }
+
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
+        }
+        //$factura_simple_xml = new \SimpleXMLElement(file_get_contents($archivo_xml));
+        if((string)$factura_xml["version"] == "3.2")
+        {
+            $this->arreglo_factura["version"] = (string)$factura_xml["version"];
+            $this->setArreglo32($factura_xml);
+        } else if($factura_xml["Version"] == "3.3")
+        {
+            $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
+            $this->setArreglo33($factura_xml);
         }
     }
 
@@ -158,7 +139,11 @@ class CFDSATService
         $ns = $factura_xml->getNamespaces(true);
         try{
             $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
-            $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[count($impuestos)-1]["TotalImpuestosTrasladados"];
+            if(count($impuestos)>=1){
+                $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[count($impuestos)-1]["TotalImpuestosTrasladados"];
+            } else{
+                $this->arreglo_factura["total_impuestos_trasladados"] = "";
+            }
             $traslados =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslado');
 
             $i = 0;

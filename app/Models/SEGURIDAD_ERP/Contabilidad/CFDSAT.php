@@ -67,8 +67,10 @@ class CFDSAT extends Model
             foreach($data["conceptos"] as $concepto){
                 $cfd->conceptos()->create($concepto);
             }
-            foreach($data["traslados"] as $traslado){
-                $cfd->traslados()->create($traslado);
+            if(key_exists("traslados",$data)){
+                foreach($data["traslados"] as $traslado){
+                    $cfd->traslados()->create($traslado);
+                }
             }
             DB::connection('seguridad')->commit();
             return $cfd;
