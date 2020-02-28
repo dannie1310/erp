@@ -86,6 +86,7 @@ class CFDSATService
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
+            $factura_simple_xml = new \SimpleXMLElement(file_get_contents($archivo_xml));
             if((string)$factura_xml["version"] == "3.2")
             {
                 $this->arreglo_factura["version"] = (string)$factura_xml["version"];
@@ -93,7 +94,7 @@ class CFDSATService
             } else if($factura_xml["Version"] == "3.3")
             {
                 $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
-                $this->setArreglo33($factura_xml);
+                $this->setArreglo33($factura_simple_xml);
             }
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
@@ -136,8 +137,6 @@ class CFDSATService
                     $i++;
                 }
             }
-
-            //dd($traslados_concepto);
             $conceptos =$factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
             foreach($conceptos as $concepto)
@@ -167,7 +166,6 @@ class CFDSATService
         }
 
         try {
-            //$ns = $factura_xml->getNamespaces(true);
             $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
             $factura_xml->registerXPathNamespace('t', $ns['tfd']);
             $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
@@ -184,8 +182,6 @@ class CFDSATService
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
         }
-        dd($this->arreglo_factura);
-
     }
 
     private function setArreglo32($factura_xml)
