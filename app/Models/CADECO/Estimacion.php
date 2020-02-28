@@ -900,7 +900,15 @@ class Estimacion extends Transaccion
 
     public function getAnticipoAnteriorAttribute()
     {
-        return $this->suma_importes * (1- $this->retencion / 100) - $this->monto + $this->impuesto;
+        $anticipo = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $anticipo += $estimacion->suma_importes * ( 1 - $estimacion->retencion / 100) - $estimacion->monto + $estimacion->impuesto;
+        }                                
+        return $anticipo;
     }
 
     public function getFondoGarantiaAcumuladoAnteriorAttribute(){
