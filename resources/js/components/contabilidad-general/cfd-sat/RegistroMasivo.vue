@@ -5,7 +5,7 @@
          </button>
         <form role="form" @submit.prevent="validate">
         <div class="modal fade" ref="modal_carga_masiva" role="dialog" data-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
 
                     <div class="modal-content">
                         <div class="modal-header">
@@ -18,22 +18,67 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label class="col-md-2 col-form-label">Archivo ZIP:</label>
-                                        <div class="col-md-10">
-                                            <input type="file" class="form-control" id="carga_zip"
-                                                   @change="onFileChange"
-                                                   row="3"
-                                                   v-validate="{ ext: ['zip']}"
-                                                   name="carga_zip"
-                                                   data-vv-as="zip"
-                                                   ref="carga_zip"
-                                                   :class="{'is-invalid': errors.has('carga_zip')}"
-                                            >
-                                            <div class="invalid-feedback" v-show="errors.has('carga_zip')">{{ errors.first('carga_zip') }} (zip)</div>
-                                        </div>
+                                        <label class="col-form-label">Archivo ZIP:</label>
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <input type="file" class="form-control" id="carga_zip"
+                                               @change="onFileChange"
+                                               row="3"
+                                               v-validate="{ ext: ['zip']}"
+                                               name="carga_zip"
+                                               data-vv-as="zip"
+                                               ref="carga_zip"
+                                               :class="{'is-invalid': errors.has('carga_zip')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('carga_zip')">{{ errors.first('carga_zip') }} (zip)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span v-if="resultado.nombre_archivo_zip">
+                                <hr/>
+                                <h6><i class="fa fa-arrow-circle-right"></i><b>Resultado del procesamiento</b></h6>
+                                <div class="table-responsive">
+                            <table style="width: 100%" class="table table-stripped">
+                                <tbody>
+                                    <tr>
+                                        <th style="text-align: left" >Nombre de archivo zip:</th>
+                                        <td style="text-align: right">{{resultado.nombre_archivo_zip}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left" >Núm. archivos leidos:</th>
+                                        <td style="text-align: right">{{resultado.archivos_leidos}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left" >Núm. archivos cargados:</th>
+                                        <td style="text-align: right">{{resultado.archivos_cargados}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left" >Núm. archivos no cargados:</th>
+                                        <td style="text-align: right">{{resultado.archivos_no_cargados}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left" >Núm. archivos preexistentes:</th>
+                                        <td style="text-align: right">{{resultado.archivos_preexistentes}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left" >Núm. archivos receptor no válido:</th>
+                                        <td style="text-align: right">{{resultado.archivos_receptor_no_valido}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left" >Núm. archivos error app:</th>
+                                        <td style="text-align: right">{{resultado.archivos_no_cargados_error_app}}</td>
+                                    </tr>
+                                </tbody>
+
+                                </table>
+                               </div>
+
+                            </span>
+
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary" :disabled="cargando || errors.count() > 0">
@@ -55,10 +100,10 @@
 </template>
 
 <script>
-    import {ModelListSelect} from 'vue-search-select';
+
     export default {
         name: "cfd-sat-registro-masivo",
-        components: {ModelListSelect},
+
 
         data() {
             return {
@@ -66,10 +111,11 @@
                 archivo : '',
                 file_zip : null,
                 file_zip_name : '',
+                resultado : [],
             }
         },
         mounted(){
-            this.getEmpresas();
+
         },
 
         methods: {
@@ -127,6 +173,9 @@
                     }
                 })
                 .then(data => {
+                    /*this.resultado.nombre_archivo_zip = data.nombre_archivo_zip;*/
+                    this.resultado = data;
+                   /* console.log(data);*/
                     /*if(data.data.length > 0){
                         this.pagos = data.data;
                         this.cuentas_cargo = data.cuentas_cargo;
