@@ -550,14 +550,14 @@ class EstimacionFormato extends Rotation
 
         /// Calculos Resumen Amortizacion Anticpo
         $amort_anticipo_anterior = $this->estimacion->anticipo_anterior;
-        $amortizacion_anticipo =  $this->estimacion->suma_importes*$this->estimacion->anticipo/100;
+        $amortizacion_anticipo =  $this->estimacion->monto_anticipo_aplicado;
         $anticipo_actual = $amort_anticipo_anterior + $amortizacion_anticipo;
         $anticipo_saldo = $this->estimacion->subcontrato->anticipo_monto - $anticipo_actual;
 
         /// Calculos Resumen Fondo Garantia
         $fondo_garantia_contrato = $this->estimacion->subcontrato->importe_fondo_garantia;
         $fondo_garantia_anterior= $this->estimacion->fondo_garantia_acumulado_anterior;
-        $fondo_garantia= $this->estimacion->importe_retencion;
+        $fondo_garantia= $this->estimacion->retencion_fondo_garantia_orden_pago;
         $fondo_garantia_actual = $fondo_garantia_anterior + $fondo_garantia;
         $fondo_garantia_saldo = $fondo_garantia_contrato - $fondo_garantia_actual;
 

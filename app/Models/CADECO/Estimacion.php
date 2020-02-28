@@ -567,7 +567,6 @@ class Estimacion extends Transaccion
     }
 
     # retencion_fondo_garantia_orden_pago_format
-
     public function getRetencionFondoGarantiaOrdenPagoAttribute()
     {
         if ($this->configuracion->ret_fon_gar_antes_iva == 0) {
@@ -737,22 +736,22 @@ class Estimacion extends Transaccion
     public function subcontratoAEstimar()
     {
         return [
-            'fecha_inicial' => $this->getCumplimientoAttribute($this->cumplimiento),
-            'fecha_final' => $this->getCumplimientoAttribute($this->vencimiento),
-            'fecha' => $this->fecha_format,
-            'razon_social' => $this->empresa->razon_social,
-            'moneda' => $this->moneda->nombre,
-            'observaciones' => $this->observaciones,
-            'folio' => $this->numero_folio_format,
-            'subtotal' => $this->subtotal_orden_pago,
-            'iva' => $this->iva_orden_pago,
-            'total' => $this->total_orden_pago,
-            'folio_consecutivo' => $this->subcontratoEstimacion->folio_consecutivo_format,
-            'folio_consecutivo_num' => $this->subcontratoEstimacion->NumeroFolioConsecutivo,
-            'id_empresa' => $this->empresa->id_empresa,
-            'anticipo_format' => $this->anticipo_format,
+            'fecha_inicial'           => $this->getCumplimientoAttribute($this->cumplimiento),
+            'fecha_final'             => $this->getCumplimientoAttribute($this->vencimiento),
+            'fecha'                   => $this->fecha_format,
+            'razon_social'            => $this->empresa->razon_social,
+            'moneda'                  => $this->moneda->nombre,
+            'observaciones'           => $this->observaciones,
+            'folio'                   => $this->numero_folio_format,
+            'subtotal'                => $this->subtotal_orden_pago,
+            'iva'                     => $this->iva_orden_pago,
+            'total'                   => $this->total_orden_pago,
+            'folio_consecutivo'       => $this->subcontratoEstimacion->folio_consecutivo_format,
+            'folio_consecutivo_num'   => $this->subcontratoEstimacion->NumeroFolioConsecutivo,
+            'id_empresa'              => $this->empresa->id_empresa,
+            'anticipo_format'         => $this->anticipo_format,
             'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
-            'subcontrato' => $this->subcontrato->subcontratoParaEstimar($this->id_transaccion)
+            'subcontrato'             => $this->subcontrato->subcontratoParaEstimar($this->id_transaccion)
         ];
     }
 
@@ -894,11 +893,11 @@ class Estimacion extends Transaccion
     {
         $anticipo = 0;
         $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
-            ->where('numero_folio', '<', $this->numero_folio)
-            ->where('estado', '>=', 0)->get();
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>=', 0)->get();
 
-        foreach ($estimaciones_anteriores as $estimacion) {
-            $anticipo += $estimacion->suma_importes * (1 - $estimacion->retencion / 100) - $estimacion->monto + $estimacion->impuesto;
+        foreach($estimaciones_anteriores as $estimacion){
+            $anticipo += $estimacion->monto_anticipo_aplicado;
         }
         return $anticipo;
     }
@@ -907,11 +906,11 @@ class Estimacion extends Transaccion
     {
         $fondo = 0;
         $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
-            ->where('numero_folio', '<', $this->numero_folio)
-            ->where('estado', '>=', 0)->get();
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>=', 0)->get();
 
-        foreach ($estimaciones_anteriores as $estimacion) {
-            $fondo += $estimacion->suma_importes * $estimacion->retencion / 100;
+        foreach($estimaciones_anteriores as $estimacion){
+            $fondo += $estimacion->retencion_fondo_garantia_orden_pago;
         }
         return $fondo;
     }
