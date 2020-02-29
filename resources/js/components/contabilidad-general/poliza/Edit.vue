@@ -1,7 +1,7 @@
 <template>
     <span>
         <div class="modal fade" ref="modalEditPoliza" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-dialog modal-xl">
                 <form role="form" @submit.prevent="validate">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -93,11 +93,11 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th class="bg-gray-light">#</th>
-                                                <th class="bg-gray-light">Cuenta</th>
+                                                <th class="bg-gray-light index_corto">#</th>
+                                                <th class="bg-gray-light no_parte">Cuenta</th>
                                                 <th class="bg-gray-light">Cargo</th>
                                                 <th class="bg-gray-light">Abono</th>
-                                                <th class="bg-gray-light no_parte">Referencia</th>
+                                                <th class="bg-gray-light">Referencia</th>
                                                 <th class="bg-gray-light">Concepto</th>
                                             </tr>
                                         </thead>

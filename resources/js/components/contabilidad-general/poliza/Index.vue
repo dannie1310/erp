@@ -171,7 +171,7 @@
     import Show from "./Show";
     import Edit from "./Edit";
     export default {
-        name: "busqueda-poliza",
+        name: "index-poliza",
         components: {Edit, ModelListSelect, Show},
         data() {
             return {
@@ -314,7 +314,7 @@
             },
             conectar(){
                 this.conectando = true;
-                return this.$store.dispatch('contabilidadGeneral/empresa/conectar',
+                return this.$store.dispatch('contabilidadGeneral/empresa-contpaq/conectar',
                     {
                         data: {id: this.id_empresa},
                         config: {
@@ -332,7 +332,7 @@
             getEmpresas() {
                 this.empresas = [];
                 this.cargando = true;
-                return this.$store.dispatch('seguridad/lista-empresas/index', {
+                return this.$store.dispatch('contabilidadGeneral/empresa/index', {
                     params: {
                         sort: 'Nombre',
                         order: 'asc',

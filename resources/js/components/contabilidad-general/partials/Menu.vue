@@ -8,6 +8,13 @@
                 </router-link>
             </li>
 
+            <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+                <router-link :to="{name: 'cfd-sat'}" class="nav-link" :class="{active: this.$route.name == 'cfd-sat'}">
+                    <i class="fa fa-file-invoice nav-icon"></i>
+                    <p>CFD SAT</p>
+                </router-link>
+            </li>
+
             <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-cogs nav-icon"></i>
@@ -20,13 +27,11 @@
                     <li class="nav-item" v-if="$root.can('configurar_visibilidad_empresa_ctpq', true ) || $root.can('configurar_editabilidad_empresa_ctpq', true ) ">
                         <router-link :to="{name: 'lista-empresa'}" class="nav-link" :class="{active: this.$route.name == 'lista-empresa'}">
                             &nbsp;<i class="fa fa-building nav-icon"></i>
-                            <p>Empresas</p>
+                            <p>Empresas Contpaq</p>
                         </router-link>
                     </li>
                 </ul>
             </li>
-
-            
         </ul>
     </nav>
 </template>
