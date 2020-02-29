@@ -138,6 +138,9 @@ class SalidaAlmacen extends Transaccion
             $items = $this->items->pluck('id_item');
         try {
             DB::connection('cadeco')->beginTransaction();
+
+            if($data['contratista'])
+            {
             $this->id_empresa = $data['id_empresa'];
             $this->save();
             if($this->entrega_contratista)
@@ -159,6 +162,16 @@ class SalidaAlmacen extends Transaccion
                             'con_cargo' => $data['tipo_cargo']]);
                 }
             }
+            }else{
+                $this->entrega_contratista()->delete();
+                foreach( $items as $item)
+                 {
+                   if(ItemContratista::find($item))
+                    {
+                       ItemContratista::where('id_item', '=', $item)->delete();
+                    }
+                 }
+                }
             DB::connection('cadeco')->commit();
             
         } catch (\Exception $e) {
