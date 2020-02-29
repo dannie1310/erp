@@ -21,6 +21,7 @@ class CFDSATService
     protected $repository;
     protected $arreglo_factura;
     protected $log;
+    protected $carga;
 
     public function __construct(Model $model)
     {
@@ -61,6 +62,8 @@ class CFDSATService
 
     public function storeZIPCFD($nombre_archivo, $archivo_zip)
     {
+        $this->carga = $this->repository->iniciaCarga($nombre_archivo);
+        $this->arreglo_factura["id_carga_cfd_sat"] = $this->carga->id;
         $this->log["nombre_archivo_zip"] = $nombre_archivo;
         $paths = $this->generaDirectorios();
         $exp = explode("base64,", $archivo_zip);
@@ -71,7 +74,9 @@ class CFDSATService
         $contenido = $zipper->make(public_path($paths["path_zip"]))->listFiles();
         $zipper->make(public_path($paths["path_zip"]))->extractTo(public_path($paths["path_xml"]));
         $this->procesaCFD($paths["path_xml"]);
-        return $this->log;
+        $this->log["fecha_hora_fin"] = date("Y-m-d H:i:s");
+        $this->carga->update($this->log);
+        return $this->carga;
     }
 
     private function generaDirectorios()

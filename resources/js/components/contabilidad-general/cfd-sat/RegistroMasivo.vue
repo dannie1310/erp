@@ -15,35 +15,41 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label class="col-form-label"><i class="fa fa-file-archive"></i> Archivo ZIP:</label>
+                            <span v-if="!procesado">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group row error-content">
+                                            <label class="col-form-label"><i class="fa fa-file-archive"></i> Archivo ZIP:</label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <input type="file" class="form-control" id="carga_zip"
-                                               @change="onFileChange"
-                                               row="3"
-                                               v-validate="{ ext: ['zip']}"
-                                               name="carga_zip"
-                                               data-vv-as="zip"
-                                               ref="carga_zip"
-                                               :class="{'is-invalid': errors.has('carga_zip')}"
-                                        >
-                                        <div class="invalid-feedback" v-show="errors.has('carga_zip')">{{ errors.first('carga_zip') }} (zip)</div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group row error-content">
+                                            <input type="file" class="form-control" id="carga_zip"
+                                                   @change="onFileChange"
+                                                   row="3"
+                                                   v-validate="{ ext: ['zip']}"
+                                                   name="carga_zip"
+                                                   data-vv-as="zip"
+                                                   ref="carga_zip"
+                                                   :class="{'is-invalid': errors.has('carga_zip')}"
+                                            >
+                                            <div class="invalid-feedback" v-show="errors.has('carga_zip')">{{ errors.first('carga_zip') }} (zip)</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <span v-if="resultado.nombre_archivo_zip">
-                                <hr/>
+                            </span>
+
+                            <span v-else>
                                 <h6><i class="fa fa-arrow-circle-right"></i><b>Resultado del procesamiento</b></h6>
                                 <div class="table-responsive">
                                     <table style="width: 100%" class="table table-stripped">
                                         <tbody>
+                                            <tr>
+                                                <th style="text-align: left" >Duración de procesamiento (segundos):</th>
+                                                <td style="text-align: right">{{resultado.duracion}}</td>
+                                            </tr>
                                             <tr>
                                                 <th style="text-align: left" >Nombre de archivo zip:</th>
                                                 <td style="text-align: right">{{resultado.nombre_archivo_zip}}</td>
@@ -82,7 +88,7 @@
                             </span>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary" :disabled="cargando || errors.count() > 0">
+                            <button type="submit" class="btn btn-primary" v-if="!procesado" :disabled="cargando || errors.count() > 0">
                                 <span v-if="cargando">
                                     <i class="fa fa-spin fa-spinner"></i>
                                 </span>
@@ -105,6 +111,7 @@
         data() {
             return {
                 cargando: false,
+                procesado : false,
                 archivo : '',
                 file_zip : null,
                 file_zip_name : '',
@@ -167,6 +174,8 @@
                 })
                 .then(data => {
                     this.resultado = data;
+                    this.$refs.carga_zip.value = '';
+                    this.procesado = true;
                 }).finally(() => {
                     this.cargando = false;
                 });
@@ -175,10 +184,10 @@
                 $(this.$refs.modal_carga_masiva).modal('show');
             },
             close(){
-                $(this.$refs.modal_carga_masiva).modal('hide');
-                this.$refs.carga_zip.value = '';
                 this.file_zip = null;
                 this.resultado = [];
+                this.procesado = false;
+                $(this.$refs.modal_carga_masiva).modal('hide');
             }
         }
     }

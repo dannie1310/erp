@@ -43,6 +43,11 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         }
         return $salida;
     }
+
+    public function iniciaCarga($nombre_archivo){
+        return $this->model->carga()->create(["nombre_archivo_zip"=>$nombre_archivo]);
+    }
+
     public function getIdProveedorSAT($datos, $id_empresa){
 
         $proveedor = ProveedorSAT::where("rfc","=",$datos["rfc"])

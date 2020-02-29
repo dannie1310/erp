@@ -35,7 +35,13 @@ class CFDSAT extends Model
         ,"id_empresa_sat"
         ,"id_proveedor_sat"
         ,"moneda"
+        ,"id_carga_cfd_sat"
     ];
+
+    public function carga()
+    {
+        return $this->belongsTo(CargaCFDSAT::class, 'id_carga_cfd_sat', 'id');
+    }
 
     public function conceptos()
     {
