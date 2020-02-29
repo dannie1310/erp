@@ -1,32 +1,32 @@
-const URI = '/api/contabilidad-general/lista-empresa/';
+const URI = '/api/contabilidad-general/cfd-sat/';
 export default {
     namespaced: true,
     state: {
-        listaEmpresas: [],
-        currentEmpresa: null,
+        CFDSAT: [],
+        currentCFDSAT: null,
         meta: {},
     },
 
     mutations: {
-        SET_EMPRESAS(state, data) {
-            state.listaEmpresas = data;
+        SET_CFDSAT(state, data) {
+            state.CFDSAT = data;
         },
 
         SET_META(state, data) {
             state.meta = data;
         },
 
-        SET_EMPRESA(state, data) {
-            state.currentEmpresa = data;
+        SET_cCFDSAT(state, data) {
+            state.currentCFDSAT = data;
         },
-        UPDATE_EMPRESA(state, data) {
-            state.listaEmpresas = state.listaEmpresas.map(empresa => {
-                if (empresa.id === data.id) {
-                    return Object.assign({}, empresa, data)
+        UPDATE_CFDSAT(state, data) {
+            state.CFDSAT = state.CFDSAT.map(cfd => {
+                if (cfd.id === data.id) {
+                    return Object.assign({}, cfd, data)
                 }
-                return empresa
+                return cfd
             })
-            state.currentEmpresa = state.currentEmpresa ? data : null;
+            state.currentCFDSAT = state.currentCFDSAT ? data : null;
         },
     },
 
@@ -75,7 +75,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Guardar cambios de la Empresa",
+                    text: "Guardar cambios del CFD",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -94,7 +94,7 @@ export default {
                                 .patch(URI + payload.id, payload.data, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Empresa Actualizada Correctamente", {
+                                    swal("CFD Actualizado Correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -110,19 +110,32 @@ export default {
                     });
             });
         },
+        cargarZIP(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'carga-zip', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
     },
 
     getters: {
-        empresas(state) {
-            return state.listaEmpresas
+        CFDSAT(state) {
+            return state.CFDSAT
         },
 
         meta(state) {
             return state.meta
         },
 
-        currentEmpresa(state) {
-            return state.currentEmpresa
+        currentCFDSAT(state) {
+            return state.currentCFDSAT
         }
     }
 }

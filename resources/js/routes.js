@@ -92,6 +92,24 @@ export const routes = [
                 ]
             },
             {
+                path: 'cfd-sat',
+                component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cfd-sat",
+                        component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
+                        meta: {
+                            title: 'CFD SAT',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CFD SAT'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'lista-empresa',
                 component: require('./components/contabilidad-general/empresas/Index.vue').default,
                 children:[

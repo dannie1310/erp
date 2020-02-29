@@ -22,6 +22,7 @@ class PolizaRepository extends Repository implements RepositoryInterface
 
     public function update(array $datos, $id)
     {
+        //TODO: migrarlo al observer cuando se resuelva el manejo de la empresa de contabilidad en el contexto
         $item = $this->show($id);
         $item->actualiza($datos);
         $logs = $item->logs()->where("id_empresa","=","666")->get();
