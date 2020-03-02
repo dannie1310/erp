@@ -58,7 +58,7 @@
                                     <div class="invoice p-3 mb-3">
                                         <div role="form">
                                             <div class="form-group row">
-                                               
+
                                                <div class="col-md-12">
                                                         <b>Entrega a contratista</b>
                                                     </div>
@@ -67,12 +67,12 @@
                                                      <div class="col-md-6 offset-3">
                                                      <div class="input-group-text">
                                                       <input type="checkbox" aria-label="Checkbox for following text input" class="icono" v-model="con_prestamo">
-                                                       </div>                                               
+                                                       </div>
                                                      </div>
-                                                       
-                                                       
+
+
                                                      </div>
-                                                     
+
                                                 <div class="col-md-7" v-if="salida.partidas" v-show="con_prestamo">
                                                     <model-list-select
                                                         name="id_empresa"
@@ -195,7 +195,7 @@
                         id_empresa:'',
                         contratista: ''
                     }
-                
+
             }
         },
         methods: {
@@ -206,35 +206,33 @@
                 this.cargando = true;
                 this.getContratista();
                 $(this.$refs.modal).modal('show');
-                
+
                 this.$store.commit('almacenes/salida-almacen/SET_SALIDA', null);
                 return this.$store.dispatch('almacenes/salida-almacen/find', {
                     id: this.id,
                     params: {include: ['partidas', 'entrega_contratista']}
                 }).then(data => {
                     this.salida = data;
-                    
+
                     if(data.entrega_contratista)
-                    {            
-                        this.con_prestamo = true;            
+                    {
+                        this.con_prestamo = true;
                         this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
                         this.id_empresa = this.salida.entrega_contratista.id_empresa;
-                        this.tipo_cargo = this.salida.entrega_contratista.tipo_cargo;    
-                    this.tipo_cargo = this.salida.entrega_contratista.tipo_cargo;                    
-                        this.tipo_cargo = this.salida.entrega_contratista.tipo_cargo;    
-                    }                                    
+                        this.tipo_cargo = this.salida.entrega_contratista.tipo_cargo;
+                    }
 
                 }).finally(() => {
                     this.cargando = false;
-                })                
+                })
             },
-            getContratista() {                
+            getContratista() {
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {sort: 'razon_social', order: 'asc', scope:'Contratista' }
                 })
                     .then(data => {
                         this.contratistas = data.data;
-                    })                    
+                    })
             },
             validate() {
                 this.$validator.validate().then(result => {
@@ -246,17 +244,17 @@
             update()
             {
                 this.res.id_empresa = this.id_empresa;
-                this.res.tipo_cargo = this.tipo_cargo; 
+                this.res.tipo_cargo = this.tipo_cargo;
                 this.res.contratista = this.con_prestamo;
 
-                 return this.$store.dispatch('almacenes/salida-almacen/tipo', {
+                 return this.$store.dispatch('almacenes/salida-almacen/actualizarEntrega', {
                        id: this.id,
                        params: this.res
                    })
                    .then(() => {
                        $(this.$refs.modal).modal('hide');
                    })
-                
+
             }
         },
     }
