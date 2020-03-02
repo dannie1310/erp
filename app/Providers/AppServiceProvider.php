@@ -249,8 +249,10 @@ use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
 use App\Models\CADECO\Unidad;
+use App\Models\CADECO\UnidadComplemento;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
+use App\Observers\CADECO\UnidadComplementoObserver;
 use App\Observers\CADECO\UnidadObserver;
 use Illuminate\Support\ServiceProvider;
 
@@ -442,6 +444,7 @@ class AppServiceProvider extends ServiceProvider
             Sucursal::observe(SucursalObserver::class);
             Transaccion::observe(TransaccionObserver::class);
             Unidad::observe(UnidadObserver::class);
+            UnidadComplemento::observe(UnidadComplementoObserver::class);
             Venta::observe(VentaObserver::class);
             VentaCancelacion::observe(VentaCancelacionObserver::class);
             VentaPartida::observe(VentaPartidaObserver::class);

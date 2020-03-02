@@ -15,8 +15,7 @@ class Unidad extends Model
     public $searchable = [
         'unidad',
         'tipo_unidad',
-        'descripcion',
-        'IdUsuario'
+        'descripcion'
     ];
 
     protected $fillable = [
@@ -36,6 +35,11 @@ class Unidad extends Model
         }
     }
 
+    public function unidadComplemento()
+    {
+        return $this->belongsTo(UnidadComplemento::class, 'unidad', 'unidad');
+    }
+
     public function validarUsoItems()
     {
         if(Material::where('unidad', '=', $this->unidad)->first())
@@ -50,8 +54,11 @@ class Unidad extends Model
         if($this->validarUsoItems()){
             abort(403, "\n\n No se puede eliminar la unidad '".$this->unidad."'.\n  La unidad ya esta siendo usada en algunos materiales");
         }
-        $this->where('unidad', '=', $this->unidad)->delete();        
-        
+        $this->where('unidad', '=', $this->unidad)->delete();
+        if($this->unidadComplemento)
+        {
+            $this->unidadComplemento->delete();
+        }
     }
 
     public function actualizarUnidad($data)
