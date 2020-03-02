@@ -1,26 +1,23 @@
-const URI = '/api/contabilidad-general/lista-empresa/';
+const URI = '/api/contabilidad-general/empresa/';
 export default {
     namespaced: true,
     state: {
-        listaEmpresas: [],
+        empresas: [],
         currentEmpresa: null,
         meta: {},
     },
 
     mutations: {
-        SET_EMPRESAS(state, data) {
-            state.listaEmpresas = data;
+        SET_POLIZAS(state, data) {
+            state.empresas = data;
         },
 
         SET_META(state, data) {
             state.meta = data;
         },
 
-        SET_EMPRESA(state, data) {
-            state.currentEmpresa = data;
-        },
         UPDATE_EMPRESA(state, data) {
-            state.listaEmpresas = state.listaEmpresas.map(empresa => {
+            state.empresas = state.empresas.map(empresa => {
                 if (empresa.id === data.id) {
                     return Object.assign({}, empresa, data)
                 }
@@ -28,6 +25,10 @@ export default {
             })
             state.currentEmpresa = state.currentEmpresa ? data : null;
         },
+
+        SET_EMPRESA(state, data) {
+            state.currentEmpresa = data;
+        }
     },
 
     actions: {
@@ -67,6 +68,32 @@ export default {
                     })
                     .catch(error => {
                         reject(error);
+                    })
+            });
+        },
+
+        findEdit(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.get(URI + payload.id + '/editar', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        conectar(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'connect', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
                     })
             });
         },
@@ -114,7 +141,7 @@ export default {
 
     getters: {
         empresas(state) {
-            return state.listaEmpresas
+            return state.empresas
         },
 
         meta(state) {

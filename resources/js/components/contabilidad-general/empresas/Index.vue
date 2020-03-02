@@ -61,10 +61,10 @@
         methods: {
                 paginate() {
                     this.cargando = true;
-                    return this.$store.dispatch('seguridad/lista-empresas/paginate', { params: this.query })
+                    return this.$store.dispatch('contabilidadGeneral/empresa/paginate', { params: this.query })
                         .then(data => {
-                            this.$store.commit('seguridad/lista-empresas/SET_EMPRESAS', data.data);
-                            this.$store.commit('seguridad/lista-empresas/SET_META', data.meta);
+                            this.$store.commit('contabilidadGeneral/empresa/SET_EMPRESAS', data.data);
+                            this.$store.commit('contabilidadGeneral/empresa/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -74,10 +74,10 @@
 
         computed: {
             empresas(){
-                return this.$store.getters['seguridad/lista-empresas/empresas'];
+                return this.$store.getters['contabilidadGeneral/empresa/empresas'];
             },
             meta(){
-                return this.$store.getters['seguridad/lista-empresas/meta'];
+                return this.$store.getters['contabilidadGeneral/empresa/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
