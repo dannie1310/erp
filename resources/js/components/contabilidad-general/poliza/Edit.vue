@@ -97,7 +97,7 @@
                                                 <th class="bg-gray-light no_parte">Cuenta</th>
                                                 <th class="bg-gray-light">Cargo</th>
                                                 <th class="bg-gray-light">Abono</th>
-                                                <th class="bg-gray-light">Referencia</th>
+                                                <th class="bg-gray-light referencia_input">Referencia</th>
                                                 <th class="bg-gray-light">Concepto</th>
                                             </tr>
                                         </thead>
@@ -225,11 +225,6 @@ export default {
     }
 }
 </script>
-<style scoped>
-    .detalle_poliza{
-        font-size: 0.8em;
-    }
-     .form-control{
-        font-size: 1em;
-    }
+<style >
+
 </style>

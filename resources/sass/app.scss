@@ -111,6 +111,13 @@ td.no_parte, td_no_parte{
   min-width: 90px;
 }
 
+th.referencia_input, td.referencia_input, .th_referencia_input, .td_referencia_input
+{
+  width: 260px;
+  max-width: 260px;
+  min-width: 260px;
+}
+
 th.unidad,.th_unidad
 {
   width: 60px;
