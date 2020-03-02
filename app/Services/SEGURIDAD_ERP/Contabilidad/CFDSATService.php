@@ -152,7 +152,7 @@ class CFDSATService
         if(!$fecha_xml) {
             $fecha_xml = DateTime::createFromFormat('Y-m-d\TH:i:s.u', $fecha);
             if (!$fecha_xml) {
-                $fecha_xml = $fecha;
+                $fecha_xml = substr($fecha,0,19);
             }
         }
         return $fecha_xml;
