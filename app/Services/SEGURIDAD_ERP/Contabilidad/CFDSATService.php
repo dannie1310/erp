@@ -12,6 +12,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
 use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
+use DateTime;
 
 class CFDSATService
 {
@@ -145,6 +146,17 @@ class CFDSATService
             $this->setArreglo33($factura_xml);
         }
     }
+    private function getFecha(string $fecha)
+    {
+        $fecha_xml = DateTime::createFromFormat('Y-m-d\TH:i:s', $fecha);
+        if(!$fecha_xml) {
+            $fecha_xml = DateTime::createFromFormat('Y-m-d\TH:i:s.u', $fecha);
+            if (!$fecha_xml) {
+                $fecha_xml = $fecha;
+            }
+        }
+        return $fecha_xml;
+    }
 
     private function setArreglo33($factura_xml)
     {
@@ -153,7 +165,7 @@ class CFDSATService
             $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
             $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
             $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
-            $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
+            $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["Fecha"]);
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
             $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
@@ -254,7 +266,7 @@ class CFDSATService
         $this->arreglo_factura["total"] = (float)$factura_xml["total"];
         $this->arreglo_factura["serie"] = (string)$factura_xml["serie"];
         $this->arreglo_factura["folio"] = (string)$factura_xml["folio"];
-        $this->arreglo_factura["fecha"] = $factura_xml["fecha"];
+        $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["fecha"]);
         $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
         $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["rfc"][0];
         $this->arreglo_factura["rfc_emisor"] = $this->arreglo_factura["emisor"]["rfc"];
