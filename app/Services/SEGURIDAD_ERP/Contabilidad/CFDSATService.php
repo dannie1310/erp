@@ -128,6 +128,7 @@ class CFDSATService
     private function setArregloFactura($archivo_xml)
     {
         $this->arreglo_factura = [];
+        $this->arreglo_factura["id_carga_cfd_sat"] = $this->carga->id;
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
