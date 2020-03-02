@@ -102,14 +102,16 @@ class ItemSubcontrato extends Item
         );
     }
 
-    public function partidasFormatoEstimacion($id_estimacion, $id_contrato)
+    public function partidasFormatoEstimacion($id_estimacion)
     {
         $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
             ->where('id_antecedente', $this->id_transaccion)
             ->where('item_antecedente', $this->id_concepto)->first();
 
-        $contrato = $this->contrato()->where('id_transaccion', '=', $id_contrato)->first();
-        $cantidad_estimacion_anterior = $estimacion ?  $this->cantidad_total_estimada - $estimacion->cantidad : $this->cantidad_total_estimada;
+        $acumulado_anterior = $this->acumulado_anterior->where('id_transaccion', '<', $id_estimacion);
+        $contrato = $this->contrato()->where('id_transaccion', '=', $this->subcontrato->id_antecedente)->first();
+        $cantidad_estimacion = $estimacion ? $estimacion->cantidad : 0;
+        $importe_estimacion =  $estimacion ? $estimacion->importe : 0;
 
         return array(
             'id' => $this->id_item,
@@ -120,15 +122,24 @@ class ItemSubcontrato extends Item
             'cantidad_subcontrato' => $this->cantidad,
             'precio_unitario_subcontrato' => $this->precio_unitario,
             'importe_subcontrato' => ($this->cantidad * $this->precio_unitario),
-            'cantidad_estimacion_anterior' => $cantidad_estimacion_anterior,
-            'importe_estimacion_anterior' =>  ($cantidad_estimacion_anterior * $this->precio_unitario),
-
+            'cantidad_acumulado_anterior' => $acumulado_anterior->sum('cantidad'),
+            'importe_acumulado_anterior' => $acumulado_anterior->sum('importe'),
+            'cantidad_estimacion' => $cantidad_estimacion,
+            'importe_estimacion' => $importe_estimacion,
+            'cantidad_acumulado_a_esta_estimacion' => $acumulado_anterior->sum('cantidad') + $cantidad_estimacion,
+            'importe_acumulado_a_esta_estimacion' => $acumulado_anterior->sum('importe') + $importe_estimacion,
+            'cantidad_porEstimar' => $this->cantidad - ($acumulado_anterior->sum('cantidad') + $cantidad_estimacion),
+            'importe_porEstimar' => ($this->cantidad * $this->precio_unitario) - ($acumulado_anterior->sum('importe') + $importe_estimacion)
         );
-
     }
 
     private function importe_total($precio_unitario)
     {
         return  '$ ' . number_format($this->cantidad * $precio_unitario,2,'.',',');
+    }
+
+    public function getAcumuladoAnteriorAttribute()
+    {
+        return Item::where('id_antecedente', $this->id_transaccion)->where('item_antecedente', $this->id_concepto);
     }
 }

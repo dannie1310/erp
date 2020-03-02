@@ -78,7 +78,7 @@ class Estimacion extends Transaccion
 
     public function itemsXContratistas()
     {
-        return $this->hasMany(ItemContratista::class, 'id_empresa',  'id_empresa');
+        return $this->hasMany(ItemContratista::class, 'id_empresa', 'id_empresa');
     }
 
     public function descuentos()
@@ -162,9 +162,8 @@ class Estimacion extends Transaccion
 
     private function estimaConceptos($conceptos)
     {
-        foreach ($conceptos as $concepto)
-        {
-            $pu =  Item::where('id_transaccion', '=', $this->id_antecedente)
+        foreach ($conceptos as $concepto) {
+            $pu = Item::where('id_transaccion', '=', $this->id_antecedente)
                 ->where('id_concepto', '=', $concepto['item_antecedente'])
                 ->first()->precio_unitario;
 
@@ -183,6 +182,7 @@ class Estimacion extends Transaccion
             ]);
         }
     }
+
     public function creaSubcontratoEstimacion()
     {
         \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->create([
@@ -228,11 +228,11 @@ class Estimacion extends Transaccion
                     ]
                 );
             } else {
-                $this->retencion_fondo_garantia->importe =$this->retencion_fondo_garantia_orden_pago;
+                $this->retencion_fondo_garantia->importe = $this->retencion_fondo_garantia_orden_pago;
                 $this->retencion_fondo_garantia->save();
                 $this->retencion_fondo_garantia->generaMovimientoRegistro();
             }
-        }else{
+        } else {
             throw New \Exception('La estimación no tiene establecido un porcentaje de retención de fondo de garantía, la retención no puede generarse');
         }
     }
@@ -255,8 +255,7 @@ class Estimacion extends Transaccion
         $this->recalculaDatosGenerales();
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_aprobar_transaccion] {$this->id_transaccion}");
-        if($this->subcontrato->retencion && $this->subcontrato->retencion > 0)
-        {
+        if ($this->subcontrato->retencion && $this->subcontrato->retencion > 0) {
             $this->generaRetencion();
         }
         return $this;
@@ -264,26 +263,22 @@ class Estimacion extends Transaccion
 
     public function anticipoAmortizacion($data)
     {
-        if($data <= $this->sumaImportes)
-        {
-            if($this->sumaImportes == 0 || $this->sumaImportes == null)
-            {
+        if ($data <= $this->sumaImportes) {
+            if ($this->sumaImportes == 0 || $this->sumaImportes == null) {
                 $this->anticipo = 0;
                 $this->save();
-            }else
-            {
-                if($this->subcontrato->first()->anticipo != 0)
-                {
-                    $this->anticipo = ($data/$this->sumaImportes)*100;
+            } else {
+                if ($this->subcontrato->first()->anticipo != 0) {
+                    $this->anticipo = ($data / $this->sumaImportes) * 100;
                     $this->save();
-                }else{
+                } else {
                     throw new \Exception('No se puede actualizar la amortización de anticipo.');
                 }
 
             }
             $this->recalculaDatosGenerales();
             return $this->subcontratoAEstimar();
-        }else{
+        } else {
             throw new \Exception('El importe de la amortización no puede ser mayor al importe de la estimación.');
         }
     }
@@ -312,7 +307,7 @@ class Estimacion extends Transaccion
 
     public function getSumaImportesFormatAttribute()
     {
-        return '$ ' . number_format($this->suma_importes, 2,".",",");
+        return '$ ' . number_format($this->suma_importes, 2, ".", ",");
     }
 
     public function getAmortizacionPendienteAttribute()
@@ -333,7 +328,7 @@ class Estimacion extends Transaccion
 
     public function getMontoAnticipoAplicadoAttribute()
     {
-        return $this->suma_importes*(($this->anticipo)/100);
+        return $this->suma_importes * (($this->anticipo) / 100);
     }
 
     public function getMontoAnticipoAplicadoFormatAttribute()
@@ -346,7 +341,7 @@ class Estimacion extends Transaccion
         $estimaciones_anteriores = $this->subcontrato->estimaciones()
             ->where('fecha', '<=', $this->fecha)
             ->where('estado', '>=', 1)
-            ->where("id_transaccion",'<>',$this->id_transaccion)
+            ->where("id_transaccion", '<>', $this->id_transaccion)
             ->get();
 
         $sumatoria = 0;
@@ -364,15 +359,14 @@ class Estimacion extends Transaccion
     public function getConfiguracionAttribute()
     {
         $configuracion = $this->obra->configuracionEstimaciones;
-        if(!$configuracion)
-        {
-            $configuracion=ConfiguracionEstimacion::create([
-                'penalizacion_antes_iva'=>1,
-                'retenciones_antes_iva'=>1,
-                'ret_fon_gar_antes_iva'=>1,
-                'desc_pres_mat_antes_iva'=>1,
-                'desc_otros_prest_antes_iva'=>0,
-                'ret_fon_gar_con_iva'=>0,
+        if (!$configuracion) {
+            $configuracion = ConfiguracionEstimacion::create([
+                'penalizacion_antes_iva' => 1,
+                'retenciones_antes_iva' => 1,
+                'ret_fon_gar_antes_iva' => 1,
+                'desc_pres_mat_antes_iva' => 1,
+                'desc_otros_prest_antes_iva' => 0,
+                'ret_fon_gar_con_iva' => 0,
             ]);
 
         }
@@ -384,8 +378,7 @@ class Estimacion extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->respaldar($motivo);
-            foreach ($this->items()->get() as $item)
-            {
+            foreach ($this->items()->get() as $item) {
                 $item->delete();
             }
             $this->delete();
@@ -431,12 +424,11 @@ class Estimacion extends Transaccion
         }
 
         $item_relacionados = Item::where('id_antecedente', '=', $this->id_transaccion)->first();
-        if($item_relacionados)
-        {
+        if ($item_relacionados) {
             $transaccion = Transaccion::where('id_transaccion', '=', $item_relacionados->id_transaccion)->withoutGlobalScopes()->first();
-            if($transaccion) {
-                $mensaje = $mensaje . "-Contiene items relacionados en ".$transaccion->tipo->Descripcion.". \n";
-            }else{
+            if ($transaccion) {
+                $mensaje = $mensaje . "-Contiene items relacionados en " . $transaccion->tipo->Descripcion . ". \n";
+            } else {
                 $mensaje = $mensaje . "-Contiene items relacionados a otra transacción \n";
             }
         }
@@ -509,16 +501,16 @@ class Estimacion extends Transaccion
 
     public function getSubtotalOrdenPagoAttribute()
     {
-        $subtotal = $this->suma_importes- $this->monto_anticipo_aplicado;
-        if($this->configuracion->retenciones_antes_iva == 1){
-            $subtotal-=$this->retenciones->sum("importe");
-            $subtotal+=$this->liberaciones->sum("importe");
+        $subtotal = $this->suma_importes - $this->monto_anticipo_aplicado;
+        if ($this->configuracion->retenciones_antes_iva == 1) {
+            $subtotal -= $this->retenciones->sum("importe");
+            $subtotal += $this->liberaciones->sum("importe");
         }
-        if($this->configuracion->desc_pres_mat_antes_iva == 1){
-            $subtotal-=$this->descuentos->sum("importe");
+        if ($this->configuracion->desc_pres_mat_antes_iva == 1) {
+            $subtotal -= $this->descuentos->sum("importe");
         }
-        if($this->configuracion->ret_fon_gar_antes_iva == 1){
-            $subtotal-=$this->retencion_fondo_garantia_orden_pago;
+        if ($this->configuracion->ret_fon_gar_antes_iva == 1) {
+            $subtotal -= $this->retencion_fondo_garantia_orden_pago;
         }
         return $subtotal;
     }
@@ -573,18 +565,18 @@ class Estimacion extends Transaccion
         $total = ($this->subtotal_orden_pago + $this->iva_orden_pago) - $this->IVARetenido;
         return $total;
     }
-    # retencion_fondo_garantia_orden_pago_format
 
+    # retencion_fondo_garantia_orden_pago_format
     public function getRetencionFondoGarantiaOrdenPagoAttribute()
     {
-        if($this->configuracion->ret_fon_gar_antes_iva == 0 ){
-            if($this->configuracion->ret_fon_gar_con_iva == 1){
-                return $this->suma_importes * ($this->retencion/100) * 1.16;
-            } else{
-                return $this->suma_importes * ($this->retencion/100) ;
+        if ($this->configuracion->ret_fon_gar_antes_iva == 0) {
+            if ($this->configuracion->ret_fon_gar_con_iva == 1) {
+                return $this->suma_importes * ($this->retencion / 100) * 1.16;
+            } else {
+                return $this->suma_importes * ($this->retencion / 100);
             }
         } else {
-            return $this->suma_importes * ($this->retencion/100);
+            return $this->suma_importes * ($this->retencion / 100);
         }
     }
 
@@ -595,7 +587,7 @@ class Estimacion extends Transaccion
 
     public function getAnticipoALiberarAttribute()
     {
-        return $this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar:0;
+        return $this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar : 0;
     }
 
     public function getAnticipoALiberarFormatAttribute()
@@ -616,16 +608,16 @@ class Estimacion extends Transaccion
     public function getMontoAPagarAttribute()
     {
         $monto_pagar = $this->total_orden_pago + $this->anticipo_a_liberar;
-        if($this->configuracion->retenciones_antes_iva == 0){
-            $monto_pagar-=$this->retenciones->sum("importe");
-            $monto_pagar-=$this->IVARetenido;
-            $monto_pagar+=$this->liberaciones->sum("importe");
+        if ($this->configuracion->retenciones_antes_iva == 0) {
+            $monto_pagar -= $this->retenciones->sum("importe");
+            $monto_pagar -= $this->IVARetenido;
+            $monto_pagar += $this->liberaciones->sum("importe");
         }
-        if($this->configuracion->desc_pres_mat_antes_iva == 0){
-            $monto_pagar-=$this->descuentos->sum("importe");
+        if ($this->configuracion->desc_pres_mat_antes_iva == 0) {
+            $monto_pagar -= $this->descuentos->sum("importe");
         }
-        if($this->configuracion->ret_fon_gar_antes_iva == 0){
-            $monto_pagar-=$this->retencion_fondo_garantia_orden_pago;
+        if ($this->configuracion->ret_fon_gar_antes_iva == 0) {
+            $monto_pagar -= $this->retencion_fondo_garantia_orden_pago;
         }
         return $monto_pagar;
     }
@@ -642,9 +634,8 @@ class Estimacion extends Transaccion
 
     public function getIvaRetenidoPorcentajeAttribute()
     {
-        if($this->subtotal_orden_pago>0)
-        {
-            return number_format($this->IVARetenido*100 / $this->subtotal_orden_pago, 2)." %";
+        if ($this->subtotal_orden_pago > 0) {
+            return number_format($this->IVARetenido * 100 / $this->subtotal_orden_pago, 2) . " %";
         } else {
             return "0 %";
         }
@@ -690,7 +681,7 @@ class Estimacion extends Transaccion
      */
     public function cancelarRetencion()
     {
-        if($this->retencion != 0 && $this->retencion_fondo_garantia) {
+        if ($this->retencion != 0 && $this->retencion_fondo_garantia) {
             $movimiento_retencion = $this->retencion_fondo_garantia->generaCancelacionMovimientoRetencion();
 
             $this->retencion_fondo_garantia->movimientos->movimiento_general()->create(
@@ -707,28 +698,29 @@ class Estimacion extends Transaccion
         }
     }
 
-    public function registrarIVARetenido($retencion){
-        if($retencion > 0){
+    public function registrarIVARetenido($retencion)
+    {
+        if ($retencion > 0) {
             $porcentaje = $retencion * 100 / $this->subtotal_orden_pago;
-            switch ((int)round($porcentaje)){
+            switch ((int)round($porcentaje)) {
                 case 4:
-                    if($porcentaje <= 3.9999 || $porcentaje >= 4.0001){
+                    if ($porcentaje <= 3.9999 || $porcentaje >= 4.0001) {
                         abort(403, 'La retención de IVA no es del 4%');
                     }
-                break;
+                    break;
                 case 6:
-                    if($porcentaje <= 5.9999 || $porcentaje >= 6.0001){
+                    if ($porcentaje <= 5.9999 || $porcentaje >= 6.0001) {
                         abort(403, 'La retención de IVA no es del 6%');
                     }
-                break;
+                    break;
                 case 10:
-                    if($porcentaje <= 9.9999 || $porcentaje >= 10.0001){
+                    if ($porcentaje <= 9.9999 || $porcentaje >= 10.0001) {
                         abort(403, 'La retención de IVA no es del 10%');
                     }
-                break;
+                    break;
                 default:
                     abort(403, 'La retención de IVA no es valida');
-                break;
+                    break;
             }
         }
         $this->IVARetenido = $retencion;
@@ -783,15 +775,14 @@ class Estimacion extends Transaccion
             $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
             DB::connection('cadeco')->beginTransaction();
 
-            foreach ($datos['partidas']  as $partida) {
+            foreach ($datos['partidas'] as $partida) {
 
                 if (array_key_exists('id', $partida)) {
 
                     /**
                      * Se edita item existente.
                      */
-                    if ($partida['id_item_estimacion'] != 0)
-                    {
+                    if ($partida['id_item_estimacion'] != 0) {
                         $item = $this->items()->where('id_item', '=', $partida['id_item_estimacion'])->first();
 
                         $item->update([
@@ -823,14 +814,14 @@ class Estimacion extends Transaccion
 
             $this->update([
                 'cumplimiento' => $fecha_inicial->format("Y-m-d"),
-                'vencimiento'  => $fecha_final->format("Y-m-d"),
+                'vencimiento' => $fecha_final->format("Y-m-d"),
                 'observaciones' => $datos['observaciones']
             ]);
 
             $this->recalculaDatosGenerales();
             DB::connection('cadeco')->commit();
             return $this;
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(500, $e->getMessage());
             throw $e;
@@ -839,7 +830,7 @@ class Estimacion extends Transaccion
 
     public function getAnticipoFormatAttribute()
     {
-        return number_format(abs($this->anticipo),4).'%';
+        return number_format(abs($this->anticipo), 4) . '%';
     }
 
     public function descuentosPartidas()
@@ -900,6 +891,32 @@ class Estimacion extends Transaccion
 
     public function getAnticipoAnteriorAttribute()
     {
-        return $this->suma_importes * (1- $this->retencion / 100) - $this->monto + $this->impuesto;
+        $anticipo = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $anticipo += $estimacion->monto_anticipo_aplicado;
+        }
+        return $anticipo;
+    }
+
+    public function getFondoGarantiaAcumuladoAnteriorAttribute()
+    {
+        $fondo = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $fondo += $estimacion->retencion_fondo_garantia_orden_pago;
+        }
+        return $fondo;
+    }
+
+    public function getPorcentajeIvaAttribute()
+    {
+        return ($this->impuesto / ($this->monto - $this->impuesto)) * 100;
     }
 }
