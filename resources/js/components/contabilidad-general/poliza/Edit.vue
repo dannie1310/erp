@@ -79,6 +79,7 @@
                                                      v-model="poliza.concepto"
                                                      placeholder="CONCEPTO DE PÓLIZA"
                                                      :class="{'is-invalid': errors.has('concepto_edit')}"
+                                                     v-on:keyup ="repiteConceptos()"
                                              ></textarea>
                                             <div class="invalid-feedback" v-show="errors.has('concepto_edit')">{{ errors.first('concepto_edit') }}</div>
                                         </div>
@@ -141,6 +142,14 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="repetir_concepto" v-on:change="repiteConceptos()" v-model="repite_concepto" >
+                                            <label for="repetir_concepto" class="custom-control-label" >Replicar concepto de póliza en concepto de movimientos</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </span>
                         </div>
                         <div class="modal-footer">
@@ -161,6 +170,7 @@ export default {
     props: ['tipo_modal','id_empresa'],
     data(){
         return {
+            repite_concepto : false,
             edit:{
                 id_empresa:'',
                 id : '',
@@ -207,6 +217,14 @@ export default {
                     $(this.$refs.modalEditPoliza).modal('hide');
                 })
         },
+        repiteConceptos(){
+            if(this.repite_concepto === true ){
+                let self = this;
+                this.poliza.movimientos_poliza.data.forEach(function(movimiento, i){
+                    movimiento.concepto = self.poliza.concepto;
+                });
+            }
+        }
     },
 
     computed: {
