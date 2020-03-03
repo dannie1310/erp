@@ -1,7 +1,7 @@
 <template>
     <span>
         <div class="modal fade" ref="modalShowPoliza" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> CONSULTA DE PÓLIZA</h5>
@@ -87,11 +87,11 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="bg-gray-light">#</th>
-                                            <th class="bg-gray-light">Cuenta</th>
+                                            <th class="bg-gray-light index_corto">#</th>
+                                            <th class="bg-gray-light no_parte">Cuenta</th>
                                             <th class="bg-gray-light">Cargo</th>
                                             <th class="bg-gray-light">Abono</th>
-                                            <th class="bg-gray-light">Referencia</th>
+                                            <th class="bg-gray-light referencia_input">Referencia</th>
                                             <th class="bg-gray-light">Concepto</th>
                                         </tr>
                                     </thead>
@@ -154,11 +154,5 @@ export default {
     }
 }
 </script>
-<style scoped>
-    .detalle_poliza{
-        font-size: 0.8em;
-    }
-     .form-control{
-        font-size: 1em;
-    }
+<style >
 </style>
