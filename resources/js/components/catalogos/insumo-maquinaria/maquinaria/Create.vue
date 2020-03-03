@@ -130,6 +130,7 @@
                 this.dato.tipo = null;
                 this.dato.descripcion = '';
                 this.dato.nu_parte = '';
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
 

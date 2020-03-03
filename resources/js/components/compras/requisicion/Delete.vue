@@ -155,6 +155,7 @@
                 }).then(data => {
                     this.$store.commit('compras/requisicion/SET_REQUISICION', data);
                     this.requisicion = data;
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },

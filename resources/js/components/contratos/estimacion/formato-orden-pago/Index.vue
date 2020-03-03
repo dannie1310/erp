@@ -110,6 +110,7 @@
         methods: {
             init() {
                 this.cargando = true;
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
 
                 this.id_empresa = '';
@@ -134,6 +135,7 @@
                     .then(data => {
                         this.empresas = data.data
                         if(this.empresas.length){
+                            $(this.$refs.modal).appendTo('body')
                             $(this.$refs.modal).modal('show');
                         }
                     })
@@ -152,6 +154,7 @@
                 }).then(data => {
                     this.subcontratos = data.subcontratos.data;
                     if(this.subcontratos.length){
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
 
                     }

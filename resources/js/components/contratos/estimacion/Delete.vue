@@ -5,7 +5,7 @@
             <Resumen v-bind:id="id_estimacion"></Resumen>
         </div>
     </div>
-    <div class="row">  
+    <div class="row">
         <div class="col-md-12">
             <div class="invoice p-3 mb-3">
                 <form role="form" @submit.prevent="validate">
@@ -231,6 +231,7 @@ import Resumen from './resumen/Show';
                     id: id,
                 }).then(data => {
                     this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 }).finally(() => {
                     this.cargando = false;

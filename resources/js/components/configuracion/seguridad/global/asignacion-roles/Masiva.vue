@@ -261,6 +261,7 @@
                 })
                     .then(data => {
                         this.usuario_seleccionado = data.nombre;
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
                     })
             }

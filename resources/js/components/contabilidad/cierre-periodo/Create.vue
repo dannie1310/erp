@@ -63,6 +63,7 @@
         },
         methods: {
             init() {
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.date = new Date();
                 this.anio = new Date (this.date).getFullYear();

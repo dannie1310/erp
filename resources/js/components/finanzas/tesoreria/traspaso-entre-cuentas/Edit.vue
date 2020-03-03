@@ -201,7 +201,7 @@
                                 this.traspaso = data;
                                 this.traspaso.cumplimiento = data.traspasoTransaccion.debito ? data.traspasoTransaccion.debito.cumplimiento : data.traspasoTransaccion.credito.cumplimiento
                                 this.traspaso.referencia = data.traspasoTransaccion.debito ? data.traspasoTransaccion.debito.referencia : data.traspasoTransaccion.credito.cumplimiento
-
+                                $(this.$refs.modal).appendTo('body')
                                 $(this.$refs.modal).modal('show');
                             })
                     });

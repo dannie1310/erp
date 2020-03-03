@@ -111,6 +111,7 @@
                     params: { include: 'moneda,tiposCuentasObra' }
                 }).then(data => {
                     this.$store.commit('cadeco/cuenta/SET_CUENTA', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
             },

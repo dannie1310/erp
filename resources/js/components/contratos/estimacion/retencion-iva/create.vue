@@ -63,7 +63,7 @@ export default {
             cargando:false,
         }
     },
-    mounted() {      
+    mounted() {
     },
     methods: {
         init(){
@@ -78,6 +78,7 @@ export default {
                     id: this.id,
                 }).then(data => {
                     this.estimacion = data;
+                $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 }).finally(() =>{
                     this.cargando = false;

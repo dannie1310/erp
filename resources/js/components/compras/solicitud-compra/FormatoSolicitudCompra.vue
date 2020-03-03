@@ -32,6 +32,7 @@
             pdf(){
                 var url = '/api/compras/solicitud-compra/pdf/' + this.id +'?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Orden de Compra</iframe>');
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             }
         }

@@ -176,6 +176,7 @@ export default {
                 params: {include: ['empresa', 'partidas_total.material', 'usuario', 'estado']}
             }).then(data => {
                 this.$store.commit('ventas/venta/SET_VENTA', data);
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show')
             })
         },

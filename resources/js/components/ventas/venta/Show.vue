@@ -168,6 +168,7 @@
         },
         methods: {
             find() {
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.cargando = true;
                 this.motivo = '';

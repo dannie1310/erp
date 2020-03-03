@@ -75,6 +75,7 @@
 
         methods: {
             init() {
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                   this.$validator.reset()
             },

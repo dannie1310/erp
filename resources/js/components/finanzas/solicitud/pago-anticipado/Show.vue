@@ -129,6 +129,7 @@
                     params: { include: ['subcontrato','empresa','usuario','orden_compra','costo'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
             }

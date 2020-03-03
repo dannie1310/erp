@@ -83,6 +83,7 @@
                 })
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-almacen/SET_CUENTA', data)
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
                     })
                     .finally(() => {

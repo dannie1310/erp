@@ -88,6 +88,7 @@
         methods: {
             init() {
                   this.cargando = false;
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
             store() {

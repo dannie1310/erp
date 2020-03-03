@@ -101,6 +101,7 @@
                             });
                         } else {
                             this.secretCode();
+                            $(this.$refs.modal2fa).appendTo('body')
                             $(this.$refs.modal2fa).modal('show');
                             $(this.$refs.codeInput).pincodeInput().data('plugin_pincodeInput').focus();
                         }

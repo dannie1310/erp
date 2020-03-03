@@ -103,6 +103,7 @@
                     }
                 }).then(data => {
                     this.$store.commit('cadeco/fondo/SET_FONDO', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
 

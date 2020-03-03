@@ -22,7 +22,7 @@
                                         {{res.descripcion}}
                                     </div>
                             </div>
-                        </div>    
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -63,7 +63,7 @@ export default {
         find(unidad) {
             this.cargando = true;
             this.res = '';
-            this.id = unidad.unidad;           
+            this.id = unidad.unidad;
 
                 this.$store.commit('cadeco/unidad/SET_UNIDAD', null);
                 return this.$store.dispatch('cadeco/unidad/find', {
@@ -71,7 +71,8 @@ export default {
                 }).then(data => {
                     this.$store.commit('cadeco/unidad/SET_UNIDAD', data);
                     this.res = data;
-                    
+
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;
