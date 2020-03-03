@@ -49,4 +49,10 @@ class ListaEmpresasController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function consolidar(Request $request, $id)
+    {
+        $res = $this->service->consolida($request->all(), $id);
+        return response()->json([], 200);
+    }
 }
