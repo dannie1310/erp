@@ -117,7 +117,7 @@
                             estado:layout.estado.descripcion,
                             buttons: $.extend({}, {
                                 id: layout.id,
-                                autorizar: (layout.estado.estado == 0)?true:false,
+                                autorizar: self.$root.can('autorizar_carga_layout_pago') ? true : false,
                                 show: true
                             })
                         })

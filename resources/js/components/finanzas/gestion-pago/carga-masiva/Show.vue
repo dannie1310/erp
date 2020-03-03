@@ -133,11 +133,7 @@
             }
         },
         mounted() {
-            this.$Progress.start();
             this.find()
-                .finally(() => {
-                    this.$Progress.finish();
-                })
         },
         methods: {
             find() {

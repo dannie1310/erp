@@ -1193,7 +1193,7 @@ export const routes = [
                             middleware: [auth, context,],
 
                         }
-                    },                    
+                    },
                     {
                         path: ':id/editar',
                         name: 'estimacion-edit',
@@ -1636,6 +1636,7 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'autorizar-layout',
+                        props: true,
                         component: require('./components/finanzas/gestion-pago/carga-masiva/Autorizar').default,
                         meta: {
                             title: 'Autorizar Layouts',
