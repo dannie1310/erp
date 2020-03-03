@@ -85,6 +85,15 @@
                                         </div>
                                     </div>
                                 </div>
+                                 <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="repetir_concepto" v-on:change="repiteConceptos()" v-model="repite_concepto" >
+                                            <label for="repetir_concepto" class="custom-control-label" >Replicar concepto de póliza en concepto de movimientos</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label ><i class="fa fa-th-list icon"></i>Movimientos</label>
@@ -142,14 +151,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="repetir_concepto" v-on:change="repiteConceptos()" v-model="repite_concepto" >
-                                            <label for="repetir_concepto" class="custom-control-label" >Replicar concepto de póliza en concepto de movimientos</label>
-                                        </div>
-                                    </div>
-                                </div>
                             </span>
                         </div>
                         <div class="modal-footer">
@@ -183,6 +184,7 @@ export default {
     methods: {
         closeModal(){
             this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
+            this.repite_concepto = false;
             $(this.$refs.modalEditPoliza).modal('hide');
         },
         init(){
@@ -214,7 +216,7 @@ export default {
                 .then(data => {
                     this.$store.commit('contabilidadGeneral/poliza/UPDATE_POLIZA', data);
                 }).finally(()=>{
-                    $(this.$refs.modalEditPoliza).modal('hide');
+                    this.closeModal();
                 })
         },
         repiteConceptos(){
