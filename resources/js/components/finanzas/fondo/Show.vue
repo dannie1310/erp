@@ -3,7 +3,7 @@
         <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Fondo">
             <i class="fa fa-eye"></i>
         </button>
-          <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -12,73 +12,69 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                        <div class="modal-body">
-                            <div>
-                                <div v-if="fondoFijo">
-                                      <div class="row" v-if="fondoFijo">
-                                          <div class="col-md-12">
-                                            <div class="form-group error-content">
-                                                <div class="form-group">
-                                                    <label><b>Fecha:</b></label>
-                                                    {{ fondoFijo.fecha_format }}
-                                                </div>
+                    <div class="modal-body">
+                        <div>
+                            <div v-if="fondoFijo">
+                                <div class="row" v-if="fondoFijo">
+                                    <div class="col-md-12">
+                                        <div class="form-group error-content">
+                                            <div class="form-group">
+                                                <label><b>Fecha:</b></label>
+                                                {{ fondoFijo.fecha_format }}
                                             </div>
-                                          </div>
-                                               <div class="col-md-12">
-                                                    <div class="form-group error-content">
-                                                        <div class="form-group">
-                                                            <label><b>Responsable:</b></label>
-                                                            {{ fondoFijo.nombre }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                           <div class="col-md-12">
-                                                    <div class="form-group error-content">
-                                                        <div class="form-group">
-                                                            <label><b>Tipo de Fondo:</b></label>
-                                                            {{ fondoFijo.tipo_fondo.descripcion }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            <div class="col-md-12">
-                                                    <div class="form-group error-content">
-                                                        <div class="form-group">
-                                                            <label><b>Tipo de Gasto:</b></label>
-                                                            {{ fondoFijo.costo.descripcion }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                           <div class="col-md-12">
-                                                    <div class="form-group error-content">
-                                                        <div class="form-group">
-                                                            <label><b>Saldo:</b></label>
-                                                            {{ `$ ${parseFloat(fondoFijo.saldo).formatMoney(2)}`}}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                           <div class="col-md-12" v-id="fondoFijo">
-                                                    <div class="form-group error-content">
-                                                        <div class="form-group" v-if="fondoFijo.fondo_obra === '0'">
-                                                            <label><b>Fondo de Obra:</b></label>
-                                                            No
-                                                        </div>
-                                                          <div class="form-group" v-if="fondoFijo.fondo_obra === '1'">
-                                                            <label><b>Fondo de Obra:</b></label>
-                                                            Si
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                      </div>
-                                </div>
-
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group error-content">
+                                            <div class="form-group">
+                                                <label><b>Responsable:</b></label>
+                                                {{ fondoFijo.nombre }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group error-content">
+                                            <div class="form-group">
+                                                <label><b>Tipo de Fondo:</b></label>
+                                                {{ fondoFijo.tipo_fondo.descripcion }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group error-content">
+                                            <div class="form-group">
+                                                <label><b>Tipo de Gasto:</b></label>
+                                                {{ fondoFijo.costo.descripcion }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group error-content">
+                                            <div class="form-group">
+                                                <label><b>Saldo:</b></label>
+                                                {{ `$ ${parseFloat(fondoFijo.saldo).formatMoney(2)}`}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" v-if="fondoFijo">
+                                        <div class="form-group error-content">
+                                            <div class="form-group" v-if="fondoFijo.fondo_obra === '0'">
+                                                <label><b>Fondo de Obra:</b></label>
+                                                No
+                                            </div>
+                                            <div class="form-group" v-if="fondoFijo.fondo_obra === '1'">
+                                                <label><b>Fondo de Obra:</b></label>
+                                                Si
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
+                    </div>
                 </div>
             </div>
+        </div>
     </span>
 </template>
 
