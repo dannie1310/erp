@@ -3,39 +3,6 @@
         <button @click="find(servicio)" type="button" class="btn btn-sm btn-outline-info" title="Eliminar Unidad" v-show="update">
             <i class="fa fa-pencil"></i>
         </button>
-        <!-- <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-unidad"> <i class="fas fa-trash-alt"></i> ELIMINAR SERVICIO</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body" v-if="res">
-                        <div class="row">
-                            <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="unidad" class="col-sm-3" style="text-align:right;">Servicio: &nbsp;</label>
-                                        {{res.descripcion}}
-                                    </div>
-                                    <div class="form-group row error-content">
-                                        <label for="unidad" class="col-sm-2 offset-1" style="text-align:right;">No Parte: &nbsp;</label>
-                                            {{res.numero_parte}}
-                                        <label for="unidad" class="col-sm-2 offset-2" style="text-align:right;">Unidad: &nbsp;</label>
-                                        {{res.unidad}}
-                                    </div>
-                            </div>
-                        </div>    
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-danger" @click="destroy">Eliminar</button>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
@@ -109,7 +76,6 @@
                                         <label for="unidad" class="col-sm-1 col-form-label">Unidad: </label>
                                         <div class="col-sm-2">
                                             <select
-                                                :disabled="true"
                                                 type="text"
                                                 name="unidad"
                                                 data-vv-as="Unidad"
@@ -168,8 +134,7 @@ export default {
     },
     methods: {
         save() {
-            console.log('ID', this.id);
-            if(this.service.descripcion == this.res.descripcion && this.service.tipo == this.res.nivel_padre && this.service.numero_parte == this.res.numero_parte)
+            if(this.service.descripcion == this.res.descripcion && this.service.tipo == this.res.nivel_padre && this.service.numero_parte == this.res.numero_parte && this.service.unidad == this.res.unidad)
             {
                 swal('¡Error!', 'Favor de ingresar datos actualizados.', 'error')
             }else{
@@ -178,26 +143,16 @@ export default {
                 id: this.id,
                 data: this.service,
             })
-                .then(data => {
-                    this.$store.commit('cadeco/material/UPDATE_MATERIAL', data);
-                }).finally(()=>{
-                    $(this.$refs.modal).modal('hide');
-                })
+                .then(() => {
+                   return this.$store.dispatch('cadeco/material/paginate', { params: {scope:['servicios','insumos'], sort: 'descripcion', order: 'asc'}})
+                    .then(data => {
+                        this.$store.commit('cadeco/material/SET_MATERIALES', data.data);
+                        this.$store.commit('cadeco/material/SET_META', data.meta);
+                    })
+                   }).finally( ()=>{
+                       $(this.$refs.modal).modal('hide');
+                   });
             }
-            
-            
-            // return this.$store.dispatch('cadeco/material/delete', {
-            //     id: this.res.id
-            // })
-            // .then(() => {
-            //     this.$store.dispatch('cadeco/material/paginate', {params: {scope:['servicios','insumos'], sort: 'descripcion', order: 'asc'}})
-            //     .then(data => {
-            //         this.$store.commit('cadeco/material/SET_MATERIAL', data.data);
-            //         this.$store.commit('cadeco/material/SET_META', data.meta);
-            //     })
-            // }).finally( ()=>{
-            //     $(this.$refs.modal).modal('hide');
-            // });
         },       
         find(servicio) {
             this.id = '';
@@ -205,25 +160,20 @@ export default {
             this.getUnidades();
             this.cargando = true;
             this.res = '';
-            this.id = servicio;
-            console.log(this.id);
-            
-            
-                      
+            this.id = servicio;    
 
                 this.$store.commit('cadeco/unidad/SET_UNIDAD', null);
                 return this.$store.dispatch('cadeco/material/find', {
                     id: servicio,
                     params: {scope: 'servicios'}
                 }).then(data => {
+
                     this.$store.commit('cadeco/material/SET_MATERIAL', data);
                     this.res = data;
                     this.service.tipo = this.res.nivel_padre;
                     this.service.descripcion = this.res.descripcion;
                     this.service.unidad = this.res.unidad;
-                    this.service.numero_parte = this.res.numero_parte;
-                    // console.log(this.res.descripcion_familia);
-                                        
+                    this.service.numero_parte = this.res.numero_parte;                                        
                     
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
@@ -243,9 +193,7 @@ export default {
                     params: {sort: 'descripcion',  order: 'asc', scope:'tipo:2'}
                 })
                     .then(data => {
-                        this.familias_moys= data.data;
-                        // console.log(this.familias_moys);
-                        
+                        this.familias_moys= data.data;                        
                     })
         },
         validate() {

@@ -57,11 +57,11 @@ export default {
                 id: this.res.id
             })
             .then(() => {
-                this.$store.dispatch('cadeco/material/paginate', {params: {scope:['servicios','insumos'], sort: 'descripcion', order: 'asc'}})
-                .then(data => {
-                    this.$store.commit('cadeco/material/SET_MATERIAL', data.data);
-                    this.$store.commit('cadeco/material/SET_META', data.meta);
-                })
+                return this.$store.dispatch('cadeco/material/paginate', { params: {scope:['servicios','insumos'], sort: 'descripcion', order: 'asc'}})
+                    .then(data => {
+                        this.$store.commit('cadeco/material/SET_MATERIALES', data.data);
+                        this.$store.commit('cadeco/material/SET_META', data.meta);
+                    })
             }).finally( ()=>{
                 $(this.$refs.modal).modal('hide');
             });

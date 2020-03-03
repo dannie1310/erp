@@ -77,7 +77,6 @@ class MaterialService
 
     public function delete($data, $id)
     {
-        // dd('Delete dervice', $id, $data);
         return $this->show($id)->eliminarInsumo();        
     }
 
@@ -89,6 +88,6 @@ class MaterialService
 
     public function update(array $data, $id)
     {
-        dd('update', $data, $id);
+        return $this->show($id)->actualizarInsumo($data);
     }
 }

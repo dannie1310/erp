@@ -25,6 +25,11 @@ class MaterialObserver
 
     public function deleting(Material $material)
     {
-        $material->validarEliminacion();
+        $material->validarModificar('eliminar');
+    }
+
+    public function updating(Material $material)
+    {
+        $material->validarModificar('editar');
     }
 }
