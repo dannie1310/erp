@@ -15,10 +15,10 @@
                         </button>
                     </div>
                     <div class="modal-body" v-if="cargando">
-                            <div>
-                                <h5  id="exampleModalLongTitle"><i class="fa fa-spin fa-spinner"></i>CARGANDO</h5>
-                            </div>
+                        <div>
+                            <h5  id="exampleModalLongTitle"><i class="fa fa-spin fa-spinner"></i>CARGANDO</h5>
                         </div>
+                    </div>
                     <form role="form" v-if="salida" @submit.prevent="validate">
                         <div class="modal-body" v-if="!cargando">
                             <div class="row">
@@ -55,58 +55,63 @@
                                 </div>
                                 <!--Entrega a contratista-->
                                 <div class="col-md-12">
-                                    <div class="invoice p-3 mb-3">
-                                        <div role="form">
-                                            <div class="form-group row">
-
-                                               <div class="col-md-12">
-                                                        <b>Entrega a contratista</b>
-                                                    </div>
-                                                    <hr>
-                                                <div class="col-md-2">
-                                                     <div class="col-md-6 offset-3">
-                                                     <div class="input-group-text">
-                                                      <input type="checkbox" aria-label="Checkbox for following text input" class="icono" v-model="con_prestamo">
-                                                       </div>
-                                                     </div>
-
-
-                                                     </div>
-
-                                                <div class="col-md-7" v-if="salida.partidas" v-show="con_prestamo">
-                                                    <model-list-select
-                                                        name="id_empresa"
-                                                        :disabled="!con_prestamo"
-                                                        placeholder="Seleccionar o buscar por RFC y razón social del contratista"
-                                                        data-vv-as="Empresa"
-                                                        v-validate="{required: true}"
-                                                        v-model="id_empresa"
-                                                        option-value="id"
-                                                        :custom-text="rfcAndRazonSocial"
-                                                        :list="contratistas"
-                                                        :isError="errors.has(`id_empresa`)">
-                                                    </model-list-select>
+                                        <div class="invoice p-3 mb-3">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                     <b>Entrega a contratista</b>
                                                 </div>
-                                                <div class="col-md-3" v-if="salida.partidas" v-show="con_prestamo">
-                                                    <div class="btn-group btn-group-toggle">
-                                                        <label class="btn btn-outline-primary" :class="tipo_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
-                                                        <input type="radio"
-                                                               :disabled="!con_prestamo"
-                                                               class="btn-group-toggle "
-                                                               name="tipo_cargo"
-                                                               :id="'opcion_cargo' + key"
-                                                               :value="key"
-                                                               autocomplete="on"
-                                                               v-validate="{required: true}"
-                                                               v-model.number="tipo_cargo">
-                                                            {{ cargo }}
-                                                        </label>
+                                            </div>
+                                            <hr>
+                                            <div class="row col-md-12">
+                                                <div class="col-md-2">
+                                                    <div class="form-group error-content">
+                                                        <div class="col-md-6">
+                                                            <div class="input-group-text">
+                                                                <input type="checkbox" aria-label="Checkbox for following text input" class="icono" v-model="con_prestamo">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-7" v-show="con_prestamo">
+                                                    <div class="form-group error-content">
+                                                        <model-list-select
+                                                            name="id_empresa"
+                                                            :disabled="!con_prestamo"
+                                                            placeholder="Seleccionar o buscar por RFC y razón social del contratista"
+                                                            data-vv-as="Empresa"
+                                                            v-validate="{required: true}"
+                                                            v-model="id_empresa"
+                                                            option-value="id"
+                                                            :custom-text="rfcAndRazonSocial"
+                                                            :list="contratistas"
+                                                            :isError="errors.has(`id_empresa`)">
+                                                        </model-list-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3" v-show="con_prestamo">
+                                                    <div class="form-group error-content">
+                                                        <div class="form-group">
+                                                            <div class="btn-group btn-group-toggle">
+                                                                <label class="btn btn-outline-primary" :class="tipo_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                                    <input type="radio"
+                                                                           :disabled="!con_prestamo"
+                                                                           class="btn-group-toggle "
+                                                                           name="tipo_cargo"
+                                                                           :id="'opcion_cargo' + key"
+                                                                           :value="key"
+                                                                           autocomplete="on"
+                                                                           v-validate="{required: true}"
+                                                                           v-model.number="tipo_cargo">
+                                                                    {{ cargo }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+
                                 <!--Partidas-->
                                 <div class="col-md-12">
                                     <div class="invoice p-3 mb-3">
@@ -184,7 +189,6 @@
                 },
                 con_prestamo : false,
                 contratistas : [],
-                boton: '',
                 salida: '',
                 tipo_cargo: 1,
                 id_empresa:'',
@@ -199,10 +203,24 @@
             }
         },
         methods: {
+            init() {
+                this.con_prestamo = false;
+                this.contratistas = [];
+                this.tipo_cargo = 1;
+                this.id_empresa = '';
+                this.contratista = 0;
+                this.salida = '';
+                this.res = {
+                    tipo_cargo: '',
+                    id_empresa: '',
+                    contratista: ''
+                }
+            },
             rfcAndRazonSocial (item){
                 return `[${item.rfc}] - ${item.razon_social}`
             },
             find() {
+                this.init()
                 this.cargando = true;
                 this.getContratista();
                 $(this.$refs.modal).modal('show');
@@ -246,7 +264,6 @@
                 this.res.id_empresa = this.id_empresa;
                 this.res.tipo_cargo = this.tipo_cargo;
                 this.res.contratista = this.con_prestamo;
-
                  return this.$store.dispatch('almacenes/salida-almacen/actualizarEntrega', {
                        id: this.id,
                        params: this.res

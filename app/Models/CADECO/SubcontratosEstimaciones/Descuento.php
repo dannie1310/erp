@@ -25,27 +25,32 @@ class Descuento extends Model
     protected $fillable = [
         'id_transaccion',
         'id_material',
-        'cantidad', 
+        'cantidad',
         'precio',
     ];
 
-    public function material(){
+    public function material()
+    {
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
 
-    public function estimacion(){
+    public function estimacion()
+    {
         return $this->belongsTo(Estimacion::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function getCantidadFormatAttribute(){
+    public function getCantidadFormatAttribute()
+    {
         return number_format($this->cantidad, 4, '.', '');
     }
 
-    public function getPrecioFormatAttribute(){
+    public function getPrecioFormatAttribute()
+    {
         return '$ ' . number_format($this->precio, 2, '.', ',');
     }
 
-    public function getImporteFormatAttribute(){
+    public function getImporteFormatAttribute()
+    {
         return '$ ' . number_format($this->importe, 2, '.', ',');
     }
 
@@ -54,13 +59,13 @@ class Descuento extends Model
         $estimaciones = Estimacion::where('id_empresa', '=', $estimacion_empresa )->whereNotIn('id_transaccion', [$this->id_transaccion])->pluck('id_transaccion');
         $cant_descontada = $this->where('id_material', '=', $descuento['id_material'])->whereIn('id_transaccion', $estimaciones)->sum('cantidad');
         $itemsContratista = ItemContratista::where('id_empresa', '=', $estimacion_empresa)->where('con_cargo', '=', 1)->pluck('id_item');
-        
+
         $salidas = SalidaAlmacenPartida::itemContratista()->with('material')->whereIn('id_item', $itemsContratista)->where('id_material', '=', $descuento['id_material'])
         ->select('id_material', DB::raw('sum(cantidad) as cantidad, (sum(importe) / sum(cantidad)) as precio_unitario '))
         ->groupBy('id_material')
         ->first();
 
-        if($descuento['cantidad'] > ($salidas->cantidad - $cant_descontada)) 
+        if($descuento['cantidad'] > ($salidas->cantidad - $cant_descontada))
             abort(403, 'La cantidad '.number_format($descuento['cantidad'], 2, '.', ',').' a descontar del material '.
                         $this->material->descripcion.' es mayor a la permitida para esta estimación: '.
                         number_format(($salidas->cantidad - $cant_descontada), 2, '.', ',').'');

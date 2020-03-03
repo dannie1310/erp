@@ -65,8 +65,7 @@ class SalidaAlmacenService
 
     public function actualizarEntregaContratista($data, $id)
     {
-        dd($data);
-       return $this->show($id)->editarEntregasContratista($data['params']);
+       return $this->show($id)->editarEntregasContratista($data);
     }
 
     public function pdfSalidaAlmacen($id)
