@@ -47,6 +47,7 @@ class CtgEfos extends Model
 
     public function reg($file)
     {
+        DB::connection('seguridad')->beginTransaction();
         if($file == null) {
             abort(403, 'Archivo CSV inválido');
         }
@@ -124,23 +125,35 @@ class CtgEfos extends Model
                         {
                             $razon = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $razon);
                         }
+                        $fecha_presunto = (!isset($renglon[$t + 2])) ? '' : $renglon[$t + 2];
+                        $fecha_presunto_obj = DateTime::createFromFormat('d/m/Y', $fecha_presunto);
+                        if($fecha_presunto_obj)
+                        {
+                            $fecha_presunto_f = $fecha_presunto_obj->format('Y-m-d');
+                        }
+
                         $fecha_definitivo = (!isset($renglon[$t + 10])) ? '' : $renglon[$t + 10];
                         if($fecha_definitivo != '')
                         {
-                            if(DateTime::createFromFormat('d/m/y', $fecha_definitivo))
+                            $fecha_definitivo_obj = DateTime::createFromFormat('d/m/Y', $fecha_definitivo);
+                            if($fecha_definitivo_obj)
                             {
-                                $fecha_definitivo = DateTime::createFromFormat('d/m/y', $fecha_definitivo);
-                                $fecha_definitivo = $fecha_definitivo->format('d-m-Y');
+                                $fecha_definitivo_f = $fecha_definitivo_obj->format('Y-m-d');
                             }
-                            $fecha_definitivo =  str_replace('/','-', $fecha_definitivo);
                         }
-                        $content[] = array(
-                            'rfc' => $renglon[1],
-                            'razon_social' => (str_replace('"','', $razon)),
-                            'fecha_presunto' => date("Y-m-d", strtotime($renglon[$t + 2])),
-                            'fecha_definitivo' => ($fecha_definitivo != '') ? date("Y-m-d", strtotime($fecha_definitivo)) : NULL,
-                            'estado' => str_replace(' ', '', strtoupper($renglon[$t]))
-                        );
+                        try{
+                            $content[] = array(
+                                'rfc' => $renglon[1],
+                                'razon_social' => (str_replace('"','', $razon)),
+                                'fecha_presunto' => $fecha_presunto_f,
+                                'fecha_definitivo' => ($fecha_definitivo_f != '') ? $fecha_definitivo_f : NULL,
+                                'estado' => str_replace(' ', '', strtoupper($renglon[$t]))
+                            );
+                        }
+                        catch (Error $e){
+                            dd($fecha_presunto_f,$fecha_definitivo_f,$renglon);
+                        }
+
                         $linea++;
                         $t = 2;
                         $razon = '';
