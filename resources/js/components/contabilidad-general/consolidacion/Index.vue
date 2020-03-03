@@ -74,7 +74,7 @@
                                     <td>{{ nombre }}</td>
                                 </tr>
                                  <tr  v-if="nuevos_asignados.length">
-                                    <th>Areas Subcontratantes a Asignar:</th>
+                                    <th>Empresa(s) a Consolidar:</th>
                                     <td>
                                         <ul>
                                             <li v-for="nuevo in nuevos_asignados">{{ nuevo.nombre }}</li>
@@ -82,7 +82,7 @@
                                     </td>
                                 </tr>
                                 <tr v-if="desasignados.length">
-                                    <th>Areas Subcontratantes a Desasignar:</th>
+                                    <th>Empresa(s) a Desconsolidar:</th>
                                     <td>
                                         <ul>
                                             <li v-for="desa in desasignados">{{ desa.nombre }}</li>
@@ -112,7 +112,6 @@
 </template>
 
 <script>
-    // import UsuarioSelect from "../../igh/usuario/Select";
     import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "subcontratantes",
@@ -160,11 +159,6 @@
                 this.areas_disponibles = this.areas_disponibles.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
             },
 
-            changeSelect()
-            {
-                alert('Change select');
-            },
-
             aliasbddnombre (item){
                 return `${item.nombre} - ${item.alias}`;
             },
@@ -175,9 +169,7 @@
                     params: {sort: 'Nombre', order: 'asc', scope: 'consolidadora'}
                 })
                     .then(data => {
-                        this.empresas = data.data;
-                        console.log('Empresas', this.empresas);
-                        
+                        this.empresas = data.data;                        
                     })
             },
 
@@ -189,17 +181,12 @@
                 })
                     .then(data => {
                         this.asignados = data.consolida.data;
-                        this.originales = data.consolida.data;
-                        this.nombre = data.nombre
-                        console.log('nombre', this.nombre);
+                        data.consolida.data.forEach(perm=> {
+                            this.originales.push(perm.id);
+                        })
+                        
+                        this.nombre = data.nombre;
                         this.getEmpresasDisponibles();
-                        
-                        // this.asignados = this.empresas.diff(this.asignados );
-                        // console.log('Disponibles', this.disponibles);
-                        // console.log('empieza');
-                        
-                        // console.log('Asignacion', this.empresas.diff(this.disponibles));
-                        // console.log('termina'); 
                     })
             },
 
@@ -209,44 +196,30 @@
                     params: {sort: 'Nombre', order: 'asc', scope: 'disponibles'}
                 })
                     .then(data => {
-                        this.disponibles = data.data;
-                        console.log('Disponibles', this.disponibles);
-                        
+                        this.disponibles = data.data;                        
                     })
             },
 
             agregar() {
-                console.log('agregar', this.selected);
-                // this.disponibles = this.disponibles.diff(this.selected);
-                // console.log('Disponibles diff', this.disponibles);
                 
                 this.selected.forEach(consolida => {
                     this.disponibles.forEach(dis => {
                         if(dis.id == consolida) {
 
                             this.asignados.push(dis);
-                            console.log('consolida con push', this.asignados);
-
                             this.disponibles = this.disponibles.filter(empresa => {
                                 return empresa.id != dis.id;
                             });
-                            
-                            // this.areas_disponibles = this.areas_disponibles.filter(areas => {
-                            //     return areas.id != a.id;
-                            // });
                         }
                     })
                 })
             },
 
-            quitar() {
-                console.log('Quitar', this.mover);
-                
+            quitar() {                
                 this.mover.forEach(consolida => {
                     this.asignados.forEach(asig => {
                         if(asig.id == consolida) {
                             this.disponibles.push(asig);
-                            console.log('disponibles', this.disponibles);
                             
                             this.asignados = this.asignados.filter(empresa => {
                                 return empresa.id != asig.id;
@@ -257,26 +230,18 @@
             },
 
             asignar() {
-                this.guardando = true;
-                return this.$store.dispatch('configuracion/area-subcontratante/asignacionAreasSubcontratantes', {
-                    user_id: this.form.user_id,
-                    area_id: this.areas_asignados.map(area => (
-                        area.id
-                    ))
-                })
-                    .then(data => {
-                        if (this.currentUser.idusuario == this.form.user_id) {
-                            this.$session.set('permisos', data)
-                        }
-                        this.areas_originales = this.areas_asignados.map(area => (
-                            area.id
-                        ))
-                    } )
-                    .finally(() => {
+                
+                return this.$store.dispatch('seguridad/lista-empresas/consolidar', {
+                    id: this.id_empresa,
+                    params: this.asignados.map(area => (area.id))
+                    })
+                    .then(() => {
+                        this.getEmpresasDisponibles();
+                    }).finally( ()=>{
                         $(this.$refs.modal).modal('hide');
-                        this.guardando = false;
+            });
 
-                    });
+                
             },
 
             validate() {
@@ -288,13 +253,7 @@
             },
 
             save() {
-                this.$store.dispatch('igh/usuario/find', {
-                    id: this.form.user_id
-                })
-                    .then(data => {
-                        this.usuario_seleccionado = data.nombre;
                         $(this.$refs.modal).modal('show');
-                    })
             }
         },
 
@@ -309,41 +268,23 @@
                     return (a.nombre<b.nombre?-1:(a.nombre>b.nombre?1:0));
                 });
             },
-            desasignados() {
+            desasignados() {                
                 return this.disponibles.filter(areas => {
-                    return $.inArray(areas.id, this.areas_originales) > -1;
+                    return $.inArray(areas.id, this.originales) > -1;
                 })
             },
 
             nuevos_asignados() {
-                return this.asignados.filter(areas => {
-                    return $.inArray(areas.id, this.areas_originales) == -1;
-                })
-            },
-            areas_desasignados() {
-                return this.areas_disponibles.filter(areas => {
-                    return $.inArray(areas.id, this.areas_originales) > -1;
-                })
-            },
-            areas_nuevos_asignados() {
-                return this.areas_asignados.filter(areas => {
-                    return $.inArray(areas.id, this.areas_originales) == -1;
+                
+                return this.asignados.filter(areas => {                    
+                    return $.inArray(areas.id, this.originales) == -1;
                 })
             }
         },
         watch: {
             'id_empresa'(id) {
                 this.$validator.reset();
-                console.log('Cambio', id);
                 this.getEmpresasAsociadadas(id);
-                // this.$validator.reset()
-                // if (id) {
-                //     this.cargando = true;
-                //     this.getAreasUsuario(id)
-                //         .finally(() => {
-                //             this.cargando = false;
-                //         });
-                // }
             }
 
         },

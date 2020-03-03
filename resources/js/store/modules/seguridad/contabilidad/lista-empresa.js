@@ -59,6 +59,47 @@ export default {
             });
         },
 
+        consolidar(context, payload) {
+            
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Actualizar Empresa Consolidadora",
+                    text: "¿Está seguro/a de que desea actualizar las empresas que consolida?",
+                    icon: "info",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    },
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/consolidar', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Empresas consolidadas correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+
         paginate (context, payload) {
             return new Promise((resolve, reject) => {
                 axios

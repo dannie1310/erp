@@ -121,7 +121,7 @@ export const routes = [
                             title: 'Consolidación',
                             breadcrumb: {parent: 'contabilidad-general', name: 'CONSOLIDACIÓN'},
                             middleware: [auth, permission],
-                            permission: ['configurar_visibilidad_empresa_ctpq','configurar_editabilidad_empresa_ctpq'],
+                            permission: ['editar_empresa_consolidadora'],
                             general: true
                         }
                     }

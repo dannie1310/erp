@@ -41,4 +41,9 @@ class ListaEmpresasService{
     {
         return $this->repository->show($id);
     }
+
+    public function consolida($data, $id)
+    {
+        $this->repository->show($id)->actualizaEmpresas($data['params']);
+    }
 }

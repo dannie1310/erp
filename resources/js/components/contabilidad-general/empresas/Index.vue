@@ -100,6 +100,7 @@
                         buttons: $.extend({}, {
                             edit: self.$root.can('configurar_visibilidad_empresa_ctpq', true) || self.$root.can('configurar_editabilidad_empresa_ctpq', true) || self.$root.can('configurar_tipo_empresa_ctpq', true) ? true : false,
                             empresa: empresa,
+                            consolidada: empresa.consolidada
                         })
                     }));
                 },

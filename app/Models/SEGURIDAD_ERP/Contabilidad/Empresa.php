@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Empresa extends Model
 {
@@ -21,7 +22,8 @@ class Empresa extends Model
         'Visible',
         'Editable',
         'Historica',
-        'Consolidadora'
+        'Consolidadora',
+        'IdConsolidadora'
     ];
 
     public $searchable = [
@@ -46,7 +48,30 @@ class Empresa extends Model
 
     public function scopeDisponibles($query)
     {
-        return $query->whereNull('IdConsolidadora')->whereNull('Consolidadora')->orWhereRaw('Consolidadora = 0');
+        return $query->whereRaw('(Consolidadora = 0 or Consolidadora is null)')->whereNull('IdConsolidadora');
     }
 
+    public function actualizaEmpresas($data)
+    {        
+        try {
+            DB::connection('seguridad')->beginTransaction();
+            $this->consolida()->update(['IdConsolidadora' => NULL]);
+
+            foreach($data as $empresa)
+            {
+                $this->where('Id', '=', $empresa)->update(['IdConsolidadora' => $this->Id]);
+            }
+
+            DB::connection('seguridad')->commit();            
+            
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            throw $e;
+        }
+    }
+
+    public function getConsolidadaAttribute()
+    {
+        return ($this->IdConsolidadora == NULL) ? 0 : 1;
+    }
 }
