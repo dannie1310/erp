@@ -236,7 +236,7 @@
                     params: this.asignados.map(area => (area.id))
                     })
                     .then(() => {
-                        this.getEmpresasDisponibles();
+                        this.getEmpresasAsociadadas(this.id_empresa);
                     }).finally( ()=>{
                         $(this.$refs.modal).modal('hide');
             });
