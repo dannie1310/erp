@@ -14,12 +14,12 @@
                                         <Layout @created="getMateriales()" v-if="id_almacen" v-model="items"></Layout>
                                     </div>
                                 </div>
-                             
+
                              <div class="row" v-if="id_almacen">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
-                                            <div class="col-12">
+                                            <div class="col-12 table-responsive-xl">
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
@@ -67,7 +67,7 @@
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.material" 
+                                                                    :disabled = "!item.material"
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`cantidad[${i}]`"
@@ -193,13 +193,13 @@
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
             },
             changeSelect(item){
-                
+
                 var busqueda = this.materiales.find(x=>x.id === item.id_material);
                 if(busqueda != undefined)
                 {
                     item.material = busqueda;
                     item.i = 2;
-                    
+
                 }
             },
             getAlmacen(){
@@ -275,7 +275,7 @@
                     }
                 });
             },
-            store() {                
+            store() {
                 return this.$store.dispatch('almacenes/nuevo-lote/store', this.$data)
                     .then((data) => {
                         this.$router.push({name: 'ajuste-inventario'});
