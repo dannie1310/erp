@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 use App\CSV\ListaMaterialesLayout;
 use App\Models\CADECO\Contabilidad\CuentaMaterial;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class Material extends Model
@@ -66,6 +67,11 @@ class Material extends Model
         }
     }
 
+    public function getNivelPadreAttribute()
+    {
+        return substr($this->nivel, 0, -4);
+    }
+
     public function getDescripcionFamiliaAttribute()
     {
         $nivel = substr($this->nivel, 0,4);
@@ -94,6 +100,41 @@ class Material extends Model
         return $this->hasOne(CuentaMaterial::class, 'id_material');
     }
 
+    public function items()
+    {
+        return $this->hasMany(Item::class, 'id_material', 'id_material');
+    }
+
+    public function almacen()
+    {
+        return $this->hasMany(Almacen::class, 'id_material', 'id_material');
+    }
+
+    public function jornal()
+    {
+        return $this->hasMany(Jornal::class, 'id_material');
+    }
+
+    public function concepto()
+    {
+        return $this->hasMany(Concepto::class, 'id_material');
+    }
+
+    public function suministrado()
+    {
+        return $this->hasMany(Suministrados::class, 'id_material');
+    }
+
+    public function movimiento()
+    {
+        return $this->hasMany(Movimiento::class, 'id_material');
+    }
+
+    public function basico()
+    {
+        return $this->hasMany(Basico::class, 'id_material');
+    }
+
     public function inventarios()
     {
         return $this->hasMany(Inventario::class, 'id_material','id_material');
@@ -113,6 +154,39 @@ class Material extends Model
     {
         return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
             ->where('nivel', 'LIKE',  '009.___.');
+    }
+
+    public function eliminarInsumo()
+    {
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        } catch(\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function actualizarInsumo($data)
+    {
+        $this->nivel = $data['tipo'];
+        $nivel = $this->nivelConsecutivo();
+        try{
+            $this->numero_parte = $data['numero_parte'];
+            $this->unidad = $data['unidad'];
+            $this->unidad_compra = $data['unidad'];
+            $this->descripcion = $data['descripcion'];
+            $this->nivel = $nivel;
+            $this->save();
+            DB::connection('cadeco')->commit();
+            exit;
+        } catch(\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 
     public function scopeRoots($query)
@@ -204,6 +278,73 @@ class Material extends Model
         if(!$unidad)
         {
             throw New \Exception('La unidad "'.$this->unidad.'" no está dada de alta en el catálogo de unidades, favor de ingresarla.');
+        }
+    }
+
+    public function validarUso()
+    {
+        if($this->items()->count() > 0)
+        {
+            return 1;
+        }
+        if($this->almacen()->count() > 0)
+        {
+            return 2;
+        }
+        if($this->concepto()->count() > 0)
+        {
+            return 3;
+        }
+        if($this->basico()->count() > 0)
+        {
+            return 4;
+        }
+        if($this->inventarios()->count() > 0)
+        {
+            return 5;
+        }
+        if($this->jornal()->count() > 0)
+        {
+            return 6;
+        }
+        if($this->movimiento()->count() > 0)
+        {
+            return 7;
+        }
+        if($this->suministrado()->count() > 0)
+        {
+            return 8;
+        }        
+    }
+
+    public function validarModificar($tipo)
+    {
+        switch($this->validarUso())
+        {
+            case(1):
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunas partidas.");
+            break;
+            case(2):
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos  Almacenes.");
+            break;
+            case(3):
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos conceptos.");
+            break;
+            case(4):
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos  basicos.");
+            break;
+            case(5):
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos inventarios.");
+            break;
+            case(6):
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en la tabla Jornal.");
+            break;
+            case(7):
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos movimientos.");
+            break;
+            case(8):
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos  suministros.");
+            break;
         }
     }
 
