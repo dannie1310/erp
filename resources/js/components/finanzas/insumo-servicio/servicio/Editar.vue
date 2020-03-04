@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(servicio)" type="button" class="btn btn-sm btn-outline-info" title="Eliminar Unidad" v-show="update">
+        <button @click="find(servicio)" type="button" class="btn btn-sm btn-outline-info" title="Editar Servicio" v-show="update">
             <i class="fa fa-pencil"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
