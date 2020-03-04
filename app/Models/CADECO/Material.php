@@ -83,10 +83,15 @@ class Material extends Model
 
     public function lista_materiales($data)
     {
-        Storage::disk('lista_insumos')->delete(Storage::disk('lista_insumos')->allFiles());
-        $nombre_archivo = 'Lista-Materiales' . date('dmYY_His') . '.csv';
-        (new ListaMaterialesLayout($this))->store($nombre_archivo, 'lista_insumos');
-        return Storage::disk('lista_insumos')->download($nombre_archivo);
+        if(config('filesystems.disks.lista_insumos.root') != storage_path())
+        {
+            Storage::disk('lista_insumos')->delete(Storage::disk('lista_insumos')->allFiles());
+            $nombre_archivo = 'Lista-Materiales' . date('dmYY_His') . '.csv';
+            (new ListaMaterialesLayout($this))->store($nombre_archivo, 'lista_insumos');
+            return Storage::disk('lista_insumos')->download($nombre_archivo);
+        }else{
+            dd('No existe el directorio destino: STORAGE_LISTA_MATERIALES. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
     }
 
     public function cuentaMaterial()
@@ -169,7 +174,7 @@ class Material extends Model
     }
 
     public function scopeSuministrables($query){
-        
+
         return $query->whereIn('tipo_material',[1,2,4])->where('equivalencia', '=', 1);
     }
 
