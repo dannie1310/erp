@@ -47,6 +47,46 @@ export default {
             });
         },
 
+        delete(context, payload) {            
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Servicio",
+                    text: "¿Está seguro/a de que desea eliminar servicio?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Servicio eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+
         index(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -98,6 +138,46 @@ export default {
                         reject(error);
                     })
             })
+        },
+        update(context, payload) {
+                        
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Editar datos del Servicio",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("El Servicio ha sido Editado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
         },
         store(context, payload) {
             return new Promise((resolve, reject) => {
