@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(servicio)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Unidad" v-show="borrar">
+        <button @click="find(servicio)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Servicio" v-show="borrar">
             <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
