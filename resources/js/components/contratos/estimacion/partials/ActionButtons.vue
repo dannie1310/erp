@@ -154,6 +154,7 @@
             resumen(opcion) {
                 if (opcion == 'aprobar') {this.aprobando = true;}
                 else {this.revirtiendo = true;}
+                $(this.$refs.resumen).appendTo('body')
                 $(this.$refs.resumen).modal('show');
                 this.getConfiguraciones()
             },
