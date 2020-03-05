@@ -43,6 +43,7 @@ class SalidaAlmacenFormato extends Rotation
         $this->numero_folio = $this->salida->numero_folio_format;
 
         $this->fecha = $this->salida->fecha_format;
+        $this->fecha_registro = $this->salida->fecha_hora_registro_format;
 
         $this->almacen = $this->salida->almacen->descripcion;
 
@@ -440,7 +441,7 @@ class SalidaAlmacenFormato extends Rotation
         $this->Cell(10, .3, (''), 0, 1, 'L');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de almacenes. Fecha de registro: '  .date("Y-m-d", strtotime($this->fecha)) . ' ') , 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de almacenes. Fecha y hora de registro: '  .$this->fecha_registro . ' ') , 0, 0, 'L');
         $this->Cell(9.5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
