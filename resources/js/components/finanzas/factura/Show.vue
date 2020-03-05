@@ -130,11 +130,9 @@
                                 </div>
                             </div>
                             <span v-if="factura.cambio" v-for="(cambio, i) in factura.cambio.data">
-                                <div>
-                                    <div class="form-group error-content">
-                                        <label :for="`cambio[${i}]`">{{cambio.moneda.abreviatura}}:</label>
-                                        {{cambio.cambio_format}}&nbsp&nbsp
-                                    </div>
+                                <div class="form-group error-content">
+                                    <label :for="`cambio[${i}]`">{{cambio.moneda.abreviatura}}:</label>
+                                    {{cambio.cambio_format}}&nbsp&nbsp
                                 </div>
                             </span>
                         </div>
