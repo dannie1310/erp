@@ -353,7 +353,7 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-salida-almacen', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@pdfSalidaAlmacen')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@store');
-            $api->patch('{id}/entrega', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@entregaContratista')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/actualizarEntrega', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@actualizarEntregaContratista')->where(['id' => '[0-9]+']);
 
         });
     });
