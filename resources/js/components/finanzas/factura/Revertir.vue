@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-info" title="Revertir">
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-info" title="Revertir Revisión">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-repeat" v-else></i>
         </button>
