@@ -142,6 +142,112 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <div class="form-group error-content float-right"><label for="observaciones">Subtotal:</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> {{factura.subtotal_format}} </div>
+                            </div>
+                            <!-- <div class="col-md-5"></div> -->
+
+                            <div class="col-md-10">
+                                <div class="form-group error-content float-right"><label for="observaciones">Fondo de Garantía:</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> $ 19.50 </div>
+                            </div>
+                            <!-- <div class="col-md-5"></div> -->
+
+                            <div class="col-md-10">
+                                <div class="form-group error-content float-right"><label for="observaciones">IVA Subtotal:</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> {{factura.impuesto_format}}</div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">Ret. IVA (4%):</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> {{factura.complemento.ret_iva_4_format}} </div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">Ret. IVA (6%):</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> {{factura.complemento.ret_iva_6_format}} </div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">Ret. IVA (2/3):</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right">{{factura.complemento.ret_iva_10_format}}  </div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">IVA A Pagar:</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> {{factura.impuesto_format}}  </div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">IEPS:</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> {{factura.complemento.ieps_format}} </div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">Imp. Hospedaje:</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> {{factura.complemento.imp_hosp_format}}  </div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">Ret. ISR (10%):</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> {{factura.complemento.ret_isr_10_format}}  </div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">Retenciones Subcontratos:</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> $ 19.50  </div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">Devolución de Retenciones Subcontratos:</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> $ 19.50  </div>
+                            </div>
+                            <div class="col-md-5"></div>
+
+                            <div class="col-md-5">
+                                <div class="form-group error-content float-right"> <label for="observaciones">Total:</label></div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content float-right"> {{factura.total_format}} </div>
+                            </div>
+                            <div class="col-md-5"></div>
+                            
+                        </div>
                         
 
 
@@ -167,6 +273,7 @@
                 this.$store.commit('finanzas/factura/SET_FACTURA', null);
                 return this.$store.dispatch('finanzas/factura/find', {
                     id: id,
+                    params: {include: ['complemento']}
                 }).then(data => {
                     this.$store.commit('finanzas/factura/SET_FACTURA', data);
                     $(this.$refs.modal).modal('show')
