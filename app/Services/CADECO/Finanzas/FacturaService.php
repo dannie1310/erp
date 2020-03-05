@@ -365,14 +365,27 @@ class FacturaService
             $factura_repositorio->load("usuario");
             event(new IncidenciaCI(
                 ["id_tipo_incidencia" => 4,
-                    "id_factura_repositorio" => $factura_repositorio->id]
+                    "id_factura_repositorio" => $factura_repositorio->id,
+                    "mensaje" => 'Comprobante utilizado previamente:
+            Registró: ' . $factura_repositorio->usuario->nombre_completo . '
+            BD: ' . $factura_repositorio->proyecto->base_datos . '
+            Proyecto: ' . $factura_repositorio->obra . '
+            Factura: ' . $factura_repositorio->factura->numero_folio . '
+            Fecha Registro: '. $factura_repositorio->fecha_hora_registro_format . '
+            UUID: ' . $this->arreglo_factura["complemento"]["uuid"] . '
+            Emisor: ' . $this->arreglo_factura["emisor"]["nombre"] . '
+            RFC Emisor: ' . $this->arreglo_factura["emisor"]["rfc"]
+                ]
             ));
             abort(403, 'Comprobante utilizado previamente:
             Registró: ' . $factura_repositorio->usuario->nombre_completo . '
             BD: ' . $factura_repositorio->proyecto->base_datos . '
             Proyecto: ' . $factura_repositorio->obra . '
             Factura: ' . $factura_repositorio->factura->numero_folio . '
-            Fecha: ' . $factura_repositorio->fecha_hora_registro_format);
+            Fecha Registro: '. $factura_repositorio->fecha_hora_registro_format . '
+            UUID: ' . $this->arreglo_factura["complemento"]["uuid"] . '
+            Emisor: ' . $this->arreglo_factura["emisor"]["nombre"] . '
+            RFC Emisor: ' . $this->arreglo_factura["emisor"]["rfc"] );
         }
     }
 
