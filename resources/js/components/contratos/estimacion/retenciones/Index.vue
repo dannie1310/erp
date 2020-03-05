@@ -43,9 +43,9 @@
                                     </tbody>
                                 </table>
                                 <div class="col-md-12" >
-                                    <br> 
+                                    <br>
                                     <hr style="margin-top:auto;border: 1px solid grey;" width="100%" size="20" />
-                                    <br>       
+                                    <br>
                                 </div>
                                 <div class="col-md-12 mt-2 text-left" >
                                     <label class="text-secondary ">Liberadas </label>
@@ -135,8 +135,8 @@ export default {
                 params:{}})
                 .then(data => {
                     this.$store.commit('subcontratosEstimaciones/retencion/SET_RETENCIONES', data.data);
-                })            
-        },        
+                })
+        },
         init(){
             this.getRetenciones();
             this.getLiberaciones();

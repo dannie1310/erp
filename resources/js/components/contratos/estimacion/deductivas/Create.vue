@@ -17,7 +17,7 @@
                             <form role="form" @submit.prevent="validate">
                                 <div class="modal-body">
                                     <div class="invoice p-3 mb-3">
-                                        <div class="row">   
+                                        <div class="row">
                                         <!-- <div class="col-12"> -->
                                             <div class="col-8" >
                                                 <model-list-select
@@ -31,7 +31,7 @@
                                                             :isError="errors.has(`id_material`)">
                                                     </model-list-select>
                                                     <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
-                                                    
+
                                             </div>
                                             <div class="col-2">
                                                 <input
@@ -125,7 +125,7 @@ export default {
                 }else{
                     this.items = data;
                     $(this.$refs.modalAgregar).modal('show');
-                }               
+                }
             })
             .finally(()=>{
                 this.cargando = false;

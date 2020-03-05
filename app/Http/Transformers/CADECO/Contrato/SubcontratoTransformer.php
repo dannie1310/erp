@@ -24,7 +24,9 @@ class SubcontratoTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'empresa',
         'moneda',
-        'estimaciones'
+        'estimaciones',
+        'partidas',
+        'partidas_ordenadas'
     ];
 
     /**
@@ -101,6 +103,24 @@ class SubcontratoTransformer extends TransformerAbstract
     {
         if($estimaciones = $model->estimaciones){
             return $this->collection($estimaciones, new EstimacionTransformer);
+        }
+        return null;
+    }
+
+    public function includePartidas(Subcontrato $model)
+    {
+        if($partidas = $model->partidas)
+        {
+            return $this->collection($partidas, new SubcontratoPartidaTransformer);
+        }
+        return null;
+    }
+
+    public function includePartidasOrdenadas(Subcontrato $model)
+    {
+        if($partidas = $model->partidasOrdenadas)
+        {
+            return $this->collection($partidas, new SubcontratoPartidaTransformer);
         }
         return null;
     }
