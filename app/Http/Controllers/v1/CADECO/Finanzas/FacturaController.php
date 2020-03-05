@@ -81,8 +81,6 @@ class FacturaController extends Controller
 
     public function revertir($id)
     {
-        $factura = DB::connection('cadeco')
-            ->select(DB::raw("EXEC [dbo].[sp_revertir_transaccion] {$id}"));
-        return response()->json($factura);
+        return $this->respondWithItem($this->service->revertir($id));
     }
 }

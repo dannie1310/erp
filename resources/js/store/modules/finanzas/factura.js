@@ -20,6 +20,19 @@ export default {
         SET_META(state, data) {
             state.meta = data;
         },
+        UPDATE_FACTURA(state, data) {
+            state.facturas = state.facturas.map(factura => {
+                if (factura.id === data.id) {
+                    return Object.assign([], factura, data)
+                }
+                return factura
+            })
+            state.currentFactura = data
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentFactura[data.attribute] = data.value
+        }
     },
 
     actions: {

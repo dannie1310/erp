@@ -10,6 +10,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
 use App\Notifications\NotificacionIncidenciasCI;
 use App\Repositories\CADECO\Finanzas\Facturas\Repository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use DateTime;
@@ -486,6 +487,21 @@ class FacturaService
     {
         $this->setArregloFactura($archivo_xml);
         return $this->arreglo_factura;
+    }
+
+    public  function revertir($id)
+    {
+        $factura = $this->repository->show($id);
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $factura->revertir();
+            DB::connection('cadeco')->commit();
+            $factura->refresh();
+            return $factura;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
     }
 }
 

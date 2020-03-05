@@ -126,6 +126,10 @@
                             </div>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-info" v-on:click="revertir" >Revertir</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -159,7 +163,7 @@
                 return this.$store.dispatch('finanzas/factura/revertir', {
                     id: this.id,
                 }).then(data => {
-                    console.log(data)
+                    this.$store.commit('finanzas/factura/UPDATE_FACTURA', data);
                     $(this.$refs.modal).modal('hide')
                 })
             }
