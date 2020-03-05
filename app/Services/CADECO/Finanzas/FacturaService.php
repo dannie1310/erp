@@ -10,6 +10,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
 use App\Notifications\NotificacionIncidenciasCI;
 use App\Repositories\CADECO\Finanzas\Facturas\Repository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use DateTime;
@@ -365,14 +366,27 @@ class FacturaService
             $factura_repositorio->load("usuario");
             event(new IncidenciaCI(
                 ["id_tipo_incidencia" => 4,
-                    "id_factura_repositorio" => $factura_repositorio->id]
+                    "id_factura_repositorio" => $factura_repositorio->id,
+                    "mensaje" => 'Comprobante utilizado previamente:
+            Registró: ' . $factura_repositorio->usuario->nombre_completo . '
+            BD: ' . $factura_repositorio->proyecto->base_datos . '
+            Proyecto: ' . $factura_repositorio->obra . '
+            Factura: ' . $factura_repositorio->factura->numero_folio . '
+            Fecha Registro: '. $factura_repositorio->fecha_hora_registro_format . '
+            UUID: ' . $this->arreglo_factura["complemento"]["uuid"] . '
+            Emisor: ' . $this->arreglo_factura["emisor"]["nombre"] . '
+            RFC Emisor: ' . $this->arreglo_factura["emisor"]["rfc"]
+                ]
             ));
             abort(403, 'Comprobante utilizado previamente:
             Registró: ' . $factura_repositorio->usuario->nombre_completo . '
             BD: ' . $factura_repositorio->proyecto->base_datos . '
             Proyecto: ' . $factura_repositorio->obra . '
             Factura: ' . $factura_repositorio->factura->numero_folio . '
-            Fecha: ' . $factura_repositorio->fecha_hora_registro_format);
+            Fecha Registro: '. $factura_repositorio->fecha_hora_registro_format . '
+            UUID: ' . $this->arreglo_factura["complemento"]["uuid"] . '
+            Emisor: ' . $this->arreglo_factura["emisor"]["nombre"] . '
+            RFC Emisor: ' . $this->arreglo_factura["emisor"]["rfc"] );
         }
     }
 
@@ -486,6 +500,21 @@ class FacturaService
     {
         $this->setArregloFactura($archivo_xml);
         return $this->arreglo_factura;
+    }
+
+    public  function revertir($id)
+    {
+        $factura = $this->repository->show($id);
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $factura->revertir();
+            DB::connection('cadeco')->commit();
+            $factura->refresh();
+            return $factura;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
     }
 }
 

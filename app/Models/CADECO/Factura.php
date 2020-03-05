@@ -161,14 +161,13 @@ class Factura extends Transaccion
             $factura_repositorio->save();
 
         } else {
-            $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
-            if (!$factura_repositorio) {
-                abort(400, "Hubo un error al registrar la factura en el repositorio");
+            if($data["factura_repositorio"]){
+                $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
+                if (!$factura_repositorio) {
+                    abort(400, "Hubo un error al registrar la factura en el repositorio");
+                }
             }
         }
-
-
-
     }
 
     public function registrar($data)
@@ -352,5 +351,10 @@ class Factura extends Transaccion
         } else {
             return 1;
         }
+    }
+
+    public function revertir()
+    {
+        DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
     }
 }
