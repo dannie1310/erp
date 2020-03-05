@@ -47,6 +47,7 @@ class SalidaAlmacenController extends Controller
         $this->middleware('permiso:consultar_salida_almacen')->only(['show','paginate','index','find']);
         $this->middleware('permiso:eliminar_salida_almacen')->only(['destroy']);
         $this->middleware('permiso:registrar_salida_almacen')->only(['store']);
+        $this->middleware('permiso:editar_salida_almacen')->only(['actualizarEntregaContratista']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -67,15 +68,8 @@ class SalidaAlmacenController extends Controller
 
     }
 
-    public function entregaContratista(Request $request, $id)
+    public function actualizarEntregaContratista(Request $request, $id)
     {
-        if(auth()->user()->can('editar_salida_almacen'))
-        {
-            $res = $this->service->entregaContratista($request->all(), $id);
-            return response()->json([], 200);
-        }       
-
-        throw New \Exception('No cuentas con los permisos necesarios para realizar la acción solicitada.');
+        return $this->service->actualizarEntregaContratista($request->all(), $id);
     }
-
 }
