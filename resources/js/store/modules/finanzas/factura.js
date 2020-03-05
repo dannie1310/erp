@@ -137,7 +137,7 @@ export default {
                                 .get(URI + payload.id + "/revertir", { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Factura registrada correctamente", {
+                                    swal("Revisión de factura revertida correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
