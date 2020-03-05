@@ -102,5 +102,12 @@ class FacturaTransformer extends TransformerAbstract
         return null;
     }
 
+    public function includeComplemento(Factura $model){
+        if($complemento = $model->complemento) {
+            return $this->item($complemento, new ComplementoTransformer);
+        }
+        return null;
+    }
+
 
 }

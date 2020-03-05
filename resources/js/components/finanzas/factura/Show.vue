@@ -22,94 +22,92 @@
                                 </div>
                             </div>
                         </div>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <div class="form-group error-content">
-                                <label for="fecha">Empresa:</label>
-                                {{factura.empresa}}
+                        <div class="row">
+                            <div class="col-md-10">
+                                <div class="form-group error-content">
+                                    <label for="fecha">Empresa:</label>
+                                    {{factura.empresa}}
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <!--Referencia-->
+                            <div class="col-md-2">
+                                <!--Referencia-->
                                 <div class="form-group error-content">
                                     <label for="referencia">Folio:</label>
                                     {{factura.referencia}}
                                 </div>
+                            </div>
                         </div>
 
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <!--Rubro-->
-                            <div class="form-group error-content">
-                                <label >Rubro de Factura:</label>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group error-content">
-                                <label >Emisión:</label>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group error-content">
-                                <label>Vencimiento:</label>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group error-content">
-                                <label >Total:</label>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group error-content">
-                                <label >Moneda:</label>
-                            </div>
-                        </div>
-                    </div>
                         <div class="row">
-                        <div class="col-md-4">
-                            <!--Rubro-->
-                            <div class="form-group error-content">
-                                {{factura.rubro}}
+                            <div class="col-md-4">
+                                <!--Rubro-->
+                                <div class="form-group error-content">
+                                    <label >Rubro de Factura:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content">
+                                    <label >Emisión:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content">
+                                    <label>Vencimiento:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content">
+                                    <label >Total:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content">
+                                    <label >Moneda:</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group error-content">
-                                {{factura.fecha_format}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <!--Rubro-->
+                                <div class="form-group error-content">
+                                    {{factura.rubro}}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content">
+                                    {{factura.fecha_format}}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content">
+
+                                    {{factura.vencimiento_format}}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content">
+
+                                    {{factura.monto_format}}
+
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group error-content">
+
+                                    {{factura.moneda}}
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group error-content">
 
-                                {{factura.vencimiento_format}}
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group error-content">
+                                    <label for="observaciones">Observaciones:</label>
+                                    {{factura.observaciones}}
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group error-content">
-
-                                {{factura.monto_format}}
-
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group error-content">
-
-                                {{factura.moneda}}
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group error-content">
-                                <label for="observaciones">Observaciones:</label>
-                                {{factura.observaciones}}
-                            </div>
-                        </div>
-                    </div>
                         <hr>
                         <div class="row">
                             <div class="col-md-12">
@@ -125,6 +123,28 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group error-content">
+                                    <label for="observaciones">Tipo de Cambio:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group error-content">
+                                    <label for="observaciones">USD:</label>
+                                    19.50
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group error-content">
+                                    <label for="observaciones">EURO:</label>
+                                    21.5
+                                </div>
+                            </div>
+                        </div>
+                        
+
+
                     </div>
                 </div>
             </div>

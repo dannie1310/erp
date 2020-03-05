@@ -22,6 +22,7 @@ class ComplementoFactura extends Model
         "ieps",
         "imp_hosp",
         "ret_iva_4",
+        "ret_iva_6",
         'ret_iva_10',
         "ret_isr_10",
         "fecha_inicio",
