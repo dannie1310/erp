@@ -106,21 +106,26 @@ class CFDSATService
                 $ruta_archivo = $path . "/" . $current;
                 $contenido_archivo_xml = file_get_contents($ruta_archivo);
                 $this->setArregloFactura($ruta_archivo);
-                if (!$this->repository->validaExistencia($this->arreglo_factura["uuid"]) ) {
-                    if($this->arreglo_factura["id_empresa_sat"] > 0){
-                        $this->arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
-                        if ($this->store()) {
-                            Storage::disk('xml_sat')->put($current, fopen($ruta_archivo, "r"));
-                            $this->log["archivos_cargados"]+=1;
+                if(key_exists("uuid",$this->arreglo_factura)){
+                    if (!$this->repository->validaExistencia($this->arreglo_factura["uuid"]) ) {
+                        if($this->arreglo_factura["id_empresa_sat"] > 0){
+                            $this->arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
+                            if ($this->store()) {
+                                Storage::disk('xml_sat')->put($current, fopen($ruta_archivo, "r"));
+                                $this->log["archivos_cargados"]+=1;
+                            }
+                        }else {
+                            $this->log["archivos_no_cargados"] += 1;
+                            $this->log["archivos_receptor_no_valido"] += 1;
+                            $this->log["receptores_no_validos"][]= $this->arreglo_factura["receptor"];
                         }
-                    }else {
+                    } else {
+                        $this->log["archivos_preexistentes"]+=1;
                         $this->log["archivos_no_cargados"] += 1;
-                        $this->log["archivos_receptor_no_valido"] += 1;
-                        $this->log["receptores_no_validos"][]= $this->arreglo_factura["receptor"];
                     }
-                } else {
-                    $this->log["archivos_preexistentes"]+=1;
-                    $this->log["archivos_no_cargados"] += 1;
+                }
+                else{
+                    abort(500,"no hay uuid".$current);
                 }
             }
         }
@@ -232,7 +237,9 @@ class CFDSATService
         }
 
         try {
-            $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
+            if(key_exists("cfdi",$ns)){
+                $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
+            }
             $factura_xml->registerXPathNamespace('t', $ns['tfd']);
             $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
             $this->arreglo_factura["uuid"] = (string)$complemento["UUID"][0];
@@ -308,7 +315,9 @@ class CFDSATService
             $this->log["archivos_no_cargados_error_app"] +=1;
         }
         try {
-            $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
+            if(key_exists("cfdi",$ns)){
+                $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
+            }
             $factura_xml->registerXPathNamespace('t', $ns['tfd']);
             $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
             $this->arreglo_factura["uuid"] = (string)$complemento["UUID"][0];
@@ -322,7 +331,7 @@ class CFDSATService
                 }
             }
         } catch (\Exception $e) {
-            //abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
+            abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] +=1;
         }
         $this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]["rfc"]);
