@@ -4,12 +4,13 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
-use App\Http\Transformers\CADECO\ContraReciboTransformer;
-use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\MonedaTransformer;
-use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoTransformer;
 use App\Models\CADECO\Factura;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\CADECO\CambioTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\ContraReciboTransformer;
+use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoTransformer;
 
 class FacturaTransformer extends TransformerAbstract
 {
@@ -22,6 +23,7 @@ class FacturaTransformer extends TransformerAbstract
         'empresa',
         'moneda',
         'complemento',
+        'cambio',
 
     ];
 
@@ -67,6 +69,10 @@ class FacturaTransformer extends TransformerAbstract
             'rubro' => $model->rubro,
             'datos_registro' => $model->datos_registro,
             'comentario' => $model->comentario,
+            'fondo_garantia_format' => $model->fondo_garantia_format,
+            'retenciones_format' => $model->retenciones_subcontrato_format,
+            'devoluciones_format' => $model->devoluciones_subcontrato_format,
+
         ];
     }
 
@@ -110,5 +116,11 @@ class FacturaTransformer extends TransformerAbstract
         return null;
     }
 
+    public function includeCambio(Factura $model){
+        if($cambio = $model->tipoCambioFecha) {
+            return $this->collection($cambio, new CambioTransformer);
+        }
+        return null;
+    }
 
 }

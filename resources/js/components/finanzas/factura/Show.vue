@@ -129,18 +129,21 @@
                                     <label for="observaciones">Tipo de Cambio:</label>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <span v-if="factura.cambio" v-for="(cambio, i) in factura.cambio.data">
+                                <div>
                                 <div class="form-group error-content">
-                                    <label for="observaciones">USD:</label>
-                                    19.50
+                                    <label :for="`observaciones[${i}]`">{{cambio.moneda.abreviatura}}:</label>
+                                    {{cambio.cambio_format}}&nbsp&nbsp
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            </span>
+                            
+                            <!-- <div class="col-md-2">
                                 <div class="form-group error-content">
                                     <label for="observaciones">EURO:</label>
                                     21.5
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="row">
                             <div class="col-md-10">
@@ -155,7 +158,7 @@
                                 <div class="form-group error-content float-right"><label for="observaciones">Fondo de Garantía:</label></div>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group error-content float-right"> $ 19.50 </div>
+                                <div class="form-group error-content float-right"> {{factura.fondo_garantia_format}} </div>
                             </div>
                             <!-- <div class="col-md-5"></div> -->
 
@@ -227,7 +230,7 @@
                                 <div class="form-group error-content float-right"> <label for="observaciones">Retenciones Subcontratos:</label></div>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group error-content float-right"> $ 19.50  </div>
+                                <div class="form-group error-content float-right"> {{factura.retenciones_format}}   </div>
                             </div>
                             <div class="col-md-5"></div>
 
@@ -235,7 +238,7 @@
                                 <div class="form-group error-content float-right"> <label for="observaciones">Devolución de Retenciones Subcontratos:</label></div>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group error-content float-right"> $ 19.50  </div>
+                                <div class="form-group error-content float-right"> {{factura.devoluciones_format}}  </div>
                             </div>
                             <div class="col-md-5"></div>
 
@@ -273,7 +276,7 @@
                 this.$store.commit('finanzas/factura/SET_FACTURA', null);
                 return this.$store.dispatch('finanzas/factura/find', {
                     id: id,
-                    params: {include: ['complemento']}
+                    params: {include: ['complemento', 'cambio.moneda']}
                 }).then(data => {
                     this.$store.commit('finanzas/factura/SET_FACTURA', data);
                     $(this.$refs.modal).modal('show')
