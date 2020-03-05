@@ -6,7 +6,7 @@
         <button @click="find(value.id, 2)" type="button" class="btn btn-sm btn-outline-primary  " title="Editar" v-if="value.editar">
             <i class="fa fa-pencil" aria-hidden="true"></i>
         </button>
-        <delete v-bind:id="value.id"></delete>
+        <delete v-bind:id="value.id" v-if="value.eliminar"></delete>
         <!-- <button type="button" v-if="value.eliminar" class="btn btn-sm btn-outline-danger  " @click="eliminar" title="Eliminar">
             <i class="fa fa-trash" aria-hidden="true"></i>
         </button> -->
