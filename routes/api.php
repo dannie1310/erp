@@ -674,7 +674,8 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@show')->where(['id' => '[0-9]+']);
             $api->get('autorizada', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@autorizadas');
-            $api->get('{id}/pendientesPago', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pendientesPago');
+            $api->get('{id}/pendientesPago', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pendientesPago')->where(['id' => '[0-9]+']);
+            $api->get('{id}/revertir', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@revertir')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@paginate');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@destroy')->where(['id' => '[0-9]+']);
             /**
