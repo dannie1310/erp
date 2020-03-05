@@ -215,6 +215,37 @@ class SalidaAlmacen extends Transaccion
         }
     }
 
+    public function validarEliminacionEntrega()
+    {
+        $mensaje = '';
+        $i = 0;
+        foreach ($this->items as $item)
+        {
+            if($item->contratista)
+            {
+                $descuentos = Descuento::where('id_material', '=', $item->id_material)->whereHas('estimacion', function ($q) use ($item) {
+                    return $q->where('id_empresa', $item->contratista->id_empresa);
+                })->get();
+
+                if (count($descuentos) > 0)
+                {
+                    foreach ($descuentos as $descuento){
+                        $i++;
+                        $mensaje .= $descuento->estimacion->numero_folio_format . "\n";
+                    }
+                }
+            }
+        }
+        if($i > 1)
+        {
+            return "-La entrega a contratista tiene asociados descuentos en las estimaciones: \n".$mensaje;
+        }
+        else if($i == 1)
+        {
+            return "-La entrega a contratista tiene asociado un descuento en la estimación: ".$mensaje;
+        }
+    }
+
     public function getEstadoFormatAttribute()
     {
         switch ($this->estado) {
@@ -335,8 +366,9 @@ class SalidaAlmacen extends Transaccion
                     }
                 }
             }
-
         }
+        $mensaje .= $this->validarEliminacionEntrega();
+
         if ($mensaje != "") {
             abort(400, "No se puede eliminar la salida de almacén debido a las siguientes razones:\n" . $mensaje . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
         }
