@@ -37,6 +37,7 @@ class EntradaAlmacenFormato extends Rotation
         $this->entrada = EntradaMaterial::query()->find($id);
         $this->numero_folio = $this->entrada->numero_folio_format;
         $this->fecha = substr($this->entrada->fecha_format, 0, 10);
+        $this->fecha_registro = $this->entrada->fecha_hora_registro_format;
 
 
         $this->oc_folio = $this->entrada->ordenCompra->numero_folio_format;
@@ -330,7 +331,7 @@ class EntradaAlmacenFormato extends Rotation
         $this->Cell(10, .3, (''), 0, 1, 'L');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de ordenes de compra. Fecha de registro: '.date("Y-m-d", strtotime($this->fecha))  . ' ') , 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de ordenes de compra. Fecha y hora de registro: '.$this->fecha_registro  . ' ') , 0, 0, 'L');
         $this->Cell(9.5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 

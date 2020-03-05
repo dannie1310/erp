@@ -73,9 +73,9 @@ export default {
             });
         },
 
-        tipo(context, payload) {            
+        actualizarEntrega(context, payload) {
             return new Promise((resolve, reject) => {
-                
+
                 swal({
                     title: "¿Está seguro?",
                     text: "Actualizar Tipo de  Entrega a Contratista",
@@ -94,7 +94,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id + '/entrega', payload)
+                                .patch(URI + payload.id + '/actualizarEntrega', payload.params)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Tipo de entrega a contratista actualizado correctamente", {
@@ -111,8 +111,6 @@ export default {
                                 })
                         }
                     });
-                    // console.log('fin', payload);
-                    
             });
         },
 

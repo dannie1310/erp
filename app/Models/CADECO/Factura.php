@@ -410,4 +410,8 @@ class Factura extends Transaccion
         return '$ ' . number_format($this->devoluciones_subcontrato, 2);
     }
 
+    public function revertir()
+    {
+        DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
+    }
 }
