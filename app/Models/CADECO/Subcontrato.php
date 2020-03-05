@@ -64,6 +64,10 @@ class Subcontrato extends Transaccion
         });
     }
 
+    /**
+     * Relaciones Eloquent
+     */
+
     public function areasSubcontratantes()
     {
         return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante', 'id_antecedente');
@@ -86,7 +90,7 @@ class Subcontrato extends Transaccion
 
     public function partidas()
     {
-        return $this->hasMany(SubcontratoPartida::class, 'id_transaccion');
+        return $this->hasMany(ItemSubcontrato::class, 'id_transaccion');
     }
 
     public function fondo_garantia()
@@ -97,6 +101,21 @@ class Subcontrato extends Transaccion
     public function moneda()
     {
         return $this->hasOne(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function empresa()
+    {
+        return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function pago_anticipado()
+    {
+        return $this->hasOne(SolicitudPagoAnticipado::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function partidas_facturadas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function generaFondoGarantia()
@@ -113,7 +132,6 @@ class Subcontrato extends Transaccion
         }
     }
 
-
     public function partidasOrdenadas()
     {
         return $this->partidas()->leftJoin('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
@@ -128,7 +146,7 @@ class Subcontrato extends Transaccion
 
     public function scopeEstimable($query)
     {
-        return $query->whereIn("estado",[0,1]);
+        return $query->whereIn("estado", [0, 1]);
     }
 
     public function scopeSinFondo($query)
@@ -141,24 +159,9 @@ class Subcontrato extends Transaccion
         return $query->whereHas('fondo_garantia');
     }
 
-    public function empresa()
-    {
-        return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
-    }
-
-    public function pago_anticipado()
-    {
-        return $this->hasOne(SolicitudPagoAnticipado::class, 'id_antecedente', 'id_transaccion');
-    }
-
     public function getNombre()
     {
         return 'SUBCONTRATO';
-    }
-
-    public function partidas_facturadas()
-    {
-        return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function getMontoFacturadoEstimacionAttribute()
@@ -247,5 +250,51 @@ class Subcontrato extends Transaccion
                 }
             }
         }
+    }
+
+    public function subcontratoParaEstimar($id_estimacion)
+    {
+        $respuesta = array();
+        $items = array();
+        $nivel_ancestros = '';
+
+        foreach ($this->partidasOrdenadas as $partida) {
+            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
+            if ($nivel != $nivel_ancestros) {
+                $nivel_ancestros = $nivel;
+                foreach ($partida->ancestros as $ancestro) {
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
+                }
+            }
+            $items [$partida->nivel] = $partida->partidasEstimadas($id_estimacion, $this->id_antecedente);
+        }
+        $respuesta = array(
+            'folio' => $this->numero_folio_format,
+            'referencia' => $this->referencia,
+            'partidas' => $items
+        );
+        return $respuesta;
+    }
+
+    public function getAcumuladoRetencionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        foreach ($this->estimaciones as $estimacion) {
+            $acumulado += $estimacion->retenciones->sum('importe');
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoLiberacionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        foreach ($this->estimaciones as $estimacion) {
+            $acumulado += $estimacion->liberaciones->sum('importe');
+        }
+        return $acumulado;
+    }
+
+    public function getImporteFondoGarantiaAttribute(){
+        return ($this->monto - $this->impuesto) * $this->retencion / 100;
     }
 }

@@ -9,14 +9,24 @@
 namespace App\Observers\CADECO;
 
 
-use App\Models\CADECO\EstimacionPartida;
+use App\Models\CADECO\ItemEstimacion;
 
 class EstimacionPartidaObserver
 {
     /**
-     * @param EstimacionPartida $partida
+     * @param ItemEstimacion $partida
      */
-    public function deleting(EstimacionPartida $partida)
+    public function creating(ItemEstimacion $partida)
+    {
+        $partida->validarCantidadesPartidas();
+    }
+
+    public function updating(ItemEstimacion $partida)
+    {
+        $partida->validarCantidadesPartidas();
+    }
+
+    public function deleting(ItemEstimacion $partida)
     {
         if($partida->estimacionPartidaEliminada == null)
         {

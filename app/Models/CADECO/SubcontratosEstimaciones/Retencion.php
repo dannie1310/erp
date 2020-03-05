@@ -54,5 +54,4 @@ class Retencion extends Model
             abort(403, 'La retención no puede ser '.$tipo.' porque la estimación se encuentra ' . $estado . '.');
         }
     }
-    
 }

@@ -69,6 +69,7 @@ use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\Inventarios\Marbete;
 use App\Models\CADECO\Inventarios\MarbeteLog;
+use App\Models\CADECO\ItemEstimacion;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\Movimiento;
@@ -169,6 +170,7 @@ use App\Observers\CADECO\EntradaMaterialPartidaObserver;
 use App\Observers\CADECO\EntregaObserver;
 use App\Observers\CADECO\Estimaciones\EstimacionEliminadaObserver;
 use App\Observers\CADECO\EstimacionObserver;
+use App\Observers\CADECO\EstimacionPartidaObserver;
 use App\Observers\CADECO\FacturaObserver;
 use App\Observers\CADECO\FamiliaObserver;
 use App\Observers\CADECO\Finanzas\ConfiguracionEstimacionObserver;
@@ -372,7 +374,7 @@ class AppServiceProvider extends ServiceProvider
             FolioPorSubcontrato::observe(FolioPorSubcontratoObserver::class);
             Liberacion::observe(LiberacionObserver::class);
             Retencion::observe(RetencionObserver::class);
-            
+
             /**
              * SubcontratosFG
              */
@@ -411,6 +413,7 @@ class AppServiceProvider extends ServiceProvider
             EntradaMaterial::observe(EntradaMaterialObserver::class);
             EntradaMaterialPartida::observe(EntradaMaterialPartidaObserver::class);
             Estimacion::observe(EstimacionObserver::class);
+            ItemEstimacion::observe(EstimacionPartidaObserver::class);
             Factura::observe(FacturaObserver::class);
             Familia::observe(FamiliaObserver::class);
             Fondo::observe(FondoObserver::class);

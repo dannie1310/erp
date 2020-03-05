@@ -139,7 +139,7 @@
                             id: estimacion.id,
                             estimacion: estimacion,
                             estado: estimacion.estado,
-                            delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : true,
+                            delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : false,
                             edit: self.$root.can('editar_estimacion_subcontrato') ? true : false
                         })
 

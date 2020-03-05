@@ -52,10 +52,8 @@ class SubcontratoController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function getConceptosNuevaEstimacion(Request $request, $id_subcontrato)
+    public function ordenarConceptos($id)
     {
-        $conceptos = DB::connection('cadeco')
-            ->select(DB::raw("EXEC [SubcontratosEstimaciones].[uspConceptosEstimacion] {$id_subcontrato}, null, 0, 0"));
-        return response()->json($conceptos);
+        return $this->service->ordenado($id);
     }
 }

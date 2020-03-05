@@ -5,10 +5,7 @@ namespace App\PDF\Contratos;
 
 use App\Facades\Context;
 use App\Models\CADECO\Estimacion;
-use App\Models\CADECO\Item;
 use App\Models\CADECO\Obra;
-use App\Models\CADECO\Subcontrato;
-use App\Models\CADECO\TipoTransaccion;
 use Carbon\Carbon;
 use Ghidev\Fpdf\Rotation;
 use Illuminate\Support\Facades\App;
@@ -20,6 +17,7 @@ class EstimacionFormato extends Rotation
     protected $estimacion;
     private $encabezado_pdf = '';
     protected $extgstates = array();
+    protected $conceptos_ordenados = array();
 
 
     const DPI = 96;
@@ -37,46 +35,29 @@ class EstimacionFormato extends Rotation
 
     public function __construct($id)
     {
+        parent::__construct('L', 'cm', 'Letter');
+        $this->obra = Obra::find(Context::getIdObra());
+        $this->id = $id;
+        $this->encabezado_pdf = utf8_decode($this->obra->facturar);
+        $this->estimacion = Estimacion::find($id);
+        $this->conceptos_ordenados = $this->estimacion->subcontratoAEstimar();
 
-        parent::__construct('L', 'cm', 'A4');
+        $this->fecha = Carbon::parse($this->estimacion->fecha)->format('d-m-Y');
+        $this->fecha_inicial = Carbon::parse($this->estimacion->cumplimiento)->format('d-m-Y');
+        $this->fecha_final = Carbon::parse($this->estimacion->vencimiento)->format('d-m-Y');
 
-         $this->obra = Obra::find(Context::getIdObra());
-         $this->id=$id;
-         $this->encabezado_pdf = utf8_decode($this->obra->facturar);
-//         $this->estimacion = Estimacion::with('empresa','subcontratoEstimacion','moneda','item','item.concepto', 'item.contrato')->find($id);
-
-        $this->estimacion = Estimacion::query()->find($id);
-         $this->contratista =$this->estimacion->empresa->razon_social;
-         $this->folio_consecutivo=$this->estimacion->subcontratoEstimacion->NumeroFolioConsecutivo;
-
-         $this->id_antecedente=$this->estimacion->id_antecedente;
-         $this->subcontrato = Subcontrato::find($this->id_antecedente);
-         $this->no_contrato = $this->subcontrato->referencia;
-
-
-         $this->moneda = $this->estimacion->moneda->nombre;
-         $this->items = $this->estimacion->items;
-
-
-
-         $this->numero_folio= str_pad($this->estimacion->numero_folio,6, 0, STR_PAD_LEFT);
-         $this->fecha=Carbon::parse($this->estimacion->fecha)->format('d-m-Y');
-         $this->fecha_inicial=Carbon::parse($this->estimacion->cumplimiento)->format('d-m-Y');
-         $this->fecha_final =Carbon::parse($this->estimacion->vencimiento)->format('d-m-Y');
-
-
-         $this->tran_antecedentes=0;
-         $this->suma_contrato=0;
-         $this->suma_estimacionAnterior=0;
-         $this->suma_estimacion=0;
-         $this->suma_acumulada=0;
-         $this->suma_porEstimar=0;
-         $this->WidthTotal = $this->GetPageWidth() - 2;
-
+        $this->tran_antecedentes = 0;
+        $this->suma_contrato = 0;
+        $this->suma_estimacionAnterior = 0;
+        $this->suma_estimacion = 0;
+        $this->suma_acumulada = 0;
+        $this->suma_porEstimar = 0;
+        $this->WidthTotal = $this->GetPageWidth() - 0.82;
+        $this->encola = '';
     }
 
-
-    function logo() {
+    function logo()
+    {
         $data = $this->obra->getLogoAttribute();
         $data = pack('H*', hex2bin($data));
         $file = public_path('/img/logo_temp.png');
@@ -87,14 +68,13 @@ class EstimacionFormato extends Rotation
         }
     }
 
-
     function Header()
     {
         $this->logo();
 
         $this->setXY(5.2, 1.5);
         $this->SetFont('Arial', 'B', 12);
-        $this->MultiCell(14, 0.5, $this->encabezado_pdf, '', 'C');
+        $this->MultiCell(13, 0.9, $this->encabezado_pdf, '', 'C');
 
         $this->setXY(10, 3.5);
         $this->SetFont('Arial', 'B', 14);
@@ -109,13 +89,13 @@ class EstimacionFormato extends Rotation
         $this->SetX($x_inicial);
         $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('Folio SAO'), 'LT, LR, LB', 0, 'L');
         $this->SetFont('Arial', 'B', "SDASDA");
-        $this->Cell(0.207 * $this->WidthTotal, 0.5, utf8_decode("#".$this->numero_folio), 'RT, RB', 1, 'R');
+        $this->Cell(0.207 * $this->WidthTotal, 0.5, utf8_decode($this->conceptos_ordenados['folio']), 'RT, RB', 1, 'R');
 
         $this->SetFont('Arial', 'B', 12);
         $this->SetX($x_inicial);
         $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('No. Estimación'), 'L, LR, LB', 0, 'L');
         $this->SetFont('Arial', 'B', "");
-        $this->Cell(0.207 * $this->WidthTotal, 0.5, $this->folio_consecutivo, 'RB', 1, 'R');
+        $this->Cell(0.207 * $this->WidthTotal, 0.5, $this->conceptos_ordenados['folio_consecutivo_num'], 'RB', 1, 'R');
 
         $this->SetFont('Arial', 'B', 9);
         $this->SetX($x_inicial);
@@ -135,238 +115,481 @@ class EstimacionFormato extends Rotation
         $this->SetFont('Arial', '',  10);
         $this->Cell(0.207 * $this->WidthTotal, 0.5,utf8_decode("De: ".$this->fecha_inicial. " A: ".$this->fecha_final), 'RB', 1, 'R');
 
+        $this->SetFont('Arial', 'B', 9);
+        $this->setXY(0.40, 4.2);
+        $this->Cell(0.280 * $this->WidthTotal, 0.5, utf8_decode('Organización:'), 'LRTB', 0, 'L');
+        $this->SetFont('Arial', 'B', '#' . 10);
+        $this->Cell(0.720 * $this->WidthTotal, 0.5,utf8_decode($this->obra->nombre), 'LRTB', 1, 'C');
 
 
         $this->SetFont('Arial', 'B', 9);
-        $this->setXY(1, 4.2);
-        $this->Cell(0.250 * $this->WidthTotal, 0.5, utf8_decode('Organización:'), 'LB, LR, LT', 0, 'L');
+        $this->Cell(0.280 * $this->WidthTotal, 0.5, utf8_decode('Contratista:'), 'LB, LR, LT', 0, 'L');
         $this->SetFont('Arial', 'B', '#' . 10);
-        $this->Cell(0.757 * $this->WidthTotal, 0.5,utf8_decode($this->obra->nombre), 'RB, LT', 1, 'C');
+        $this->Cell(0.720* $this->WidthTotal, 0.5,utf8_decode($this->conceptos_ordenados['razon_social']), 'RB, LT', 1, 'C');
 
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(0.250 * $this->WidthTotal, 0.5, utf8_decode('Contratista:'), 'LB, LR, LT', 0, 'L');
+        $this->Cell(0.280 * $this->WidthTotal, 0.5, utf8_decode('No. de Contrato:'), 'LB, LR, LT', 0, 'L');
         $this->SetFont('Arial', 'B', '#' . 10);
-        $this->Cell(0.757* $this->WidthTotal, 0.5,utf8_decode($this->contratista), 'RB, LT', 1, 'C');
-
-        $this->SetFont('Arial', 'B', 9);
-        $this->Cell(0.250 * $this->WidthTotal, 0.5, utf8_decode('No. de Contrato:'), 'LB, LR, LT', 0, 'L');
-        $this->SetFont('Arial', 'B', '#' . 10);
-        $this->Cell(0.757 * $this->WidthTotal, 0.5,utf8_decode($this->no_contrato), 'RB, LT', 1, 'C');
+        $this->Cell(0.720 * $this->WidthTotal, 0.5,utf8_decode($this->conceptos_ordenados['subcontrato']['referencia']), 'RB, LT', 1, 'C');
 
         $this->tableHeader();
+
         $currentPage = $this->PageNo();
-
         if($currentPage>1){
-
             $this->Ln();
+        }
+    }
 
+    public function tableHeader()
+    {
+        $this->Ln();
+        $this->SetFills(180,180,180);
+        $this->SetFont('Arial', 'B', 6);
+        $this->SetFillColor(180,180,180);
+        $this->Cell(0.230 * $this->WidthTotal,0.8,'Concepto','RTLB',0,'C',180);
+        $this->Cell(0.050 * $this->WidthTotal,0.8,'C. Concepto','RTLB',0,'C',180);
+        $this->Cell(0.060 * $this->WidthTotal,0.8,'U.M.','RTLB',0,'C',180);
+        $this->Cell(0.050 * $this->WidthTotal,0.8,'P.U.','RTLB',0,'C',180);
+        $this->Cell(0.122 * $this->WidthTotal,0.4,'Contrato y Aditamentos ','BTLR',0,'C',180);
+        $this->Cell(0.122 * $this->WidthTotal,0.4,utf8_decode("Acum. A Estimación Anterior"),'BTLR',0,'C',180);
+        $this->Cell(0.122 * $this->WidthTotal,0.4,utf8_decode("Esta Estimación "),'BTLR',0,'C',180);
+        $this->Cell(0.122 * $this->WidthTotal,0.4,utf8_decode("Acum. A Esta Estimación "),'BTLR',0,'C',180);
+        $this->Cell(0.122 * $this->WidthTotal,0.4,utf8_decode("Saldo por Estimar "),'BTLR',0,'C',180);
+
+        $this->setXY(10.98, 6.6);
+        $this->Cell((0.050 * $this->WidthTotal),0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.072 * $this->WidthTotal),0.4,'Importe','LRBT',0,'C',180);
+
+        $this->setXY(10.98+(0.122 * $this->WidthTotal), 6.6);
+        $this->Cell((0.050 * $this->WidthTotal),0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.072 * $this->WidthTotal),0.4,'Importe','LRBT',0,'C',180);
+
+        $this->setXY(10.98+(0.122 * $this->WidthTotal)*2, 6.6);
+        $this->Cell((0.050 * $this->WidthTotal),0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.072 * $this->WidthTotal),0.4,'Importe','LRBT',0,'C',180);
+
+        $this->setXY(10.98+(0.122 * $this->WidthTotal)*3, 6.6);
+        $this->Cell((0.050 * $this->WidthTotal),0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.072 * $this->WidthTotal),0.4,'Importe','LRBT',0,'C',180);
+
+        $this->setXY(10.98+(0.122 * $this->WidthTotal)*4, 6.6);
+        $this->Cell((0.050 * $this->WidthTotal),0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.072 * $this->WidthTotal),0.4,'Importe','LRBT',0,'C',180);
+
+        if($this->encola == 'obra_ejecutada'){
+            $this->obraEjecutadaTitle();
+        }
+        if($this->encola == 'partidas_deductivas'){
+            $this->deductivaDescuentosTitle();
+        }
+        if($this->encola == 'retenciones'){
+            $this->retencionesTitle();
+        }
+        if($this->encola == 'liberaciones'){
+            $this->liberacionesTitle();
+        }
+        if($this->encola == 'resumen'){
+            $w_t = $this->WidthTotal;
+            $this->Ln();
+            $this->SetFont('Arial', '', 5);
+            $this->SetFillColor(180, 180, 180);
+            $this->SetWidths([$w_t* 0.230, $w_t* 0.050, $w_t* 0.060, $w_t* 0.050, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072]);
+            $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+            $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '', '2']);
+            $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+            $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+            $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+            $this->SetHeights([0.4]);
+            $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
         }
 
-
-
     }
 
-    public function tableHeader(){
-
-
-        $this->Ln();
-
-        $this->SetFills(180,180,180);
+    public function obraEjecutadaTitle(){
         $this->SetFont('Arial', 'B', 7);
-        $this->SetFillColor(180,180,180);
-        $this->Cell(0.250 * $this->WidthTotal,0.8,'Concepto','RTLB',0,'C',180);   // empty cell with left,top, and right borders
-        $this->Cell(0.05 * $this->WidthTotal,0.8,'U.M.','RTLB',0,'C',180);
-        $this->Cell(0.06 * $this->WidthTotal,0.8,'P.U.','RTLB',0,'C',180);
-        $this->Cell(0.130 * $this->WidthTotal,0.4,'Contrato y Aditamentos ','BTLR',0,'C',180);
-        $this->Cell(0.130 * $this->WidthTotal,0.4,utf8_decode("Acum. A Estimación Anterior"),'BTLR',0,'C',180);
-        $this->Cell(0.130 * $this->WidthTotal,0.4,utf8_decode("Esta Estimación "),'BTLR',0,'C',180);
-        $this->Cell(0.130 * $this->WidthTotal,0.4,utf8_decode("Acum. A Esta Estimación "),'BTLR',0,'C',180);
-        $this->Cell(0.128 * $this->WidthTotal,0.4,utf8_decode("Saldo por Estimar "),'BTLR',0,'C',180);
+        $this->setXY(0.4, 7);
 
+        $this->Cell(0.340 * $this->WidthTotal,0.4,'OBRA EJECUTADA',0,0,'L',0);
 
-        $this->setXY(10.97, 6.6);
-        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
-        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
+        $this->SetFont('Arial', '', 5);
+        $this->setXY(0.4+(0.340 * $this->WidthTotal), 7);
+        $this->Cell(0.050 * $this->WidthTotal,0.4,$this->conceptos_ordenados['moneda'],0,0,'C',0);
 
+        $this->setXY(0.4+(0.440* $this->WidthTotal), 7);
+        $this->Cell(0.072 * $this->WidthTotal,0.4,$this->conceptos_ordenados['moneda'],0,0,'C',0);
 
-        $this->setXY(10.97+(0.130 * $this->WidthTotal), 6.6);
-        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
-        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
+        $this->setXY(0.4+(0.562* $this->WidthTotal), 7);
+        $this->Cell(0.072 * $this->WidthTotal,0.4,$this->conceptos_ordenados['moneda'],0,0,'C',0);
 
+        $this->setXY(0.4+(0.682* $this->WidthTotal), 7);
+        $this->Cell(0.072 * $this->WidthTotal,0.4,$this->conceptos_ordenados['moneda'],0,0,'C',0);
 
-        $this->setXY(10.97+(0.130 * $this->WidthTotal)*2, 6.6);
-        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
-        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
+        $this->setXY(0.4+(0.804* $this->WidthTotal), 7);
+        $this->Cell(0.072 * $this->WidthTotal,0.4, $this->conceptos_ordenados['moneda'],0,0,'C',0);
 
-
-        $this->setXY(10.97+(0.130 * $this->WidthTotal)*3, 6.6);
-        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
-        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
-
-        $this->setXY(10.97+(0.130 * $this->WidthTotal)*4, 6.6);
-        $this->Cell((0.128 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
-        $this->Cell((0.128 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
-
-
-
-        $this->setXY(1, 7);
-        $this->Cell(0.250 * $this->WidthTotal,0.4,'OBRA EJECUTADA',0,0,'L',0);
-
-        $this->setXY(1+(0.300 * $this->WidthTotal), 7);
-        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
-
-        $this->setXY(1+(0.428* $this->WidthTotal), 7);
-        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
-
-
-        $this->setXY(1+(0.558* $this->WidthTotal), 7);
-        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
-
-        $this->setXY(1+(0.688* $this->WidthTotal), 7);
-        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
-
-        $this->setXY(1+(0.818* $this->WidthTotal), 7);
-        $this->Cell(0.06 * $this->WidthTotal,0.4, $this->moneda,0,0,'C',0);
-
-        $this->setXY(1+(0.948* $this->WidthTotal), 7);
-        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
-        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-
+        $this->setXY(0.4+(0.926* $this->WidthTotal), 7);
+        $this->Cell(0.07 * $this->WidthTotal,0.4,$this->conceptos_ordenados['moneda'],0,0,'C',0);
+        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255',  '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
 
     }
 
-
-    public function setWaterText($txt1="fdsgfd", $txt2="dfgsfds"){
+    public function setWaterText($txt1="fdsgfd", $txt2="dfgsfds")
+    {
         $this->_outerText1 = $txt1;
         $this->_outerText2 = $txt2;
     }
 
+    public function partidas()
+    {
+        $this->obraEjecutadaTitle();
+        $w_t = $this->WidthTotal;
+        $this->Ln();
+        $this->SetFont('Arial', '', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->SetWidths([$w_t * 0.230, $w_t * 0.050, $w_t * 0.060, $w_t * 0.050, $w_t * 0.050, $w_t * 0.072, $w_t * 0.050, $w_t * 0.072, $w_t * 0.050, $w_t * 0.072, $w_t * 0.050, $w_t * 0.072, $w_t * 0.050, $w_t * 0.072]);
+        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+        $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '', '2']);
+        $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['L', 'C', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+        $this->encola = 'obra_ejecutada';
 
+        foreach ( $this->estimacion->subcontrato->partidas as $i => $p) {
+            $array = $p->partidasFormatoEstimacion($this->estimacion->id_transaccion);
+            $this->suma_contrato += $array['importe_subcontrato'];
+            $this->suma_estimacionAnterior += $array['importe_acumulado_anterior'];
+            $this->suma_estimacion += $array['importe_estimacion'];
+            $this->suma_acumulada += $array['importe_acumulado_a_esta_estimacion'];
+            $this->suma_porEstimar += $array['importe_porEstimar'];
 
-
-
-public function partidas(){
-
-    $this->Ln();
-    $this->SetFont('Arial', '', 5);
-    $this->SetFillColor(180, 180, 180);
-    $this->SetWidths([6.92, 1.39, 1.67, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.78, 1.78]);
-    $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
-    $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '2']);
-    $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
-    $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-    $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
-    $this->SetHeights([0.4]);
-    $this->SetAligns(['L', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
-
-
-    foreach ($this->estimacion->subcontrato->partidasOrdenadas as $i => $p) {
-        $item_antecedente = $p->contrato->id_concepto;
-
-
-        $this->contrato_importe = $p->precio_unitario * $p->cantidad;
-        $this->suma_contrato += $this->contrato_importe;
-
-        $this->tran_antecedentes = $p->getEstimadoAnteriorAttribute($this->id);
-
-
-        $this->importe_antecedentes = $this->tran_antecedentes * $p->precio_unitario;
-
-
-
-        $estimacionItem=$p->getEstimacionPartidaAttribute($this->id);
-        $aux=0;
-
-
-
-        if($estimacionItem) {
-            $this->suma_estimacion += $estimacionItem->importe;
-            $this->cantidad_acumulada = $this->tran_antecedentes + $estimacionItem->cantidad;
-            $this->importe_acumulado = $this->importe_antecedentes + $estimacionItem->importe;
-            $this->suma_acumulada += $this->importe_acumulado;
-            $this->cantidad_restante = $p->cantidad- $this->cantidad_acumulada;
-            $this->importe_restante = $p->precio_unitario * $this->cantidad_restante;
-            $this->suma_porEstimar+=$this->importe_restante;
             $this->Row([
-                mb_strtoupper($p->contrato->descripcion),
-                mb_strtoupper($p->contrato->unidad),
-                number_format($p->precio_unitario, 3, ".", ","),
-                number_format($p->cantidad, 3, ".", ","),
-                number_format($this->contrato_importe,3, ".", ","),
-                number_format($this->tran_antecedentes, 3, ".", ","),
-                number_format($this->importe_antecedentes, 3, ".", ","),
-                number_format($estimacionItem->cantidad, 3, ".", ","),
-                number_format($estimacionItem->importe, 3, ".", ","),
-                number_format($this->cantidad_acumulada, 3, ".", ","),
-                number_format($this->importe_acumulado, 3, ".", ","),
-                number_format($this->cantidad_restante, 3, ".", ","),
-                number_format($this->importe_restante, 3, ".", ","),
-            ]);
-
-
-
-        }else{
-            $this->cantidad_acumulada = $this->tran_antecedentes + $aux;
-            $this->importe_acumulado = $this->importe_antecedentes + $p->importe;
-            $this->suma_acumulada += $this->importe_acumulado;
-            $this->cantidad_restante = $p->cantidad - $this->cantidad_acumulada;
-            $this->importe_restante = $p->precio_unitario * $this->cantidad_restante;
-            $this->suma_porEstimar+=$this->importe_restante;
-            $this->Row([
-                mb_strtoupper($p->contrato->descripcion),
-                mb_strtoupper($p->contrato->unidad),
-                number_format($p->precio_unitario, 3, ".", ","),
-                number_format($p->cantidad, 3, ".", ","),
-                number_format($this->contrato_importe,3, ".", ","),
-                number_format($this->tran_antecedentes, 3, ".", ","),
-                number_format($this->importe_antecedentes, 3, ".", ","),
-                number_format($aux, 3, ".", ","),
-                number_format($aux, 3, ".", ","),
-                number_format($this->cantidad_acumulada, 3, ".", ","),
-                number_format($this->importe_acumulado, 3, ".", ","),
-                number_format($this->cantidad_restante, 3, ".", ","),
-                number_format($this->importe_restante, 3, ".", ","),
+                mb_strtoupper($array['descripcion_concepto']),
+                mb_strtoupper($array['clave']),
+                mb_strtoupper($array['unidad']),
+                number_format($array['precio_unitario_subcontrato'], 4, ".", ","),
+                number_format($array['cantidad_subcontrato'], 4, ".", ","),
+                number_format($array['importe_subcontrato'], 4, ".", ","),
+                number_format($array['cantidad_acumulado_anterior'], 4, ".", ","),
+                number_format($array['importe_acumulado_anterior'], 4, ".", ","),
+                number_format($array['cantidad_estimacion'], 4, ".", ","),
+                number_format($array['importe_estimacion'], 4, ".", ","),
+                number_format($array['cantidad_acumulado_a_esta_estimacion'], 4, ".", ","),
+                number_format($array['importe_acumulado_a_esta_estimacion'], 4, ".", ","),
+                number_format($array['cantidad_porEstimar'], 4, ".", ","),
+                number_format($array['importe_porEstimar'], 4, ".", ",")
             ]);
         }
+
+        /*Footer partidas*/
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 5);
+        $this->SetFillColor(180, 180, 180);
+
+        $this->Cell(0.230 * $w_t, 0.3, "Sub-totales Obra Ejecutada", 'RTLB', 0, 'R', 180);   // empty cell with left,top, and right borders
+        $this->Cell(0.050 * $w_t, 0.3, "", 'RTLB', 0, 'C', 180);
+        $this->Cell(0.060 * $w_t, 0.3, "", 'RTLB', 0, 'C', 180);
+        $this->Cell(0.050 * $w_t, 0.3, '', 'RTLB', 0, 'R', 180);
+        $this->Cell(0.050 * $w_t, 0.3, ' ', 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_contrato, 4, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(0.050 * $w_t, 0.3, '', 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_estimacionAnterior, 4, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(0.050 * $w_t, 0.3, ' ', 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_estimacion, 4, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(0.050 * $w_t, 0.3, ' ', 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_acumulada, 4, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->Cell(0.050 * $w_t, 0.3, '', 'BTLR', 0, 'R', 180);
+        $this->Cell(0.072 * $w_t, 0.3, number_format($this->suma_porEstimar, 4, ".", ","), 'BTLR', 0, 'R', 180);
+        $this->encola = '';
+    }
+
+    public function deductivaDescuentosTitle()
+    {
+        $this->setXY(0.4, $this->getY() + 0.4);
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 7);
+        $this->SetFillColor(180, 180, 180);
+        $this->Ln(.3);
+
+        if($this->getY() > 17.2)$this->AddPage();
+        $this->Cell(0.230 * $this->WidthTotal, 0.4, 'DEDUCTIVAS Y DESCUENTOS', '', 0, 'L', 0);
+        $this->Cell(0.282 * $this->WidthTotal, 0.4, 'DEDUCTIVAS', 'RTLB', 0, 'C', 1);
+        $this->Cell(0.488 * $this->WidthTotal, 0.4, 'DESCUENTOS', 'RTLB', 1, 'C', 1);
+        $w_t = $this->WidthTotal;
+        $this->SetFont('Arial', '', 5);
+
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', '', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->SetWidths([$w_t* 0.230, $w_t* 0.050, $w_t* 0.060, $w_t* 0.050, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072]);
+        $this->SetStyles(['DF', 'DF','DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+        $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '', '2']);
+        $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+        $this->SetFills(['255,255,55', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0','0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['L', 'R','R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+    }
+
+    public function partidaDeductiva($partidas)
+    {
+        $this->deductivaDescuentosTitle();
+        $this->deductivas = $partidas;
+
+        $this->encola = 'partidas_deductivas';
+        foreach ($partidas['partidas_descuento'] as $partida)
+        {
+            $this->Row([
+                utf8_decode($partida['descripcion']),
+                '',
+                $partida['unidad'],
+                number_format($partida['precio_unitario'], 4, ".", ","),
+                number_format($partida['cantidad_original'], 4, ".", ","),
+                number_format($partida['importe_original'], 4, ".", ","),
+                number_format($partida['cantidad_descuento_anterior'], 4, ".", ","),
+                number_format($partida['importe_descuento_anterior'], 4, ".", ","),
+                number_format($partida['cantidad_descuento'], 4, ".", ","),
+                number_format($partida['importe_descuento'], 4, ".", ","),
+                number_format($partida['cantidad_a_esta_estimacion'], 4, ".", ","),
+                number_format($partida['importe_a_esta_estimacion'], 4, ".", ","),
+                number_format($partida['cantidad_descuento_porEstimar'], 4, ".", ","),
+                number_format($partida['importe_descuento_porEstimar'], 4, ".", ","),
+            ]);
+        }
+
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->Cell(0.230 * $this->WidthTotal, 0.4, 'Sub-Totales Deductivas', 'RTLB', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.060 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4,  number_format($partidas['importe_total_original'], 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4,  number_format($partidas['importe_descuento_anterior'], 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4,  number_format($partidas['importe_descuento'], 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4,  number_format($partidas['$importe_acumulado'], 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4,  number_format($partidas['importe_porEstimar'], 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->encola ='';
+    }
+
+    public function retencionesTitle()
+    {
+        $this->Ln();
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 7);
+        $this->SetFillColor(180, 180, 180);
+        $this->Ln(.3);
+        if($this->getY() > 17.2)$this->AddPage();
+        $this->Cell(0.230 * $this->WidthTotal, 0.4, 'RETENCIONES', '', 0, 'L', 0);
+
+        $w_t = $this->WidthTotal;
+        $this->SetFont('Arial', '', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->SetWidths([$w_t* 0.230, $w_t* 0.050, $w_t* 0.060, $w_t* 0.050, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072]);
+        $this->SetStyles(['DF', 'DF','DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+        $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '', '2']);
+        $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+        $this->SetFills(['255,255,55', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0','0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+        // $this->Ln();
+    }
+
+    public function partidaRetenciones()
+    {
+        $this->retencionesTitle();
+        $this->encola = 'retenciones';
+        $this->Ln();
+        $retenciones = $this->estimacion->retenciones()->get();
+       foreach ($retenciones as $retencion) {
+
+           $this->Row([
+               utf8_decode($retencion->concepto),
+               '',
+               utf8_decode($retencion->tipo_retencion),
+               '', '', '', '', '', '',
+               number_format($retencion->importe, 4, ".", ","),
+               '', '', '', '',
+           ]);
+
+       }
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->Cell(0.230 * $this->WidthTotal, 0.4, 'Sub-Totales Retenciones', 'RTLB', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.060 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->estimacion->subcontrato->acumulado_retencion_anteriores - $retenciones->sum('importe'), 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($retenciones->sum('importe'), 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->estimacion->subcontrato->acumulado_retencion_anteriores, 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->encola ='';
+    }
+
+    public function liberacionesTitle()
+    {
+        $this->Ln();
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 7);
+        $this->SetFillColor(180, 180, 180);
+        $this->Ln(.5);
+        if($this->getY() > 17.2)$this->AddPage();
+        $this->Cell(0.230 * $this->WidthTotal, 0.4, 'LIBERACIONES', '', 0, 'L', 0);
+        $w_t = $this->WidthTotal;
+        $this->SetFont('Arial', '', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->SetWidths([$w_t* 0.230, $w_t* 0.050, $w_t* 0.060, $w_t* 0.050, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072]);
+        $this->SetStyles(['DF', 'DF','DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+        $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '', '2']);
+        $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+    }
+
+    public function partidaLiberaciones()
+    {
+        $this->liberacionesTitle();
+        $this->encola = 'liberaciones';
+        $this->Ln();
+        $liberaciones = $this->estimacion->liberaciones;
+
+        foreach ($liberaciones as $liberacion) {
+            $this->Row([
+                utf8_decode($liberacion->concepto),
+                '', '', '', '', '', '', '', '',
+                number_format($liberacion->importe, 4, ".", ","),
+                '', '', '', '',
+            ]);
+        }
+
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->Cell(0.230 * $this->WidthTotal, 0.4, 'Sub-Totales Liberaciones', 'RTLB', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.060 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->estimacion->subcontrato->acumulado_liberacion_anteriores - $liberaciones->sum('importe'), 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($liberaciones->sum('importe'), 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->estimacion->subcontrato->acumulado_liberacion_anteriores, 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+
+        $this->Ln();
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->Cell(0.230 * $this->WidthTotal, 0.4, 'Por Liberar', 'RTLB', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.060 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4,number_format(($this->estimacion->subcontrato->acumulado_retencion_anteriores-$this->estimacion->subcontrato->acumulado_liberacion_anteriores)-($this->estimacion->retenciones->sum('importe')-$liberaciones->sum('importe')), 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->estimacion->retenciones->sum('importe')-$liberaciones->sum('importe'), 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->estimacion->subcontrato->acumulado_retencion_anteriores-$this->estimacion->subcontrato->acumulado_liberacion_anteriores, 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
+
+        $this->encola ='';
+    }
+
+    public function tablaResumen()
+    {
+        $this->encola = 'resumen';
+        $w_t = $this->WidthTotal;
+        $this->Ln();
+        $this->SetFills(180, 180, 180);
+        $this->SetFont('Arial', 'B', 7);
+        $this->SetFillColor(180, 180, 180);
+        $this->Ln(.3);
+        $this->Cell(0.230 * $w_t, 0.4, 'RESUMEN', '', 0, 'L', 0);
+
+        $this->Ln();
+        $this->SetFont('Arial', 'B', 5);
+        $this->SetFillColor(180, 180, 180);
+        $this->SetWidths([$w_t* 0.230, $w_t* 0.050, $w_t* 0.060, $w_t* 0.050, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072, $w_t* 0.050, $w_t* 0.072]);
+        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+        $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '', '2']);
+        $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+
+        //Penalizaciones
+        $penalizacion_subcontrato = 0;
+        $penalizacion_acum_estim_anterior = ($this->estimacion->subcontrato->acumulado_retencion_anteriores+$this->estimacion->subcontrato->acumulado_liberacion_anteriores)-($this->estimacion->retenciones->sum('importe')+$this->estimacion->liberaciones->sum('importe'));
+        $penalizacion_estimacion = ($this->estimacion->retenciones->sum('importe')+$this->estimacion->liberaciones->sum('importe'));
+        $penalizacion_a_esta_estimacion = $this->deductivas['$importe_acumulado'] + $this->estimacion->subcontrato->acumulado_retencion_anteriores+$this->estimacion->subcontrato->acumulado_liberacion_anteriores;
+        $penalizacion_porEstimar = $penalizacion_subcontrato - $penalizacion_estimacion;
+
+        /// Calculos Resumen Amortizacion Anticpo
+        $amort_anticipo_anterior = $this->estimacion->anticipo_anterior;
+        $amortizacion_anticipo =  $this->estimacion->monto_anticipo_aplicado;
+        $anticipo_actual = $amort_anticipo_anterior + $amortizacion_anticipo;
+        $anticipo_saldo = $this->estimacion->subcontrato->anticipo_monto - $anticipo_actual;
+
+        /// Calculos Resumen Fondo Garantia
+        $fondo_garantia_contrato = $this->estimacion->subcontrato->importe_fondo_garantia;
+        $fondo_garantia_anterior= $this->estimacion->fondo_garantia_acumulado_anterior;
+        $fondo_garantia= $this->estimacion->retencion_fondo_garantia_orden_pago;
+        $fondo_garantia_actual = $fondo_garantia_anterior + $fondo_garantia;
+        $fondo_garantia_saldo = $fondo_garantia_contrato - $fondo_garantia_actual;
+
+        $subtotal_contrato = $this->suma_contrato - ($this->deductivas['importe_total_original'] + $penalizacion_subcontrato + $this->estimacion->subcontrato->anticipo_monto + $fondo_garantia_contrato);
+        $subtotal_acum_estimado_anterior = $this->suma_estimacionAnterior - ($this->deductivas['importe_descuento_anterior'] + $penalizacion_acum_estim_anterior + $this->estimacion->anticipo_anterior + $fondo_garantia_anterior);
+        $subtotal_estimacion = $this->estimacion->subtotal_orden_pago;
+        $subtotal_acumulado =  $this->suma_acumulada - ($this->deductivas['$importe_acumulado'] + $penalizacion_a_esta_estimacion + $anticipo_actual + $fondo_garantia_actual);
+        $subtotal_a_estimar = $this->suma_porEstimar - ($this->deductivas['importe_porEstimar'] + $penalizacion_porEstimar + $anticipo_saldo + $fondo_garantia_saldo);
+
+
+        $this->Row(['Importe asociado a trabajos ejecutados', '', '', '', '',  number_format($this->suma_contrato, 4, ".", ","), '', number_format($this->suma_estimacionAnterior, 4, ".", ","), '', number_format($this->suma_estimacion, 4, ".", ","), '',number_format($this->suma_acumulada, 4, ".", ","), '', number_format($this->suma_porEstimar, 4, ".", ",")]);
+        $this->Row(['Deductivas y Descuentos', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","),'', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '', number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
+        $this->Row(['Penalizaciones', '', '', '', '', number_format($penalizacion_subcontrato, 4, ".", ","), '', number_format($penalizacion_acum_estim_anterior, 4, ".", ","), '', number_format($penalizacion_estimacion, 4, ".", ","), '',  number_format($penalizacion_a_esta_estimacion, 4, ".", ","), '', number_format($penalizacion_porEstimar, 4, ".", ",")]);
+        $this->Row(['Anticipo Solicitado', '', '%', $this->estimacion->subcontrato->anticipo, '', number_format($this->estimacion->subcontrato->anticipo_monto, 4, ".", ","), '', '', '', '', '', '', '', '']);
+        $this->Row([utf8_decode('Amortización Anticipo'), '', '%',  number_format($this->estimacion->anticipo, 4, ".", ","), '', '', '',number_format($amort_anticipo_anterior, 4, ".", ",") , '', number_format($amortizacion_anticipo, 4, ".", ","), ' ',number_format($anticipo_actual, 4, ".", ","), ' ',number_format($anticipo_saldo, 4, ".", ",")]);
+        $this->Row([utf8_decode('Fondo de Garantía'), ' ', '%', $this->estimacion->subcontratoEstimacion->PorcentajeFondoGarantia, ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
+        $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
+        $this->Row(['Sub-total valor de los trabajos', ' ', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($subtotal_contrato, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior, 4, ".", ","), ' ',  number_format($subtotal_estimacion, 4, ".", ","), ' ', number_format($subtotal_acumulado, 4, ".", ","), ' ', number_format($subtotal_a_estimar, 4, ".", ",")]);
+        $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->Row(['IVA', ' ', '%', number_format($this->estimacion->porcentaje_iva, 4, ".", ","), ' ', number_format($subtotal_contrato * 0.16, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior * 0.16, 4, ".", ","), ' ', number_format($subtotal_estimacion * 0.16, 4, ".", ","), ' ', number_format($subtotal_acumulado * 0.16, 4, ".", ","), ' ', number_format($subtotal_a_estimar * 0.16, 4, ".", ",")]);
+        $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
+        $this->Row(['Total','', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($subtotal_contrato + ($subtotal_contrato * 0.16), 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior + ($subtotal_acum_estimado_anterior * 0.16), 4, ".", ","), ' ', number_format($subtotal_estimacion + ($subtotal_estimacion * 0.16), 4, ".", ","), ' ', number_format($subtotal_acumulado + ($subtotal_acumulado * 0.16), 4, ".", ","), ' ', number_format($subtotal_a_estimar + ($subtotal_a_estimar * 0.16), 4, ".", ",")]);
     }
 
 
-
-
-    /*Footer partidas*/
-
-    $this->SetFills(180,180,180);
-    $this->SetFont('Arial', '', 5);
-    $this->SetFillColor(180,180,180);
-
-
-    $this->Cell( 6.92,0.3,"Sub-totales Obra Ejecutada",'RTLB',0,'R',180);   // empty cell with left,top, and right borders
-    $this->Cell(1.39,0.3,"",'RTLB',0,'C',180);
-    $this->Cell(1.67,0.3,'','RTLB',0,'R',180);
-    $this->Cell(1.80,0.3,' ','BTLR',0,'R',180);
-    $this->Cell(1.80,0.3,number_format($this->suma_contrato,3, ".",","),'BTLR',0,'R',180);
-    $this->Cell(1.80,0.3,'','BTLR',0,'R',180);
-    $this->Cell(1.80,0.3,number_format($this->suma_estimacionAnterior,3, ".",","),'BTLR',0,'R',180);
-    $this->Cell(1.80,0.3,' ','BTLR',0,'R',180);
-    $this->Cell(1.80,0.3,number_format($this->suma_estimacion,3, ".",","),'BTLR',0,'R',180);
-    $this->Cell(1.80,0.3,' ','BTLR',0,'R',180);
-    $this->Cell(1.80,0.3,number_format($this->suma_acumulada,3, ".",","),'BTLR',0,'R',180);
-    $this->Cell(1.78,0.3,'','BTLR',0,'R',180);
-    $this->Cell(1.78,0.3,number_format($this->suma_porEstimar,3, ".",","),'BTLR',0,'R',180);
-
-
-
-
-    }
-
-
-
-    function pixelsToCM($val) {
+    function pixelsToCM($val)
+    {
         return ($val * self::MM_IN_INCH / self::DPI) / 10;
     }
 
-
-    function resizeToFit($imgFilename) {
+    function resizeToFit($imgFilename)
+    {
         list($width, $height) = getimagesize($imgFilename);
         $widthScale = self::MAX_WIDTH / $width;
         $heightScale = self::MAX_HEIGHT / $height;
@@ -377,331 +600,293 @@ public function partidas(){
         ];
     }
 
+    function firmas()
+    {
+        if (Context::getDatabase() == "SAO1814_PISTA_AEROPUERTO") {
+            $this->SetY(-3.5);
+            $this->SetTextColor('0', '0', '0');
+            $this->SetFillColor(180, 180, 180);
+            $this->SetFont('Arial', 'B', 4.5);
+            $this->Cell(1);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode(''), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Avaló'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Vo.Bo.'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('AUTORIZÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('REVISÓ/RECIBIÓ'), 'TRLB', 0, 'C', 1);
 
+            $this->Ln();
+            $this->Cell(1);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
 
-    function firmas() {
+            $this->SetXY(7.89, -2.3);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Victor Luis Gurrola Deras'), '', 0, 'C', 0);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Aurelio Aguilar Ramos'), '', 0, 'C', 0);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Francisco Resendiz Flores'), '', 0, 'C', 0);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. José Luis Gaona Aburto'), '', 0, 'C', 0);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Victor Manuel Orozco Muñoz'), '', 0, 'C', 0);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('C.P. Eleazar Ortega Valerio'), '', 0, 'C', 0);
 
-
-        if (Context::getDatabase() == "SAO1814_PISTA_AEROPUERTO"){
-
-        $this->SetY(-3.5);
-        $this->SetTextColor('0', '0', '0');
-        $this->SetFillColor(180, 180, 180);
-        $this->SetFont('Arial', 'B', 4.5);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode(''), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('ELABORÓ'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('REVISÓ'), 'TRLB', 1, 'C', 1);
-
-
-        $this->SetXY(14.75,-3.5);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Vo.Bo.'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('REVISÓ'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('AUTORIZÓ'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('REVISÓ/RECIBIÓ'), 'TRLB', 0, 'C', 1);
-
-        $this->Ln();
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRL', 0, 'C');
-
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
-
-        $this->SetXY(14.75,-3.1);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
-        $this->SetXY(18.19, -3.1);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
-        $this->SetXY(18.19+0.73+($this->GetPageWidth() - 8) / 8, -3.1);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
-        $this->SetXY(18.19+(0.73+($this->GetPageWidth() - 8) / 8)*2, -3.1);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
-
-
-
-
-
-
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('CONCILIADOR'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('DEPARTAMENTO'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('SUPERINTENDENCIA DE OBRA'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.71);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('SUBCONTRATOS'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('SUPERINTENDENCIA TÉCNICA'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('GERENCIA DE PROYECTO'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
-
-
-
-        $this->SetXY(7.89,-2.3);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Victor Luis Gurrola Deras'), '', 0, 'C', 0);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Aurelio Aguilar Ramos'), '', 0, 'C', 0);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Francisco Resendiz Flores'), '', 0, 'C', 0);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. José Luis Gaona Aburto'), '', 0, 'C', 0);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Victor Manuel Orozco Muñoz'), '', 0, 'C', 0);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('C.P. Eleazar Ortega Valerio'), '', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(1);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('CONCILIADOR'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('DEPARTAMENTO'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('SUPERINTENDENCIA DE OBRA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('SUBCONTRATOS'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('SUPERINTENDENCIA TÉCNICA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('GERENCIA DE PROYECTO'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
 
 
 
-        } else if(Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO") {
+        } else if (Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO") {
             /*Firmas en Gral*/
             $this->SetY(-3.5);
             $this->SetTextColor('0', '0', '0');
             $this->SetFont('Arial', '', 6);
             $this->SetFillColor(180, 180, 180);
 
-
-
             $this->SetFont('Arial', 'B', 4.2);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('ELABORÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('REVISÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 1, 'C', 1);
-
-
-            $this->SetXY(13.1,-3.5);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Vo.Bo.'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('AUTORIZÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('RECIBE'), 'TRLB', 0, 'C', 1);
-
-
+            $this->Cell(0.7);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo.'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('AUTORIZÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('RECIBE'), 'TRLB', 0, 'C', 1);
 
             $this->Ln();
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 0, 'C');
-
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-
-            $this->SetXY(13.1,-3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-            $this->SetXY(16.13, -3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-            $this->SetXY(16.13 +0.73+($this->GetPageWidth() - 9) / 9, -3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-            $this->SetXY(16.13+(0.73+($this->GetPageWidth() - 9) / 9)*2, -3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-            $this->SetXY(16.13+(0.73+($this->GetPageWidth() - 9) / 9)*3, -3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-
-
-
-
+            $this->Cell(0.7);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
 
             $this->SetFont('Arial', 'B', 4.2);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CONTRATISTA'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CONTROL DE ESTIMACIONES'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('SUPERINTENDENCIA DE OBRA'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.71);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CONTROL DE PLANEACIÓN'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CONTROL DE SEGUIMIENTO'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('SUBCONTRATOS'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('DIRECTOR DE PROYECTO'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('ADMINISTRADOR'), 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            $this->Cell(0.7);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTRATISTA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTROL DE ESTIMACIONES'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('SUPERINTENDENCIA DE OBRA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTROL DE PLANEACIÓN'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTROL DE SEGUIMIENTO'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('SUBCONTRATOS'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('DIRECTOR DE PROYECTO'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('ADMINISTRADOR'), 'TRLB', 0, 'C', 1);
 
 
-            $this->SetXY(1,-2.3);
             $this->SetFont('Arial', 'B', 3.6);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode(''), '', 0, 'C', 0);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode(''), '', 0, 'C', 0);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode(''), '', 0, 'C', 0);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode(''), '', 0, 'C', 0);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Ing. Giselle Belran Baños'), '', 0, 'C', 0);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Ing. Lazaro Romero Zamora'), '', 0, 'C', 0);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Ing. Guadalupe Moreno Hernández'), '', 0, 'C', 0);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Ing. Luis Alfonso Hernández Reding'), '', 0, 'C', 0);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Ing. Francisco Javier Bay Ortuazar'), '', 0, 'C', 0);
+            $this->SetY(-2.3);
+            // $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode(''), '', 0, 'C', 0);
+            $this->Cell(0.7);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode(''), '', 0, 'C', 0);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode(''), '', 0, 'C', 0);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode(''), '', 0, 'C', 0);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Ing. Giselle Belran Baños'), '', 0, 'C', 0);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Ing. Lazaro Romero Zamora'), '', 0, 'C', 0);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Ing. Guadalupe Moreno Hernández'), '', 0, 'C', 0);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Ing. Luis Alfonso Hernández Reding'), '', 0, 'C', 0);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Ing. Francisco Javier Bay Ortuazar'), '', 0, 'C', 0);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Ing. Martin Morales Sanchéz o'), '', 0, 'R', 0);
 
-            $this->SetXY(16,-2.5);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Ing. Martin Morales Sanchéz o'), '', 0, 'R', 0);
-
-
-        }else if(Context::getDatabase() == "SAO1814_TERMINAL_NAICM"){
+        } else if (Context::getDatabase() == "SAO1814_TERMINAL_NAICM") {
             $this->SetY(-3.5);
             $this->SetTextColor('0', '0', '0');
             $this->SetFont('Arial', '', 6);
             $this->SetFillColor(180, 180, 180);
-
-
 
             $this->SetFont('Arial', 'B', 4.5);
+            $this->Cell(0.7);
             $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 1, 'C', 1);
-
-
-            $this->SetXY(23.75,-3.5);
+            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('RECIBE'), 'TRLB', 0, 'C', 1);
 
-
             $this->Ln();
+            $this->Cell(0.7);
             $this->Cell(($this->GetPageWidth() - 5) / 5, 1.2, '', 'TRLB', 0, 'C');
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 5) / 5, 1.2, '', 'TRLB', 0, 'C');
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 5) / 5, 1.2, '', 'TRLB', 0, 'C');
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 5) / 5, 1.2, '', 'TRLB', 1, 'C');
-
-            $this->SetXY(23.75,-3.1);
-            $this->Cell(($this->GetPageWidth() - 5) / 5, 1.2, '', 'TRLB', 1, 'C');
+            $this->Cell(($this->GetPageWidth() - 5) / 5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 5) / 5, 1.2, '', 'TRLB', 0, 'C');
             $this->SetXY(18.19, -3.1);
 
-
-            $this->SetXY(1, -1.9);
-            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4,  utf8_decode('CONTROL DE ESTIMACIONES'), 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            $this->Cell(0.7);
+            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('CONTROL DE ESTIMACIONES'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4,  utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4,  utf8_decode('CONTROL DE PROYECTOS'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('CONTROL DE PROYECTOS'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4,  utf8_decode('DIRECTOR DE ÁREA'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.79);
-            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4,  utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
-
-        } else{
+            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('DIRECTOR DE ÁREA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.73);
+            $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
+        } else {
             /*Firmas en Gral*/
             $this->SetY(-3.5);
             $this->SetTextColor('0', '0', '0');
             $this->SetFont('Arial', '', 6);
             $this->SetFillColor(180, 180, 180);
 
-
-
             $this->SetFont('Arial', 'B', 4.2);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('ELABORÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('REVISÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 1, 'C', 1);
-
-
-            $this->SetXY(13.1,-3.5);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Vo.Bo.'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('AUTORIZÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4, utf8_decode('RECIBE'), 'TRLB', 0, 'C', 1);
-
-
+            $this->Cell(0.7);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Elaboró!!'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo.'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('AUTORIZÓ'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('RECIBE'), 'TRLB', 0, 'C', 1);
 
             $this->Ln();
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 0, 'C');
-
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-
-            $this->SetXY(13.1,-3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-            $this->SetXY(16.13, -3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-            $this->SetXY(16.13 +0.73+($this->GetPageWidth() - 9) / 9, -3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-            $this->SetXY(16.13+(0.73+($this->GetPageWidth() - 9) / 9)*2, -3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-            $this->SetXY(16.13+(0.73+($this->GetPageWidth() - 9) / 9)*3, -3.1);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 1.2, '', 'TRLB', 1, 'C');
-
-
-
-
+            $this->Cell(0.7);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
 
             $this->SetFont('Arial', 'B', 4.2);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CONTRATISTA'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CONTROL DE ESTIMACIONES'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('SUPERINTENDENCIA DE OBRA'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.71);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CONTROL DE PLANEACIÓN'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('CONTROL DE SEGUIMIENTO'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('SUBCONTRATOS'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('DIRECTOR DE PROYECTO'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 9) / 9, 0.4,  utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
-
-
+            $this->Ln();
+            $this->Cell(0.7);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTRATISTA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTROL DE ESTIMACIONES'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('SUPERINTENDENCIA DE OBRA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTROL DE PLANEACIÓN'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTROL DE SEGUIMIENTO'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('SUBCONTRATOS'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('DIRECTOR DE PROYECTO'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.5);
+            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
         }
-
     }
 
-
-
-    function Footer(){
-        if (!App::environment('production')) {
-            $this->SetFont('Arial','B',90);
-            $this->SetTextColor(155,155,155);
-            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
-            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
-            $this->SetTextColor('0,0,0');
-        }
+    function Footer()
+    {
+//        if (!App::environment('production')) {
+//            $this->SetFont('Arial','B',90);
+//            $this->SetTextColor(155,155,155);
+//            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+//            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
+//            $this->SetTextColor('0,0,0');
+//        }
         $this->firmas();
 
         $this->SetY($this->GetPageHeight() - 1);
@@ -717,7 +902,6 @@ public function partidas(){
         $this->setX(1);
         $this->SetTextColor('0,0,0');
 
-
         $this->Ln(.5);
         $this->SetY(-0.9);
         $this->SetTextColor('0,0,0');
@@ -725,19 +909,14 @@ public function partidas(){
 
         $this->SetFont('Arial', 'BI', 6);
         $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de estimaciones. Fecha de registro: ' . date("d-m-Y", strtotime($this->fecha))), 0, 0, 'L');
-        $this->SetXY(24,-0.9);
+        $this->SetXY(22.6,-0.9);
         $this->Cell(5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
         $this->estatus();
     }
 
-
-
-
-
-public function estatus(){
-
-        if($this->estimacion->estado ==='0') {
-
+    public function estatus()
+    {
+        if ($this->estimacion->estado === '0') {
             $this->SetFont('Arial', 'B', 91);
             $this->SetTextColor(155, 155, 155);
             $this->SetAlpha(0.30);
@@ -745,27 +924,29 @@ public function estatus(){
             $this->RotatedText(9, 17, utf8_decode("ESTIMACIÓN"), 35);
             $this->SetTextColor('0,0,0');
         }
-}
+    }
 
-    public function create() {
-        $this->SetMargins(1, 0.5, 1);
+    public function create()
+    {
+        $this->SetMargins(0.4, 0.5, 0.4);
         $this->AliasNbPages();
         $this->AddPage();
-
-
-
         $this->SetAutoPageBreak(true,3.75);
 
         $this->partidas();
+        $this->partidaDeductiva($this->estimacion->descuentosPartidas());
+        $this->partidaRetenciones();
+        $this->partidaLiberaciones();
+        $this->tablaResumen();
         try {
-            $this->Output('I', "Formato - Estimacion_#$this->numero_folio.pdf", 1);
+            $this->Output('I', "Formato - Estimacion_".$this->conceptos_ordenados['folio'].".pdf", 1);
         } catch (\Exception $ex) {
             dd("error",$ex);
         }
         exit;
     }
 
-// alpha: real value from 0 (transparent) to 1 (opaque)
+    // alpha: real value from 0 (transparent) to 1 (opaque)
     // bm:    blend mode, one of the following:
     //          Normal, Multiply, Screen, Overlay, Darken, Lighten, ColorDodge, ColorBurn,
     //          HardLight, SoftLight, Difference, Exclusion, Hue, Saturation, Color, Luminosity
@@ -825,5 +1006,4 @@ public function estatus(){
         $this->_putextgstates();
         parent::_putresources();
     }
-
 }
