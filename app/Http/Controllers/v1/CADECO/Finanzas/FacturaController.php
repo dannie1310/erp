@@ -10,6 +10,7 @@ use App\Http\Transformers\CADECO\Finanzas\FacturaTransformer;
 use App\Services\CADECO\Finanzas\FacturaService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use League\Fractal\Manager;
 
 class FacturaController extends Controller
@@ -45,6 +46,7 @@ class FacturaController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_factura')->only(['paginate']);
         $this->middleware('permiso:eliminar_factura')->only(['destroy']);
+        $this->middleware('permiso:revertir_revision_factura')->only(['revertir']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -77,4 +79,10 @@ class FacturaController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function revertir($id)
+    {
+        $factura = DB::connection('cadeco')
+            ->select(DB::raw("EXEC [dbo].[sp_revertir_transaccion] {$id}"));
+        return response()->json($factura);
+    }
 }

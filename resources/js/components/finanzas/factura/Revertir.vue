@@ -1,7 +1,8 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Factura">
-            <i class="fa fa-trash"></i>
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-info" title="Revertir">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-repeat" v-else></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -111,11 +112,11 @@
                     </div>
                         <hr>
                         <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                {{factura.datos_registro}}
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {{factura.datos_registro}}
+                                </div>
                             </div>
-                        </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
@@ -124,97 +125,53 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                        <div class="col-12">
-                                <div class="form-group row error-content">
-                                            <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
-                                        <div class="col-sm-10">
-                                            <textarea
-                                                name="motivo"
-                                                id="motivo"
-                                                class="form-control"
-                                                v-model="motivo"
-                                                v-validate="{required: false}"
-                                                data-vv-as="Motivo"
-                                                :class="{'is-invalid': errors.has('motivo')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
-                                        </div>
-                                    </div>
-                            </div>
-                    </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-danger" @click="validate">Eliminar</button>
                     </div>
                 </div>
             </div>
         </div>
     </span>
 </template>
+
 <script>
-export default {
-    name: "eliminar-factura",
-    props: ['id','pagina'],
-    data() {
-        return {
-            motivo:'',
-            cargando: false,
-        }
-    },
-    methods: {
-        destroy() {
-            return this.$store.dispatch('finanzas/factura/delete', {
-                id: this.id,
-                params: {data: [this.$data.motivo]}
-            })
-            .then(() => {
-                this.$store.dispatch('finanzas/factura/paginate', {params: {sort: 'id_transaccion', order: 'desc', include: ['contra_recibo','empresa']}})
-                .then(data => {
-                    this.$store.commit('finanzas/factura/SET_FACTURAS', data.data);
-                    this.$store.commit('finanzas/factura/SET_META', data.meta);
-                })
-            }).finally( ()=>{
-                $(this.$refs.modal).modal('hide');
-            });
+    export default {
+        name: "Revertir",
+        props: ['id'],
+        data() {
+            return {
+                cargando: false,
+            }
         },
-        find(id) {
-            this.motivo = '';
-            this.cargando = true;
+        methods: {
+            find() {
+                this.cargando = true;
                 this.$store.commit('finanzas/factura/SET_FACTURA', null);
                 return this.$store.dispatch('finanzas/factura/find', {
-                    id: id,
+                    id: this.id,
                 }).then(data => {
                     this.$store.commit('finanzas/factura/SET_FACTURA', data);
+                    $(this.$refs.modal).appendTo('body');
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;
                 })
+            },
+            revertir() {
+                return this.$store.dispatch('finanzas/factura/revertir', {
+                    id: this.id,
+                }).then(data => {
+                    console.log(data)
+                    $(this.$refs.modal).modal('hide')
+                })
+            }
         },
-        validate() {
-            this.$validator.validate().then(result => {
-                if (result) {
-                    if(this.motivo === '') {
-                        swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
-                    }
-                    else {
-                        this.destroy()
-                    }
-                }
-            });
-        },
-    },
-    computed:{
-        factura() {
+        computed: {
+            factura() {
                 return this.$store.getters['finanzas/factura/currentFactura']
             }
+        }
     }
-}
 </script>
-<style>
-    .icons
-    {
-        text-align: center;
-    }
+
+<style scoped>
+
 </style>

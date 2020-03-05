@@ -101,6 +101,44 @@ export default {
                     })
             });
         },
+        revertir(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Revertir Factura",
+                    text: "¿Está seguro de revertir la factura?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Revertir',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id + "/revertir", { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Factura registrada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
         cargarXML(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
