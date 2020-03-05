@@ -169,6 +169,11 @@ class CtgEfos extends Model
 
     private function guardarCsv($file, $file_fingerprint)
     {
+        if (config('filesystems.disks.lista_efos.root') == storage_path())
+        {
+            abort(403,'No existe el directorio destino: STORAGE_LISTA_EFOS. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
+
         $nombre = 'actualizacion '.date('d-m-Y').'.csv';
         $log = CtgEfosLog::create([
             'nombre_archivo' => $nombre,

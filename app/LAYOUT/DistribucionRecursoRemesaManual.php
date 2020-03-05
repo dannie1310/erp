@@ -77,6 +77,10 @@ class DistribucionRecursoRemesaManual
 
             if (count($this->data_mismo) > 0 && count($this->data_inter) > 0) {
 
+                if(config('filesystems.disks.portal_zip.root') == storage_path())
+                {
+                    dd('No existe el directorio destino: SANTANDER_PORTAL_STORAGE_ZIP. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+                }
                 Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());
 
                 Storage::disk('portal_zip')->put($file_m_banco . '.txt', $mismo);
@@ -92,6 +96,10 @@ class DistribucionRecursoRemesaManual
                 DB::connection('cadeco')->commit();
                 return Storage::disk('portal_descarga')->download($file_zip . '.zip');
             }else{
+                if(config('filesystems.disks.portal_descarga.root') == storage_path())
+                {
+                    dd('No existe el directorio destino: SANTANDER_PORTAL_STORAGE_DESCARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+                }
                 if (count($this->data_mismo) > 0){
                     Storage::disk('portal_descarga')->put($file_m_banco . '.txt', $mismo);
 
