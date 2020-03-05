@@ -1185,7 +1185,7 @@ export const routes = [
                         component: require('./components/contratos/estimacion/Create').default,
                         meta: {
                             title: 'Estimaciones',
-                            breadcrumb: {parent: 'estimacion', name: 'NUEVA'},
+                            breadcrumb: {parent: 'estimacion', name: 'REGISTRAR'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_estimacion_subcontrato'
                         }
@@ -1193,6 +1193,7 @@ export const routes = [
                     {
                         path: ':id/eliminar',
                         name: 'estimacion-delete',
+                        props: true,
                         component: require('./components/contratos/estimacion/Delete').default,
                         meta: {
                             title: 'Eliminar Estimación',
@@ -1204,21 +1205,23 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'estimacion-show',
+                        props: true,
                         component: require('./components/contratos/estimacion/Show').default,
                         meta: {
                             title: 'Información de Estimación',
                             breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
-                            middleware: [auth, context,],
+                            middleware: [auth, context],
 
                         }
-                    },                    
+                    },
                     {
                         path: ':id/editar',
                         name: 'estimacion-edit',
+                        props: true,
                         component: require('./components/contratos/estimacion/Edit').default,
                         meta: {
                             title: 'Editar Estimación',
-                            breadcrumb: {parent: 'estimacion', name: 'EDITAR ESTIMACIÓN'},
+                            breadcrumb: {parent: 'estimacion', name: 'EDITAR'},
                             middleware: [auth, context, permission],
                             permission: 'editar_estimacion_subcontrato'
 
