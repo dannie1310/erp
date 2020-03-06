@@ -40,8 +40,7 @@ class SalidaAlmacenObserver extends TransaccionObserver
     public function deleting(SalidaAlmacen $salida)
     {
         $salida->desvincularPolizas();
-        $items = $salida->partidas()->get()->toArray();
-        $salida->eliminar_partidas($items);
+        $salida->eliminar_partidas($salida->partidas);
         SalidaEliminada::create(
             [
                 'id_transaccion' => $salida->id_transaccion,

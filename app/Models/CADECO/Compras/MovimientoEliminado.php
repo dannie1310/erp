@@ -28,6 +28,7 @@ class MovimientoEliminado extends Model
         'monto_total',
         'monto_pagado',
         'monto_original',
-        'creado'
+        'creado',
+        'lote_antecedente'
     ];
 }

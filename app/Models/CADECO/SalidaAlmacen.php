@@ -415,9 +415,13 @@ class SalidaAlmacen extends Transaccion
      */
     public function eliminar_partidas($partidas)
     {
-        foreach ($partidas as $item) {
-            ItemContratista::where('id_item','=',$item['id_item'])->delete();
-            SalidaAlmacenPartida::find($item['id_item'])->delete();
+        foreach ($partidas as $item)
+        {
+            if($item->contratista)
+            {
+                $item->contratista->delete();
+            }
+            $item->delete();
         }
     }
 
