@@ -27,7 +27,8 @@ class ListaEmpresasTransformer extends TransformerAbstract
             'editable' => $model->Editable ? (int) $model->Editable : 0,
             'historica' => $model->Historica ? (int) $model->Historica : 0,
             'consolidadora' => $model->Consolidadora ? (int) $model->Consolidadora : 0,
-            'consolidada' => $model->consolidada
+            'consolidada' => $model->consolidada,
+            'desarrollo' => $model->Desarrollo ? (int) $model->Desarrollo : 0            
         ];
     }
 
