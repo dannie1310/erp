@@ -214,7 +214,8 @@ export default {
                         Desarrollo: parseInt(this.Desarrollo)
                     }
                 }).then(data => {
-                    this.$store.commit('seguridad/lista-empresas/UPDATE_EMPRESA', data);
+                                        
+                    this.$store.commit('contabilidadGeneral/empresa/UPDATE_EMPRESA', data);
                     $(this.$refs.modal).modal('hide');
                 })
             }
