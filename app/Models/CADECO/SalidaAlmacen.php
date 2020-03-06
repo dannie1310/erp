@@ -302,7 +302,7 @@ class SalidaAlmacen extends Transaccion
             }
             if ($this->opciones == 65537) {
 
-                $inventarios = Inventario::where('id_item', $item['id_item'])->get()->toArray();
+                $inventarios = Inventario::where('id_item', $item['id_item'])->get();
 
                 if ($inventarios == []) {
                     $mensaje = $mensaje . "-No existe inventario\n";
@@ -342,6 +342,18 @@ class SalidaAlmacen extends Transaccion
                             }
                         }
                     }
+                    if(count($inventario->inventarios_hijos))
+                    {
+                        foreach ($inventario->inventarios_hijos as $inv_hijo)
+                        {
+                            $item_inv_hijo = SalidaAlmacenPartida::where('id_item', '=', $inv_hijo->id_item)->first();
+                            if ($item_inv_hijo->salida->tipo_transaccion == 34 && $item_inv_hijo->salida->opciones == 65537)
+                            {
+                                $mensaje .='-Salida (Transferencia): #'.$item_inv_hijo->salida->numero_folio.".\n";
+                            }
+                        }
+                    }
+
                     if ($inventario['cantidad'] != $inventario['saldo']) {
                         $mensaje = $mensaje . "-La cantidad es diferente al saldo del inventario\n";
                     }
@@ -349,11 +361,8 @@ class SalidaAlmacen extends Transaccion
                     if ($inventario_antecedente[0]['saldo'] + $inventario['cantidad'] > $inventario_antecedente[0]['cantidad']) {
                         $mensaje = $mensaje . "-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }
-
                 }
-
             }
-
             if ($this->opciones == 1) {
                 $movimientos = Movimiento::where('id_item', $item['id_item'])->get()->toArray();
                 if ($movimientos == []) {
