@@ -63,6 +63,7 @@
                 })
                     .then(data => {
                         this.$store.commit('cadeco/empresa/SET_EMPRESA', data);
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
                     })
                     .finally(() => {

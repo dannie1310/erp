@@ -162,6 +162,7 @@
                 }).then(data => {
                     this.$store.commit('almacenes/ajuste-positivo/SET_AJUSTE', data);
                     this.ajustes = data;
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },
@@ -173,6 +174,7 @@
                 }).then(data => {
                     this.$store.commit('almacenes/ajuste-negativo/SET_AJUSTE', data);
                     this.ajustes = data;
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },
@@ -184,6 +186,7 @@
                 }).then(data => {
                     this.$store.commit('almacenes/nuevo-lote/SET_AJUSTE', data);
                     this.ajustes = data;
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },

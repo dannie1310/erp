@@ -20,7 +20,7 @@
                                             <div class="col-md-12">
                                                 <div class="text-center">
                                                                 <img src="../../../../../img/ajuste-inventario/lote-nuevo.png" class="rounded" alt="Formato de carga de CSV">
-                                                      </div>                                                
+                                                      </div>
                                             </div>
                                         </div>
                     <form role="form" @submit.prevent="validate">
@@ -90,6 +90,7 @@
                 this.data = null;
                 this.$validator.errors.clear();
 
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
             cerrarModal(event) {

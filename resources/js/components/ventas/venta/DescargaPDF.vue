@@ -97,18 +97,21 @@ export default {
 
         methods: {
             mostrar(){
+                $(this.$refs.modal1).appendTo('body')
                 $(this.$refs.modal1).modal('show');
             },
             pdf_venta(){
                 $(this.$refs.modal1).modal('hide');
                 var url = '/api/ventas/venta/' + this.id +'/pdf_venta?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.bodyVenta).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Estimación</iframe>');
+                $(this.$refs.modalVenta).appendTo('body')
                 $(this.$refs.modalVenta).modal('show');
             },
             pdf_factura(){
                 $(this.$refs.modal1).modal('hide');
                 var url = '/api/ventas/venta/' + this.id +'/pdf_factura?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'" type="application/pdf" frameborder="0" height="100%" width="100%">Formato Estimación</iframe>');
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             }
         }

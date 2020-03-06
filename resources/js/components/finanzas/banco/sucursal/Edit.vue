@@ -218,6 +218,7 @@
                 })
                     .then(data => {
                         this.sucursal = data
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show')
                     })
                     .finally(() => {

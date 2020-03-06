@@ -146,6 +146,7 @@
                     this.id_fondo_garantia=data.id
                     this.fondo_garantia = data
                     this.saldo_resultante= data.saldo
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
                     .finally(() => {

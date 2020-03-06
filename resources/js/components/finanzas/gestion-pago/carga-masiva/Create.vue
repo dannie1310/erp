@@ -331,7 +331,6 @@
                         this.$router.push({name: 'carga-masiva'});
                     });
             },
-
             store() {
                 return this.$store.dispatch('finanzas/carga-masiva-pago/store', this.$data)
                     .then((data) => {

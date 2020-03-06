@@ -54,7 +54,8 @@
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Almacen:</b></td>
-                                                        <td class="bg-gray-light">{{venta.almacen.descripcion}}</td>
+                                                        <td class="bg-gray-light" v-if="venta.almacen">{{venta.almacen.descripcion}}</td>
+                                                          <td class="bg-gray-light" v-else></td>
                                                         <td class="bg-gray-light" v-if="venta.usuario"><b>Usuario Registró</b></td>
                                                         <td class="bg-gray-light" v-else></td>
                                                         <td class="bg-gray-light" v-if="venta.usuario">{{venta.usuario.nombre}}</td>
@@ -168,6 +169,7 @@
         },
         methods: {
             find() {
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.cargando = true;
                 this.motivo = '';

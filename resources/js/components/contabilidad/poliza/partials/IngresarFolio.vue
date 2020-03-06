@@ -82,6 +82,7 @@
 
         methods: {
             openModal() {
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
 

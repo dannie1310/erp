@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="init()" :disabled="cargandoo" class="btn btn-primary float-right" >
+        <button type="button" @click="init()" class="btn btn-primary float-right" >
             Retención IVA
         </button>
         <div class="row">
@@ -55,7 +55,7 @@
 export default {
     name: "retencion-iva-create",
     components: {},
-    props: ['id', 'cargandoo'],
+    props: ['id'],
     data() {
         return {
             estimacion:[],
@@ -63,7 +63,7 @@ export default {
             cargando:false,
         }
     },
-    mounted() {      
+    mounted() {
     },
     methods: {
         init(){
@@ -78,6 +78,7 @@ export default {
                     id: this.id,
                 }).then(data => {
                     this.estimacion = data;
+                $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 }).finally(() =>{
                     this.cargando = false;

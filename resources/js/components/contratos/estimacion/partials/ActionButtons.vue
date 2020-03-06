@@ -14,7 +14,9 @@
             <button @click="show"  type="button" class="btn btn-sm btn-outline-secondary" title="Ver Estimación ">
                 <i class="fa fa-eye"></i>
             </button>
-            <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit && (value.estado == 0)"  ><i class="fa fa-pencil"></i></button>
+            <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit && (value.estado == 0)">
+                <i class="fa fa-pencil"></i>
+            </button>
             <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0)"  v-bind:id="value.id">
                 <i class="fa fa-trash"></i>
             </button>
@@ -128,11 +130,9 @@
 
 <script>
     import PDF from '../FormatoEstimacion';
-    import EstimacionShow from '../Show';
-
     export default {
         name: "action-buttons",
-        components: {EstimacionShow, PDF},
+        components: {PDF},
         props: ['value'],
         data() {
             return {
@@ -154,6 +154,7 @@
             resumen(opcion) {
                 if (opcion == 'aprobar') {this.aprobando = true;}
                 else {this.revirtiendo = true;}
+                $(this.$refs.resumen).appendTo('body')
                 $(this.$refs.resumen).modal('show');
                 this.getConfiguraciones()
             },
@@ -182,10 +183,10 @@
                     })
             },
             show(){
-                this.$router.push({ name:'estimacion-show', params: {id: this.value.id} });
+                this.$router.push({ name:'estimacion-show', params: {id: this.value.id}});
             },
             edit(){
-                this.$router.push({ name:'estimacion-edit', params: {id: this.value.id} });
+                this.$router.push({ name:'estimacion-edit', params: {id: this.value.id}});
             },
             eliminar() {
                 this.$router.push({name: 'estimacion-delete', params: {id: this.value.id}});

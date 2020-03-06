@@ -108,7 +108,7 @@
                                                     <div class="col-sm-6">
                                                         <div class="btn-group btn-group-toggle">
                                                             <label class="btn btn-outline-secondary" :class="Consolidadora === Number(1) ? 'active': ''"  :key="1">
-                                                                <input type="radio" :disabled="!$root.can('configurar_tipo_empresa_ctpq', true)"
+                                                                <input type="radio" :disabled="!$root.can('configurar_tipo_empresa_ctpq', true) && consolidada"
                                                                     class="btn-group-toggle"
                                                                     name="Consolidadora"
                                                                     :id="'Consolidadora' + 1"
@@ -150,7 +150,7 @@
 export default {
     name: "lista-empresas-update",
     components: {},
-    props: ['empresa'],
+    props: ['empresa', 'consolidada'],
     data() {
         return {
             Visible:'',
@@ -160,14 +160,20 @@ export default {
             cargando:false,
         }
     },
-    mounted() {      
+    mounted() {
     },
     methods: {
         init(){
             this.$validator.reset();
+            $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
         },
         update(){
+            if(this.consolidada == 1 && this.empresa.consolidadora != this.Consolidadora)
+            {
+                swal('¡Error!', 'La empresa no puede ser consolidadora porque ya se encuentra consolidada.', 'error')
+            }else{
+
             return this.$store.dispatch('seguridad/lista-empresas/update', {
                     id: this.empresa.id,
                     params:{
@@ -180,6 +186,7 @@ export default {
                     this.$store.commit('seguridad/lista-empresas/UPDATE_EMPRESA', data);
                     $(this.$refs.modal).modal('hide');
                 })
+            }
         },
     },
     watch: {

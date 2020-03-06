@@ -38,7 +38,7 @@
                     { title: 'Remesa Liberada', field: 'remesa', sortable: false },
                     { title: 'Monto Remesa', field: 'monto_autorizado', tdClass: 'money',sortable: true },
                     { title: 'Monto Dispersado', field: 'monto_distribuido', tdClass: 'money', sortable: true },
-                    { title: 'Estatus', field: 'estado', tdComp: require('./partials/DistribuirEstatus'), sortable: true},
+                    { title: 'Estatus', field: 'estado', tdComp: require('./partials/DistribuirEstatus').default, sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default },
                 ],
                 data: [],

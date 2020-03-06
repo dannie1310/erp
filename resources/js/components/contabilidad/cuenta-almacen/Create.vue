@@ -98,6 +98,7 @@
                     .then(data => {
                         this.almacenes = data.data
                         if (this.almacenes.length) {
+                            $(this.$refs.modal).appendTo('body')
                             $(this.$refs.modal).modal('show');
 
                             this.id_almacen = '';

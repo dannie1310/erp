@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar Venta" v-show="borrar">
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar Venta">
             <i class="fa fa-ban"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -146,7 +146,7 @@
 <script>
 export default {
     name: "cancelar-venta",
-    props: ['id','pagina','borrar'],
+    props: ['id','pagina'],
     data() {
         return {
             motivo:'',
@@ -169,13 +169,14 @@ export default {
                 $(this.$refs.modal).modal('hide');
             });
         },
-        find(id) {
+        find() {
             this.$store.commit('ventas/venta/SET_VENTA', null);
             return this.$store.dispatch('ventas/venta/find', {
-                id: id,
+                id: this.id,
                 params: {include: ['empresa', 'partidas_total.material', 'usuario', 'estado']}
             }).then(data => {
                 this.$store.commit('ventas/venta/SET_VENTA', data);
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show')
             })
         },
