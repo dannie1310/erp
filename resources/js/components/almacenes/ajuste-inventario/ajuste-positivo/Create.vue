@@ -18,7 +18,7 @@
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
-                                            <div class="col-12">
+                                            <div class="col-12 table-responsive-xl">
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
@@ -173,7 +173,7 @@
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
             },
             changeSelect(item){
-                
+
                 var busqueda = this.materiales.find(x=>x.id === item.id_material);
                 if(busqueda != undefined)
                 {

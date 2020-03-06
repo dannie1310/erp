@@ -136,6 +136,7 @@
                 this.find({id: this.id}).then(data=>{
 
                     this.fondo_garantia = data
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
                     .finally(() => {

@@ -223,6 +223,7 @@
                 this.init()
                 this.cargando = true;
                 this.getContratista();
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
 
                 this.$store.commit('almacenes/salida-almacen/SET_SALIDA', null);

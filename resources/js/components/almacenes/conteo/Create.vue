@@ -229,6 +229,7 @@
                 this.dato.total='';
                 this.dato.iniciales='';
                 this.dato.observaciones='';
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.dato.id_marbete = null;
                 this.$validator.reset();

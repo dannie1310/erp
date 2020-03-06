@@ -83,6 +83,7 @@
                 })
                     .then(data => {
                         this.empresa = data
+                        $(this.$refs.editModal).appendTo('body')
                         $(this.$refs.editModal).modal('show')
                     })
                     .finally(() => {

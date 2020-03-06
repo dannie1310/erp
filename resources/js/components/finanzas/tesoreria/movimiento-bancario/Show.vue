@@ -79,6 +79,7 @@
                     params: { include: 'cuenta.empresa,transaccion' }
                 }).then(data => {
                     this.$store.commit('finanzas/movimiento-bancario/SET_MOVIMIENTO', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
             }

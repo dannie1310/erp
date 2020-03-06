@@ -160,11 +160,12 @@ export default {
             cargando:false,
         }
     },
-    mounted() {      
+    mounted() {
     },
     methods: {
         init(){
             this.$validator.reset();
+            $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
         },
         update(){

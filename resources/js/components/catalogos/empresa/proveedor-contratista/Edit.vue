@@ -18,13 +18,12 @@
                                 <a aria-controls="nav-sucursales" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-edit-sucursales"
                                 id="nav-edit-sucursales-tab" role="tab">Sucursales</a>
 
-                                <a aria-controls="nav-materiales" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-edit-materiales" 
+                                <a aria-controls="nav-materiales" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-edit-materiales"
                                 id="nav-edit-materiales-tab" role="tab"  >Materiales Suministrados</a>
                             </div>
                             <div class="tab-content" id="nav-tabContent">
-                                
                                 <div aria-labelledby="nav-edit-identificacion-tab" class="tab-pane fade show active" id="nav-edit-identificacion" role="tabpanel">
-                                    <form role="form" @submit.prevent="validate"  style="height:360px;">
+                                    <form role="form" @submit.prevent="validate">
                                         <div class="row" v-if="proveedorContratista">
                                             <div class="col-md-12">
                                                 <br>
@@ -48,8 +47,8 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group row error-content">
-                                                    <label for="rfc" class="col-sm-5 col-form-label">R.F.C.: </label>
-                                                    <div class="col-sm-7">
+                                                    <label for="rfc" class="col-md-5 col-form-label">R.F.C.: </label>
+                                                    <div class="col-md-7">
                                                         <input
                                                             :disabled="!$root.can('editar_proveedor_rfc') || emite_factura === 0 || es_nacional === 0"
                                                             type="text"
@@ -67,8 +66,8 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group row error-content">
-                                                    <label for="no_proveedor_virtual" class="col-sm-5 col-form-label">No. Proveedor Virtual: </label>
-                                                    <div class="col-sm-7">
+                                                    <label for="no_proveedor_virtual" class="col-md-5 col-form-label">No. Proveedor Virtual: </label>
+                                                    <div class="col-md-7">
                                                         <input
                                                             :disabled="!$root.can('editar_proveedor')"
                                                             type="number"
@@ -87,8 +86,8 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group row error-content">
-                                                    <label for="dias_credito" class="col-sm-5 col-form-label">Días Crédito: </label>
-                                                    <div class="col-sm-7">
+                                                    <label for="dias_credito" class="col-md-5 col-form-label">Días Crédito: </label>
+                                                    <div class="col-md-7">
                                                         <input
                                                             :disabled="!$root.can('editar_proveedor')"
                                                             type="number"
@@ -107,8 +106,8 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group row error-content">
-                                                    <label for="porcentaje" class="col-sm-5 col-form-label">Descuento Financiero: </label>
-                                                    <div class="col-sm-7">
+                                                    <label for="porcentaje" class="col-md-5 col-form-label">Descuento Financiero: </label>
+                                                    <div class="col-md-7">
                                                         <input
                                                         :disabled="!$root.can('editar_proveedor')"
                                                                 type="number"
@@ -127,12 +126,12 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="form-group row error-content">
-                                                    <label for="id_empresa" class="col  sm-2 col-form-label">Tipo </label>
-                                                    <div class="col-sm-10">
+                                                    <label for="id_empresa" class="col-md-2 col-form-label">Tipo </label>
+                                                    <div class="col-md-10">
                                                         <div class="btn-group btn-group-toggle" style="margin-left:5%;">
-                                                            <label class="btn btn-outline-secondary" 
-                                                            
-                                                                :class="edit.tipo_empresa === Number(key) ? 'active': ''" 
+                                                            <label class="btn btn-outline-secondary"
+
+                                                                :class="edit.tipo_empresa === Number(key) ? 'active': ''"
                                                                 v-for="(tipo, key) in tipos_empresas()" :key="key">
                                                                 <input type="radio" :disabled="!$root.can('editar_proveedor')"
                                                                     class="btn-group-toggle"
@@ -149,8 +148,8 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group row error-content">
-                                                    <label for="es_nacional" class="col-sm-5 col-form-label">Es Proveedor Nacional: </label>
-                                                    <div class="col-sm-7">
+                                                    <label for="es_nacional" class="col-md-5 col-form-label">Es Proveedor Nacional: </label>
+                                                    <div class="col-md-7">
                                                         <div class="btn-group btn-group-toggle">
                                                             <label class="btn btn-outline-secondary" :class="es_nacional === Number(1) ? 'active': ''"  :key="1">
                                                                 <input type="radio" :disabled="!$root.can('editar_proveedor_es_nacional')"
@@ -178,8 +177,8 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group row error-content">
-                                                    <label for="emite_factura" class="col-sm-5 col-form-label">Emite Factura (XML): </label>
-                                                    <div class="col-sm-7">
+                                                    <label for="emite_factura" class="col-md-5 col-form-label">Emite Factura (XML): </label>
+                                                    <div class="col-md-7">
                                                         <div class="btn-group btn-group-toggle">
                                                             <label class="btn btn-outline-secondary" :class="emite_factura === Number(1) ? 'active': ''"  :key="1">
                                                                 <input type="radio" :disabled="!$root.can('editar_proveedor_emite_factura') ||es_nacional === 0"
@@ -208,11 +207,11 @@
                                             <!--EFO-->
                                             <div class="col-md-12" v-if="proveedorContratista.efo">
                                                 <div class="form-group row error-content">
-                                                    <label for="id_empresa" class="col  sm-2 col-form-label">Efo</label>
-                                                    <div class="col-sm-10">
+                                                    <label for="id_empresa" class="col-md-2 col-form-label">Efo</label>
+                                                    <div class="col-md-10">
                                                         <div class="btn-group btn-group-toggle" style="margin-left:5%;">
-                                                            <small v-if="proveedorContratista.efo.estado.id == 2 || proveedorContratista.efo.estado.id == 0" class="badge" 
-                                                                :class="{'badge-warning': proveedorContratista.efo.estado.id == 2, 'badge-danger' 
+                                                            <small v-if="proveedorContratista.efo.estado.id == 2 || proveedorContratista.efo.estado.id == 0" class="badge"
+                                                                :class="{'badge-warning': proveedorContratista.efo.estado.id == 2, 'badge-danger'
                                                                 : proveedorContratista.efo.estado.id == 0 }">
                                                                 {{proveedorContratista.efo.estado.descripcion}}
                                                             </small>
@@ -232,8 +231,8 @@
                                 </div>
                                 <div aria-labelledby="nav-edit-materiales-tab" class="tab-pane fade" id="nav-edit-materiales" role="tabpanel">
                                     <material-tab v-if="proveedorContratista" v-bind:id_empresa="proveedorContratista.id"></material-tab>
-                                </div>   
-                            
+                                </div>
+
                             </div>
                         </nav>
                     </div>
@@ -277,7 +276,7 @@ export default {
             $('.nav-tabs a[href="#nav-edit-identificacion"]').tab('show');
             $(this.$refs.modalEdit).modal('hide');
         },
-        
+
         fillDataEdit(){
             this.edit.razon_social = this.proveedorContratista.razon_social;
             this.edit.rfc = this.proveedorContratista.rfc;
@@ -295,6 +294,7 @@ export default {
             this.$store.commit('cadeco/sucursal/SET_SUCURSALES', this.proveedorContratista.sucursales.data);
             this.$store.commit('cadeco/suministrado/SET_SUMINISTRADOS', this.proveedorContratista.suministrados.data);
 
+            $(this.$refs.modalEdit).appendTo('body');
             $(this.$refs.modalEdit).modal('show');
         },
         tipos_empresas(){
@@ -321,16 +321,12 @@ export default {
                             }
                         }) .then(() => {
                             this.$store.commit('cadeco/proveedor-contratista/UPDATE_PROVEEDOR_CONTRATISTA', data);
-                            // this.$emit('created', data);
-                            // $(this.$refs.modal).modal('hide');
                         })
                     }else {
                         this.$store.commit('cadeco/proveedor-contratista/UPDATE_PROVEEDOR_CONTRATISTA', data);
-                        // this.$emit('created', data);
-                        // $(this.$refs.modal).modal('hide');
                     }
-                    
-                    
+
+
                 }).finally(()=>{
                     this.fillDataEdit();
                         this.cargando=false;
@@ -352,7 +348,7 @@ export default {
     computed: {
         proveedorContratista() {
             return this.$store.getters['cadeco/proveedor-contratista/currentProveeedor'];
-        }, 
+        },
     },
     watch:{
         tipo(value){

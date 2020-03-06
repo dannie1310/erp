@@ -80,6 +80,7 @@
                 }).then(data => {
                     this.$store.commit('cadeco/destajista/SET_DESTAJISTA', data);
                     this.destajista = data;
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },

@@ -108,7 +108,7 @@
                                 </div>
                                 <div class="row">
                                     <div  class="col-md-12">
-                                        <div>
+                                        <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <thead>
                                                 <tr>
@@ -471,7 +471,7 @@
                     id_destino : ''
                 };
                 this.id_concepto_temporal = '';
-                
+
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },

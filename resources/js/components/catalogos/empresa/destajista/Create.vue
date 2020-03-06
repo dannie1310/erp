@@ -113,6 +113,7 @@
                     dias_credito : '',
                 };
                 this.rfc = '';
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.rfcValidate =  false;
             },

@@ -18,7 +18,7 @@
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
-                                            <div class="col-12">
+                                            <div class="col-12 table-responsive-xl">
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
@@ -203,7 +203,6 @@
                     params: { include: 'materiales_ajuste' }
                 })
                     .then(data => {
-                        console.log(data);
                         this.materiales = data.materiales_ajuste.data;
                         if( this.materiales.length != 0 ) {
                             this.bandera = 1;

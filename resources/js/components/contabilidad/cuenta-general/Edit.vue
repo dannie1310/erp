@@ -86,6 +86,7 @@
                 })
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-general/SET_CUENTA', data)
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
                     })
                     .finally(() => {

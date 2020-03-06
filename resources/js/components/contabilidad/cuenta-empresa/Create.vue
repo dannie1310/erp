@@ -117,6 +117,7 @@
                         this.getTipos()
                     }
                     this.cargando = true;
+                    $(this.$refs.createModal).appendTo('body')
                     $(this.$refs.createModal).modal('show');
 
                     this.id_empresa = this.id;

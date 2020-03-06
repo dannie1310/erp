@@ -209,6 +209,7 @@
                 }).then(data => {
                     this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', data);
                     this.partidas = this.entrada.partidas.data;
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },

@@ -265,6 +265,7 @@
                     params: {include: ['complemento', 'cambio.moneda']}
                 }).then(data => {
                     this.$store.commit('finanzas/factura/SET_FACTURA', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;

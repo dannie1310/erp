@@ -124,6 +124,7 @@
                     id: this.id
                 }).then(data => {
                     this.$store.commit('cadeco/sucursal/SET_SUCURSAL', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
             }

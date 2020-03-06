@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="find()" class="btn btn-sm btn-outline-danger" title="Eliminar">
+        <button type="button" @click="find()" class="btn btn-sm btn-outline-danger" title="Eliminar" >
             <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modalDelete" data-backdrop="static" data-keyboard="false">
@@ -52,8 +52,8 @@
                                             </tr>
                                             <tr v-if="proveedorContratista.efo">
                                                 <th class="align">Efo:</th>
-                                                <td><small v-if="proveedorContratista.efo.estado.id == 2 || proveedorContratista.efo.estado.id == 0" class="badge" 
-                                                    :class="{'badge-warning': proveedorContratista.efo.estado.id == 2, 'badge-danger' 
+                                                <td><small v-if="proveedorContratista.efo.estado.id == 2 || proveedorContratista.efo.estado.id == 0" class="badge"
+                                                    :class="{'badge-warning': proveedorContratista.efo.estado.id == 2, 'badge-danger'
                                                     : proveedorContratista.efo.estado.id == 0 }">
                                                     {{proveedorContratista.efo.estado.descripcion}}
                                                 </small></td>
@@ -102,6 +102,7 @@ export default {
                 params: {include: ['suministrados', 'sucursales']}
             }).then(data => {
                 this.proveedorContratista = data;
+                $(this.$refs.modalDelete).appendTo('body');
                 $(this.$refs.modalDelete).modal('show');
             }).finally(()=>{
                 this.cargando=false;

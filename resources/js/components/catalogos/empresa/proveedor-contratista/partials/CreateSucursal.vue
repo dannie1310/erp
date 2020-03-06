@@ -1,7 +1,7 @@
 <template>
      <span>
     <button @click="init" v-if="$root.can('registrar_sucursal_proveedor')" class="btn btn-primary float-right">
-        <i class="fa fa-plus"></i> Registrar 
+        <i class="fa fa-plus"></i> Registrar
     </button>
 
         <div class="modal fade" ref="modalCreateSucursal" role="dialog" aria-hidden="true">
@@ -203,7 +203,7 @@
         components: {},
         data() {
             return {
-                
+
                 descripcion:'',
                 direccion:'',
                 ciudad:'',
@@ -236,6 +236,8 @@
                 this.email = '';
                 this.contacto = '';
                 this.observaciones = '';
+                this.telefono_movil = '';
+                this.telefono = '';
                 $(this.$refs.modalCreateSucursal).modal('show');
                 this.$validator.reset();
             },

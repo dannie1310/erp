@@ -260,6 +260,7 @@
                 this.$validator.reset();
                 this.cargando = false;
                 this.$refs.barcodeValue.focus();
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
             getConteo(){

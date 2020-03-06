@@ -85,6 +85,7 @@
 
         methods: {
             init() {
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
 
                 this.id_naturaleza_poliza = '';
