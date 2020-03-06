@@ -83,15 +83,15 @@ class GestionPagoService
             'beneficiario' => $data->Destinatario,
             'monto_format' => '$ ' . number_format($pago['monto'], 2),
             'monto' => $pago['monto'],
-            'cuenta_cargo' => ['id_cuenta_cargo' => $data->partidaVigente->cuentaCargo->id_cuenta, 
-                                'numero'=> $data->partidaVigente->cuentaCargo->numero, 
-                                'abreviatura'=> $data->partidaVigente->cuentaCargo->abreviatura, 
-                                'nombre' => $data->partidaVigente->cuentaCargo->empresa->razon_social, 
+            'cuenta_cargo' => ['id_cuenta_cargo' => $data->partidaVigente->cuentaCargo->id_cuenta,
+                                'numero'=> $data->partidaVigente->cuentaCargo->numero,
+                                'abreviatura'=> $data->partidaVigente->cuentaCargo->abreviatura,
+                                'nombre' => $data->partidaVigente->cuentaCargo->empresa->razon_social,
                                 'id_empresa' => $data->partidaVigente->cuentaCargo->empresa->id_empresa,
                                 'id_moneda' => $data->partidaVigente->cuentaCargo->id_moneda],
-            'cuenta_abono' => ['id_cuenta_abono' => $data->partidaVigente->cuentaAbono->id, 
-                                'numero'=> $data->partidaVigente->cuentaAbono->cuenta_clabe, 
-                                'abreviatura'=> $data->partidaVigente->cuentaAbono->banco->ctg_banco->nombre_corto, 
+            'cuenta_abono' => ['id_cuenta_abono' => $data->partidaVigente->cuentaAbono->id,
+                                'numero'=> $data->partidaVigente->cuentaAbono->cuenta_clabe,
+                                'abreviatura'=> $data->partidaVigente->cuentaAbono->banco->ctg_banco->nombre_corto,
                                 'nombre' => $data->partidaVigente->cuentaAbono->empresa->razon_social,
                                 'id_empresa' => $data->partidaVigente->cuentaAbono->empresa->id_empresa],
             'referencia' => $pago['referencia'],
@@ -146,6 +146,10 @@ class GestionPagoService
     }
 
     public function guardar_bitacora($bitacora){
+        if (config('filesystems.disks.portal_carga.root') == storage_path())
+        {
+            abort(403, 'No existe el directorio destino: SANTANDER_PORTAL_STORAGE_CARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
         $nombre = hash_file('md5', $bitacora);
         $file_bitacora = fopen($bitacora, "r") or die("Unable to open file!");
         Storage::disk('portal_carga')->put($nombre . '.txt', $file_bitacora);
@@ -314,7 +318,7 @@ class GestionPagoService
                     $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $pago['id_distribucion_recurso'])
                                         ->where('id_documento', '=', $pago['id_documento'])->partidaPagable()->first();
                     if ($partida_remesa->documento->transaccion) {
-                        $transaccion = $partida_remesa->documento->transaccion;                                
+                        $transaccion = $partida_remesa->documento->transaccion;
                         $data = [
                             'monto_pagado_transaccion' => $partida_remesa->documento->getImporteTotalProcesadoAttribute(),
                             'id_cuenta_cargo' => $partida_remesa->cuentaCargo->id_cuenta,
@@ -366,11 +370,11 @@ class GestionPagoService
                     $distribucion_layout->fecha_hora_carga = date('Y-m-d');
                     $distribucion_layout->folio_confirmacion_bancaria = date('Y-m-d');
                     $distribucion_layout->save();
-                
+
                 }
 
                 else if($pago['id_transaccion'] != null && $pago['id_transaccion'] >0){
-                    $transaccion = Transaccion::find($pago['id_transaccion']);                        
+                    $transaccion = Transaccion::find($pago['id_transaccion']);
                     $data = [
                         'monto_pagado_transaccion' => $pago['monto'],
                         'id_cuenta_cargo' => $pago['cuenta_cargo']['id_cuenta_cargo'],
@@ -421,7 +425,7 @@ class GestionPagoService
                     'cuenta_cargo' => $pago['cuenta_cargo']['numero'],
                     'id_cuenta_cargo' => $pago['cuenta_cargo']['id_cuenta_cargo']
                 ]);
-            
+
             }
 
             $archivo_bitacora->estado = 1;
@@ -464,7 +468,7 @@ class GestionPagoService
         $proyectos = UnificacionObra::where('IDBaseDatos', '=',BaseDatosObra::first()->IDBaseDatos)->where('id_obra', '=', Context::getIdObra())->pluck('IDProyecto');
 
         $remesas = Remesa::whereIn('IDProyecto', $proyectos)->liberada()
-                        ->where('Anio', '=', $dispersion->remesaLiberada->remesa->Anio) 
+                        ->where('Anio', '=', $dispersion->remesaLiberada->remesa->Anio)
                         ->where('NumeroSemana', $dispersion->remesaLiberada->remesa->NumeroSemana)->pluck('IDRemesa');
 
         $disp_remesas = $dispersion->whereIn('id_remesa', $remesas)->pluck('id');
@@ -472,7 +476,7 @@ class GestionPagoService
         $registros_bitacora = array();
         $doctos_repetidos = [];
         foreach ($this->getTxtData($bitacora) as $key => $pago){
-            
+
             if($c_cargo = Cuenta::where('numero', $pago['cuenta_abono'])->first()){
                 continue;
             }
@@ -487,7 +491,7 @@ class GestionPagoService
                     continue;
                 }
             }
-                 
+
             $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
             $cuenta_abono?'':abort(403, 'El número de cuenta "' . $pago['cuenta_abono'] . '" no está registrado.' );
 
@@ -528,7 +532,7 @@ class GestionPagoService
                 );
                 continue;
             }
-            
+
             $dist_partidas = DistribucionRecursoRemesaPartida::transaccionPago()->partidaVigente()->partidaPagable()
                                 ->where('id_cuenta_abono', '=', $cuenta_abono->id)
                                 ->whereIn('id_distribucion_recurso',$disp_remesas)->get();
@@ -537,7 +541,7 @@ class GestionPagoService
                 $val = false;
                 foreach($dist_partidas as $dist_partida){
                     $documento = $dist_partida->documento->documentoProcesado->where('IDProceso', '=', 4)->first();
-                    $index = array_keys($doctos_repetidos, $documento->IDDocumento);                   
+                    $index = array_keys($doctos_repetidos, $documento->IDDocumento);
                     if(count($index) > 0) continue;
                     if(($documento->MontoAutorizadoPrimerEnvio + $documento->MontoAutorizadoSegundoEnvio) == $pago['monto']){
                         $doctos_repetidos[] = $documento->IDDocumento;
@@ -627,7 +631,7 @@ class GestionPagoService
                 'origen_docto' => '   N/A   ',
                 'fecha_pago' => $pago['fecha'],
                 'select_transacciones' => null
-            );       
+            );
         }
         return array(
             'data' => $registros_bitacora,
