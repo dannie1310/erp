@@ -77,6 +77,7 @@
 
         methods: {
             load() {
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show')
                 this.$refs.carga_layout_interbancario.value = '';
                 this.$refs.carga_layout_mismo_banco.value = '';

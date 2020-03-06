@@ -1,13 +1,13 @@
 <template>
     <span>
-        <div class="row" style="height:360px;" >
+        <div class="row">
             <div class="col-12" v-if="sucursales">
                 <div class="invoice p-3 mb-3">
                     <div class="row">
                         <div class="col-md-12">
                             <create-sucursal @created="updateSucursal" v-bind:id="id_empresa"></create-sucursal>
                         </div>
-                        
+
                         <div class="table-responsive col-12">
                             <br>
                             <table class="table table-striped table-fixed">
@@ -32,13 +32,13 @@
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                             <edit-sucursal @created="updateSucursal" v-bind:id="sucursal.id" v-if="$root.can('editar_sucursal_proveedor')"></edit-sucursal>
-                                            
+
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -48,8 +48,8 @@
 
 <script>
 import EditSucursal from '../partials/EditSucursal';
-import CreateSucursal from '../partials/CreateSucursal'; 
-import ShowSucursal from '../partials/ShowSucursal'; 
+import CreateSucursal from '../partials/CreateSucursal';
+import ShowSucursal from '../partials/ShowSucursal';
 export default {
     name: "proveedor-contratista-sucursal-tab",
     components: {CreateSucursal, EditSucursal, ShowSucursal},

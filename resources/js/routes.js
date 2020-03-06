@@ -126,6 +126,24 @@ export const routes = [
                         }
                     }
                 ]
+            },
+            {
+                path: 'consolidacion',
+                component: require('./components/contabilidad-general/consolidacion/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"consolidacion",
+                        component: require('./components/contabilidad-general/consolidacion/Index.vue').default,
+                        meta: {
+                            title: 'Consolidación',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CONSOLIDACIÓN'},
+                            middleware: [auth, permission],
+                            permission: ['editar_empresa_consolidadora'],
+                            general: true
+                        }
+                    }
+                ]
             }
         ]
     },
@@ -1639,6 +1657,7 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'autorizar-layout',
+                        props: true,
                         component: require('./components/finanzas/gestion-pago/carga-masiva/Autorizar').default,
                         meta: {
                             title: 'Autorizar Layouts',

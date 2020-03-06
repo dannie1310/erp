@@ -201,6 +201,7 @@
                     params: {include: ['partidas', 'entrega_contratista', 'transacciones_relacionadas']}
                 }).then(data => {
                     this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },

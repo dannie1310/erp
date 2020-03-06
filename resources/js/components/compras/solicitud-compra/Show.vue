@@ -134,6 +134,7 @@
                     }
                 }).then(data => {
                     this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
             }

@@ -101,6 +101,7 @@
                 })
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-material/SET_CUENTA', data)
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
                     })
                     .finally(() => {

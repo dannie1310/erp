@@ -295,6 +295,9 @@ import Resumen from './resumen/Show';
                     params: {}
                 }).then(data => {
                     this.estimacion = data;
+                    $(this.$refs.modal).appendTo('body')
+                    $(this.$refs.modal).modal('show');
+
                 }).finally(() => {
                     this.cargando = false;
                 })

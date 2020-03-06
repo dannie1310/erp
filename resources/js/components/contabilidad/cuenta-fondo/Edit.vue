@@ -85,6 +85,7 @@
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-fondo/SET_CUENTA', data)
                         this.id_fondo = data.fondo.id
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
                     })
                     .finally(() => {
