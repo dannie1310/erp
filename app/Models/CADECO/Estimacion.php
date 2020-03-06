@@ -7,18 +7,20 @@
  */
 
 namespace App\Models\CADECO;
-use App\Facades\Context;
+use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Estimaciones\EstimacionEliminada;
 use App\Models\CADECO\Estimaciones\EstimacionPartidaEliminada;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
+use App\Models\CADECO\Moneda;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
-use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Moneda;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 class Estimacion extends Transaccion
@@ -74,6 +76,11 @@ class Estimacion extends Transaccion
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function itemsXContratistas()
+    {
+        return $this->hasMany(ItemContratista::class, 'id_empresa', 'id_empresa');
+    }
+
     public function descuentos()
     {
         return $this->hasMany(Descuento::class, 'id_transaccion', 'id_transaccion');
@@ -94,6 +101,46 @@ class Estimacion extends Transaccion
         return $this->hasMany(Retencion::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function items()
+    {
+        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function movimientos()
+    {
+        return $this->hasManyThrough(Movimiento::class, ItemEstimacion::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function partidas()
+    {
+        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function prepoliza()
+    {
+        return $this->belongsTo(Poliza::class, 'id_transaccion', 'id_transaccion_sao');
+    }
+
+    public function estimacionEliminada()
+    {
+        return $this->belongsTo(EstimacionEliminada::class, 'id_transaccion');
+    }
+
     /**
      * Acciones
      */
@@ -101,7 +148,7 @@ class Estimacion extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            $estimacion = Estimacion::create($data);
+            $estimacion = $this->create($data);
             $estimacion->estimaConceptos($data['conceptos']);
             $estimacion->recalculaDatosGenerales();
             DB::connection('cadeco')->commit();
@@ -115,10 +162,8 @@ class Estimacion extends Transaccion
 
     private function estimaConceptos($conceptos)
     {
-        foreach ($conceptos as $concepto)
-        {
-            $pu = Item::query()
-                ->where('id_transaccion', '=', $this->id_antecedente)
+        foreach ($conceptos as $concepto) {
+            $pu = Item::where('id_transaccion', '=', $this->id_antecedente)
                 ->where('id_concepto', '=', $concepto['item_antecedente'])
                 ->first()->precio_unitario;
 
@@ -137,6 +182,7 @@ class Estimacion extends Transaccion
             ]);
         }
     }
+
     public function creaSubcontratoEstimacion()
     {
         \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->create([
@@ -147,21 +193,19 @@ class Estimacion extends Transaccion
 
     public static function calcularFolio()
     {
-        $est = Transaccion::query()->where('tipo_transaccion', '=', 52)->orderBy('numero_folio', 'DESC')->first();
+        $est = Transaccion::where('tipo_transaccion', '=', 52)->orderBy('numero_folio', 'DESC')->first();
         return $est ? $est->numero_folio + 1 : 1;
     }
 
     private function generaFolioConsecutivo()
     {
-        $folio = FolioPorSubcontrato::query()
-            ->where('IDSubcontrato', '=', $this->id_antecedente)
-            ->first();
+        $folio = FolioPorSubcontrato::where('IDSubcontrato', '=', $this->id_antecedente)->first();
 
         if ($folio) {
             $folio->UltimoFolio += 1;
             $folio->save();
         } else {
-            $folio = FolioPorSubcontrato::query()->create([
+            $folio = FolioPorSubcontrato::create([
                 'IDSubcontrato' => $this->id_antecedente,
                 'UltimoFolio' => 1
             ]);
@@ -184,11 +228,11 @@ class Estimacion extends Transaccion
                     ]
                 );
             } else {
-                $this->retencion_fondo_garantia->importe =$this->retencion_fondo_garantia_orden_pago;
+                $this->retencion_fondo_garantia->importe = $this->retencion_fondo_garantia_orden_pago;
                 $this->retencion_fondo_garantia->save();
                 $this->retencion_fondo_garantia->generaMovimientoRegistro();
             }
-        }else{
+        } else {
             throw New \Exception('La estimación no tiene establecido un porcentaje de retención de fondo de garantía, la retención no puede generarse');
         }
     }
@@ -211,8 +255,7 @@ class Estimacion extends Transaccion
         $this->recalculaDatosGenerales();
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_aprobar_transaccion] {$this->id_transaccion}");
-        if($this->subcontrato->retencion && $this->subcontrato->retencion > 0)
-        {
+        if ($this->subcontrato->retencion && $this->subcontrato->retencion > 0) {
             $this->generaRetencion();
         }
         return $this;
@@ -220,25 +263,22 @@ class Estimacion extends Transaccion
 
     public function anticipoAmortizacion($data)
     {
-        if($data <= $this->sumaImportes)
-        {
-            if($this->sumaImportes == 0 || $this->sumaImportes == null)     
-            {
-                $this->anticipo = 0;        
-                $this->save();          
-            }else
-            {
-                if($this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->first()->anticipo != 0)
-                {
-                    $this->anticipo = ($data/$this->sumaImportes)*100;
-                    $this->save(); 
-                }else{
-                    throw new \Exception('No se puede actualizar la amortización de anticipo.');            
+        if ($data <= $this->sumaImportes) {
+            if ($this->sumaImportes == 0 || $this->sumaImportes == null) {
+                $this->anticipo = 0;
+                $this->save();
+            } else {
+                if ($this->subcontrato->first()->anticipo != 0) {
+                    $this->anticipo = ($data / $this->sumaImportes) * 100;
+                    $this->save();
+                } else {
+                    throw new \Exception('No se puede actualizar la amortización de anticipo.');
                 }
-                
+
             }
             $this->recalculaDatosGenerales();
-        }else{
+            return $this->subcontratoAEstimar();
+        } else {
             throw new \Exception('El importe de la amortización no puede ser mayor al importe de la estimación.');
         }
     }
@@ -267,17 +307,7 @@ class Estimacion extends Transaccion
 
     public function getSumaImportesFormatAttribute()
     {
-        return '$ ' . number_format($this->suma_importes, 2,".",",");
-    }
-
-    public function items()
-    {
-        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
-    }
-
-    public function movimientos()
-    {
-        return $this->hasManyThrough(Movimiento::class, ItemEstimacion::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
+        return '$ ' . number_format($this->suma_importes, 2, ".", ",");
     }
 
     public function getAmortizacionPendienteAttribute()
@@ -298,7 +328,7 @@ class Estimacion extends Transaccion
 
     public function getMontoAnticipoAplicadoAttribute()
     {
-        return $this->suma_importes*(($this->anticipo)/100);
+        return $this->suma_importes * (($this->anticipo) / 100);
     }
 
     public function getMontoAnticipoAplicadoFormatAttribute()
@@ -311,7 +341,7 @@ class Estimacion extends Transaccion
         $estimaciones_anteriores = $this->subcontrato->estimaciones()
             ->where('fecha', '<=', $this->fecha)
             ->where('estado', '>=', 1)
-            ->where("id_transaccion",'<>',$this->id_transaccion)
+            ->where("id_transaccion", '<>', $this->id_transaccion)
             ->get();
 
         $sumatoria = 0;
@@ -329,49 +359,18 @@ class Estimacion extends Transaccion
     public function getConfiguracionAttribute()
     {
         $configuracion = $this->obra->configuracionEstimaciones;
-        if(!$configuracion)
-        {
-            $configuracion=ConfiguracionEstimacion::create([
-                'penalizacion_antes_iva'=>1,
-                'retenciones_antes_iva'=>1,
-                'ret_fon_gar_antes_iva'=>1,
-                'desc_pres_mat_antes_iva'=>1,
-                'desc_otros_prest_antes_iva'=>0,
-                'ret_fon_gar_con_iva'=>0,
+        if (!$configuracion) {
+            $configuracion = ConfiguracionEstimacion::create([
+                'penalizacion_antes_iva' => 1,
+                'retenciones_antes_iva' => 1,
+                'ret_fon_gar_antes_iva' => 1,
+                'desc_pres_mat_antes_iva' => 1,
+                'desc_otros_prest_antes_iva' => 0,
+                'ret_fon_gar_con_iva' => 0,
             ]);
 
         }
         return $configuracion;
-    }
-
-    public function empresa()
-    {
-        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
-    }
-
-    public function moneda()
-    {
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
-    }
-
-    public function partidas()
-    {
-        return $this->hasMany(EstimacionPartida::class, 'id_transaccion', 'id_transaccion');
-    }
-
-    public function facturas()
-    {
-        return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
-    }
-
-    public function prepoliza()
-    {
-        return $this->belongsTo(Poliza::class, 'id_transaccion', 'id_transaccion_sao');
-    }
-
-    public function estimacionEliminada()
-    {
-        return $this->belongsTo(EstimacionEliminada::class, 'id_transaccion');
     }
 
     public function eliminar($motivo)
@@ -379,7 +378,9 @@ class Estimacion extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->respaldar($motivo);
-            $this->partidas()->delete();
+            foreach ($this->items()->get() as $item) {
+                $item->delete();
+            }
             $this->delete();
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
@@ -419,6 +420,16 @@ class Estimacion extends Transaccion
                     $mensaje_fin = $mensaje_fin . $mensaje_item;
                 }
                 $mensaje = $mensaje . $mensaje_fin;
+            }
+        }
+
+        $item_relacionados = Item::where('id_antecedente', '=', $this->id_transaccion)->first();
+        if ($item_relacionados) {
+            $transaccion = Transaccion::where('id_transaccion', '=', $item_relacionados->id_transaccion)->withoutGlobalScopes()->first();
+            if ($transaccion) {
+                $mensaje = $mensaje . "-Contiene items relacionados en " . $transaccion->tipo->Descripcion . ". \n";
+            } else {
+                $mensaje = $mensaje . "-Contiene items relacionados a otra transacción \n";
             }
         }
 
@@ -490,16 +501,16 @@ class Estimacion extends Transaccion
 
     public function getSubtotalOrdenPagoAttribute()
     {
-        $subtotal = $this->suma_importes- $this->monto_anticipo_aplicado;
-        if($this->configuracion->retenciones_antes_iva == 1){
-            $subtotal-=$this->retenciones->sum("importe");
-            $subtotal+=$this->liberaciones->sum("importe");
+        $subtotal = $this->suma_importes - $this->monto_anticipo_aplicado;
+        if ($this->configuracion->retenciones_antes_iva == 1) {
+            $subtotal -= $this->retenciones->sum("importe");
+            $subtotal += $this->liberaciones->sum("importe");
         }
-        if($this->configuracion->desc_pres_mat_antes_iva == 1){
-            $subtotal-=$this->descuentos->sum("importe");
+        if ($this->configuracion->desc_pres_mat_antes_iva == 1) {
+            $subtotal -= $this->descuentos->sum("importe");
         }
-        if($this->configuracion->ret_fon_gar_antes_iva == 1){
-            $subtotal-=$this->retencion_fondo_garantia_orden_pago;
+        if ($this->configuracion->ret_fon_gar_antes_iva == 1) {
+            $subtotal -= $this->retencion_fondo_garantia_orden_pago;
         }
         return $subtotal;
     }
@@ -554,18 +565,18 @@ class Estimacion extends Transaccion
         $total = ($this->subtotal_orden_pago + $this->iva_orden_pago) - $this->IVARetenido;
         return $total;
     }
-    # retencion_fondo_garantia_orden_pago_format
 
+    # retencion_fondo_garantia_orden_pago_format
     public function getRetencionFondoGarantiaOrdenPagoAttribute()
     {
-        if($this->configuracion->ret_fon_gar_antes_iva == 0 ){
-            if($this->configuracion->ret_fon_gar_con_iva == 1){
-                return $this->suma_importes * ($this->retencion/100) * 1.16;
-            } else{
-                return $this->suma_importes * ($this->retencion/100) ;
+        if ($this->configuracion->ret_fon_gar_antes_iva == 0) {
+            if ($this->configuracion->ret_fon_gar_con_iva == 1) {
+                return $this->suma_importes * ($this->retencion / 100) * 1.16;
+            } else {
+                return $this->suma_importes * ($this->retencion / 100);
             }
         } else {
-            return $this->suma_importes * ($this->retencion/100);
+            return $this->suma_importes * ($this->retencion / 100);
         }
     }
 
@@ -576,7 +587,7 @@ class Estimacion extends Transaccion
 
     public function getAnticipoALiberarAttribute()
     {
-        return $this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar:0;
+        return $this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar : 0;
     }
 
     public function getAnticipoALiberarFormatAttribute()
@@ -597,16 +608,16 @@ class Estimacion extends Transaccion
     public function getMontoAPagarAttribute()
     {
         $monto_pagar = $this->total_orden_pago + $this->anticipo_a_liberar;
-        if($this->configuracion->retenciones_antes_iva == 0){
-            $monto_pagar-=$this->retenciones->sum("importe");
-            $monto_pagar-=$this->IVARetenido;
-            $monto_pagar+=$this->liberaciones->sum("importe");
+        if ($this->configuracion->retenciones_antes_iva == 0) {
+            $monto_pagar -= $this->retenciones->sum("importe");
+            $monto_pagar -= $this->IVARetenido;
+            $monto_pagar += $this->liberaciones->sum("importe");
         }
-        if($this->configuracion->desc_pres_mat_antes_iva == 0){
-            $monto_pagar-=$this->descuentos->sum("importe");
+        if ($this->configuracion->desc_pres_mat_antes_iva == 0) {
+            $monto_pagar -= $this->descuentos->sum("importe");
         }
-        if($this->configuracion->ret_fon_gar_antes_iva == 0){
-            $monto_pagar-=$this->retencion_fondo_garantia_orden_pago;
+        if ($this->configuracion->ret_fon_gar_antes_iva == 0) {
+            $monto_pagar -= $this->retencion_fondo_garantia_orden_pago;
         }
         return $monto_pagar;
     }
@@ -616,16 +627,18 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->monto_a_pagar, 2);
     }
 
-    public function getIvaRetenidoFormatAttribute(){
+    public function getIvaRetenidoFormatAttribute()
+    {
         return '$ ' . number_format($this->IVARetenido, 2);
     }
-    public function getIvaRetenidoPorcentajeAttribute(){
-        if($this->subtotal_orden_pago>0){
-            return number_format($this->IVARetenido*100 / $this->subtotal_orden_pago, 2)." %";
+
+    public function getIvaRetenidoPorcentajeAttribute()
+    {
+        if ($this->subtotal_orden_pago > 0) {
+            return number_format($this->IVARetenido * 100 / $this->subtotal_orden_pago, 2) . " %";
         } else {
             return "0 %";
         }
-
     }
 
     /**
@@ -651,7 +664,8 @@ class Estimacion extends Transaccion
         }
     }
 
-    public function recalculaDatosGenerales(){
+    public function recalculaDatosGenerales()
+    {
         $this->monto = $this->monto_a_pagar;
         $this->saldo = $this->monto_a_pagar;
         $this->impuesto = $this->iva_orden_pago;
@@ -667,7 +681,7 @@ class Estimacion extends Transaccion
      */
     public function cancelarRetencion()
     {
-        if($this->retencion != 0 && $this->retencion_fondo_garantia) {
+        if ($this->retencion != 0 && $this->retencion_fondo_garantia) {
             $movimiento_retencion = $this->retencion_fondo_garantia->generaCancelacionMovimientoRetencion();
 
             $this->retencion_fondo_garantia->movimientos->movimiento_general()->create(
@@ -684,33 +698,225 @@ class Estimacion extends Transaccion
         }
     }
 
-    public function registrarIVARetenido($retencion){
-        if($retencion > 0){
+    public function registrarIVARetenido($retencion)
+    {
+        if ($retencion > 0) {
             $porcentaje = $retencion * 100 / $this->subtotal_orden_pago;
-            switch ((int)round($porcentaje)){
+            switch ((int)round($porcentaje)) {
                 case 4:
-                    if($porcentaje <= 3.9999 || $porcentaje >= 4.0001){
+                    if ($porcentaje <= 3.9999 || $porcentaje >= 4.0001) {
                         abort(403, 'La retención de IVA no es del 4%');
                     }
-                break;
+                    break;
                 case 6:
-                    if($porcentaje <= 5.9999 || $porcentaje >= 6.0001){
+                    if ($porcentaje <= 5.9999 || $porcentaje >= 6.0001) {
                         abort(403, 'La retención de IVA no es del 6%');
                     }
-                break;
+                    break;
                 case 10:
-                    if($porcentaje <= 9.9999 || $porcentaje >= 10.0001){
+                    if ($porcentaje <= 9.9999 || $porcentaje >= 10.0001) {
                         abort(403, 'La retención de IVA no es del 10%');
                     }
-                break;
+                    break;
                 default:
                     abort(403, 'La retención de IVA no es valida');
-                break;
+                    break;
             }
         }
         $this->IVARetenido = $retencion;
         $this->save();
         $this->recalculaDatosGenerales();
         return $this;
+    }
+
+    /**
+     * Obtener estimación con las partidas ordenadas dependiendo los niveles de los contratos.
+     * @return array
+     */
+    public function subcontratoAEstimar()
+    {
+        return [
+            'fecha_inicial'           => $this->getCumplimientoAttribute($this->cumplimiento),
+            'fecha_final'             => $this->getCumplimientoAttribute($this->vencimiento),
+            'fecha'                   => $this->fecha_format,
+            'razon_social'            => $this->empresa->razon_social,
+            'moneda'                  => $this->moneda->nombre,
+            'observaciones'           => $this->observaciones,
+            'folio'                   => $this->numero_folio_format,
+            'subtotal'                => $this->subtotal_orden_pago,
+            'iva'                     => $this->iva_orden_pago,
+            'total'                   => $this->total_orden_pago,
+            'folio_consecutivo'       => $this->subcontratoEstimacion->folio_consecutivo_format,
+            'folio_consecutivo_num'   => $this->subcontratoEstimacion->NumeroFolioConsecutivo,
+            'id_empresa'              => $this->empresa->id_empresa,
+            'anticipo_format'         => $this->anticipo_format,
+            'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
+            'subcontrato'             => $this->subcontrato->subcontratoParaEstimar($this->id_transaccion)
+        ];
+    }
+
+    /**
+     * Editar la estimación
+     * @param $datos
+     * $datos = [
+     *      fecha_inicial,
+     *      fecha_final,
+     *      observaciones,
+     *      partidas ]
+     * @return $this
+     * @throws \Exception
+     */
+    public function editar($datos)
+    {
+        try {
+            $fecha_inicial = New DateTime($datos['fecha_inicial']);
+            $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_final = New DateTime($datos['fecha_final']);
+            $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+            DB::connection('cadeco')->beginTransaction();
+
+            foreach ($datos['partidas'] as $partida) {
+
+                if (array_key_exists('id', $partida)) {
+
+                    /**
+                     * Se edita item existente.
+                     */
+                    if ($partida['id_item_estimacion'] != 0) {
+                        $item = $this->items()->where('id_item', '=', $partida['id_item_estimacion'])->first();
+
+                        $item->update([
+                            'cantidad' => $partida['cantidad_estimacion'],
+                            'importe' => $partida['importe_estimacion']
+                        ]);
+                    }
+
+                    /**
+                     * Se crea un item nuevo.
+                     */
+                    if ($partida['id_item_estimacion'] == 0 && $partida['cantidad_estimacion'] > 0) {
+                        $this->items()->create([
+                            'id_transaccion' => $this->id_transaccion,
+                            'id_antecedente' => $this->id_antecedente,
+                            'item_antecedente' => $partida['id_concepto'],
+                            'id_concepto' => $partida['id_destino'],
+                            'cantidad' => $partida['cantidad_estimacion'],
+                            'cantidad_material' => 0,
+                            'cantidad_mano_obra' => 0,
+                            'importe' => $partida['importe_estimacion'],
+                            'precio_unitario' => $partida['precio_unitario_subcontrato'],
+                            'precio_material' => 0,
+                            'precio_mano_obra' => 0
+                        ]);
+                    }
+                }
+            }
+
+            $this->update([
+                'cumplimiento' => $fecha_inicial->format("Y-m-d"),
+                'vencimiento' => $fecha_final->format("Y-m-d"),
+                'observaciones' => $datos['observaciones']
+            ]);
+
+            $this->recalculaDatosGenerales();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getAnticipoFormatAttribute()
+    {
+        return number_format(abs($this->anticipo), 4) . '%';
+    }
+
+    public function descuentosPartidas()
+    {
+        $array = array();
+        $importe_total_original = 0;
+        $importe_descuento = 0;
+        $importe_descuento_anterior = 0;
+        $importe_porEstimar = 0;
+        $importe_acumulado = 0;
+        $itemxcontratistas = $this->itemsXContratistas()->pluck('id_item');
+        $items = Item::whereIn('id_item', $itemxcontratistas)->selectRaw('id_material, sum(cantidad) as cantidad,  sum(importe) as importe, sum(importe)/sum(cantidad) as precio_unitario')->groupBy('id_material')->get();
+
+        foreach ($items as $k => $a) {
+            $importe_total_original += $a->importe;
+            $descuento = Descuento::where('id_transaccion', '=', $this->id_transaccion)->where('id_material', '=', $a->id_material)->first();
+            $descuento_antertior = Descuento::join('transacciones', 'transacciones.id_transaccion', 'descuento.id_transaccion')
+                ->where('transacciones.id_transaccion', '!=', $this->id_transaccion)
+                ->where('id_antecedente', '=', $this->id_antecedente)
+                ->where('id_empresa', '=', $this->id_empresa)
+                ->where('descuento.id_material', '=', $a->id_material)
+                ->where('id_obra', '=', $this->id_obra)
+                ->where('estado', '>', 0)
+                ->selectRaw('sum(descuento.cantidad) as cantidad,  sum(descuento.importe) as importe')->first();
+
+            $importe_descuento += $descuento ? $descuento->importe : 0;
+            $importe_descuento_anterior += $descuento_antertior->importe ? $descuento_antertior->importe : 0;
+            $importe_porEstimar += ($a->importe - (($descuento_antertior->importe ? $descuento_antertior->importe : 0) + ($descuento ? $descuento->importe : 0)));
+            $importe_acumulado += ($descuento_antertior->importe ? $descuento_antertior->importe : 0) + ($descuento ? $descuento->importe : 0);
+
+            $array[$k] = [
+                'id_material' => $a->id_material,
+                'unidad' => $a->material->unidad,
+                'descripcion' => $a->material->descripcion,
+                'precio_unitario' => $a->precio_unitario,
+                'cantidad_original' => $a->cantidad,
+                'importe_original' => $a->importe,
+                'cantidad_descuento' => $descuento ? $descuento->cantidad : 0,
+                'importe_descuento' => $descuento ? $descuento->importe : 0,
+                'precio_descuento' => $descuento ? $descuento->precio : 0,
+                'cantidad_descuento_anterior' => $descuento_antertior->cantidad ? $descuento_antertior->cantidad : 0,
+                'importe_descuento_anterior' => $descuento_antertior->importe ? $descuento_antertior->importe : 0,
+                'cantidad_a_esta_estimacion' => ($descuento_antertior->cantidad ? $descuento_antertior->cantidad : 0) + ($descuento ? $descuento->cantidad : 0),
+                'importe_a_esta_estimacion' => ($descuento_antertior->importe ? $descuento_antertior->importe : 0) + ($descuento ? $descuento->importe : 0),
+                'cantidad_descuento_porEstimar' => ($a->cantidad - (($descuento_antertior->cantidad ? $descuento_antertior->cantidad : 0) + ($descuento ? $descuento->cantidad : 0))),
+                'importe_descuento_porEstimar' => ($a->importe - (($descuento_antertior->importe ? $descuento_antertior->importe : 0) + ($descuento ? $descuento->importe : 0)))
+            ];
+        }
+        return array(
+            'importe_total_original' => $importe_total_original,
+            'importe_descuento' => $importe_descuento,
+            'importe_descuento_anterior' => $importe_descuento_anterior,
+            '$importe_acumulado' => $importe_acumulado,
+            'importe_porEstimar' => $importe_porEstimar,
+            'partidas_descuento' => $array
+        );
+    }
+
+    public function getAnticipoAnteriorAttribute()
+    {
+        $anticipo = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $anticipo += $estimacion->monto_anticipo_aplicado;
+        }
+        return $anticipo;
+    }
+
+    public function getFondoGarantiaAcumuladoAnteriorAttribute()
+    {
+        $fondo = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $fondo += $estimacion->retencion_fondo_garantia_orden_pago;
+        }
+        return $fondo;
+    }
+
+    public function getPorcentajeIvaAttribute()
+    {
+        return ($this->impuesto / ($this->monto - $this->impuesto)) * 100;
     }
 }

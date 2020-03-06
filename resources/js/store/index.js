@@ -82,11 +82,13 @@ import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
 import CFDSAT from './modules/contabilidadGeneral/cfd-sat';
 
 //CONTRATOS
+import contratoConcepto from './modules/contratos/contrato-concepto';
+import contratoProyectado from './modules/contratos/contrato-proyectado';
 import estimacion from './modules/contratos/estimacion';
 import fondoGarantia from './modules/contratos/fondo-garantia';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
-import contratoProyectado from './modules/contratos/contrato-proyectado';
+
 
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
@@ -190,11 +192,12 @@ export default new Vuex.Store({
         'configuracion/nodo-tipo' : nodoTipo,
         'configuracion/nodo-proyecto' : nodoProyecto,
 
+        'contratos/contrato-concepto' : contratoConcepto,
+        'contratos/contrato-proyectado': contratoProyectado,
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
-        'contratos/contrato-proyectado': contratoProyectado,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,

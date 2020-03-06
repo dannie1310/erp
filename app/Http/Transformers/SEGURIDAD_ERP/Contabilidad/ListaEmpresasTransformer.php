@@ -14,7 +14,7 @@ class ListaEmpresasTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        
+        'consolida'        
     ];
 
     public function transform(Empresa $model) {
@@ -26,7 +26,20 @@ class ListaEmpresasTransformer extends TransformerAbstract
             'visible' => $model->Visible ? (int) $model->Visible : 0,
             'editable' => $model->Editable ? (int) $model->Editable : 0,
             'historica' => $model->Historica ? (int) $model->Historica : 0,
-            'consolidadora' => $model->Consolidadora ? (int) $model->Consolidadora : 0
+            'consolidadora' => $model->Consolidadora ? (int) $model->Consolidadora : 0,
+            'consolidada' => $model->consolidada
         ];
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \Leag\League\Fractal\Resource\Collection|null
+     */
+    public function includeConsolida(Empresa $model)
+    {
+        if($consolida = $model->consolida)
+        {
+            return $this->collection($consolida, new ListaEmpresasTransformer);
+        }
     }
 }

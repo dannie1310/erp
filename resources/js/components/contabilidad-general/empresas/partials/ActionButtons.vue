@@ -1,6 +1,6 @@
 <template>
     <div class="btn-group">
-        <Edit v-bind:empresa="value.empresa" v-if="value.edit"></Edit>
+        <Edit v-bind:empresa="value.empresa" v-if="value.edit" v-bind:consolidada="value.consolidada"></Edit>
     </div>
 </template>
 

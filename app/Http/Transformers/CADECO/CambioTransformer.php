@@ -11,6 +11,7 @@ namespace App\Http\Transformers\CADECO;
 
 use App\Models\CADECO\Cambio;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\CADECO\MonedaTransformer;
 
 class CambioTransformer extends TransformerAbstract
 {
@@ -20,7 +21,7 @@ class CambioTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'moneda'
     ];
 
     /**
@@ -36,7 +37,16 @@ class CambioTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'fecha' => $model->fecha,
-            'cambio' => $model->cambio
+            'cambio' => $model->cambio,
+            'cambio_format' => $model->cambio_format,
         ];
+    }
+
+    public function includeMoneda(Cambio $model)
+    {
+        if ($moneda = $model->moneda) {
+            return $this->item($moneda, new MonedaTransformer);
+        }
+        return null;
     }
 }
