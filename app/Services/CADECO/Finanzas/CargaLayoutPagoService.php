@@ -112,7 +112,7 @@ class CargaLayoutPagoService
         ];
         return $this->repository->create($datos);
     }
-    
+
     private function validaTC($pagos){
         $pagos_validados = array();
         $message = "";
@@ -158,6 +158,11 @@ class CargaLayoutPagoService
 
     public function descargarLayout()
     {
+        if (config('filesystems.disks.layout_pagos_descarga.root') == storage_path())
+        {
+            dd('No existe el directorio destino: STORAGE_LAYOUT_PAGOS. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
+
         Storage::disk('layout_pagos_descarga')->delete(Storage::disk('layout_pagos_descarga')->allFiles());
         $nombre_archivo = 'LayoutRegistroPagos_' . date('dmYY_His') . '.csv';
         (new PagoLayout())->store($nombre_archivo, 'layout_pagos_descarga');

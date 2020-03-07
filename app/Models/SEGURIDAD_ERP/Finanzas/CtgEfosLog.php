@@ -23,12 +23,17 @@ class CtgEfosLog extends Model
 
     public function validarRegistros()
     {
+        if(config('filesystems.disks.lista_efos.root') == storage_path())
+        {
+            dd('No existe el directorio destino: STORAGE_LISTA_EFOS. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
+
         if($this->all()->count() >= 5)
         {
             $previous = $this->orderBy('id', 'asc')->first();
             Storage::disk('lista_efos')->delete($previous->nombre_archivo);
             $this->orderBy('id', 'asc')->first()->delete();
-        } 
+        }
     }
 
 }
