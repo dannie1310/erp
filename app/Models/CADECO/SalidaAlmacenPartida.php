@@ -51,12 +51,12 @@ class SalidaAlmacenPartida extends Item
 
     public function inventario()
     {
-        return $this->belongsTo(Inventario::class, 'id_item', 'id_item');
+        return $this->hasMany(Inventario::class, 'id_item', 'id_item');
     }
 
     public function movimiento()
     {
-        return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
+        return $this->hasMany(Movimiento::class, 'id_item', 'id_item');
     }
 
     /**
