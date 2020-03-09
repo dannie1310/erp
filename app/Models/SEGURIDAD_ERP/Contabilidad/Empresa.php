@@ -23,6 +23,7 @@ class Empresa extends Model
         'Editable',
         'Historica',
         'Consolidadora',
+        'Desarrollo',
         'IdConsolidadora'
     ];
 
