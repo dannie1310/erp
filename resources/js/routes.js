@@ -784,9 +784,6 @@ export const routes = [
             {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue').default,
-                meta: {
-                    middleware: [auth, context]
-                },
                 children: [{
                     path: '/',
                     name: 'orden-compra',
@@ -836,8 +833,8 @@ export const routes = [
                         name: 'solicitud-compra',
                         component: require('./components/compras/solicitud-compra/Index').default,
                         meta: {
-                            title: 'SOLICITUDES DE COMPRA',
-                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA'},
+                            title: 'Solicitudes de Compra',
+                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_solicitud_compra'
                         }
@@ -1120,7 +1117,7 @@ export const routes = [
                             middleware: [auth, context,],
 
                         }
-                    },                    
+                    },
                     {
                         path: ':id/editar',
                         name: 'estimacion-edit',
