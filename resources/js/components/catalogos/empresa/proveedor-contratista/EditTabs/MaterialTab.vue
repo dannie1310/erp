@@ -1,9 +1,9 @@
 <template>
     <span>
-        <div class="col-12" v-if="suministrados" style="height:360px;">
+        <div class="col-12" v-if="suministrados">
             <div class="invoice p-3 mb-3">
                 <div class="row" v-if="suministrados">
-                   
+
                         <div class="col-md-10" v-if="$root.can('registrar_material_proveedor')">
                             <MaterialSelect
                                 :scope="scope"
@@ -17,7 +17,7 @@
                         <div class="col-md-2" v-if="$root.can('registrar_material_proveedor')">
                             <button type="submit" class="btn btn-primary float-right" @click="registrarMaterial()" :disabled="material.length == 0"><i class="fa fa-plus"></i>  Registrar</button>
                         </div>
-                    
+
                     <div class="table-responsive col-12"><br>
                         <table class="table table-striped table-fixed">
                             <thead>

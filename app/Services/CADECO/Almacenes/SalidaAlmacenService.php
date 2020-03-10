@@ -63,6 +63,11 @@ class SalidaAlmacenService
         return $this->repository->create($data);
     }
 
+    public function actualizarEntregaContratista($data, $id)
+    {
+       return $this->show($id)->editarEntregasContratista($data);
+    }
+
     public function pdfSalidaAlmacen($id)
     {
         $pdf = new SalidaAlmacenFormato($id);

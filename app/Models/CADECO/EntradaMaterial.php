@@ -284,7 +284,7 @@ class EntradaMaterial extends Transaccion
      */
     private function revisar_respaldos($motivo)
     {
-        $entrada = EntradaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
+        $entrada = EntradaEliminada::where('id_transaccion', $this->id_transaccion)->first();
         if ($entrada == null) {
             DB::connection('cadeco')->rollBack();
             abort(400, 'Error en el proceso de eliminación de entrada de almacén, no se respaldo la entrada.');
@@ -316,8 +316,10 @@ class EntradaMaterial extends Transaccion
     public function eliminar_partidas($partidas)
     {
         foreach ($partidas as $item) {
-            ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
-            EntradaMaterialPartida::find($item['id_item'])->delete();
+            if($item->contratista) {
+                $item->contratista->delete();
+            }
+            $item->delete();
         }
     }
 

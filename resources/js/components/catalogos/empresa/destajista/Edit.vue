@@ -106,6 +106,7 @@
                     id: this.id
                 }).then(data => {
                     this.destajista = data;
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 }).finally(() => {
                     this.cargando = false;

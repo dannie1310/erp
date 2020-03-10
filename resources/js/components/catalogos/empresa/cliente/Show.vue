@@ -83,6 +83,7 @@
                 }).then(data => {
                     this.$store.commit('cadeco/cliente/SET_CLIENTE', data);
                     this.cliente = data;
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             }

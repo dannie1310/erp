@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Factura" v-show="borrar">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Factura">
             <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -116,6 +116,15 @@
                                 {{factura.datos_registro}}
                             </div>
                         </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Comentario: {{factura.comentario}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                         <div class="col-12">
                                 <div class="form-group row error-content">
                                             <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
@@ -147,7 +156,7 @@
 <script>
 export default {
     name: "eliminar-factura",
-    props: ['id','pagina','borrar'],
+    props: ['id','pagina'],
     data() {
         return {
             motivo:'',
@@ -178,6 +187,7 @@ export default {
                     id: id,
                 }).then(data => {
                     this.$store.commit('finanzas/factura/SET_FACTURA', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;

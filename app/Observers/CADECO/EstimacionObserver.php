@@ -29,7 +29,8 @@ class EstimacionObserver extends TransaccionObserver
         $estimacion->id_moneda = $subcontrato->id_moneda;
         $estimacion->saldo = $estimacion->monto;
         $estimacion->retencion = $subcontrato->retencion;
-        $estimacion->fecha = date('Y-m-d');
+        $estimacion->anticipo = $subcontrato->anticipo;
+        $estimacion->fecha = $estimacion->fecha;
         $estimacion->numero_folio = $estimacion->calcularFolio();
     }
 
@@ -52,6 +53,11 @@ class EstimacionObserver extends TransaccionObserver
         if($estimacion->estimacionEliminada == null)
         {
             abort(400, "Error al eliminar, respaldo incorrecto.");
+        }
+
+        if($estimacion->retencion_fondo_garantia)
+        {
+            $estimacion->retencion_fondo_garantia->eliminaEstimacion();
         }
     }
 

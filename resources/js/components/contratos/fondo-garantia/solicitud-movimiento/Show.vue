@@ -127,6 +127,7 @@
             init(){
                 this.find({id: this.id}).then(data=>{
                     this.solicitud = data
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
                     .finally(() => {

@@ -69,6 +69,7 @@ use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\Inventarios\Marbete;
 use App\Models\CADECO\Inventarios\MarbeteLog;
+use App\Models\CADECO\ItemEstimacion;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\Movimiento;
@@ -97,6 +98,8 @@ use App\Models\CADECO\SolicitudReposicionFF;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
+use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
+use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\CADECO\SubcontratosFG\MovimientoFondoGarantia;
 use App\Models\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantia;
@@ -114,6 +117,8 @@ use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
 use App\Models\SEGURIDAD_ERP\Compras\AreaSolicitanteUsuario;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
@@ -165,6 +170,7 @@ use App\Observers\CADECO\EntradaMaterialPartidaObserver;
 use App\Observers\CADECO\EntregaObserver;
 use App\Observers\CADECO\Estimaciones\EstimacionEliminadaObserver;
 use App\Observers\CADECO\EstimacionObserver;
+use App\Observers\CADECO\EstimacionPartidaObserver;
 use App\Observers\CADECO\FacturaObserver;
 use App\Observers\CADECO\FamiliaObserver;
 use App\Observers\CADECO\Finanzas\ConfiguracionEstimacionObserver;
@@ -215,6 +221,8 @@ use App\Observers\CADECO\SolicitudReposicionFFObserver;
 use App\Observers\CADECO\SubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\DescuentoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
+use App\Observers\CADECO\SubcontratosEstimaciones\LiberacionObserver;
+use App\Observers\CADECO\SubcontratosEstimaciones\RetencionObserver;
 use App\Observers\CADECO\SubcontratosFG\FondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\MovimientoFondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantiaObserver;
@@ -228,6 +236,8 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
+use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
+use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
 use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
@@ -241,8 +251,10 @@ use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
 use App\Models\CADECO\Unidad;
+use App\Models\CADECO\UnidadComplemento;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
+use App\Observers\CADECO\UnidadComplementoObserver;
 use App\Observers\CADECO\UnidadObserver;
 use Illuminate\Support\ServiceProvider;
 
@@ -256,6 +268,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        /*
+         * CTPQ
+         * */
+        \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
+        \App\Models\CTPQ\PolizaMovimiento::observe(\App\Observers\CTPQ\PolizaMovimientoObserver::class);
+
         /**
          * CADECO
          */
@@ -354,6 +372,8 @@ class AppServiceProvider extends ServiceProvider
              */
             Descuento::observe(DescuentoObserver::class);
             FolioPorSubcontrato::observe(FolioPorSubcontratoObserver::class);
+            Liberacion::observe(LiberacionObserver::class);
+            Retencion::observe(RetencionObserver::class);
 
             /**
              * SubcontratosFG
@@ -393,6 +413,7 @@ class AppServiceProvider extends ServiceProvider
             EntradaMaterial::observe(EntradaMaterialObserver::class);
             EntradaMaterialPartida::observe(EntradaMaterialPartidaObserver::class);
             Estimacion::observe(EstimacionObserver::class);
+            ItemEstimacion::observe(EstimacionPartidaObserver::class);
             Factura::observe(FacturaObserver::class);
             Familia::observe(FamiliaObserver::class);
             Fondo::observe(FondoObserver::class);
@@ -425,6 +446,7 @@ class AppServiceProvider extends ServiceProvider
             Sucursal::observe(SucursalObserver::class);
             Transaccion::observe(TransaccionObserver::class);
             Unidad::observe(UnidadObserver::class);
+            UnidadComplemento::observe(UnidadComplementoObserver::class);
             Venta::observe(VentaObserver::class);
             VentaCancelacion::observe(VentaCancelacionObserver::class);
             VentaPartida::observe(VentaPartidaObserver::class);
@@ -440,6 +462,11 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
         UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
         FacturaRepositorio::observe(FacturaRepositorioObserver::class);
+        /*
+         * Contabilidad
+         * */
+        LogEdicion::observe(LogEdicionObserver::class);
+        CargaCFDSAT::observe(CargaCFDSATObserver::class);
     }
 
     /**

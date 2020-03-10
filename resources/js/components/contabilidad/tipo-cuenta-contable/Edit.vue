@@ -92,6 +92,7 @@
                         if(data.naturaleza){
                             this.id_naturaleza_poliza = data.naturaleza.id_naturaleza_poliza
                         }
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
                     })
                     .finally(() => {

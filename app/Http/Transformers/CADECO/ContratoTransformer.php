@@ -2,6 +2,7 @@
 
 
 namespace App\Http\Transformers\CADECO;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoPartidaTransformer;
 use App\Models\CADECO\Contrato;
 use League\Fractal\TransformerAbstract;
 
@@ -13,7 +14,8 @@ class ContratoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'destino',
+        'partidas_subcontrato'
     ];
 
     /**
@@ -21,18 +23,48 @@ class ContratoTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $defaultIncludes = [];
+    protected $defaultIncludes = [
+
+    ];
 
     public function transform(Contrato $model)
     {
         return [
-              'id_transaccion'=>$model->id_transaccion,
-              'id_concepto' => $model->id_concepto,
-              'nivel' => $model->nivel,
-              'descripcion'=>$model->descripcion,
-              'unidad' => $model->unidad,
-              'cantidad_original' => $model->cantidad_original,
+            'id_concepto' => $model->getKey(),
+            'id_transaccion' => $model->id_transaccion,
+            'clave' => $model->clave,
+            'nivel' => $model->nivel,
+            'descripcion' => $model->descripcion,
+            'unidad' => $model->unidad,
+            'cantidad_original' => $model->cantidad_original,
+            'cantidad_presupuestada' => $model->cantidad_presupuestada,
+            'para_estimar' => $model->para_estimar
         ];
     }
 
+    /**
+     * @param Contrato $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeDestino(Contrato $model)
+    {
+        if($destino =  $model->destino)
+        {
+            return $this->item($destino, new DestinoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Contrato $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includePartidasSubcontrato(Contrato $model)
+    {
+        if($partida = $model->itemsSubcontrato)
+        {
+            return $this->item($partida, new SubcontratoPartidaTransformer);
+        }
+        return null;
+    }
 }

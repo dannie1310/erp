@@ -210,6 +210,7 @@
                 }).then(data => {
                     this.loadData(data);
                     this.cargando=false;
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
             },

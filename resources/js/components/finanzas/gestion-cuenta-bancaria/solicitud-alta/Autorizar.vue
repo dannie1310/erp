@@ -33,7 +33,7 @@
                                                             <td>{{solicitudAlta.banco.razon_social}}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Cuenta / CLABE:</th>
+                                                            <th>Cuenta / CLABE / Núm. Tarjeta:</th>
                                                             <td>{{solicitudAlta.cuenta}}</td>
                                                         </tr>
                                                         <tr>
@@ -50,7 +50,7 @@
                                                         </tr>
                                                         <tr>
                                                             <th>Tipo:</th>
-                                                            <td>{{solicitudAlta.tipos}}</td>
+                                                            <td>{{solicitudAlta.tipo_cuenta.descripcion}}</td>
                                                         </tr>
                                                         <tr>
                                                             <th>Observaciones:</th>
@@ -100,10 +100,11 @@
                 this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/find', {
                     id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
+                    params: { include: ['moneda', 'subcontrato', 'tipo_cuenta', 'empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).draggable();
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },
@@ -114,6 +115,7 @@
                 var url = '/api/finanzas/gestion-cuenta-bancaria/solicitud-alta/pdf/' + this.id +'?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE ALTA DE CUENTA BANCARIA</iframe>');
                 $(this.$refs.modalPDF).draggable();
+                $(this.$refs.modalPDF).appendTo('body')
                 $(this.$refs.modalPDF).modal('show');
             },
             autorizar() {

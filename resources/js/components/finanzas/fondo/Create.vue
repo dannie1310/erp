@@ -164,6 +164,7 @@
 
         methods: {
             init() {
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.id_empresa = '';
                 this.responsable_text = '';

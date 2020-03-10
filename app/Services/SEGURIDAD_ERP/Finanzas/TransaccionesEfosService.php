@@ -150,6 +150,10 @@ class TransaccionesEfosService
 
     public function descargarCSV()
     {
+        if (config('filesystems.disks.control_interno.root') == storage_path())
+        {
+            dd('No existe el directorio destino: STORAGE_CONTROL_INTERNO. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
         Storage::disk('control_interno')->delete(Storage::disk('control_interno')->allFiles());
         $nombre_archivo = 'TransaccionEfos_' . date('dmYY_His') . '.csv';
         (new TransaccionEfo())->store($nombre_archivo, 'control_interno');

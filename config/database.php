@@ -45,6 +45,28 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'cntpq' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_CNTPQ', 'localhost'),
+            'database' => env('DB_DATABASE_CNTPQ', 'forge'),
+            'username' => env('DB_USERNAME_CNTPQ', 'forge'),
+            'password' => env('DB_PASSWORD_CNTPQ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
+        'cntpqg' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_GCNTPQ', 'localhost'),
+            'database' => env('DB_DATABASE_GCNTPQ', 'forge'),
+            'username' => env('DB_USERNAME_GCNTPQ', 'forge'),
+            'password' => env('DB_PASSWORD_GCNTPQ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
         'igh' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_IGH', '127.0.0.1'),

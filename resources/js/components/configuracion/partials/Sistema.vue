@@ -177,6 +177,7 @@
                 })
                     .then(data => {
                         this.sistemas_seleccionado = data.display_name;
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
                     })
             },

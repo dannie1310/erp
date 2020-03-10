@@ -51,7 +51,7 @@ class EstimacionTransformer extends TransformerAbstract
             'impuesto_format' => $model->impuesto_format,
             'monto' => $model->monto,
             'monto_format' => $model->monto_format,
-            'estado' => $model->estado,
+            'estado' => (int) $model->estado,
             'fecha' => $model->fecha_format,
             'fecha_inicial'=> $model->cumplimiento_format,
             'fecha_final' => $model->vencimiento_format,
@@ -59,18 +59,23 @@ class EstimacionTransformer extends TransformerAbstract
             'subtotal_format' => $model->subtotal_format,
             'suma_importes' => $model->suma_importes_format,
             'anticipo' => $model->anticipo,
+            'anticipo_format' => $model->anticipo_format,
             'monto_anticipo_aplicado' => $model->monto_anticipo_aplicado,
+            'monto_anticipo_aplicado_format' => $model->monto_anticipo_aplicado_format,
             'retencion' => $model->subcontrato->retencion,
             'retencion_fondo_garantia' => $model->retencion_fondo_garantia_orden_pago_format,
-            'total_retenciones' => $model->retenciones->sum('importe'),
-            'retencion_iva' => $model->IVARetenido ? $model->IVARetenido : 0,
-            'total_retencion_liberadas' => $model->liberaciones->sum('importe'),
-            'total_deductivas' => $model->descuentos->sum('importe'),
+            'total_retenciones' => $model->suma_retenciones_format,
+            'retencion_iva' => $model->IVARetenido,
+            'retencion_iva_format' => $model->iva_retenido_format,
+            'retencion_iva_porcentaje' => $model->iva_retenido_porcentaje,
+            'total_retencion_liberadas' => $model->suma_liberaciones_format,
+            'total_deductivas' => $model->suma_deductivas_format,
             'subtotal_orden_pago' => $model->subtotal_orden_pago_format,
             'iva_orden_pago' => $model->iva_orden_pago_format,
             'total_orden_pago' => $model->total_orden_pago_format,
             'total_anticipo_liberar' => $model->anticipo_a_liberar_format,
-            'monto_pagar' => $model->monto_a_pagar
+            'monto_pagar' => $model->monto_a_pagar,
+            'monto_pagar_format' => $model->monto_a_pagar_format
         ];
     }
 

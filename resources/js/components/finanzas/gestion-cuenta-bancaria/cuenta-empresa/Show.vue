@@ -117,6 +117,7 @@
                     params: { include: ['empresa', 'tipo', 'banco', 'plaza', 'moneda', 'solicitud_alta.movimientos.usuario', 'solicitud_baja.movimientos.usuario']}
                 }).then(data => {
                     this.$store.commit('finanzas/cuenta-bancaria-empresa/SET_CUENTA', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             }

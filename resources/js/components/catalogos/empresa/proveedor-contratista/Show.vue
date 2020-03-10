@@ -19,7 +19,7 @@
                                     <a aria-controls="nav-sucursales" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-sucursales"
                                     id="nav-sucursales-tab" role="tab">Sucursales</a>
 
-                                    <a aria-controls="nav-materiales" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-materiales" 
+                                    <a aria-controls="nav-materiales" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-materiales"
                                     id="nav-materiales-tab" role="tab"  >Materiales Suministrados</a>
                                 </div>
                             </nav>
@@ -65,8 +65,8 @@
                                                             </tr>
                                                             <tr v-if="proveedorContratista.efo">
                                                                 <th class="align">Efo:</th>
-                                                                <td><small v-if="proveedorContratista.efo.estado.id == 2 || proveedorContratista.efo.estado.id == 0" class="badge" 
-                                                                    :class="{'badge-warning': proveedorContratista.efo.estado.id == 2, 'badge-danger' 
+                                                                <td><small v-if="proveedorContratista.efo.estado.id == 2 || proveedorContratista.efo.estado.id == 0" class="badge"
+                                                                    :class="{'badge-warning': proveedorContratista.efo.estado.id == 2, 'badge-danger'
                                                                     : proveedorContratista.efo.estado.id == 0 }">
                                                                     {{proveedorContratista.efo.estado.descripcion}}
                                                                 </small></td>
@@ -130,10 +130,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>   
+                                    </div>
                                 </div>
                             </div>
-                        </nav> 
+                        </nav>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
@@ -145,7 +145,7 @@
 </template>
 
 <script>
-import ShowSucursal from './partials/ShowSucursal'; 
+import ShowSucursal from './partials/ShowSucursal';
 export default {
     name: "proveedor-contratista-show",
     props: ['tipo'],
@@ -170,11 +170,12 @@ export default {
     watch:{
         tipo(value){
             if(value !== '' && value === 1){
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             }
         }
     }
-    
+
 }
 </script>
 

@@ -8,7 +8,7 @@
                     </div>
                 </div>
                 <!--                <div class="modal-body">-->
-                <div class="row">
+                <div class="row" v-if="layout">
                     <div class="table-responsive col-12">
                         <table class="table table-striped">
                             <tbody>
@@ -73,7 +73,7 @@
 
                 </div>
                 <h5><i class="fa fa-list" style="padding-right: 3px"></i>Partidas del Layout</h5>
-                <div v-if="" class="row">
+                <div class="row" v-if="layout">
                     <div  class="col-12 table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -95,7 +95,7 @@
                                 <th>Estado</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody v-if="layout.partidas">
                             <tr v-for="(doc, i) in layout.partidas.data">
                                 <td>{{i+1}}</td>
                                 <td v-if="doc.factura">{{doc.factura.referencia}}</td>
@@ -132,7 +132,7 @@
                 </div>
                                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer" v-if="layout">
                     <button  type="button" class="btn btn-secondary float-right" @click="index" >Cerrar</button>
                     <div>
                         <button v-if="layout.estado.estado==0" @click="autorizar" title="Autorizar" class="btn btn-primary float-right">Autorizar</button>
@@ -146,24 +146,21 @@
 <script>
     import EstatusLabel from "./partials/CargaMasivaEstatus";
     export default {
-        name: "Autorizar",
+        name: "autorizar-layout",
         components: {EstatusLabel},
-        props: ['value'],
+        props: ['id'],
         data() {
             return {
-                id:'',
             }
         },
         mounted() {
-            this.id = this.$route.params.id;
             this.find()
-
         },
         methods: {
             find() {
                 this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', null);
                 return this.$store.dispatch('finanzas/carga-masiva-pago/find', {
-                    params: { include: ['partidas.solicitud.fondo','usuario', 'usuario_autorizo', 'estado', 'partidas','partidas.solicitud.empresa','partidas.factura','partidas.factura.empresa.efos', 'partidas.moneda']},
+                    params: { include: ['partidas.solicitud.fondo','usuario', 'usuario_autorizo', 'estado', 'partidas.solicitud.empresa','partidas.factura','partidas.factura.empresa.efos', 'partidas.moneda']},
                     id: this.id
                 }).then(data => {
                     this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', data);
@@ -194,4 +191,3 @@
 <style scoped>
 
 </style>
-|
