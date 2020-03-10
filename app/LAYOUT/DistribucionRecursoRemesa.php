@@ -22,6 +22,11 @@ class DistribucionRecursoRemesa
     }
 
     function create(){
+        if(config('filesystems.disks.h2h_in.root') == storage_path())
+        {
+            dd('No existe el directorio destino: SANTANDER_H2H_STORAGE_IN. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
+
         if($this->remesa->estado != 1){return "Layout de distribucion de remesa no disponible.". PHP_EOL . "Estado: " . $this->remesa->estatus->descripcion ;}
         if($this->remesa->remesaLayout){return "Layout de distribucion de remesa descargado previamente." ;}
         $this->encabezado();

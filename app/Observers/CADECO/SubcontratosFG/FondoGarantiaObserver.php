@@ -52,7 +52,7 @@ class FondoGarantiaObserver
         * */
         if($fondoGarantia->saldo<0)
         {
-            throw New \Exception('El saldo del fondo de garantía no puede ser menor a 0');
+            throw New \Exception('El saldo del fondo de garantía no puede ser menor a 0->'.$fondoGarantia->saldo);
         }
         /*
          * se valida que el saldo del fondo de garantía no sea mayor al subtotal del subcontrato al momento de actualizarlo

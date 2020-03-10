@@ -38,7 +38,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Fecha', field: 'fecha', tdClass: 'fecha_hora', sortable: true},
                     { title: 'Monto', field: 'monto', tdClass: 'td_money', sortable: true},
                     { title: 'No. Doctos.', field: 'cantidad_documentos', tdClass: 'money', sortable: false},
@@ -117,7 +117,7 @@
                             estado:layout.estado.descripcion,
                             buttons: $.extend({}, {
                                 id: layout.id,
-                                autorizar: (layout.estado.estado == 0)?true:false,
+                                autorizar: self.$root.can('autorizar_carga_layout_pago') ? true : false,
                                 show: true
                             })
                         })

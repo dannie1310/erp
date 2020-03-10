@@ -11,7 +11,7 @@
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle"> 
+                                <h5 class="modal-title" id="exampleModalLongTitle">
                                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                     <i class="fa fa-edit" v-else></i>Editar Deductivas</h5>
                                 <button type="button" class="close" @click="cerrar()" aria-label="Close">
@@ -53,13 +53,13 @@
                                             <td style="width:280px;">{{descuento.material.descripcion}}</td>
                                             <td style="width:70px;">{{descuento.material.unidad}}</td>
                                             <!-- <td style="width:10%;">{{descuento.cantidad_format}}</td> -->
-                                            <td style="width:130px;"><input type="number" step="any" :name="`cantidad[${i}]`" 
+                                            <td style="width:130px;"><input type="number" step="any" :name="`cantidad[${i}]`"
                                                         data-vv-as="Cantidad"  v-validate="{required:true, min_value:0, decimal:5}" :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                         class="form-control float-right align" id="cantidad" placeholder="Cantidad"
                                                         v-model="descuento.cantidad">
                                                 <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                             </td>
-                                            <td style="width:130px;" class="align"><input type="number" step="any" :name="`precio[${i}]`" 
+                                            <td style="width:130px;" class="align"><input type="number" step="any" :name="`precio[${i}]`"
                                                         data-vv-as="Precio"  v-validate="{required:true, min_value:0.01, decimal:4}"
                                                         class="form-control float-right align" id="precio" placeholder="Precio"
                                                         v-model="descuento.precio" :class="{'is-invalid': errors.has(`precio[${i}]`)}">
@@ -73,7 +73,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @click="cerrar()">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" v-if="$root.can('editar_descuento_estimacion_subcontrato')">Actualizar</button>
+                                <button type="submit" class="btn btn-primary"  v-if="$root.can(['registrar_descuento_estimacion_subcontrato','eliminar_descuento_estimacion_subcontrato'])">Actualizar</button>
                             </div>
                             </form>
                         </div>

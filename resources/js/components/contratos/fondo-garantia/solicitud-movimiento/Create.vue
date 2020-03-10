@@ -204,6 +204,7 @@
                 this.referencia = '';
                 this.importe = '';
                 this.observaciones = '';
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.cargando = false;
                 this.$validator.reset()

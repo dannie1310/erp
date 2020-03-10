@@ -224,6 +224,7 @@
                 })
                 .finally(() => {
                     this.cargando = false;
+                    $(this.$refs.modalEditSucursal).appendTo('body')
                     $(this.$refs.modalEditSucursal).modal('show');
                 })
             },
@@ -253,4 +254,3 @@
 <style>
 
 </style>
-                

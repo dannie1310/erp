@@ -115,7 +115,7 @@
 <script>
     import {ModelListSelect} from 'vue-search-select';
     export default {
-        name: "material-create",
+        name: "servicio-create",
         components: {ModelListSelect},
         data() {
             return {

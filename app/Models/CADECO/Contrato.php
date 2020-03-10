@@ -31,4 +31,14 @@ class Contrato extends Model
     ];
 
     public $timestamps = false;
+
+    public function contrato()
+    {
+        return $this->belongsTo(ContratoProyectado::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function destino()
+    {
+        return $this->belongsTo(Destino::class, 'id_transaccion', 'id_transaccion')->where('id_concepto_contrato', '=', $this->id_concepto);
+    }
 }

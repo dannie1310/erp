@@ -47,6 +47,7 @@ class CtgEfos extends Model
 
     public function reg($file)
     {
+        DB::connection('seguridad')->beginTransaction();
         if($file == null) {
             abort(403, 'Archivo CSV inválido');
         }
@@ -58,6 +59,9 @@ class CtgEfos extends Model
             $this->truncate();
 
         $efos=$this->getCsvData($file);
+        if(!count($efos)>0){
+            abort(500, 'El procesamiento del archivo no arrojó EFOS');
+        }
 
         try {
         foreach ($efos as $efo){
@@ -94,63 +98,70 @@ class CtgEfos extends Model
         $estado = array('DEFINITIVO', 'DESVIRTUADO', 'PRESUNTO', 'SENTENCIAFAVORABLE');
         while(!feof($myfile)) {
             $renglon = explode(",",fgets($myfile));
-            if($linea <= 3){
-                $linea++;
-            }else{
-                if(is_numeric($renglon[0]))
+            if(is_numeric($renglon[0]))
+            {
+                if($renglon[1] == '')
                 {
-                    if($renglon[1] == '')
+                    abort(400,'---Verificar RFC vacio No'.$renglon[0]);
+                }
+                if(substr_count($renglon[1], substr($renglon[1], 0,1)) <= 6)
+                {
+                    while (!in_array(str_replace(' ', '', strtoupper($renglon[$t])), $estado))
                     {
-                        abort(400,'---Verificar RFC vacio No'.$renglon[0]);
+                        $razon = $razon.$renglon[$t];
+                        $t++;
                     }
-                    if(substr_count($renglon[1], substr($renglon[1], 0,1)) > 6)
+                    if($renglon[$t + 2] == '' || strlen($razon) === 0)
                     {
-                    }else{
-                        while (!in_array(str_replace(' ', '', strtoupper($renglon[$t])), $estado))
+                        abort(400,(($renglon[$t + 2] =='')? "--Verificar Fecha de Publicación de la página del  SAT \n":"")
+                            .((strlen($razon) === 0)? "--Verificar Razon Social\n":"").'------- Registro '. $renglon[0].' -------');
+                    }
+                    if (!mb_check_encoding($renglon[1],'UTF-8'))
+                    {
+                        $renglon[1] = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $renglon[1]);
+                    }
+                    if (!mb_check_encoding($razon,'UTF-8'))
+                    {
+                        $razon = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $razon);
+                    }
+                    $fecha_presunto = (!isset($renglon[$t + 2])) ? '' : $renglon[$t + 2];
+                    $fecha_presunto_obj = DateTime::createFromFormat('d/m/Y', $fecha_presunto);
+                    if($fecha_presunto_obj)
+                    {
+                        $fecha_presunto_f = $fecha_presunto_obj->format('Y-m-d');
+                    }
+
+                    $fecha_definitivo = (!isset($renglon[$t + 10])) ? '' : $renglon[$t + 10];
+                    if($fecha_definitivo != '')
+                    {
+                        $fecha_definitivo_obj = DateTime::createFromFormat('d/m/Y', $fecha_definitivo);
+                        if($fecha_definitivo_obj)
                         {
-                            $razon = $razon.$renglon[$t];
-                            $t++;
+                            $fecha_definitivo_f = $fecha_definitivo_obj->format('Y-m-d');
                         }
-                        if($renglon[$t + 2] == '' || strlen($razon) === 0)
-                        {
-                            abort(400,(($renglon[$t + 2] =='')? "--Verificar Fecha de Publicación de la página del  SAT \n":"")
-                                .((strlen($razon) === 0)? "--Verificar Razon Social\n":"").'------- Registro '. $renglon[0].' -------');
-                        }
-                        if (!mb_check_encoding($renglon[1],'UTF-8'))
-                        {
-                            $renglon[1] = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $renglon[1]);
-                        }
-                        if (!mb_check_encoding($razon,'UTF-8'))
-                        {
-                            $razon = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $razon);
-                        }
-                        $fecha_definitivo = (!isset($renglon[$t + 10])) ? '' : $renglon[$t + 10];
-                        if($fecha_definitivo != '')
-                        {
-                            if(DateTime::createFromFormat('d/m/y', $fecha_definitivo))
-                            {
-                                $fecha_definitivo = DateTime::createFromFormat('d/m/y', $fecha_definitivo);
-                                $fecha_definitivo = $fecha_definitivo->format('d-m-Y');
-                            }
-                            $fecha_definitivo =  str_replace('/','-', $fecha_definitivo);
-                        }
+                    }
+                    try{
                         $content[] = array(
                             'rfc' => $renglon[1],
                             'razon_social' => (str_replace('"','', $razon)),
-                            'fecha_presunto' => date("Y-m-d", strtotime($renglon[$t + 2])),
-                            'fecha_definitivo' => ($fecha_definitivo != '') ? date("Y-m-d", strtotime($fecha_definitivo)) : NULL,
+                            'fecha_presunto' => $fecha_presunto_f,
+                            'fecha_definitivo' => ($fecha_definitivo_f != '') ? $fecha_definitivo_f : NULL,
                             'estado' => str_replace(' ', '', strtoupper($renglon[$t]))
                         );
-                        $linea++;
-                        $t = 2;
-                        $razon = '';
                     }
-                }else
-                {
+                    catch (Error $e){
+                        abort(400, $e->getMessage());
+                    }
+
                     $linea++;
                     $t = 2;
                     $razon = '';
                 }
+            }else
+            {
+                $linea++;
+                $t = 2;
+                $razon = '';
             }
         }
         return $content;
@@ -158,6 +169,11 @@ class CtgEfos extends Model
 
     private function guardarCsv($file, $file_fingerprint)
     {
+        if (config('filesystems.disks.lista_efos.root') == storage_path())
+        {
+            abort(403,'No existe el directorio destino: STORAGE_LISTA_EFOS. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
+
         $nombre = 'actualizacion '.date('d-m-Y').'.csv';
         $log = CtgEfosLog::create([
             'nombre_archivo' => $nombre,

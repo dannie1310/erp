@@ -82,6 +82,7 @@
                 this.file = null;
                 this.$validator.errors.clear();
 
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
             cerrarModal(event) {

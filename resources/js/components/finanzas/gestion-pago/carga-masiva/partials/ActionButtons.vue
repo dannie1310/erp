@@ -1,10 +1,9 @@
 <template>
-    <div class="btn-group" v-if="value.id">
-        <button @click="show()" type="button" class="btn btn-sm btn-outline-success" title="Autorizar" v-if="value.autorizar && $root.can('autorizar_carga_layout_pago')">
+    <div class="btn-group">
+        <button @click="autorizar()" type="button" class="btn btn-sm btn-outline-success" title="Autorizar" v-if="value.autorizar && $root.can('autorizar_carga_layout_pago')">
             <i class="fa fa-check"></i>
         </button>
         <button @click="ver" v-if="value.show" type="button" class="btn btn-sm btn-outline-secondary" title="Ver"><i class="fa fa-eye"></i></button>
-
     </div>
 </template>
 <script>
@@ -21,7 +20,7 @@
         methods: {
             destroy() {
             },
-            show() {
+            autorizar() {
                 this.$router.push({name: 'autorizar-layout', params: {id: this.value.id}});
             },
             ver() {

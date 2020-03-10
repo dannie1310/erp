@@ -116,7 +116,7 @@
                                     {{ sucursal.observaciones }}
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -149,6 +149,7 @@ export default {
                 })
                 .finally(() => {
                     this.cargando = false;
+                    $(this.$refs.modalShowSucursal).appendTo('body');
                     $(this.$refs.modalShowSucursal).modal('show');
                 })
             },

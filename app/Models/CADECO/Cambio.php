@@ -18,5 +18,12 @@ class Cambio extends Model
     protected $table = 'cambios';
     protected $primaryKey = 'id_moneda';
 
+    public function moneda(){
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function getCambioFormatAttribute(){
+        return '$ ' . number_format($this->cambio, 4);
+    }
 
 }
