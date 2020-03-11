@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\CADECO\FinanzasCBE\Solicitud;
 use Illuminate\Database\Eloquent\Model;
 
 class SolicitudEdicion extends Model
@@ -20,6 +21,12 @@ class SolicitudEdicion extends Model
     public function partidas()
     {
         return $this->hasMany(SolicitudEdicionPartida::class,"id_solicitud_edicion","id");
+    }
+
+    public static function getFolio()
+    {
+        $solicitud = Solicitud::orderBy('numero_folio', 'DESC')->first();
+        return $solicitud ? $solicitud->NumeroFolioAlt + 1 : 1;
     }
 
 }
