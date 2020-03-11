@@ -16,7 +16,7 @@
                     <div class="modal-body" v-if="factura">
                         <div class="row">
                             <div class="col-md-12">
-                                <button type="button" @click="prepoliza(factura.poliza.id)" class="btn btn-primary float-right" v-if="factura.poliza && $root.can('consultar_prepolizas_generadas')"> Ver Prepóliza</button>
+                                <button type="button" @click="prepoliza(factura.poliza.id)" class="btn btn-primary float-right" v-if="factura.poliza && $root.can('consultar_prepolizas_generadas') && factura.estado > 0"> Ver Prepóliza</button>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group error-content">
