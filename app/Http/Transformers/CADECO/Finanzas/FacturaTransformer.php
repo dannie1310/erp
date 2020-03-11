@@ -10,6 +10,7 @@ use App\Http\Transformers\CADECO\CambioTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\ContraReciboTransformer;
+use App\Http\Transformers\CADECO\Contabilidad\PolizaTransformer;
 use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoTransformer;
 
 class FacturaTransformer extends TransformerAbstract
@@ -24,6 +25,7 @@ class FacturaTransformer extends TransformerAbstract
         'moneda',
         'complemento',
         'cambio',
+        'poliza',
 
     ];
 
@@ -98,6 +100,14 @@ class FacturaTransformer extends TransformerAbstract
     {
         if ($moneda = $model->moneda) {
             return $this->item($moneda, new MonedaTransformer);
+        }
+        return null;
+    }
+
+    public function includePoliza(Factura $model)
+    {
+        if ($poliza = $model->poliza) {
+            return $this->item($poliza, new PolizaTransformer);
         }
         return null;
     }
