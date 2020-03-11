@@ -42,7 +42,7 @@ class FacturaService
 
     public function show($id)
     {
-        return $this->repository->show($id);
+        return $this->repository->show($id)->validarPrepoliza();
     }
 
     public function delete($data, $id)
