@@ -485,8 +485,11 @@ class FacturaService
 
     private function validaTotal($total)
     {
-        if (abs($this->arreglo_factura["total"] - $total) > 0.99) {
+        /*if (abs($this->arreglo_factura["total"] - $total) > 0.99) {
             abort(500, "El monto ingresado no corresponde al monto en el comprobante digital");
+        }*/
+        if ($total > ($this->arreglo_factura["total"] +0.99)) {
+            abort(500, "El monto ingresado supera al monto en el comprobante digital");
         }
     }
 
