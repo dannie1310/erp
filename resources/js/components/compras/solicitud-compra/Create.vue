@@ -1,6 +1,7 @@
 <template>
-    <nav>
-        <div class="row">
+    <span>
+        <nav>
+            <div class="row">
             <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <form role="form" @submit.prevent="validate">
@@ -8,7 +9,7 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group error-content">
-                                        <label for="fecha" class="col-form-label">Fecha:</label>
+                                        <label class="col-form-label">Fecha:</label>
                                         <datepicker v-model = "fecha"
                                                     name = "fecha"
                                                     :format = "formatoFecha"
@@ -40,7 +41,7 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_compradora')">{{ errors.first('id_area_compradora') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="id_tipo">Tipo</label>
                                         <select class="form-control"
@@ -56,7 +57,7 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_tipo')">{{ errors.first('id_tipo') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="id_area_solicitante">Área Solicitante</label>
                                         <select class="form-control"
@@ -72,6 +73,36 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_solicitante')">{{ errors.first('id_area_solicitante') }}</div>
                                     </div>
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Fecha Requisición Origen:</label>
+                                        <datepicker v-model = "fecha_req"
+                                                    name = "fecha_req"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :disabled-dates="fechasDeshabilitadas"
+                                                    :class="{'is-invalid': errors.has('fecha_req')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha_req')">{{ errors.first('fecha_req') }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Folio Requisición Origen</label>
+                                        <input
+                                                 style="text-align:right;"
+                                                 :disabled="true"
+                                                 type="text"
+                                                 data-vv-as="total"
+                                                 class="form-control"
+                                                 placeholder="folio_req"
+                                                v-model="folio_req" />
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
@@ -95,16 +126,6 @@
                                 </div>
                             </div>
                             <hr />
-                            <div class="d-flex flex-row-reverse">
-                                <div class="p-2">
-                                    <button  type="button" :disabled="cargando" class="btn btn-info" @click="lista">
-                                        <i v-show="!cargando" class="fa fa-list-ul "></i>
-                                        <i v-show="cargando" class="spinner-border spinner-border-sm"></i>
-                                        Lista de Materiales</button>
-                                    &nbsp;
-                                    <Layout v-model="partidas"></Layout>
-                                </div>
-                            </div>
                             <div class="row">
                                 <div  class="col-md-12 table-responsive-xl">
                                     <div>
@@ -276,155 +297,268 @@
                 </div>
             </div>
         </div>
-    </nav>
+        </nav>
+        <nav>
+            <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row error-content">
+                                        <label class="col-sm-2 col-form-label">Conceptos:</label>
+                                        <div class="col-sm-10">
+                                            <concepto-select
+                                                name="id_concepto"
+                                                data-vv-as="Concepto"
+                                                id="id_concepto"
+                                                v-model="id_concepto_temporal"
+                                                :error="errors.has('id_concepto')"
+                                                ref="conceptoSelect"
+                                                :disableBranchNodes="false"
+                                            ></concepto-select>
+                                            <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </nav>
+    </span>
 </template>
 
 <script>
-    import MaterialSelect from "../../cadeco/material/SelectAutocomplete"
-    import SelectDestino from "../../cadeco/destino/Select";
+    import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
+    import {ModelListSelect} from 'vue-search-select';
+    import ConceptoSelect from "../../cadeco/concepto/Select";
     export default {
         name: "solicitud-compra-create",
-        components: {MaterialSelect, SelectDestino},
+        components: {Datepicker, ModelListSelect, es,ConceptoSelect},
         data(){
             return{
-                areas_compradoras: [],
-                areas_solicitantes:[],
-                tipos: [],
-                marcas: [],
-                modelos: [],
                 cargando: false,
-                disabled: true,
-                index:0,
-                id_area_compradora: '',
-                id_area_solicitante: '',
-                id_tipo: '',
-                fecha_requisicion: '',
-                folio_requisicion: '',
-                concepto: '',
-                observaciones: '',
-                destino: '',
-                items: [
+                es:es,
+                fechasDeshabilitadas:{},
+                fechasDeshabilitadasHasta:{},
+                fecha : '',
+                fecha_req : '',
+                fecha_hoy : '',
+                id_material: '',
+                areas_compradoras : [],
+                areas_solicitantes : [],
+                tipos : [],
+                id_area_compradora : '',
+                id_concepto_temporal : '',
+                id_tipo : '',
+                materiales : [],
+                id_area_solicitante : '',
+                concepto : '',
+                observaciones : '',
+                unidades : [],
+                t: '',
+                folio_req : '',
+                destino_seleccionado: {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                },
+                partidas: [
                     {
-                        aux:'',
-                        material: "",
-                        id_material:"",
-                        numero_parte: "",
-                        marca: "",
-                        modelo: "",
-                        cantidad:"",
-                        unidad: "",
-                        fecha:"",
-                        destino:"",
-                        id_destino:"",
-                        observaciones:"",
-                        destino_concepto: null,
-                        destino_almacen: null,
+                        i : 0,
+                        material : "",
+                        unidad : "",
+                        numero_parte : "",
+                        descripcion : "",
+                        cantidad : "",
+                        fecha : "",
+                        observaciones : "",
+                        concepto_temporal : ""
                     }
                 ],
             }
-
         },
         mounted() {
             this.$validator.reset()
             this.getAreasCompradoras();
-            this.getTipos();
             this.getAreasSolicitantes();
-            this.getMarcas();
-            this.getModelos();
+            this.getTipos();
+            this.getUnidades();
+            this.getMateriales();
         },
         methods : {
-            getAreasCompradoras(){
+            init() {
+                this.fecha = new Date();
+                this.cargando = true;
+                this.areas_compradoras = '';
+                this.areas_solicitantes = [];
+                this.tipos = [];
+                this.id_area_compradora = '';
+                this.id_tipo = '';
+                this.id_area_solicitante = '';
+                this.concepto = '';
+                this.observaciones = '';
+                this.id_concepto_temporal = '';
+                this.unidades = [];
+                this.partidas = [{
+                    i : 0,
+                    material : "",
+                    unidad : "",
+                    numero_parte : "",
+                    descripcion : "",
+                    cantidad : "",
+                    fecha : "",
+                    observaciones : "",
+                    concepto_temporal : ""
+                }];
+            },
+            changeSelect(item){
+                var busqueda = this.materiales.find(x=>x.id === item.id_material);
+                if(busqueda != undefined)
+                {
+                    item.material = busqueda;
+                }
+            },
+            modalDestino(i) {
+                this.partidas[i].clave_concepto = '';
+                this.destino_seleccionado.destino = '';
+                this.index_temporal = i;
+                $(this.$refs.modal_destino).modal('show');
+            },
+            cerrarModalDestino(){
+                this.id_concepto_temporal = '';
+                $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
+            },
+            idAndNumeroParteAndDescripcion (item) {
+                return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
+            },
+            formatoFecha(date){
+                return moment(date).format('DD/MM/YYYY');
+            },
+            getAreasCompradoras() {
+                this.fecha_hoy = new Date();
+                this.fecha = new Date();
+                this.fechasDeshabilitadas.from= new Date();
+                this.fechasDeshabilitadasHasta.to= new Date();
                 return this.$store.dispatch('configuracion/area-compradora/index', {
-                    params: { scope: 'asignadas', sort: 'descripcion',  order: 'asc'}
+                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_compradoras = data;
                         this.disabled = false;
                     })
             },
+            getUnidades() {
+                return this.$store.dispatch('cadeco/unidad/index', {
+                    params: {sort: 'unidad',  order: 'asc'}
+                })
+                    .then(data => {
+                        this.unidades= data.data;
+                    })
+            },
             getTipos() {
                 return this.$store.dispatch('configuracion/ctg-tipo/index', {
-                    params: {sort: 'descripcion',  order: 'asc'}
+                    params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.tipos = data.data;
                         this.disabled = false;
                     })
             },
-            getAreasSolicitantes(){
+            seleccionarDestino() {
+                this.partidas[this.index_temporal].destino = this.destino_seleccionado.destino;
+                this.partidas[this.index_temporal].clave_concepto = this.destino_seleccionado.destino;
+                this.index_temporal = '';
+                this.destino_seleccionado = {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                };
+                this.id_concepto_temporal = '';
+
+                $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
+            },
+            getConcepto() {
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: this.destino_seleccionado.id_destino,
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.destino_seleccionado.destino = data;
+                        this.seleccionarDestino();
+                    })
+            },
+            getAreasSolicitantes() {
                 return this.$store.dispatch('configuracion/area-solicitante/index', {
-                    params: { scope: 'asignadas', sort: 'descripcion',  order: 'asc'}
+                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
-                      this.areas_solicitantes = data;
+                        this.areas_solicitantes = data;
                         this.disabled = false;
                     })
             },
-            addRow(index){
-                    this.items.splice(index + 1, 0, {});
-                    this.index = index+1;
-            },
-            removeRow(index){
-                this.items.splice(index, 1);
-            },
-            getMarcas() {
-                return this.$store.dispatch('sci/marca/index',{
-                    params: { sort: 'marca', order: 'asc'}
-                })
-                    .then(data => {
-                       this.marcas = data.data;
-                    })
-                    .finally(() => {
-                        this.disabled = false;
-                    })
-            },
-            getModelos(){
-                return this.$store.dispatch('sci/modelo/index',{
-                    params: { sort: 'modelo', order: 'asc'}
-                })
-                    .then(data => {
-                      this.modelos = data.data;
-                    })
-                    .finally(() => {
-                        this.disabled = false;
-                    })
+            addPartidas(){
+                this.partidas.splice(this.partidas.length + 1, 0, {
+                    i : 0,
+                    material : "",
+                    descripcion : "",
+                    unidad : "",
+                    numero_parte : "",
+                    cantidad : "",
+                    fecha : "",
+                    observaciones : "",
+                    concepto_temporal : ""
+                });
+                this.index = this.index+1;
             },
             salir(){
                 this.$router.push({name: 'solicitud-compra'});
             },
-            store() {
-                return this.$store.dispatch('compras/solicitud-compra/store',  this.$data )
-                    .then((data) => {
-                        $(this.$refs.modal).modal('hide');
-                        this.$emit('created',data)
-
+            destroy(index){
+                this.partidas.splice(index, 1);
+            },
+            manual(index){
+                this.partidas[index].material = ""
+                this.partidas[index].id_material = ""
+                this.partidas[index].i = 1;
+            },
+            busqueda(index){
+                this.partidas[index].unidad = ""
+                this.partidas[index].descripcion = ""
+                this.partidas[index].numero_parte = ""
+                this.partidas[index].material = ""
+                this.partidas[index].id_material = ""
+                this.partidas[index].i = 0;
+            },
+            getMateriales() {
+                this.materiales = [];
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/material/index', {
+                    params: {
+                        scope: 'requisicion',
+                    }
+                })
+                    .then(data => {
+                        this.materiales = data.data;
+                        this.cargando = false;
                     })
-
-            },
-            setRowValues(material,i){
-                this.items[i].id_material = material.id;
-                this.items[i].numero_parte = material.numero_parte;
-                this.items[i].unidad = material.unidad;
-                this.items[i].material_status = true;
-            },
-            setDestinoValues(dest, i){
-
-                if(dest.text){
-                    /*Almacen*/
-                    this.items[i].destino_concepto=false;
-                    this.items[i].destino_almacen=true;
-                    this.items[i].id_destino = dest.value;
-                    this.items[i].destino = dest.text;
-                }
-                if(dest.path){
-                   /*Concepto*/
-                    this.items[i].destino_concepto=true;
-                    this.items[i].destino_almacen=false;
-                    this.items[i].id_destino = dest.id;
-                    this.items[i].destino = dest.path;
-
-                }
-
             },
             validate() {
                 this.$validator.validate().then(result => {
@@ -433,23 +567,37 @@
                     }
                 });
             },
+            store() {
+                this.t = 0;
+                this.m = 0;
+                while(this.t < this.partidas.length){
+                    if(typeof this.partidas[this.t].clave_concepto === 'undefined' || this.partidas[this.t].clave_concepto === '')
+                    {
+                        this.m ++;
+                        swal('¡Error!', 'Ingrese un destino válido en partida '+(this.t + 1) +'.', 'error');
+                    }
+                    this.t ++;
+                }if(this.m == 0)
+                {
+                    return this.$store.dispatch('compras/requisicion/store', this.$data)
+                        .then((data) => {
+                            this.$router.push({name: 'requisicion'});
+                        });
 
+                }
+            },
         },
-        computed :{
-            areas(){
-                return this.$store.getters['configuracion/area-compradora/areas']
+        watch: {
+            id_concepto_temporal(value){
+                if(value !== '' && value !== null && value !== undefined){
+                    this.destino_seleccionado.id_destino = value;
+                    this.getConcepto();
+                }
             },
         }
-
     }
 </script>
 
 <style>
-    .error > .vue-treeselect__control {
-        border-color: #dc3545
-    }
-     .error {
-         border-color: #dc3545
-     }
 
 </style>
