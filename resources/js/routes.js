@@ -92,6 +92,42 @@ export const routes = [
                 ]
             },
             {
+                path: 'solicitud-edicion-poliza',
+                component: require('./components/contabilidad-general/solicitudes-edicion/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"solicitud-edicion-poliza",
+                        component: require('./components/contabilidad-general/solicitudes-edicion/Index.vue').default,
+                        meta: {
+                            title: 'Solicitudes de Edición',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'SOLICITUDES DE EDICIÓN'},
+                            middleware: [auth, permission],
+                            permission: ['editar_poliza','consultar_poliza'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path:"solicitud-edicion-poliza/carga-masiva",
+                component: require('./components/contabilidad-general/solicitudes-edicion/carga-masiva/Create.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"solicitud-edicion-carga-masiva",
+                        component: require('./components/contabilidad-general/solicitudes-edicion/carga-masiva/Create.vue').default,
+                        meta: {
+                            title: 'Carga masiva',
+                            breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'CARGA MASIVA'},
+                            middleware: [auth, permission],
+                            permission: ['editar_poliza','consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ],
+            },
+            {
                 path: 'cfd-sat',
                 component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
                 children:[
