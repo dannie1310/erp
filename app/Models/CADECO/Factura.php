@@ -414,4 +414,12 @@ class Factura extends Transaccion
     {
         DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
     }
+
+    public function validarPrepoliza(){
+        if(!$this->poliza){
+            DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+            return $this->find($this->id_transaccion);
+        }
+        return $this;
+    }
 }
