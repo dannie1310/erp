@@ -42,7 +42,7 @@ class FacturaService
 
     public function show($id)
     {
-        return $this->repository->show($id);
+        return $this->repository->show($id)->validarPrepoliza();
     }
 
     public function delete($data, $id)
@@ -139,23 +139,39 @@ class FacturaService
     private function setArregloFactura($archivo_xml)
     {
         try {
+            //dd($archivo_xml);
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
-            $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
-            $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
-            $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
-            $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
-            $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
-            $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
+            if(!$factura_xml){
+                $factura_xml = new \SimpleXMLElement(file_get_contents($archivo_xml));
+            }
+        } catch (\Exception $e) {
+            abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
+        }
+
+        $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
+        $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
+        $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
+        $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
+        $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
+        $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
+
+        try{
+
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["nombre"] = (string)$emisor["Nombre"][0];
+
+        }catch (\Exception $e) {
+            abort(500, "Hubo un error al leer el emisor: " . $e->getMessage());
+        }
+        try{
+
             $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
             $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
             $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
-
-        } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
+        }catch (\Exception $e) {
+            abort(500, "Hubo un error al leer el receptor: " . $e->getMessage());
         }
 
         try {
@@ -485,8 +501,11 @@ class FacturaService
 
     private function validaTotal($total)
     {
-        if (abs($this->arreglo_factura["total"] - $total) > 0.99) {
+        /*if (abs($this->arreglo_factura["total"] - $total) > 0.99) {
             abort(500, "El monto ingresado no corresponde al monto en el comprobante digital");
+        }*/
+        if ($total > ($this->arreglo_factura["total"] +0.99)) {
+            abort(500, "El monto ingresado supera al monto en el comprobante digital");
         }
     }
 
