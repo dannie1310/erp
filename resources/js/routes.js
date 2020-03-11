@@ -57,6 +57,97 @@ export const routes = [
         }
     },
     {
+        path: '/contabilidad-general',
+        components:  {
+            default: require('./components/contabilidad-general/partials/Layout.vue').default,
+            menu: require('./components/contabilidad-general/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'contabilidad-general',
+                meta: {
+                    title: 'CONTABILIDAD GENERAL',
+                    middleware: [auth, permission],
+                    permission: ['editar_poliza','configurar_visibilidad_empresa_ctpq','configurar_editabilidad_empresa_ctpq','consultar_log_edicion_poliza'],
+                    general: true
+                }
+            },
+            {
+                path: 'polizas',
+                component: require('./components/contabilidad-general/poliza/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"poliza-contpaq",
+                        component: require('./components/contabilidad-general/poliza/Index.vue').default,
+                        meta: {
+                            title: 'Pólizas',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'PÓLIZAS'},
+                            middleware: [auth, permission],
+                            permission: ['editar_poliza','consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'cfd-sat',
+                component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cfd-sat",
+                        component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
+                        meta: {
+                            title: 'CFD SAT',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CFD SAT'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'lista-empresa',
+                component: require('./components/contabilidad-general/empresas/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"lista-empresa",
+                        component: require('./components/contabilidad-general/empresas/Index.vue').default,
+                        meta: {
+                            title: 'Empresas',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'EMPRESAS'},
+                            middleware: [auth, permission],
+                            permission: ['configurar_visibilidad_empresa_ctpq','configurar_editabilidad_empresa_ctpq'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'consolidacion',
+                component: require('./components/contabilidad-general/consolidacion/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"consolidacion",
+                        component: require('./components/contabilidad-general/consolidacion/Index.vue').default,
+                        meta: {
+                            title: 'Consolidación',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CONSOLIDACIÓN'},
+                            middleware: [auth, permission],
+                            permission: ['editar_empresa_consolidadora'],
+                            general: true
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
         path: '/control-interno',
         name: 'control-interno',
         components:  {
@@ -1091,7 +1182,7 @@ export const routes = [
                         component: require('./components/contratos/estimacion/Create').default,
                         meta: {
                             title: 'Estimaciones',
-                            breadcrumb: {parent: 'estimacion', name: 'NUEVA'},
+                            breadcrumb: {parent: 'estimacion', name: 'REGISTRAR'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_estimacion_subcontrato'
                         }
@@ -1099,6 +1190,7 @@ export const routes = [
                     {
                         path: ':id/eliminar',
                         name: 'estimacion-delete',
+                        props: true,
                         component: require('./components/contratos/estimacion/Delete').default,
                         meta: {
                             title: 'Eliminar Estimación',
@@ -1110,21 +1202,23 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'estimacion-show',
+                        props: true,
                         component: require('./components/contratos/estimacion/Show').default,
                         meta: {
                             title: 'Información de Estimación',
                             breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
-                            middleware: [auth, context,],
+                            middleware: [auth, context],
 
                         }
                     },
                     {
                         path: ':id/editar',
                         name: 'estimacion-edit',
+                        props: true,
                         component: require('./components/contratos/estimacion/Edit').default,
                         meta: {
                             title: 'Editar Estimación',
-                            breadcrumb: {parent: 'estimacion', name: 'EDITAR ESTIMACIÓN'},
+                            breadcrumb: {parent: 'estimacion', name: 'EDITAR'},
                             middleware: [auth, context, permission],
                             permission: 'editar_estimacion_subcontrato'
 
@@ -1560,6 +1654,7 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'autorizar-layout',
+                        props: true,
                         component: require('./components/finanzas/gestion-pago/carga-masiva/Autorizar').default,
                         meta: {
                             title: 'Autorizar Layouts',

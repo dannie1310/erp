@@ -142,6 +142,7 @@
                         porcentaje : 0,
                 };
                 this.rfc = '';
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.rfcValidate =  false;
             },

@@ -1,0 +1,37 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: EMartinez
+ * Date: 28/02/2020
+ * Time: 05:46 PM
+ */
+
+namespace App\Models\SEGURIDAD_ERP\Contabilidad;
+
+
+use Illuminate\Database\Eloquent\Model;
+
+class CargaCFDSAT extends Model
+{
+    protected $connection = 'seguridad';
+    protected $table = 'SEGURIDAD_ERP.Contabilidad.cargas_cfd_sat';
+    public $timestamps = false;
+    protected $fillable =[
+        "nombre_archivo_zip"
+        ,"archivos_leidos"
+        ,"archivos_cargados"
+        ,"archivos_no_cargados"
+        ,"archivos_preexistentes"
+        ,"archivos_receptor_no_valido"
+        ,"archivos_no_cargados_error_app"
+        ,"proveedores_nuevos"
+        ,"fecha_hora_fin"
+        ,"usuario_cargo"
+    ];
+
+    public function cfd()
+    {
+        return $this->hasMany(CFDSAT::class, 'id_carga_cfd_sat', 'id');
+    }
+
+}

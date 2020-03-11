@@ -22,4 +22,14 @@ class MaterialObserver
         $material->FechaHoraRegistro = date('Y-m-d h:i:s');
         $material->UsuarioRegistro = auth()->user()->usuario;
     }
+
+    public function deleting(Material $material)
+    {
+        $material->validarModificar('eliminar');
+    }
+
+    public function updating(Material $material)
+    {
+        $material->validarModificar('editar');
+    }
 }

@@ -31,7 +31,7 @@ class Item extends Model
         'precio_material',
         'precio_mano_obra',
     ];
-    
+
     public function almacen()
     {
         return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
@@ -44,12 +44,12 @@ class Item extends Model
 
     public function getCantidadFormatAttribute()
     {
-        return number_format($this->cantidad,2,'.', ',');
+        return number_format($this->cantidad,3,'.', ',');
 
     }
     public function getCantidadDecimalAttribute()
     {
-        return round($this->cantidad,2);
+        return round($this->cantidad,3);
 
     }
     /**

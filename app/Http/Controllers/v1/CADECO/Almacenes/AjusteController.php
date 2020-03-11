@@ -42,6 +42,7 @@ class AjusteController extends Controller
      */
     public function __construct(AjusteService $service, AjusteTransformer $transformer, Manager $fractal)
     {
+        // dd('ajuste  de inventario');
         $this->middleware('auth:api');
         $this->middleware('context');
 

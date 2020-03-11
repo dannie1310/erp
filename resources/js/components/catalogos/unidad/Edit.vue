@@ -13,7 +13,7 @@
                         </button>
                     </div>
                     <div class="modal-body" v-if="res">
-                        
+
                         <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
@@ -30,7 +30,7 @@
                                                 placeholder="######"
                                                 :class="{'is-invalid': errors.has('unidad')}">
                                             <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
-                                        </div>                                        
+                                        </div>
                                         <label for="descripcion" class="col-sm-2 col-form-label" style="text-align:right;">Descripción: </label>
                                         <div class="col-sm-5">
                                             <input
@@ -83,7 +83,7 @@ export default {
     },
     methods: {
         update() {
-            
+
             if(this.campo1 == this.res.unidad && this.campo2 == this.res.descripcion)
             {
                 swal('¡Error!', 'El campo Unidad ó Descripción no tienen valores actualizados.', 'error')
@@ -95,7 +95,7 @@ export default {
                        params: this.$data.t
                    })
                    .then(() => {
-                       this.$store.dispatch('cadeco/unidad/paginate', {params: {sort: 'FechaHoraRegistro', order: 'desc'}})
+                       this.$store.dispatch('cadeco/unidad/paginate', {params: {sort: 'descripcion', order: 'asc'}})
                        .then(data => {
                            this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
                            this.$store.commit('cadeco/unidad/SET_META', data.meta);
@@ -104,14 +104,14 @@ export default {
                        $(this.$refs.modal).modal('hide');
                    });
             }
-            
+
         },
         find(unidad) {
             this.cargando = true;
             this.t.unidad = '';
             this.t.descripcion = ';'
             this.res = '';
-            this.id = unidad.unidad;           
+            this.id = unidad.unidad;
 
                 this.$store.commit('cadeco/unidad/SET_UNIDAD', null);
                 return this.$store.dispatch('cadeco/unidad/find', {
@@ -122,6 +122,7 @@ export default {
                     this.campo1 = this.res.unidad;
                     this.campo2 = this.res.descripcion;
 
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;

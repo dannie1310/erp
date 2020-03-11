@@ -20,6 +20,19 @@ export default {
         SET_META(state, data) {
             state.meta = data;
         },
+        UPDATE_FACTURA(state, data) {
+            state.facturas = state.facturas.map(factura => {
+                if (factura.id === data.id) {
+                    return Object.assign([], factura, data)
+                }
+                return factura
+            })
+            state.currentFactura = data
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentFactura[data.attribute] = data.value
+        }
     },
 
     actions: {
@@ -99,6 +112,44 @@ export default {
                     .catch(error => {
                         reject(error);
                     })
+            });
+        },
+        revertir(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Revertir Factura",
+                    text: "¿Está seguro de revertir la factura?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Revertir',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id + "/revertir", { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Revisión de factura revertida correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
             });
         },
         cargarXML(context, payload) {

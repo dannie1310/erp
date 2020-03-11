@@ -3,7 +3,8 @@
         <div class="btn-group">
             <FacturaShow v-if="value.show" v-bind:id="value.id" />
             <PDF v-bind:id="value.id" @click="value.id" ></PDF>
-            <Eliminar  v-if="$root.can('eliminar_factura')" v-bind:id="value.id" v-bind:pagina="value.pagina" v-bind:borrar="value.borrar"></Eliminar>
+            <Eliminar v-if="value.borrar" v-bind:id="value.id" v-bind:pagina="value.pagina" />
+            <Revertir v-if="value.revertir" v-bind:id="value.id" />
         </div>
     </span>
 </template>
@@ -12,9 +13,10 @@
     import PDF from '../FormatoCR';
     import FacturaShow from "../Show";
     import Eliminar from '../Eliminar';
+    import Revertir from "../Revertir";
     export default {
         name: "action-buttons",
-        components: {PDF, FacturaShow, Eliminar},
+        components: {Revertir, PDF, FacturaShow, Eliminar},
         props: ['value'],
     }
 </script>

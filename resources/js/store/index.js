@@ -73,12 +73,22 @@ import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 
+//CONTABILIDAD GRAL
+
+import polizaGeneral from './modules/contabilidadGeneral/poliza';
+import empresaContabilidad from './modules/contabilidadGeneral/empresa';
+import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
+import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
+import CFDSAT from './modules/contabilidadGeneral/cfd-sat';
+
 //CONTRATOS
+import contratoConcepto from './modules/contratos/contrato-concepto';
+import contratoProyectado from './modules/contratos/contrato-proyectado';
 import estimacion from './modules/contratos/estimacion';
 import fondoGarantia from './modules/contratos/fondo-garantia';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
-import contratoProyectado from './modules/contratos/contrato-proyectado';
+
 
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
@@ -106,6 +116,7 @@ import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgEfos from './modules/seguridad/finanzas/ctg-efos';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
 import ctgtipo from './modules/configuracion/ctg-tipo';
+import listaEmpresas from './modules/seguridad/contabilidad/lista-empresa';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -116,6 +127,9 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
+import retencion from './modules/subcontratosEstimaciones/retencion';
+import retencionLiberacion from './modules/subcontratosEstimaciones/retencion-liberacion';
+import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 
 //IGH
 import usuario from "./modules/igh/usuario";
@@ -178,11 +192,12 @@ export default new Vuex.Store({
         'configuracion/nodo-tipo' : nodoTipo,
         'configuracion/nodo-proyecto' : nodoProyecto,
 
+        'contratos/contrato-concepto' : contratoConcepto,
+        'contratos/contrato-proyectado': contratoProyectado,
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
-        'contratos/contrato-proyectado': contratoProyectado,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,
@@ -221,6 +236,12 @@ export default new Vuex.Store({
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
         'contabilidad/transaccion-interfaz': transaccionInterfaz,
 
+        'contabilidadGeneral/poliza' :polizaGeneral,
+        'contabilidadGeneral/empresa' :empresaContabilidad,
+        'contabilidadGeneral/empresa-sat': empresaSAT,
+        'contabilidadGeneral/cfd-sat': CFDSAT,
+        'contabilidadGeneral/empresa-contpaq': empresaContpaq,
+
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
 
@@ -242,8 +263,12 @@ export default new Vuex.Store({
         'seguridad/sistema': sistema,
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
+        'seguridad/lista-empresas': listaEmpresas,
 
         'subcontratosEstimaciones/descuento': descuento,
+        'subcontratosEstimaciones/retencion': retencion,
+        'subcontratosEstimaciones/retencion-liberacion': retencionLiberacion,
+        'subcontratosEstimaciones/retencion-tipo': retencionTipo,
 
         'ventas/venta': venta,
     },

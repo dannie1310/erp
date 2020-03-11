@@ -25,7 +25,7 @@
                                                             <td>{{solicitudBaja.empresa.razon_social}}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Cuenta / CLABE:</th>
+                                                            <th>Cuenta / CLABE / Núm. Tarjeta:</th>
                                                             <td>{{solicitudBaja.cuenta}}</td>
                                                         </tr>
                                                     </tbody>
@@ -65,7 +65,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td><b>Tipo:</b></td>
-                                                            <td>{{solicitudBaja.tipo_cuenta}}</td>
+                                                            <td>{{solicitudBaja.tipo_cuenta.descripcion}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -144,10 +144,11 @@
                 this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/find', {
                     id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos.usuario',] }
+                    params: { include: ['moneda', 'subcontrato', 'tipo_cuenta', 'empresa','banco','tipo','plaza','movimientos.usuario',] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).draggable();
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },
@@ -155,6 +156,7 @@
                 var url = '/api/finanzas/gestion-cuenta-bancaria/solicitud-baja/pdf/' + this.id +'?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE BAJA DE CUENTA BANCARIA</iframe>');
                 $(this.$refs.modalPDF).draggable();
+                $(this.$refs.modalPDF).appendTo('body')
                 $(this.$refs.modalPDF).modal('show');
             },
         },

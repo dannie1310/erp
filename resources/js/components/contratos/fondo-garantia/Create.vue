@@ -104,6 +104,7 @@
             },
             init() {
                 cargando: true;
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.id_subcontrato = '';
                 this.retencion = '';

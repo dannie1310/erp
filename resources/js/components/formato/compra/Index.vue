@@ -88,6 +88,7 @@
         methods: {
             init() {
                 this.cargando = true;
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
 
                 this.id_empresa = '';
@@ -109,6 +110,7 @@
                     .then(data => {
                         this.empresas = data.data
                         if(this.empresas.length){
+                            $(this.$refs.modal).appendTo('body')
                             $(this.$refs.modal).modal('show');
                         }
                     })
@@ -125,6 +127,7 @@
                 }).then(data => {
                     this.ordenes_compras = data.ordenes_compra.data;
                     if(this.ordenes_compras.length){
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
 
                     }

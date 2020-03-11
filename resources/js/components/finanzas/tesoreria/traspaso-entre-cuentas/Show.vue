@@ -74,6 +74,7 @@
                     params: { include: 'cuentaOrigen.empresa,cuentaDestino.empresa' }
                 }).then(data => {
                     this.$store.commit('finanzas/traspaso-entre-cuentas/SET_TRASPASO', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
             }

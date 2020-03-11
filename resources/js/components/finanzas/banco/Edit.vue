@@ -61,6 +61,7 @@
                     id: this.id
                 }).then(data => {
                     this.$store.commit('cadeco/banco/SET_BANCO', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
             }

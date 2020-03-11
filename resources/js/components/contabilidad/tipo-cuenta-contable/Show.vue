@@ -67,6 +67,7 @@
                 })
                     .then(data => {
                         this.$store.commit('contabilidad/tipo-cuenta-contable/SET_TIPO', data);
+                        $(this.$refs.modal).appendTo('body')
                         $(this.$refs.modal).modal('show');
                     })
                     .finally(() => {

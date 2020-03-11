@@ -73,6 +73,7 @@
                 this.find({id: this.id}).then(data=>{
 
                     this.contrato_proyectado = data
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 })
                     .finally(() => {

@@ -5,15 +5,25 @@
                 <div class="invoice p-3 mb-3">
                      <form role="form" @submit.prevent="validate">
                          <div class="modal-body">
+                              <div class="d-flex flex-row-reverse">
+                                    <div class="p-3">
+                                        <button  type="button" v-if="id_almacen" class="btn btn-info" @click="lista">
+                                                <i class="fa fa-list-ul "></i>
+                                                 Lista de Materiales</button>
+                                        &nbsp;
+                                        <Layout @created="getMateriales()" v-if="id_almacen" v-model="items"></Layout>
+                                    </div>
+                                </div>
                              <div class="row" v-if="id_almacen">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
-                                            <div class="col-12">
+                                            <div class="col-12 table-responsive-xl">
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
                                                         <th class="bg-gray-light index_corto">#</th>
+                                                        <th class="bg-gray-light" style="width:120px;">No. de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
                                                         <th class="bg-gray-light th_unidad">Unidad</th>
                                                         <th class="bg-gray-light th_money_input">Cantidad Ingresada</th>
@@ -30,7 +40,8 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
-                                                        <td>
+                                                        <td>{{item.material.numero_parte}}</td>
+                                                        <td v-if="item.i === 2 ">
                                                             <model-list-select
                                                                     :name="`id_material[${i}]`"
                                                                     :disabled = "!bandera"
@@ -48,6 +59,23 @@
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
                                                             </div>
                                                         </td>
+                                                        <td v-else-if="item.i === 3">{{item.material.descripcion}}</td>
+                                                        <td v-else><model-list-select
+                                                                    :name="`id_material[${i}]`"
+                                                                    :disabled = "!bandera"
+                                                                    :onchange="changeSelect(item)"
+                                                                    placeholder="Seleccionar o buscar id, número de parte o descripción del material"
+                                                                    data-vv-as="Material"
+                                                                    v-validate="{required: true}"
+                                                                    v-model="item.id_material"
+                                                                    option-value="id"
+                                                                    :custom-text="idAndNumeroParteAndDescripcion"
+                                                                    :list="materiales"
+                                                                    :isError="errors.has(`id_material[${i}]`)">
+                                                            </model-list-select>
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
+                                                            </div></td>
                                                         <td>
                                                             {{item.material.unidad}}
                                                         </td>
@@ -63,7 +91,7 @@
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`cantidad[${i}]`"
-                                                                    v-model="item.material.cantidad"
+                                                                    v-model="item.cantidad"
                                                                     data-vv-as="Cantidad"
                                                                     v-validate="{required: true,min_value: 0.1}"
                                                                     class="form-control"
@@ -118,9 +146,10 @@
 
 <script>
     import {ModelListSelect} from 'vue-search-select';
+    import Layout from './CargaLayout'
     export default {
         name: "ajuste-positivo-create",
-        components:{ModelListSelect},
+        components:{ModelListSelect, Layout},
         propos:['id_almacen', 'referencia','fecha'],
 
         data() {
@@ -144,10 +173,15 @@
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
             },
             changeSelect(item){
+
                 var busqueda = this.materiales.find(x=>x.id === item.id_material);
                 if(busqueda != undefined)
                 {
                     item.material = busqueda;
+                    item.i = 3;
+                }
+                else{
+                    item.id_material = null;
                 }
             },
             getAlmacen(){
@@ -184,30 +218,16 @@
 
                     })
             },
-            /*getMateriales(id_almacen){
-                this.materiales = [];
-                this.cargando = true;
-                return this.$store.dispatch('cadeco/material/index', {
-                    params: {
-                        scope: ['inventariosDiferenciaSaldo:'+id_almacen],
-                        sort: 'descripcion',
-                        order: 'asc'
-                    }
-                })
-                    .then(data => {
-                        this.materiales = data.data;
-                        if( this.materiales.length != 0 ) {
-                            this.bandera = 1;
-                            this.cargando = false
-                        }
+            lista()
+            {
+                 this.cargando = true;
+                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'requisicion'})
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.cargando = false;
                     })
-                    .finally(() => {
-                        if( this.materiales.length == 0 ) {
-                            swal('¡Error!', 'No existe ningun material disponible para ajustar.', 'error')
-                        }
-
-                    })
-            },*/
+            },
             agregar() {
                 var array = {
                     'material' : '',

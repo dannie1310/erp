@@ -65,6 +65,10 @@ class SolicitudAltaCuentaBancariaService
 
     public function store(array $data)
     {
+        if (config('filesystems.disks.solicitud_cuenta_bancaria.root') == storage_path())
+        {
+            abort(403,'No existe el directorio destino: STORAGE_SOPORTE_SOLICITUD_CUENTA_BANCARIA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
         $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
         $datos = [
             'id_empresa' => $data['id_empresa'],

@@ -29,7 +29,8 @@ class CuentaBancariaEmpresaTransformer extends TransformerAbstract
         'moneda',
         'plaza',
         'solicitud_alta',
-        'solicitud_baja'
+        'solicitud_baja',
+        'tipo_cuenta'
     ];
 
     /**
@@ -77,6 +78,19 @@ class CuentaBancariaEmpresaTransformer extends TransformerAbstract
             return $this->item($empresa, new BancoTransformer);
         }
         return null;
+    }
+
+    /**
+     * @param TipoCuenta $model
+     * Include Tipo de Cuenta
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipoCuenta(CuentaBancariaEmpresa $model)
+    {
+        if($cuenta = $model->tipoCuenta)
+        {
+            return $this->item($cuenta, new CtgTipoCuentaTransformer);
+        }
     }
 
     /**

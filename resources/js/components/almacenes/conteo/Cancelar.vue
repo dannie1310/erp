@@ -143,6 +143,7 @@
                     params: { include: ['marbete'] }
                 }).then(data => {
                     this.$store.commit('almacenes/conteo/SET_CONTEO', data);
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             },

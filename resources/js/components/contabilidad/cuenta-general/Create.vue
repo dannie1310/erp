@@ -100,6 +100,7 @@
                     .then(data => {
                         this.tipos = data.data
                         if (this.tipos.length) {
+                            $(this.$refs.modal).appendTo('body')
                             $(this.$refs.modal).modal('show');
 
                             this.cuenta_contable = '';

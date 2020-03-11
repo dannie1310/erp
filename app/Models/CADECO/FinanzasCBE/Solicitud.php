@@ -45,6 +45,11 @@ class Solicitud extends Model
         return $this->belongsTo(CtgTipoSolicitud::class, 'id_tipo_solicitud', 'id');
     }
 
+    public function tipoCuenta()
+    {
+        return $this->belongsTo(CtgTipoCuenta::class, 'tipo_cuenta', 'id');
+    }
+
     public function moneda()
     {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');

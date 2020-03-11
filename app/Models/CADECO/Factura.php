@@ -9,15 +9,17 @@
 namespace App\Models\CADECO;
 
 
-use App\Models\CADECO\Finanzas\ComplementoFactura;
+use App\Facades\Context;
+use App\Models\CADECO\Cambio;
+use App\Models\CADECO\Estimacion;
+use Illuminate\Support\Facades\DB;
+use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Finanzas\FacturaEliminada;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
+use App\Models\CADECO\Finanzas\ComplementoFactura;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
-use Illuminate\Support\Facades\DB;
-use App\Facades\Context;
-use App\Models\CADECO\Contabilidad\Poliza;
-use App\Models\SEGURIDAD_ERP\Proyecto;
 
 class Factura extends Transaccion
 {
@@ -114,6 +116,10 @@ class Factura extends Transaccion
     {
         return $this->belongsTo(Poliza::class, 'id_transaccion', 'id_transaccion_sao');
     }
+    
+    public function tipoCambioFecha(){
+        return $this->hasMany(Cambio::class, 'fecha', 'fecha');
+    }
 
     private function registrarCR($data)
     {
@@ -161,14 +167,13 @@ class Factura extends Transaccion
             $factura_repositorio->save();
 
         } else {
-            $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
-            if (!$factura_repositorio) {
-                abort(400, "Hubo un error al registrar la factura en el repositorio");
+            if($data["factura_repositorio"]){
+                $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
+                if (!$factura_repositorio) {
+                    abort(400, "Hubo un error al registrar la factura en el repositorio");
+                }
             }
         }
-
-
-
     }
 
     public function registrar($data)
@@ -352,5 +357,61 @@ class Factura extends Transaccion
         } else {
             return 1;
         }
+    }
+
+    public function getFondoGarantiaAttribute(){
+        $antecedente = $this->partidas->pluck('id_antecedente');
+        if($estimaciones = Estimacion::whereIn('id_transaccion', $antecedente)->get()){
+            $fondo = 0;
+            foreach($estimaciones as $estimacion){
+                $fondo += $estimacion->retencion_fondo_garantia_orden_pago;
+            }
+            return $fondo;
+        }
+
+        return null;
+    }
+
+    public function getFondoGarantiaFormatAttribute(){
+        return '$ ' . number_format($this->fondo_garantia, 2);
+    }
+
+    public function getRetencionesSubcontratoAttribute(){
+        $antecedente = $this->partidas->pluck('id_antecedente');
+        if($estimaciones = Estimacion::whereIn('id_transaccion', $antecedente)->get()){
+            $retencion = 0;
+            foreach($estimaciones as $estimacion){
+                $retencion += $estimacion->suma_retenciones;
+            }
+            return $retencion;
+        }
+
+        return null;
+    }
+
+    public function getRetencionesSubcontratoFormatAttribute(){
+        return '$ ' . number_format($this->retenciones_subcontrato, 2);
+    }
+
+    public function getDevolucionesSubcontratoAttribute(){
+        $antecedente = $this->partidas->pluck('id_antecedente');
+        if($estimaciones = Estimacion::whereIn('id_transaccion', $antecedente)->get()){
+            $liberaciones = 0;
+            foreach($estimaciones as $estimacion){
+                $liberaciones += $estimacion->suma_liberaciones;
+            }
+            return $liberaciones;
+        }
+
+        return null;
+    }
+
+    public function getDevolucionesSubcontratoFormatAttribute(){
+        return '$ ' . number_format($this->devoluciones_subcontrato, 2);
+    }
+
+    public function revertir()
+    {
+        DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
     }
 }

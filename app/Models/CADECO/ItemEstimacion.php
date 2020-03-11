@@ -40,6 +40,11 @@ class ItemEstimacion extends Item
         return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
     }
 
+    public function itemSubcontrato()
+    {
+        return $this->belongsTo(ItemSubcontrato::class, 'item_antecedente', 'id_concepto')->where('id_transaccion','=', $this->id_antecedente);
+    }
+
     public function estimacionPartidaEliminada()
     {
         return $this->belongsTo(EstimacionPartidaEliminada::class, 'id_item');
@@ -66,5 +71,24 @@ class ItemEstimacion extends Item
             $first += 4;
         }
         return $list;
+    }
+
+    public function getPrecioUnitarioFormatAttribute()
+    {
+        return '$ ' . number_format($this->precio_unitario,2,'.',',');
+    }
+
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad,2,'.',',');
+    }
+
+    public function validarCantidadesPartidas()
+    {
+        $cantidad_estimada_anterior =((float) $this->itemSubcontrato->cantidad_total_estimada) - ($this->original != [] ? $this->original['cantidad'] : 0);
+        if($this->itemSubcontrato->cantidad < ($cantidad_estimada_anterior + $this->cantidad))
+        {
+            abort(400, 'La partida "'.$this->contrato->descripcion. '" sobrepasa la cantidad del subcontrato.');
+        }
     }
 }

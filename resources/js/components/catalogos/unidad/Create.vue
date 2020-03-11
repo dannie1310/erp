@@ -32,7 +32,7 @@
                                                 v-model="dato.unidad"
                                                 :class="{'is-invalid': errors.has('unidad')}">
                                             <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
-                                        </div>                                        
+                                        </div>
                                         <label for="descripcion" class="col-sm-2 col-form-label" style="text-align:right;">Descripción: </label>
                                         <div class="col-sm-5">
                                             <input
@@ -82,14 +82,12 @@
                   this.cargando = false;
                     this.dato.unidad = '';
                     this.dato.descripcion = '';
+                $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
-            store() {                
+            store() {
                 return this.$store.dispatch('cadeco/unidad/store', this.$data.dato)
                     .then(data => {
-                        console.log(data);
-                        
-                        
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');
                     }).finally( ()=>{

@@ -109,7 +109,21 @@
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="cuenta" class="col-sm-2 col-form-label">Cuenta:</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-10" v-if=" id_tipo == 3">
+                                            <input
+                                                    :disabled="!id_tipo"
+                                                    type="number"
+                                                    name="cuenta"
+                                                    data-vv-as="Cuenta"
+                                                    v-validate="{required: true, length:16}"
+                                                    class="form-control"
+                                                    id="cuenta"
+                                                    placeholder="Cuenta"
+                                                    v-model="cuenta"
+                                                    :class="{'is-invalid': errors.has('cuenta')}">
+                                            <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
+                                        </div>
+                                        <div class="col-sm-10" v-else>
                                             <input
                                                     :disabled="!id_tipo"
                                                     type="number"
@@ -264,6 +278,7 @@
                 cuenta: '',
                 id_tipo: '',
                 tipos: {
+                    3: "Tarjeta Mismo Banco",
                     2: "Interbancaria",
                     1: "Mismo Banco"
                 },
@@ -357,7 +372,8 @@
             getFondoFijo(){
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
-                        scope: 'responsableFondoFijo'
+                        scope: 'responsableFondoFijo',
+                        sort: 'razon_social', order: 'asc'
                     }
                 })
                     .then(data => {
@@ -368,7 +384,8 @@
             getDestajistas(){
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
-                        scope: 'destajistas'
+                        scope: 'destajistas',
+                        sort: 'razon_social', order: 'asc'
                     }
                 })
                     .then(data => {

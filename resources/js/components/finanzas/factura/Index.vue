@@ -109,7 +109,8 @@
                                 id: factura.id,
                                 show: self.$root.can('consultar_factura') ? true : false,
                                 factura: factura,
-                                borrar: factura.estado === 0 ? true : false,
+                                borrar: self.$root.can('eliminar_factura') && factura.estado === 0 ? true : false,
+                                revertir: self.$root.can('revertir_revision_factura') && factura.estado === 1 ? true : false
                             })
 
                         })

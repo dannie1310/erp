@@ -41,6 +41,11 @@ class ContratoProyectado extends Transaccion
         return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante');
     }
 
+    public function conceptos()
+    {
+        return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion');
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -60,5 +65,10 @@ class ContratoProyectado extends Transaccion
                         ->orHas('areasSubcontratantes', '=', 0);
                 });
         });
+    }
+
+    public function conceptos_antecedentes()
+    {
+
     }
 }

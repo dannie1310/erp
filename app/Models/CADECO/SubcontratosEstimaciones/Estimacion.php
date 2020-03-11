@@ -23,4 +23,9 @@ class Estimacion extends Model
         'IDEstimacion',
         'NumeroFolioConsecutivo',
     ];
+
+    public function getFolioConsecutivoFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->NumeroFolioConsecutivo);
+    }
 }

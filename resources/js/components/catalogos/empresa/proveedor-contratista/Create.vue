@@ -197,7 +197,7 @@
                 </div>
             </div>
         </div>
-    </span>           
+    </span>
 </template>
 
 <script>
@@ -223,6 +223,7 @@ export default {
     },
     methods: {
         init() {
+            $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
             this.$validator.reset();
             this.reset_fields();
@@ -299,7 +300,7 @@ export default {
         }
     },
     watch:{
-        
+
         es_nacional(value){
             if(value === 0){
                 this.emite_factura = 0;
