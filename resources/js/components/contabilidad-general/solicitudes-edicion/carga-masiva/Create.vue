@@ -77,7 +77,7 @@
                 var formData = new FormData();
                 formData.append('solicitud',  this.file_solicitudes);
                 formData.append('nombre_archivo',  this.file_solicitudes_name);
-                return this.$store.dispatch('finanzas/carga-masiva-pago/cargarLayout',
+                return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/cargarLayout',
                     {
                         data: formData,
                         config: {
