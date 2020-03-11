@@ -17,6 +17,7 @@ yarn-error.log
 .phpunit.result.cache
 /storage/logs
 /public/images
+/public/uploads
 /public/mix-manifest.json
 /storage
 /public/img/logo_temp.png

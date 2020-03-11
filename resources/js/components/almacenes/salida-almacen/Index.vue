@@ -101,6 +101,7 @@
                                 show: true,
                                 pagina: self.query.offset,
                                 borrar: self.$root.can('eliminar_salida_almacen') ? true : false,
+                                edit: self.$root.can('editar_salida_almacen') ? true : false,
                                 id: salida.id
 
                             })

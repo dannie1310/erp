@@ -1,7 +1,7 @@
 <template>
     <span>
         <div class="modal fade" ref="modalEditPoliza" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-dialog modal-xl">
                 <form role="form" @submit.prevent="validate">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -79,11 +79,21 @@
                                                      v-model="poliza.concepto"
                                                      placeholder="CONCEPTO DE PÓLIZA"
                                                      :class="{'is-invalid': errors.has('concepto_edit')}"
+                                                     v-on:keyup ="repiteConceptos()"
                                              ></textarea>
                                             <div class="invalid-feedback" v-show="errors.has('concepto_edit')">{{ errors.first('concepto_edit') }}</div>
                                         </div>
                                     </div>
                                 </div>
+                                 <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="repetir_concepto" v-on:change="repiteConceptos()" v-model="repite_concepto" >
+                                            <label for="repetir_concepto" class="custom-control-label" >Replicar concepto de póliza en concepto de movimientos</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label ><i class="fa fa-th-list icon"></i>Movimientos</label>
@@ -93,11 +103,11 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th class="bg-gray-light">#</th>
-                                                <th class="bg-gray-light">Cuenta</th>
+                                                <th class="bg-gray-light index_corto">#</th>
+                                                <th class="bg-gray-light no_parte">Cuenta</th>
                                                 <th class="bg-gray-light">Cargo</th>
                                                 <th class="bg-gray-light">Abono</th>
-                                                <th class="bg-gray-light no_parte">Referencia</th>
+                                                <th class="bg-gray-light referencia_input">Referencia</th>
                                                 <th class="bg-gray-light">Concepto</th>
                                             </tr>
                                         </thead>
@@ -161,6 +171,7 @@ export default {
     props: ['tipo_modal','id_empresa'],
     data(){
         return {
+            repite_concepto : false,
             edit:{
                 id_empresa:'',
                 id : '',
@@ -173,6 +184,7 @@ export default {
     methods: {
         closeModal(){
             this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
+            this.repite_concepto = false;
             $(this.$refs.modalEditPoliza).modal('hide');
         },
         init(){
@@ -204,9 +216,17 @@ export default {
                 .then(data => {
                     this.$store.commit('contabilidadGeneral/poliza/UPDATE_POLIZA', data);
                 }).finally(()=>{
-                    $(this.$refs.modalEditPoliza).modal('hide');
+                    this.closeModal();
                 })
         },
+        repiteConceptos(){
+            if(this.repite_concepto === true ){
+                let self = this;
+                this.poliza.movimientos_poliza.data.forEach(function(movimiento, i){
+                    movimiento.concepto = self.poliza.concepto;
+                });
+            }
+        }
     },
 
     computed: {
@@ -225,11 +245,6 @@ export default {
     }
 }
 </script>
-<style scoped>
-    .detalle_poliza{
-        font-size: 0.8em;
-    }
-     .form-control{
-        font-size: 1em;
-    }
+<style >
+
 </style>

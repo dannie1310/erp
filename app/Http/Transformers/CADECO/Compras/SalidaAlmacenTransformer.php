@@ -20,6 +20,7 @@ class SalidaAlmacenTransformer extends TransformerAbstract
     ];
 
     public function transform(SalidaAlmacen $model) {
+        // dd('para');
         return [
             'id' => (int) $model->getKey(),
             'fecha' => $model->fecha,

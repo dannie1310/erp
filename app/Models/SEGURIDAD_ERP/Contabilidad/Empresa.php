@@ -19,7 +19,9 @@ class Empresa extends Model
     
     public $fillable = [
         'Visible',
-        'Editable'
+        'Editable',
+        'Historica',
+        'Consolidadora'
     ];
 
     public $searchable = [

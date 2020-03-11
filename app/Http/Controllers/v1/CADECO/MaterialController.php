@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteMaterialRequest;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Services\CADECO\MaterialService;
 use App\Traits\ControllerTrait;
@@ -18,7 +19,9 @@ use League\Fractal\Manager;
 
 class MaterialController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        destroy as traitDestroy;
+    }
 
     /**
      * @var Manager
@@ -47,7 +50,9 @@ class MaterialController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_insumo_mano_obra|consultar_insumo_material|consultar_insumo_herramienta_equipo|consultar_insumo_servicio|consultar_insumo_maquinaria')->only(['show','paginate','index','find']);
         $this->middleware('permiso:registrar_insumo_mano_obra|registrar_insumo_material|registrar_insumo_herramienta_equipo|registrar_insumo_servicio|registrar_insumo_maquinaria')->only('store');
-        $this->middleware('permiso:editar_insumo_material')->only('update');
+        $this->middleware('permiso:editar_insumo_servicio')->only('update');
+        $this->middleware('permiso:eliminar_insumo_servicio')->only('destroy');
+
 
 
         $this->fractal = $fractal;
@@ -59,4 +64,10 @@ class MaterialController extends Controller
     {
         return $this->service->catalogo_insumos($request->scope);
     }
+
+    public function destroy(DeleteMaterialRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);      
+    }
+}
 }

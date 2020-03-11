@@ -133,6 +133,54 @@ class SalidaAlmacen extends Transaccion
         };
     }
 
+    public function editarEntregasContratista($data)
+    {
+            $items = $this->items->pluck('id_item');
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+            if($data['contratista'])
+            {
+            $this->id_empresa = $data['id_empresa'];
+            $this->save();
+            if($this->entrega_contratista)
+            {
+                $this->entrega_contratista->tipo = $data['tipo_cargo'];
+                $this->entrega_contratista->save();
+            }else
+            {
+                $this->entrega_contratista()->create(['tipo' => $data['tipo_cargo']]);
+            }
+            foreach( $items as $item)
+            {
+                if(ItemContratista::find($item))
+                {
+                    ItemContratista::where('id_item', '=', $item)->update(['id_empresa' => $data['id_empresa'], 'con_cargo' => $data['tipo_cargo']]);
+                }else{
+                    ItemContratista::query()->create(['id_item' => $item,
+                            'id_empresa' => $data['id_empresa'],
+                            'con_cargo' => $data['tipo_cargo']]);
+                }
+            }
+            }else{
+                $this->entrega_contratista()->delete();
+                foreach( $items as $item)
+                 {
+                   if(ItemContratista::find($item))
+                    {
+                       ItemContratista::where('id_item', '=', $item)->delete();
+                    }
+                 }
+                }
+            DB::connection('cadeco')->commit();
+            
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function getEstadoFormatAttribute()
     {
         switch ($this->estado) {
@@ -205,6 +253,11 @@ class SalidaAlmacen extends Transaccion
                             $partida = Item::query()->where('id_item', '=', $mov['id_item'])->first();
                             $transa = Transaccion::query()->where('id_transaccion', '=', $partida['id_transaccion'])->first();
                             if ($mov != []) {
+                                if ($transa['tipo_transaccion'] == 33 && $transa['opciones'] == 1) {
+                                    $cadena .= $i . ') Entrada: #' .
+                                        $transa['numero_folio'] . '
+                                        ';
+                                }
                                 if ($transa['tipo_transaccion'] == 34 && $transa['opciones'] == 1) {
                                     $cadena .= $i . ') Salida: #' .
                                         $transa['numero_folio'] . '
@@ -212,6 +265,11 @@ class SalidaAlmacen extends Transaccion
                                 }
                                 if ($transa['tipo_transaccion'] == 34 && $transa['opciones'] == 65537) {
                                     $cadena .= $i . ') Transferencia: #' .
+                                        $transa['numero_folio'] . '
+                                        ';
+                                }
+                                if ($transa['tipo_transaccion'] == 36) {
+                                    $cadena .= $i . ') Parte de Uso: #' .
                                         $transa['numero_folio'] . '
                                         ';
                                 }
@@ -226,8 +284,11 @@ class SalidaAlmacen extends Transaccion
                     if ($inventario_antecedente[0]['saldo'] + $inventario['cantidad'] > $inventario_antecedente[0]['cantidad']) {
                         $mensaje = $mensaje . "-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }
+                    
                 }
+                
             }
+            
             if ($this->opciones == 1) {
                 $movimientos = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
                 if ($movimientos == []) {

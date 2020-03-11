@@ -23,8 +23,10 @@ class ListaEmpresasTransformer extends TransformerAbstract
             'nombre' => $model->Nombre,
             'alias' => $model->AliasBDD,
             'alias_bdd' => $model->AliasBDD,
-            'visible' => $model->Visible?(int)$model->Visible:0,
-            'editable' => $model->Editable?(int)$model->Editable:0,
+            'visible' => $model->Visible ? (int) $model->Visible : 0,
+            'editable' => $model->Editable ? (int) $model->Editable : 0,
+            'historica' => $model->Historica ? (int) $model->Historica : 0,
+            'consolidadora' => $model->Consolidadora ? (int) $model->Consolidadora : 0
         ];
     }
 }

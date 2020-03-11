@@ -20,9 +20,8 @@ class PolizaService
     protected $repository;
 
     /**
-     * AlmacenService constructor.
-     *
-     * @param Almacen $model
+     * PolizaService constructor.
+     * @param Poliza $model
      */
     public function __construct(Poliza $model)
     {

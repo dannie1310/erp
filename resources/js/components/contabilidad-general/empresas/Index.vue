@@ -38,6 +38,8 @@
                     { title: 'Alias', field: 'alias', sortable: true },
                     { title: 'Visible', field: 'visible', sortable: true },
                     { title: 'Editable', field: 'editable', sortable: true },
+                    { title: 'Histórica', field: 'historica', sortable: true },
+                    { title: 'Consolidadora ', field: 'consolidadora', sortable: true },
                     { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -59,10 +61,10 @@
         methods: {
                 paginate() {
                     this.cargando = true;
-                    return this.$store.dispatch('seguridad/lista-empresas/paginate', { params: this.query })
+                    return this.$store.dispatch('contabilidadGeneral/empresa/paginate', { params: this.query })
                         .then(data => {
-                            this.$store.commit('seguridad/lista-empresas/SET_EMPRESAS', data.data);
-                            this.$store.commit('seguridad/lista-empresas/SET_META', data.meta);
+                            this.$store.commit('contabilidadGeneral/empresa/SET_EMPRESAS', data.data);
+                            this.$store.commit('contabilidadGeneral/empresa/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -72,10 +74,10 @@
 
         computed: {
             empresas(){
-                return this.$store.getters['seguridad/lista-empresas/empresas'];
+                return this.$store.getters['contabilidadGeneral/empresa/empresas'];
             },
             meta(){
-                return this.$store.getters['seguridad/lista-empresas/meta'];
+                return this.$store.getters['contabilidadGeneral/empresa/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -93,8 +95,10 @@
                         alias: empresa.alias,
                         visible: empresa.visible == 1?'SI':'NO',
                         editable: empresa.editable == 1?'SI':'NO',
+                        historica: empresa.historica == 1?'SI':'NO',
+                        consolidadora: empresa.consolidadora == 1?'SI':'NO',
                         buttons: $.extend({}, {
-                            edit: self.$root.can('configurar_visibilidad_empresa_ctpq', true) || self.$root.can('configurar_editabilidad_empresa_ctpq', true) ? true : false,
+                            edit: self.$root.can('configurar_visibilidad_empresa_ctpq', true) || self.$root.can('configurar_editabilidad_empresa_ctpq', true) || self.$root.can('configurar_tipo_empresa_ctpq', true) ? true : false,
                             empresa: empresa,
                         })
                     }));

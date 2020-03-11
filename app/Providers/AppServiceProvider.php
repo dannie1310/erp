@@ -116,6 +116,7 @@ use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
 use App\Models\SEGURIDAD_ERP\Compras\AreaSolicitanteUsuario;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
@@ -233,6 +234,7 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
+use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
@@ -247,8 +249,10 @@ use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
 use App\Models\CADECO\Unidad;
+use App\Models\CADECO\UnidadComplemento;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
+use App\Observers\CADECO\UnidadComplementoObserver;
 use App\Observers\CADECO\UnidadObserver;
 use Illuminate\Support\ServiceProvider;
 
@@ -439,6 +443,7 @@ class AppServiceProvider extends ServiceProvider
             Sucursal::observe(SucursalObserver::class);
             Transaccion::observe(TransaccionObserver::class);
             Unidad::observe(UnidadObserver::class);
+            UnidadComplemento::observe(UnidadComplementoObserver::class);
             Venta::observe(VentaObserver::class);
             VentaCancelacion::observe(VentaCancelacionObserver::class);
             VentaPartida::observe(VentaPartidaObserver::class);
@@ -458,6 +463,7 @@ class AppServiceProvider extends ServiceProvider
          * Contabilidad
          * */
         LogEdicion::observe(LogEdicionObserver::class);
+        CargaCFDSAT::observe(CargaCFDSATObserver::class);
     }
 
     /**

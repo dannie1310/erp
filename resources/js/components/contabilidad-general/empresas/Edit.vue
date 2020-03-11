@@ -71,7 +71,65 @@
                                                             </label>
                                                         </div>
                                                     </div>
-                                                </div>
+                                             </div>
+                                        </div>
+                                        <div class="col-md-12" v-show="$root.can('configurar_tipo_empresa_ctpq', true)">
+                                            <div class="form-group row error-content">
+                                                    <label for="es_nacional" class="col-sm-6 col-form-label">Es Historica: </label>
+                                                    <div class="col-sm-6">
+                                                        <div class="btn-group btn-group-toggle">
+                                                            <label class="btn btn-outline-secondary" :class="Historica === Number(1) ? 'active': ''"  :key="1">
+                                                                <input type="radio" :disabled="!$root.can('configurar_tipo_empresa_ctpq', true)"
+                                                                    class="btn-group-toggle"
+                                                                    name="Historica"
+                                                                    :id="'Historica' + 1"
+                                                                    :value="1"
+                                                                    autocomplete="on"
+                                                                    v-model.number="Historica">
+                                                                Si
+                                                            </label>
+                                                            <label class="btn btn-outline-secondary" :class="Historica === Number(0) ? 'active': ''"  :key="0">
+                                                                <input type="radio" :disabled="!$root.can('configurar_tipo_empresa_ctpq', true)"
+                                                                    class="btn-group-toggle"
+                                                                    name="Historica"
+                                                                    :id="'Historica' + 0"
+                                                                    :value="0"
+                                                                    autocomplete="on"
+                                                                    v-model.number="Historica">
+                                                                No
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                             </div>
+                                        </div>
+                                        <div class="col-md-12" v-show="$root.can('configurar_tipo_empresa_ctpq', true)">
+                                            <div class="form-group row error-content">
+                                                    <label for="es_nacional" class="col-sm-6 col-form-label">Es Consolidadora: </label>
+                                                    <div class="col-sm-6">
+                                                        <div class="btn-group btn-group-toggle">
+                                                            <label class="btn btn-outline-secondary" :class="Consolidadora === Number(1) ? 'active': ''"  :key="1">
+                                                                <input type="radio" :disabled="!$root.can('configurar_tipo_empresa_ctpq', true)"
+                                                                    class="btn-group-toggle"
+                                                                    name="Consolidadora"
+                                                                    :id="'Consolidadora' + 1"
+                                                                    :value="1"
+                                                                    autocomplete="on"
+                                                                    v-model.number="Consolidadora">
+                                                                Si
+                                                            </label>
+                                                            <label class="btn btn-outline-secondary" :class="Consolidadora === Number(0) ? 'active': ''"  :key="0">
+                                                                <input type="radio" :disabled="!$root.can('configurar_tipo_empresa_ctpq', true)"
+                                                                    class="btn-group-toggle"
+                                                                    name="Consolidadora"
+                                                                    :id="'Consolidadora' + 0"
+                                                                    :value="0"
+                                                                    autocomplete="on"
+                                                                    v-model.number="Consolidadora">
+                                                                No
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                             </div>
                                         </div>
                                     </div>
                                 </div>
@@ -97,6 +155,8 @@ export default {
         return {
             Visible:'',
             Editable:'',
+            Historica: '',
+            Consolidadora: '',
             cargando:false,
         }
     },
@@ -113,6 +173,8 @@ export default {
                     params:{
                         Visible:parseInt(this.Visible),
                         Editable:parseInt(this.Editable),
+                        Historica:parseInt(this.Historica),
+                        Consolidadora:parseInt(this.Consolidadora)
                     }
                 }).then(data => {
                     this.$store.commit('seguridad/lista-empresas/UPDATE_EMPRESA', data);
@@ -124,6 +186,8 @@ export default {
         empresa(value) {
             this.Editable = value.editable;
             this.Visible = value.visible;
+            this.Historica = value.historica;
+            this.Consolidadora = value.consolidadora;
         }
     }
 
