@@ -416,7 +416,7 @@ class Factura extends Transaccion
     }
 
     public function validarPrepoliza(){
-        if(!$this->poliza){
+        if(!$this->poliza && $this->estado > 0){
             DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
             return $this->find($this->id_transaccion);
         }
