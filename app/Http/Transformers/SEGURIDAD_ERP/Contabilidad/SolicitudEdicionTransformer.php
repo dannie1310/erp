@@ -21,9 +21,14 @@ class SolicitudEdicionTransformer extends TransformerAbstract
     public function transform(SolicitudEdicion $model) {
         return [
             'id' => (int) $model->id,
-            'numero_folio' => $model->numero_folio,
-            'fecha_hora_registro' => $model->fecha_hora_registro_format,
-            'usuario_registro' => $model->usuario_registro,
+            'numero_folio_format' => $model->numero_folio_format,
+            'fecha_hora_registro_format' => $model->fecha_hora_registro_format,
+            'usuario_registro' => $model->usuario->nombre_completo,
+            'estado_format' => $model->estado_format,
+            'numero_bd' => $model->numero_bd,
+            'numero_polizas' => $model->polizas()->count(),
+            'numero_partidas' => $model->partidas()->count(),
+            'numero_movimientos' => $model->numero_movimientos,
         ];
     }
 
