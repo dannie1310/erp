@@ -17,6 +17,13 @@
             >
             <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (xlsx)</div>
         </form>
+        <div class="row" v-if="solicitud_partidas.length > 0">
+            <div class="col-md-12">
+                Cantidad de Partidas: {{resumen.cantidad_partidas}}
+            </div>
+
+            </div>
+        </div>
     </span>
 </template>
 
@@ -85,8 +92,9 @@
                         }
                     })
                     .then(data => {
-                        if(data.data.length > 0){
-                            this.solicitud_partidas = data.data;
+                        console.log(data);
+                        if(data.partidas.length > 0){
+                            this.solicitud_partidas = data.partidas;
                             this.resumen = data.resumen;
 
                         }else{
@@ -94,7 +102,7 @@
                                 this.$refs.carga_layout.value = '';
                                 this.file_solicitudes = null;
                             }
-                            this.pagos = [];
+                            this.solicitud_partidas = [];
                             swal('Carga Masiva', 'Archivo de layout sin cambios válidos.', 'warning')
                         }
                     }).finally(() => {

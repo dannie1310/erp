@@ -31,9 +31,16 @@ class SolicitudEdicionService
     protected $arreglo_solicitud;
     protected $log;
     protected $carga;
+    protected $resumen;
 
     public function __construct(Model $model)
     {
+        $this->resumen["cantidad_polizas_involucradas"] = 0;
+        $this->resumen["cantidad_partidas"] = 0;
+        $this->resumen["cantidad_movimientos"] = 0;
+        $this->resumen["cantidad_bases"] = 0;
+        $this->resumen["bases"] = [];
+        $this->bases = [];
         $this->repository = new Repository($model);
 
     }
@@ -118,21 +125,29 @@ class SolicitudEdicionService
                 try{
                     \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
                     $polizas_encontradas = $repositorio_poliza->find($partida);
+                    if(count($polizas_encontradas)>0)
+                    {
+                        $this->bases[] = $empresa->AliasBDD;
+                    }
                 }catch (\Exception $e){
                     abort(500,"No tiene acceso a la BD: ".$empresa->AliasBDD." favor de ponerse en contacto con el área de soporte a aplicaciones.");
                 }
+
+
 
                 foreach($polizas_encontradas as $poliza_encontrada){
                     $movimientos = [];
                     foreach ($poliza_encontrada->movimientos as $movimiento)
                     {
                         $movimientos[] = $movimiento_transformer->transform($movimiento);
+                        $this->resumen["cantidad_movimientos"]++;
                     }
                     $poliza_encontrada_transform = $poliza_transformer->transform($poliza_encontrada);
                     $polizas[$i] = $poliza_encontrada_transform;
                     $polizas[$i]["bd_contpaq"] = $empresa->AliasBDD;
                     $polizas[$i]["movimientos"] = $movimientos;
                     $i++;
+                    $this->resumen["cantidad_polizas_involucradas"]++;
                 }
             }
             $partidas[$i_partida]["polizas"] = $polizas;
@@ -145,7 +160,12 @@ class SolicitudEdicionService
     {
         $file_xls = $this->getFileXLS($nombre_archivo,$archivo_xls);
         $partidas = $this->getDatosPartidas($file_xls);
+        $this->resumen["cantidad_partidas"] = count($partidas);
+
+
         $partidas_con_polizas = $this->getDatosPolizas($partidas);
-        return $partidas_con_polizas;
+        $this->resumen["cantidad_bases"] = count(array_unique($this->bases));
+        $this->resumen["bases"] = array_unique($this->bases);
+        return ["partidas"=>$partidas_con_polizas, "resumen"=>$this->resumen];
     }
 }
