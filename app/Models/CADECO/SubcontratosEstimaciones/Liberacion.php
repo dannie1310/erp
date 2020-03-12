@@ -24,10 +24,16 @@ class Liberacion extends Model
         'importe',
         'concepto',
         'usuario',
+        'id_retencion'
     ];
 
     public function estimacion(){
         return $this->belongsTo(Estimacion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function retencion()
+    {
+        return $this->belongsTo(Retencion::class, 'id_retencion', 'id_retencion');
     }
 
     public function getImporteFormatAttribute(){
