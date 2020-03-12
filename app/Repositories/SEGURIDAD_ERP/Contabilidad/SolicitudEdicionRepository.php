@@ -27,7 +27,7 @@ class SolicitudEdicionRepository extends Repository implements RepositoryInterfa
     }
 
     public function getListaBDContpaq(){
-        return Empresa::where("Editable","1")->select("AliasBDD")->get();
+        return Empresa::where("Editable","1")->select("AliasBDD","IdContpaq")->get();
     }
 
 }

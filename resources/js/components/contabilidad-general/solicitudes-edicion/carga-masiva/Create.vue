@@ -70,7 +70,7 @@
 
                 </div>
             </div>
-            <button type="button" class="btn btn-primary pull-right"  @click="registrar">Registrar</button>
+            <button type="button" class="btn btn-primary pull-right"  @click="store">Registrar</button>
 
         </span>
 
@@ -90,8 +90,11 @@
             }
         },
         methods:{
-            registrar(){
-
+            store() {
+                return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/store', this.$data)
+                    .then((data) => {
+                        this.$router.push({name: 'solicitud-edicion-poliza'});
+                    });
             },
             createImage(file, tipo) {
                 var reader = new FileReader();

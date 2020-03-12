@@ -11,8 +11,6 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 use App\Http\Transformers\CTPQ\PolizaMovimientoTransformer;
 use App\Http\Transformers\CTPQ\PolizaTransformer;
 use App\Imports\SolicitudEdicionImport;
-use App\Imports\SolicitudEdicionImportModel;
-use App\Models\CTPQ\Poliza as ModelPoliza;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion as Model;
 use App\Repositories\CTPQ\PolizaRepository;
@@ -21,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
 use DateTime;
 use Maatwebsite\Excel\Facades\Excel;
+use DB;
 
 class SolicitudEdicionService
 {
@@ -60,9 +59,9 @@ class SolicitudEdicionService
         return $this->repository->paginate($data);
     }
 
-    private function store()
+    public function store(array $data)
     {
-        $solicitud = $this->repository->registrar($this->arreglo_solicitud);
+        $solicitud = $this->repository->registrar($data);
         return $solicitud;
     }
 
@@ -137,7 +136,9 @@ class SolicitudEdicionService
             $polizas = [];
             $i = 0;
             foreach ($lista as $empresa) {
+                $polizas_encontradas = [];
                 try {
+                    DB::purge('cntpq');
                     \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
                     $polizas_encontradas = $repositorio_poliza->find($partida);
                     if (count($polizas_encontradas) > 0) {
@@ -145,19 +146,28 @@ class SolicitudEdicionService
                         $contador_bases++;
                     }
                 } catch (\Exception $e) {
-                    abort(500, "No tiene acceso a la BD: " . $empresa->AliasBDD . " favor de ponerse en contacto con el área de soporte a aplicaciones.");
+                    abort(500, "No tiene acceso a la BD: " . $empresa->AliasBDD . " favor de ponerse en contacto con el área de soporte a aplicaciones.".$e->getMessage());
                 }
 
                 foreach ($polizas_encontradas as $poliza_encontrada) {
                     $movimientos = [];
+                    $im = 0;
                     foreach ($poliza_encontrada->movimientos as $movimiento) {
-                        $movimientos[] = $movimiento_transformer->transform($movimiento);
+                        $movimiento_transform = $movimiento_transformer->transform($movimiento);
+                        $movimientos[$im] = $movimiento_transform;
+                        $movimientos[$im]["id_movimiento"] = $movimiento_transform["id"];
+                        $movimientos[$im]["concepto_original"] = $movimiento_transform["concepto"];
+                        $movimientos[$im]["referencia_original"] = $movimiento_transform["referencia"];
                         $this->resumen["cantidad_movimientos"]++;
+                        $im++;
                     }
                     $poliza_encontrada_transform = $poliza_transformer->transform($poliza_encontrada);
                     $polizas[$i] = $poliza_encontrada_transform;
                     $polizas[$i]["bd_contpaq"] = $empresa->AliasBDD;
                     $polizas[$i]["movimientos"] = $movimientos;
+                    $polizas[$i]["concepto_original"] = $poliza_encontrada_transform["concepto"];
+                    $polizas[$i]["id_poliza"] = $poliza_encontrada_transform["id"];
+                    $polizas[$i]["id_empresa_contpaq"] = $empresa->IdContpaq;
                     $contador_movimientos += count($movimientos);
                     $i++;
                     $this->resumen["cantidad_polizas_involucradas"]++;
