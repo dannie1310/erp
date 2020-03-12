@@ -8,6 +8,7 @@
 
 namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
@@ -23,6 +24,10 @@ class SolicitudEdicionRepository extends Repository implements RepositoryInterfa
     public function registrar(array $datos)
     {
         return $this->model->registrar($datos);
+    }
+
+    public function getListaBDContpaq(){
+        return Empresa::where("Editable","1")->select("AliasBDD")->get();
     }
 
 }

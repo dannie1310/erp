@@ -45,7 +45,7 @@ class SolicitudEdicionController extends Controller
 
     public function cargaXLS(Request $request)
     {
-        $respuesta =$this->service->storeZIPCFD($request->nombre_archivo, $request->archivo_zip);
+        $respuesta =$this->service->procesaSolicitudXLS($request->nombre_archivo, $request->solicitud);
         return response()->json($respuesta, 200);
     }
 
