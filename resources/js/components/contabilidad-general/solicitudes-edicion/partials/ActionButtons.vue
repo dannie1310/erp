@@ -24,7 +24,7 @@
                 this.$router.push({name: 'autorizar-layout', params: {id: this.value.id}});
             },
             ver() {
-                this.$router.push({name: 'pago-masivo-show', params: {id: this.value.id}});
+                this.$router.push({name: 'solicitud-edicion-poliza-show', params: {id: this.value.id}});
             },
         }
     }

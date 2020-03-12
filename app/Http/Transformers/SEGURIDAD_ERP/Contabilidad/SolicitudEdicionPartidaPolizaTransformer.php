@@ -26,4 +26,12 @@ class SolicitudEdicionPartidaPolizaTransformer extends TransformerAbstract
         ];
     }
 
+    public function includeMovimientos(SolicitudEdicionPartidaPoliza $model)
+    {
+        if($movimientos = $model->movimientos)
+        {
+            return $this->collection($movimientos, new SolicitudEdicionPartidaPolizaMovimientoTransformer);
+        }
+    }
+
 }

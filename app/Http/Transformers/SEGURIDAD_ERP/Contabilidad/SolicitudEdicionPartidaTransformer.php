@@ -20,12 +20,17 @@ class SolicitudEdicionPartidaTransformer extends TransformerAbstract
     public function transform(SolicitudEdicionPartida $model) {
         return [
             'id' => (int) $model->id,
-            'fecha' => $model->fecha_format,
+            'fecha_format' => $model->fecha_format,
             'folio' => $model->folio,
             'tipo' => $model->tipo,
+            'tipo_format' => $model->tipo_format,
             'importe' => $model->importe,
+            'importe_format' => $model->importe_format,
             'concepto' => $model->concepto,
             'referencia' => $model->referencia,
+            'numero_bd' => $model->numero_bd,
+            'numero_polizas' => $model->polizas()->count(),
+            'numero_movimientos' => $model->movimientos()->count(),
         ];
     }
 

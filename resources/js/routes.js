@@ -128,6 +128,26 @@ export const routes = [
                 ],
             },
             {
+                path:"solicitud-edicion-poliza/:id",
+                props: true,
+                component: require('./components/contabilidad-general/solicitudes-edicion/Show.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"solicitud-edicion-poliza-show",
+                        props: true,
+                        component: require('./components/contabilidad-general/solicitudes-edicion/Show.vue').default,
+                        meta: {
+                            title: 'Consultar Solicitud de Edición',
+                            breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'CONSULTAR'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        }
+                    }
+                ],
+            },
+            {
                 path: 'cfd-sat',
                 component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
                 children:[
