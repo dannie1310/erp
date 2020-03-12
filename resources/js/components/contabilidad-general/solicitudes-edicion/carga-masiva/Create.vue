@@ -17,13 +17,63 @@
             >
             <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (xlsx)</div>
         </form>
-        <div class="row" v-if="solicitud_partidas.length > 0">
-            <div class="col-md-12">
-                Cantidad de Partidas: {{resumen.cantidad_partidas}}
+        <span v-if="solicitud_partidas.length > 0">
+            <br />
+            <div class="row" >
+                <div class="col-md-12">
+                    <h6>-Cantidad de Partidas: {{resumen.cantidad_partidas}} -Cantidad de Pólizas: {{resumen.cantidad_polizas_involucradas}} -Cantidad de Movimientos: {{resumen.cantidad_movimientos}} -Cantidad de Bases de Datos: {{resumen.cantidad_bases}} </h6>
+                </div>
             </div>
+            <div class="row" >
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="index_corto">#</th>
+                                    <th class="fecha">Fecha</th>
+                                    <th class="fecha">Tipo</th>
+                                    <th class="fecha">Folio</th>
+                                    <th class="money">Importe</th>
+                                    <th>Concepto</th>
+                                    <th class="referencia_input">Referencia</th>
+                                    <th class="index_corto">#BD</th>
+                                    <th class="index_corto">#P</th>
+                                    <th class="index_corto">#M</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(partida, i) in solicitud_partidas">
+                                    <tr style="background-color:rgba(0, 0, 0, 0.1)">
+                                        <td>{{i+1}}</td>
+                                        <td>{{partida.fecha_format}}</td>
+                                        <td>{{partida.tipo_txt}}</td>
+                                        <td>{{partida.folio}}</td>
+                                        <td>{{partida.importe_format}}</td>
+                                        <td>{{partida.concepto}}</td>
+                                        <td>{{partida.referencia}}</td>
+                                        <td>{{partida.cantidad_bases}}</td>
+                                        <td>{{partida.polizas.length}}</td>
+                                        <td>{{partida.cantidad_movimientos}}</td>
+                                    </tr>
+                                    <tr v-for="(poliza, j) in partida.polizas">
+                                        <td></td>
+                                        <td style="text-align: right">{{j+1}}</td>
+                                        <td colspan="2">{{poliza.bd_contpaq}}</td>
+                                        <td colspan="5">{{poliza.concepto}}</td>
+                                        <td>{{poliza.movimientos.length}}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
 
+                </div>
             </div>
-        </div>
+            <button type="button" class="btn btn-primary pull-right"  @click="registrar">Registrar</button>
+
+        </span>
+
     </span>
 </template>
 
@@ -40,6 +90,9 @@
             }
         },
         methods:{
+            registrar(){
+
+            },
             createImage(file, tipo) {
                 var reader = new FileReader();
                 var vm = this;
