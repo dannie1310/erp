@@ -94,8 +94,9 @@
                             unidad: material.unidad,
                             numero_parte: material.numero_parte,
                             buttons: $.extend({}, {
-                                edit: self.$root.can('editar_insumo_material') ? true : undefined,
-                                id: material.id
+                               id: material.id,
+                               borrar: true,
+                               update: true
                             })
                         })
                     });

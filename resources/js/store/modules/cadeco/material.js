@@ -53,8 +53,8 @@ export default {
         delete(context, payload) {            
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Servicio",
-                    text: "¿Está seguro/a de que desea eliminar servicio?",
+                    title: "Eliminar Insumo",
+                    text: "¿Está seguro/a de que desea eliminar insumo?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -74,7 +74,7 @@ export default {
                                 .delete(URI + payload.id, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Servicio eliminado correctamente", {
+                                    swal("Insumo eliminado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -146,8 +146,8 @@ export default {
                         
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Está seguro?",
-                    text: "Editar datos del Servicio",
+                    title: "Actualizar Insumo",
+                    text: "¿Está seguro/a de que desea actualizar insumo?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -166,7 +166,7 @@ export default {
                                 .patch(URI + payload.id, payload.data, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("El Servicio ha sido Editado correctamente", {
+                                    swal("El Insumo ha sido actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -216,45 +216,6 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 });
-                        }
-                    });
-            });
-        },
-        update(context, payload) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "¿Está seguro?",
-                    text: "Actualizar el Material",
-                    icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Actualizar',
-                            closeModal: false,
-                        }
-                    }
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .patch(URI + payload.id, payload.data)
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("Material actualizado correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    })
-                                        .then(() => {
-                                            resolve(data);
-                                        })
-                                })
-                                .catch(error => {
-                                    reject(error);
-                                })
                         }
                     });
             });

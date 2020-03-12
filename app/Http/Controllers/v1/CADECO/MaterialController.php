@@ -50,8 +50,8 @@ class MaterialController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_insumo_mano_obra|consultar_insumo_material|consultar_insumo_herramienta_equipo|consultar_insumo_servicio|consultar_insumo_maquinaria')->only(['show','paginate','index','find']);
         $this->middleware('permiso:registrar_insumo_mano_obra|registrar_insumo_material|registrar_insumo_herramienta_equipo|registrar_insumo_servicio|registrar_insumo_maquinaria')->only('store');
-        $this->middleware('permiso:editar_insumo_servicio')->only('update');
-        $this->middleware('permiso:eliminar_insumo_servicio')->only('destroy');
+        $this->middleware('permiso:editar_insumo_servicio|editar_insumo_material')->only('update');
+        $this->middleware('permiso:eliminar_insumo_servicio|eliminar_insumo_material')->only('destroy');
 
 
 
@@ -70,4 +70,4 @@ class MaterialController extends Controller
         return $this->traitDestroy($request, $id);      
     }
 }
-}
+
