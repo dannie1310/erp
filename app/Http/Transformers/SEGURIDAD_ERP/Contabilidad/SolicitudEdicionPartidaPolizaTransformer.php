@@ -23,6 +23,7 @@ class SolicitudEdicionPartidaPolizaTransformer extends TransformerAbstract
             'id' => (int) $model->id,
             'bd_contpaq' => $model->bd_contpaq,
             'concepto_original' => $model->concepto_original,
+            'estado' => $model->estado,
         ];
     }
 

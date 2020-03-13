@@ -114,7 +114,12 @@
                                         <td>{{partida.numero_movimientos}}</td>
                                     </tr>
                                     <tr v-for="(poliza, j) in partida.polizas.data">
-                                        <td></td>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" :id="`cumplido${i}-${j}`"  v-model="poliza.estado">
+                                                <label :for="`cumplido${i}-${j}`" class="custom-control-label" v-model="poliza.estado"></label>
+                                            </div>
+                                        </td>
                                         <td style="text-align: right">{{j+1}}</td>
                                         <td colspan="2">{{poliza.bd_contpaq}}</td>
                                         <td colspan="5">{{poliza.concepto}}</td>
@@ -128,6 +133,8 @@
                 </div>
             </div>
             <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+            <button type="button" class="btn btn-success pull-right"  @click="autorizar"><i class="fa fa-check"></i>Autorizar</button>
+            <button type="button" class="btn btn-danger pull-right"  @click="rechazar"><i class="fa fa-ban"></i>Rechazar</button>
         </span>
 </template>
 
@@ -159,6 +166,19 @@
                 })
             },
             regresar() {
+                this.$router.push({name: 'solicitud-edicion-poliza'});
+            },
+            autorizar() {
+                let self = this;
+                return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/autorizar', {
+                    id: this.id,
+                    partidas:self.solicitud.partidas.data
+                }).then(data => {
+                    this.find();
+                    this.solicitud();
+                })
+            },
+            rechazar() {
                 this.$router.push({name: 'solicitud-edicion-poliza'});
             },
         },

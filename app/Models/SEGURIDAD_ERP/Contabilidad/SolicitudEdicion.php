@@ -76,13 +76,16 @@ class SolicitudEdicion extends Model
     public function getEstadoFormatAttribute()
     {
         switch ($this->estado){
-            case 1 :
+            case 0 :
                 return 'Registrada';
                 break;
-            case 2 :
+            case 1 :
                 return 'Autorizada';
                 break;
-            case 3 :
+            case 2 :
+                return 'Aplicada';
+                break;
+            case -1 :
                 return 'Rechazada';
                 break;
         }

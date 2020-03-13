@@ -109,8 +109,46 @@ export default {
                 });
             });
         },
+        autorizar(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Autorización de solicitud de edición de póliza",
+                    text: "¿Está seguro de que desea autorizar esta solicitud?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Autorizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + '/autorizar', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Solicitud autorizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
     },
-
     getters: {
         solicitudes(state) {
             return state.solicitudes

@@ -2,10 +2,10 @@
     <span>
         <div class="row">
             <div class="col-12"  :disabled="cargando">
-                <button  @click="carga_masiva" title="Cargar solicitud de cambio por layout" class="btn btn-app btn-info float-right" v-if="$root.can('editar_poliza')" >
+                <button  @click="carga_masiva" title="Cargar solicitud de edición de póliza por layout" class="btn btn-app btn-info float-right" v-if="$root.can('registrar_solicitud_edicion_poliza_ctpq',true)" >
                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                     <i class="fa fa-upload" v-else></i>
-                    Registrar
+                    Registrar por Layout
                 </button>
             </div>
         </div>
@@ -97,7 +97,10 @@
                             estado: solicitud.estado_format,
                             buttons: $.extend({}, {
                                 id: solicitud.id,
-                                autorizar: self.$root.can('autorizar_solicitud_edicion_polizas') ? true : false,
+                                estado: solicitud.estado,
+                                autorizar: self.$root.can('autorizar_solicitud_edicion_poliza_ctpq',true) ? true : false,
+                                rechazar: self.$root.can('rechazar_solicitud_edicion_poliza_ctpq',true) ? true : false,
+                                aplicar: self.$root.can('aplicar_solicitud_edicion_poliza_ctpq',true) ? true : false,
                                 show: true
                             })
                         })

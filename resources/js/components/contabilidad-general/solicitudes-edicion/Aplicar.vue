@@ -127,7 +127,7 @@
 
                 </div>
             </div>
-            <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+            <button type="button" class="btn btn-primary pull-right"  @click="regresar">Regresar</button>
         </span>
 </template>
 

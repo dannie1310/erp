@@ -193,4 +193,19 @@ class SolicitudEdicionService
         $this->resumen["bases"] = array_unique($this->bases);
         return ["partidas" => $partidas_con_polizas, "resumen" => $this->resumen];
     }
+
+    public function autorizar($id, $datos)
+    {
+        return $this->repository->autorizar();
+    }
+
+    public function rechazar($id)
+    {
+        return $this->repository->rechazar();
+    }
+
+    public function aplicar($id)
+    {
+        return $this->repository->aplicar();
+    }
 }

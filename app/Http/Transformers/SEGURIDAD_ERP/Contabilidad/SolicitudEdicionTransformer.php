@@ -25,6 +25,7 @@ class SolicitudEdicionTransformer extends TransformerAbstract
             'fecha_hora_registro_format' => $model->fecha_hora_registro_format,
             'usuario_registro' => $model->usuario->nombre_completo,
             'estado_format' => $model->estado_format,
+            'estado' => $model->estado,
             'numero_bd' => $model->numero_bd,
             'numero_polizas' => $model->polizas()->count(),
             'numero_partidas' => $model->partidas()->count(),

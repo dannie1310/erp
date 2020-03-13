@@ -70,9 +70,11 @@
 
                 </div>
             </div>
-            <button type="button" class="btn btn-primary pull-right"  @click="store">Registrar</button>
+
 
         </span>
+        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+        <button type="button" class="btn btn-success pull-right"  @click="store" v-if="solicitud_partidas.length > 0"><i class="fa fa-save"></i>Registrar</button>
 
     </span>
 </template>
@@ -134,6 +136,9 @@
                         this.$validator.errors.clear();
                     }
                 });
+            },
+            regresar() {
+                this.$router.push({name: 'solicitud-edicion-poliza'});
             },
             cargarLayout(){
                 this.cargando = true;
