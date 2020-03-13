@@ -129,13 +129,14 @@
                                 </template>
                             </tbody>
                         </table>
+                        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                        <button type="button" class="btn btn-success pull-right"  @click="autorizar" v-if="solicitud_edit.estado == 0"><i class="fa fa-check"></i>Autorizar</button>
+                        <button type="button" class="btn btn-danger pull-right"  @click="rechazar" v-if="solicitud_edit.estado == 0"><i class="fa fa-ban"></i>Rechazar</button>
                     </div>
 
                 </div>
             </div>
-            <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
-            <button type="button" class="btn btn-success pull-right"  @click="autorizar" v-if="solicitud_edit.estado == 0"><i class="fa fa-check"></i>Autorizar</button>
-            <button type="button" class="btn btn-danger pull-right"  @click="rechazar" v-if="solicitud_edit.estado == 0"><i class="fa fa-ban"></i>Rechazar</button>
+
         </span>
 </template>
 

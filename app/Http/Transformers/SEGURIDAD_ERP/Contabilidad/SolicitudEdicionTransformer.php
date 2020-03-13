@@ -15,7 +15,8 @@ use League\Fractal\TransformerAbstract;
 class SolicitudEdicionTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'partidas'
+        'partidas',
+        'partidas_activas'
     ];
 
     public function transform(SolicitudEdicion $model)
@@ -43,6 +44,13 @@ class SolicitudEdicionTransformer extends TransformerAbstract
     public function includePartidas(SolicitudEdicion $model)
     {
         if ($partidas = $model->partidas) {
+            return $this->collection($partidas, new SolicitudEdicionPartidaTransformer);
+        }
+    }
+
+    public function includePartidasActivas(SolicitudEdicion $model)
+    {
+        if ($partidas = $model->partidasActivas) {
             return $this->collection($partidas, new SolicitudEdicionPartidaTransformer);
         }
     }

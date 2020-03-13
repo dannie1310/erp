@@ -76,11 +76,7 @@
                 </table>
             </div>
         </div>
-            <div class="row" >
-                <div class="col-md-12">
-                    <h6>-Cantidad de Partidas: {{solicitud.numero_partidas}} -Cantidad de Pólizas: {{solicitud.numero_polizas}} -Cantidad de Movimientos: {{solicitud.numero_movimientos}} -Cantidad de Bases de Datos: {{solicitud.numero_bd}} </h6>
-                </div>
-            </div>
+
             <div class="row" >
                 <div class="col-md-12">
                     <div class="table-responsive">
@@ -100,7 +96,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <template v-for="(partida, i) in solicitud.partidas.data">
+                                <template v-for="(partida, i) in solicitud.partidas_activas.data">
                                     <tr style="background-color:rgba(0, 0, 0, 0.1)">
                                         <td>{{i+1}}</td>
                                         <td>{{partida.fecha_format}}</td>
@@ -124,12 +120,13 @@
                                 </template>
                             </tbody>
                         </table>
+                        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                        <button type="button" class="btn btn-success pull-right"  @click="aplicar" v-if="solicitud.estado == 1"><i class="fa fa-arrow-alt-circle-down"></i>Aplicar</button>
                     </div>
 
                 </div>
             </div>
-            <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
-            <button type="button" class="btn btn-success pull-right"  @click="aplicar" v-if="solicitud.estado == 1"><i class="fa fa-arrow-alt-circle-down"></i>Aplicar</button>
+
         </span>
 </template>
 
@@ -152,7 +149,7 @@
                 return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/find', {
                     id: this.id,
                     params: {
-                        include: ['partidas.polizas_autorizadas'],
+                        include: ['partidas_activas.polizas_autorizadas'],
                     }
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/solicitud-edicion-poliza/SET_SOLICITUD', data);

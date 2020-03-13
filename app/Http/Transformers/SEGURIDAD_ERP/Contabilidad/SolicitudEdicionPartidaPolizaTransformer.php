@@ -27,6 +27,7 @@ class SolicitudEdicionPartidaPolizaTransformer extends TransformerAbstract
             'monto_format' => $model->monto_format,
             'numero_movimientos' => $model->movimientos()->count(),
             'estado' => ($model->estado == 0)?false:$model->estado,
+            'class_estado' => ($model->estado == 0)?"far fa-square":"fa fa-check-square",
         ];
     }
 

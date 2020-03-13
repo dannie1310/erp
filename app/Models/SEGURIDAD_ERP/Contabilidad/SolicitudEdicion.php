@@ -29,6 +29,10 @@ class SolicitudEdicion extends Model
     {
         return $this->hasMany(SolicitudEdicionPartida::class,"id_solicitud_edicion","id");
     }
+    public function partidasActivas()
+    {
+        return $this->hasMany(SolicitudEdicionPartida::class,"id_solicitud_edicion","id")->activas();
+    }
 
     public function polizas()
     {

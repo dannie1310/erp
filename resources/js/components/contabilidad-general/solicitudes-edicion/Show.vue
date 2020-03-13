@@ -114,7 +114,9 @@
                                         <td>{{partida.numero_movimientos}}</td>
                                     </tr>
                                     <tr v-for="(poliza, j) in partida.polizas.data">
-                                        <td></td>
+                                        <td>
+                                            <i :class="poliza.class_estado"></i>
+                                        </td>
                                         <td style="text-align: right">{{j+1}}</td>
                                         <td colspan="2">{{poliza.bd_contpaq}}</td>
                                         <td >{{poliza.monto_format}}</td>
@@ -124,11 +126,10 @@
                                 </template>
                             </tbody>
                         </table>
+                        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
                     </div>
-
                 </div>
             </div>
-            <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
         </span>
 </template>
 

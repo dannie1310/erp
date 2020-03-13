@@ -24,6 +24,11 @@ class SolicitudEdicionPartida extends Model
         , "tipo"
     ];
 
+    public function scopeActivas($query)
+    {
+        return $query->whereHas('polizasAutorizadas');
+    }
+
     public function solicitud()
     {
         return $this->belongsTo(SolicitudEdicion::class, "id_solicitud_edicion", "id");
