@@ -54,9 +54,9 @@ class SolicitudEdicionController extends Controller
         return $this->service->autorizar($id,$request->partidas);
     }
 
-    public function rechazar($data)
+    public function rechazar($id)
     {
-        return $this->service->rechazar($data);
+        return $this->service->rechazar($id);
     }
 
     public function aplicar($data)

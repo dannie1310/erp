@@ -174,4 +174,25 @@ class SolicitudEdicion extends Model
 
     }
 
+    public function rechazar()
+    {
+        try {
+            DB::connection('seguridad')->beginTransaction();
+            $this->estado = -1;
+            $this->save();
+            $polizas = $this->polizas;
+            foreach ($polizas as $poliza_obj){
+                $poliza_obj->estado = 0;
+                $poliza_obj->save();
+            }
+            DB::connection('seguridad')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+
+    }
+
 }

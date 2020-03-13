@@ -33,9 +33,9 @@ class SolicitudEdicionRepository extends Repository implements RepositoryInterfa
         return $item;
     }
 
-    public function rechazar(array $datos)
+    public function rechazar($id)
     {
-        return $this->model->rechazar($datos);
+        return $this->show($id)->rechazar();
     }
 
     public function aplicar()

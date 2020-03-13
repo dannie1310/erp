@@ -178,11 +178,15 @@
                     partidas:self.solicitud_edit.partidas.data
                 }).then(data => {
                     this.find();
-                    //this.solicitud();
                 })
             },
             rechazar() {
-                this.$router.push({name: 'solicitud-edicion-poliza'});
+                let self = this;
+                return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/rechazar', {
+                    id: this.id,
+                }).then(data => {
+                    this.find();
+                })
             },
         },
         /*computed: {

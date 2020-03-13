@@ -217,7 +217,7 @@ class SolicitudEdicionService
 
     public function rechazar($id)
     {
-        return $this->repository->rechazar();
+        return $this->repository->rechazar($id);
     }
 
     public function aplicar($id)
