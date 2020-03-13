@@ -46,4 +46,12 @@ class PolizaRepository extends Repository implements RepositoryInterface
         return $item;
     }
 
+    public function find(array $datos){
+        return $this->model->where("Folio","=",$datos["folio"])
+            ->where("Fecha","=",$datos["fecha"])
+            ->where("TipoPol","=",$datos["tipo"])
+            ->where("Cargos","=",$datos["importe"])
+            ->get();
+    }
+
 }
