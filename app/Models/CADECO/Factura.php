@@ -134,6 +134,10 @@ class Factura extends Transaccion
         return $cr;
     }
 
+    public function prepolizaActiva(){
+        return $this->polizas()->orderBy('estatus', 'DESC')->first();
+    }
+
     private function registrarComplemento($factura)
     {
         $complemento = $factura->complemento()->create(["id_transaccion" => $factura->id_transaccion]);

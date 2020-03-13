@@ -21,6 +21,7 @@ class SolicitudEdicionPartidaPoliza extends Model
         , "id_empresa_contpaq"
         , "id_poliza"
         , "concepto_original"
+        , "monto"
     ];
 
     public function partida_solicitud()
@@ -31,6 +32,16 @@ class SolicitudEdicionPartidaPoliza extends Model
     public function  movimientos()
     {
         return $this->hasMany(SolicitudEdicionPartidaPolizaMovimiento::class,"id_solicitud_partida_poliza","id");
+    }
+
+    public function getMontoFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->monto),2);
+    }
+
+    public function scopeAutorizadas($query)
+    {
+        return $query->where('estado', 1);
     }
 
 }

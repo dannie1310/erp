@@ -38,9 +38,9 @@ class SolicitudEdicionRepository extends Repository implements RepositoryInterfa
         return $this->show($id)->rechazar();
     }
 
-    public function aplicar()
+    public function aplicar($id)
     {
-        return $this->model->aplicar();
+        return $this->show($id)->aplicar();
     }
 
     public function getListaBDContpaq(){
