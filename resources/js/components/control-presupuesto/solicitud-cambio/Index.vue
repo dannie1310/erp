@@ -29,14 +29,13 @@ export default {
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
                     { title: 'Número de Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default,  sortable: true},
-                    { title: 'Observaciones', field: 'observaciones', sortable: true },
-                    { title: 'Contratista', field: 'id_empresa',  sortable: true  },
-                    { title: 'Subtotal', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: true  },
-                    { title: 'IVA', field: 'impuesto', tdClass: 'money', thClass: 'th_money', sortable: true },
-                    { title: 'Total', field: 'total', tdClass: 'money', thClass: 'th_money', sortable: false },
-                    // { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Tipo Orden', field: 'tipo_orden', sortable: true },
+                    { title: 'Fecha Solicitud', field: 'fecha',  sortable: true  },
+                    { title: 'Usuario Solicita', field: 'usuario', sortable: true  },
+                    { title: 'Motivo', field: 'motivo',sortable: true },
+                    { title: 'Importe Afectación', field: 'monto_afectacion', sortable: false },
+                    { title: 'Estatus', field: 'estatus', sortable: false },
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -50,7 +49,7 @@ export default {
             // this.query.include = 'subcontrato.empresa';
             // this.query.sort = 'numero_folio';
             // this.query.order = 'DESC';
-
+            this.lista_solicitudes();
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -70,6 +69,9 @@ export default {
                     .finally(() => {
                         this.cargando = false;
                     })
+            },
+            lista_solicitudes(){
+                
             },
         },
         computed: {

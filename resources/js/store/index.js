@@ -91,6 +91,7 @@ import subcontrato from './modules/contratos/subcontrato';
 
 //CONTROL PRESUPUESTO
 import solicitudCambio from './modules/controlPresupuesto/solicitud-cambio';
+import tipoOrden from './modules/controlPresupuesto/tipo-orden';
 
 
 //FINANZAS
@@ -203,6 +204,7 @@ export default new Vuex.Store({
         'contratos/subcontrato': subcontrato,
 
         'control-presupuesto/solicitud-cambio': solicitudCambio,
+        'control-presupuesto/tipo-orden': tipoOrden,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,

@@ -633,9 +633,17 @@ $api->version('v1', function ($api) {
      * CONTROL DE CAMBIOS AL PRESUPUESTO
      */
     $api->group(['middleware' => 'api', 'prefix' => 'control-presupuesto'], function ($api){
+
+        // SOLICITUD DE CAMBIO
         $api->group(['prefix' => 'solicitud-cambio'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\SolicitudCambioController@paginate');
         });
+
+        // TIPOS ORDENES
+        $api->group(['prefix' => 'tipo-orden', function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TipoOrden@index');
+        }]);
+
     });
 
     /**

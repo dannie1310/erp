@@ -8,7 +8,7 @@
             <li class="nav-item">
                 <router-link :to="{name: 'solicitud-cambio'}" class="nav-link">
                     <i class="nav-icon fa fa-sign-in"></i>
-                    <p>Solicitud Cambio Presupuesto </p>
+                    <p>Cambios Al Presupuesto </p>
                 </router-link>
             </li>
         </ul>

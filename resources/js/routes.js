@@ -362,8 +362,8 @@ export const routes = [
                         name: 'solicitud-cambio',
                         component: require('./components/control-presupuesto/solicitud-cambio/Index').default,
                         meta: {
-                            title: 'Solicitud de Cambio',
-                            breadcrumb: {parent: 'control_presupuesto', name: 'SOLICITUD CAMBIO'},
+                            title: 'Control de Cambios al Presupuesto',
+                            breadcrumb: {parent: 'control_presupuesto', name: 'CONTROL CAMBIOS'},
                             middleware: [auth, context],
                             // permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
                         }
