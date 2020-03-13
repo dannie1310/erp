@@ -33,7 +33,7 @@
                     { title: 'Número Parte', field: 'numero_parte',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Unidad', field: 'unidad', thClass: 'th_unidad', tdClass: 'td_unidad', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -44,6 +44,7 @@
         },
         mounted() {
             this.$Progress.start();
+            this.getUnidades()
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
@@ -61,7 +62,13 @@
                     .finally(() => {
                         this.cargando = false;
                     })
-            }
+            },
+            getUnidades() {
+                return this.$store.dispatch('cadeco/unidad/index',{})
+                    .then(data => {
+                        this.$store.commit('cadeco/unidad/SET_UNIDADES', data.data);
+                    })
+            },
         },
         computed: {
             materiales(){
@@ -86,6 +93,11 @@
                             descripcion: material.descripcion,
                             unidad: material.unidad,
                             numero_parte: material.numero_parte,
+                            buttons: $.extend({}, {
+                               id: material.id,
+                               borrar: true,
+                               update: true
+                            })
                         })
                     });
                 },
