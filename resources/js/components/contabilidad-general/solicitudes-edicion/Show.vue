@@ -117,7 +117,7 @@
                                         <td></td>
                                         <td style="text-align: right">{{j+1}}</td>
                                         <td colspan="2">{{poliza.bd_contpaq}}</td>
-                                        <td colspan="5">{{poliza.concepto}}</td>
+                                        <td colspan="5">{{poliza.concepto_original}}</td>
                                         <td>{{poliza.movimientos.data.length}}</td>
                                     </tr>
                                 </template>

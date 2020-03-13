@@ -196,7 +196,23 @@ class SolicitudEdicionService
 
     public function autorizar($id, $datos)
     {
-        return $this->repository->autorizar();
+        $polizas = [];
+        $contador_aprobadas = 0;
+        foreach ($datos as $partida){
+            foreach($partida["polizas"]["data"] as $poliza )
+            {
+                $polizas[] = ["id"=>$poliza["id"], "estado"=>$poliza["estado"]] ;
+                if($poliza["estado"])
+                {
+                    $contador_aprobadas++;
+                }
+            }
+        }
+        if(!$contador_aprobadas > 0)
+        {
+            abort(500,"No puede autorizar una solicitud sin aprobar el cambio de al menos una póliza");
+        }
+        return $this->repository->autorizar($polizas, $id);
     }
 
     public function rechazar($id)

@@ -33,6 +33,22 @@ class SolicitudEdicion extends Model
         return $this->hasManyThrough(SolicitudEdicionPartidaPoliza::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id_solicitud_partida","id","id");
     }
 
+    public function usuario_registro(){
+        return $this->belongsTo(Usuario::class, 'id_usuario_registro', 'idusuario');
+    }
+
+    public function usuario_autorizo(){
+        return $this->belongsTo(Usuario::class, 'id_usuario_autorizo', 'idusuario');
+    }
+
+    public function usuario_rechazo(){
+        return $this->belongsTo(Usuario::class, 'id_usuario_rechazo', 'idusuario');
+    }
+
+    public function usuario_aplico(){
+        return $this->belongsTo(Usuario::class, 'id_usuario_aplico', 'idusuario');
+    }
+
     public function getNumeroMovimientosAttribute()
     {
         $no_movimientos = 0;
@@ -58,9 +74,6 @@ class SolicitudEdicion extends Model
         return $no_bd;
     }
 
-    public function usuario(){
-        return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
-    }
 
     public static function getFolio()
     {
@@ -97,6 +110,24 @@ class SolicitudEdicion extends Model
         return date_format($date,"d/m/Y H:i:s");
     }
 
+    public function getFechaHoraAutorizacionFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_autorizacion);
+        return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public function getFechaHoraRechazoFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_rechazo);
+        return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public function getFechaHoraAplicacionFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_aplicacion);
+        return date_format($date,"d/m/Y H:i:s");
+    }
+
     public function registrar($datos)
     {
         try {
@@ -114,6 +145,27 @@ class SolicitudEdicion extends Model
             }
             DB::connection('seguridad')->commit();
             return $solicitud;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+
+    }
+
+    public function autorizar($polizas)
+    {
+        try {
+            DB::connection('seguridad')->beginTransaction();
+            $this->estado = 1;
+            $this->save();
+            foreach ($polizas as $poliza){
+                $poliza_obj = SolicitudEdicionPartidaPoliza::find($poliza["id"]);
+                $poliza_obj->estado = $poliza["estado"];
+                $poliza_obj->save();
+            }
+            DB::connection('seguridad')->commit();
+            return $this;
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());

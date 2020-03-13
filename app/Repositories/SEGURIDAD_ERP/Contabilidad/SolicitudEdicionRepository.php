@@ -26,9 +26,11 @@ class SolicitudEdicionRepository extends Repository implements RepositoryInterfa
         return $this->model->registrar($datos);
     }
 
-    public function autorizar($datos)
+    public function autorizar(array $data, $id)
     {
-        return $this->model->autorizar($datos);
+        $item = $this->show($id);
+        $item->autorizar($data);
+        return $item;
     }
 
     public function rechazar(array $datos)
