@@ -222,6 +222,6 @@ class SolicitudEdicionService
 
     public function aplicar($id)
     {
-        return $this->repository->aplicar();
+        return $this->repository->aplicar($id);
     }
 }

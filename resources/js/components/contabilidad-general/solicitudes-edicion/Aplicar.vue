@@ -161,6 +161,14 @@
             regresar() {
                 this.$router.push({name: 'solicitud-edicion-poliza'});
             },
+            aplicar() {
+                let self = this;
+                return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/aplicar', {
+                    id: this.id,
+                }).then(data => {
+                    this.find();
+                })
+            },
         },
         computed: {
             solicitud() {

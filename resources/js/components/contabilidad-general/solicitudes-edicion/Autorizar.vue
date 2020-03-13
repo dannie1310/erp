@@ -189,11 +189,6 @@
                 })
             },
         },
-        /*computed: {
-            solicitud() {
-                return this.$store.getters['contabilidadGeneral/solicitud-edicion-poliza/currentSolicitud']
-            }
-        }*/
     }
 </script>
 

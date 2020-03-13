@@ -50,7 +50,6 @@ class PolizaRepository extends Repository implements RepositoryInterface
         return $this->model->where("Folio","=",$datos["folio"])
             ->where("Fecha","=",$datos["fecha"])
             ->where("TipoPol","=",$datos["tipo"])
-            ->where("Cargos","=",$datos["importe"])
             ->get();
     }
 

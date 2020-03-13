@@ -21,6 +21,7 @@ class SolicitudEdicionPartidaPoliza extends Model
         , "id_empresa_contpaq"
         , "id_poliza"
         , "concepto_original"
+        , "monto"
     ];
 
     public function partida_solicitud()
