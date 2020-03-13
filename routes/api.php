@@ -630,6 +630,15 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * CONTROL DE CAMBIOS AL PRESUPUESTO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'control-presupuesto'], function ($api){
+        $api->group(['prefix' => 'solicitud-cambio'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\SolicitudCambioController@paginate');
+        });
+    });
+
+    /**
      * FINANZAS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {

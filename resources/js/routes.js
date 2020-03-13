@@ -337,6 +337,42 @@ export const routes = [
         }
     },
     {
+        path: '/sao/control_presupuesto',
+        components: {
+            default: require('./components/control-presupuesto/partials/Layout.vue').default,
+            menu: require('./components/control-presupuesto/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'control_presupuesto',
+                component: require('./components/control-presupuesto/Index').default,
+                meta: {
+                    title: 'Control Presupuesto',
+                    breadcrumb: {parent:'home', name: 'CONTROL PRESUPUESTO'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'solicitud-cambio',
+                component: require('./components/control-presupuesto/solicitud-cambio/Index').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-cambio',
+                        component: require('./components/control-presupuesto/solicitud-cambio/Index').default,
+                        meta: {
+                            title: 'Solicitud de Cambio',
+                            breadcrumb: {parent: 'control_presupuesto', name: 'SOLICITUD CAMBIO'},
+                            middleware: [auth, context],
+                            // permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/almacenes',
         components: {
             default: require('./components/almacenes/partials/Layout.vue').default,
