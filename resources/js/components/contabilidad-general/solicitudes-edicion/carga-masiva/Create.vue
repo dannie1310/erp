@@ -67,6 +67,8 @@
                                 </template>
                             </tbody>
                         </table>
+                        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                        <button type="button" class="btn btn-success pull-right"  @click="store" v-if="solicitud_partidas.length > 0"><i class="fa fa-save"></i>Registrar</button>
                     </div>
 
                 </div>
@@ -74,8 +76,7 @@
 
 
         </span>
-        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
-        <button type="button" class="btn btn-success pull-right"  @click="store" v-if="solicitud_partidas.length > 0"><i class="fa fa-save"></i>Registrar</button>
+
 
     </span>
 </template>
