@@ -91,6 +91,11 @@ class Retencion extends Model
 
     public function getImporteDisponibleAttribute()
     {
-        return (float) $this->importe - (float)$this->liberaciones->sum('importe');
+        return number_format(((float) $this->importe - (float)$this->liberaciones->sum('importe')), 4, '.','');
+    }
+
+    public function getImporteDisponibleFormatAttribute()
+    {
+        return '$ ' . number_format($this->importe_disponible, 2, '.',',');
     }
 }

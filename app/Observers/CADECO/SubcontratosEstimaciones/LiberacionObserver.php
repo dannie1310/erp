@@ -17,20 +17,29 @@ class LiberacionObserver {
      */
     public function creating(Liberacion $liberacion)
     {
+        $liberacion->validarImporteTotalALiberar();
         $liberacion->validarEstadoEstimacion('registrada');
-        $liberacion->validarLiberacionImporte($liberacion->importe);
         $liberacion->usuario = auth()->user()->usuario;
     }
 
+    public function created(Liberacion $liberacion)
+    {
+        if($liberacion->retencion->importe == $liberacion->suma_liberado_por_retencion)
+        {
+            $liberacion->cerrarRetencion();
+        }
+    }
 
-
-    /**
-     * @param Liberacion $liberacion
-     * @throws \Exception
-     */
     public function deleting(Liberacion $liberacion)
     {
         $liberacion->validarEstadoEstimacion('eliminada');
-        $liberacion->validarLiberacionImporte($liberacion->importe);
+    }
+
+    public function deleted(Liberacion $liberacion)
+    {
+        if($liberacion->retencion->estatus == 1)
+        {
+            $liberacion->abrirRetencion();
+        }
     }
 }

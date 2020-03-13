@@ -39,7 +39,8 @@ class RetencionTransformer extends TransformerAbstract
             'tipo_retencion'=> $model->tipo_retencion,
             'importe'=> $model->importe,
             'importe_format'=> $model->importe_format,
-            'importe_disponible' => (float) $model->importe_disponible,
+            'importe_disponible' => $model->importe_disponible,
+            'importe_disponible_format' => $model->importe_disponible_format,
             'concepto'=> $model->concepto,
         ];
     }

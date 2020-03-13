@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="modal fade" ref="modalLiberadas" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-md">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> Liberación</h5>
@@ -17,9 +17,6 @@
                             <form role="form" @submit.prevent="validate">
                                 <div class="modal-body">
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <label for="concepto" class="col-form-label float-right"><h3><b>POR LIBERAR</b></h3> </label>
-                                        </div>
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
                                                 <label class="col-md-3 col-form-label">Retención a liberar:</label>
@@ -61,11 +58,12 @@
                                                 <label for="importe" class="col-md-3 col-form-label">Importe: </label>
                                                 <div class="col-md-9">
                                                     <input
+                                                        :disabled="cargando"
                                                         type="number"
                                                         step="any"
                                                         name="importe"
                                                         data-vv-as="Importe"
-                                                        v-validate="{required: true, decimal:4, min_value:0.01}"
+                                                        v-validate="{required: true, decimal:4, min_value:0.01, max_value:retencion.importe_disponible}"
                                                         class="form-control"
                                                         id="importe"
                                                         placeholder="Importe"
@@ -101,6 +99,7 @@
             return {
                 concepto: '',
                 importe: '',
+                retencion: '',
                 cargando: false,
                 retenciones: [],
                 id_retencion:''
@@ -111,7 +110,7 @@
         },
         methods: {
             retencionDescripcion(item) {
-                return `[${item.tipo.tipo_retencion}] - [${item.concepto}] - [${item.importe_format}]`
+                return `[${item.tipo.tipo_retencion}] [${item.concepto}]- [Restan: ${item.importe_disponible_format}]`
             },
             getRetenciones() {
                 this.cargando = true;
@@ -171,7 +170,8 @@
                     this.retenciones.filter(retencion => {
                         if(retencion.id === value)
                         {
-                            return this.importe = retencion.importe_disponible
+                            this.retencion = retencion;
+                            return this.importe = retencion.importe_disponible;
                         }
                     });
                 }
