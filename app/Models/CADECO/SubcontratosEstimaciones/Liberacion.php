@@ -51,4 +51,9 @@ class Liberacion extends Model
             abort(403, 'La liberación no puede ser '.$tipo.' porque la estimación se encuentra ' . $estado . '.');
         }
     }
+
+    public function scopePorEstimacion($query, $id_transaccion)
+    {
+        return $query->where('id_transaccion', '=', $id_transaccion);
+    }
 }

@@ -6,7 +6,7 @@
  * Time: 20:05 PM
  */
 
-namespace App\Observers\CADECO\subcontratosEstimaciones;
+namespace App\Observers\CADECO\SubcontratosEstimaciones;
 
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 
@@ -21,7 +21,9 @@ class LiberacionObserver {
         $liberacion->validarLiberacionImporte($liberacion->importe);
         $liberacion->usuario = auth()->user()->usuario;
     }
-    
+
+
+
     /**
      * @param Liberacion $liberacion
      * @throws \Exception

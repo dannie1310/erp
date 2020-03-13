@@ -10,6 +10,7 @@ namespace App\Models\CADECO\SubcontratosEstimaciones;
 
 
 use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Subcontrato;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\SubcontratosEstimaciones\RetencionTipo;
 
@@ -74,5 +75,22 @@ class Retencion extends Model
     public function scopeDisponible($query)
     {
         return $query->where('estatus', '=', 0);
+    }
+
+    public function scopePorEstimacion($query, $id_transaccion)
+    {
+        return $query->where('id_transaccion', '=', $id_transaccion);
+    }
+
+    public function scopeDisponiblesParaLiberar($query, $id_estimacion)
+    {
+        $estimacion = Estimacion::find($id_estimacion);
+        $subcontrato =  Subcontrato::where('id_transaccion', '=', $estimacion->id_antecedente)->first();
+        return $query->whereIn('id_transaccion',$subcontrato->estimaciones->whereNotIn('id_transaccion', $id_estimacion)->pluck('id_transaccion'));
+    }
+
+    public function getImporteDisponibleAttribute()
+    {
+        return (float) $this->importe - (float)$this->liberaciones->sum('importe');
     }
 }
