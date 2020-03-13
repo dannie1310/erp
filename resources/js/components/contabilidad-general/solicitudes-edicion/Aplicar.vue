@@ -91,7 +91,7 @@
                                     <th class="fecha">Fecha</th>
                                     <th class="fecha">Tipo</th>
                                     <th class="fecha">Folio</th>
-                                    <th class="money">Importe</th>
+                                    <th class="money"></th>
                                     <th>Concepto</th>
                                     <th class="referencia_input">Referencia</th>
                                     <th class="index_corto">#BD</th>
@@ -106,19 +106,20 @@
                                         <td>{{partida.fecha_format}}</td>
                                         <td>{{partida.tipo_format}}</td>
                                         <td>{{partida.folio}}</td>
-                                        <td>{{partida.importe_format}}</td>
+                                        <td></td>
                                         <td>{{partida.concepto}}</td>
                                         <td>{{partida.referencia}}</td>
                                         <td>{{partida.numero_bd}}</td>
                                         <td>{{partida.numero_polizas}}</td>
                                         <td>{{partida.numero_movimientos}}</td>
                                     </tr>
-                                    <tr v-for="(poliza, j) in partida.polizas.data">
+                                    <tr v-for="(poliza, j) in partida.polizas_autorizadas.data">
                                         <td></td>
                                         <td style="text-align: right">{{j+1}}</td>
                                         <td colspan="2">{{poliza.bd_contpaq}}</td>
-                                        <td colspan="5">{{poliza.concepto}}</td>
-                                        <td>{{poliza.movimientos.data.length}}</td>
+                                        <td >{{poliza.monto_format}}</td>
+                                        <td colspan="4">{{poliza.concepto_original}}</td>
+                                        <td>{{poliza.numero_movimientos}}</td>
                                     </tr>
                                 </template>
                             </tbody>
@@ -127,7 +128,8 @@
 
                 </div>
             </div>
-            <button type="button" class="btn btn-primary pull-right"  @click="regresar">Regresar</button>
+            <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+            <button type="button" class="btn btn-success pull-right"  @click="aplicar" v-if="solicitud.estado == 1"><i class="fa fa-arrow-alt-circle-down"></i>Aplicar</button>
         </span>
 </template>
 
@@ -150,7 +152,7 @@
                 return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/find', {
                     id: this.id,
                     params: {
-                        include: ['partidas.polizas.movimientos'],
+                        include: ['partidas.polizas_autorizadas'],
                     }
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/solicitud-edicion-poliza/SET_SOLICITUD', data);

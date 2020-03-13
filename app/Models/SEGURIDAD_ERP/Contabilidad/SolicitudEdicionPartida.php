@@ -35,6 +35,11 @@ class SolicitudEdicionPartida extends Model
         return $this->hasMany(SolicitudEdicionPartidaPoliza::class, "id_solicitud_partida", "id");
     }
 
+    public function polizasAutorizadas()
+    {
+        return $this->hasMany(SolicitudEdicionPartidaPoliza::class, "id_solicitud_partida", "id")->autorizadas();
+    }
+
     public function movimientos()
     {
         return $this->hasManyThrough(SolicitudEdicionPartidaPolizaMovimiento::class,SolicitudEdicionPartidaPoliza::class,"id_solicitud_partida","id_solicitud_partida_poliza","id","id");
