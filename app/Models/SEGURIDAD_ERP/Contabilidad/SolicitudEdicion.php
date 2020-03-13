@@ -10,6 +10,8 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
 use App\Models\CADECO\FinanzasCBE\Solicitud;
+use App\Models\CTPQ\Poliza;
+use App\Models\CTPQ\PolizaMovimiento;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -27,10 +29,19 @@ class SolicitudEdicion extends Model
     {
         return $this->hasMany(SolicitudEdicionPartida::class,"id_solicitud_edicion","id");
     }
+    public function partidasActivas()
+    {
+        return $this->hasMany(SolicitudEdicionPartida::class,"id_solicitud_edicion","id")->activas();
+    }
 
     public function polizas()
     {
         return $this->hasManyThrough(SolicitudEdicionPartidaPoliza::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id_solicitud_partida","id","id");
+    }
+
+    public function polizasAutorizadas()
+    {
+        return $this->hasManyThrough(SolicitudEdicionPartidaPoliza::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id_solicitud_partida","id","id")->autorizadas();
     }
 
     public function usuario_registro(){
@@ -155,42 +166,94 @@ class SolicitudEdicion extends Model
 
     public function autorizar($polizas)
     {
-        try {
-            DB::connection('seguridad')->beginTransaction();
-            $this->estado = 1;
-            $this->save();
-            foreach ($polizas as $poliza){
-                $poliza_obj = SolicitudEdicionPartidaPoliza::find($poliza["id"]);
-                $poliza_obj->estado = $poliza["estado"];
-                $poliza_obj->save();
-            }
-            DB::connection('seguridad')->commit();
-            return $this;
-        } catch (\Exception $e) {
-            DB::connection('seguridad')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
+        if($this->estado == 0){
+            try {
 
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = 1;
+                $this->save();
+                foreach ($polizas as $poliza){
+                    $poliza_obj = SolicitudEdicionPartidaPoliza::find($poliza["id"]);
+                    $poliza_obj->estado = $poliza["estado"];
+                    $poliza_obj->save();
+                }
+                DB::connection('seguridad')->commit();
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede autorizar.");
+            return $this;
+        }
     }
 
     public function rechazar()
     {
-        try {
-            DB::connection('seguridad')->beginTransaction();
-            $this->estado = -1;
-            $this->save();
-            $polizas = $this->polizas;
-            foreach ($polizas as $poliza_obj){
-                $poliza_obj->estado = 0;
-                $poliza_obj->save();
+        if($this->estado == 0){
+            try {
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = -1;
+                $this->save();
+                $polizas = $this->polizas;
+                foreach ($polizas as $poliza_obj){
+                    $poliza_obj->estado = 0;
+                    $poliza_obj->save();
+                }
+                DB::connection('seguridad')->commit();
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
             }
-            DB::connection('seguridad')->commit();
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede autorizar.");
             return $this;
-        } catch (\Exception $e) {
-            DB::connection('seguridad')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
+        }
+    }
+
+    public function aplicar()
+    {
+        if($this->estado == 1){
+            try {
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = 2;
+                $this->save();
+                $polizas = $this->polizasAutorizadas;
+                foreach ($polizas as $poliza_obj){
+                    DB::purge('cntpq');
+                    \Config::set('database.connections.cntpq.database', $poliza_obj->bd_contpaq);
+                    $poliza_contpaq = Poliza::find($poliza_obj->id_poliza);
+                    if($poliza_obj->partida_solicitud->concepto != "" && $poliza_contpaq->Concepto == $poliza_obj->concepto_original){
+                        $poliza_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
+                        $poliza_contpaq->save();
+                    }
+                    foreach($poliza_obj->movimientos as $movimiento_obj){
+                        $movimiento_contpaq = PolizaMovimiento::find($movimiento_obj->id_movimiento);
+
+                        if($poliza_obj->partida_solicitud->concepto != "" && $movimiento_contpaq->Concepto == $movimiento_obj->concepto_original){
+                            $movimiento_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
+                        }
+
+                        if($poliza_obj->partida_solicitud->referencia != "" && $movimiento_contpaq->Referencia == $movimiento_obj->referencia_original){
+                            $movimiento_contpaq->Referencia = $poliza_obj->partida_solicitud->referencia;
+                        }
+                        $movimiento_contpaq->save();
+                    }
+                }
+                DB::connection('seguridad')->commit();
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede aplicar.");
+            return $this;
         }
 
     }

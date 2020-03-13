@@ -187,6 +187,45 @@ export default {
                     });
             });
         },
+        aplicar(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Aplicación de solicitud de edición de póliza",
+                    text: "¿Está seguro de que desea aplicar esta solicitud de edición?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Aplicar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + '/aplicar', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Solicitud aplicada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
     },
     getters: {
         solicitudes(state) {
