@@ -32,7 +32,7 @@
                     { title: 'Familia', field: 'tipo_material',sortable: true},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Unidad', field: 'unidad', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -84,6 +84,11 @@
                             tipo_material: material.descripcion_familia,
                             descripcion: material.descripcion,
                             unidad: material.unidad,
+                            buttons: $.extend({}, {
+                               id: material.id,
+                               borrar: true,
+                               update: true
+                            })
                         })
                     });
                 },
