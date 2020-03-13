@@ -18,7 +18,6 @@
 <script>
     export default {
         name: "control-presupuesto-menu",
-
         computed: {
         },
         methods: {

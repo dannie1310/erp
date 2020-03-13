@@ -2,13 +2,6 @@
   <div class="col-12">
       <div class="card">
           <div class="card-header">
-              <div class="row">
-                  <div class="col">
-                      <div class="form-group">
-                          <!-- <input type="text" class="form-control" placeholder="Buscar" v-model="search"> -->
-                      </div>
-                  </div>
-              </div>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -25,6 +18,7 @@
 <script>
 export default {
   name: "solicitud-cambio-index",
+  components: {},
         data() {
             return {
                 HeaderSettings: false,
@@ -63,15 +57,12 @@ export default {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('control-presupuesto/solicitud-cambio/SET_SOLICiTUDES', data.data);
+                        this.$store.commit('control-presupuesto/solicitud-cambio/SET_SOLICITUDES', data.data);
                         this.$store.commit('control-presupuesto/solicitud-cambio/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
-            },
-            lista_solicitudes(){
-                
             },
         },
         computed: {

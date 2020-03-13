@@ -2,16 +2,16 @@
 /**
  * Created by PhpStorm.
  * User: JLopezA
- * Date: 12/03/2020
- * Time: 09:45 PM
+ * Date: 13/03/2020
+ * Time: 03:45 PM
  */
 
 namespace App\Services\CADECO\ControlPresupuesto;
 
 use App\Repositories\Repository;
-use App\Models\CADECO\ControlPresupuesto\SolicitudCambio;
+use App\Models\CADECO\ControlPresupuesto\TipoOrden;
 
-class SolicitudCambioService{
+class TipoOrdenService{
     /**
      * @var Repository
      */
@@ -20,15 +20,15 @@ class SolicitudCambioService{
     /**
      * SolicitudCambio constructor.
      *
-     * @param SolicitudCambio $model
+     * @param TipoOrden $model
      */
-    public function __construct(SolicitudCambio $model)
+    public function __construct(TipoOrden $model)
     {
         $this->repository = new Repository($model);
     }
 
-    public function paginate($data)
+    public function index($data)
     {
-        return $this->repository->paginate($data);
+        return $this->repository->all($data);
     }
 }

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class TipoOrden extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'ControlPresupuesto.tipo_orden';
+    protected $table = 'ControlPresupuesto.tipos_ordenes';
     protected $primaryKey = 'id';
 
     protected static function boot()
