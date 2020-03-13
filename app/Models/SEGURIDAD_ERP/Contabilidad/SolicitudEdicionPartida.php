@@ -22,8 +22,12 @@ class SolicitudEdicionPartida extends Model
         , "fecha"
         , "folio"
         , "tipo"
-        , "importe"
     ];
+
+    public function scopeActivas($query)
+    {
+        return $query->whereHas('polizasAutorizadas');
+    }
 
     public function solicitud()
     {
@@ -33,6 +37,11 @@ class SolicitudEdicionPartida extends Model
     public function polizas()
     {
         return $this->hasMany(SolicitudEdicionPartidaPoliza::class, "id_solicitud_partida", "id");
+    }
+
+    public function polizasAutorizadas()
+    {
+        return $this->hasMany(SolicitudEdicionPartidaPoliza::class, "id_solicitud_partida", "id")->autorizadas();
     }
 
     public function movimientos()

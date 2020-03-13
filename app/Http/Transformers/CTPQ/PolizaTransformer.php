@@ -33,7 +33,10 @@ class PolizaTransformer extends TransformerAbstract
             'fecha' => (string) $model->fecha_format,
             'cargos' => (string) $model->cargos_format,
             'abonos' => (float) $model->Abonos,
-            'tipo' => (string) $model->tipo_poliza->Nombre
+            'tipo' => (string) $model->tipo_poliza->Nombre,
+            'monto' => (string) $model->Cargos,
+            'monto_format' => (string) $model->cargos_format,
+
         ];
     }
 

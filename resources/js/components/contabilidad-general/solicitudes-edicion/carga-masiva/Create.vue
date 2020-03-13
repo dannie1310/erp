@@ -34,7 +34,7 @@
                                     <th class="fecha">Fecha</th>
                                     <th class="fecha">Tipo</th>
                                     <th class="fecha">Folio</th>
-                                    <th class="money">Importe</th>
+                                    <th class="money"></th>
                                     <th>Concepto</th>
                                     <th class="referencia_input">Referencia</th>
                                     <th class="index_corto">#BD</th>
@@ -49,7 +49,7 @@
                                         <td>{{partida.fecha_format}}</td>
                                         <td>{{partida.tipo_txt}}</td>
                                         <td>{{partida.folio}}</td>
-                                        <td>{{partida.importe_format}}</td>
+                                        <td></td>
                                         <td>{{partida.concepto}}</td>
                                         <td>{{partida.referencia}}</td>
                                         <td>{{partida.cantidad_bases}}</td>
@@ -60,12 +60,15 @@
                                         <td></td>
                                         <td style="text-align: right">{{j+1}}</td>
                                         <td colspan="2">{{poliza.bd_contpaq}}</td>
-                                        <td colspan="5">{{poliza.concepto}}</td>
+                                        <td >{{poliza.monto_format}}</td>
+                                        <td colspan="4">{{poliza.concepto}}</td>
                                         <td>{{poliza.movimientos.length}}</td>
                                     </tr>
                                 </template>
                             </tbody>
                         </table>
+                        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                        <button type="button" class="btn btn-success pull-right"  @click="store" v-if="solicitud_partidas.length > 0"><i class="fa fa-save"></i>Registrar</button>
                     </div>
 
                 </div>
@@ -73,8 +76,7 @@
 
 
         </span>
-        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
-        <button type="button" class="btn btn-success pull-right"  @click="store" v-if="solicitud_partidas.length > 0"><i class="fa fa-save"></i>Registrar</button>
+
 
     </span>
 </template>

@@ -15,7 +15,8 @@ use League\Fractal\TransformerAbstract;
 class SolicitudEdicionPartidaTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'polizas'
+        'polizas',
+        'polizas_autorizadas'
     ];
     public function transform(SolicitudEdicionPartida $model) {
         return [
@@ -37,6 +38,14 @@ class SolicitudEdicionPartidaTransformer extends TransformerAbstract
     public function includePolizas(SolicitudEdicionPartida $model)
     {
         if($polizas = $model->polizas)
+        {
+            return $this->collection($polizas, new SolicitudEdicionPartidaPolizaTransformer);
+        }
+    }
+
+    public function includePolizasAutorizadas(SolicitudEdicionPartida $model)
+    {
+        if($polizas = $model->polizasAutorizadas)
         {
             return $this->collection($polizas, new SolicitudEdicionPartidaPolizaTransformer);
         }
