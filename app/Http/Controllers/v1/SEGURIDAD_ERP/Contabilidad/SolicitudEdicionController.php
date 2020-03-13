@@ -49,4 +49,19 @@ class SolicitudEdicionController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function autorizar(Request $request, $id)
+    {
+        return $this->service->autorizar($id,$request->partidas);
+    }
+
+    public function rechazar($id)
+    {
+        return $this->service->rechazar($id);
+    }
+
+    public function aplicar($data)
+    {
+        return $this->service->aplicar($data);
+    }
+
 }

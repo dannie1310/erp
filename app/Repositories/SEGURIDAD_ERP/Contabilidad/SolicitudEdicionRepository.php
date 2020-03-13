@@ -26,6 +26,23 @@ class SolicitudEdicionRepository extends Repository implements RepositoryInterfa
         return $this->model->registrar($datos);
     }
 
+    public function autorizar(array $data, $id)
+    {
+        $item = $this->show($id);
+        $item->autorizar($data);
+        return $item;
+    }
+
+    public function rechazar($id)
+    {
+        return $this->show($id)->rechazar();
+    }
+
+    public function aplicar()
+    {
+        return $this->model->aplicar();
+    }
+
     public function getListaBDContpaq(){
         return Empresa::where("Editable","1")->select("AliasBDD","IdContpaq")->get();
     }
