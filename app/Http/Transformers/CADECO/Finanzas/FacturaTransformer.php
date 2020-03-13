@@ -106,7 +106,7 @@ class FacturaTransformer extends TransformerAbstract
 
     public function includePoliza(Factura $model)
     {
-        if ($poliza = $model->poliza) {
+        if ($poliza = $model->prepolizaActiva()) {
             return $this->item($poliza, new PolizaTransformer);
         }
         return null;
