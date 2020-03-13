@@ -9,7 +9,7 @@ export default {
     },
 
     mutations: {
-        SET_SOLICTUDES(state, data) {
+        SET_SOLICiTUDES(state, data) {
             state.solicitudesCambio = data
         },
         SET_SOLICITUD(state, data) {

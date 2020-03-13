@@ -89,6 +89,9 @@ import fondoGarantia from './modules/contratos/fondo-garantia';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
 
+//CONTROL PRESUPUESTO
+import solicitudCambio from './modules/controlPresupuesto/solicitud-cambio';
+
 
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
@@ -198,6 +201,8 @@ export default new Vuex.Store({
         'contratos/fondo-garantia': fondoGarantia,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
+
+        'control-presupuesto/solicitud-cambio': solicitudCambio,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,
