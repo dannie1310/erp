@@ -640,9 +640,9 @@ $api->version('v1', function ($api) {
         });
 
         // TIPOS ORDENES
-        $api->group(['prefix' => 'tipo-orden', function ($api){
+        $api->group(['prefix' => 'tipo-orden'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TipoOrden@index');
-        }]);
+        });
 
     });
 
