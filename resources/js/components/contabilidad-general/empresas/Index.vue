@@ -40,6 +40,7 @@
                     { title: 'Editable', field: 'editable', sortable: true },
                     { title: 'Histórica', field: 'historica', sortable: true },
                     { title: 'Consolidadora ', field: 'consolidadora', sortable: true },
+                    { title: 'Desarrollo ', field: 'desarrollo', sortable: true },
                     { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -97,6 +98,7 @@
                         editable: empresa.editable == 1?'SI':'NO',
                         historica: empresa.historica == 1?'SI':'NO',
                         consolidadora: empresa.consolidadora == 1?'SI':'NO',
+                        desarrollo: empresa.desarrollo == 1 ? 'SI' : 'NO',
                         buttons: $.extend({}, {
                             edit: self.$root.can('configurar_visibilidad_empresa_ctpq', true) || self.$root.can('configurar_editabilidad_empresa_ctpq', true) || self.$root.can('configurar_tipo_empresa_ctpq', true) ? true : false,
                             empresa: empresa,
