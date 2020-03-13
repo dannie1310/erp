@@ -22,7 +22,6 @@ class SolicitudEdicionPartida extends Model
         , "fecha"
         , "folio"
         , "tipo"
-        , "importe"
     ];
 
     public function solicitud()

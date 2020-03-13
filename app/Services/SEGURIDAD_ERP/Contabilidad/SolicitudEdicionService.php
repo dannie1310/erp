@@ -92,10 +92,10 @@ class SolicitudEdicionService
                 $partidas_solicitud[$i]["tipo"] = (int)$row[1];
 
                 $partidas_solicitud[$i]["folio"] = (int)$row[2];
-                $partidas_solicitud[$i]["importe"] = (float)$row[3];
-                $partidas_solicitud[$i]["importe_format"] = "$ " . number_format($row[3], "2", ".", ",");
-                $partidas_solicitud[$i]["concepto"] = (string)$row[4];
-                $partidas_solicitud[$i]["referencia"] = (string)$row[5];
+                /*$partidas_solicitud[$i]["importe"] = (float)$row[3];
+                $partidas_solicitud[$i]["importe_format"] = "$ " . number_format($row[3], "2", ".", ",");*/
+                $partidas_solicitud[$i]["concepto"] = (string)$row[3];
+                $partidas_solicitud[$i]["referencia"] = (string)$row[4];
                 switch ($row[1]) {
                     case 1:
                         $partidas_solicitud[$i]["tipo_txt"] = "Ingresos";
