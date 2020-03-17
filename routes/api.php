@@ -634,14 +634,19 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'control-presupuesto'], function ($api){
 
-        // SOLICITUD DE CAMBIO
-        $api->group(['prefix' => 'solicitud-cambio'], function ($api){
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\SolicitudCambioController@paginate');
-        });
-
         // TIPOS ORDENES
         $api->group(['prefix' => 'tipo-orden'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TipoOrdenController@index');
+        });
+
+        // TARJETAS
+        $api->group(['prefix' => 'tarjeta'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TarjetaController@index');
+        });
+
+        // SOLICITUD DE CAMBIO
+        $api->group(['prefix' => 'solicitud-cambio'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\SolicitudCambioController@paginate');
         });
 
         // VARIACIÓN DE VOLUMEN

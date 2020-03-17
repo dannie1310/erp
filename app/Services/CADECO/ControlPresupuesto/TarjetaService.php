@@ -9,20 +9,20 @@
 namespace App\Services\CADECO\ControlPresupuesto;
 
 use App\Repositories\Repository;
-use App\Models\CADECO\ControlPresupuesto\TipoOrden;
+use App\Models\CADECO\ControlPresupuesto\Tarjeta;
 
-class TipoOrdenService{
+class TarjetaService{
     /**
      * @var Repository
      */
     protected $repository;
 
     /**
-     * TipoOrden constructor.
+     * Tarjeta constructor.
      *
-     * @param TipoOrden $model
+     * @param Tarjeta $model
      */
-    public function __construct(TipoOrden $model)
+    public function __construct(Tarjeta $model)
     {
         $this->repository = new Repository($model);
     }

@@ -93,6 +93,7 @@ import subcontrato from './modules/contratos/subcontrato';
 import solicitudCambio from './modules/controlPresupuesto/solicitud-cambio';
 import variacionVolumen from './modules/controlPresupuesto/variacion-volumen';
 import tipoOrden from './modules/controlPresupuesto/tipo-orden';
+import tarjeta from './modules/controlPresupuesto/tarjeta';
 
 
 //FINANZAS
@@ -207,6 +208,7 @@ export default new Vuex.Store({
         'control-presupuesto/solicitud-cambio': solicitudCambio,
         'control-presupuesto/variacion-volumen': variacionVolumen,
         'control-presupuesto/tipo-orden': tipoOrden,
+        'control-presupuesto/tarjeta': tarjeta,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,

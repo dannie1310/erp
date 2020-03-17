@@ -372,7 +372,7 @@ export const routes = [
             },
             {
                 path: 'variacion-volumen',
-                component: require('./components/control-presupuesto/variacion-volumen/Index').default,
+                component: require('./components/control-presupuesto/variacion-volumen/Layout').default,
                 children: [
                     {
                         path: '/',
@@ -383,6 +383,17 @@ export const routes = [
                             breadcrumb: {parent: 'control_presupuesto', name: 'VARIACIÓN VOLUMEN'},
                             middleware: [auth, context],
                             // permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'variacion-volumen-create',
+                        component: require('./components/control-presupuesto/variacion-volumen/Create').default,
+                        meta: {
+                            title: 'Registrar Variación de Volúmen',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'variacion-volumen'},
+                            middleware: [auth, context],
+                            // permission: ['registrar_variacion_volumen']
                         }
                     },
                 ]

@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: JLopezA
- * Date: 12/03/2020
- * Time: 0:58 PM
+ * Date: 13/03/2020
+ * Time: 02:58 PM
  */
 
 namespace App\Http\Controllers\v1\CADECO\ControlPresupuesto;
@@ -13,10 +13,10 @@ use League\Fractal\Manager;
 use Illuminate\Http\Request;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
-use App\Services\CADECO\ControlPresupuesto\VariacionVolumenService;
-use App\Http\Transformers\CADECO\ControlPresupuesto\VariacionVolumenTransformer;
+use App\Services\CADECO\ControlPresupuesto\TarjetaService;
+use App\Http\Transformers\CADECO\ControlPresupuesto\TarjetaTransformer;
 
-class VariacionVolumenController extends Controller
+class TarjetaController extends Controller
 {
     use ControllerTrait;
 
@@ -26,26 +26,26 @@ class VariacionVolumenController extends Controller
     protected $fractal;
 
     /**
-     * @var VariacionVolumenService
+     * @var TarjetaService
      */
     protected $service;
 
 
     /**
-     * @var VariacionVolumenTransformer
+     * @var TarjetaTransformer
      */
     protected $transformer;
 
 
     /**
-     * SolicitudCambioController constructor
+     * TipoOrdenController constructor
      *
      * @param Manager $fractal
-     * @param VariacionVolumenService $service
-     * @param VariacionVolumenTransformer $transformer
+     * @param TarjetaService $service
+     * @param TarjetaTransformer $transformer
      */
 
-    public function __construct(Manager $fractal, VariacionVolumenService $service, VariacionVolumenTransformer $transformer)
+    public function __construct(Manager $fractal, TarjetaService $service, TarjetaTransformer $transformer)
     {
         $this->middleware('auth:api');
         $this->middleware('context');

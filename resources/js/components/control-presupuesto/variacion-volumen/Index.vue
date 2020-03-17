@@ -1,18 +1,27 @@
 <template>
-  <div class="col-12">
-      <div class="card">
-          <div class="card-header">
-          </div>
-          <!-- /.card-header -->
-          <div class="card-body">
-              <div class="table-responsive">
-                  <datatable v-bind="$data" />
-              </div>
-          </div>
-          <!-- /.card-body -->
-      </div>
-      <!-- /.card -->
-  </div>
+    <div class="row">
+        <div class="col-12"  v-if="$root.can('registrar_variacion_volumen') || true" :disabled="cargando">
+            <button  @click="create" title="Crear" class="btn btn-app btn-info float-right" >
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-plus" v-else></i>
+                Registrar
+            </button>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <datatable v-bind="$data" />
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
 </template>
 
 <script>
@@ -30,7 +39,7 @@ export default {
                     { title: 'Motivo', field: 'motivo',sortable: true },
                     { title: 'Importe Afectación', field: 'monto_afectacion', sortable: false },
                     { title: 'Estatus', field: 'estatus', sortable: false },
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -43,7 +52,6 @@ export default {
             // this.query.include = 'subcontrato.empresa';
             // this.query.sort = 'numero_folio';
             // this.query.order = 'DESC';
-            this.lista_solicitudes();
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -63,6 +71,10 @@ export default {
                     .finally(() => {
                         this.cargando = false;
                     })
+            },
+            create() {
+                this.$router.push({name: 'variacion-volumen-create'});
+                
             },
         },
         computed: {
