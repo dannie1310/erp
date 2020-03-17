@@ -370,6 +370,23 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'variacion-volumen',
+                component: require('./components/control-presupuesto/variacion-volumen/Index').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'variacion-volumen',
+                        component: require('./components/control-presupuesto/variacion-volumen/Index').default,
+                        meta: {
+                            title: 'Variación de Volumen (Aditivas o Deductivas)',
+                            breadcrumb: {parent: 'control_presupuesto', name: 'VARIACIÓN VOLUMEN'},
+                            middleware: [auth, context],
+                            // permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+                        }
+                    },
+                ]
+            },
         ]
     },
     {

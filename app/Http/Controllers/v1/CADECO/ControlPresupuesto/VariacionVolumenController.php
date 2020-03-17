@@ -1,0 +1,57 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: JLopezA
+ * Date: 12/03/2020
+ * Time: 0:58 PM
+ */
+
+namespace App\Http\Controllers\v1\CADECO\ControlPresupuesto;
+
+
+use League\Fractal\Manager;
+use Illuminate\Http\Request;
+use App\Traits\ControllerTrait;
+use App\Http\Controllers\Controller;
+
+class VariacionVolumenController extends Controller
+{
+    use ControllerTrait;
+
+    /**
+     * @var Manager
+     */
+    protected $fractal;
+
+    /**
+     * @var VariacionVolumenService
+     */
+    protected $service;
+
+
+    /**
+     * @var VariacionVolumenTransformer
+     */
+    protected $transformer;
+
+
+    /**
+     * SolicitudCambioController constructor
+     *
+     * @param Manager $fractal
+     * @param VariacionVolumenService $service
+     * @param VariacionVolumenTransformer $transformer
+     */
+
+    public function __construct(Manager $fractal, VariacionVolumenService $service, VariacionVolumenTransformer $transformer)
+    {
+        $this->middleware('auth:api');
+        $this->middleware('context');
+        // $this->middleware('permiso:consultar_pagos')->only(['paginate']);
+
+        $this->fractal = $fractal;
+        $this->service = $service;
+        $this->transformer = $transformer;
+    }
+
+}

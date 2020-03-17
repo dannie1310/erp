@@ -91,6 +91,7 @@ import subcontrato from './modules/contratos/subcontrato';
 
 //CONTROL PRESUPUESTO
 import solicitudCambio from './modules/controlPresupuesto/solicitud-cambio';
+import variacionVolumen from './modules/controlPresupuesto/variacion-volumen';
 import tipoOrden from './modules/controlPresupuesto/tipo-orden';
 
 
@@ -204,6 +205,7 @@ export default new Vuex.Store({
         'contratos/subcontrato': subcontrato,
 
         'control-presupuesto/solicitud-cambio': solicitudCambio,
+        'control-presupuesto/variacion-volumen': variacionVolumen,
         'control-presupuesto/tipo-orden': tipoOrden,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,

@@ -36,6 +36,7 @@ use App\Models\CADECO\Contabilidad\TipoCuentaContable;
 use App\Models\CADECO\ContraRecibo;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\CADECO\ControlPresupuesto\SolicitudCambio;
+use App\Models\CADECO\ControlPresupuesto\VariacionVolumen;
 use App\Models\CADECO\Credito;
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Debito;
@@ -159,6 +160,7 @@ use App\Observers\CADECO\Contabilidad\TipoCuentaContableObserver;
 use App\Observers\CADECO\ContrareciboObserver;
 use App\Observers\CADECO\Contratos\AreaSubcontratanteObserver;
 use App\Observers\CADECO\ControlPresupuesto\SolicitudCambioObserver;
+use App\Observers\CADECO\ControlPresupuesto\VariacionVolumenObserver;
 use App\Observers\CADECO\CreditoObserver;
 use App\Observers\CADECO\CuentaObserver;
 use App\Observers\CADECO\DebitoObserver;
@@ -329,6 +331,7 @@ class AppServiceProvider extends ServiceProvider
              * Control Presupuesto
              */
             SolicitudCambio::observe(SolicitudCambioObserver::class);
+            VariacionVolumen::observe(VariacionVolumenObserver::class);
 
 
             /**

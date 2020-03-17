@@ -6,7 +6,7 @@
  * Time: 01:45 PM
  */
 
-namespace App\Observers\CADECO\Contratos;
+namespace App\Observers\CADECO\ControlPresupuesto;
 
 
 use App\Models\CADECO\ControlPresupuesto;

@@ -644,6 +644,11 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TipoOrdenController@index');
         });
 
+        // VARIACIÓN DE VOLUMEN
+        $api->group(['prefix' => 'variacion-volumen'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\VariacionVolumenController@paginate');
+        });
+
     });
 
     /**

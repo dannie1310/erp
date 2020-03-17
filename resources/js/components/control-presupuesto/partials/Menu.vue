@@ -11,6 +11,13 @@
                     <p>Cambios Al Presupuesto </p>
                 </router-link>
             </li>
+            <li class="nav-item">
+                <router-link :to="{name: 'variacion-volumen'}" class="nav-link">
+                    <i class="nav-icon fa fa-sign-in"></i>
+                    <p>Variación de Volumen <br>
+                        (Aditivas o Deductivas) </p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
