@@ -77,12 +77,12 @@ class EntradaMaterialPartidaObserver
 
     public function deleting(EntradaMaterialPartida $partida)
     {
-        if (count($partida->inventario) > 0)
+        if ($partida->inventario)
         {
-            foreach ($partida->inventario as $inv)
-            {
-                $inv->delete();
-            }
+            $partida->inventario->delete();
+        }
+        else if ($partida->movimiento) {
+            $partida->movimiento->delete();
         }
     }
 
