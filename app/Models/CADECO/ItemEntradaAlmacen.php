@@ -54,7 +54,7 @@ class ItemEntradaAlmacen extends Item
 
     public function inventario()
     {
-        return $this->hasMany(Inventario::class, 'id_item', 'id_item');
+        return $this->belongsTo(Inventario::class, 'id_item', 'id_item');
     }
 
     public function concepto()
