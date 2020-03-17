@@ -8,11 +8,13 @@
                     <div class="info-box-content">
                         <span class="info-box-number">{{sistema.name.toUpperCase()}}</span>
                         <router-link :to="{name:sistema.url}" v-if="!sistema.externo">
-                            <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
+                            <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right" /></span>
                         </router-link>
-
                         <a :href="`${sistema.url}?origen=${url}`" target="_blank" v-else>
-                            <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
+                            <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right" /></span>
+                        </a>
+                        <a :href="`${sistema.manual}`" v-if="!sistema.externo && sistema.manual" target="_blank">
+                            <span class="info-box-text" align="right" title="Ver manual de usuario"><i class="fa fa-file-pdf-o" /></span>
                         </a>
                     </div>
                     <!-- /.info-box-content -->
