@@ -27,6 +27,6 @@ class OrdenCompraComplemento extends Model
 
     public function getFechaEntregaFormatAttribute()
     {
-        return $this->fecha_entrega ?  date("d-m-Y", strtotime($this->fecha_entrega)) : '';
+        return $this->fecha_entrega ?  date("d/m/Y", strtotime($this->fecha_entrega)) : '';
     }
 }
