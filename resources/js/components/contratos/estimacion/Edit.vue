@@ -2,14 +2,14 @@
      <span>
        <div class="d-flex flex-row-reverse" v-if="!cargando">
            <div class="p-2">
+                <Penalizacion v-bind:id="id"></Penalizacion>
+            </div>
+           <div class="p-2">
                 <Resumen v-bind:id="id" v-bind:cargando="cargando"></Resumen>
             </div>
            <div class="p-2">
                 <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
-            </div>
-            <div class="p-2">
-                <Penalizacion v-bind:id="id"></Penalizacion>
-            </div>
+            </div>            
             <div class="p-2">
                 <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
