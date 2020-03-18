@@ -11,34 +11,32 @@
                                 </h4>
                             </div>
                         </div>
-                        
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group row error-content">
-                                            <label for="id_almacen" class="col-sm-2 col-form-label">tarjetas: </label>
-                                            <div class="col-sm-10">
-                                                <model-list-select
-                                                    :disabled="cargando"
-                                                    name="id_tarjeta"
-                                                    v-model="id_tarjeta"
-                                                    option-value="id"
-                                                    option-text="descripcion"
-                                                    :list="tarjetas"
-                                                    :placeholder="!cargando?'Seleccionar o buscar tarjeta por descripcion':'Cargando...'"
-                                                    :isError="errors.has(`id_tarjeta`)">
-                                                </model-list-select>
-                                                <div class="invalid-feedback" v-show="errors.has('id_tarjeta')">{{ errors.first('id_tarjeta') }}</div>
-                                            </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_almacen" class="col-sm-2 col-form-label">Conceptos: </label>
+                                        <div class="col-sm-10">
+                                            <model-list-select
+                                                :disabled="cargando"
+                                                name="id_tarjeta"
+                                                v-model="id_tarjeta"
+                                                option-value="id"
+                                                option-text="descripcion"
+                                                :list="tarjetas"
+                                                :placeholder="!cargando?'Seleccionar o buscar tarjeta por descripcion':'Cargando...'"
+                                                :isError="errors.has(`id_tarjeta`)">
+                                            </model-list-select>
+                                            <div class="invalid-feedback" v-show="errors.has('id_tarjeta')">{{ errors.first('id_tarjeta') }}</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row" v-if="conceptos_tarjeta.length > 0">
+            <div class="row" v-if="concepto">
                 <div class="col-12">
                     <div class="invoice p-3 mb-3">
                         <div class="col-12">
@@ -51,47 +49,35 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th class="text-center">#</th>
                                         <th class="text-center" width="60%">Descripción</th>
                                         <th class="text-center">Unidad</th>
                                         <th class="text-center">Volumen</th>
                                         <th class="text-center">Volumen del Cambio</th>
                                         <th class="text-center">Importe</th>
-                                        <th class="text-center" width="5%">-</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(concepto, i) in conceptos_tarjeta">
-                                            <td class="text-center">{{ i + 1}}</td>
-                                            <td>{{ concepto.concepto.descripcion}}</td>
-                                            <td class="text-center">{{ concepto.concepto.unidad}}</td>
-                                            <td class="text-center">{{ concepto.concepto.cantidad_presupuestada_format}}</td>
+                                        <tr>
+                                            <td>{{ concepto.descripcion}}</td>
+                                            <td class="text-center">{{ concepto.unidad}}</td>
+                                            <td class="text-center">{{ concepto.cantidad_presupuestada_format}}</td>
                                             <td>
                                                 <input type="text"
                                                     class="form-control"
-                                                    :name="`variacion_volumen[${i}]`"
+                                                    name="variacion_volumen"
                                                     data-vv-as="Volumen del Cambio"
                                                     v-model="concepto.variacion_volumen"
-                                                    v-validate="{required: concepto.checkVariacion == true ? true:false, min_value:concepto.concepto.cantidad_presupuestada *-1}"
-                                                    :class="{'is-invalid': errors.has(`variacion_volumen[${i}]`)}"
-                                                    :id="`variacion_volumen[${i}]`">
-                                                <div class="invalid-feedback" v-show="errors.has(`variacion_volumen[${i}]`)">{{ errors.first(`variacion_volumen[${i}]`) }}</div>
+                                                    v-validate="{required:true, min_value:concepto.cantidad_presupuestada *-1, decimal:4}"
+                                                    :class="{'is-invalid': errors.has('variacion_volumen')}"
+                                                    id="variacion_volumen">
+                                                <div class="invalid-feedback" v-show="errors.has(`variacion_volumen`)">{{ errors.first(`variacion_volumen`) }}</div>
                                             </td>
-                                            <td class="text-right">{{ concepto.concepto.monto_presupuestado_format}}</td>
-                                            <td class="text-center">
-                                                <input type="checkbox"
-                                                name="checkVariacion"
-                                                class="form-check-input"
-                                                data-vv-as="Variación"
-                                                v-model="concepto.checkVariacion"
-                                                id="checkVariacion"
-                                                v-on:click=" ! concepto.checkVariacion">
-                                            </td>
+                                            <td class="text-right">{{ concepto.monto_presupuestado_format}}</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="5" class="text-right"><b>SUBTOTAL</b></td>
-                                            <td class="text-right"><b>$ {{ subtotal.formatMoney(2, ',', '.') }}</b></td>
-                                            <td></td>
+                                            <td colspan="4" class="text-right"><b>SUBTOTAL</b></td>
+                                            <td class="text-right"><b>{{concepto.monto_presupuestado_format}}</b></td>
+                                            
                                         </tr>
                                     </tbody>
                                 </table>
@@ -148,7 +134,8 @@ export default {
             id_tarjeta: '',
             motivo:'',
             area_solicitante:'',
-            conceptos_tarjeta:[],
+            tarjetas:[],
+            concepto:null,
         }
     },
     methods: {
@@ -158,23 +145,15 @@ export default {
                 params: {}
             })
             .then(data => {
-                this.$store.commit('control-presupuesto/tarjeta/SET_TARJETAS', data);
+                this.tarjetas =  data;
             })
             .finally(() => {
                 this.cargando = false;
             })
         },
         getConceptosTarjeta(id){
-            this.cargando = true;
-            return this.$store.dispatch('control-presupuesto/concepto-tarjeta/find', {
-                id: id
-            })
-            .then(data => {
-                this.conceptos_tarjeta =  data.data;
-            })
-            .finally(() => {
-                this.cargando = false;
-            })
+            this.concepto = [];
+            this.concepto = this.tarjetas[id];
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -188,15 +167,19 @@ export default {
         }
     },
     computed: {
-        tarjetas(){
-            return this.$store.getters['control-presupuesto/tarjeta/tarjetas'];
-        },
-        subtotal : function () {
+        // tarjetas(){
+        //     return this.$store.getters['control-presupuesto/tarjeta/tarjetas'];
+        // },
+        total : function () {
             var res = 0;
 
-            this.conceptos_tarjeta.forEach(function (partida) {
-                res += parseFloat(partida.concepto.monto_presupuestado);
-            });
+            if(this.concepto.variacion_volumen){
+                res = (parseFloat(this.concepto.variacion_volumen) * parseFloat(this.concepto.precio_unitario));
+            }
+
+            // this.conceptos_tarjeta.forEach(function (partida) {
+            //     res += parseFloat(partida.concepto.monto_presupuestado);
+            // });
             return res;
         }
     },

@@ -10,25 +10,23 @@ namespace App\Models\CADECO\ControlPresupuesto;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Concepto;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ControlPresupuesto\ConceptoTarjeta;
 
-class Tarjeta extends Model
+class Tarjeta extends Concepto
 {
-    protected $connection = 'cadeco';
-    protected $table = 'ControlPresupuesto.tarjeta';
-    protected $primaryKey = 'id';
 
     protected static function boot()
     {
         parent::boot();
 
         static::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
+            return $query->where('id_obra', '=', Context::getIdObra())->where('concepto_medible', '=', 3);
         });
     }
 
-    public function conceptostarjeta(){
-        return $this->hasMany(ConceptoTarjeta::class, 'id', 'id_tarjeta');
-    }
+    // public function conceptostarjeta(){
+    //     return $this->hasMany(ConceptoTarjeta::class, 'id', 'id_tarjeta');
+    // }
 }

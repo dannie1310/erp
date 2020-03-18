@@ -56,6 +56,7 @@ class Concepto extends Model
 
     public function getPathAttribute()
     {
+        // dd($this->nivel_padre);
         if ($this->nivel_padre == '') {
             return $this->descripcion;
         } else {
