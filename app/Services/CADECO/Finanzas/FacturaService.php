@@ -150,6 +150,7 @@ class FacturaService
         }
 
         $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
+        $this->arreglo_factura["tipo_comprobante"]  = (string)$factura_xml["TipoDeComprobante"];
         $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
         $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
         $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
@@ -515,9 +516,30 @@ class FacturaService
         return $pdf;
     }
 
-    public function cargaXML($archivo_xml)
+    public function cargaXML(array $data)
     {
+        $archivo_xml = $data["xml"];
+        $tipo = $data["tipo"];
+        $id_empresa = $data["id_empresa"];
+
+
         $this->setArregloFactura($archivo_xml);
+        if(is_numeric($id_empresa)){
+            $empresa = $this->repository->getEmpresaPorId($id_empresa);
+            if($empresa["rfc"] != $this->arreglo_factura["emisor"]["rfc"]){
+                if($this->arreglo_factura["tipo_comprobante"] == "E"){
+                    abort(500, "El emisor de los CFD no coincide, favor de verificar");
+                }
+            }
+        }
+        if($this->arreglo_factura["tipo_comprobante"] == "I" && $tipo == 2)
+        {
+            abort(500, "Se ingresó un CFD de tipo erróneo, favor de ingresar un CFD de tipo egreso (Nota de Crédito)");
+        }
+        elseif($this->arreglo_factura["tipo_comprobante"] == "E" && $tipo == 1)
+        {
+            abort(500, "Se ingresó un CFD de tipo erróneo, favor de ingresar un CFD de tipo ingreso (Factura)");
+        }
         return $this->arreglo_factura;
     }
 
