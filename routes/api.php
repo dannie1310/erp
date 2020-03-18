@@ -644,6 +644,11 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TarjetaController@index');
         });
 
+        // CONCEPTOS TARJETAS
+        $api->group(['prefix' => 'concepto-tarjeta'], function ($api){
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ConceptoTarjetaController@conceptosTarjeta')->where(['id' => '[0-9]+']);
+        });
+
         // SOLICITUD DE CAMBIO
         $api->group(['prefix' => 'solicitud-cambio'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\SolicitudCambioController@paginate');

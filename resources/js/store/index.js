@@ -94,6 +94,7 @@ import solicitudCambio from './modules/controlPresupuesto/solicitud-cambio';
 import variacionVolumen from './modules/controlPresupuesto/variacion-volumen';
 import tipoOrden from './modules/controlPresupuesto/tipo-orden';
 import tarjeta from './modules/controlPresupuesto/tarjeta';
+import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
 
 
 //FINANZAS
@@ -209,6 +210,7 @@ export default new Vuex.Store({
         'control-presupuesto/variacion-volumen': variacionVolumen,
         'control-presupuesto/tipo-orden': tipoOrden,
         'control-presupuesto/tarjeta': tarjeta,
+        'control-presupuesto/concepto-tarjeta': conceptoTarjeta,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,
