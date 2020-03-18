@@ -20,7 +20,13 @@ class OrdenCompraComplemento extends Model
         'registro',
     ];
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
+    }
+
+    public function getFechaEntregaFormatAttribute()
+    {
+        return $this->fecha_entrega ?  date("d-m-Y", strtotime($this->fecha_entrega)) : '';
     }
 }

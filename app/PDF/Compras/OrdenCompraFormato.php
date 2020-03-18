@@ -74,13 +74,11 @@ class OrdenCompraFormato extends Rotation
 
         $this->id_oc=$ordenCompra;
         if(!(empty($this->ordenCompra[0]->complemento->fecha_entrega))){
-            $this->fecha_entrega= $this->ordenCompra[0]->complemento->fecha_entrega;
             $this->domicilio=$this->ordenCompra[0]->complemento->domicilio_entrega;
             $this->plazo=$this->ordenCompra[0]->complemento->plazos_entrega_ejecucion;
             $this->condiciones=$this->ordenCompra[0]->complemento->otras_condiciones;
             $this->descuento=$this->complemento[0]->descuento;
         }else{
-            $this->fecha_entrega='';
             $this->domicilio='';
             $this->plazo='';
             $this->condiciones='';
@@ -622,8 +620,7 @@ class OrdenCompraFormato extends Rotation
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Fecha de entrega: ', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-
-        $this->CellFitScale(2, .5, ($this->fecha_entrega != '' ? date("d-m-Y", strtotime($this->fecha_entrega)) : ''), 1, 0,'R');
+        $this->CellFitScale(2, .5,$this->ordenCompra[0]->complemento->fecha_entrega_format, 1, 0,'R');
         $this->Ln(.7);
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
@@ -1077,9 +1074,4 @@ class OrdenCompraFormato extends Rotation
         }
         exit;
     }
-
-
-
-
-
 }
