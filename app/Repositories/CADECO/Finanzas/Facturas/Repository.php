@@ -87,7 +87,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         $empresa = Empresa::find($id_empresa);
         if ($empresa) {
-            $rfc = preg_replace("/[^0-9a-zA-Z\s]+/", "", $empresa->rfc);
+            $rfc = $empresa->rfc;
             $rfc = strtoupper($rfc);
             return $rfc;
         } else {

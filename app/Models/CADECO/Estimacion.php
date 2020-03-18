@@ -522,7 +522,12 @@ class Estimacion extends Transaccion
 
     public function getIvaOrdenPagoAttribute()
     {
-        return $this->subtotal_orden_pago * 0.16;
+        if ($this->subcontrato->impuesto != 0)
+        {
+            return $this->subtotal_orden_pago * 0.16;
+        } else {
+            return 0;
+        }
     }
 
     public function getIvaOrdenPagoFormatAttribute()
