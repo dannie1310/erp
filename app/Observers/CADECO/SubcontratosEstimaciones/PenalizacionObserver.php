@@ -13,7 +13,18 @@ class PenalizacionObserver
      */
     public function creating(Penalizacion $penalizacion)
     {
+        $penalizacion->validarEstadoPenalizacion('registrada');
+        $penalizacion->validarTotalPenalizacion();
         $penalizacion->estatus = 0;
+    }
+
+    /**
+     * @param Penalizacion $penalizacion
+     * @throws \Exception
+     */
+    public function created(Penalizacion $penalizacion)
+    {
+        $penalizacion->estimacion->recalculaDatosGenerales();
     }
 
     /**
@@ -24,4 +35,13 @@ class PenalizacionObserver
     {
         $penalizacion->validarEstadoPenalizacion('eliminada');
     }    
+
+    /**
+     * @param Penalizacion $penalizacion
+     * @throws \Exception
+     */
+    public function deleted(Penalizacion $penalizacion)
+    {
+        $penalizacion->estimacion->recalculaDatosGenerales();
+    }
 }

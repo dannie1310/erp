@@ -96,8 +96,6 @@ export default {
             cargando:false,
         }
     },
-    // mounted() {
-    // },
     methods: {
         cerrar(){
             $(this.$refs.modalPenalizaciones).modal('hide');
@@ -117,11 +115,11 @@ export default {
         },
         getLiberaciones(){
             this.cargando = true;
-            this.$store.commit('subcontratosEstimaciones/retencion-liberacion/SET_LIBERACIONES', null);
-            return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/index',{
+            this.$store.commit('subcontratosEstimaciones/penalizacion-liberacion/SET_LIBERACIONES', null);
+            return this.$store.dispatch('subcontratosEstimaciones/penalizacion-liberacion/index',{
                 params:{ scope : ['porEstimacion:'+this.id]}})
                 .then(data => {
-                    this.$store.commit('subcontratosEstimaciones/retencion-liberacion/SET_LIBERACIONES', data.data);
+                    this.$store.commit('subcontratosEstimaciones/penalizacion-liberacion/SET_LIBERACIONES', data.data);
                 })
                 .finally(() => {
                     this.cargando = false;
@@ -147,7 +145,7 @@ export default {
             return this.$store.getters['subcontratosEstimaciones/penalizacion/penalizaciones']
         },
         liberaciones() {
-            return this.$store.getters['subcontratosEstimaciones/retencion-liberacion/liberaciones']
+            return this.$store.getters['subcontratosEstimaciones/penalizacion-liberacion/liberaciones']
         },
     }
 }

@@ -929,6 +929,13 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones\RetencionLiberacionController@index');
         });
 
+        $api->group(['prefix'=>'penalizacion-liberacion'], function ($api){
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones\RetencionLiberacionController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones\RetencionLiberacionController@store');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones\RetencionLiberacionController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones\RetencionLiberacionController@index');
+        });
+
         $api->group(['prefix'=>'retencion-tipo'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones\RetencionTipoController@index');
         });

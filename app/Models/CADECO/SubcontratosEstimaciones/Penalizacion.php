@@ -35,6 +35,19 @@ class Penalizacion extends Model
         return $query->where('id_transaccion', '=', $id_transaccion);
     }
 
+    public function validarTotalPenalizacion()
+    {
+        if($this->estimacion->penalizaciones->sum('importe') == $this->estimacion->resta_importes_amortizacion)
+        {
+            abort(403, 'No hay monto disponible para retener en esta estimación.');
+        }
+
+        if(($this->estimacion->penalizaciones->sum('importe') + $this->importe) > $this->estimacion->resta_importes_amortizacion)
+        {
+            abort(403, 'La suma de penalizaciones no puede ser mayor al monto de la estimación.');
+        }
+    }
+
     public function validarEstadoPenalizacion($tipo)
     {
         if($this->estimacion->estado >= 1)

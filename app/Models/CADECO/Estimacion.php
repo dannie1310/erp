@@ -17,6 +17,7 @@ use App\Models\CADECO\Moneda;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
+use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use DateTime;
@@ -104,6 +105,11 @@ class Estimacion extends Transaccion
     public function items()
     {
         return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function penalizaciones()
+    {
+        return $this->hasMany(Penalizacion::class, 'id_transaccion');
     }
 
     public function movimientos()
@@ -618,6 +624,10 @@ class Estimacion extends Transaccion
         }
         if ($this->configuracion->ret_fon_gar_antes_iva == 0) {
             $monto_pagar -= $this->retencion_fondo_garantia_orden_pago;
+        }
+        if($this->configuracion->penalizacion_antes_iva == 0)
+        {
+            $monto_pagar -= $this->penalizaciones->sum('importe');            
         }
         return $monto_pagar;
     }
