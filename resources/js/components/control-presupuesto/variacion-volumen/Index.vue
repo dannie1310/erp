@@ -37,7 +37,7 @@ export default {
                     { title: 'Fecha Solicitud', field: 'fecha',  sortable: true  },
                     { title: 'Usuario Solicita', field: 'usuario', sortable: true  },
                     { title: 'Motivo', field: 'motivo',sortable: true },
-                    { title: 'Importe Afectación', field: 'monto_afectacion', sortable: false },
+                    { title: 'Importe Afectación', field: 'monto_afectacion',tdClass: 'money', sortable: false },
                     { title: 'Estatus', field: 'estatus', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
@@ -88,7 +88,64 @@ export default {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
-        watch: {}
+        watch: {
+            solicitudes: {
+                handler(solicitudes) {
+                    let self = this
+                    self.$data.data = []
+                    solicitudes.forEach(function (solicitud, i) {
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                           numero_folio: solicitud.numero_folio,
+                           tipo_orden: solicitud.tipo_orden,
+                           fecha: solicitud.fecha_solicitud,
+                           usuario: solicitud.usuario.nombre,
+                           motivo: solicitud.motivo,
+                           monto_afectacion: solicitud.importe_afectacion_format,
+                           estatus: solicitud.estatus,
+                            buttons: $.extend({}, {
+                                 show: true,
+                                 edit: true,
+                            })
+                        })
+
+                    });
+
+                },
+                deep: true
+            },
+            meta: {
+                handler(meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler(query) {
+                    this.paginate(query)
+                },
+                deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
+        },
 }
 </script>
 

@@ -14,6 +14,7 @@ use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ControlPresupuesto\Estatus;
 use App\Models\CADECO\ControlPresupuesto\TipoOrden;
+use App\Models\CADECO\ControlPresupuesto\SolicitudCambioPartidas;
 
 class SolicitudCambio extends Model
 {
@@ -22,12 +23,14 @@ class SolicitudCambio extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'id_solicita',
         'area_solicitante',
         'motivo',
         'numero_folio',
         'id_estatus',
         'id_tipo_orden',
         'importe_afectacion',
+        'id_obra',
     ];
 
     protected static function boot()
@@ -43,16 +46,20 @@ class SolicitudCambio extends Model
         return $this->belongsTo(Estatus::class, 'id_estatus', 'clave_estado');
     }
 
+    public function solicitudPartidas(){
+        return $this->hasMany(SolicitudCambioPartidas::class, 'id_solicitud_cambio', 'id');
+    }
+
     public function tipoOrden(){
         return $this->belongsTo(TipoOrden::class, 'id_tipo_orden', 'id');
     }
 
-    public function getImporteAfectacionFormatAttribute(){
-        return '$ ' . number_format($this->importe_afectacion,2,".",",");
-    }
-
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_solicita', 'idusuario');
+    }
+
+    public function getImporteAfectacionFormatAttribute(){
+        return '$ ' . number_format($this->importe_afectacion,2,".",",");
     }
 
 }

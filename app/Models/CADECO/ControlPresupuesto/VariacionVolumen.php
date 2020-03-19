@@ -26,4 +26,8 @@ class VariacionVolumen extends SolicitudCambio
         });
     }
 
+    public function genera_folio(){
+        return $this->all()->count + 1;
+    }
+
 }

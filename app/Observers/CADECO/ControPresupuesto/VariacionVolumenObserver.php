@@ -20,7 +20,8 @@ class VariacionVolumenObserver extends SolicitudCambioObserver
      */
     public function creating(VariacionVolumen $variacion_volumen)
     {
-        parent::creating($variacion_volumen);
+        parent::creating($variacion_volumen);   
+        $variacion_volumen->numero_folio = $variacion_volumen->genera_folio();
         $variacion_volumen->id_tipo_orden = 4;
         // $solicitud_cambio->fecha_solicitud = date('Y-m-d h:i:s');
     }

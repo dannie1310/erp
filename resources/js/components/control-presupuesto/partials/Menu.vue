@@ -7,13 +7,13 @@
             <li class="nav-header">MÓDULOS</li>
             <li class="nav-item">
                 <router-link :to="{name: 'solicitud-cambio'}" class="nav-link">
-                    <i class="nav-icon fa fa-sign-in"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>Cambios Al Presupuesto </p>
                 </router-link>
             </li>
             <li class="nav-item">
                 <router-link :to="{name: 'variacion-volumen'}" class="nav-link">
-                    <i class="nav-icon fa fa-sign-in"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>Variación de Volumen <br>
                         (Aditivas o Deductivas) </p>
                 </router-link>

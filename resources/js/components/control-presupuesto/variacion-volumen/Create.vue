@@ -89,7 +89,7 @@
                                         class="form-control"
                                         name="motivo"
                                         data-vv-as="Motivo"
-                                        v-model="motivo"
+                                        v-model="concepto.motivo"
                                         v-validate="{required: true}"
                                         :class="{'is-invalid': errors.has('motivo')}"
                                         id="motivo">
@@ -103,7 +103,7 @@
                                         class="form-control"
                                         name="area_solicitante"
                                         data-vv-as="Area Solicitante"
-                                        v-model="area_solicitante"
+                                        v-model="concepto.area_solicitante"
                                         v-validate="{required: true}"
                                         :class="{'is-invalid': errors.has('area_solicitante')}"
                                         id="area_solicitante">
@@ -163,7 +163,14 @@ export default {
             });
         },
         store() {
-            
+            this.cargando = true;
+            return this.$store.dispatch('control-presupuesto/variacion-volumen/store', this.concepto)
+            .then(data => {
+                console.log(data);
+            })
+            .finally(() => {
+                this.cargando = false;
+            })
         }
     },
     computed: {

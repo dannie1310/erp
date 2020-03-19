@@ -8,6 +8,7 @@
 
 namespace App\Services\CADECO\ControlPresupuesto;
 
+use App\Facades\Context;
 use App\Repositories\Repository;
 use App\Models\CADECO\ControlPresupuesto\VariacionVolumen;
 
@@ -30,5 +31,33 @@ class VariacionVolumenService{
     public function paginate($data)
     {
         return $this->repository->paginate($data);
+    }
+    
+    public function store(array $data)
+    {
+        $Solicitud_variacion_volumen = $this->repository->create([
+                
+                'area_solicitante' => $data['area_solicitante'],
+                'motivo' => $data['motivo'],
+                'id_tipo_orden' => 4,
+                'importe_afectacion' => $data['variacion_volumen'] * $data['precio_unitario'],
+                'numero_folio' => $this->repository->all()->count() + 1,
+                'id_solicita' => auth()->id(),
+                'id_obra' => Context::getIdObra(),
+                'id_estatus' => 1,
+        ]);
+        $Solicitud_variacion_volumen->solicitudPartidas()->create([
+            'id_tipo_orden' => 4,
+            'id_concepto' => $data['id'],
+            'nivel' => $data['nivel'],
+            'unidad' => $data['unidad'],
+            'cantidad_presupuestada_original' => $data['cantidad_presupuestada'],
+            'cantidad_presupuestada_nueva' => $data['cantidad_presupuestada'] + $data['variacion_volumen'],
+            'precio_unitario_original' => $data['precio_unitario'],
+            'monto_presupuestado' => $data['monto_presupuestado'],
+            'variacion_volumen' => $data['variacion_volumen'],
+        ]);
+        
+        return $Solicitud_variacion_volumen;
     }
 }

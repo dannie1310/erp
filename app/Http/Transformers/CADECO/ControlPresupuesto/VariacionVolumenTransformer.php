@@ -37,6 +37,7 @@ class VariacionVolumenTransformer extends TransformerAbstract
         return [
             'id' => (int) $model->getKey(),
             'area_solicitante' => (string) $model->area_solicitante,
+            'motivo' => (string) $model->motivo,
             'numero_folio' =>  $model->numero_folio,
             'id_estatus' => (int) $model->id_estatus,
             'estatus' => $model->estatus->descripcion,

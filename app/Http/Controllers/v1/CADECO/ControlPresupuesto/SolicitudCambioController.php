@@ -50,6 +50,7 @@ class SolicitudCambioController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         // $this->middleware('permiso:consultar_pagos')->only(['paginate']);
+        // $this->middleware('permiso:consultar_pagos')->only(['store']);
 
         $this->fractal = $fractal;
         $this->service = $service;

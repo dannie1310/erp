@@ -16,13 +16,4 @@ class TipoOrden extends Model
     protected $connection = 'cadeco';
     protected $table = 'ControlPresupuesto.tipos_ordenes';
     protected $primaryKey = 'id';
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope(function ($query) {
-            return $query->where('estatus', '=', 1);
-        });
-    }
 }
