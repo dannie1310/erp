@@ -13,7 +13,12 @@ class DeleteMaterialRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can(['eliminar_insumo_servicio', 'eliminar_insumo_material', 'eliminar_insumo_herramienta_equipo', 'eliminar_insumo_maquinaria']);
+        return auth()->user()->can([
+            'eliminar_insumo_servicio',
+            'eliminar_insumo_material',
+            'eliminar_insumo_herramienta_equipo',
+            'eliminar_insumo_maquinaria',
+            'eliminar_insumo_mano_obra']);
     }
 
     /**
