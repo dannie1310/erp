@@ -170,11 +170,11 @@ $api->version('v1', function ($api) {
         //UNIDAD
         $api->group(['prefix'=>'unidad'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\UnidadController@index');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/unidad', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\UnidadController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\UnidadController@store');
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@destroy')->where(['id' => '[0-9]+']);
-            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@destroy');
+            $api->patch('{id}/update', 'App\Http\Controllers\v1\CADECO\UnidadController@update');
         });
 
     });

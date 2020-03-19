@@ -36,7 +36,7 @@ export default {
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id, { params: payload.params })
+                    .get(URI + payload.id + '/unidad', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -113,7 +113,7 @@ export default {
                                         timer: 2000,
                                         buttons: false
                                     }).then(() => {
-
+                                        
                                         resolve(data);
                                     })
                                 })
@@ -152,7 +152,7 @@ export default {
                                         timer: 1500,
                                         buttons: false
                                     })
-                                        .then(() => {
+                                        .then(() => {                                            
                                             resolve(payload.params);
                                         })
                                 })
@@ -176,7 +176,7 @@ export default {
                     })
             })
         }
-    },
+    },    
 
     getters: {
         unidades(state) {
