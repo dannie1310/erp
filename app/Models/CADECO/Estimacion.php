@@ -624,6 +624,7 @@ class Estimacion extends Transaccion
         if ($this->configuracion->ret_fon_gar_antes_iva == 0) {
             $monto_pagar -= $this->retencion_fondo_garantia_orden_pago;
         }
+        $monto_pagar -= $this->retencionIVA_2_3;
         return $monto_pagar;
     }
 
@@ -634,7 +635,7 @@ class Estimacion extends Transaccion
 
     public function getIvaRetenidoFormatAttribute()
     {
-        return '$ ' . number_format($this->IVARetenido, 2);
+        return '$ ' . number_format($this->IVARetenido + $this->retencionIVA_2_3, 2);
     }
 
     public function getIvaRetenidoPorcentajeAttribute()
@@ -713,23 +714,32 @@ class Estimacion extends Transaccion
                     if ($porcentaje <= 3.9999 || $porcentaje >= 4.0001) {
                         abort(403, 'La retención de IVA no es del 4%');
                     }
+                    $this->IVARetenido = $retencion;
                     break;
                 case 6:
                     if ($porcentaje <= 5.9999 || $porcentaje >= 6.0001) {
                         abort(403, 'La retención de IVA no es del 6%');
                     }
+                    $this->IVARetenido = $retencion;
                     break;
                 case 10:
                     if ($porcentaje <= 9.9999 || $porcentaje >= 10.0001) {
                         abort(403, 'La retención de IVA no es del 10%');
                     }
+                    $this->IVARetenido = $retencion;
+                    break;
+                case 11:
+                    if(number_format($porcentaje, 5) <= 10.66665 || number_format($porcentaje, 5) >= 10.66667){
+                        abort(403, 'La retención de IVA no es 2/3');
+                    }
+                    $this->retencionIVA_2_3 = $retencion;
                     break;
                 default:
+                dd($porcentaje);
                     abort(403, 'La retención de IVA no es valida');
                     break;
             }
         }
-        $this->IVARetenido = $retencion;
         $this->save();
         $this->recalculaDatosGenerales();
         return $this;
