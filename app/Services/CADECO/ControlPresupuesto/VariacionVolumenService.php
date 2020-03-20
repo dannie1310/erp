@@ -32,19 +32,23 @@ class VariacionVolumenService{
     {
         return $this->repository->paginate($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
     
     public function store(array $data)
     {
         $Solicitud_variacion_volumen = $this->repository->create([
-                
-                'area_solicitante' => $data['area_solicitante'],
-                'motivo' => $data['motivo'],
-                'id_tipo_orden' => 4,
-                'importe_afectacion' => $data['variacion_volumen'] * $data['precio_unitario'],
-                'numero_folio' => $this->repository->all()->count() + 1,
-                'id_solicita' => auth()->id(),
-                'id_obra' => Context::getIdObra(),
-                'id_estatus' => 1,
+            'area_solicitante' => $data['area_solicitante'],
+            'motivo' => $data['motivo'],
+            'id_tipo_orden' => 4,
+            'importe_afectacion' => $data['variacion_volumen'] * $data['precio_unitario'],
+            'numero_folio' => $this->repository->all()->count() + 1,
+            'id_solicita' => auth()->id(),
+            'id_obra' => Context::getIdObra(),
+            'id_estatus' => 1,
         ]);
         $Solicitud_variacion_volumen->solicitudPartidas()->create([
             'id_tipo_orden' => 4,

@@ -151,7 +151,7 @@ export default {
                 this.cargando = false;
             })
         },
-        getConceptosTarjeta(id){
+        getConcepto(id){
             this.concepto = [];
             this.concepto = this.tarjetas[id];
         },
@@ -166,7 +166,7 @@ export default {
             this.cargando = true;
             return this.$store.dispatch('control-presupuesto/variacion-volumen/store', this.concepto)
             .then(data => {
-                console.log(data);
+                this.$router.push({name: 'variacion-volumen'});
             })
             .finally(() => {
                 this.cargando = false;
@@ -174,19 +174,12 @@ export default {
         }
     },
     computed: {
-        // tarjetas(){
-        //     return this.$store.getters['control-presupuesto/tarjeta/tarjetas'];
-        // },
         total : function () {
             var res = 0;
 
             if(this.concepto.variacion_volumen){
                 res = (parseFloat(this.concepto.variacion_volumen) * parseFloat(this.concepto.precio_unitario));
             }
-
-            // this.conceptos_tarjeta.forEach(function (partida) {
-            //     res += parseFloat(partida.concepto.monto_presupuestado);
-            // });
             return res;
         }
     },
@@ -196,7 +189,7 @@ export default {
     watch:{
         id_tarjeta(value){
             if(value != ''){
-                this.getConceptosTarjeta(value);
+                this.getConcepto(value);
             }
         }
     }

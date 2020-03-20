@@ -26,6 +26,10 @@ class VariacionVolumen extends SolicitudCambio
         });
     }
 
+    public function variacionVolumenPartidas(){
+        return $this->hasMany(VariacionVolumenPartidas::class, 'id_solicitud_cambio', 'id');
+    }
+
     public function genera_folio(){
         return $this->all()->count + 1;
     }

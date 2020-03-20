@@ -10,6 +10,7 @@ namespace App\Observers\CADECO\ControlPresupuesto;
 
 
 use App\Models\CADECO\ControlPresupuesto;
+use App\Models\CADECO\ControlPresupuesto\SolicitudCambio;
 
 class SolicitudCambioObserver
 {
@@ -18,7 +19,6 @@ class SolicitudCambioObserver
      */
     public function creating(SolicitudCambio $solicitud_cambio)
     {
-        dd('pando');
         $solicitud_cambio->id_solicita = auth()->id();
         $solicitud_cambio->id_obra = Context::getIdObra();
         // $solicitud_cambio->fecha_solicitud = date('Y-m-d h:i:s');

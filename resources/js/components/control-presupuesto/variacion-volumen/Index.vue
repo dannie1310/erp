@@ -43,7 +43,7 @@ export default {
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {sort: 'id', order: 'desc'},
                 search: '',
                 cargando: false
             }
@@ -104,8 +104,9 @@ export default {
                            monto_afectacion: solicitud.importe_afectacion_format,
                            estatus: solicitud.estatus,
                             buttons: $.extend({}, {
-                                 show: true,
-                                 edit: true,
+                                id:solicitud.id,
+                                show: true,
+                                pdf: true,
                             })
                         })
 

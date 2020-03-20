@@ -11,6 +11,7 @@ namespace App\Http\Transformers\CADECO\ControlPresupuesto;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\ControlPresupuesto\VariacionVolumen;
+use App\Http\Transformers\CADECO\ControlPresupuesto\VariacionVolumenPartidasTransformer;
 
 class VariacionVolumenTransformer extends TransformerAbstract
 {
@@ -21,7 +22,8 @@ class VariacionVolumenTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'usuario'
+        'usuario',
+        'partidas'
     ];
 
     /**
@@ -58,6 +60,19 @@ class VariacionVolumenTransformer extends TransformerAbstract
         if($usuario = $model->usuario)
         {
             return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+     /**
+     * @param VariacionVolumen $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includePartidas(VariacionVolumen $model)
+    {
+        if($partidas = $model->variacionVolumenPartidas)
+        {
+            return $this->collection($partidas, new VariacionVolumenPartidasTransformer);
         }
         return null;
     }
