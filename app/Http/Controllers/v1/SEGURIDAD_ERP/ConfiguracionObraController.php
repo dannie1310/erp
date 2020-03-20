@@ -39,6 +39,7 @@ class ConfiguracionObraController extends Controller
     {
         $this->middleware( 'auth:api');
         $this->middleware( 'context')->except('index');
+        //$this->middleware('permiso:registrar_cuenta_corriente')->only(['update']);
 
         $this->fractal = $fractal;
         $this->service = $service;

@@ -138,6 +138,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@show');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
             $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
+            $api->get('/globales', 'App\Http\Controllers\v1\CADECO\ObraController@obrasGlobales');
         });
 
         // PROVEEDOR/CONTRATISTA
@@ -962,7 +963,6 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SCI\ModeloController@index');
         });
     });
-
 
 //    VENTAS
     $api->group(['middleware' => 'api', 'prefix' => 'ventas'], function ($api) {

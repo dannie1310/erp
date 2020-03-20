@@ -24,4 +24,9 @@ class ConfiguracionObraObserver
         $configuracionObra->id_proyecto = Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey();
         $configuracionObra->id_obra = Context::getIdObra();
     }
+
+    public function updated(ConfiguracionObra $configuracionObra)
+    {
+
+    }
 }

@@ -80,10 +80,6 @@ class Obra extends Model
         return $this->hasOne(ConfiguracionObra::class, 'id_obra');
     }
 
-    public function configuracionConceptosNodos(){
-
-    }
-
     public function getLogoAttribute()
     {
         if (isset($this->configuracion->logotipo_original)) {

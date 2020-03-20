@@ -52,9 +52,29 @@ export const routes = [
         meta: {
             title: 'CONFIGURACIÓN',
             middleware: [auth, permission],
-            permission: 'asignar_areas_subcontratantes',
+            permission: ['asignar_areas_subcontratantes'],
             general: true
         }
+    },
+    {
+        path: '/configuracion/obra',
+        components: {
+            default: require('./components/pages/Configuracion.vue').default,
+            menu: require('./components/pages/partials/MenuConfiguracion.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'configuracion-obra',
+                component: require('./components/configuracion-general/configuracion-obra/Obra.vue').default,
+                meta: {
+                    title: 'Obra',
+                    breadcrumb: {parent: 'configuracion_', name: 'OBRA'},
+                    middleware: [auth]
+
+                }
+            },
+        ]
     },
     {
         path: '/contabilidad-general',
