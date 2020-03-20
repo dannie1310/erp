@@ -522,7 +522,12 @@ class Estimacion extends Transaccion
 
     public function getIvaOrdenPagoAttribute()
     {
-        return $this->subtotal_orden_pago * 0.16;
+        if ($this->subcontrato->impuesto != 0)
+        {
+            return $this->subtotal_orden_pago * 0.16;
+        } else {
+            return 0;
+        }
     }
 
     public function getIvaOrdenPagoFormatAttribute()
@@ -700,6 +705,7 @@ class Estimacion extends Transaccion
 
     public function registrarIVARetenido($retencion)
     {
+        if($this->subtotal_orden_pago == 0) abort(403, 'La estimación no cuenta con volumen registrado.');
         if ($retencion > 0) {
             $porcentaje = $retencion * 100 / $this->subtotal_orden_pago;
             switch ((int)round($porcentaje)) {
