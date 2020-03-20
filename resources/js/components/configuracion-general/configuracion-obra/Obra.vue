@@ -41,6 +41,15 @@
                 obras: [],
             }
         },
+        mounted() {
+            this.getObras();
+        },
+        init() {
+            this.cargando = true;
+            this.obras = [];
+            this.obra = null;
+            this.id_obra = '';
+        },
         methods: {
             obraDescripcion(item) {
                 return `[${item.numero_folio_format}] - [${item.referencia}]- [${item.empresa}]`

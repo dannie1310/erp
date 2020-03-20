@@ -24,7 +24,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-header">CONFIGURACIÓN</li>
             <li class="nav-item">
-                <router-link :to="{name: 'configuracion-obra'}" class="nav-link">
+                <router-link :to="{name: 'configuracion-obra'}" class="nav-link"  :class="{active: this.$route.name == 'configuracion-obra'}">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Obra</p>
                 </router-link>

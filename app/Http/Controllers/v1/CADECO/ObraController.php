@@ -47,7 +47,7 @@ class ObraController extends Controller
     public function __construct(Manager $fractal, ObraService $service, ObraTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context', ['except' => ['authPaginate', 'obrasGlobales']]);
+        $this->middleware('context', ['except' => ['authPaginate']]);
         $this->middleware('permiso:administracion_configuracion_obra')->only(['update']);
 
         $this->fractal = $fractal;
@@ -79,7 +79,7 @@ class ObraController extends Controller
 
     public function obrasGlobales(Request $request)
     {
-        dd("globales???");
+        dd("globales???", $request);
         return $this->respondWithCollection($this->service->index($request->all()));
     }
 }

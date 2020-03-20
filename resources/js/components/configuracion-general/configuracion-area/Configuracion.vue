@@ -9,11 +9,11 @@
 </template>
 
 <script>
-    import Subcontratantes from "./partials/Subcontratantes";
-    import Compradoras from "./partials/Compradoras";
-    import Solicitantes from "./partials/Solicitantes";
+    import Subcontratantes from "./Subcontratantes";
+    import Compradoras from "./Compradoras";
+    import Solicitantes from "./Solicitantes";
     export default {
-        name: "configuracion",
+        name: "configuracion-area",
         components: {Solicitantes, Compradoras, Subcontratantes},
     }
 </script>

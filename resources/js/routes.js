@@ -44,9 +44,9 @@ export const routes = [
     },
     {
         path: '/configuracion',
-        name: 'configuracion_',
+        name: 'configuracion-area',
         components:  {
-            default: require('./components/pages/Configuracion.vue').default,
+            default: require('./components/configuracion-general/configuracion-area/Configuracion.vue').default,
             menu: require('./components/pages/partials/MenuConfiguracion.vue').default
         },
         meta: {
@@ -57,22 +57,30 @@ export const routes = [
         }
     },
     {
-        path: '/configuracion/obra',
+        path: '/configuracion/general',
         components: {
-            default: require('./components/pages/Configuracion.vue').default,
-            menu: require('./components/pages/partials/MenuConfiguracion.vue').default
+            default: require('./components/configuracion-general/configuracion-obra/Obra.vue').default,
+            menu: require('./components/configuracion-general/partials/Menu.vue').default
         },
         children: [
             {
-                path: '',
-                name: 'configuracion-obra',
-                component: require('./components/configuracion-general/configuracion-obra/Obra.vue').default,
-                meta: {
-                    title: 'Obra',
-                    breadcrumb: {parent: 'configuracion_', name: 'OBRA'},
-                    middleware: [auth]
+                path: 'obra',
+                component: require('./components/configuracion-general/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'configuracion-obra',
+                        component: require('./components/configuracion-general/configuracion-obra/Obra').default,
+                        meta: {
+                            title: 'Configuración de Obra',
+                            breadcrumb: {parent: 'configuracion-general', name: 'OBRA'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_efos',
+                            general: true,
 
-                }
+                        }
+                    },
+                ]
             },
         ]
     },
