@@ -58,7 +58,7 @@
                                                 <label for="importe" class="col-md-3 col-form-label">Importe: </label>
                                                 <div class="col-md-9">
                                                     <input
-                                                        :disabled="cargando"
+                                                        :disabled="id_retencion==''"
                                                         type="number"
                                                         step="any"
                                                         name="importe"
