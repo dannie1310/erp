@@ -8,6 +8,8 @@
 
 namespace App\Models\CADECO\ControlPresupuesto;
 
+use App\Models\CADECO\Concepto;
+
 // use Illuminate\Database\Eloquent\Model;
 
 class VariacionVolumenPartidas extends SolicitudCambioPartidas
@@ -20,6 +22,10 @@ class VariacionVolumenPartidas extends SolicitudCambioPartidas
         self::addGlobalScope(function ($query) {
             return $query->whereHas('solicitudcambio')->where('id_tipo_orden', '=', 4);
         });
+    }
+
+    public function concepto(){
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 
     public function getCantidadPresupuestadaOriginalFormatAttribute(){
@@ -44,6 +50,14 @@ class VariacionVolumenPartidas extends SolicitudCambioPartidas
 
     public function getImporteActualizadoFormatAttribute(){
         return '$ ' . number_format(($this->precio_unitario_original * $this->cantidad_presupuestada_nueva), 2, '.',',');
+    }
+
+    public function getVariacionVolumenFormatAttribute(){
+        return number_format($this->variacion_volumen, 4, '.', '');
+    }
+
+    public function getDescripcionFormatAttribute(){
+        return substr($this->concepto->descripcion, 0, 35);
     }
 
 }

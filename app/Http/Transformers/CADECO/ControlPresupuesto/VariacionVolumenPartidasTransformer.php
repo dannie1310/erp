@@ -36,7 +36,8 @@ class VariacionVolumenPartidasTransformer extends TransformerAbstract
             'id_tipo_orden' => (int) $model->id_tipo_orden,
             'tipo_orden' => (string) $model->solicitudcambio->estatus->descripcion,
             'unidad' =>  $model->unidad,
-            'descripcion' => (string) $model->descripcion,
+            'descripcion' => (string) $model->concepto->descripcion,
+            'descripcion_format' => (string) $model->descripcion_format,
             'cantidad_presupuestada_original' => $model->cantidad_presupuestada_original,
             'cantidad_presupuestada_original_format' => $model->cantidad_presupuestada_original_format,
             'cantidad_presupuestada_nueva' =>  $model->cantidad_presupuestada_nueva,
@@ -47,6 +48,7 @@ class VariacionVolumenPartidasTransformer extends TransformerAbstract
             'importe_cambio_format' => $model->importe_cambio_format,
             'importe_actualizado_format' => $model->importe_actualizado_format,
             'variacion_volumen' => $model->variacion_volumen,
+            'variacion_volumen_format' => $model->variacion_volumen_format,
         ];
     }
 

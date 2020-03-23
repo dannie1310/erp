@@ -2,6 +2,16 @@
     <span>
         <div class="row">
             <div class="col-12">
+                <button type="button" @click="autorizar()" :disabled="cargando" class="btn btn-primary float-right" >
+                    Autorizar
+                </button>
+                <button type="button" :disabled="cargando" class="btn btn-default float-right" >
+                    Rechazar
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="row">
                         <div class="col-12">
@@ -22,14 +32,14 @@
                                     # {{ solicitud.numero_folio }}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label><b>Usuario que Solicita: </b></label>
                                     {{ solicitud.usuario.nombre }}
                                 </div>
                             </div>
                             
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label><b>Fecha de solicitud: </b></label>
                                     {{ solicitud.fecha_solicitud }}
@@ -43,18 +53,58 @@
                                     {{ solicitud.area_solicitante }}
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-5">
                                 <div class="form-group">
                                     <label><b>Motivo: </b></label>
                                     {{ solicitud.motivo }}
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label><b>Estatus: </b></label>
                                     {{ solicitud.estatus }}
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" v-if="solicitud">
+            <div class="col-12">
+                <div class="invoice p-3 mb-3">
+                    <div class="modal-body">
+                        <div class="col-12 table-responsive-xl">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th class="text-center">Descripción</th>
+                                        <th class="text-center">Unidad</th>
+                                        <th class="text-center">Precio Unitario</th>
+                                        <th class="text-center">Volumen Original</th>
+                                        <th class="text-center">Volumen del Cambio</th>
+                                        <th class="text-center">Volumen Actualizado</th>
+                                        <th class="text-center">Importe Original</th>
+                                        <th class="text-center">Importe del Cambio</th>
+                                        <th class="text-center">Importe Actualizado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(partida, i) in solicitud.partidas.data">
+                                        <td>{{i + 1}}</td>
+                                        <td :title="partida.descripcion">{{partida.descripcion_format}}</td>
+                                        <td>{{partida.unidad}}</td>
+                                        <td class="text-right">{{partida.precio_unitario_original_format}}</td>
+                                        <td>{{partida.cantidad_presupuestada_original_format}}</td>
+                                        <td>{{partida.variacion_volumen_format}}</td>
+                                        <td>{{partida.cantidad_presupuestada_nueva_format}}</td>
+                                        <td class="text-right">{{partida.importe_original_format}}</td>
+                                        <td class="text-right">{{partida.importe_cambio_format}}</td>
+                                        <td class="text-right">{{partida.importe_actualizado_format}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -68,6 +118,11 @@ export default {
     name: "action-buttons",
     components: {},
     props: ['id'],
+    data() {
+        return {
+            cargando:false,
+        }
+    },
     methods: {
         find() {
             this.cargando = true;
@@ -79,6 +134,15 @@ export default {
                 }
             }).then(data => {
                 this.$store.commit('control-presupuesto/variacion-volumen/SET_VARIACION', data);
+            }) .finally(() => {
+                this.cargando = false;
+            })
+        },
+        autorizar(){
+            return this.$store.dispatch('control-presupuesto/variacion-volumen/autorizar', {
+                id: this.id
+            }).then(data => {
+                console.log('pardo');
             }) .finally(() => {
                 this.cargando = false;
             })

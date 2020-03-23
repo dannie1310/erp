@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\ControlPresupuesto;
 
 use App\Facades\Context;
+use App\Models\CADECO\Concepto;
 use App\Repositories\Repository;
 use App\Models\CADECO\ControlPresupuesto\VariacionVolumen;
 
@@ -63,5 +64,26 @@ class VariacionVolumenService{
         ]);
         
         return $Solicitud_variacion_volumen;
+    }
+
+    public function autorizar($id){
+        $variacion_volumen = $this->repository->show($id);
+        foreach($variacion_volumen->variacionVolumenPartidas as $partida){
+            $concepto = $partida->concepto;
+            
+            $monto_presupuestado_original = $concepto->monto_presupuestado;
+            $cantidad_presupuestada_original = $concepto->cantidad_presupuestada;
+
+            $cantidad_presupuestada_actualizada = $cantidad_presupuestada_original + $partida->variacion_volumen;
+            $factor = $cantidad_presupuestada_actualizada / $cantidad_presupuestada_original;
+
+            $conceptos_afectables = Concepto::where('nivel', 'like', $concepto->nivel . '_%')->where('id_obra', '=', Context::getIdObra())->orderBy('nivel', 'ASC')->get();
+            foreach($conceptos_afectables as $concepto){
+                $concepto->update(['cantidad_presupuestada' => $conceptos_afectables->cantidad_presupuestada * $factor, 'monto_presupuestado' => $conceptos_afectables->monto_presupuestado * $factor]);
+                $concepto->save();
+            }            
+
+        }
+        dd('pardo');
     }
 }

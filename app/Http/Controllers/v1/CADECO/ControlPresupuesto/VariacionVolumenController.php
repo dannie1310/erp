@@ -56,4 +56,8 @@ class VariacionVolumenController extends Controller
         $this->transformer = $transformer;
     }
 
+    public function autorizar($id){
+         return $this->service->autorizar($id);
+    }
+
 }
