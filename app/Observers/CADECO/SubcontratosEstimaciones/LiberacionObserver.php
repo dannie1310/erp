@@ -37,7 +37,7 @@ class LiberacionObserver {
 
     public function deleted(Liberacion $liberacion)
     {
-        if($liberacion->retencion->estatus == 1)
+        if($liberacion->retencion->estatus == 1 || is_null($liberacion->retencion->estatus))
         {
             $liberacion->abrirRetencion();
         }
