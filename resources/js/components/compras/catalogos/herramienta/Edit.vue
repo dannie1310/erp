@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(servicio)" type="button" class="btn btn-sm btn-outline-info" title="Editar Servicio" v-show="update">
+        <button @click="find(herramienta)" type="button" class="btn btn-sm btn-outline-info" title="Editar Heramienta y Equipo" v-show="update">
             <i class="fa fa-pencil" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
@@ -8,7 +8,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-pencil"></i> EDITAR SERVICIO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-pencil"></i> EDITAR HERRAMIENTA Y EQUIPO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -24,10 +24,10 @@
                                                     :disabled="cargando"
                                                     name="tipo"
                                                     v-validate="{required: true}"
-                                                    v-model="service.tipo"
+                                                    v-model="insumo.tipo"
                                                     option-value="nivel"
                                                     option-text="descripcion"
-                                                    :list="familias_moys"
+                                                    :list="materiales"
                                                     :placeholder="!cargando?'Seleccionar o buscar familia por descripcion':'Cargando...'"
                                                     >
                                             </model-list-select>
@@ -48,7 +48,7 @@
                                                 v-validate="{required: true}"
                                                 class="form-control"
                                                 id="descripcion"
-                                                v-model="service.descripcion"
+                                                v-model="insumo.descripcion"
                                                 placeholder="Descripcion"
                                                 :class="{'is-invalid': errors.has('descripcion')}">
                                             <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
@@ -62,14 +62,14 @@
                                         <label for="nu_parte" class="col-sm-2 col-form-label">N° Parte:</label>
                                         <div class="col-sm-5">
                                             <input
-                                                :disabled="!service.descripcion"
+                                                :disabled="!insumo.descripcion"
                                                 type="text"
                                                 name="nu_parte"
                                                 data-vv-as="N° Parte"
                                                 v-validate="{required: true}"
                                                 class="form-control"
                                                 id="nu_parte"
-                                                v-model="service.numero_parte"
+                                                v-model="insumo.numero_parte"
                                                 placeholder="######"
                                                 :class="{'is-invalid': errors.has('nu_parte')}">
                                             <div class="invalid-feedback" v-show="errors.has('nu_parte')">{{ errors.first('nu_parte') }}</div>
@@ -83,7 +83,7 @@
                                                 v-validate="{required: true}"
                                                 class="form-control"
                                                 id="unidad"
-                                                v-model="service.unidad"
+                                                v-model="insumo.unidad"
                                                 :class="{'is-invalid': errors.has('unidad')}"
                                             >
                                                     <option value>--Unidad--</option>
@@ -113,8 +113,8 @@
         import {ModelListSelect} from 'vue-search-select';
 export default {
     
-    name: "servicio-editar",
-    props: ['servicio', 'update'],
+    name: "herramienta-editar",
+    props: ['herramienta', 'update'],
     components: {ModelListSelect},
     data() {
         return {
@@ -122,30 +122,29 @@ export default {
             id: '',
             res: '',
             unidades: [],
-            familias_moys: [],
-            service: {
+            materiales: [],
+            insumo: {
                 descripcion: '',
                 numero_parte: '',
                 tipo: '',
                 unidad: ''
-
             }
             
         }
     },
     methods: {
         save() {
-            if(this.service.descripcion == this.res.descripcion && this.service.tipo == this.res.nivel_padre && this.service.numero_parte == this.res.numero_parte && this.service.unidad == this.res.unidad)
+            if(this.insumo.descripcion == this.res.descripcion && this.insumo.tipo == this.res.nivel_padre && this.insumo.numero_parte == this.res.numero_parte && this.insumo.unidad == this.res.unidad)
             {
                 swal('¡Error!', 'Favor de ingresar datos actualizados.', 'error')
-            }else{
+            }else{                
 
                 return this.$store.dispatch('cadeco/material/update', {
                 id: this.id,
-                data: this.service,
+                data: this.insumo,
             })
                 .then(() => {
-                   return this.$store.dispatch('cadeco/material/paginate', { params: {scope:['servicios','insumos'], sort: 'descripcion', order: 'asc'}})
+                   return this.$store.dispatch('cadeco/material/paginate', { params: {scope:['herramientas','insumos'], sort: 'descripcion', order: 'asc'}})
                     .then(data => {
                         this.$store.commit('cadeco/material/SET_MATERIALES', data.data);
                         this.$store.commit('cadeco/material/SET_META', data.meta);
@@ -155,26 +154,26 @@ export default {
                    });
             }
         },       
-        find(servicio) {
+        find(herramienta) {
             this.id = '';
-            this.getFamiliasMOyS();
+            this.getMateriales();
             this.getUnidades();
             this.cargando = true;
             this.res = '';
-            this.id = servicio;    
+            this.id = herramienta;    
 
                 this.$store.commit('cadeco/unidad/SET_UNIDAD', null);
                 return this.$store.dispatch('cadeco/material/find', {
-                    id: servicio,
-                    params: {scope: 'servicios'}
+                    id: herramienta,
+                    params: {scope: 'herramientas'}
                 }).then(data => {
 
                     this.$store.commit('cadeco/material/SET_MATERIAL', data);
                     this.res = data;
-                    this.service.tipo = this.res.nivel_padre;
-                    this.service.descripcion = this.res.descripcion;
-                    this.service.unidad = this.res.unidad;
-                    this.service.numero_parte = this.res.numero_parte;                                        
+                    this.insumo.tipo = this.res.nivel_padre;
+                    this.insumo.descripcion = this.res.descripcion;
+                    this.insumo.unidad = this.res.unidad;
+                    this.insumo.numero_parte = this.res.numero_parte;                                        
                     
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
@@ -189,12 +188,12 @@ export default {
                         this.unidades= data.data;
                     })
         },
-         getFamiliasMOyS(){
+         getMateriales(){
                 return this.$store.dispatch('cadeco/familia/index', {
-                    params: {sort: 'descripcion',  order: 'asc', scope:'tipo:2'}
+                    params: {sort: 'descripcion',  order: 'asc', scope:'tipo:4'}
                 })
                     .then(data => {
-                        this.familias_moys= data.data;                        
+                        this.materiales = data.data;                        
                     })
         },
         validate() {
