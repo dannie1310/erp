@@ -70,6 +70,7 @@ class EstimacionTransformer extends TransformerAbstract
             'retencion_iva6_format' => $model->retencion_iva6_format,
             'retencion_iva23' => $model->retencionIVA_2_3,
             'retencion_iva23_format' => $model->retencion_iva23_format,
+            'retencion_iva_format' => $model->iva_retenido_format,
             'retencion_iva_porcentaje' => $model->iva_retenido_porcentaje,
             'total_retencion_liberadas' => $model->suma_liberaciones_format,
             'total_deductivas' => $model->suma_deductivas_format,
