@@ -709,8 +709,8 @@ class Estimacion extends Transaccion
         if($this->subtotal_orden_pago == 0) abort(403, 'La estimación no cuenta con volumen registrado.');
 
         if($retenciones['retencionIVA_2_3'] != null && $retenciones['retencionIVA_2_3'] >= 0){
-            $porcentaje = $retenciones['retencionIVA_2_3'] * 100 / $this->subtotal_orden_pago;
-            if($retenciones['retencionIVA_2_3'] > 0 && (number_format($porcentaje, 5) <= 10.66665 || number_format($porcentaje, 5) >= 10.66667)){
+            $iva_o_p = $this->subtotal_orden_pago * 0.16;
+            if(abs((($iva_o_p / 3) * 2) -  $retenciones['retencionIVA_2_3'] ) > 0.025  && $retenciones['retencionIVA_2_3'] > 0){
                 abort(403, 'La retención de IVA no es 2/3');
             }
             $this->retencionIVA_2_3 = $retenciones['retencionIVA_2_3'];
