@@ -8,6 +8,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use App\Exports\SolicitudEdicionExport;
 use App\Http\Transformers\CTPQ\PolizaMovimientoTransformer;
 use App\Http\Transformers\CTPQ\PolizaTransformer;
 use App\Imports\SolicitudEdicionImport;
@@ -223,5 +224,20 @@ class SolicitudEdicionService
     public function aplicar($id)
     {
         return $this->repository->aplicar($id);
+    }
+
+    public function descargarXLS($id)
+    {
+        $folio = $this->show($id)->numero_folio;
+        $solicitud_polizas = array(
+            array('a','b'),
+            array('c','d'),
+        );
+
+        $polizas_solicitud = $this->repository->getPolizasSolicitud($id);
+
+        $export = new SolicitudEdicionExport($polizas_solicitud);
+
+        return Excel::download($export, "SolEdPol_#".$folio."_".date('dmY_His').".xlsx");
     }
 }

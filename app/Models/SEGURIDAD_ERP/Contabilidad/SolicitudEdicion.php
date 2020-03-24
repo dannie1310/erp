@@ -258,4 +258,21 @@ class SolicitudEdicion extends Model
 
     }
 
+    public function getPolizasSolicitud(){
+        $salida = [];
+        $polizas = $this->polizas;
+        $i=0;
+        foreach ($polizas as $poliza){
+            DB::purge('cntpq');
+            \Config::set('database.connections.cntpq.database', $poliza->bd_contpaq);
+            $poliza_contpaq = Poliza::find($poliza->id_poliza);
+            $movimientos = $poliza->movimientos;
+            foreach ($movimientos as $movimiento) {
+                $salida[$i] =[($i+1), $poliza->bd_contpaq, $poliza_contpaq->fecha_format,$poliza_contpaq->tipo_poliza->Id, $poliza_contpaq->Folio, $poliza_contpaq->Concepto];
+                $i++;
+            }
+        }
+        return $salida;
+    }
+
 }

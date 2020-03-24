@@ -1,6 +1,12 @@
 <template>
     <span v-if="solicitud">
-            <br />
+
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary pull-right"  @click="descargar"><i class="fa fa-download"></i>Descargar</button>
+            </div>
+        </div>
+        <br />
         <div  class="row">
             <div class="table-responsive col-12">
                 <table class="table table-striped">
@@ -140,6 +146,7 @@
         data() {
             return {
                 cargando: false,
+                descargando: false,
             }
         },
         mounted() {
@@ -158,6 +165,16 @@
                     this.$store.commit('contabilidadGeneral/solicitud-edicion-poliza/SET_SOLICITUD', data);
                 }) .finally(() => {
                     this.cargando = false;
+                })
+            },
+            descargar() {
+                this.descargando = true;
+                return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/descargaXLS', {
+                    id: this.id
+                }).then(data => {
+                    this.$emit('success')
+                }) .finally(() => {
+                    this.descargando = false;
                 })
             },
             regresar() {
