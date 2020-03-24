@@ -13,6 +13,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 
+
 class SolicitudEdicionRepository extends Repository implements RepositoryInterface
 {
     public function __construct(SolicitudEdicion $model)
@@ -47,4 +48,7 @@ class SolicitudEdicionRepository extends Repository implements RepositoryInterfa
         return Empresa::where("Editable","1")->select("AliasBDD","IdContpaq")->get();
     }
 
+    public function getPolizasSolicitud($id){
+        return $this->show($id)->getPolizasSolicitud();
+    }
 }
