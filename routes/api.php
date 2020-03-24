@@ -210,6 +210,7 @@ $api->version('v1', function ($api) {
             $api->post('{id}/autorizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@autorizar')->where(['id' => '[0-9]+']);
             $api->post('{id}/rechazar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@rechazar')->where(['id' => '[0-9]+']);
             $api->post('{id}/aplicar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@aplicar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/descargar-xls', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@descargarXLS')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@update')->where(['id' => '[0-9]+']);
@@ -270,10 +271,10 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoTipoController@destroy')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoTipoController@store');
         });
-        // NODOS PROYECTO
         $api->group(['prefix' => 'nodo-proyecto'], function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoProyectoController@show')->where(['id' => '[0-9]+']);
         });
+        // NODOS PROYECTO
     });
 
     /**

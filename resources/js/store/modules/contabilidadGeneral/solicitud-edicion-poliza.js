@@ -226,6 +226,29 @@ export default {
                     });
             });
         },
+        descargaXLS(context, payload){
+            /*axios
+                .get(URI + payload.id + '/descargar-xls', payload)
+                .then(r => r.data)
+                .then(data => {
+                    swal("Solicitud descargada correctamente", {
+                        icon: "success",
+                        timer: 1500,
+                        buttons: false
+                    })
+                })*/
+
+            var urr = URI + payload.id + '/descargar-xls'+ '?access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Solicitud descargada correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        }
     },
     getters: {
         solicitudes(state) {
