@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones;
+namespace App\Http\Transformers\CADECO\SubcontratosEstimaciones;
 
 use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use League\Fractal\TransformerAbstract;
@@ -12,7 +12,10 @@ class PenalizacionLiberacionTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'id_transaccion' => $model->id_transaccion
+            'id_transaccion' => $model->id_transaccion,
+            'importe' => $model->importe,
+            'importe_format' => $model->importe_format,
+            'concepto' => $model->concepto
         ];
     }
 }

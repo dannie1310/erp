@@ -26,4 +26,14 @@ class PenalizacionLiberacionService
     {
         return $this->repository->all($data);
     }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->delete($data, $id);
+    }
+
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
+    }
 }

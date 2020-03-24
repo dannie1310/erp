@@ -38,9 +38,10 @@ class PenalizacionController extends Controller
      
      public function __construct(Manager $fractal, PenalizacionService $service, PenalizacionTransformer $transformer)
      {
-        //  dd('Penalizacion controller');
          $this->middleware('auth:api');
          $this->middleware('context');
+         $this->middleware('permiso:registrar_penalizacion_estimacion_subcontrato')->only(['store']);
+         $this->middleware('permiso:eliminar_penalizacion_estimacion_subcontrato')->only(['destroy']);
 
          $this->fractal = $fractal;
          $this->service = $service;

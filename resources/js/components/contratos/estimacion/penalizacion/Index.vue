@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargando" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" >
+        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargando" v-if="$root.can('registrar_penalizacion_estimacion_subcontrato')" >
             Penalizaciones
         </button>
         <div class="row">
@@ -23,19 +23,21 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th style="width:25%;">Tipo</th>
+                                            <th class="index_corto">#</th>
+                                            <th style="width:5%;"></th>
                                             <th style="width:20%;">Importe</th>
-                                            <th style="width:45%;">Concepto</th>
+                                            <th>Concepto</th>                                            
                                             <th style="width:10%;"></th>
                                         </tr>
                                     </thead>
                                     <tbody v-if="penalizaciones">
                                         <tr v-for="(penalizacion,i) in penalizaciones">
-                                            <td>PENALIZACIÓN</td>
+                                            <td class="icono">{{i+1}}</td>
+                                            <td></td>
                                             <td class="text-right">{{penalizacion.importe_format}}</td>
-                                            <td>{{penalizacion.concepto}}</td>
+                                            <td class="text-center">{{penalizacion.concepto}}</td>
                                             <td class="icono">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="destroyPenalizacion(penalizacion.id)" v-if="$root.can('eliminar_retencion_estimacion_subcontrato')">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="destroyPenalizacion(penalizacion.id)" v-if="$root.can('eliminar_penalizacion_estimacion_subcontrato')">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </td>
@@ -55,17 +57,21 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
+                                            <th class="index_corto">#</th>
+                                            <th style="width:5%;"></th>
                                             <th style="width:20%;">Importe</th>
-                                            <th style="width:70%;">Concepto</th>
+                                            <th>Concepto</th>
                                             <th style="width:10%;"></th>
                                         </tr>
                                     </thead>
                                     <tbody v-if="penalizaciones">
                                         <tr v-for="(liberacion,i) in liberaciones">
+                                            <td class="icono">{{i+1}}</td>
+                                            <td></td>
                                             <td class="text-right">{{liberacion.importe_format}}</td>
-                                            <td>{{liberacion.concepto}}</td>
+                                            <td style="text-align:center;">{{liberacion.concepto}}</td>
                                             <td class="icono">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="destroyLiberacion(liberacion.id)" v-if="$root.can('eliminar_liberacion_estimacion_subcontrato')">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="destroyLiberacion(liberacion.id)" v-if="$root.can('eliminar_liberacion_penalizacion_estimacion_subcontrato')">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </td>
@@ -108,9 +114,10 @@ export default {
                 })
         },
         destroyLiberacion(id){
-            return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/delete', id)
+            
+            return this.$store.dispatch('subcontratosEstimaciones/penalizacion-liberacion/delete', id)
                 .then(() => {
-                    this.$store.commit('subcontratosEstimaciones/retencion-liberacion/DELETE_LIBERACION', id)
+                    this.$store.commit('subcontratosEstimaciones/penalizacion-liberacion/DELETE_LIBERACION', id)
                 })
         },
         getLiberaciones(){

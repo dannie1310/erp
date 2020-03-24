@@ -253,10 +253,12 @@ use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
 use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
+use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\Unidad;
 use App\Models\CADECO\UnidadComplemento;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
+use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionLiberacionObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionObserver;
 use App\Observers\CADECO\UnidadComplementoObserver;
 use App\Observers\CADECO\UnidadObserver;
@@ -378,6 +380,7 @@ class AppServiceProvider extends ServiceProvider
             FolioPorSubcontrato::observe(FolioPorSubcontratoObserver::class);
             Liberacion::observe(LiberacionObserver::class);
             Penalizacion::observe(PenalizacionObserver::class);
+            PenalizacionLiberacion::observe(PenalizacionLiberacionObserver::class);
             Retencion::observe(RetencionObserver::class);
 
             /**

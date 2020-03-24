@@ -18,6 +18,7 @@ use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
+use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use DateTime;
@@ -110,6 +111,11 @@ class Estimacion extends Transaccion
     public function penalizaciones()
     {
         return $this->hasMany(Penalizacion::class, 'id_transaccion');
+    }
+
+    public function penalizacionLiberaciones()
+    {
+        return $this->hasMany(PenalizacionLiberacion::class, 'id_transaccion');
     }
 
     public function movimientos()
@@ -518,6 +524,11 @@ class Estimacion extends Transaccion
         if ($this->configuracion->ret_fon_gar_antes_iva == 1) {
             $subtotal -= $this->retencion_fondo_garantia_orden_pago;
         }
+        if($this->configuracion->penalizacion_antes_iva == 1)
+        {
+            $subtotal -= $this->penalizaciones->sum('importe');
+            $subtotal += $this->penalizacionLiberaciones->sum('importe');
+        }
         return $subtotal;
     }
 
@@ -627,7 +638,8 @@ class Estimacion extends Transaccion
         }
         if($this->configuracion->penalizacion_antes_iva == 0)
         {
-            $monto_pagar -= $this->penalizaciones->sum('importe');            
+            $monto_pagar -= $this->penalizaciones->sum('importe');  
+            $monto_pagar += $this->penalizacionLiberaciones->sum('importe');          
         }
         return $monto_pagar;
     }

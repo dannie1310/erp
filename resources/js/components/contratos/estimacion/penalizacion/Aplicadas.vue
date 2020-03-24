@@ -1,6 +1,6 @@
 <template>
   <span>
-        <button type="button" class="btn btn-primary float-right" title="Registrar" @click="getPenalizaciones()">
+        <button type="button" class="btn btn-primary float-right" title="Registrar" @click="getPenalizaciones()" v-if="$root.can('registrar_penalizacion_estimacion_subcontrato')">
             <i class="fa fa-plus"></i>
         </button>
         <div class="row">
@@ -18,24 +18,7 @@
                                 <div class="modal-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="form-group row error-content">
-                                                <label for="id_tipo_retencion" class="col-sm-3 col-form-label">Tipo Penalización: </label>
-                                                <div class="col-sm-9">
-                                                    <select
-                                                        type="text"
-                                                        name="id_tipo_retencion"
-                                                        data-vv-as="Tipo"
-                                                        class="form-control"
-                                                        id="id_tipo_retencion"
-                                                        v-model="id_tipo_retencion"
-                                                        v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('id_tipo_retencion')}" >
-                                                        <option value>-- Seleccione un Tipo --</option>
-                                                        <option v-for="tipo in tipos" :value="tipo.id">{{ tipo.tipo_retencion }}</option>
-                                                    </select>
-                                                    <div class="invalid-feedback" v-show="errors.has('id_tipo_retencion')">{{ errors.first('id_tipo_retencion') }}</div>
-                                                </div>
-                                            </div>
+                                            <br>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">

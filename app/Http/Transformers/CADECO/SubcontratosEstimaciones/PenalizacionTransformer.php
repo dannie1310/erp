@@ -15,7 +15,8 @@ class PenalizacionTransformer extends TransformerAbstract
             'importe' => $model->importe,
             'importe_format' => $model->importe_format,
             'importe_disponible' => $model->importe_disponible,
-            'concepto' => $model->concepto
+            'concepto' => $model->concepto,
+            'importe_disponible_format' => $model->importe_disponible_format          
         ];
     }
 }
