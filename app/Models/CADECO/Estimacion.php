@@ -941,22 +941,22 @@ class Estimacion extends Transaccion
     public function getRetencionIva4FormatAttribute(){
         if($subtotal = $this->subtotal_orden_pago){
             $porcentaje = $this->IVARetenido * 100 / $subtotal;
-            if((int)round($porcentaje) == 10) return '$ ' . number_format($this->IVARetenido * .4, 2, ',', '.');
-            if((int)round($porcentaje)) return '$ ' . number_format($this->IVARetenido, 2, ',', '.');
+            if((int)round($porcentaje) == 10) return '$ ' . number_format($this->IVARetenido * .4, 2);
+            if((int)round($porcentaje)) return '$ ' . number_format($this->IVARetenido, 2);
         }
-        return '$ ' . number_format(0, 2, ',', '.');
+        return '$ ' . number_format(0, 2);
     }
     
     public function getRetencionIva6FormatAttribute(){
         if($subtotal = $this->subtotal_orden_pago){
             $porcentaje = $this->IVARetenido * 100 / $subtotal;
-            if((int)round($porcentaje) == 10) return '$ ' . number_format($this->IVARetenido * .6, 2, ',', '.');
-            if((int)round($porcentaje)) return '$ ' . number_format($this->IVARetenido, 2, ',', '.');
+            if((int)round($porcentaje) == 10) return '$ ' . number_format($this->IVARetenido * .6, 2);
+            if((int)round($porcentaje)) return '$ ' . number_format($this->IVARetenido, 2);
         }
-        return '$ ' . number_format(0, 2, ',', '.');
+        return '$ ' . number_format(0, 2);
     }
     
     public function getRetencionIva23FormatAttribute(){
-        return '$ ' . number_format($this->retencionIVA_2_3, 2, ',', '.');
+        return '$ ' . number_format($this->retencionIVA_2_3, 2);
     }
 }
