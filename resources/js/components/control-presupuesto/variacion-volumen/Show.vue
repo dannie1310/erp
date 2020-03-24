@@ -140,9 +140,12 @@ export default {
         },
         autorizar(){
             return this.$store.dispatch('control-presupuesto/variacion-volumen/autorizar', {
-                id: this.id
+                id: this.id,
+                params: {
+                    include: ['partidas'],
+                }
             }).then(data => {
-                console.log('pardo');
+                this.find();
             }) .finally(() => {
                 this.cargando = false;
             })

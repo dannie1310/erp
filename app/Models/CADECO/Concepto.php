@@ -21,6 +21,11 @@ class Concepto extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'cantidad_presupuestada',
+        'monto_presupuestado',
+    ];
+
     protected static function boot()
     {
         parent::boot();

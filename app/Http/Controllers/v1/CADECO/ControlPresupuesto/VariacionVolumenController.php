@@ -57,7 +57,8 @@ class VariacionVolumenController extends Controller
     }
 
     public function autorizar($id){
-         return $this->service->autorizar($id);
+         $resp =  $this->service->autorizar($id);
+         return $this->respondWithItem($resp);
     }
 
 }

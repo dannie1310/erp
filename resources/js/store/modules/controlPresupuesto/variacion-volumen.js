@@ -122,14 +122,20 @@ export default {
                         axios.post(URI + payload.id + '/autorizar', { params: payload.params })
                             .then(r => r.data)
                             .then(data => {
-                                resolve(data);
+                                swal("Solicitud de cambio registrado correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                })
+                                    .then(() => {
+                                        resolve(data);
+                                    })
                             })
                             .catch(error => {
                                 reject(error);
-                            }) 
-                    } else {
-                        resolve();
+                            })
                     }
+                    
                 });
             });
         },
