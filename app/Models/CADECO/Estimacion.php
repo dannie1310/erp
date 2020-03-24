@@ -624,6 +624,7 @@ class Estimacion extends Transaccion
         if ($this->configuracion->ret_fon_gar_antes_iva == 0) {
             $monto_pagar -= $this->retencion_fondo_garantia_orden_pago;
         }
+        $monto_pagar -= $this->retencionIVA_2_3;
         return $monto_pagar;
     }
 
@@ -634,7 +635,7 @@ class Estimacion extends Transaccion
 
     public function getIvaRetenidoFormatAttribute()
     {
-        return '$ ' . number_format($this->IVARetenido, 2);
+        return '$ ' . number_format($this->IVARetenido + $this->retencionIVA_2_3, 2);
     }
 
     public function getIvaRetenidoPorcentajeAttribute()
@@ -703,9 +704,19 @@ class Estimacion extends Transaccion
         }
     }
 
-    public function registrarIVARetenido($retencion)
+    public function registrarIVARetenido($retenciones)
     {
         if($this->subtotal_orden_pago == 0) abort(403, 'La estimación no cuenta con volumen registrado.');
+
+        if($retenciones['retencionIVA_2_3'] != null && $retenciones['retencionIVA_2_3'] >= 0){
+            $porcentaje = $retenciones['retencionIVA_2_3'] * 100 / $this->subtotal_orden_pago;
+            if($retenciones['retencionIVA_2_3'] > 0 && (number_format($porcentaje, 5) <= 10.66665 || number_format($porcentaje, 5) >= 10.66667)){
+                abort(403, 'La retención de IVA no es 2/3');
+            }
+            $this->retencionIVA_2_3 = $retenciones['retencionIVA_2_3'];
+        }
+        
+        $retencion = $retenciones['IVARetenido'];
         if ($retencion > 0) {
             $porcentaje = $retencion * 100 / $this->subtotal_orden_pago;
             switch ((int)round($porcentaje)) {
@@ -729,6 +740,7 @@ class Estimacion extends Transaccion
                     break;
             }
         }
+
         $this->IVARetenido = $retencion;
         $this->save();
         $this->recalculaDatosGenerales();
@@ -924,5 +936,27 @@ class Estimacion extends Transaccion
     public function getPorcentajeIvaAttribute()
     {
         return ($this->impuesto / ($this->monto - $this->impuesto)) * 100;
+    }
+
+    public function getRetencionIva4FormatAttribute(){
+        if($subtotal = $this->subtotal_orden_pago){
+            $porcentaje = $this->IVARetenido * 100 / $subtotal;
+            if((int)round($porcentaje) == 10) return '$ ' . number_format($this->IVARetenido * .4, 2, ',', '.');
+            if((int)round($porcentaje)) return '$ ' . number_format($this->IVARetenido, 2, ',', '.');
+        }
+        return '$ ' . number_format(0, 2, ',', '.');
+    }
+    
+    public function getRetencionIva6FormatAttribute(){
+        if($subtotal = $this->subtotal_orden_pago){
+            $porcentaje = $this->IVARetenido * 100 / $subtotal;
+            if((int)round($porcentaje) == 10) return '$ ' . number_format($this->IVARetenido * .6, 2, ',', '.');
+            if((int)round($porcentaje)) return '$ ' . number_format($this->IVARetenido, 2, ',', '.');
+        }
+        return '$ ' . number_format(0, 2, ',', '.');
+    }
+    
+    public function getRetencionIva23FormatAttribute(){
+        return '$ ' . number_format($this->retencionIVA_2_3, 2, ',', '.');
     }
 }
