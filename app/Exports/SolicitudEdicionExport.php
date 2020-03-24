@@ -30,11 +30,23 @@ class SolicitudEdicionExport implements FromArray, WithHeadings
     {
         return [
             '#',
-            'BD',
-            'Folio',
+            'Fecha',
             'Tipo',
-            'Concepto Póliza',
-
+            'Folio',
+            'Concepto Deseado',
+            'Referencia Deseada',
+            'BD',
+            'Id Poliza',
+            'Fecha',
+            'Tipo',
+            'Folio',
+            'Concepto de Póliza',
+            'Id Movimiento',
+            'Cuenta',
+            'Tipo Movimiento',
+            'Monto',
+            'Referencia de Movimiento',
+            'Concepto de Movimiento',
         ];
     }
 }

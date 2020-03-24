@@ -268,7 +268,27 @@ class SolicitudEdicion extends Model
             $poliza_contpaq = Poliza::find($poliza->id_poliza);
             $movimientos = $poliza->movimientos;
             foreach ($movimientos as $movimiento) {
-                $salida[$i] =[($i+1), $poliza->bd_contpaq, $poliza_contpaq->fecha_format,$poliza_contpaq->tipo_poliza->Id, $poliza_contpaq->Folio, $poliza_contpaq->Concepto];
+                $movimiento_contpaq = PolizaMovimiento::find($movimiento->id_movimiento);
+                $salida[$i] =[
+                    ($i+1),
+                    $poliza->partida_solicitud->fecha_format,
+                    $poliza->partida_solicitud->tipo_format,
+                    $poliza->partida_solicitud->folio,
+                    $poliza->partida_solicitud->concepto,
+                    $poliza->partida_solicitud->referencia,
+                    $poliza->bd_contpaq,
+                    $poliza_contpaq->Id,
+                    $poliza_contpaq->fecha_format,
+                    $poliza_contpaq->tipo_poliza->Nombre,
+                    $poliza_contpaq->Folio,
+                    $poliza_contpaq->Concepto,
+                    $movimiento_contpaq->Id,
+                    "'".$movimiento_contpaq->cuenta->Codigo,
+                    $movimiento_contpaq->tipo_format,
+                    $movimiento_contpaq->importe_format,
+                    $movimiento_contpaq->Referencia,
+                    $movimiento_contpaq->Concepto
+                ];
                 $i++;
             }
         }
