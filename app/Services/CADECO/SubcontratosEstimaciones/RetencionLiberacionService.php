@@ -33,10 +33,9 @@ class RetencionLiberacionService
         return $this->repository->delete($data, $id);
     }
 
-    public function list($id)
+    public function index($data)
     {
-        $response = $this->repository->where([['id_transaccion', '=', $id]]);
-        return $response->all();
+        return $this->repository->all($data);
     }
 
     public function store(array $data)

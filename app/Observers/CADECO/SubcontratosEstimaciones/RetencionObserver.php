@@ -19,8 +19,10 @@ class RetencionObserver {
     public function creating(Retencion $retencion)
     {
         $retencion->validarEstadoEstimacion('registrada');
+        $retencion->validarTotalRetencion();
+        $retencion->estatus = 0;
     }
-    
+
     /**
      * @param Retencion $retencion
      * @throws \Exception
@@ -29,7 +31,7 @@ class RetencionObserver {
     {
         $retencion->estimacion->recalculaDatosGenerales();
     }
-    
+
     /**
      * @param Retencion $retencion
      * @throws \Exception
@@ -38,7 +40,7 @@ class RetencionObserver {
     {
         $retencion->validarEstadoEstimacion('eliminada');
     }
-    
+
     /**
      * @param Retencion $retencion
      * @throws \Exception
