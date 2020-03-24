@@ -33,6 +33,21 @@ class ConfiguracionObraService
         return $configuracionObra->all();
    }
 
+
+   public function establecerContexto($id)
+   {
+       $config = $this->repository->withoutGlobalScopes()->show($id);
+       try {
+           config()->set('database.connections.cadeco.database', $config->proyecto->base_datos);
+
+           session()->put('db', $config->proyecto->base_datos);
+           session()->put('id_obra', $config->id_obra);
+
+       } catch (\Exception $e) {
+           throw $e;
+       }
+   }
+
     public function contexto()
     {
 

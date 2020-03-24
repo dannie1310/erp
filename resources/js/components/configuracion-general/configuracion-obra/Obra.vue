@@ -18,7 +18,7 @@
                             option-value="id"
                             :custom-text="obraDescripcion"
                             :list="obras"
-                            :placeholder="!cargando?'Seleccionar o buscar por número de folio o referencia de subcontrato o razón social de contratista':'Cargando...'"
+                            :placeholder="!cargando?'Seleccionar o buscar por nombre de obra o base de datos':'Cargando...'"
                             :isError="errors.has(`id_obra`)">
 						</model-list-select>
 					</div>
@@ -52,23 +52,39 @@
         },
         methods: {
             obraDescripcion(item) {
-                return `[${item.numero_folio_format}] - [${item.referencia}]- [${item.empresa}]`
+                return `${item.nombre} - (${item.base_datos})`
             },
             getObras() {
                 this.obras = [];
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/obras/all', {
+                return this.$store.dispatch('seguridad/configuracion-obra/index', {
                     params: {
-                       // scope: 'estimable',
-                       // sort: 'id',
-                       // order: 'desc'
+                        sort: 'nombre',
+                        order: 'asc'
                     }
                 })
                     .then(data => {
-                        this.subcontratos = data;
+                        this.obras = data.data;
                         this.cargando = false;
                     })
             },
+        },
+        watch: {
+            id_obra(value){
+                if(value != '')
+                {
+                    console.log(value)
+                    return this.$store.dispatch('seguridad/configuracion-obra/establecerContexto', {
+                        id: value,
+                        params: {
+
+                        }
+                    })
+                    .then(data => {
+                       console.log(data)
+                    })
+                }
+            }
         }
     }
 </script>

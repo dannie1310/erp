@@ -38,12 +38,17 @@ class ConfiguracionObraController extends Controller
     public function __construct(Manager $fractal, ConfiguracionObraService $service, ConfiguracionObraTransformer $transformer)
     {
         $this->middleware( 'auth:api');
-        $this->middleware( 'context')->except('index');
+        $this->middleware( 'context')->except(['index','establecerContexto']);
         //$this->middleware('permiso:registrar_cuenta_corriente')->only(['update']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function establecerContexto(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->establecerContexto($id));
     }
 
     public function contexto(Request $request)

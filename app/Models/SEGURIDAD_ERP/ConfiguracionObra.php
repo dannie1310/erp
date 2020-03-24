@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP;
 
 use App\Facades\Context;
+use App\Models\CADECO\Obra;
 use Illuminate\Database\Eloquent\Model;
 
 class ConfiguracionObra extends Model
@@ -59,5 +60,10 @@ class ConfiguracionObra extends Model
     public function scopeObraTerminada($query)
     {
         return $query->where('tipo_obra', '!=', 2);
+    }
+
+    public function obra()
+    {dd($this->id_obra);
+        return Obra::where('id_obra', '=', $this->id_obra);
     }
 }
