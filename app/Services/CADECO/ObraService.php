@@ -13,6 +13,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\Usuario;
 use App\Models\MODULOSSAO\BaseDatosObra;
 use App\Models\MODULOSSAO\UnificacionObra;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Repositories\Repository;
 use Illuminate\Database\Eloquent\Collection;
@@ -44,7 +45,7 @@ class ObraService
     public function update($data, $id)
     {
         $obra = $this->repository->show($id);
-
+dd($data, $obra);
         if (isset($data['configuracion']['id_responsable'])) {
             $data['responsable'] = \App\Models\IGH\Usuario::query()->find($data['configuracion']['id_responsable'])->nombre_completo;
         }
@@ -213,5 +214,16 @@ class ObraService
                 }
 
         return $obra;
+    }
+
+    public function busquedaSinContexto($id, $data)
+    {
+        $config = ConfiguracionObra::withoutGlobalScopes()->find($data['id_configuracion']);
+        try {
+            config()->set('database.connections.cadeco.database', $config->proyecto->base_datos);
+            return $this->repository->withoutGlobalScopes()->show($id);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

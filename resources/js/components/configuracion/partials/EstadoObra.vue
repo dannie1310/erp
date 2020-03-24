@@ -1,5 +1,5 @@
 <template>
-    <div class="card" id="estado-obra" v-if="$root.can('actualizar_estado_obra')">
+    <div class="card" id="estado-obra" v-if="$root.can('actualizar_estado_obra', true)">
         <div class="card-header">
             <h6 class="card-title">Estado de Obra</h6>
             <div class="card-tools">
@@ -57,13 +57,11 @@
                 logo_nuevo: null,
                 form: null,
                 cargando: true,
-                guardando: false,
-                tipos_proyecto: []
+                guardando: false
             }
         },
 
         mounted() {
-            this.getTiposProyectos();
             this.form = JSON.parse(JSON.stringify(this.obra));
             setTimeout(() => {
                 if (this.form.configuracion.logotipo_original) {
@@ -76,17 +74,6 @@
         },
 
         methods: {
-            getTiposProyectos() {
-                this.cargando = true;
-                return this.$store.dispatch('seguridad/tipo-proyecto/index')
-                    .then(data => {
-                        this.tipos_proyecto = data;
-                    })
-                    .finally(() => {
-                        this.cargando = false;
-                    })
-            },
-
             onLogoSelected(event) {
                 this.logo_nuevo = event.target.files[0]
             },

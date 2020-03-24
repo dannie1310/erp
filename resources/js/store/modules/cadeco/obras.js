@@ -40,7 +40,19 @@ export default {
                     });
             });
         },
-
+        global(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + payload.id+'/global', payload.data, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

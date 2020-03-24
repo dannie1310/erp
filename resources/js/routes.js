@@ -69,7 +69,7 @@ export const routes = [
                 children: [
                     {
                         path: '/',
-                        name: 'configuracion-obra',
+                        name: 'configuracion-general-obra',
                         component: require('./components/configuracion-general/configuracion-obra/Obra').default,
                         meta: {
                             title: 'Configuración de Obra',

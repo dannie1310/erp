@@ -138,7 +138,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@show');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
             $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
-            $api->get('globales', 'App\Http\Controllers\v1\CADECO\ObraController@obrasGlobales');
+            $api->post('{id}/global', 'App\Http\Controllers\v1\CADECO\ObraController@busquedaSinContexto');
         });
 
         // PROVEEDOR/CONTRATISTA
@@ -837,7 +837,6 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'configuracion-obra'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@index');
             $api->get('contexto', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@contexto');
-            $api->get('{id}/getContexto', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@establecerContexto')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'permiso'], function ($api) {

@@ -47,7 +47,7 @@ class ObraController extends Controller
     public function __construct(Manager $fractal, ObraService $service, ObraTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context', ['except' => ['authPaginate']]);
+        $this->middleware('context', ['except' => ['authPaginate','busquedaSinContexto','actualizarEstado', 'update']]);
         $this->middleware('permiso:administracion_configuracion_obra')->only(['update']);
 
         $this->fractal = $fractal;
@@ -77,9 +77,8 @@ class ObraController extends Controller
         return $this->updateTrait($request, $id);
     }
 
-    public function obrasGlobales(Request $request)
+    public function busquedaSinContexto(Request $request, $id)
     {
-        dd("globales???", $request);
-        return $this->respondWithCollection($this->service->index($request->all()));
+        return $this->respondWithItem($this->service->busquedaSinContexto($id, $request->all()));
     }
 }

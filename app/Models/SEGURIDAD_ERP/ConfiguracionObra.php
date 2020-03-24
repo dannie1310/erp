@@ -61,9 +61,4 @@ class ConfiguracionObra extends Model
     {
         return $query->where('tipo_obra', '!=', 2);
     }
-
-    public function obra()
-    {dd($this->id_obra);
-        return Obra::where('id_obra', '=', $this->id_obra);
-    }
 }

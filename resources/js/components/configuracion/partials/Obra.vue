@@ -1,5 +1,5 @@
 <template>
-    <div class="card" id="configuracion-obra" v-if="$root.can('administracion_configuracion_obra')">
+    <div class="card" id="configuracion-obra" v-if="$root.can('administracion_configuracion_obra',true)">
         <div class="card-header">
             <h6 class="card-title">Configuración de Obra</h6>
             <div class="card-tools">
@@ -232,13 +232,13 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" id="esquema_permisos1" value="1"
                                    v-model="form.configuracion.esquema_permisos"
-                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto')">
+                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto', true)">
                             <label class="form-check-label" for="esquema_permisos1"> Esquema Global</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" id="esquema_permisos2" value="2"
                                    v-model="form.configuracion.esquema_permisos"
-                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto')">
+                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto', true)">
                             <label class="form-check-label" for="esquema_permisos2"> Esquema Personalizado</label>
                         </div>
                     </div>
@@ -366,7 +366,7 @@
             update() {
                 this.guardando = true;
                 var formData = new FormData();
-
+console.log( this.form.configuracion)
                 formData.append('ciudad', this.form.ciudad);
                 formData.append('cliente', this.form.cliente)
                 formData.append('codigo_postal', this.form.codigo_postal);
@@ -395,7 +395,7 @@
                     if(value == 'null' || value == '')
                         formData.delete(key);
                 });
-
+                console.log( formData)
                 return this.$store.dispatch('cadeco/obras/update', {
                     id: this.obra.id_obra,
                     data: formData,
