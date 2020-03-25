@@ -13,6 +13,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\DatosContables;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Database\Eloquent\Model;
 
 class Obra extends Model
@@ -45,7 +46,8 @@ class Obra extends Model
         'direccion',
         'ciudad',
         'codigo_postal',
-        'valor_contrato'
+        'valor_contrato',
+        'id_administrador'
     ];
 
     protected $dates = [
@@ -117,4 +119,21 @@ class Obra extends Model
         return Moneda::where("tipo",1)->first();
     }
 
+    public function edicionObra($data)
+    {
+        $this->update(array_except($data, 'configuracion'));
+
+        $configuracion = ConfiguracionObra::where('id_obra', '=', $this->id_obra)
+            ->where('id_proyecto', '=', Proyecto::where('base_datos', '=', $data['configuracion']['base_datos'])->pluck('id'))
+            ->withoutGlobalScopes()
+            ->first();
+        $configuracion->update(array_except($data['configuracion'], ['logotipo_original', 'base_datos']));
+
+        $this->refresh();
+        dd($this);
+        return [
+             "obra" => $this,
+             "configuracion" => $configuracion->toArray()
+        ];
+    }
 }

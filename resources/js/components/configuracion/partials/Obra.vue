@@ -425,13 +425,14 @@
                         id: this.obra.id_obra,
                         data: formData,
                         config: {
-                            params: {_method: 'PATCH', include: 'configuracion'}
+                            params: {_method: 'PATCH'}
                         }
                     })
                         .then(data => {
                             if (data) {
-                                this.$store.commit('auth/setObra', {obra: data});
-                                this.form = data
+                                this.form = data.obra
+                           //     this.$store.commit('auth/setObra', {obra: ' '});
+                                this.form.configuracion = data.configuracion;
                                 setTimeout(() => {
                                     if (data.configuracion.logotipo_original) {
                                         this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;

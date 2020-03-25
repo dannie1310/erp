@@ -71,7 +71,8 @@ class ObraService
         try {
             config()->set('database.connections.cadeco.database', $data['configuracion']['base_datos']);
             $obra = $this->repository->withoutGlobalScopes()->show($id);
-            $config = ConfiguracionObra::withoutGlobalScopes()->where('id_obra', '=', $obra->id_obra);
+            $config = ConfiguracionObra::withoutGlobalScopes()->where('id_obra', '=', $obra->id_obra)
+                ->where('id_proyecto', '=', Proyecto::where('base_datos', '=', $data['configuracion']['base_datos'])->pluck('id'));
 
             if (isset($data['configuracion']['id_responsable'])) {
                 $data['responsable'] = \App\Models\IGH\Usuario::find($data['configuracion']['id_responsable'])->nombre_completo;
@@ -85,12 +86,8 @@ class ObraService
                     'logotipo_reportes' => DB::raw("CONVERT(VARBINARY(MAX), '" . $imageData[1] . "')")
                 ]);
             }
-            $config->fill(array_except($data['configuracion'], 'logotipo_original'));
-            $config->save();
-
-            $obra->update($data);
-
-            return $obra;
+            config()->set('database.connections.cadeco.database', '');
+            return $obra->edicionObra($data);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -251,7 +248,9 @@ class ObraService
         $config = ConfiguracionObra::withoutGlobalScopes()->find($data['id_configuracion']);
         try {
             config()->set('database.connections.cadeco.database', $config->proyecto->base_datos);
-            return $this->repository->withoutGlobalScopes()->show($id);
+            $datos =  $this->repository->withoutGlobalScopes()->show($id);
+            config()->set('database.connections.cadeco.database', '');
+            return $datos;
         } catch (\Exception $e) {
             throw $e;
         }

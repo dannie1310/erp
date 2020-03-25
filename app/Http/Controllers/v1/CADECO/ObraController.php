@@ -62,7 +62,8 @@ class ObraController extends Controller
 
     public function updateGeneral(Request $request, $id)
     {
-        return $this->respondWithItem($this->service->updateGeneral($request->all(), $id));
+        $respuesta = $this->service->updateGeneral($request->all(), $id);
+        return ['obra' => $this->transformer->transform($respuesta['obra']), 'configuracion' => $respuesta['configuracion']];
     }
 
     public function authPaginate(Request $request)
