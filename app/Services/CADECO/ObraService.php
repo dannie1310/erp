@@ -45,7 +45,7 @@ class ObraService
     public function update($data, $id)
     {
         $obra = $this->repository->show($id);
-dd($data, $obra);
+
         if (isset($data['configuracion']['id_responsable'])) {
             $data['responsable'] = \App\Models\IGH\Usuario::query()->find($data['configuracion']['id_responsable'])->nombre_completo;
         }
@@ -64,6 +64,36 @@ dd($data, $obra);
         $obra->update($data);
 
         return $obra;
+    }
+
+    public function updateGeneral($data, $id)
+    {
+        try {
+            config()->set('database.connections.cadeco.database', $data['configuracion']['base_datos']);
+            $obra = $this->repository->withoutGlobalScopes()->show($id);
+            $config = ConfiguracionObra::withoutGlobalScopes()->where('id_obra', '=', $obra->id_obra);
+
+            if (isset($data['configuracion']['id_responsable'])) {
+                $data['responsable'] = \App\Models\IGH\Usuario::find($data['configuracion']['id_responsable'])->nombre_completo;
+            }
+
+            if (isset($data['configuracion']['logotipo_original'])) {
+                $file = request()->file('configuracion')['logotipo_original'];
+                $imageData = unpack("H*", file_get_contents($file->getPathname()));
+                $config->update([
+                    'logotipo_original' => DB::raw("CONVERT(VARBINARY(MAX), '" . $imageData[1] . "')"),
+                    'logotipo_reportes' => DB::raw("CONVERT(VARBINARY(MAX), '" . $imageData[1] . "')")
+                ]);
+            }
+            $config->fill(array_except($data['configuracion'], 'logotipo_original'));
+            $config->save();
+
+            $obra->update($data);
+
+            return $obra;
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function authPaginate() {

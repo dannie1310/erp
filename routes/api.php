@@ -131,12 +131,14 @@ $api->version('v1', function ($api) {
         // MONEDA
         $api->group(['prefix' => 'moneda'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MonedaController@index');
+            $api->get('/monedasGlobales', 'App\Http\Controllers\v1\CADECO\MonedaController@monedasGlobales');
         });
 
         // OBRA
         $api->group(['prefix' => 'obra'], function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@show');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
+            $api->patch('{id}/updateGeneral', 'App\Http\Controllers\v1\CADECO\ObraController@updateGeneral');
             $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
             $api->post('{id}/global', 'App\Http\Controllers\v1\CADECO\ObraController@busquedaSinContexto');
         });

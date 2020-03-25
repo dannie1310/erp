@@ -316,7 +316,7 @@
     export default {
         name: "configuracion-obra",
         components: {UsuarioSelect},
-        props: ['obra'],
+        props: ['obra', 'monedas', 'tipo'],
         data() {
             return {
                 user: '',
@@ -366,11 +366,12 @@
             update() {
                 this.guardando = true;
                 var formData = new FormData();
-console.log( this.form.configuracion)
+
                 formData.append('ciudad', this.form.ciudad);
                 formData.append('cliente', this.form.cliente)
                 formData.append('codigo_postal', this.form.codigo_postal);
 
+                formData.append('configuracion[base_datos]', this.form.configuracion.base_datos);
                 formData.append('configuracion[esquema_permisos]', this.form.configuracion.esquema_permisos);
                 if (this.form.configuracion.id_administrador) formData.append('configuracion[id_administrador]', this.form.configuracion.id_administrador);
                 if (this.form.configuracion.id_responsable) formData.append('configuracion[id_responsable]', this.form.configuracion.id_responsable);
@@ -395,36 +396,55 @@ console.log( this.form.configuracion)
                     if(value == 'null' || value == '')
                         formData.delete(key);
                 });
-                console.log( formData)
-                return this.$store.dispatch('cadeco/obras/update', {
-                    id: this.obra.id_obra,
-                    data: formData,
-                    config: {
-                        params: { _method: 'PATCH', include: 'configuracion'}
-                    }
-                })
-                    .then(data => {
-                        if (data) {
-                            this.$store.commit('auth/setObra', { obra: data });
-                            this.form = data
-                            setTimeout(() => {
-                                if (data.configuracion.logotipo_original) {
-                                    this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
-                                }
-                            }, 100);
+
+                if(this.tipo == 0) {
+                    return this.$store.dispatch('cadeco/obras/update', {
+                        id: this.obra.id_obra,
+                        data: formData,
+                        config: {
+                            params: {_method: 'PATCH', include: 'configuracion'}
                         }
                     })
-                    .finally(() => {
-                        this.guardando = false;
+                        .then(data => {
+                            if (data) {
+                                this.$store.commit('auth/setObra', {obra: data});
+                                this.form = data
+                                setTimeout(() => {
+                                    if (data.configuracion.logotipo_original) {
+                                        this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
+                                    }
+                                }, 100);
+                            }
+                        })
+                        .finally(() => {
+                            this.guardando = false;
+                        })
+                }
+                if(this.tipo == 1) {
+                    return this.$store.dispatch('cadeco/obras/updateGeneral', {
+                        id: this.obra.id_obra,
+                        data: formData,
+                        config: {
+                            params: {_method: 'PATCH', include: 'configuracion'}
+                        }
                     })
+                        .then(data => {
+                            if (data) {
+                                this.$store.commit('auth/setObra', {obra: data});
+                                this.form = data
+                                setTimeout(() => {
+                                    if (data.configuracion.logotipo_original) {
+                                        this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
+                                    }
+                                }, 100);
+                            }
+                        })
+                        .finally(() => {
+                            this.guardando = false;
+                        })
+                }
             }
         },
-
-        computed: {
-            monedas() {
-                return this.$store.getters['cadeco/moneda/monedas'];
-            }
-        }
     }
 </script>
 

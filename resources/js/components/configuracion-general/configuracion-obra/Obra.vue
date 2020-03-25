@@ -26,7 +26,7 @@
 
 			</div>
 		</div>
-        <configuracion-obra v-if="obra" :obra="obra" />
+        <configuracion-obra v-if="obra" :obra="obra" v-bind:monedas="monedas" v-bind:tipo="1"/>
 
         <div class="card" v-if="obra">
             <estado-obra :obra="obra" />
@@ -47,7 +47,8 @@
                 configuracion: null,
                 cargando: false,
                 obras: [],
-                obra: null
+                obra: null,
+                monedas : []
             }
         },
         mounted() {
@@ -59,6 +60,7 @@
             this.configuracion = null;
             this.id_configuracion = '';
             this.obra = null;
+            this.monedas = []
         },
         methods: {
             obraDescripcion(item) {
@@ -83,10 +85,21 @@
                     id: this.configuracion.id_obra,
                     data: {id_configuracion : this.id_configuracion },
                     params: { include: [], 'logo' : true }
-                }).then(data => {
-                    this.obra = data;
-                    this.obra.configuracion = this.configuracion;
+                }).then(data_obra => {
+                    return this.$store.dispatch('cadeco/moneda/monedasGlobales')
+                        .then(data => {
+                            this.monedas = data.data;
+                            this.obra = data_obra;
+                            this.obra.configuracion = this.configuracion;
+                        })
+
                 })
+            },
+            getMonedas() {
+                return this.$store.dispatch('cadeco/moneda/monedasGlobales')
+                    .then(data => {
+                        this.monedas = data.data;
+                    })
             },
         },
         watch: {

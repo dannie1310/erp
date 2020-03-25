@@ -94,6 +94,47 @@ export default {
             });
         },
 
+        updateGeneral(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar Configuración de Obra",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + '/updateGeneral', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Configuración actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            resolve();
+                        }
+                    });
+            });
+        },
+
         actualizarEstado(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
