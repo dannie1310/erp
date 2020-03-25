@@ -12,6 +12,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Concepto;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
+use App\PDF\ControlPresupuesto\VariacionVolumenFormato;
 use App\Models\CADECO\ControlPresupuesto\VariacionVolumen;
 use App\Models\CADECO\ControlPresupuesto\SolicitudCambioPartidaHistorico;
 
@@ -125,5 +126,11 @@ class VariacionVolumenService{
             abort(400, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function pdfVariacionVolumen($id)
+    {
+        $pdf = new VariacionVolumenFormato($id);
+        return $pdf;
     }
 }

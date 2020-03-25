@@ -8,6 +8,7 @@
                 <button type="button" :disabled="cargando" class="btn btn-default float-right" >
                     Rechazar
                 </button>
+                <PdfVariacion v-bind:id="id"></PdfVariacion>
             </div>
         </div>
         <div class="row">
@@ -114,9 +115,10 @@
 </template>
 
 <script>
+import PdfVariacion from './partials/FormatoVariacionVolumen';
 export default {
     name: "action-buttons",
-    components: {},
+    components: {PdfVariacion},
     props: ['id'],
     data() {
         return {
