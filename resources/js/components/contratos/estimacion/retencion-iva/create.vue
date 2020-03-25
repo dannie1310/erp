@@ -123,10 +123,9 @@ export default {
                 });
         },
         update(){
-            let retencion = parseFloat(this.IVARetenido4==''?0:this.IVARetenido4) + parseFloat(this.IVARetenido6==''?0:this.IVARetenido6);
             return this.$store.dispatch('contratos/estimacion/registrarRetencionIva', {
                     id: this.id,
-                    params:{IVARetenido:retencion, retencionIVA_2_3:this.retencion_2_3}
+                    params:{retencion4:this.IVARetenido4, retencion6:this.IVARetenido6, retencionIVA_2_3:this.retencion_2_3}
                 }).then(data => {
                     $(this.$refs.modal).modal('hide');
                 })

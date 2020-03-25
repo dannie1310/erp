@@ -709,37 +709,32 @@ class Estimacion extends Transaccion
         if($this->subtotal_orden_pago == 0) abort(403, 'La estimación no cuenta con volumen registrado.');
 
         if($retenciones['retencionIVA_2_3'] != null && $retenciones['retencionIVA_2_3'] >= 0){
-            $porcentaje = $retenciones['retencionIVA_2_3'] * 100 / $this->subtotal_orden_pago;
-            if($retenciones['retencionIVA_2_3'] > 0 && (number_format($porcentaje, 5) <= 10.66665 || number_format($porcentaje, 5) >= 10.66667)){
+            $iva_o_p = $this->subtotal_orden_pago * 0.16;
+            if(abs((($iva_o_p / 3) * 2) -  $retenciones['retencionIVA_2_3'] ) > 0.025  && $retenciones['retencionIVA_2_3'] > 0){
                 abort(403, 'La retención de IVA no es 2/3');
             }
             $this->retencionIVA_2_3 = $retenciones['retencionIVA_2_3'];
         }
         
-        $retencion = $retenciones['IVARetenido'];
-        if ($retencion > 0) {
-            $porcentaje = $retencion * 100 / $this->subtotal_orden_pago;
-            switch ((int)round($porcentaje)) {
-                case 4:
-                    if ($porcentaje <= 3.9999 || $porcentaje >= 4.0001) {
-                        abort(403, 'La retención de IVA no es del 4%');
-                    }
-                    break;
-                case 6:
-                    if ($porcentaje <= 5.9999 || $porcentaje >= 6.0001) {
-                        abort(403, 'La retención de IVA no es del 6%');
-                    }
-                    break;
-                case 10:
-                    if ($porcentaje <= 9.9999 || $porcentaje >= 10.0001) {
-                        abort(403, 'La retención de IVA no es del 10%');
-                    }
-                    break;
-                default:
-                    abort(403, 'La retención de IVA no es valida');
-                    break;
+        if($retenciones['retencion4'] != null && $retenciones['retencion4'] > 0){
+            $porcentaje = $retenciones['retencion4'] * 100 / $this->subtotal_orden_pago;
+            if ($porcentaje <= 3.9999 || $porcentaje >= 4.0001) {
+                abort(403, 'La retención de IVA no es del 4%');
             }
         }
+        if($retenciones['retencion6'] != null && $retenciones['retencion6'] > 0){
+            $porcentaje = $retenciones['retencion6'] * 100 / $this->subtotal_orden_pago;
+            if ($porcentaje <= 5.9999 || $porcentaje >= 6.0001) {
+                abort(403, 'La retención de IVA no es del 6%');
+            }
+        }
+
+        $retencion_registrada_4 = $this->retencion_iva4;
+        $retencion_registrada_6 = $this->retencion_iva6;
+        $retenciones['retencion4'] != null? $retencion_registrada_4 = $retenciones['retencion4']:'';
+        $retenciones['retencion6'] != null? $retencion_registrada_6 = $retenciones['retencion6']:'';
+        
+        $retencion = $retencion_registrada_4 + $retencion_registrada_6;
 
         $this->IVARetenido = $retencion;
         $this->save();
@@ -938,22 +933,30 @@ class Estimacion extends Transaccion
         return ($this->impuesto / ($this->monto - $this->impuesto)) * 100;
     }
 
-    public function getRetencionIva4FormatAttribute(){
+    public function getRetencionIva4Attribute(){
         if($subtotal = $this->subtotal_orden_pago){
             $porcentaje = $this->IVARetenido * 100 / $subtotal;
-            if((int)round($porcentaje) == 10) return '$ ' . number_format($this->IVARetenido * .4, 2);
-            if((int)round($porcentaje)) return '$ ' . number_format($this->IVARetenido, 2);
+            if((int)round($porcentaje) == 10) return $this->IVARetenido * .4;
+            if((int)round($porcentaje) == 4) return $this->IVARetenido;
         }
-        return '$ ' . number_format(0, 2);
+        return 0;
+    }
+
+    public function getRetencionIva4FormatAttribute(){
+        return '$ ' . number_format($this->retencion_iva4, 2);
     }
     
-    public function getRetencionIva6FormatAttribute(){
+    public function getRetencionIva6Attribute(){
         if($subtotal = $this->subtotal_orden_pago){
             $porcentaje = $this->IVARetenido * 100 / $subtotal;
-            if((int)round($porcentaje) == 10) return '$ ' . number_format($this->IVARetenido * .6, 2);
-            if((int)round($porcentaje)) return '$ ' . number_format($this->IVARetenido, 2);
+            if((int)round($porcentaje) == 10) return $this->IVARetenido * .6;
+            if((int)round($porcentaje) == 6) return $this->IVARetenido;
         }
-        return '$ ' . number_format(0, 2);
+        return 0;
+    }
+
+    public function getRetencionIva6FormatAttribute(){
+        return '$ ' . number_format($this->retencion_iva6, 2);
     }
     
     public function getRetencionIva23FormatAttribute(){
