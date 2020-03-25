@@ -1,22 +1,26 @@
 <template>
     <span>
-        <div class="row">
-            <div class="col-12">
-                <button type="button" @click="autorizar()" :disabled="cargando" class="btn btn-primary float-right" >
+        <div class="d-flex flex-row-reverse" v-if="!cargando">
+           <div class="p-2">
+                <button type="button" @click="autorizar()" v-if="$root.can('autorizar_variacion_volumen') && solicitud && solicitud.id_estatus == 1" :disabled="cargando" class="btn btn-primary float-right" >
                     Autorizar
                 </button>
-                <button type="button" :disabled="cargando" class="btn btn-default float-right" >
+            </div>
+           <div class="p-2">
+                <button type="button" :disabled="cargando" v-if="$root.can('rechazar_variacion_volumen') && solicitud && solicitud.id_estatus == 1" class="btn btn-default float-right" >
                     Rechazar
                 </button>
-                <PdfVariacion v-bind:id="id"></PdfVariacion>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-10">
                             <h4> <i class="fa fa-list-alt"></i> DETALLE DE LA SOLICITUD </h4>
+                        </div>
+                        <div class="col-2">
+                            <PdfVariacion v-bind:id="id"></PdfVariacion>
                         </div>
                     </div>
                     <div class="modal-body" v-if="solicitud">
@@ -117,7 +121,7 @@
 <script>
 import PdfVariacion from './partials/FormatoVariacionVolumen';
 export default {
-    name: "action-buttons",
+    name: "variacion-volumen-show",
     components: {PdfVariacion},
     props: ['id'],
     data() {

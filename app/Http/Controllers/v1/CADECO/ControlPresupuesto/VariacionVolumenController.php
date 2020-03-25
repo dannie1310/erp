@@ -49,7 +49,10 @@ class VariacionVolumenController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        // $this->middleware('permiso:consultar_pagos')->only(['paginate']);
+        $this->middleware('permiso:consultar_variacion_volumen')->only(['paginate', 'pdfVariacionVolumen', 'show']);
+        $this->middleware('permiso:registrar_variacion_volumen')->only(['store']);
+        $this->middleware('permiso:autorizar_variacion_volumen')->only(['autorizar']);
+        $this->middleware('permiso:rechazar_variacion_volumen')->only(['autorizar']);
 
         $this->fractal = $fractal;
         $this->service = $service;

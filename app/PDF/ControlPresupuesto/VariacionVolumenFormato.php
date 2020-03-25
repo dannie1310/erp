@@ -350,7 +350,6 @@ class VariacionVolumenFormato extends Rotation
         $renderer->setMargin(0);
         $writer = new Writer($renderer);
         $url = $_SERVER['SERVER_NAME'].':'. $_SERVER['SERVER_PORT'].'/api/control-presupuesto/variacion-volumen/'.$this->solicitud->id. '/formato-variacion-volumen?db='.Context::getDatabase().'&idobra='.Context::getIdObra().'&access_token='.config('app.env_variables.SERVICIO_CFDI_TOKEN');
-        // dd($url, $_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT']);
         $writer->writeFile($url , $qr_name);
 
         $this->SetY($this->GetPageHeight() - 5);

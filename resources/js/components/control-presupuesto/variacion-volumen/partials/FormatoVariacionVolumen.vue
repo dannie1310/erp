@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF">
+        <button @click="init" v-if="$root.can('consultar_variacion_volumen')" type="button" class="btn btn-sm btn-outline-primary float-right" title="Ver Formato PDF">
             <i class="fa fa-file-pdf-o"></i>
         </button>
 
@@ -11,7 +11,7 @@
                         <h4 class="modal-title">Formato de Solicitud de Variación de Volumen</h4>
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                     </div>
-                    <div class="modal-body modal-lg" style="height: 800px" ref="body">
+                    <div class="modal-body modal-lg" style="height: 650px" ref="body">
 
                     </div>
                     <div class="modal-footer">
@@ -25,6 +25,7 @@
 
 <script>
     export default {
+        name: "variacion-volumen-pdf",
         props: ['id'],
         methods: {
             init() {

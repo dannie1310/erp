@@ -12,7 +12,7 @@
                 </router-link>
             </li>
             <li class="nav-item">
-                <router-link :to="{name: 'variacion-volumen'}" class="nav-link">
+                <router-link :to="{name: 'variacion-volumen'}" class="nav-link"  v-if="$root.can(['consultar_variacion_volumen'])">
                     <i class="nav-icon fa fa-circle"></i>
                     <p>Variación de Volumen <br>
                         (Aditivas o Deductivas) </p>
