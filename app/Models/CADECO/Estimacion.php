@@ -671,6 +671,8 @@ class Estimacion extends Transaccion
 
     public function recalculaDatosGenerales()
     {
+        $this->refresh();
+
         $this->monto = $this->monto_a_pagar;
         $this->saldo = $this->monto_a_pagar;
         $this->impuesto = $this->iva_orden_pago;
@@ -924,5 +926,10 @@ class Estimacion extends Transaccion
     public function getPorcentajeIvaAttribute()
     {
         return ($this->impuesto / ($this->monto - $this->impuesto)) * 100;
+    }
+
+    public function getRestaImportesAmortizacionAttribute()
+    {
+        return $this->suma_importes - $this->monto_anticipo_aplicado;
     }
 }
