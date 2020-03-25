@@ -38,6 +38,10 @@ class RetencionObserver {
      */
     public function deleting(Retencion $retencion)
     {
+        if (count($retencion->liberaciones) > 0)
+        {
+            abort(403, 'La retención no puede ser eliminada porque se encuentra liberada.');
+        }
         $retencion->validarEstadoEstimacion('eliminada');
     }
 
