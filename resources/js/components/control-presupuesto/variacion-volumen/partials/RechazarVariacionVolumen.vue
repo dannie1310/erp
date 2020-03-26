@@ -116,6 +116,7 @@ export default {
                 id: this.id,
                 params: {data:[this.$data.motivo]}
             }).then(data => {
+                this.$emit('created', data);
                     $(this.$refs.modal).modal('hide');
             }) .finally(() => {
                 this.cargando = false;

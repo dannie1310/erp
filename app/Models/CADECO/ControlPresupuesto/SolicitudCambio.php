@@ -32,6 +32,8 @@ class SolicitudCambio extends Model
         'id_tipo_orden',
         'importe_afectacion',
         'id_obra',
+        'id_autoriza',
+        'fecha_autorizacion',
     ];
 
     protected static function boot()
@@ -60,6 +62,10 @@ class SolicitudCambio extends Model
     }
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_solicita', 'idusuario');
+    }
+
+    public function usuarioAutoriza(){
+        return $this->belongsTo(Usuario::class, 'id_autoriza', 'idusuario');
     }
 
     public function getImporteAfectacionFormatAttribute(){

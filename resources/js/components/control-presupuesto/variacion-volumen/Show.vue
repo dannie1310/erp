@@ -7,7 +7,7 @@
                 </button>
             </div>
            <div class="p-2">
-                <RechazarVariacionVolumen v-bind:id="id"></RechazarVariacionVolumen>
+                <RechazarVariacionVolumen @created="find()" v-if="solicitud && solicitud.id_estatus == 1" v-bind:id="id" ></RechazarVariacionVolumen>
             </div>
         </div>
         <div class="row">
@@ -15,7 +15,8 @@
                 <div class="invoice p-3 mb-3">
                     <div class="row">
                         <div class="col-10">
-                            <h4> <i class="fa fa-list-alt"></i> DETALLE DE LA SOLICITUD </h4>
+                            <h4><i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                <i class="fa fa-list-alt" v-else></i>  DETALLE DE LA SOLICITUD </h4>
                         </div>
                         <div class="col-2">
                             <PdfVariacion v-bind:id="id"></PdfVariacion>

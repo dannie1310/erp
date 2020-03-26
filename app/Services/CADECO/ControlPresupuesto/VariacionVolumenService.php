@@ -123,6 +123,8 @@ class VariacionVolumenService{
                 }
             }
             $variacion_volumen->id_estatus = 2;
+            $variacion_volumen->id_autoriza = auth()->id();
+            $variacion_volumen->fecha_autorizacion = date('Y-m-d h:i:s');
             $variacion_volumen->save();
             DB::connection('cadeco')->commit();
 
