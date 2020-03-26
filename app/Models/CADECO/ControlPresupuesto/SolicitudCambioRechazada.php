@@ -8,9 +8,9 @@
 
 namespace App\Models\CADECO\ControlPresupuesto;
 
-use Ghi\Domain\Core\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 
-class SolicitudCambioRechazada extends BaseModel
+class SolicitudCambioRechazada extends Model
 {
     protected $table = 'ControlPresupuesto.solicitud_cambio_rechazada';
     protected $connection = 'cadeco';
