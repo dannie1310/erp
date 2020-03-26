@@ -22,6 +22,10 @@ class PenalizacionObserver
 
     public function deleting(Penalizacion $penalizacion)
     {
+        if($penalizacion->liberaciones->first())
+        {
+            abort(403, 'La penalización no puede ser eliminada porque se encuentra liberada.');
+        }
         $penalizacion->validarEstadoPenalizacion('eliminada');
     }   
 

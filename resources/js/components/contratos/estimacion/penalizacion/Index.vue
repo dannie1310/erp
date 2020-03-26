@@ -37,7 +37,7 @@
                                             <td class="text-right">{{penalizacion.importe_format}}</td>
                                             <td class="text-center">{{penalizacion.concepto}}</td>
                                             <td class="icono">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="destroyPenalizacion(penalizacion.id)" v-if="$root.can('eliminar_penalizacion_estimacion_subcontrato')">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" :title="(penalizacion.liberada == true ) ? 'Penalización liberada':'Eliminar'" @click="destroyPenalizacion(penalizacion.id)" :disabled="penalizacion.liberada" v-if="$root.can('eliminar_penalizacion_estimacion_subcontrato')">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </td>
