@@ -458,6 +458,42 @@ class GestionPagoService
     }
 
     public function validarBitacora($bitacora, $bitacora_nombre, $id_dispersion){
+        try{
+            $file_fingerprint = hash_file('md5', $bitacora);
+            if(BitacoraSantander::where('hash_file_bitacora', '=', $file_fingerprint)->first()){
+                abort(403, 'Archivo de bitácora procesado previamente.');
+            }
+        
+            $myfile = fopen($bitacora, "r") or die("Unable to open file!");
+            $content = array();
+            while(!feof($myfile)) {
+                $content[] = fgets($myfile);
+                // $linea = explode(";",fgets($myfile));
+                // if(count($linea) > 1 && $linea[8] == 'Aceptado' && $linea[4] > 1) {
+                //     $content[] = array(
+                //         "fecha" => $linea[0],
+                //         "hora" => $linea[1],
+                //         "concepto" => str_replace('  ', '', $linea[2]),
+                //         "cuenta_cargo" =>  str_replace(' ', '', $linea[3]),
+                //         "cuenta_abono" =>  str_replace(' ', '', $linea[4]),
+                //         "monto" => $this->getAmount($linea[5]),
+                //         "referencia" => $linea[6],
+                //         "usuario" => $linea[7],
+                //         "estatus" => $linea[8],
+                //         "origen" => $linea[9]
+                //     );
+                // }
+            }
+            fclose($myfile);
+            dd($content);
+            return $content;
+        }catch (\Exception $e){
+            throw New \Exception('Error al procesar el archivo: ' . $e->getMessage());
+        }
+
+    }
+
+    public function validarBitacora_2($bitacora, $bitacora_nombre, $id_dispersion){
         $file_fingerprint = hash_file('md5', $bitacora);
         if(BitacoraSantander::where('hash_file_bitacora', '=', $file_fingerprint)->first()){
             abort(403, 'Archivo de bitácora procesado previamente.');
