@@ -130,7 +130,17 @@ class Obra extends Model
         $configuracion->update(array_except($data['configuracion'], ['logotipo_original', 'base_datos']));
 
         $this->refresh();
-        dd($this);
+
+        $configuracion_arr = $configuracion->toArray();
+        $configuracion_arr['administrador']=$configuracion->administrador;
+        /*dd($configuracion_arr);
+        dd([
+            "obra" => $this,
+            "configuracion" => $configuracion->toArray(),
+            "configuracion.admin" => $configuracion->administrador_nombre
+        ]);*/
+
+
         return [
              "obra" => $this,
              "configuracion" => $configuracion->toArray()

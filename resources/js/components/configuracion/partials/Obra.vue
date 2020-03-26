@@ -101,7 +101,7 @@
                             data-vv-as="Responsable"
                             v-validate="{integer: true}"
                             v-model="form.configuracion.id_responsable"
-                            :placeholder="form.configuracion.id_responsable ? form.responsable : '-- Buscar --'"
+                            :placeholder="form.configuracion.id_responsable ? form.configuracion.responsable : '-- Buscar --'"
                             :error="errors.has('responsable')"
                     >
                     </usuario-select>
@@ -117,7 +117,7 @@
                             data-vv-as="Administrador"
                             v-validate="{integer: true}"
                             v-model="form.configuracion.id_administrador"
-                            :placeholder="form.configuracion.id_administrador ? form.administrador : '-- Buscar --'"
+                            :placeholder="form.configuracion.id_administrador ? form.configuracion.administrador : '-- Buscar --'"
                             :error="errors.has('administrador')"
                     >
                     </usuario-select>

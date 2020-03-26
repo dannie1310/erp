@@ -249,7 +249,9 @@ class ObraService
         try {
             config()->set('database.connections.cadeco.database', $config->proyecto->base_datos);
             $datos =  $this->repository->withoutGlobalScopes()->show($id);
+            $datos['administrador ']=$config->administrador_nombre;
             config()->set('database.connections.cadeco.database', '');
+
             return $datos;
         } catch (\Exception $e) {
             throw $e;
