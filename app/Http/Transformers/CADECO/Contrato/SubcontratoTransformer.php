@@ -51,6 +51,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'impuesto'=>(float)$model->impuesto,
             'impuesto_format'=>(string) '$ '.number_format($model->impuesto,2,".",","),
             'monto'=>(float)$model->monto,
+            'estado' => (int)$model->estado,
             'total_format'=>(string)$model->monto_format,
             'monto_format'=>(string)$model->monto_format,
             'referencia'=>(string)$model->referencia,

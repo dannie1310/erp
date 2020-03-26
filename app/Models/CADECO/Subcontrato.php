@@ -40,7 +40,11 @@ class Subcontrato extends Transaccion
 
     public $searchable = [
         'numero_folio',
-        'referencia'
+        'referencia',
+        'observaciones',
+        'empresa.razon_social',
+        'monto',
+        'impuesto'
     ];
 
     protected static function boot()
