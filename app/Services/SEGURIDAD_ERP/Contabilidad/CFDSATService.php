@@ -71,13 +71,22 @@ class CFDSATService
         $data = base64_decode($exp[1]);
         $file = public_path($paths["path_zip"]);
         file_put_contents($file, $data);
-        $zipper = new Zipper;
-        //$contenido = $zipper->make(public_path($paths["path_zip"]))->listFiles();
-        $zipper->make(public_path($paths["path_zip"]))->extractTo(public_path($paths["path_xml"]));
+        $this->extraeZIP($paths["path_zip"],$paths["path_xml"]);
         $this->procesaCFD($paths["path_xml"]);
         $this->log["fecha_hora_fin"] = date("Y-m-d H:i:s");
         $this->carga->update($this->log);
         return $this->carga;
+    }
+
+    private function extraeZIP($ruta_origen, $ruta_destino)
+    {
+        try{
+            $zipper = new Zipper;
+            $zipper->make(public_path($ruta_origen))->extractTo(public_path($ruta_destino));
+        }catch (\Exception $e){
+            abort(500, "Hubo un error al extraer el archivo zip proporcionado. Ruta Origen: ".$ruta_origen . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
+        }
+        $zipper->delete();
     }
 
     private function generaDirectorios()
@@ -95,6 +104,23 @@ class CFDSATService
             mkdir($dir_xml, 777, true);
         }
         return ["path_zip" => $path_zip, "path_xml" => $path_xml, "dir_xml" => $dir_xml];
+    }
+
+    public function procesaZIPCFD($path)
+    {
+        $dir = opendir($path);
+        while ($current = readdir($dir)) {
+            if($current != "." && $current != ".."){
+                if(is_dir($path.$current)){
+                    $this->procesaZIPCFD($path.$current."/");
+                } else {
+                    if (strpos($current,".zip")) {
+                        $this->extraeZIP($current,"uploads/contabilidad/cfd/xml/".date("Ymdhis")."/");
+                        $this->procesaCFD("uploads/contabilidad/cfd/xml/".date("Ymdhis")."/");
+                    }
+                }
+            }
+        }
     }
 
     private function procesaCFD($path)
@@ -116,6 +142,7 @@ class CFDSATService
                                     $this->arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
                                     if ($this->store()) {
                                         Storage::disk('xml_sat')->put($current, fopen($ruta_archivo, "r"));
+                                        unlink($ruta_archivo);
                                         $this->log["archivos_cargados"]+=1;
                                     }
                                 }else {
@@ -126,6 +153,7 @@ class CFDSATService
                             } else {
                                 $this->log["archivos_preexistentes"]+=1;
                                 $this->log["archivos_no_cargados"] += 1;
+                                unlink($ruta_archivo);
                             }
                         }
                         else{
@@ -134,6 +162,14 @@ class CFDSATService
                     }
                 }
             }
+        }
+
+        $contenido = @scandir($path);
+
+        if(count($contenido)<=2)
+        {
+            closedir($dir);
+            rmdir($path);
         }
     }
 
