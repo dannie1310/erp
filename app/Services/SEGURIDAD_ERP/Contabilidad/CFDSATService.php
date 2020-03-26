@@ -86,7 +86,7 @@ class CFDSATService
         $nombre_zip = $nombre . ".zip";
         $dir_zip = "uploads/contabilidad/cfd/zip/";
         $dir_xml = "uploads/contabilidad/cfd/xml/";
-        $path_xml = $dir_xml . $nombre;
+        $path_xml = $dir_xml . $nombre."/";
         $path_zip = $dir_zip . $nombre_zip;
         if (!file_exists($dir_zip) && !is_dir($dir_zip)) {
             mkdir($dir_zip, 777, true);
@@ -101,31 +101,37 @@ class CFDSATService
     {
         $dir = opendir($path);
         while ($current = readdir($dir)) {
-            if (strpos($current,".xml")) {
-                $this->log["archivos_leidos"]+=1;
-                $ruta_archivo = $path . "/" . $current;
-                $contenido_archivo_xml = file_get_contents($ruta_archivo);
-                $this->setArregloFactura($ruta_archivo);
-                if(key_exists("uuid",$this->arreglo_factura)){
-                    if (!$this->repository->validaExistencia($this->arreglo_factura["uuid"]) ) {
-                        if($this->arreglo_factura["id_empresa_sat"] > 0){
-                            $this->arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
-                            if ($this->store()) {
-                                Storage::disk('xml_sat')->put($current, fopen($ruta_archivo, "r"));
-                                $this->log["archivos_cargados"]+=1;
+            if($current != "." && $current != ".."){
+                if(is_dir($path.$current)){
+                    $this->procesaCFD($path.$current."/");
+                } else {
+                    if (strpos($current,".xml")) {
+                        $this->log["archivos_leidos"]+=1;
+                        $ruta_archivo = $path . "/" . $current;
+                        $contenido_archivo_xml = file_get_contents($ruta_archivo);
+                        $this->setArregloFactura($ruta_archivo);
+                        if(key_exists("uuid",$this->arreglo_factura)){
+                            if (!$this->repository->validaExistencia($this->arreglo_factura["uuid"]) ) {
+                                if($this->arreglo_factura["id_empresa_sat"] > 0){
+                                    $this->arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
+                                    if ($this->store()) {
+                                        Storage::disk('xml_sat')->put($current, fopen($ruta_archivo, "r"));
+                                        $this->log["archivos_cargados"]+=1;
+                                    }
+                                }else {
+                                    $this->log["archivos_no_cargados"] += 1;
+                                    $this->log["archivos_receptor_no_valido"] += 1;
+                                    $this->log["receptores_no_validos"][]= $this->arreglo_factura["receptor"];
+                                }
+                            } else {
+                                $this->log["archivos_preexistentes"]+=1;
+                                $this->log["archivos_no_cargados"] += 1;
                             }
-                        }else {
-                            $this->log["archivos_no_cargados"] += 1;
-                            $this->log["archivos_receptor_no_valido"] += 1;
-                            $this->log["receptores_no_validos"][]= $this->arreglo_factura["receptor"];
                         }
-                    } else {
-                        $this->log["archivos_preexistentes"]+=1;
-                        $this->log["archivos_no_cargados"] += 1;
+                        else{
+                            abort(500,"no hay uuid".$current);
+                        }
                     }
-                }
-                else{
-                    abort(500,"no hay uuid".$current);
                 }
             }
         }
