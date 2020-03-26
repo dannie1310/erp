@@ -710,7 +710,7 @@ class Estimacion extends Transaccion
 
         if($retenciones['retencionIVA_2_3'] != null && $retenciones['retencionIVA_2_3'] >= 0){
             $iva_o_p = $this->subtotal_orden_pago * 0.16;
-            if(abs((($iva_o_p / 3) * 2) -  $retenciones['retencionIVA_2_3'] ) > 0.025  && $retenciones['retencionIVA_2_3'] > 0){
+            if(abs((($iva_o_p / 3) * 2) -  $retenciones['retencionIVA_2_3'] ) > 0.99 && $retenciones['retencionIVA_2_3'] > 0){
                 abort(403, 'La retención de IVA no es 2/3');
             }
             $this->retencionIVA_2_3 = $retenciones['retencionIVA_2_3'];
