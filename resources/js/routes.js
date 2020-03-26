@@ -92,6 +92,102 @@ export const routes = [
                 ]
             },
             {
+                path: 'solicitud-edicion-poliza',
+                component: require('./components/contabilidad-general/solicitudes-edicion/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"solicitud-edicion-poliza",
+                        component: require('./components/contabilidad-general/solicitudes-edicion/Index.vue').default,
+                        meta: {
+                            title: 'Solicitudes de Edición',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'SOLICITUDES DE EDICIÓN'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_solicitud_edicion_poliza_ctpq'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path:"solicitud-edicion-poliza/carga-masiva",
+                component: require('./components/contabilidad-general/solicitudes-edicion/carga-masiva/Create.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"solicitud-edicion-carga-masiva",
+                        component: require('./components/contabilidad-general/solicitudes-edicion/carga-masiva/Create.vue').default,
+                        meta: {
+                            title: 'Carga masiva',
+                            breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'CARGA MASIVA'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_solicitud_edicion_poliza_ctpq'],
+                            general: true
+                        }
+                    }
+                ],
+            },
+            {
+                path:"solicitud-edicion-poliza/:id",
+                props: true,
+                component: require('./components/contabilidad-general/solicitudes-edicion/Show.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"solicitud-edicion-poliza-show",
+                        props: true,
+                        component: require('./components/contabilidad-general/solicitudes-edicion/Show.vue').default,
+                        meta: {
+                            title: 'Consultar Solicitud de Edición',
+                            breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'CONSULTAR'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_edicion_poliza_ctpq',
+                            general: true
+                        }
+                    }
+                ],
+            },
+            {
+                path:"solicitud-edicion-poliza/:id/autorizar",
+                props: true,
+                component: require('./components/contabilidad-general/solicitudes-edicion/Autorizar.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"solicitud-edicion-poliza-autorizar",
+                        props: true,
+                        component: require('./components/contabilidad-general/solicitudes-edicion/Autorizar.vue').default,
+                        meta: {
+                            title: 'Autorizar / Rechazar Solicitud de Edición',
+                            breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'AUTORIZAR / RECHAZAR'},
+                            middleware: [auth, permission],
+                            permission: ['autorizar_solicitud_edicion_poliza_ctpq','rechazar_solicitud_edicion_poliza_ctpq'],
+                            general: true
+                        }
+                    }
+                ],
+            },
+            {
+                path:"solicitud-edicion-poliza/:id/aplicar",
+                props: true,
+                component: require('./components/contabilidad-general/solicitudes-edicion/Aplicar.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"solicitud-edicion-poliza-aplicar",
+                        props: true,
+                        component: require('./components/contabilidad-general/solicitudes-edicion/Aplicar.vue').default,
+                        meta: {
+                            title: 'Aplicar Solicitud de Edición Autorizada',
+                            breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'APLICAR'},
+                            middleware: [auth, permission],
+                            permission: ['aplicar_solicitud_edicion_poliza_ctpq'],
+                            general: true
+                        }
+                    }
+                ],
+            },
+            {
                 path: 'cfd-sat',
                 component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
                 children:[

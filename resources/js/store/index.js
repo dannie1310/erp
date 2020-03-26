@@ -80,6 +80,7 @@ import empresaContabilidad from './modules/contabilidadGeneral/empresa';
 import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
 import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
 import CFDSAT from './modules/contabilidadGeneral/cfd-sat';
+import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 
 //CONTRATOS
 import contratoConcepto from './modules/contratos/contrato-concepto';
@@ -134,6 +135,8 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
+import penalizacion from './modules/subcontratosEstimaciones/penalizacion';
+import penalizacionLiberacion from './modules/subcontratosEstimaciones/penalizacion-liberacion';
 import retencion from './modules/subcontratosEstimaciones/retencion';
 import retencionLiberacion from './modules/subcontratosEstimaciones/retencion-liberacion';
 import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
@@ -254,6 +257,7 @@ export default new Vuex.Store({
         'contabilidadGeneral/empresa-sat': empresaSAT,
         'contabilidadGeneral/cfd-sat': CFDSAT,
         'contabilidadGeneral/empresa-contpaq': empresaContpaq,
+        'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
 
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
@@ -279,6 +283,8 @@ export default new Vuex.Store({
         'seguridad/lista-empresas': listaEmpresas,
 
         'subcontratosEstimaciones/descuento': descuento,
+        'subcontratosEstimaciones/penalizacion': penalizacion,
+        'subcontratosEstimaciones/penalizacion-liberacion': penalizacionLiberacion,
         'subcontratosEstimaciones/retencion': retencion,
         'subcontratosEstimaciones/retencion-liberacion': retencionLiberacion,
         'subcontratosEstimaciones/retencion-tipo': retencionTipo,

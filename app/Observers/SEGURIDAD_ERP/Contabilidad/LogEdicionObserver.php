@@ -18,5 +18,6 @@ class LogEdicionObserver
     public function creating(LogEdicion $log)
     {
         $log->usuario_modifico = auth()->id();
+        $log->bd_contpaq = config('database.connections.cntpq.database');
     }
 }

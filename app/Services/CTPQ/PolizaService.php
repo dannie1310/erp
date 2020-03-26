@@ -9,6 +9,7 @@
 namespace App\Services\CTPQ;
 use App\Models\CTPQ\Empresa;
 use App\Repositories\CTPQ\PolizaRepository as Repository;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\CTPQ\Poliza;
 
@@ -36,6 +37,7 @@ class PolizaService
     public function show(array $data, $id)
     {
         $empresa = Empresa::find($data["id_empresa"]);
+        DB::purge('cntpq');
         \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         return $this->repository->show($id);
     }
@@ -49,6 +51,7 @@ class PolizaService
     {
         $empresa = Empresa::find($data["id_empresa"]);
         $data["empresa"] = $empresa->AliasBDD;
+        DB::purge('cntpq');
         \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         $poliza = $this->repository->show($id);
         if($poliza->Ejercicio == 2015){
@@ -60,6 +63,7 @@ class PolizaService
     public function paginate($data)
     {
         $empresa = Empresa::find($data["id_empresa"]);
+        DB::purge('cntpq');
         \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         $poliza = $this->repository;
 

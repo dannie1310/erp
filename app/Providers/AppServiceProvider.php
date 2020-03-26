@@ -123,6 +123,7 @@ use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
 use App\Models\SEGURIDAD_ERP\Compras\AreaSolicitanteUsuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
@@ -248,6 +249,7 @@ use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
+use App\Observers\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
@@ -258,10 +260,14 @@ use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
+use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
+use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\Unidad;
 use App\Models\CADECO\UnidadComplemento;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
+use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionLiberacionObserver;
+use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionObserver;
 use App\Observers\CADECO\UnidadComplementoObserver;
 use App\Observers\CADECO\UnidadObserver;
 use Illuminate\Support\ServiceProvider;
@@ -389,6 +395,8 @@ class AppServiceProvider extends ServiceProvider
             Descuento::observe(DescuentoObserver::class);
             FolioPorSubcontrato::observe(FolioPorSubcontratoObserver::class);
             Liberacion::observe(LiberacionObserver::class);
+            Penalizacion::observe(PenalizacionObserver::class);
+            PenalizacionLiberacion::observe(PenalizacionLiberacionObserver::class);
             Retencion::observe(RetencionObserver::class);
 
             /**
@@ -483,6 +491,7 @@ class AppServiceProvider extends ServiceProvider
          * */
         LogEdicion::observe(LogEdicionObserver::class);
         CargaCFDSAT::observe(CargaCFDSATObserver::class);
+        SolicitudEdicion::observe(SolicitudEdicionObserver::class);
     }
 
     /**
