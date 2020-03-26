@@ -343,21 +343,21 @@ class VariacionVolumenFormato extends Rotation
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
 
-        $qr_name = 'qrcode_'. mt_rand() .'.png';
-        $renderer = new Png();
-        $renderer->setHeight(132);
-        $renderer->setWidth(132);
-        $renderer->setMargin(0);
-        $writer = new Writer($renderer);
-        $url = $_SERVER['SERVER_NAME'].':'. $_SERVER['SERVER_PORT'].'/api/control-presupuesto/variacion-volumen/'.$this->solicitud->id. '/formato-variacion-volumen?db='.Context::getDatabase().'&idobra='.Context::getIdObra().'&access_token='.config('app.env_variables.SERVICIO_CFDI_TOKEN');
-        $writer->writeFile($url , $qr_name);
+        // $qr_name = 'qrcode_'. mt_rand() .'.png';
+        // $renderer = new Png();
+        // $renderer->setHeight(132);
+        // $renderer->setWidth(132);
+        // $renderer->setMargin(0);
+        // $writer = new Writer($renderer);
+        // $url = $_SERVER['SERVER_NAME'].':'. $_SERVER['SERVER_PORT'].'/api/control-presupuesto/variacion-volumen/'.$this->solicitud->id. '/formato-variacion-volumen?db='.Context::getDatabase().'&idobra='.Context::getIdObra().'&access_token='.config('app.env_variables.SERVICIO_CFDI_TOKEN');
+        // $writer->writeFile($url , $qr_name);
 
-        $this->SetY($this->GetPageHeight() - 5);
+        // $this->SetY($this->GetPageHeight() - 5);
 
-        $qrX = $this->GetPageWidth() + 4;
+        $qrX = $this->GetPageWidth() ;
 
-        $this->Image($qr_name, 1);
-        unlink($qr_name);
+        // $this->Image($qr_name, 1);
+        // unlink($qr_name);
 
         $this->SetY($this->GetPageHeight() - 4);
         $firmasWidth = 6.5;
@@ -389,13 +389,13 @@ class VariacionVolumenFormato extends Rotation
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->SetY($this->GetPageHeight() - 1);
         $this->SetFont('Arial', '', $this->txtFooterTam);
-        $this->Cell(6.5, .4, utf8_decode('Fecha de Consulta: ' . date('Y-m-d g:i a')), 0, 0, 'L');
+        $this->Cell(6.5, .4, utf8_decode(''), 0, 0, 'L');
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->Cell(6.5, .4, '', 0, 0, 'C');
         $this->Cell(15, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
         $this->SetY($this->GetPageHeight() - 1.3);
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
-        $this->Cell(6.5, .4, utf8_decode('Formato generado desde SAO-ERP.'), 0, 0, 'L');
+        $this->Cell(6.5, .4, utf8_decode('Fecha de Consulta: ' . date('Y-m-d g:i a') . ' Formato generado desde SAO-ERP.'), 0, 0, 'L');
     }
 
     public function logo()

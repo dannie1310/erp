@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ControlPresupuesto\Estatus;
 use App\Models\CADECO\ControlPresupuesto\TipoOrden;
 use App\Models\CADECO\ControlPresupuesto\SolicitudCambioPartidas;
+use App\Models\CADECO\ControlPresupuesto\SolicitudCambioRechazada;
 
 class SolicitudCambio extends Model
 {
@@ -54,6 +55,9 @@ class SolicitudCambio extends Model
         return $this->belongsTo(TipoOrden::class, 'id_tipo_orden', 'id');
     }
 
+    public function solicitudRechazada(){
+        return $this->belongsTo(SolicitudCambioRechazada::class, 'id', 'id_solicitud_cambio');
+    }
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_solicita', 'idusuario');
     }

@@ -41,6 +41,12 @@ class VariacionVolumenService{
     {
         return $this->repository->show($id);
     }
+
+    
+    public function delete($data, $id)
+    {
+        return $this->repository->show($id)->rechazar($data['data'][0]);
+    }
     
     public function store(array $data)
     {

@@ -139,6 +139,47 @@ export default {
                 });
             });
         },
+        rechazar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Rechazar Solicitud de Cambio",
+                    text: "¿Está seguro de que desea rechazar la solicitud de Variación de Volumen?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Rechazar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Solicitud de Cambio rechazado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        }
     },
 
     getters: {

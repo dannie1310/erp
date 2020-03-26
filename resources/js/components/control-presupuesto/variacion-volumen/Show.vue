@@ -7,9 +7,7 @@
                 </button>
             </div>
            <div class="p-2">
-                <button type="button" :disabled="cargando" v-if="$root.can('rechazar_variacion_volumen') && solicitud && solicitud.id_estatus == 1" class="btn btn-default float-right" >
-                    Rechazar
-                </button>
+                <RechazarVariacionVolumen v-bind:id="id"></RechazarVariacionVolumen>
             </div>
         </div>
         <div class="row">
@@ -120,9 +118,10 @@
 
 <script>
 import PdfVariacion from './partials/FormatoVariacionVolumen';
+import RechazarVariacionVolumen from './partials/RechazarVariacionVolumen';
 export default {
     name: "variacion-volumen-show",
-    components: {PdfVariacion},
+    components: {PdfVariacion, RechazarVariacionVolumen},
     props: ['id'],
     data() {
         return {

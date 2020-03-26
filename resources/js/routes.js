@@ -391,10 +391,10 @@ export const routes = [
                         component: require('./components/control-presupuesto/variacion-volumen/Create').default,
                         props: true,
                         meta: {
-                            title: 'Registrar Variación de Volúmen',
+                            title: 'Registrar Variación de Volumen',
                             breadcrumb: {name: 'REGISTRAR', parent: 'variacion-volumen'},
-                            middleware: [auth, context],
-                            // permission: ['registrar_variacion_volumen']
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_variacion_volumen']
                         }
                     },
                     {
@@ -403,10 +403,10 @@ export const routes = [
                         component: require('./components/control-presupuesto/variacion-volumen/Show').default,
                         props: true,
                         meta: {
-                            title: 'Variación de Volúmen',
+                            title: 'Variación de Volumen',
                             breadcrumb: {name: 'VER', parent: 'variacion-volumen'},
-                            middleware: [auth, context],
-                            // permission: ['registrar_variacion_volumen']
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_variacion_volumen']
                         }
                     },
                 ]
