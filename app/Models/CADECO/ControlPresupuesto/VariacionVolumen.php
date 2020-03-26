@@ -39,7 +39,10 @@ class VariacionVolumen extends SolicitudCambio
             abort(403, 'La solicitud no puede ser rechazada porque tiene un estatus: ' . $this->estatus->descripcion);
         }
         
-        dd($motivo);
+        $this->solicitudRechazada()->create(['motivo' => $motivo, 'id_solicitud_cambio' => $this->id, 'id_rechazo' => auth()->id()]);
+        $this->id_estatus = 3;
+        $this->save();
+        return $this;
     }
 
 }
