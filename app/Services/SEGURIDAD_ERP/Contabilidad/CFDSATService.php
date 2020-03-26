@@ -72,7 +72,7 @@ class CFDSATService
         $file = public_path($paths["path_zip"]);
         file_put_contents($file, $data);
         $zipper = new Zipper;
-        $contenido = $zipper->make(public_path($paths["path_zip"]))->listFiles();
+        //$contenido = $zipper->make(public_path($paths["path_zip"]))->listFiles();
         $zipper->make(public_path($paths["path_zip"]))->extractTo(public_path($paths["path_xml"]));
         $this->procesaCFD($paths["path_xml"]);
         $this->log["fecha_hora_fin"] = date("Y-m-d H:i:s");
