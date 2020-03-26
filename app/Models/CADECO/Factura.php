@@ -107,9 +107,10 @@ class Factura extends Transaccion
         return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function facturaRepositorioLiberar()
+    public function facturasRepositorioLiberar()
     {
-        return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+        return $this->hasMany(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
+            ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
     }
 
     public function poliza()
@@ -167,18 +168,18 @@ class Factura extends Transaccion
         }
     }
 
-    private function registrarFacturaRepositorio($factura, $data)
+    private function registrarCFDRepositorio($factura, $data)
     {
-        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["factura_repositorio"]["uuid"])->first();
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
             $factura_repositorio->id_transaccion = $factura->id_transaccion;
             $factura_repositorio->save();
 
         } else {
-            if($data["factura_repositorio"]){
-                $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
+            if($data){
+                $factura_repositorio = $factura->facturaRepositorio()->create($data);
                 if (!$factura_repositorio) {
-                    abort(400, "Hubo un error al registrar la factura en el repositorio");
+                    abort(400, "Hubo un error al registrar el CFD en el repositorio");
                 }
             }
         }
@@ -193,7 +194,10 @@ class Factura extends Transaccion
             $factura = $cr->facturas()->create($data["factura"]);
             $this->registrarComplemento($factura);
             $this->registrarRubro($factura, $data);
-            $this->registrarFacturaRepositorio($factura, $data);
+            $this->registrarCFDRepositorio($factura, $data["factura_repositorio"]);
+            if($data["nc_repositorio"]){
+                $this->registrarCFDRepositorio($factura, $data["nc_repositorio"]);
+            }
             DB::connection('cadeco')->commit();
             return $factura;
 
@@ -224,13 +228,15 @@ class Factura extends Transaccion
 
     public function desvinculaFacturaRepositorio()
     {
-        if ($this->facturaRepositorioLiberar) {
-            $this->facturaRepositorioLiberar->id_transaccion = null;
-            $this->facturaRepositorioLiberar->id_proyecto = null;
-            $this->facturaRepositorioLiberar->id_obra = null;
-            $this->facturaRepositorioLiberar->usuario_asocio = null;
-            $this->facturaRepositorioLiberar->fecha_hora_asociacion = null;
-            $this->facturaRepositorioLiberar->save();
+        if ($this->facturasRepositorioLiberar) {
+            foreach ($this->facturasRepositorioLiberar as $cfd_repositorio){
+                $cfd_repositorio->id_transaccion = null;
+                $cfd_repositorio->id_proyecto = null;
+                $cfd_repositorio->id_obra = null;
+                $cfd_repositorio->usuario_asocio = null;
+                $cfd_repositorio->fecha_hora_asociacion = null;
+                $cfd_repositorio->save();
+            }
         }
     }
 

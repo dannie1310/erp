@@ -1,29 +1,29 @@
-const URI = '/api/subcontratos-estimaciones/retencion/';
+const URI = '/api/subcontratos-estimaciones/penalizacion/';
 export default{
     namespaced: true,
     state: {
-        retenciones: [],
-        currentRetencion: null,
+        penalizaciones: [],
+        currentPenalizacion: null,
         meta: {}
     },
     mutations: {
-        SET_RETENCIONES(state, data){
-            state.retenciones = data
+        SET_PENALIZACIONES(state, data){
+            state.penalizaciones = data
         },
 
         SET_META(state, data){
             state.meta = data
         },
 
-        SET_RETENCION(state, data){
-            state.currentRetencion = data
+        SET_PENALIZACION(state, data){
+            state.currentPenalizacion = data
         },
-        INSERT_RETENCION(state, data){
-            state.retenciones = state.retenciones.concat(data);
+        INSERT_PENALIZACION(state, data){
+            state.penalizaciones = state.penalizaciones.concat(data);
         },
-        DELETE_RETENCION(state, id) {
-            state.retenciones = state.retenciones.filter(retencion => {
-                return retencion.id != id
+        DELETE_PENALIZACION(state, id) {
+            state.penalizaciones = state.penalizaciones.filter(penalizacion => {
+                return penalizacion.id != id
             });
         }
     },
@@ -31,8 +31,8 @@ export default{
         delete(context, id) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Retención",
-                    text: "¿Está seguro de que deseas eliminar la retención?",
+                    title: "Eliminar Penalización",
+                    text: "¿Está seguro de que deseas eliminar la penalización?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -52,7 +52,7 @@ export default{
                                 .delete(URI + id)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Retención eliminada correctamente", {
+                                    swal("Penalización eliminada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -83,7 +83,7 @@ export default{
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Retención",
+                    title: "Registrar Penalización",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -103,7 +103,7 @@ export default{
                         .post(URI, payload)
                         .then(r => r.data)
                         .then(data => {
-                            swal("Retención registrada correctamente", {
+                            swal("Penalización registrada correctamente", {
                                 icon: "success",
                                 timer: 2000,
                                 buttons: false
@@ -133,16 +133,16 @@ export default{
         },
     },
     getters: {
-        retenciones(state) {
-            return state.retenciones
+        penalizaciones(state) {
+            return state.penalizaciones
         },
 
         meta(state) {
             return state.meta
         },
 
-        currentRetencion(state) {
-            return state.currentRetencion
+        currentPenalizacion(state) {
+            return state.currentPenalizacion
         }
     }
 }
