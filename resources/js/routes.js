@@ -1271,8 +1271,8 @@ export const routes = [
                         meta: {
                             title: 'Subcontratos',
                             breadcrumb: {parent: 'contratos', name: 'SUBCONTRATOS'},
-                            middleware: [auth, context],
-
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_listado_subcontratos'
                         }
                     },
                 ]

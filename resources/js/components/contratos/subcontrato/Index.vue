@@ -51,15 +51,12 @@
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {sort: 'numero_folio', order: 'DESC'},
                 search: '',
                 cargando: false
             }
         },
         mounted() {
-            // this.query.include = 'subcontrato.empresa';
-            this.query.sort = 'numero_folio';
-            this.query.order = 'DESC';
 
             this.$Progress.start();
             this.paginate()
@@ -83,7 +80,6 @@
             },
 
             getEstado(estado) {
-                console.log('get estado', estado);
                 
                 let val = parseInt(estado);
                 switch (val) {
@@ -145,7 +141,6 @@
             },
             meta: {
                 handler (meta) {
-                    console.log(meta);
                     
                     let total = meta.pagination.total
                     this.$data.total = total
@@ -164,7 +159,6 @@
                     this.timer = null;
                 }
                 this.timer = setTimeout(() => {
-                    console.log(this.query);
                     
                     this.query.search = val;
                     this.query.offset = 0;

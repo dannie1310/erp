@@ -64,7 +64,6 @@ export default {
             });
         },
         paginate (context, payload){
-            console.log('subcontrato.js', payload);
             
             return new Promise((resolve, reject) => {
                 axios

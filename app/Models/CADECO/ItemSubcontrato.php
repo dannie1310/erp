@@ -133,9 +133,9 @@ class ItemSubcontrato extends Item
         );
     }
 
-    private function importe_total($precio_unitario)
+    public function getImporteTotalAttribute()
     {
-        return  '$ ' . number_format($this->cantidad * $precio_unitario,2,'.',',');
+        return  '$ ' . number_format($this->cantidad * $this->precio_unitario,2,'.',',');
     }
 
     public function getAcumuladoAnteriorAttribute()
