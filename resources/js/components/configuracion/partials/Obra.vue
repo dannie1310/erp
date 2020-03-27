@@ -431,7 +431,6 @@
                         .then(data => {
                             if (data) {
                                 this.form = data.obra
-                           //     this.$store.commit('auth/setObra', {obra: ' '});
                                 this.form.configuracion = data.configuracion;
                                 setTimeout(() => {
                                     if (data.configuracion.logotipo_original) {

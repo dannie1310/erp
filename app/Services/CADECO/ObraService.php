@@ -243,6 +243,59 @@ class ObraService
         return $obra;
     }
 
+    public function actualizarEstadoGeneral($data,$id)
+    {
+        try {
+            config()->set('database.connections.cadeco.database', $data['configuracion']['base_datos']);
+            $obra = $this->repository->withoutGlobalScopes()->show($id);
+            $config = ConfiguracionObra::withoutGlobalScopes()->where('id_obra', '=', $obra->id_obra)
+                ->where('id_proyecto', '=', Proyecto::where('base_datos', '=', $data['configuracion']['base_datos'])->pluck('id'))
+                ->first();
+
+            if ($config->tipo_obra == 2 || $obra->tipo_obra == 2) {
+                abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
+            } else if ($config->consulta == true && ($data['configuracion']['tipo_obra'] != 2 && $data['tipo_obra'] != 2)) {
+                abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
+            } else if (($config->consulta == true && $data['configuracion']['tipo_obra'] == 2 && $data['tipo_obra'] == 2 )|| ($data['configuracion']['tipo_obra'] == 2 && $data['tipo_obra'] == 2)) {
+                $datos = [
+                    'EstaActivo' => 0,
+                    'VisibleEnReportes' => 0,
+                    'VisibleEnApps' => 0
+                ];
+                $base_unificado = BaseDatosObra::where('BaseDatos', '=',$data['configuracion']['base_datos'])->withoutGlobalScopes()->first();
+                $unificado = UnificacionObra::withoutGlobalScopes()->where('id_obra', '=', $obra->id_obra)->where('IDBaseDatos', $base_unificado->IDBaseDatos)->get();
+
+                foreach ($unificado as $uni) {
+                    $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::withoutGlobalScopes()->where('IDProyecto', '=', $uni->IDProyecto)->update($datos);
+                }
+                $config->update($data['configuracion']);
+                $obra->update($data);
+
+            } else if ($config->consulta == false && $config->tipo_obra != 2 && $obra->tipo_obra != 2) {
+                $datos = [
+                    'EstaActivo' => 1,
+                    'VisibleEnReportes' => 1,
+                    'VisibleEnApps' => 1
+                ];
+                $base_unificado = BaseDatosObra::where('BaseDatos', '=',$data['configuracion']['base_datos'])->withoutGlobalScopes()->first();
+                $unificado = UnificacionObra::withoutGlobalScopes()->where('id_obra', '=', $obra->id_obra)->where('IDBaseDatos', $base_unificado->IDBaseDatos)->get();
+
+                foreach ($unificado as $uni) {
+                    $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::withoutGlobalScopes()->where('IDProyecto', '=', $uni->IDProyecto)->update($datos);
+                }
+                $config->update($data['configuracion']);
+                $obra->update($data);
+            }
+            config()->set('database.connections.cadeco.database', '');
+            return [
+                "obra" => $obra,
+                "configuracion" => $config
+            ];
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     public function busquedaSinContexto($id, $data)
     {
         $config = ConfiguracionObra::withoutGlobalScopes()->find($data['id_configuracion']);

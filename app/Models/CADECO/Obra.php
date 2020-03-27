@@ -131,16 +131,6 @@ class Obra extends Model
 
         $this->refresh();
 
-        $configuracion_arr = $configuracion->toArray();
-        $configuracion_arr['administrador']=$configuracion->administrador;
-        /*dd($configuracion_arr);
-        dd([
-            "obra" => $this,
-            "configuracion" => $configuracion->toArray(),
-            "configuracion.admin" => $configuracion->administrador_nombre
-        ]);*/
-
-
         return [
              "obra" => $this,
              "configuracion" => $configuracion->toArray()

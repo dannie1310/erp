@@ -75,7 +75,7 @@ export const routes = [
                             title: 'Configuración de Obra',
                             breadcrumb: {parent: 'configuracion-general', name: 'OBRA'},
                             middleware: [auth, permission],
-                            permission: 'consultar_efos',
+                            permission: ['actualizar_estado_obra', 'administracion_configuracion_obra', 'reactivar_obra'],
                             general: true,
 
                         }

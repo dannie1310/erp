@@ -140,6 +140,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
             $api->patch('{id}/updateGeneral', 'App\Http\Controllers\v1\CADECO\ObraController@updateGeneral');
             $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
+            $api->patch('estadoGeneral/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstadoGeneral');
             $api->post('{id}/global', 'App\Http\Controllers\v1\CADECO\ObraController@busquedaSinContexto');
         });
 

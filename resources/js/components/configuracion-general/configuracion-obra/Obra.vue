@@ -27,10 +27,7 @@
 			</div>
 		</div>
         <configuracion-obra v-if="obra" :obra="obra" v-bind:monedas="monedas" v-bind:tipo="1"/>
-
-        <div class="card" v-if="obra">
-            <estado-obra :obra="obra" />
-        </div>
+        <estado-obra  v-if="obra" :obra="obra" v-bind:tipo="1"/>
     </span>
 </template>
 
