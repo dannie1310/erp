@@ -464,40 +464,78 @@ class GestionPagoService
                 abort(403, 'Archivo de bitácora procesado previamente.');
             }
         
+            $cod_operacion = ['FUE542','FUE092'];
             $myfile = fopen($bitacora, "r") or die("Unable to open file!");
             $content = array();
             while(!feof($myfile)) {
                 $content[] = fgets($myfile);
-                // $linea = explode(";",fgets($myfile));
-                // if(count($linea) > 1 && $linea[8] == 'Aceptado' && $linea[4] > 1) {
-                //     $content[] = array(
-                //         "fecha" => $linea[0],
-                //         "hora" => $linea[1],
-                //         "concepto" => str_replace('  ', '', $linea[2]),
-                //         "cuenta_cargo" =>  str_replace(' ', '', $linea[3]),
-                //         "cuenta_abono" =>  str_replace(' ', '', $linea[4]),
-                //         "monto" => $this->getAmount($linea[5]),
-                //         "referencia" => $linea[6],
-                //         "usuario" => $linea[7],
-                //         "estatus" => $linea[8],
-                //         "origen" => $linea[9]
-                //     );
-                // }
             }
             fclose($myfile);
-            dd($content);
-            return $content;
+            $data = array();
+            if(count(explode(";",$content[0])) == 12){
+                foreach($content as $line){
+                    $linea = explode(";",$line);
+                    if(count($linea) > 1 && $linea[8] == 'Aceptado' && $linea[4] > 1) {
+                        $data[] = array(
+                            "fecha" => $linea[0],
+                            "hora" => $linea[1],
+                            "concepto" => str_replace('  ', '', $linea[2]),
+                            "cuenta_cargo" =>  str_replace(' ', '', $linea[3]),
+                            "cuenta_abono" =>  str_replace(' ', '', $linea[4]),
+                            "monto" => $this->getAmount($linea[5]),
+                            "referencia" => $linea[6],
+                            "usuario" => $linea[7],
+                            "estatus" => $linea[8],
+                            "origen" => $linea[9]
+                        );
+                    }
+                }
+                return $this->validarBitacoraV1($data, $bitacora_nombre, $id_dispersion);
+            }
+            if(count(explode("|",$content[0])) == 9){
+                foreach($content as $line){
+                    $linea = explode("|",$line);
+                    if(in_array($linea[1], $cod_operacion) && $linea[6] == 'Aceptada') {
+                        $data[] = array(
+                            "fecha" => $linea[0],
+                            "codigo" => $linea[1],
+                            "evento" => $linea[2],
+                            "importe" =>  $this->getAmount($linea[3]),
+                            "referencia" =>  $linea[4],
+                            "usuario" => $linea[5],
+                            "estatus" => $linea[6],
+                            "descripcion" => $linea[7],
+                            "ip_user" => $linea[8],
+                        );
+                    }
+                }
+                
+                return $this->validarBitacoraV2($data, $bitacora_nombre, $id_dispersion);
+            }
+            
+            return array(
+                'data' => [],
+                'resumen' => []
+            );
         }catch (\Exception $e){
             throw New \Exception('Error al procesar el archivo: ' . $e->getMessage());
         }
 
     }
 
-    public function validarBitacora_2($bitacora, $bitacora_nombre, $id_dispersion){
-        $file_fingerprint = hash_file('md5', $bitacora);
-        if(BitacoraSantander::where('hash_file_bitacora', '=', $file_fingerprint)->first()){
-            abort(403, 'Archivo de bitácora procesado previamente.');
-        }
+    public function validarBitacoraV2($bitacora, $bitacora_nombre, $id_dispersion){
+        $dispersion = DistribucionRecursoRemesa::where('id', '=',$id_dispersion)->first();
+        $proyectos = UnificacionObra::where('IDBaseDatos', '=',BaseDatosObra::first()->IDBaseDatos)->where('id_obra', '=', Context::getIdObra())->pluck('IDProyecto');
+
+        $remesas = Remesa::whereIn('IDProyecto', $proyectos)->liberada()
+                        ->where('Anio', '=', $dispersion->remesaLiberada->remesa->Anio)
+                        ->where('NumeroSemana', $dispersion->remesaLiberada->remesa->NumeroSemana)->pluck('IDRemesa');
+
+        $disp_remesas = $dispersion->whereIn('id_remesa', $remesas)->pluck('id');
+        dd('pando',$disp_remesas);
+    }
+
+    public function validarBitacoraV1($bitacora, $bitacora_nombre, $id_dispersion){
 
         $dispersion = DistribucionRecursoRemesa::where('id', '=',$id_dispersion)->first();
 
@@ -511,7 +549,7 @@ class GestionPagoService
 
         $registros_bitacora = array();
         $doctos_repetidos = [];
-        foreach ($this->getTxtData($bitacora) as $key => $pago){
+        foreach ($bitacora as $key => $pago){
 
             if($c_cargo = Cuenta::where('numero', $pago['cuenta_abono'])->first()){
                 continue;
