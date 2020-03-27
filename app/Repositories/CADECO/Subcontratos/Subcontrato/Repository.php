@@ -85,4 +85,25 @@ class Repository implements RepositoryInterface
         $this->scope();
         return $this->model->find($id);
     }
+
+    public function paginate()
+    {
+        $this->search();
+        $this->scope();
+        $this->sort();
+        $query = $this->model;
+
+        if (request('limit') && request('offset') != '') {
+            return $query->paginate(request('limit'), ['*'], 'page', (request('offset') / request('limit')) + 1);
+        }
+
+        return $query->paginate(10);
+    }
+
+    public function sort()
+    {
+        if (request('sort')) {
+            $this->model = $this->model->orderBy(request('sort'), request('order'));
+        }
+    }
 }
