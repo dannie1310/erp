@@ -1,38 +1,51 @@
-const URI = '/api/subcontratos-estimaciones/retencion/';
+const URI = '/api/subcontratos-estimaciones/penalizacion-liberacion/';
 export default{
     namespaced: true,
     state: {
-        retenciones: [],
-        currentRetencion: null,
+        liberaciones: [],
+        currentLiberacion: null,
         meta: {}
     },
     mutations: {
-        SET_RETENCIONES(state, data){
-            state.retenciones = data
+        SET_LIBERACIONES(state, data){
+            state.liberaciones = data
         },
 
         SET_META(state, data){
             state.meta = data
         },
 
-        SET_RETENCION(state, data){
-            state.currentRetencion = data
+        SET_LIBERACION(state, data){
+            state.currentLiberacion = data
         },
-        INSERT_RETENCION(state, data){
-            state.retenciones = state.retenciones.concat(data);
+        INSERT_LIBERACION(state, data){
+            state.liberaciones = state.liberaciones.concat(data);
         },
-        DELETE_RETENCION(state, id) {
-            state.retenciones = state.retenciones.filter(retencion => {
-                return retencion.id != id
+        DELETE_LIBERACION(state, id) {
+            state.liberaciones = state.liberaciones.filter(liberacion => {
+                return liberacion.id != id
             });
         }
     },
     actions: {
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                .get(URI + payload.id, { params: payload.params })
+                .then(r => r.data)
+                .then(data => {
+                    resolve(data);
+                })
+                .catch(error => {
+                    reject(error);
+                })
+            });
+        },
         delete(context, id) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Retención",
-                    text: "¿Está seguro de que deseas eliminar la retención?",
+                    title: "Eliminar Liberación",
+                    text: "¿Está seguro de que desea eliminar la liberación?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -49,41 +62,41 @@ export default{
                     .then((value) => {
                         if (value) {
                             axios
-                                .delete(URI + id)
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("Retención eliminada correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
+                            .delete(URI + id)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Liberación eliminada correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
                                 })
-                                .catch(error => {
-                                    reject(error);
-                                })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            })
                         }
                     });
             });
         },
-        find(context, payload) {
+        index(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                .get(URI + payload.id, { params: payload.params })
-                .then(r => r.data)
-                .then(data => {
-                    resolve(data);
-                })
-                .catch(error => {
-                    reject(error);
-                })
+                    .get(URI, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             });
         },
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Retención",
+                    title: "Registrar Liberación",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -103,7 +116,7 @@ export default{
                         .post(URI, payload)
                         .then(r => r.data)
                         .then(data => {
-                            swal("Retención registrada correctamente", {
+                            swal("Liberación registrada correctamente", {
                                 icon: "success",
                                 timer: 2000,
                                 buttons: false
@@ -118,31 +131,18 @@ export default{
                 });
             });
         },
-        index(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI, { params: payload.params })
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
-        },
     },
     getters: {
-        retenciones(state) {
-            return state.retenciones
+        liberaciones(state) {
+            return state.liberaciones
         },
 
         meta(state) {
             return state.meta
         },
 
-        currentRetencion(state) {
-            return state.currentRetencion
+        currentLiberacion(state) {
+            return state.currentLiberacion
         }
     }
 }

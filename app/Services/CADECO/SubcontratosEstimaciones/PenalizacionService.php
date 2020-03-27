@@ -1,18 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: JLopezA
- * Date: 10/02/2020
- * Time: 18:40 PM
- */
 
 namespace App\Services\CADECO\SubcontratosEstimaciones;
 
+use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
 use App\Repositories\Repository;
-use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 
-
-class RetencionService
+class PenalizacionService
 {
     /**
      * @var Repository
@@ -20,12 +13,12 @@ class RetencionService
     protected $repository;
 
     /**
-     * RetencionService constructor.
-     * @param Venta $model
+     * PenalizacionService constructor
+     * @param Penalizacion $model
      */
-    public function __construct(Retencion $model)
+    public function __construct(Penalizacion $model)
     {
-        $this->repository = new Repository($model);
+        $this->repository = new Repository($model);        
     }
 
     public function index($data)

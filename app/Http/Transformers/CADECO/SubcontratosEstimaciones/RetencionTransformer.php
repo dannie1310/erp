@@ -19,6 +19,7 @@ class RetencionTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'tipo'
     ];
 
     /**
@@ -38,7 +39,22 @@ class RetencionTransformer extends TransformerAbstract
             'tipo_retencion'=> $model->tipo_retencion,
             'importe'=> $model->importe,
             'importe_format'=> $model->importe_format,
+            'importe_disponible' => $model->importe_disponible,
+            'importe_disponible_format' => $model->importe_disponible_format,
             'concepto'=> $model->concepto,
         ];
+    }
+
+    /**
+     * @param Retencion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipo(Retencion $model)
+    {
+        if($tipo = $model->retencion_tipo)
+        {
+            return $this->item($tipo, new RetencionTipoTransformer);
+        }
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <span>
-        <button type="button" class="btn btn-primary float-right" title="Registrar" @click="init()" v-if="$root.can('registrar_liberacion_estimacion_subcontrato')" >
+        <button type="button" class="btn btn-primary float-right" title="Registrar" @click="init()" v-if="$root.can('registrar_liberacion_penalizacion_estimacion_subcontrato')">
             <i class="fa fa-plus"></i>
         </button>
         <div class="row">
@@ -19,20 +19,20 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
-                                                <label class="col-md-3 col-form-label">Retención a liberar:</label>
+                                                <label class="col-md-3 col-form-label">Penalización a liberar:</label>
                                                 <div class="col-md-9">
                                                     <model-list-select
                                                         :disabled="cargando"
-                                                        name="id_retencion"
-                                                        v-model="id_retencion"
+                                                        name="id_penalizacion"
+                                                        v-model="id_penalizacion"
                                                         v-validate="{required: true}"
                                                         option-value="id"
-                                                        :custom-text="retencionDescripcion"
-                                                        :list="retenciones"
-                                                        :placeholder="!cargando?'Seleccionar o buscar por concepto de la retención':'Cargando...'"
-                                                        :isError="errors.has(`id_retencion`)">
+                                                        :custom-text="penalizacionDescripcion"
+                                                        :list="penalizaciones"
+                                                        :placeholder="!cargando?'Seleccionar o buscar por concepto de la penalización':'Cargando...'"
+                                                        :isError="errors.has(`id_penalizacion`)">
                                                     </model-list-select>
-                                                    <div class="invalid-feedback" v-show="errors.has('id_retencion')">{{ errors.first('id_retencion') }}</div>
+                                                    <div class="invalid-feedback" v-show="errors.has('id_penalizacion')">{{ errors.first('id_penalizacion') }}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -58,12 +58,12 @@
                                                 <label for="importe" class="col-md-3 col-form-label">Importe: </label>
                                                 <div class="col-md-9">
                                                     <input
-                                                        :disabled="id_retencion==''"
+                                                        :disabled="cargando"
                                                         type="number"
                                                         step="any"
                                                         name="importe"
                                                         data-vv-as="Importe"
-                                                        v-validate="{required: true, decimal:4, min_value:0.01, max_value:retencion.importe_disponible}"
+                                                        v-validate="{required: true, decimal:4, min_value:0.01, max_value:penalizacion.importe_disponible}"
                                                         class="form-control"
                                                         id="importe"
                                                         placeholder="Importe"
@@ -99,29 +99,28 @@
             return {
                 concepto: '',
                 importe: '',
-                retencion: '',
+                penalizacion: '',
                 cargando: false,
-                retenciones: [],
-                id_retencion:''
+                penalizaciones: [],
+                id_penalizacion:''
             }
         },
         mounted() {
 
         },
         methods: {
-            retencionDescripcion(item) {
-                return `[${item.tipo.tipo_retencion}] [${item.concepto}]- [Restan: ${item.importe_disponible_format}]`
+            penalizacionDescripcion(item) {
+                return `[${item.concepto}]- [Restan: ${item.importe_disponible_format}]`
             },
-            getRetenciones() {
+            getPenalizaciones() {
                 this.cargando = true;
-                return this.$store.dispatch('subcontratosEstimaciones/retencion/index', {
+                return this.$store.dispatch('subcontratosEstimaciones/penalizacion/index', {
                     params: {
-                        scope: ['disponiblesParaLiberar:' + this.id, 'disponible'],
-                        include: 'tipo'
+                        scope: ['disponiblesParaLiberar:' + this.id, 'disponible']
                     }
                 })
                     .then(data => {
-                        this.retenciones = data.data
+                        this.penalizaciones = data.data
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -133,22 +132,23 @@
             init() {
                 this.concepto = '';
                 this.importe = '';
-                this.id_retencion = '';
-                this.retenciones = [];
+                this.id_penalizacion = '';
+                this.penalizaciones = [];
                 this.$validator.reset();
                 $(this.$refs.modalLiberadas).modal('show');
-                this.getRetenciones()
+                this.getPenalizaciones();
             },
             store() {
+
                 this.cargando = true;
-                return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/store', {
+                return this.$store.dispatch('subcontratosEstimaciones/penalizacion-liberacion/store', {
                     id_transaccion: this.id,
                     concepto: this.concepto,
                     importe: this.importe,
-                    id_retencion: this.id_retencion
+                    id_penalizacion: this.id_penalizacion
                 })
                     .then(data => {
-                        this.$store.commit('subcontratosEstimaciones/retencion-liberacion/INSERT_LIBERACION', data);
+                        this.$store.commit('subcontratosEstimaciones/penalizacion-liberacion/INSERT_LIBERACION', data);
                         $(this.$refs.modalLiberadas).modal('hide');
                     }).finally(() => {
                         this.cargando = false;
@@ -163,15 +163,15 @@
             },
         },
         watch: {
-            id_retencion(value)
+            id_penalizacion(value)
             {
                 if(value)
-                {
-                    this.retenciones.filter(retencion => {
-                        if(retencion.id === value)
+                {                    
+                    this.penalizaciones.filter(penalizacion => {
+                        if(penalizacion.id === value)
                         {
-                            this.retencion = retencion;
-                            return this.importe = retencion.importe_disponible;
+                            this.penalizacion = penalizacion;
+                            return this.importe = penalizacion.importe_disponible;
                         }
                     });
                 }

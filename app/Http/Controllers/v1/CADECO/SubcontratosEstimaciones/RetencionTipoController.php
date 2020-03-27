@@ -6,7 +6,7 @@
  * Time: 11:10 AM
  */
 
-namespace App\Http\Controllers\v1\CADECO\subcontratosEstimaciones;
+namespace App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones;
 
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
