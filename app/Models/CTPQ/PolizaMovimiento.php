@@ -64,4 +64,20 @@ class PolizaMovimiento extends Model
             return "-";
         }
     }
+
+    public function  getImporteFormatAttribute(){
+        return "$ " . number_format($this->Importe,2,".",",");
+    }
+
+    public function getTipoFormatAttribute()
+    {
+        switch ($this->TipoMovto){
+            case 0 :
+                return 'Cargo';
+                break;
+            case 1 :
+                return 'Abono';
+                break;
+        }
+    }
 }
