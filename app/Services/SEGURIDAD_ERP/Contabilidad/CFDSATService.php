@@ -84,7 +84,7 @@ class CFDSATService
             $zipper = new Zipper;
             $zipper->make(public_path($ruta_origen))->extractTo(public_path($ruta_destino));
         }catch (\Exception $e){
-            abort(500, "Hubo un error al extraer el archivo zip proporcionado. Ruta Origen: ".$ruta_origen . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
+            abort(500, "Hubo un error al extraer el archivo zip proporcionado. Ruta Origen: ".$ruta_origen . 'Ruta Destino: '.$ruta_destino.' Ln.' . $e->getLine() . ' ' . $e->getMessage());
         }
         $zipper->delete();
     }
@@ -106,21 +106,35 @@ class CFDSATService
         return ["path_zip" => $path_zip, "path_xml" => $path_xml, "dir_xml" => $dir_xml];
     }
 
-    public function procesaZIPCFD($path)
+    public function procesaDirectorioZIPCFD()
     {
-        $dir = opendir($path);
+        ini_set('max_execution_time', '7200') ;
+        $path_destino = "uploads/contabilidad/cfd/xml/zcfd_".date("Ymdhis")."/";
+        $this->carga = $this->repository->iniciaCarga("inicial");
+        $this->arreglo_factura["id_carga_cfd_sat"] = $this->carga->id;
+
+        $path = "uploads/contabilidad/zip_cfd/";
+        $dir = opendir(public_path($path));
         while ($current = readdir($dir)) {
             if($current != "." && $current != ".."){
                 if(is_dir($path.$current)){
                     $this->procesaZIPCFD($path.$current."/");
                 } else {
                     if (strpos($current,".zip")) {
-                        $this->extraeZIP($current,"uploads/contabilidad/cfd/xml/".date("Ymdhis")."/");
-                        $this->procesaCFD("uploads/contabilidad/cfd/xml/".date("Ymdhis")."/");
+                        $this->log["nombre_archivo_zip"] = $current;
+                        /*if (!file_exists($path_destino) && !is_dir($path_destino)) {
+                            mkdir($path_destino, 777, true);
+                        }*/
+
+                        $this->extraeZIP($path.$current,$path_destino);
+                        $this->procesaCFD($path_destino);
                     }
                 }
             }
         }
+        $this->log["fecha_hora_fin"] = date("Y-m-d H:i:s");
+        $this->carga->update($this->log);
+        return $this->carga;
     }
 
     private function procesaCFD($path)

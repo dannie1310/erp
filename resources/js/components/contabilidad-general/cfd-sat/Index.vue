@@ -1,15 +1,17 @@
 <template>
     <span>
         <RegistroMasivo/>
+        <ProcesaDirectorio/>
     </span>
 </template>
 
 <script>
     import RegistroMasivo from './RegistroMasivo'
+    import ProcesaDirectorio from './ProcesaDirectorio'
 
     export default {
         name: "cfd-sat-index",
-        components:{RegistroMasivo},
+        components:{RegistroMasivo,ProcesaDirectorio},
 
         data() {
             return {
