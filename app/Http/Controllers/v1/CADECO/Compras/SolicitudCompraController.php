@@ -37,9 +37,10 @@ class SolicitudCompraController extends Controller
      */
     public function __construct(Manager $fractal, SolicitudCompraService $service, SolicitudCompraTransformer $transformer)
     {
+        // dd('SolicitudCompraController');
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:consultar_solicitud_compra')->only('paginate');
+        // $this->middleware('permiso:consultar_solicitud_compra')->only('paginate');
 
         $this->fractal = $fractal;
         $this->service = $service;

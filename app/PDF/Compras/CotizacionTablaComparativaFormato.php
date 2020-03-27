@@ -71,7 +71,7 @@ class CotizacionTablaComparativaFormato extends Rotation
         $this->Ln(.5);
         $this->Cell(19.7);
         $this->Cell(4, .5, 'SOLICITUD DE COMPRA ', 'L', 0, 'L');
-        $this->Cell(3, .5, 'ARR-MAT-105'/*$this->solicitud_compra->complemento->folio_compuesto*/, 'R', 0, 'L');
+        $this->Cell(3, .5, $this->solicitud_compra->complemento->folio_compuesto, 'R', 0, 'L');
 
         $this->Ln(.5);
         $this->Cell(19.7);

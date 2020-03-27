@@ -1,10 +1,10 @@
 <template>
     <div class="row">
-        <div class="col-12">
+        <!-- <div class="col-12">
             <button @click="create_solicitud" v-if="" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
-        </div>
+        </div> -->
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -20,39 +20,39 @@
         <!-- /.col -->
     </div>
 </template>
+
 <script>
-  import Create from './Create';
     export default {
         name: "solicitud-compra-index",
-        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
-                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, sortable: true },
-                    { title: 'Observaciones', field: 'observaciones', sortable: true },
-                    { title: 'Registró', field: 'registro', sortable: false },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
-
-
+                    { title: 'Folio', field: 'numero_folio', sortable: true},
+                    { title: 'Fecha', field: 'observaciones', sortable: true },
+                    { title: 'Tipo', field: 'id_empresa',  sortable: true  },
+                    { title: 'Requerido', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: false },
+                    { title: 'Estado', field: 'impuesto', tdClass: 'money', thClass: 'th_money', sortable: true },
+                    { title: 'Observaciones', field: 'monto', tdClass: 'money', thClass: 'th_money', sortable: true },
+                    // { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'id_transaccion',  order: 'desc'},
+                query: {sort: 'numero_folio', order: 'DESC'},
                 search: '',
                 cargando: false
             }
         },
         mounted() {
+
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
                 })
         },
-
         methods: {
             paginate() {
                 this.cargando = true;
@@ -65,22 +65,45 @@
                     })
                     .finally(() => {
                         this.cargando = false;
+                        console.log('solicitudes', this.solicitudes);
+                        
                     })
             },
-            create_solicitud() {
-                this.$router.push({name: 'solicitud-compra-create'});
-            },
 
+            getEstado(estado) {
+                
+                let val = parseInt(estado);
+                switch (val) {
+                    case 0:
+                        return {
+                            color: '#f39c12',
+                            descripcion: 'Registrado'
+                        }
+                    case 1:
+                        return {
+                            color: '#0073b7',
+                            descripcion: 'Estimado Parcial'
+                        }
+                    case 2:
+                        return {
+                            color: '#00a65a',
+                            descripcion: 'Estimado Total'
+                        }
+                    default:
+                        return {
+                            color: '#d2d6de',
+                            descripcion: 'Desconocido'
+                        }
+                }
+            }
         },
         computed: {
             solicitudes(){
                 return this.$store.getters['compras/solicitud-compra/solicitudes'];
             },
-
             meta(){
                 return this.$store.getters['compras/solicitud-compra/meta'];
             },
-
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
@@ -92,48 +115,47 @@
                     self.$data.data = []
                     self.$data.data = solicitudes.map((solicitud, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: `# ${solicitud.numero_folio}`,
-                        fecha: new Date(solicitud.fecha).toDate(),
+                        numero_folio: solicitud.numero_folio_format,
                         observaciones: solicitud.observaciones,
-                        id_usuario: solicitud.usuario ? solicitud.usuario.nombre : '',
-                        buttons: $.extend({}, {
-                            id: solicitud.id,
-                            show: true,
-                            edit: true,
-                            pdf: true,
-
-                        })
+                        id_empresa: solicitud.empresa,
+                        estado: this.getEstado(solicitud.estado),
+                        monto: solicitud.monto_format,
+                        impuesto:solicitud.impuesto_format,
+                        subtotal: solicitud.subtotal_format,
+                        // buttons: $.extend({}, {
+                        //     show: true,
+                        //     id: solicitud.id,
+                        // })
                     }));
                 },
                 deep: true
             },
-
             meta: {
                 handler (meta) {
+                    
                     let total = meta.pagination.total
                     this.$data.total = total
                 },
                 deep: true
             },
             query: {
-                handler () {
+                handler (query) {
                     this.paginate()
                 },
                 deep: true
             },
-
             search(val) {
                 if (this.timer) {
                     clearTimeout(this.timer);
                     this.timer = null;
                 }
                 this.timer = setTimeout(() => {
+                    
                     this.query.search = val;
                     this.query.offset = 0;
                     this.paginate();
                 }, 500);
             },
-
             cargando(val) {
                 $('tbody').css({
                     '-webkit-filter': val ? 'blur(2px)' : '',
@@ -144,6 +166,16 @@
     }
 </script>
 
-<style scoped>
 
+<style>
+    .money
+    {
+        text-align: right;
+    }
+    .th_money
+    {
+        width: 150px;
+        max-width: 150px;
+        min-width: 100px;
+    }
 </style>
