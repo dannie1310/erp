@@ -129,11 +129,13 @@
                                                 <tbody>
                                                     <tr>
                                                         <td class="bg-dark" align="left" style="width:19%;"><b>Plazo de Ejecución:</b></td>
-                                                        <td align="left"><b>Del</b>&nbsp; {{subcontratos.subcontratos.fecha_ini}} &nbsp;<b>Al</b>&nbsp; {{subcontratos.subcontratos.fecha_fin}}</td>
+                                                        <td align="left" v-if="subcontratos.subcontratos"><b>Del</b>&nbsp; {{subcontratos.subcontratos.fecha_ini}} &nbsp;<b>Al</b>&nbsp; {{subcontratos.subcontratos.fecha_fin}}</td>
+                                                        <td align="left" v-else><b>Del</b>&nbsp; -------- &nbsp;<b>Al</b>&nbsp; --------</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-dark" align="left"><b>Descripción:</b></td>
-                                                        <td align="left">{{subcontratos.subcontratos.descripcion}}</td>
+                                                        <td align="left" v-if="subcontratos.subcontratos">{{subcontratos.subcontratos.descripcion}}</td>
+                                                        <td align="left" v-else></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-dark" align="left"><b>Tipo de Gasto:</b></td>
