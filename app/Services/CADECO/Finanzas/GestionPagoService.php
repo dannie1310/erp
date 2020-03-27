@@ -500,7 +500,7 @@ class GestionPagoService
                             "fecha" => $linea[0],
                             "codigo" => $linea[1],
                             "evento" => $linea[2],
-                            "importe" =>  $this->getAmount($linea[3]),
+                            "monto" =>  $this->getAmount($linea[3]),
                             "referencia" =>  $linea[4],
                             "usuario" => $linea[5],
                             "estatus" => $linea[6],
@@ -532,7 +532,71 @@ class GestionPagoService
                         ->where('NumeroSemana', $dispersion->remesaLiberada->remesa->NumeroSemana)->pluck('IDRemesa');
 
         $disp_remesas = $dispersion->whereIn('id_remesa', $remesas)->pluck('id');
-        dd('pando',$disp_remesas);
+        
+        $dist_partidas = DistribucionRecursoRemesaPartida::transaccionPago()->partidaVigente()->partidaPagable()
+                            ->whereIn('id_distribucion_recurso',$disp_remesas)->get();
+
+
+        $registros_bitacora = array();
+        $doctos_repetidos = [];
+        foreach ($bitacora as $key => $pago){
+            $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
+            if($transaccion_pagada){
+                $registros_bitacora[] = array(
+                    'id_documento' => null,
+                    'id_distribucion_recurso' => null,
+                    'id_transaccion' => null,
+                    'id_transaccion_tipo' => '   N/A   ',
+                    'pago_a_generar' => 'N/A',
+                    'aplicacion_manual' => true,
+                    'estado' => ['id' => 0, 'estado' => 3, 'descripcion' => 'Pagada'],
+                    'pagable' => false,
+                    'concepto' => utf8_encode($pago['concepto']),
+                    'beneficiario' => $pago['cuenta_abono'],
+                    'monto_format' => '$ ' . number_format($pago['monto'], 2),
+                    'monto' => $pago['monto'],
+                    'cuenta_cargo' => ['id_cuenta_cargo' => $cta_cargo->id_cuenta,
+                        'numero' => $cta_cargo->numero,
+                        'abreviatura' => $cta_cargo->abreviatura,
+                        'nombre' => $cta_cargo->empresa->razon_social,
+                        'id_empresa' => $cta_cargo->empresa->id_empresa,
+                        'id_moneda' => $cta_cargo->id_moneda],
+                    'cuenta_abono' => [
+                        'id_cuenta_abono' => $cuenta_abono?$cuenta_abono->id:null,
+                        'numero' => $cuenta_abono?$cuenta_abono->cuenta_clabe:null,
+                        'abreviatura' => $pago['cuenta_abono'],
+                        'nombre' => $cuenta_abono?$cuenta_abono->empresa->razon_social:'',
+                        'id_empresa' => $cuenta_abono?$cuenta_abono->empresa->id_empresa:''],
+                    'referencia' => $pago['referencia'],
+                    'referencia_docto' => '   N/A   ',
+                    'folio' => 'N/P',
+                    'saldo' => 'N/P',
+                    'origen_docto' => '   N/A   ',
+                    'fecha_pago' => $pago['fecha'],
+                    'select_transacciones' => null
+                );
+                continue;
+            }
+
+            if($dist_partidas->count() > 0){
+                $val = false;
+                foreach($dist_partidas as $dist_partida){
+                    $documento = $dist_partida->documento->documentoProcesado->where('IDProceso', '=', 4)->first();
+                    $index = array_keys($doctos_repetidos, $documento->IDDocumento);
+                    if(count($index) > 0) continue;
+                    if(($documento->MontoAutorizadoPrimerEnvio + $documento->MontoAutorizadoSegundoEnvio) == $pago['monto']){
+                        $doctos_repetidos[] = $documento->IDDocumento;
+                        $registros_bitacora[] = $this->bitacoraPago($dist_partida->documento, $pago);
+                        $val = true;
+                        break;
+                    }
+                }
+                if($val)continue;
+            }
+
+        }
+
+        dd('pando',$bitacora, $registros_bitacora->toArray());
     }
 
     public function validarBitacoraV1($bitacora, $bitacora_nombre, $id_dispersion){
