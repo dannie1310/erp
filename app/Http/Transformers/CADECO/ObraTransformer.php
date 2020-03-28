@@ -63,6 +63,10 @@ class ObraTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param Obra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeConfiguracion(Obra $model)
     {
         if ($configuracion = $model->configuracion) {
@@ -71,16 +75,27 @@ class ObraTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Obra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeDatosContables(Obra $model)
     {
         if ($datos = $model->datosContables) {
             return $this->item($datos, new DatosContablesTransformer);
         }
+        return null;
     }
+
+    /**
+     * @param Obra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeDatosEstimaciones(Obra $model)
     {
         if ($estimaciones = $model->datosEstimaciones) {
             return $this->item($estimaciones, new ConfiguracionEstimacionTransformer);
         }
+        return null;
     }
 }

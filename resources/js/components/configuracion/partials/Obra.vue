@@ -1,5 +1,5 @@
 <template>
-    <div class="card" id="configuracion-obra" v-if="$root.can('administracion_configuracion_obra')">
+    <div class="card" id="configuracion-obra" v-if="$root.can('administracion_configuracion_obra',true)">
         <div class="card-header">
             <h6 class="card-title">Configuración de Obra</h6>
             <div class="card-tools">
@@ -101,7 +101,7 @@
                             data-vv-as="Responsable"
                             v-validate="{integer: true}"
                             v-model="form.configuracion.id_responsable"
-                            :placeholder="form.configuracion.id_responsable ? form.responsable : '-- Buscar --'"
+                            :placeholder="form.configuracion.id_responsable ? form.configuracion.responsable : '-- Buscar --'"
                             :error="errors.has('responsable')"
                     >
                     </usuario-select>
@@ -117,7 +117,7 @@
                             data-vv-as="Administrador"
                             v-validate="{integer: true}"
                             v-model="form.configuracion.id_administrador"
-                            :placeholder="form.configuracion.id_administrador ? form.administrador : '-- Buscar --'"
+                            :placeholder="form.configuracion.id_administrador ? form.configuracion.administrador : '-- Buscar --'"
                             :error="errors.has('administrador')"
                     >
                     </usuario-select>
@@ -232,13 +232,13 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" id="esquema_permisos1" value="1"
                                    v-model="form.configuracion.esquema_permisos"
-                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto')">
+                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto', true)">
                             <label class="form-check-label" for="esquema_permisos1"> Esquema Global</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" id="esquema_permisos2" value="2"
                                    v-model="form.configuracion.esquema_permisos"
-                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto')">
+                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto', true)">
                             <label class="form-check-label" for="esquema_permisos2"> Esquema Personalizado</label>
                         </div>
                     </div>
@@ -316,7 +316,7 @@
     export default {
         name: "configuracion-obra",
         components: {UsuarioSelect},
-        props: ['obra'],
+        props: ['obra', 'monedas', 'tipo'],
         data() {
             return {
                 user: '',
@@ -371,6 +371,7 @@
                 formData.append('cliente', this.form.cliente)
                 formData.append('codigo_postal', this.form.codigo_postal);
 
+                formData.append('configuracion[base_datos]', this.form.configuracion.base_datos);
                 formData.append('configuracion[esquema_permisos]', this.form.configuracion.esquema_permisos);
                 if (this.form.configuracion.id_administrador) formData.append('configuracion[id_administrador]', this.form.configuracion.id_administrador);
                 if (this.form.configuracion.id_responsable) formData.append('configuracion[id_responsable]', this.form.configuracion.id_responsable);
@@ -396,35 +397,54 @@
                         formData.delete(key);
                 });
 
-                return this.$store.dispatch('cadeco/obras/update', {
-                    id: this.obra.id_obra,
-                    data: formData,
-                    config: {
-                        params: { _method: 'PATCH', include: 'configuracion'}
-                    }
-                })
-                    .then(data => {
-                        if (data) {
-                            this.$store.commit('auth/setObra', { obra: data });
-                            this.form = data
-                            setTimeout(() => {
-                                if (data.configuracion.logotipo_original) {
-                                    this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
-                                }
-                            }, 100);
+                if(this.tipo == 0) {
+                    return this.$store.dispatch('cadeco/obras/update', {
+                        id: this.obra.id_obra,
+                        data: formData,
+                        config: {
+                            params: {_method: 'PATCH', include: 'configuracion'}
                         }
                     })
-                    .finally(() => {
-                        this.guardando = false;
+                        .then(data => {
+                            if (data) {
+                                this.$store.commit('auth/setObra', {obra: data});
+                                this.form = data
+                                setTimeout(() => {
+                                    if (data.configuracion.logotipo_original) {
+                                        this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
+                                    }
+                                }, 100);
+                            }
+                        })
+                        .finally(() => {
+                            this.guardando = false;
+                        })
+                }
+                if(this.tipo == 1) {
+                    return this.$store.dispatch('cadeco/obras/updateGeneral', {
+                        id: this.obra.id_obra,
+                        data: formData,
+                        config: {
+                            params: {_method: 'PATCH'}
+                        }
                     })
+                        .then(data => {
+                            if (data) {
+                                this.form = data.obra
+                                this.form.configuracion = data.configuracion;
+                                setTimeout(() => {
+                                    if (data.configuracion.logotipo_original) {
+                                        this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
+                                    }
+                                }, 100);
+                            }
+                        })
+                        .finally(() => {
+                            this.guardando = false;
+                        })
+                }
             }
         },
-
-        computed: {
-            monedas() {
-                return this.$store.getters['cadeco/moneda/monedas'];
-            }
-        }
     }
 </script>
 

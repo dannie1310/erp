@@ -47,8 +47,9 @@ class ObraController extends Controller
     public function __construct(Manager $fractal, ObraService $service, ObraTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context', ['except' => ['authPaginate']]);
+        $this->middleware('context', ['except' => ['authPaginate','busquedaSinContexto','actualizarEstadoGeneral','updateGeneral']]);
         $this->middleware('permiso:administracion_configuracion_obra')->only(['update']);
+        $this->middleware('permiso:actualizar_estado_obra|reactivar_obra')->only(['actualizarEstado']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -58,6 +59,12 @@ class ObraController extends Controller
     public function update(UpdateObraRequest $request, $id)
     {
         return $this->updateTrait($request, $id);
+    }
+
+    public function updateGeneral(Request $request, $id)
+    {
+        $respuesta = $this->service->updateGeneral($request->all(), $id);
+        return ['obra' => $this->transformer->transform($respuesta['obra']), 'configuracion' => $respuesta['configuracion']];
     }
 
     public function authPaginate(Request $request)
@@ -75,5 +82,16 @@ class ObraController extends Controller
     {
         $obras = $this->service->actualizarEstado($request->all(),$id);
         return $this->updateTrait($request, $id);
+    }
+
+    public function actualizarEstadoGeneral(Request $request, $id)
+    {
+        $respuesta = $this->service->actualizarEstadoGeneral($request->all(), $id);
+        return ['obra' => $this->transformer->transform($respuesta['obra']), 'configuracion' => $respuesta['configuracion']];
+    }
+
+    public function busquedaSinContexto(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->busquedaSinContexto($id, $request->all()));
     }
 }
