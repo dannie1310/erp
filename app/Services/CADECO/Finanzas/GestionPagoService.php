@@ -542,6 +542,9 @@ class GestionPagoService
         foreach ($bitacora as $key => $pago){
             $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
             if($transaccion_pagada){
+                $empresa = $transaccion_pagada->empresa;
+                $cta_cargo = Cuenta::find($transaccion_pagada->id_cuenta);
+                $cuenta_abono = $empresa->cuentasBancarias[0];
                 $registros_bitacora[] = array(
                     'id_documento' => null,
                     'id_distribucion_recurso' => null,
@@ -551,8 +554,8 @@ class GestionPagoService
                     'aplicacion_manual' => true,
                     'estado' => ['id' => 0, 'estado' => 3, 'descripcion' => 'Pagada'],
                     'pagable' => false,
-                    'concepto' => utf8_encode($pago['concepto']),
-                    'beneficiario' => $pago['cuenta_abono'],
+                    'concepto' => utf8_encode($transaccion_pagada->observaciones),
+                    'beneficiario' => $empresa->razon_social,
                     'monto_format' => '$ ' . number_format($pago['monto'], 2),
                     'monto' => $pago['monto'],
                     'cuenta_cargo' => ['id_cuenta_cargo' => $cta_cargo->id_cuenta,
@@ -564,7 +567,7 @@ class GestionPagoService
                     'cuenta_abono' => [
                         'id_cuenta_abono' => $cuenta_abono?$cuenta_abono->id:null,
                         'numero' => $cuenta_abono?$cuenta_abono->cuenta_clabe:null,
-                        'abreviatura' => $pago['cuenta_abono'],
+                        'abreviatura' => $cuenta_abono?$cuenta_abono->cuenta_clabe:null,
                         'nombre' => $cuenta_abono?$cuenta_abono->empresa->razon_social:'',
                         'id_empresa' => $cuenta_abono?$cuenta_abono->empresa->id_empresa:''],
                     'referencia' => $pago['referencia'],
@@ -595,8 +598,10 @@ class GestionPagoService
             }
 
         }
-
-        dd('pando',$bitacora, $registros_bitacora->toArray());
+        return array(
+            'data' => $registros_bitacora,
+            'resumen' => $this->resumenBitacora($registros_bitacora, $bitacora_nombre)
+        );
     }
 
     public function validarBitacoraV1($bitacora, $bitacora_nombre, $id_dispersion){
