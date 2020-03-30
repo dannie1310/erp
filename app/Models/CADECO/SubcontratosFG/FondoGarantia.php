@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO\SubcontratosFG;
 
+use App\Facades\Context;
 use App\Models\CADECO\Subcontrato;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,24 @@ class FondoGarantia extends Model
     public $usuario_registra = 0;
     public $incrementing = false;
     protected $with = array('movimientos', 'subcontrato');
+
+    protected static function boot()
+    {
+        parent::boot();
+        self::addGlobalScope('obra_area_subcontratante', function ($query) {
+            return $query->whereHas('subcontrato', function ($q1) {
+                return $q1->where('id_obra', '=', Context::getIdObra())
+                    ->whereHas('areasSubcontratantes', function ($q) {
+                            return $q
+                                ->whereHas('usuariosAreasSubcontratantes', function ($q2) {
+                                    return $q2
+                                        ->where('id_usuario', '=', auth()->id());
+                                });
+                        })
+                        ->orHas('areasSubcontratantes', '=', 0);
+                });
+        });
+    }
 
     public function getSaldoFormatAttribute()
     {
