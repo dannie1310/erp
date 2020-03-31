@@ -70,9 +70,12 @@ class CFDSAT extends Model
             DB::connection('seguridad')->beginTransaction();
 
             $cfd = $this->create($data);
-            foreach($data["conceptos"] as $concepto){
-                $cfd->conceptos()->create($concepto);
+            if(key_exists("conceptos",$data)){
+                foreach($data["conceptos"] as $concepto){
+                    $cfd->conceptos()->create($concepto);
+                }
             }
+
             if(key_exists("traslados",$data)){
                 foreach($data["traslados"] as $traslado){
                     $cfd->traslados()->create($traslado);
