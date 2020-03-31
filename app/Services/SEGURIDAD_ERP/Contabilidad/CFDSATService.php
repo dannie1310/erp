@@ -356,7 +356,8 @@ class CFDSATService
             $this->arreglo_factura["rfc_emisor"] = $this->arreglo_factura["emisor"]["rfc"];
             $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["nombre"][0];
         }catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el emisor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
+            //abort(500, "Hubo un error al leer el emisor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
+            $this->log["archivos_no_cargados_error_app"] +=1;
         }
 
         try{
@@ -375,7 +376,8 @@ class CFDSATService
             $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
             $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["nombre"][0];
         }catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el receptor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
+            //abort(500, "Hubo un error al leer el receptor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
+            $this->log["archivos_no_cargados_error_app"] +=1;
         }
 
         try {
