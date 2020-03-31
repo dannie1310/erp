@@ -136,4 +136,12 @@ class Obra extends Model
              "configuracion" => $configuracion->toArray()
         ];
     }
+
+    public function editarEstado($data)
+    {
+        if(\App\Models\IGH\Usuario::find(auth()->id())->findPermisoGeneral('reactivar_obra') == true)
+        {
+
+        }
+    }
 }

@@ -252,6 +252,7 @@ class ObraService
                 ->where('id_proyecto', '=', Proyecto::where('base_datos', '=', $data['configuracion']['base_datos'])->pluck('id'))
                 ->first();
 
+$obra->editarEstado($data);
             if ($config->tipo_obra == 2 || $obra->tipo_obra == 2) {
                 abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
             } else if ($config->consulta == true && ($data['configuracion']['tipo_obra'] != 2 && $data['tipo_obra'] != 2)) {
