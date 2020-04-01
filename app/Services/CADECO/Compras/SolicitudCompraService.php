@@ -200,6 +200,12 @@ class SolicitudCompraService
         return $this->repository->show($id);
     }
 
+    public function aprobar($data, $id)
+    {
+        $solicitud = $this->repository->show($id);
+        return $solicitud->aprobarSolicitud($data);
+    }
+
     public function update(array $data, $id)
     {
 //        return $this->repository->update($data, $id);
