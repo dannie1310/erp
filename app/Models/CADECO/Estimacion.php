@@ -715,7 +715,7 @@ class Estimacion extends Transaccion
             }
             $this->retencionIVA_2_3 = $retenciones['retencionIVA_2_3'];
         }
-        
+
         if($retenciones['retencion4'] != null && $retenciones['retencion4'] > 0){
             $porcentaje = $retenciones['retencion4'] * 100 / $this->subtotal_orden_pago;
             if ($porcentaje <= 3.9999 || $porcentaje >= 4.0001) {
@@ -733,7 +733,7 @@ class Estimacion extends Transaccion
         $retencion_registrada_6 = $this->retencion_iva6;
         $retenciones['retencion4'] != null? $retencion_registrada_4 = $retenciones['retencion4']:'';
         $retenciones['retencion6'] != null? $retencion_registrada_6 = $retenciones['retencion6']:'';
-        
+
         $retencion = $retencion_registrada_4 + $retencion_registrada_6;
 
         $this->IVARetenido = $retencion;
@@ -945,7 +945,7 @@ class Estimacion extends Transaccion
     public function getRetencionIva4FormatAttribute(){
         return '$ ' . number_format($this->retencion_iva4, 2);
     }
-    
+
     public function getRetencionIva6Attribute(){
         if($subtotal = $this->subtotal_orden_pago){
             $porcentaje = $this->IVARetenido * 100 / $subtotal;
@@ -958,8 +958,26 @@ class Estimacion extends Transaccion
     public function getRetencionIva6FormatAttribute(){
         return '$ ' . number_format($this->retencion_iva6, 2);
     }
-    
+
     public function getRetencionIva23FormatAttribute(){
         return '$ ' . number_format($this->retencionIVA_2_3, 2);
+    }
+
+    public function getEstadoDescripcionAttribute()
+    {
+        switch ($this->estado) {
+            case 0:
+                return 'Registrada';
+                break;
+            case 1:
+                return 'Aprobada';
+                break;
+            case 2:
+                return 'Revisada';
+                break;
+            default:
+                return 'Desconocido';
+                break;
+        }
     }
 }
