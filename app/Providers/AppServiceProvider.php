@@ -119,6 +119,7 @@ use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
 use App\Models\SEGURIDAD_ERP\Compras\AreaSolicitanteUsuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
@@ -240,6 +241,7 @@ use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
+use App\Observers\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
@@ -467,6 +469,7 @@ class AppServiceProvider extends ServiceProvider
          * */
         LogEdicion::observe(LogEdicionObserver::class);
         CargaCFDSAT::observe(CargaCFDSATObserver::class);
+        SolicitudEdicion::observe(SolicitudEdicionObserver::class);
     }
 
     /**

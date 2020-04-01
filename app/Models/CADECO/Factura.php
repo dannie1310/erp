@@ -116,6 +116,10 @@ class Factura extends Transaccion
     {
         return $this->belongsTo(Poliza::class, 'id_transaccion', 'id_transaccion_sao');
     }
+
+    public function polizas(){
+        return $this->hasMany(Poliza::class, 'id_transaccion_sao', 'id_transaccion');
+    }
     
     public function tipoCambioFecha(){
         return $this->hasMany(Cambio::class, 'fecha', 'fecha');
@@ -128,6 +132,10 @@ class Factura extends Transaccion
             abort(400, "Hubo un error al registrar el contrarecibo");
         }
         return $cr;
+    }
+
+    public function prepolizaActiva(){
+        return $this->polizas()->orderBy('estatus', 'DESC')->first();
     }
 
     private function registrarComplemento($factura)
@@ -413,5 +421,24 @@ class Factura extends Transaccion
     public function revertir()
     {
         DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
+    }
+
+    public function validarPrepoliza(){
+        if(!$this->polizas && $this->estado > 0 ){
+            DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+            return $this->find($this->id_transaccion);
+        }else if($this->polizas && $this->estado > 0){
+            $diferente = false;
+            foreach($this->polizas->pluck('estatus') as $estatus){
+                if($estatus != -3){
+                    $diferente = true;
+                }
+            }
+            if(!$diferente){
+                DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+                return $this->find($this->id_transaccion);
+            }
+        }
+        return $this;
     }
 }

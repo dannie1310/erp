@@ -32,6 +32,7 @@ class PolizaObserver
                 "id_campo"=>1,
                 "valor_original"=>$poliza->getOriginal("Concepto"),
                 "valor_modificado"=>$poliza->Concepto,
+                "bd_contpaq" => config('database.connections.cntpq.database')
             ]);
         }
     }
