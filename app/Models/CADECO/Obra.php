@@ -12,6 +12,8 @@ namespace App\Models\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\DatosContables;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
+use App\Models\MODULOSSAO\BaseDatosObra;
+use App\Models\MODULOSSAO\UnificacionObra;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Database\Eloquent\Model;
@@ -133,7 +135,126 @@ class Obra extends Model
 
         return [
              "obra" => $this,
-             "configuracion" => $configuracion->toArray()
+             "configuracion" => array_add($configuracion->toArray(),'base_datos', $configuracion->proyecto->base_datos)
+        ];
+    }
+
+    public function editarEstado($data)
+    {
+        $tipo_obra = $this->configuracion()->first();
+
+        if($tipo_obra->tipo_obra == 2 || $this->tipo_obra == 2){
+            abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
+
+        }
+        else if($tipo_obra->consulta == true && ($data['configuracion']['tipo_obra'] != 2 && $data['tipo_obra'] != 2)) {
+            abort( 400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción' );
+        }
+        else if($tipo_obra->consulta == true && $data['configuracion']['tipo_obra'] == 2 && $data['tipo_obra'] == 2  ){
+            $datos = [
+                'EstaActivo' => 0,
+                'VisibleEnReportes' => 0,
+                'VisibleEnApps' => 0
+            ];
+            $base_unificado = BaseDatosObra::query()->first();
+            $unificado = UnificacionObra::query()->where('IDBaseDatos',$base_unificado->IDBaseDatos)->get();
+
+            foreach ($unificado as $uni)
+            {
+                $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where('IDProyecto','=',$uni->IDProyecto)->update($datos);
+            }
+
+            $this->configuracion()->update(array_except($data['configuracion'],['base_datos']));
+            $this->update($data);
+
+        }else if($data['configuracion']['tipo_obra'] == 2 && $data['tipo_obra'] == 2  ){
+            $datos = [
+                'EstaActivo' => 0,
+                'VisibleEnReportes' => 0,
+                'VisibleEnApps' => 0
+            ];
+            $base_unificado = BaseDatosObra::query()->first();
+            $unificado = UnificacionObra::query()->where('IDBaseDatos',$base_unificado->IDBaseDatos)->get();
+
+            foreach ($unificado as $uni)
+            {
+                $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where('IDProyecto','=',$uni->IDProyecto)->update($datos);
+            }
+            $this->configuracion()->update(array_except($data['configuracion'],['base_datos']));
+            $this->update($data);
+
+        }else if($tipo_obra->consulta == false && $tipo_obra->tipo_obra != 2 && $this->tipo_obra != 2) {
+            $datos = [
+                'EstaActivo' => 1,
+                'VisibleEnReportes' => 1,
+                'VisibleEnApps' => 1
+            ];
+            $base_unificado = BaseDatosObra::query()->first();
+            $unificado = UnificacionObra::query()->where( 'IDBaseDatos', $base_unificado->IDBaseDatos )->get();
+
+            foreach ($unificado as $uni) {
+                $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where( 'IDProyecto', '=', $uni->IDProyecto )->update( $datos );
+            }
+            $this->configuracion()->update( array_except($data['configuracion'],['base_datos']));
+            $this->update( $data );
+        }
+        return $this;
+    }
+
+    public function editarEstadoGeneral($data)
+    {
+        $config = ConfiguracionObra::withoutGlobalScopes()->where('id_obra', '=', $this->id_obra)
+            ->where('id_proyecto', '=', Proyecto::where('base_datos', '=', $data['configuracion']['base_datos'])->pluck('id'))
+            ->first();
+
+        if ($config->tipo_obra == 2 || $this->tipo_obra == 2)
+        {
+            if(\App\Models\IGH\Usuario::find(auth()->id())->findPermisoGeneral('reactivar_obra') == true)
+            {
+                $datos = [
+                    'EstaActivo' => 1,
+                    'VisibleEnReportes' => 1,
+                    'VisibleEnApps' => 1
+                ];
+            }else{
+                abort(400, 'No cuenta con el permiso para reactivar la obra.');
+            }
+        }
+        else if ($config->consulta == true && ($data['configuracion']['tipo_obra'] != 2 && $data['tipo_obra'] != 2))
+        {
+            abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
+        }
+        else if (($config->consulta == true && $data['configuracion']['tipo_obra'] == 2 && $data['tipo_obra'] == 2 )|| ($data['configuracion']['tipo_obra'] == 2 && $data['tipo_obra'] == 2))
+        {
+            $datos = [
+                'EstaActivo' => 0,
+                'VisibleEnReportes' => 0,
+                'VisibleEnApps' => 0
+            ];
+        }
+        else if ($config->consulta == false && $config->tipo_obra != 2 && $this->tipo_obra != 2)
+        {
+            $datos = [
+                'EstaActivo' => 1,
+                'VisibleEnReportes' => 1,
+                'VisibleEnApps' => 1
+            ];
+        }
+
+        $base_unificado = BaseDatosObra::where('BaseDatos', '=',$data['configuracion']['base_datos'])->withoutGlobalScopes()->first();
+        $unificado = UnificacionObra::withoutGlobalScopes()->where('id_obra', '=', $this->id_obra)->where('IDBaseDatos', $base_unificado->IDBaseDatos)->get();
+
+        foreach ($unificado as $uni) {
+            $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::withoutGlobalScopes()->where('IDProyecto', '=', $uni->IDProyecto)->update($datos);
+        }
+
+        $config->update(array_except($data['configuracion'],['base_datos']));
+        $this->update($data);
+        $this->refresh();
+
+        return [
+            "obra" => $this,
+            "configuracion" => array_add($config->toArray(),'base_datos', $config->proyecto->base_datos)
         ];
     }
 }
