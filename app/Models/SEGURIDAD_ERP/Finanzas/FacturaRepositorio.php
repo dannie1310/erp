@@ -29,6 +29,7 @@ class FacturaRepositorio extends Model
         'id_obra',
         'rfc_emisor',
         'rfc_receptor',
+        'tipo_comprobante'
     ];
 
     public function proyecto()
@@ -61,6 +62,12 @@ class FacturaRepositorio extends Model
         $transacciones = DB::connection('cadeco')->select(DB::raw("  
   select numero_folio from   " . $this->proyecto->base_datos . ".dbo.transacciones where id_transaccion = " . $this->id_transaccion . "      
                            "));
-        return $transacciones[0];
+        if(key_exists(0,$transacciones))
+        {
+            return $transacciones[0];
+        } else {
+            return null;
+        }
+
     }
 }

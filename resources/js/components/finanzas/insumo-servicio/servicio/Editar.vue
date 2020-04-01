@@ -1,7 +1,8 @@
 <template>
     <span>
         <button @click="find(servicio)" type="button" class="btn btn-sm btn-outline-info" title="Editar Servicio" v-show="update">
-            <i class="fa fa-pencil"></i>
+            <i class="fa fa-pencil" v-if="!cargando"></i>
+            <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">

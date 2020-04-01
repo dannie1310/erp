@@ -19,8 +19,10 @@ class RetencionObserver {
     public function creating(Retencion $retencion)
     {
         $retencion->validarEstadoEstimacion('registrada');
+        $retencion->validarTotalRetencion();
+        $retencion->estatus = 0;
     }
-    
+
     /**
      * @param Retencion $retencion
      * @throws \Exception
@@ -29,16 +31,20 @@ class RetencionObserver {
     {
         $retencion->estimacion->recalculaDatosGenerales();
     }
-    
+
     /**
      * @param Retencion $retencion
      * @throws \Exception
      */
     public function deleting(Retencion $retencion)
     {
+        if (count($retencion->liberaciones) > 0)
+        {
+            abort(403, 'La retención no puede ser eliminada porque se encuentra liberada.');
+        }
         $retencion->validarEstadoEstimacion('eliminada');
     }
-    
+
     /**
      * @param Retencion $retencion
      * @throws \Exception

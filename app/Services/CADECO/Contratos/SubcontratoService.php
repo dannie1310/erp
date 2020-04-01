@@ -52,4 +52,9 @@ class SubcontratoService
     {
         return $this->show($id)->subcontratoParaEstimar(null);
     }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
 }

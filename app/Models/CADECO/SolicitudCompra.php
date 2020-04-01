@@ -21,7 +21,9 @@ class SolicitudCompra extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 17);
+            return $query->where('tipo_transaccion', '=', 17)
+            ->where('opciones', '=', 1)
+            ->where('estado', '!=', 2);
         });
     }
 
@@ -57,6 +59,30 @@ class SolicitudCompra extends Transaccion
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
 
+    }
+
+    public function aprobarSolicitud($data)
+    {
+        $x = 0;
+        $partidas = $data['partidas'];
+        $cantidades = $data['cantidad'];
+        $res = array();
+        
+        foreach($partidas as $partida)
+        {
+            if($partida['solicitado_cantidad'] != $cantidades[$x])
+            {
+                $items = SolicitudCompraPartida::find($partida['id']);
+                $items->cantidad_original1 = $partida['solicitado_cantidad'];
+                $items->cantidad = $cantidades[$x];
+                $items->save();
+            }
+            $x ++;
+        }
+
+        $this->estado = 1;
+        $this->save();
+        return $this->partidas;
     }
 
     public function complemento(){

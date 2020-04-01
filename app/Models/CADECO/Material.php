@@ -109,6 +109,11 @@ class Material extends Model
         return $this->hasMany(Item::class, 'id_material', 'id_material');
     }
 
+    public function itemsOrdenCompra()
+    {
+        return $this->hasMany(ItemOrdenCompra::class, 'id_material', 'id_material');
+    }
+
     public function almacen()
     {
         return $this->hasMany(Almacen::class, 'id_material', 'id_material');
@@ -326,28 +331,28 @@ class Material extends Model
         switch($this->validarUso())
         {
             case(1):
-                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunas partidas.");
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El insumo ya esta siendo usado en algunas partidas.");
             break;
             case(2):
-                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos  Almacenes.");
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El insumo ya esta siendo usado en algunos  Almacenes.");
             break;
             case(3):
-                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos conceptos.");
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El insumo ya esta siendo usado en algunos conceptos.");
             break;
             case(4):
-                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos  basicos.");
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El insumo ya esta siendo usado en algunos  basicos.");
             break;
             case(5):
-                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos inventarios.");
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El insumo ya esta siendo usado en algunos inventarios.");
             break;
             case(6):
-                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en la tabla Jornal.");
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El insumo ya esta siendo usado en la tabla Jornal.");
             break;
             case(7):
-                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos movimientos.");
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El insumo ya esta siendo usado en algunos movimientos.");
             break;
             case(8):
-                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El servicio ya esta siendo usado en algunos  suministros.");
+                abort(403, "\n\n No se puede ".$tipo." el insumo '".$this->descripcion."'.\n  El insumo ya esta siendo usado en algunos  suministros.");
             break;
         }
     }

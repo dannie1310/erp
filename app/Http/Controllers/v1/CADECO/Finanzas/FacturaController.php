@@ -75,7 +75,7 @@ class FacturaController extends Controller
 
     public function cargaXML(Request $request)
     {
-        $respuesta = $this->service->cargaXML($request->xml);
+        $respuesta = $this->service->cargaXML($request->all());
         return response()->json($respuesta, 200);
     }
 

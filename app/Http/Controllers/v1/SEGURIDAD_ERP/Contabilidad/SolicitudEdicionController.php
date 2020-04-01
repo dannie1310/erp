@@ -64,4 +64,10 @@ class SolicitudEdicionController extends Controller
         return $this->service->aplicar($id);
     }
 
+    public function descargarXLS($id)
+    {
+        return $this->service->descargarXLS($id);
+    }
+
+
 }
