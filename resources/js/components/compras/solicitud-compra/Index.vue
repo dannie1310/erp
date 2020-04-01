@@ -7,6 +7,15 @@
         </div> -->
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -29,14 +38,12 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', sortable: true},
-                    { title: 'Fecha', field: 'observaciones', sortable: true },
-                    { title: 'Tipo', field: 'id_empresa',  sortable: true  },
-                    { title: 'Requerido', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: false },
-                    { title: 'Estado', field: 'impuesto', tdClass: 'money', thClass: 'th_money', sortable: true },
-                    { title: 'Observaciones', field: 'monto', tdClass: 'money', thClass: 'th_money', sortable: true },
-                    // { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Número de Folio', field: 'numero_folio', sortable: true},
+                    { title: 'Fecha Requerido', field: 'fecha', sortable: true },
+                    { title: 'Fecha / Hora Registro', field: 'fecha_registro', tdClass: 'money', thClass: 'th_money', sortable: false },
+                    { title: 'Observaciones', field: 'observaciones', sortable: false },
+                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -82,12 +89,12 @@
                     case 1:
                         return {
                             color: '#0073b7',
-                            descripcion: 'Estimado Parcial'
+                            descripcion: 'Aprobado'
                         }
                     case 2:
                         return {
                             color: '#00a65a',
-                            descripcion: 'Estimado Total'
+                            descripcion: 'Tercer caso'
                         }
                     default:
                         return {
@@ -116,16 +123,14 @@
                     self.$data.data = solicitudes.map((solicitud, i) => ({
                         index: (i + 1) + self.query.offset,
                         numero_folio: solicitud.numero_folio_format,
+                        fecha: solicitud.fecha_format,
+                        fecha_registro: solicitud.fecha_registro,
                         observaciones: solicitud.observaciones,
-                        id_empresa: solicitud.empresa,
                         estado: this.getEstado(solicitud.estado),
-                        monto: solicitud.monto_format,
-                        impuesto:solicitud.impuesto_format,
-                        subtotal: solicitud.subtotal_format,
-                        // buttons: $.extend({}, {
-                        //     show: true,
-                        //     id: solicitud.id,
-                        // })
+                        buttons: $.extend({}, {
+                            aprobar: (solicitud.estado == 0) ? true : false,
+                            id: solicitud.id,
+                        })
                     }));
                 },
                 deep: true
