@@ -569,21 +569,63 @@ class EstimacionFormato extends Rotation
 
 
         $this->Row(['Importe asociado a trabajos ejecutados', '', '', '', '',  number_format($this->suma_contrato, 4, ".", ","), '', number_format($this->suma_estimacionAnterior, 4, ".", ","), '', number_format($this->suma_estimacion, 4, ".", ","), '',number_format($this->suma_acumulada, 4, ".", ","), '', number_format($this->suma_porEstimar, 4, ".", ",")]);
-        $this->Row(['Deductivas y Descuentos', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","),'', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '', number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
-        $this->Row(['Penalizaciones', '', '', '', '', number_format($penalizacion_subcontrato, 4, ".", ","), '', number_format($penalizacion_acum_estim_anterior, 4, ".", ","), '', number_format($penalizacion_estimacion, 4, ".", ","), '',  number_format($penalizacion_a_esta_estimacion, 4, ".", ","), '', number_format($penalizacion_porEstimar, 4, ".", ",")]);
-        $this->Row(['Anticipo Solicitado', '', '%', $this->estimacion->subcontrato->anticipo, '', number_format($this->estimacion->subcontrato->anticipo_monto, 4, ".", ","), '', '', '', '', '', '', '', '']);
         $this->Row([utf8_decode('Amortización Anticipo'), '', '%',  number_format($this->estimacion->anticipo, 4, ".", ","), '', '', '',number_format($amort_anticipo_anterior, 4, ".", ",") , '', number_format($amortizacion_anticipo, 4, ".", ","), ' ',number_format($anticipo_actual, 4, ".", ","), ' ',number_format($anticipo_saldo, 4, ".", ",")]);
-        $this->Row([utf8_decode('Fondo de Garantía'), ' ', '%', $this->estimacion->subcontratoEstimacion->PorcentajeFondoGarantia, ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
+        if($this->estimacion->configuracion->ret_fon_gar_antes_iva==1)
+        {
+            $this->Row([utf8_decode('Fondo de Garantía'), ' ', '%', $this->estimacion->subcontratoEstimacion->PorcentajeFondoGarantia, ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
+        }
+
+        if($this->estimacion->configuracion->retenciones_antes_iva==1)
+        {
+            //retenciones-> suma subcontrestimacion.retencion
+            //Total Retenciones Liberadas anticipo
+        }
+        if($this->estimacion->configuracion->desc_pres_mat_antes_iva == 1)
+        {
+            $this->Row(['Deductivas y Descuentos', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","),'', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '', number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
+        }
+
         $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
         $this->Row(['Sub-total valor de los trabajos', ' ', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($subtotal_contrato, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior, 4, ".", ","), ' ',  number_format($subtotal_estimacion, 4, ".", ","), ' ', number_format($subtotal_acumulado, 4, ".", ","), ' ', number_format($subtotal_a_estimar, 4, ".", ",")]);
         $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-       if($this->estimacion->iva_orden_pago == 0){
-           $this->Row(['IVA', ' ', '%', number_format($this->estimacion->porcentaje_iva, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ",")]);
-       }else {
-           $this->Row(['IVA', ' ', '%', number_format($this->estimacion->porcentaje_iva, 4, ".", ","), ' ', number_format($subtotal_contrato * 0.16, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior * 0.16, 4, ".", ","), ' ', number_format($subtotal_estimacion * 0.16, 4, ".", ","), ' ', number_format($subtotal_acumulado * 0.16, 4, ".", ","), ' ', number_format($subtotal_a_estimar * 0.16, 4, ".", ",")]);
-       }
+        if($this->estimacion->iva_orden_pago == 0){
+            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->porcentaje_iva, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ",")]);
+        }else {
+            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->porcentaje_iva, 4, ".", ","), ' ', number_format($subtotal_contrato * 0.16, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior * 0.16, 4, ".", ","), ' ', number_format($subtotal_estimacion * 0.16, 4, ".", ","), ' ', number_format($subtotal_acumulado * 0.16, 4, ".", ","), ' ', number_format($subtotal_a_estimar * 0.16, 4, ".", ",")]);
+        }
+
+        $this->Row([utf8_decode('Retención IVA '), ' ', '', '', ' ', '', ' ', number_format($this->estimacion->iva_retenido_calculado_anterior, 4, ".", ","),'', number_format($this->estimacion->iva_retenido_calculado, 4, ".", ","), ' ', number_format(($this->estimacion->iva_retenido_calculado_anterior + $this->estimacion->iva_retenido_calculado), 4, ".", ","), ' ', '']);
+
         $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
         $this->Row(['Total','', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($subtotal_contrato + ($subtotal_contrato * 0.16), 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior + ($subtotal_acum_estimado_anterior * 0.16), 4, ".", ","), ' ', number_format($subtotal_estimacion + ($subtotal_estimacion * 0.16), 4, ".", ","), ' ', number_format($subtotal_acumulado + ($subtotal_acumulado * 0.16), 4, ".", ","), ' ', number_format($subtotal_a_estimar + ($subtotal_a_estimar * 0.16), 4, ".", ",")]);
+
+
+
+        if($this->estimacion->configuracion->ret_fon_gar_antes_iva==0)
+        {
+            $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+            $this->Row([utf8_decode('Fondo de Garantía'), ' ', '%', $this->estimacion->subcontratoEstimacion->PorcentajeFondoGarantia, ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
+        }
+
+
+        if($this->estimacion->configuracion->desc_pres_mat_antes_iva==0)
+        {
+            $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+            $this->Row(['Deductivas y Descuentos', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","),'', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '', number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
+        }
+
+        if($this->estimacion->configuracion->retenciones_antes_iva==0) {
+
+            //retenciones-> suma subcontrestimacion.retencion
+            //Total Retenciones Liberadas anticipo
+        }
+        $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->Row(['Penalizaciones', '', '', '', '', number_format($penalizacion_subcontrato, 4, ".", ","), '', number_format($penalizacion_acum_estim_anterior, 4, ".", ","), '', number_format($penalizacion_estimacion, 4, ".", ","), '',  number_format($penalizacion_a_esta_estimacion, 4, ".", ","), '', number_format($penalizacion_porEstimar, 4, ".", ",")]);
+        $this->Row(['Anticipo Solicitado', '', '%', $this->estimacion->subcontrato->anticipo, '', number_format($this->estimacion->subcontrato->anticipo_monto, 4, ".", ","), '', '', '', '', '', '', '', '']);
+
+        $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
+        $this->Row(['Total','', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($subtotal_contrato + ($subtotal_contrato * 0.16), 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior + ($subtotal_acum_estimado_anterior * 0.16), 4, ".", ","), ' ', number_format($this->estimacion->monto_a_pagar, 4, ".", ","), ' ', number_format($subtotal_acumulado + ($subtotal_acumulado * 0.16), 4, ".", ","), ' ', number_format($subtotal_a_estimar + ($subtotal_a_estimar * 0.16), 4, ".", ",")]);
+
     }
 
 
