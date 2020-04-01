@@ -15,7 +15,7 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row">                            
+                            <div class="row">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <table class="table">
@@ -98,13 +98,13 @@
                 </div>
             </div>
         </div>
-        
+
     </span>
 </template>
 <script>
 export default {
-    
-    name: "aprovar-solicitud-editar",
+
+    name: "aprobar-solicitud-editar",
     props: ['id', 'aprobar'],
     data() {
         return {
@@ -114,11 +114,11 @@ export default {
             usuario:'',
             t: '',
             partidas:[],
-            cantidad:[],            
+            cantidad:[],
         }
     },
     methods: {
-        save() {        
+        save() {
 
                 return this.$store.dispatch('compras/solicitud-compra/aprobar', {
                 id: this.id,
@@ -133,8 +133,8 @@ export default {
                    }).finally( ()=>{
                        $(this.$refs.modal).modal('hide');
                    });
-            
-        },       
+
+        },
         find() {
             this.t = 0;
             this.cantidad = [];
@@ -154,15 +154,15 @@ export default {
                     {
                         this.cantidad[this.t] = this.partidas[this.t].cantidad;
                         this.t ++;
-                    }                                      
-                    
+                    }
+
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;
                 })
         },
         validate() {
-            
+
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.save()
