@@ -11,8 +11,7 @@ namespace App\Services\CADECO;
 
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Usuario;
-use App\Models\MODULOSSAO\BaseDatosObra;
-use App\Models\MODULOSSAO\UnificacionObra;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Repositories\Repository;
 use Illuminate\Database\Eloquent\Collection;
@@ -63,6 +62,33 @@ class ObraService
         $obra->update($data);
 
         return $obra;
+    }
+
+    public function updateGeneral($data, $id)
+    {
+        try {
+            config()->set('database.connections.cadeco.database', $data['configuracion']['base_datos']);
+            $obra = $this->repository->withoutGlobalScopes()->show($id);
+            $config = ConfiguracionObra::withoutGlobalScopes()->where('id_obra', '=', $obra->id_obra)
+                ->where('id_proyecto', '=', Proyecto::where('base_datos', '=', $data['configuracion']['base_datos'])->pluck('id'));
+
+            if (isset($data['configuracion']['id_responsable'])) {
+                $data['responsable'] = \App\Models\IGH\Usuario::find($data['configuracion']['id_responsable'])->nombre_completo;
+            }
+
+            if (isset($data['configuracion']['logotipo_original'])) {
+                $file = request()->file('configuracion')['logotipo_original'];
+                $imageData = unpack("H*", file_get_contents($file->getPathname()));
+                $config->update([
+                    'logotipo_original' => DB::raw("CONVERT(VARBINARY(MAX), '" . $imageData[1] . "')"),
+                    'logotipo_reportes' => DB::raw("CONVERT(VARBINARY(MAX), '" . $imageData[1] . "')")
+                ]);
+            }
+            config()->set('database.connections.cadeco.database', '');
+            return $obra->edicionObra($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function authPaginate() {
@@ -153,65 +179,34 @@ class ObraService
 
     public function actualizarEstado($data,$id)
     {
-        $obra = $this->repository->show($id);
-        $tipo_obra = $obra->configuracion()->first();
-        $obra = $obra->where('id_obra',$id)->first();
+        return $this->repository->show($id)->editarEstado($data);
+    }
 
-        if($tipo_obra->tipo_obra == 2 || $obra->tipo_obra == 2){
-            abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
-
+    public function actualizarEstadoGeneral($data,$id)
+    {
+        try {
+            config()->set('database.connections.cadeco.database', $data['configuracion']['base_datos']);
+            $obra = $this->repository->withoutGlobalScopes()->show($id);
+            $respuesta = $obra->editarEstadoGeneral($data);
+            config()->set('database.connections.cadeco.database', '');
+            return $respuesta;
+        } catch (\Exception $e) {
+            throw $e;
         }
-        else if($tipo_obra->consulta == true && ($data['configuracion']['tipo_obra'] != 2 && $data['tipo_obra'] != 2)) {
-            abort( 400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción' );
+    }
+
+    public function busquedaSinContexto($id, $data)
+    {
+        $config = ConfiguracionObra::withoutGlobalScopes()->find($data['id_configuracion']);
+        try {
+            config()->set('database.connections.cadeco.database', $config->proyecto->base_datos);
+            $datos =  $this->repository->withoutGlobalScopes()->show($id);
+            $datos['administrador ']=$config->administrador_nombre;
+            config()->set('database.connections.cadeco.database', '');
+
+            return $datos;
+        } catch (\Exception $e) {
+            throw $e;
         }
-        else if($tipo_obra->consulta == true && $data['configuracion']['tipo_obra'] == 2 && $data['tipo_obra'] == 2  ){
-                $datos = [
-                    'EstaActivo' => 0,
-                    'VisibleEnReportes' => 0,
-                    'VisibleEnApps' => 0
-                ];
-                $base_unificado = BaseDatosObra::query()->first();
-                $unificado = UnificacionObra::query()->where('IDBaseDatos',$base_unificado->IDBaseDatos)->get();
-
-                foreach ($unificado as $uni)
-                {
-                    $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where('IDProyecto','=',$uni->IDProyecto)->update($datos);
-                }
-                $obra->configuracion()->update($data['configuracion']);
-                $obra->update($data);
-
-            }else if($data['configuracion']['tipo_obra'] == 2 && $data['tipo_obra'] == 2  ){
-                $datos = [
-                    'EstaActivo' => 0,
-                    'VisibleEnReportes' => 0,
-                    'VisibleEnApps' => 0
-                ];
-                $base_unificado = BaseDatosObra::query()->first();
-                $unificado = UnificacionObra::query()->where('IDBaseDatos',$base_unificado->IDBaseDatos)->get();
-
-                foreach ($unificado as $uni)
-                {
-                    $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where('IDProyecto','=',$uni->IDProyecto)->update($datos);
-                }
-                $obra->configuracion()->update($data['configuracion']);
-                $obra->update($data);
-
-            }else if($tipo_obra->consulta == false && $tipo_obra->tipo_obra != 2 && $obra->tipo_obra != 2) {
-                    $datos = [
-                        'EstaActivo' => 1,
-                        'VisibleEnReportes' => 1,
-                        'VisibleEnApps' => 1
-                    ];
-                    $base_unificado = BaseDatosObra::query()->first();
-                    $unificado = UnificacionObra::query()->where( 'IDBaseDatos', $base_unificado->IDBaseDatos )->get();
-
-                    foreach ($unificado as $uni) {
-                        $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where( 'IDProyecto', '=', $uni->IDProyecto )->update( $datos );
-                    }
-                    $obra->configuracion()->update( $data['configuracion'] );
-                    $obra->update( $data );
-                }
-
-        return $obra;
     }
 }
