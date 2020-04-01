@@ -92,7 +92,7 @@
                         </div>
                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 ">Aprobar</button>
+                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || partidas.length == 0">Aprobar</button>
                         </div>
                     </form>
                 </div>
@@ -118,13 +118,11 @@ export default {
         }
     },
     methods: {
-        save() {
+        save() {        
 
-            console.log(this.$data);            
-
-                return this.$store.dispatch('compras/solicitud-compra/autorizar', {
+                return this.$store.dispatch('compras/solicitud-compra/aprobar', {
                 id: this.id,
-                data: this.insumo,
+                data: this.$data,
             })
                 .then(() => {
                    return this.$store.dispatch('compras/solicitud-compra/paginate', { params: {sort: 'numero_folio', order: 'DESC'}})
@@ -135,7 +133,7 @@ export default {
                    }).finally( ()=>{
                        $(this.$refs.modal).modal('hide');
                    });
-            }
+            
         },       
         find() {
             this.t = 0;
@@ -163,8 +161,7 @@ export default {
                     this.cargando = false;
                 })
         },
-        validate() {            
-            console.log('Sigiuoente', this.cantidad, this.partidas);
+        validate() {
             
                 this.$validator.validate().then(result => {
                     if (result) {

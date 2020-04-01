@@ -72,7 +72,6 @@
                     })
                     .finally(() => {
                         this.cargando = false;
-                        console.log('solicitudes', this.solicitudes);
                         
                     })
             },
@@ -84,16 +83,16 @@
                     case 0:
                         return {
                             color: '#f39c12',
-                            descripcion: 'Registrado'
+                            descripcion: 'Registrada'
                         }
                     case 1:
                         return {
-                            color: '#0073b7',
-                            descripcion: 'Aprobado'
+                            color: '#00a65a',
+                            descripcion: 'Aprobada'
                         }
                     case 2:
                         return {
-                            color: '#00a65a',
+                            color: '#7889d6',
                             descripcion: 'Tercer caso'
                         }
                     default:
