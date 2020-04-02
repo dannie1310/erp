@@ -635,7 +635,7 @@ class Estimacion extends Transaccion
 
     public function getIvaRetenidoCalculadoAttribute()
     {
-        return number_format($this->IVARetenido + $this->retencionIVA_2_3, 2);
+        return $this->IVARetenido + $this->retencionIVA_2_3;
     }
 
     public function getIvaRetenidoFormatAttribute()
