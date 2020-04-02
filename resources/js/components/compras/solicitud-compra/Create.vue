@@ -1,4 +1,4 @@
-<template>
+<template>n
     <span>
         <nav>
             <div class="row">
@@ -93,16 +93,13 @@
                                     <div class="form-group">
                                         <label>Folio Requisición Origen</label>
                                         <input
-                                                 style="text-align:right;"
-                                                 :disabled="true"
-                                                 type="text"
-                                                 data-vv-as="total"
-                                                 class="form-control"
-                                                 placeholder="folio_req"
-                                                v-model="folio_req" />
+                                            type="text"
+                                            data-vv-as="Folio Requisición"
+                                            class="form-control"
+                                            placeholder="Folio Requisición"
+                                            v-model="folio_req"/>
                                     </div>
                                 </div>
-
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
@@ -452,6 +449,7 @@
             },
             getAreasCompradoras() {
                 this.fecha_hoy = new Date();
+                this.fecha_req = new Date();
                 this.fecha = new Date();
                 this.fechasDeshabilitadas.from= new Date();
                 this.fechasDeshabilitadasHasta.to= new Date();
@@ -552,7 +550,8 @@
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
-                        scope: 'requisicion',
+                        scope: 'materialesParaCompras',
+                        sort: 'descripcion', order: 'desc'
                     }
                 })
                     .then(data => {
