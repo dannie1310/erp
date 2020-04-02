@@ -633,9 +633,14 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->monto_a_pagar, 2);
     }
 
+    public function getIvaRetenidoCalculadoAttribute()
+    {
+        return $this->IVARetenido + $this->retencionIVA_2_3;
+    }
+
     public function getIvaRetenidoFormatAttribute()
     {
-        return '$ ' . number_format($this->IVARetenido + $this->retencionIVA_2_3, 2);
+        return '$ ' . number_format($this->iva_retenido_calculado, 2);
     }
 
     public function getIvaRetenidoPorcentajeAttribute()
@@ -979,5 +984,18 @@ class Estimacion extends Transaccion
                 return 'Desconocido';
                 break;
         }
+    }
+
+    public function getIvaRetenidoCalculadoAnteriorAttribute()
+    {
+        $iva_retenido = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $iva_retenido += $estimacion->iva_retenido_calculado;
+        }
+        return $iva_retenido;
     }
 }
