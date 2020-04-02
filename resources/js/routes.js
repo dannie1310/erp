@@ -57,6 +57,45 @@ export const routes = [
         }
     },
     {
+        path: '/reportes-pbi',
+        components:  {
+            default: require('./components/reportes-pbi/partials/Layout.vue').default,
+            menu: require('./components/reportes-pbi/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'reportes-pbi',
+                meta: {
+                    title: 'REPORTES PBI',
+                    middleware: [auth, permission],
+                    permission: ['consultar_reporte_cfd_efos'],
+                    general: true
+                }
+            },
+            {
+                /*path:"ver/:id",*/
+                path:'ver',
+                props: true,
+                component: require('./components/reportes-pbi/Visor.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"visor-reportes",
+                        component: require('./components/reportes-pbi/Visor.vue').default,
+                        meta: {
+                            title: 'Reporte',
+                            breadcrumb: {parent: 'reportes-pbi', name: ''},
+                            middleware: [auth, permission],
+                            permission: ['consultar_reporte_cfd_efos'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+        ]
+    },
+    {
         path: '/contabilidad-general',
         components:  {
             default: require('./components/contabilidad-general/partials/Layout.vue').default,
