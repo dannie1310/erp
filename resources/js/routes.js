@@ -1289,6 +1289,23 @@ export const routes = [
                 ]
             },
             {
+                path: 'subcontrato',
+                component: require('./components/contratos/subcontrato/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'subcontrato',
+                        component: require('./components/contratos/subcontrato/Index').default,
+                        meta: {
+                            title: 'Subcontratos',
+                            breadcrumb: {parent: 'contratos', name: 'SUBCONTRATOS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_listado_subcontratos'
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'estimacion',
                 component: require('./components/contratos/estimacion/Layout').default,
                 children: [

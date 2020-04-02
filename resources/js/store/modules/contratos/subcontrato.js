@@ -5,6 +5,7 @@ export default {
     state: {
         subcontratos: [],
         currentSubcontrato: null,
+        meta: {}
     },
 
     mutations: {
@@ -13,7 +14,10 @@ export default {
         },
         SET_SUBCONTRATO(state, data) {
             state.currentSubcontrato = data;
-        }
+        },
+        SET_META(state, data) {
+            state.meta = data
+        },
     },
 
     actions: {
@@ -59,6 +63,20 @@ export default {
                     })
             });
         },
+        paginate (context, payload){
+            
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        }
     },
 
     getters: {
@@ -67,6 +85,9 @@ export default {
         },
         currentSubcontrato(state) {
             return state.currentSubcontrato
+        },
+        meta(state) {
+            return state.meta
         }
     }
 }
