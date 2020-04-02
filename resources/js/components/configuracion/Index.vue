@@ -1,8 +1,8 @@
 <template>
     <div class="row">
         <div class="col-lg-10 offset-lg-1" v-if="obra">
-           <configuracion-obra :obra="obra"></configuracion-obra>
-           <estado-obra :obra="obra"></estado-obra>
+           <configuracion-obra :obra="obra" v-bind:monedas="monedas"  v-bind:tipo="0"></configuracion-obra>
+           <estado-obra :obra="obra" v-bind:tipo="0"></estado-obra>
             <configuracion-sistema  v-if="$root.can('habilitar_deshabilitar_sistema')"></configuracion-sistema>
             <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>
             <configuracion-conceptos  :datos-concepto="obra"></configuracion-conceptos>
@@ -29,7 +29,8 @@
         components: {ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra, ConfiguracionSeguridadPersonalizado, ConfiguracionSistema, EstadoObra, ConfiguracionEstimaciones, ConfiguracionConceptos},
         data() {
             return {
-                obra: null
+                obra: null,
+                monedas: []
             }
         },
 
@@ -46,14 +47,17 @@
         },
 
         methods: {
-            getMonedas() {
-                return this.$store.dispatch('cadeco/moneda/index');
-            },
             getObra() {
                 return this.$store.dispatch('cadeco/obras/find', {
                     id: this.currentObra.id_obra,
                     params: { include: ['configuracion', 'datosContables','datosEstimaciones'], 'logo' : true }
                 })
+            },
+            getMonedas() {
+                return this.$store.dispatch('cadeco/moneda/index')
+                    .then(data => {
+                        this.monedas = data.data;
+                    })
             },
         },
 

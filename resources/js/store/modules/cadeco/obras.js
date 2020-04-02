@@ -40,7 +40,19 @@ export default {
                     });
             });
         },
-
+        global(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + payload.id+'/global', payload.data, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -62,6 +74,47 @@ export default {
                         if (value) {
                             axios
                                 .post(URI + payload.id, payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Configuración actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            resolve();
+                        }
+                    });
+            });
+        },
+
+        updateGeneral(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar Configuración de Obra",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + '/updateGeneral', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Configuración actualizada correctamente", {
@@ -123,6 +176,47 @@ export default {
             });
         },
 
+        actualizarEstadoGeneral(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar Estado de Obra",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'estadoGeneral/'+payload.id, payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Estado actualizado correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            resolve();
+                        }
+                    });
+            });
+        },
+
         getObrasPorUsuario(context, payload = {}) {
             return new Promise((resolve, reject) => {
                 axios
@@ -135,7 +229,7 @@ export default {
                         reject(error);
                     });
             });
-        }
+        },
     },
 
     getters: {
