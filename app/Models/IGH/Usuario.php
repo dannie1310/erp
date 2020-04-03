@@ -284,6 +284,19 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $permisos_reportes;
     }
 
+    public function findPermisoGeneral($permiso)
+    {
+        foreach ($this->rolesGenerales as $rol) {
+            // Validate against the Permission table
+            foreach ($rol->permisos as $perm) {
+                if($perm->name == $permiso){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public function rolesGenerales()
     {
         return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');

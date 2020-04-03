@@ -44,17 +44,45 @@ export const routes = [
     },
     {
         path: '/configuracion',
-        name: 'configuracion_',
+        name: 'configuracion-area',
         components:  {
-            default: require('./components/pages/Configuracion.vue').default,
+            default: require('./components/configuracion-general/configuracion-area/Configuracion.vue').default,
             menu: require('./components/pages/partials/MenuConfiguracion.vue').default
         },
         meta: {
             title: 'CONFIGURACIÓN',
             middleware: [auth, permission],
-            permission: 'asignar_areas_subcontratantes',
+            permission: ['asignar_areas_subcontratantes'],
             general: true
         }
+    },
+    {
+        path: '/configuracion/general',
+        components: {
+            default: require('./components/configuracion-general/configuracion-obra/Obra.vue').default,
+            menu: require('./components/configuracion-general/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: 'obra',
+                component: require('./components/configuracion-general/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'configuracion-general-obra',
+                        component: require('./components/configuracion-general/configuracion-obra/Obra').default,
+                        meta: {
+                            title: 'Configuración de Obra',
+                            breadcrumb: {parent: 'configuracion-general', name: 'OBRA'},
+                            middleware: [auth, permission],
+                            permission: ['actualizar_estado_obra', 'administracion_configuracion_obra', 'reactivar_obra'],
+                            general: true,
+
+                        }
+                    },
+                ]
+            },
+        ]
     },
     {
         path: '/reportes-pbi',
