@@ -43,4 +43,12 @@ class Sistema extends Model
                 return $q->where('base_datos', '=', Context::getDatabase())->where('id_obra','=',Context::getIdObra());
             });
     }
+
+    public function  scopeAplicaciones($query)
+    {
+        $permisos = auth()->user()->permisosAplicaciones();
+        return $query->where("aplicacion","=",1)->whereHas('permisos', function($q) use ($permisos) {
+            return $q->whereIn('name', $permisos);
+        });
+    }
 }

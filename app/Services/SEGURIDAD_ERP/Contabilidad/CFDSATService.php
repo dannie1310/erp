@@ -330,16 +330,56 @@ class CFDSATService
         $this->arreglo_factura["serie"] = (string)$factura_xml["serie"];
         $this->arreglo_factura["folio"] = (string)$factura_xml["folio"];
         $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["fecha"]);
-        $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
-        $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["rfc"][0];
-        $this->arreglo_factura["rfc_emisor"] = $this->arreglo_factura["emisor"]["rfc"];
-        $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["nombre"][0];
-        $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor//cfdi:RegimenFiscal')[0]["Regimen"];
-        $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
-        $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["rfc"][0];
-        $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
-        $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["nombre"][0];
+
         $ns = $factura_xml->getNamespaces(true);
+        $factura_xml->registerXPathNamespace('t', $ns['tfd']);
+        $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
+        $uuid = (string)$complemento["UUID"][0];
+        $this->arreglo_factura["uuid"] = $uuid;
+
+        try{
+            $emisor_arr = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor');
+            if($emisor_arr) {
+                if (key_exists(0, $emisor_arr)) {
+                    $emisor = $emisor_arr[0];
+                    $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor//cfdi:RegimenFiscal')[0]["Regimen"];
+                } else {
+                    $emisor = $factura_xml->Emisor;
+                    $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$emisor->RegimenFiscal[0]["Regimen"];
+                }
+            } else {
+                $emisor = $factura_xml->Emisor;
+                $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$emisor->RegimenFiscal[0]["Regimen"];
+            }
+
+            $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["rfc"][0];
+            $this->arreglo_factura["rfc_emisor"] = $this->arreglo_factura["emisor"]["rfc"];
+            $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["nombre"][0];
+        }catch (\Exception $e) {
+            //abort(500, "Hubo un error al leer el emisor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
+            $this->log["archivos_no_cargados_error_app"] +=1;
+        }
+
+        try{
+            $receptor_arr = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor');
+            if($receptor_arr){
+                if(key_exists(0,$receptor_arr)){
+                    $receptor = $receptor_arr[0];
+                }else{
+                    $receptor = $factura_xml->Receptor;
+                }
+            }else{
+                $receptor = $factura_xml->Receptor;
+            }
+
+            $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["rfc"][0];
+            $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
+            $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["nombre"][0];
+        }catch (\Exception $e) {
+            //abort(500, "Hubo un error al leer el receptor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
+            $this->log["archivos_no_cargados_error_app"] +=1;
+        }
+
         try {
             $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
             $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[0]["totalImpuestosTrasladados"][0];
@@ -374,9 +414,7 @@ class CFDSATService
             if(key_exists("cfdi",$ns)){
                 $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
             }
-            $factura_xml->registerXPathNamespace('t', $ns['tfd']);
-            $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
-            $this->arreglo_factura["uuid"] = (string)$complemento["UUID"][0];
+
             if (!$this->arreglo_factura["folio"]) {
                 try {
                     $factura_xml->registerXPathNamespace('rf', $ns['registrofiscal']);
