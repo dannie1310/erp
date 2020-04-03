@@ -511,7 +511,7 @@ class GestionPagoService
                         );
                     }
                 }
-                dd($data);
+                
                 return $this->validarBitacoraV2($data, $bitacora_nombre, $id_dispersion);
             }
             
