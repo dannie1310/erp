@@ -267,9 +267,9 @@ class Material extends Model
         return $query->whereRaw('LEN(nivel) = 8');
     }
 
-    public function scopeRequisicion($query)
+    public function scopeMaterialesParaCompras($query)
     {
-        return $query->whereRaw('LEN(nivel) > 4')->where('unidad','<>','jornal')->where('tipo_material', '!=', 8)->orderBy('descripcion', 'asc');
+        return $query->whereRaw('LEN(nivel) > 4')->where('unidad','<>','jornal')->where('tipo_material', '!=', 8);
     }
 
     public function validarExistente()
@@ -323,7 +323,7 @@ class Material extends Model
         if($this->suministrado()->count() > 0)
         {
             return 8;
-        }        
+        }
     }
 
     public function validarModificar($tipo)

@@ -219,7 +219,7 @@
             lista()
             {
                  this.cargando = true;
-                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'requisicion'})
+                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'materialesParaCompras', sort: 'descripcion', order: 'desc'})
                     .then(() => {
                         this.$emit('success')
                     }).finally(() => {
