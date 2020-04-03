@@ -43,7 +43,6 @@ class SolicitudComplementoTransformer extends TransformerAbstract
 
     public function transform(SolicitudComplemento $model)
     {
-//        dd("Dee");
       return [
             'id' => $model->getKey(),
             'id_area_compradora' => $model->id_area_compradora,
