@@ -1,8 +1,7 @@
-<template>n
+<template>
     <span>
         <nav>
-            <div class="row">
-            <div class="col-12">
+            <div class="row"><div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
@@ -19,13 +18,13 @@
                                                     v-validate="{required: true}"
                                                     :disabled-dates="fechasDeshabilitadas"
                                                     :class="{'is-invalid': errors.has('fecha')}"
-                                        ></datepicker>
+                                        />
                                         <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row justify-content-between">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="id_area_compradora">Departamento Responsable</label>
                                         <select class="form-control"
@@ -73,20 +72,19 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_solicitante')">{{ errors.first('id_area_solicitante') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Fecha Requisición Origen:</label>
-                                        <datepicker v-model = "fecha_req"
-                                                    name = "fecha_req"
+                                        <datepicker v-model = "fecha_requisicion"
+                                                    name = "fecha_requisicion"
                                                     :format = "formatoFecha"
                                                     :language = "es"
                                                     :bootstrap-styling = "true"
                                                     class = "form-control"
                                                     v-validate="{required: true}"
-                                                    :disabled-dates="fechasDeshabilitadas"
-                                                    :class="{'is-invalid': errors.has('fecha_req')}"
+                                                    :class="{'is-invalid': errors.has('fecha_requisicion')}"
                                         ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha_req')">{{ errors.first('fecha_req') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha_requisicion')">{{ errors.first('fecha_requisicion') }}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -247,12 +245,12 @@
                                                 <td style="width:140px; text-align:center;" v-else-if="partida.destino">{{partida.destino.descripcion}}</td>
                                                 <td style="width:140px; text-align:center;" v-else></td>
                                                 <td style="width:200px;">
-                                                            <textarea class="form-control"
-                                                                      :name="`observaciones[${i}]`"
-                                                                      data-vv-as="Observaciones"
-                                                                      v-validate="{required: true}"
-                                                                      :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
-                                                                      v-model="partida.observaciones"/>
+                                                    <textarea class="form-control"
+                                                              :name="`observaciones[${i}]`"
+                                                              data-vv-as="Observaciones"
+                                                              v-validate="{required: true}"
+                                                              :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
+                                                              v-model="partida.observaciones"/>
                                                     <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                 </td>
                                                 <td>
@@ -353,7 +351,7 @@
                 fechasDeshabilitadas:{},
                 fechasDeshabilitadasHasta:{},
                 fecha : '',
-                fecha_req : '',
+                fecha_requisicion : '',
                 fecha_hoy : '',
                 id_material: '',
                 areas_compradoras : [],
@@ -449,7 +447,7 @@
             },
             getAreasCompradoras() {
                 this.fecha_hoy = new Date();
-                this.fecha_req = new Date();
+                this.fecha_requisicion = new Date();
                 this.fecha = new Date();
                 this.fechasDeshabilitadas.from= new Date();
                 this.fechasDeshabilitadasHasta.to= new Date();
@@ -578,9 +576,9 @@
                     this.t ++;
                 }if(this.m == 0)
                 {
-                    return this.$store.dispatch('compras/requisicion/store', this.$data)
+                    return this.$store.dispatch('compras/solicitud-compra/store', this.$data)
                         .then((data) => {
-                            this.$router.push({name: 'requisicion'});
+                            this.$router.push({name: 'solicitud-compra-index'});
                         });
 
                 }

@@ -53,14 +53,14 @@ class SolicitudCompraService
     public function store($data)
     {
         /*Validación de Partidas*/
-        foreach ($data['items'] as $key => $item){
-        $validacion= $this->validarPartidas($data['items'], $item, $key);
+        foreach ($data['partidas'] as $key => $item){
+        $validacion= $this->validarPartidas($data['partidas'], $item, $key);
             if($validacion===true){
                 abort(400, 'No pueden existir dos partidas con el mismo material y mismo destino... Material en Fila: '.strval($key+1)." - ".strval($item['material']['label']));
             }
         }
 
-
+dd($data);
         //Crear Solicitud de compra
         $datos = [
             'observaciones'=> $data['observaciones'],
@@ -165,28 +165,21 @@ class SolicitudCompraService
 
     public function validarPartidas($items, $item, $i){
         foreach ($items as $key => $value){
-
             if($key!=$i) {
                 if ($value['id_material'] === $item['id_material']) {
-
                     if ($value['id_destino'] === $item['id_destino']) {
                         if ($value['destino_concepto'] === true && $item['destino_concepto'] === true) {
                             return true;
                         }
                         if ($value['destino_almacen'] === true && $item['destino_almacen'] === true) {
                             return true;
-
                         }
                         return false;
                     }
                     return false;
                 }
             }
-
-
-
             return false;
-
         }
     }
 
