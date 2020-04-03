@@ -85,6 +85,41 @@ export const routes = [
         ]
     },
     {
+        path: '/reportes-pbi',
+        component: require('./components/reportes-pbi/Index.vue').default,
+        children:[
+            {
+                path:'',
+                name: 'reportes-pbi',
+                meta: {
+                    title: 'REPORTES PBI',
+                    middleware: [auth, permission],
+                    permission: ['consultar_reportes'],
+                    general: true
+                }
+            },
+        ]
+    },
+    {
+        path:"/reportes-pbi/ver/:id",
+        props: true,
+        component: require('./components/reportes-pbi/Visor.vue').default,
+        children:[
+            {
+                path:"/",
+                name:"visor-reportes",
+                component: require('./components/reportes-pbi/Visor.vue').default,
+                meta: {
+                    title: 'Reporte',
+                    breadcrumb: {parent: 'reportes-pbi', name: 'VER'},
+                    middleware: [auth, permission],
+                    permission: ['consultar_reportes'],
+                    general: true
+                }
+            }
+        ]
+    },
+    {
         path: '/contabilidad-general',
         components:  {
             default: require('./components/contabilidad-general/partials/Layout.vue').default,

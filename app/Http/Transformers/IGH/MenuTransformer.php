@@ -8,9 +8,14 @@ use League\Fractal\TransformerAbstract;
 
 class MenuTransformer extends TransformerAbstract
 {
-    public function transform(Menu $model) {
-        $model_arr = $model->toArray();
-        $model_arr["target"] = $model->target;
-        return $model_arr;
+    public function transform($model) {
+        return [
+
+            'color' => $model->color,
+            'icon' => $model->icon,
+            'menu' => ($model->menu)?$model->menu:$model->name,
+            'ruta' => ($model->ruta)?$model->ruta:$model->url,
+            'target' => $model->target,
+        ];
     }
 }
