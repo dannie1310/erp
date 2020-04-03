@@ -193,6 +193,11 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         }
     }
 
+    public function rolesSinContexto()
+    {
+        return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user', 'user_id', 'role_id');
+    }
+
     public function rolesGlobales()
     {
         $obra =  Obra::query()->find(Context::getIdObra());
@@ -253,6 +258,30 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         }
 
         return $permisos;
+    }
+
+    public function permisosAplicaciones()
+    {
+        $permisos = [];
+        foreach ($this->rolesSinContexto as $rol) {
+            // Validate against the Permission table
+            foreach ($rol->permisos as $perm) {
+                array_push($permisos, $perm->name);
+            }
+        }
+
+        return array_unique($permisos);
+    }
+
+    public function reportesGenerales()
+    {
+        $permisos_reportes = [];
+        foreach ($this->rolesGenerales as $rol) {
+            foreach ($rol->permisos()->reporte()->get() as $perm) {
+                array_push($permisos_reportes, $perm->name);
+            }
+        }
+        return $permisos_reportes;
     }
 
     public function findPermisoGeneral($permiso)
