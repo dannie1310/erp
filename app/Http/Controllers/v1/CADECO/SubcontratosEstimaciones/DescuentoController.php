@@ -6,7 +6,7 @@
  * Time: 12:10 PM
  */
 
-namespace App\Http\Controllers\v1\CADECO\subcontratosEstimaciones;
+namespace App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones;
 
 use App\Http\Transformers\CADECO\SubcontratosEstimaciones\DescuentoTransformer;
 use App\Services\CADECO\SubcontratosEstimaciones\DescuentoService;
@@ -69,7 +69,7 @@ class DescuentoController extends Controller
         $respuesta = $this->service->updateList($request->all());
         return $this->respondWithCollection($respuesta);
     }
-    
+
     public function storeItem(Request $request){
         $respuesta = $this->service->storeItem($request->all());
         return $this->respondWithCollection($respuesta);

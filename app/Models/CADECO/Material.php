@@ -109,6 +109,11 @@ class Material extends Model
         return $this->hasMany(Item::class, 'id_material', 'id_material');
     }
 
+    public function itemsOrdenCompra()
+    {
+        return $this->hasMany(ItemOrdenCompra::class, 'id_material', 'id_material');
+    }
+
     public function almacen()
     {
         return $this->hasMany(Almacen::class, 'id_material', 'id_material');

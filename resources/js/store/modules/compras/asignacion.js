@@ -146,17 +146,16 @@ export default{
                 })
             }
         },
-
-        descargaLayout(context){
+        descargaLayout(context, payload){
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'descargaLayout', { responseType:'blob', })
+                    .get(URI + 'descargaLayout/'+ payload.id, { params: payload.params, responseType:'blob', })
                     .then(r => r.data)
                     .then(data => {
                         const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
                         const link = document.createElement('a');
                         link.href = url;
-                        link.setAttribute('download', 'Layout-prueba.csv');
+                        link.setAttribute('download', 'Layout-'+payload.id+'.csv');
                         document.body.appendChild(link);
                         link.click();
                     })

@@ -11,6 +11,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\Compras\SolicitudPartidaComplementoTransformer;
+use App\Http\Transformers\CADECO\ConceptoTransformer;
 use App\Http\Transformers\CADECO\EntregaTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\SolicitudCompraPartida;
@@ -28,6 +29,7 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
         'complemento',
         'entrega',
         'material',
+        'concepto'
 
     ];
 
@@ -47,8 +49,13 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
              'id_material' => $model->id_material,
              'unidad' => $model->unidad,
              'cantidad' => $model->cantidad,
+             'solicitado_cantidad' => number_format($model->cantidad, 1,'.',','),
              'id_concepto'=> $model->id_concepto,
-             'id_almacen' =>$model->id_almacen
+             'id_almacen' =>$model->id_almacen,
+             'orden_compra_cantidad'=>($model->orden_compra) ? number_format($model->orden_compra, 1,'.',',') : '0.0',
+             'surtido_cantidad' =>($model->entrada_material) ? number_format($model->entrada_material, 1,'.',',') : '0.0',
+             'existencia_cantidad' =>(string) number_format($model->inventario->sum('saldo'), 1,'.',',')
+
          ];
 
     }
@@ -96,7 +103,16 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param SolicitudCompraPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeConcepto(SolicitudCompraPartida $model)
+    {
+        if($concepto = $model->concepto) {
+            return $this->item($concepto, new ConceptoTransformer);
 
-
-
+        }
+        return null;
+    }
 }
