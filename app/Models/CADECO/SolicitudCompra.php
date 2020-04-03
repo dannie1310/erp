@@ -4,13 +4,10 @@
 namespace App\Models\CADECO;
 
 
-use App\CSV\CotizacionLayout;
 use App\Models\CADECO\Compras\SolicitudComplemento;
-use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\SolicitudCompraPartida;
+use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Http\Request;
 
 class SolicitudCompra extends Transaccion
 {
@@ -48,6 +45,24 @@ class SolicitudCompra extends Transaccion
         'fecha'
     ];
 
+    public function complemento(){
+        return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
+    }
+
+    public function partidas()
+    {
+        return $this->hasMany(SolicitudCompraPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'registro', 'usuario');
+    }
+    public function cotizaciones()
+    {
+        return $this->hasMany(CotizacionCompra::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function getRegistroAttribute()
     {
         $comentario = explode('|', $this->comentario);
@@ -67,7 +82,7 @@ class SolicitudCompra extends Transaccion
         $partidas = $data['partidas'];
         $cantidades = $data['cantidad'];
         $res = array();
-        
+
         foreach($partidas as $partida)
         {
             if($partida['solicitado_cantidad'] != $cantidades[$x])
@@ -85,21 +100,4 @@ class SolicitudCompra extends Transaccion
         return $this->partidas;
     }
 
-    public function complemento(){
-        return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
-    }
-
-    public function partidas()
-    {
-        return $this->hasMany(SolicitudCompraPartida::class, 'id_transaccion', 'id_transaccion');
-    }
-
-    public function usuario()
-    {
-        return $this->belongsTo(Usuario::class, 'registro', 'usuario');
-    }
-    public function cotizaciones()
-    {
-        return $this->hasMany(CotizacionCompra::class, 'id_antecedente', 'id_transaccion');
-    }
 }
