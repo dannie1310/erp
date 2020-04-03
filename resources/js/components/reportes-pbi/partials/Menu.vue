@@ -4,7 +4,7 @@
             <li class="nav-item"  v-if="$root.can('consultar_reporte_cfd_efos',true)">
                 <router-link :to="{name: 'visor-reportes'}" class="nav-link" >
                     <i class="fa fa-file-invoice nav-icon"></i>
-                    <p>EFOS-CFD</p>
+                    <p>CFD de EFOS</p>
                 </router-link>
             </li>
         </ul>

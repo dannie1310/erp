@@ -58,10 +58,7 @@ export const routes = [
     },
     {
         path: '/reportes-pbi',
-        components:  {
-            default: require('./components/reportes-pbi/partials/Layout.vue').default,
-            menu: require('./components/reportes-pbi/partials/Menu.vue').default
-        },
+        component: require('./components/reportes-pbi/Index.vue').default,
         children:[
             {
                 path:'',
@@ -69,30 +66,29 @@ export const routes = [
                 meta: {
                     title: 'REPORTES PBI',
                     middleware: [auth, permission],
-                    permission: ['consultar_reporte_cfd_efos'],
+                    permission: ['consultar_reportes'],
                     general: true
                 }
             },
+        ]
+    },
+    {
+        path:"/reportes-pbi/ver/:id",
+        props: true,
+        component: require('./components/reportes-pbi/Visor.vue').default,
+        children:[
             {
-                /*path:"ver/:id",*/
-                path:'ver',
-                props: true,
+                path:"/",
+                name:"visor-reportes",
                 component: require('./components/reportes-pbi/Visor.vue').default,
-                children:[
-                    {
-                        path:"/",
-                        name:"visor-reportes",
-                        component: require('./components/reportes-pbi/Visor.vue').default,
-                        meta: {
-                            title: 'Reporte',
-                            breadcrumb: {parent: 'reportes-pbi', name: ''},
-                            middleware: [auth, permission],
-                            permission: ['consultar_reporte_cfd_efos'],
-                            general: true
-                        }
-                    }
-                ]
-            },
+                meta: {
+                    title: 'Reporte',
+                    breadcrumb: {parent: 'reportes-pbi', name: 'VER'},
+                    middleware: [auth, permission],
+                    permission: ['consultar_reportes'],
+                    general: true
+                }
+            }
         ]
     },
     {
