@@ -41,7 +41,7 @@ class SolicitudCompraController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:registrar_solicitud_compra')->only('store');
-        $this->middleware('permiso:consultar_solicitud_compra')->only('paginate');
+        $this->middleware('permiso:consultar_solicitud_compra')->only(['paginate', 'show']);
         $this->middleware('permiso:aprobar_solicitud_compra')->only('aprobar');
 
 

@@ -17,8 +17,6 @@ use App\Models\CADECO\Moneda;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
-use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
-use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use DateTime;
@@ -106,16 +104,6 @@ class Estimacion extends Transaccion
     public function items()
     {
         return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
-    }
-
-    public function penalizaciones()
-    {
-        return $this->hasMany(Penalizacion::class, 'id_transaccion');
-    }
-
-    public function penalizacionLiberaciones()
-    {
-        return $this->hasMany(PenalizacionLiberacion::class, 'id_transaccion');
     }
 
     public function movimientos()
@@ -524,11 +512,6 @@ class Estimacion extends Transaccion
         if ($this->configuracion->ret_fon_gar_antes_iva == 1) {
             $subtotal -= $this->retencion_fondo_garantia_orden_pago;
         }
-        if($this->configuracion->penalizacion_antes_iva == 1)
-        {
-            $subtotal -= $this->penalizaciones->sum('importe');
-            $subtotal += $this->penalizacionLiberaciones->sum('importe');
-        }
         return $subtotal;
     }
 
@@ -642,11 +625,6 @@ class Estimacion extends Transaccion
             $monto_pagar -= $this->retencion_fondo_garantia_orden_pago;
         }
         $monto_pagar -= $this->retencionIVA_2_3;
-        if($this->configuracion->penalizacion_antes_iva == 0)
-        {
-            $monto_pagar -= $this->penalizaciones->sum('importe');  
-            $monto_pagar += $this->penalizacionLiberaciones->sum('importe');          
-        }
         return $monto_pagar;
     }
 
@@ -655,9 +633,14 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->monto_a_pagar, 2);
     }
 
+    public function getIvaRetenidoCalculadoAttribute()
+    {
+        return $this->IVARetenido + $this->retencionIVA_2_3;
+    }
+
     public function getIvaRetenidoFormatAttribute()
     {
-        return '$ ' . number_format($this->IVARetenido + $this->retencionIVA_2_3, 2);
+        return '$ ' . number_format($this->iva_retenido_calculado, 2);
     }
 
     public function getIvaRetenidoPorcentajeAttribute()
@@ -694,8 +677,6 @@ class Estimacion extends Transaccion
 
     public function recalculaDatosGenerales()
     {
-        $this->refresh();
-
         $this->monto = $this->monto_a_pagar;
         $this->saldo = $this->monto_a_pagar;
         $this->impuesto = $this->iva_orden_pago;
@@ -739,7 +720,7 @@ class Estimacion extends Transaccion
             }
             $this->retencionIVA_2_3 = $retenciones['retencionIVA_2_3'];
         }
-        
+
         if($retenciones['retencion4'] != null && $retenciones['retencion4'] > 0){
             $porcentaje = $retenciones['retencion4'] * 100 / $this->subtotal_orden_pago;
             if ($porcentaje <= 3.9999 || $porcentaje >= 4.0001) {
@@ -757,7 +738,7 @@ class Estimacion extends Transaccion
         $retencion_registrada_6 = $this->retencion_iva6;
         $retenciones['retencion4'] != null? $retencion_registrada_4 = $retenciones['retencion4']:'';
         $retenciones['retencion6'] != null? $retencion_registrada_6 = $retenciones['retencion6']:'';
-        
+
         $retencion = $retencion_registrada_4 + $retencion_registrada_6;
 
         $this->IVARetenido = $retencion;
@@ -969,7 +950,7 @@ class Estimacion extends Transaccion
     public function getRetencionIva4FormatAttribute(){
         return '$ ' . number_format($this->retencion_iva4, 2);
     }
-    
+
     public function getRetencionIva6Attribute(){
         if($subtotal = $this->subtotal_orden_pago){
             $porcentaje = $this->IVARetenido * 100 / $subtotal;
@@ -982,13 +963,21 @@ class Estimacion extends Transaccion
     public function getRetencionIva6FormatAttribute(){
         return '$ ' . number_format($this->retencion_iva6, 2);
     }
-    
+
     public function getRetencionIva23FormatAttribute(){
         return '$ ' . number_format($this->retencionIVA_2_3, 2);
     }
-    
-    public function getRestaImportesAmortizacionAttribute()
+
+    public function getIvaRetenidoCalculadoAnteriorAttribute()
     {
-        return $this->suma_importes - $this->monto_anticipo_aplicado;
+        $iva_retenido = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $iva_retenido += $estimacion->iva_retenido_calculado;
+        }
+        return $iva_retenido;
     }
 }

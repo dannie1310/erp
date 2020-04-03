@@ -38,7 +38,8 @@ class ConfiguracionObraController extends Controller
     public function __construct(Manager $fractal, ConfiguracionObraService $service, ConfiguracionObraTransformer $transformer)
     {
         $this->middleware( 'auth:api');
-        $this->middleware( 'context')->except('index');
+        $this->middleware( 'context')->except(['index']);
+        //$this->middleware('permiso:registrar_cuenta_corriente')->only(['update']);
 
         $this->fractal = $fractal;
         $this->service = $service;

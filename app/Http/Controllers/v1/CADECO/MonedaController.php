@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Services\CADECO\MonedaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class MonedaController extends Controller
@@ -43,10 +44,15 @@ class MonedaController extends Controller
     public function __construct(Manager $fractal, MonedaService $service, MonedaTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('context')->except(['monedasGlobales']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function monedasGlobales(Request $request)
+    {
+        return $this->respondWithCollection($this->service->index($request->all()));
     }
 }
