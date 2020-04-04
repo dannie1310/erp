@@ -14,7 +14,7 @@ use App\Http\Transformers\CADECO\Compras\SolicitudPartidaComplementoTransformer;
 use App\Http\Transformers\CADECO\ConceptoTransformer;
 use App\Http\Transformers\CADECO\EntregaTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
-use App\Models\CADECO\SolicitudCompraPartida;
+use App\Models\CADECO\ItemSolicitudCompra;
 use League\Fractal\TransformerAbstract;
 
 class SolicitudCompraPartidaTransformer extends TransformerAbstract
@@ -42,7 +42,7 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(SolicitudCompraPartida $model){
+    public function transform(ItemSolicitudCompra $model){
          return [
              'id' =>$model->getKey(),
              'id_transaccion' => $model->id_transaccion,
@@ -61,11 +61,11 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudCompraPartida $model
+     * @param ItemSolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
 
-    public function includeComplemento(SolicitudCompraPartida $model)
+    public function includeComplemento(ItemSolicitudCompra $model)
     {
         if($complemento = $model->complemento)
         {
@@ -76,11 +76,11 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
 
 
     /**
-     * @param SolicitudCompraPartida $model
+     * @param ItemSolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
 
-    public function includeEntrega(SolicitudCompraPartida $model)
+    public function includeEntrega(ItemSolicitudCompra $model)
     {
         if($entrega = $model->entrega)
         {
@@ -90,11 +90,11 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudCompraPartida $model
+     * @param ItemSolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
 
-    public function includeMaterial(SolicitudCompraPartida $model)
+    public function includeMaterial(ItemSolicitudCompra $model)
     {
         if($material = $model->material)
         {
@@ -104,10 +104,10 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudCompraPartida $model
+     * @param ItemSolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeConcepto(SolicitudCompraPartida $model)
+    public function includeConcepto(ItemSolicitudCompra $model)
     {
         if($concepto = $model->concepto) {
             return $this->item($concepto, new ConceptoTransformer);

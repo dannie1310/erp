@@ -365,7 +365,6 @@
                 concepto : '',
                 observaciones : '',
                 unidades : [],
-                t: '',
                 folio_req : '',
                 destino_seleccionado: {
                     tipo_destino : '',
@@ -576,7 +575,17 @@
                     this.t ++;
                 }if(this.m == 0)
                 {
-                    return this.$store.dispatch('compras/solicitud-compra/store', this.$data)
+                    return this.$store.dispatch('compras/solicitud-compra/store', {
+                        concepto: this.concepto,
+                        fecha: this.fecha,
+                        fecha_requisicion: this.fecha_requisicion,
+                        partidas: this.partidas,
+                        id_area_compradora: this.id_area_compradora,
+                        id_area_solicitante: this.id_area_solicitante,
+                        folio_requisicion: this.folio_req,
+                        observaciones: this.observaciones,
+                        id_tipo: this.id_tipo
+                    })
                         .then((data) => {
                             this.$router.push({name: 'solicitud-compra-index'});
                         });
