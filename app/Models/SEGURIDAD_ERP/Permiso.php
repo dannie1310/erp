@@ -37,6 +37,15 @@ class Permiso extends Model
         return $query->where('reservado', '=', true);
     }
 
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function scopeReporte($query)
+    {
+        return $query->where('permissions.name', 'like', 'reporte_%');
+    }
+
     public function roles()
     {
         $obra =  Obra::query()->find(Context::getIdObra());

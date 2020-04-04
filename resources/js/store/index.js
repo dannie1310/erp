@@ -82,6 +82,10 @@ import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
 import CFDSAT from './modules/contabilidadGeneral/cfd-sat';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 
+//REPORTES
+
+import reporte from './modules/reportes/reporte';
+
 //CONTRATOS
 import contratoConcepto from './modules/contratos/contrato-concepto';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
@@ -245,6 +249,7 @@ export default new Vuex.Store({
         'contabilidadGeneral/cfd-sat': CFDSAT,
         'contabilidadGeneral/empresa-contpaq': empresaContpaq,
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
+        'reportes/reporte': reporte,
 
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
