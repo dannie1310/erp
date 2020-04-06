@@ -47,8 +47,13 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
              'id_material' => $model->id_material,
              'unidad' => $model->unidad,
              'cantidad' => $model->cantidad,
+             'solicitado_cantidad' => number_format($model->cantidad, 1,'.',','),
              'id_concepto'=> $model->id_concepto,
-             'id_almacen' =>$model->id_almacen
+             'id_almacen' =>$model->id_almacen,
+             'orden_compra_cantidad'=>($model->orden_compra) ? number_format($model->orden_compra, 1,'.',',') : '0.0',
+             'surtido_cantidad' =>($model->entrada_material) ? number_format($model->entrada_material, 1,'.',',') : '0.0',
+             'existencia_cantidad' =>(string) number_format($model->inventario->sum('saldo'), 1,'.',',')
+
          ];
 
     }

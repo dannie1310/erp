@@ -1086,7 +1086,7 @@ export const routes = [
                         name: 'solicitud-compra',
                         component: require('./components/compras/solicitud-compra/Index').default,
                         meta: {
-                            title: 'SOLICITUDES DE COMPRA',
+                            title: 'Solicitudes de Compra',
                             breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_solicitud_compra'

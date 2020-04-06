@@ -39,6 +39,27 @@ class SolicitudCompraPartida extends Item
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
 
+    public function inventario()
+    {
+        return $this->hasMany(Inventario::class, 'id_material', 'id_material');
+    }
 
+    public function itemsOrdenCompra()
+    {
+        return $this->hasMany(ItemOrdenCompra::class, 'item_antecedente', 'id_item');
+    }    
 
+    public function getOrdenCompraAttribute()
+    {        
+        return $this->join('transacciones', 'transacciones.id_transaccion', 'items.id_transaccion')
+        ->where('tipo_transaccion', '=', 19)->where('opciones', '=', 1)
+        ->where('items.id_material', '=', $this->id_material)->sum('cantidad');
+    }
+
+    public function getEntradaMaterialAttribute()
+    {
+        return $this->join('transacciones', 'transacciones.id_transaccion', 'items.id_transaccion')
+        ->where('tipo_transaccion', '=', 33)->where('opciones', '=', 1)
+        ->where('items.id_material', '=', $this->id_material)->sum('cantidad'); 
+    }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
 use App\Services\CADECO\Compras\SolicitudCompraService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class SolicitudCompraController extends Controller
@@ -40,6 +41,8 @@ class SolicitudCompraController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:consultar_solicitud_compra')->only('paginate');
+        $this->middleware('permiso:aprobar_solicitud_compra')->only('aprobar');
+        
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -58,5 +61,10 @@ class SolicitudCompraController extends Controller
     public function pdfSolicitudCompra($id)
     {
         return $this->service->pdfSolicitudCompra($id)->create();
+    }
+
+    public function aprobar(Request $request, $id)
+    {
+        return $this->service->aprobar($request->all(), $id);
     }
 }
