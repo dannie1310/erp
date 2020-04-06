@@ -76,7 +76,7 @@
 
 <script>
     import SubcontratoSelect from "../../cadeco/subcontrato/Select";
-    import DetalleSubcontrato from "../subcontratos/partials/DetalleSubcontrato";
+    import DetalleSubcontrato from "../subcontrato/partials/DetalleSubcontrato";
     export default {
         name: "fondo-garantia-create",
         components: {SubcontratoSelect, DetalleSubcontrato},
