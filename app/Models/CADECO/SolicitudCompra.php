@@ -73,6 +73,11 @@ class SolicitudCompra extends Transaccion
         return $this->belongsTo(Usuario::class, 'registro', 'usuario');
     }
 
+    public function scopeCotizacion($query)
+    {
+        return $query->has('cotizaciones');
+    }
+
     public function cotizaciones()
     {
         return $this->hasMany(CotizacionCompra::class, 'id_antecedente', 'id_transaccion');

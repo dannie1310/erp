@@ -39,9 +39,11 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
             'fecha' => $model->fecha,
+            'estado' => (int) $model->estado,
             'fecha_format'=>$model->fecha_format,
             'observaciones' => $model->observaciones,
             'numero_folio_format'=>(string)$model->numero_folio_format,
+            'cotizaciones' => $model->cotizaciones->count()
         ];
     }
 

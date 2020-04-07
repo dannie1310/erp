@@ -38,16 +38,17 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', sortable: true},
-                    { title: 'Fecha Requerido', field: 'fecha', sortable: true },
-                    { title: 'Fecha / Hora Registro', field: 'fecha_registro', tdClass: 'money', thClass: 'th_money', sortable: false },
+                    { title: 'Núm de la Solicitud', field: 'numero_folio', thClass: 'numero_parte', sortable: true},
+                    { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
-                    // { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Cotizaciones', field: 'cotizaciones', sortable: false },
+                    { title: 'Usuario Registro', field: 'usuario_registro', sortable: false },
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC'},
+                query: {sort: 'numero_folio', order: 'DESC', scope: 'cotizacion'},
                 search: '',
                 cargando: false
             }
@@ -63,12 +64,12 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/cotizacion/paginate', {
+                return this.$store.dispatch('compras/solicitud-compra/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
-                        this.$store.commit('compras/cotizacion/SET_META', data.meta);
+                        this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
+                        this.$store.commit('compras/solicitud-compra/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -76,42 +77,42 @@
                     })
             },
 
-            // getEstado(estado) {
+            getEstado(estado) {
 
-            //     let val = parseInt(estado);
-            //     switch (val) {
-            //         case 0:
-            //             return {
-            //                 color: '#f39c12',
-            //                 descripcion: 'Registrada'
-            //             }
-            //         case 1:
-            //             return {
-            //                 color: '#00a65a',
-            //                 descripcion: 'Aprobada'
-            //             }
-            //         case 2:
-            //             return {
-            //                 color: '#7889d6',
-            //                 descripcion: 'Tercer caso'
-            //             }
-            //         default:
-            //             return {
-            //                 color: '#d2d6de',
-            //                 descripcion: 'Desconocido'
-            //             }
-            //     }
-            // },
+                let val = parseInt(estado);
+                switch (val) {
+                    case 0:
+                        return {
+                            color: '#f39c12',
+                            descripcion: 'Por Autorizar'
+                        }
+                    case 1:
+                        return {
+                            color: '#00a65a',
+                            descripcion: 'Autorizada'
+                        }
+                    case 2:
+                        return {
+                            color: '#7889d6',
+                            descripcion: 'Tercer caso'
+                        }
+                    default:
+                        return {
+                            color: '#d2d6de',
+                            descripcion: 'Desconocido'
+                        }
+                }
+            },
             create() {
                 this.$router.push({name: 'solicitud-compra-create'});
             },
         },
         computed: {
             cotizaciones(){
-                return this.$store.getters['compras/cotizacion/cotizaciones'];
+                return this.$store.getters['compras/solicitud-compra/solicitudes'];
             },
             meta(){
-                return this.$store.getters['compras/cotizacion/meta'];
+                return this.$store.getters['compras/solicitud-compra/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -124,11 +125,12 @@
                     self.$data.data = []
                     self.$data.data = cotizaciones.map((cotizacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: cotizacion.folio,
+                        numero_folio: cotizacion.numero_folio_format,
                         fecha: cotizacion.fecha_format,
-                        fecha_registro: cotizacion.fecha_format,
+                        usuario_registro: cotizacion.usuario.nombre,
                         observaciones: cotizacion.observaciones,
-                        // estado: this.getEstado(cotizacion.estado),
+                        cotizaciones: cotizacion.cotizaciones,
+                        estado: this.getEstado(cotizacion.estado),
                         // buttons: $.extend({}, {
                         //     show: true,
                         //     aprobar: (cotizacion.estado == 0) ? true : false,
