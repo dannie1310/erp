@@ -147,10 +147,10 @@
                                                 <tbody>
                                                 <tr v-for="(partida, i) in partidas">
                                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                    <td v-if="partida.i === 0 && partida.material === ''">
+                                                    <td v-if="partida.material === ''">
                                                     </td>
                                                     <td v-else>{{partida.material.numero_parte}}</td>
-                                                    <td v-if="partida.i === 0 && partida.material === ''">
+                                                    <td v-if="partida.material === ''">
                                                         <model-list-select
                                                             :name="`material[${i}]`"
                                                             v-validate="{required: true}"
@@ -542,7 +542,6 @@
             },
             addPartidas(){
                 this.partidas.splice(this.partidas.length + 1, 0, {
-                    i : 0,
                     material : "",
                     descripcion : "",
                     unidad : "",
@@ -560,19 +559,6 @@
             },
             destroy(index){
                 this.partidas.splice(index, 1);
-            },
-            manual(index){
-                this.partidas[index].material = ""
-                this.partidas[index].id_material = ""
-                this.partidas[index].i = 1;
-            },
-            busqueda(index){
-                this.partidas[index].unidad = ""
-                this.partidas[index].descripcion = ""
-                this.partidas[index].numero_parte = ""
-                this.partidas[index].material = ""
-                this.partidas[index].id_material = ""
-                this.partidas[index].i = 0;
             },
             getMateriales() {
                 this.materiales = [];

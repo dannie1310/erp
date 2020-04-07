@@ -24,15 +24,9 @@ class SolicitudComplementoObserver
         $solicitudComplemento->folio_compuesto = $solicitudComplemento->generaFolioCompuesto();
         $solicitudComplemento->estado = 1;
         $solicitudComplemento->registro = auth()->id();
-    }
-
-    public function created(SolicitudComplemento $solicitudComplemento)
-    {
         if($solicitudComplemento->id_tipo === 3)
         {
-            $solicitudComplemento->activoFijo()->create([
-                'id_transaccion' => $solicitudComplemento->id_transaccion
-            ]);
+            $solicitudComplemento->generarActivoFijo();
         }
     }
 }

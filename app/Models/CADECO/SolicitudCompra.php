@@ -129,50 +129,22 @@ class SolicitudCompra extends Transaccion
 
             /*Registro de partidas*/
             foreach ($data['partidas'] as $partida) {
-                if ($partida['i'] == 0) {
-                    $item = $solicitud->partidas()->create([
-                        'id_transaccion' => $solicitud->id_transaccion,
-                        'id_material' => $partida['material'] ? $partida['material']['id'] : NULL,
-                        'unidad' => $partida['material'] ? $partida['material']['unidad'] : NULL,
-                        'cantidad' => $partida['cantidad']
-                    ]);
-                    $complemento = $item->complemento()->create([
-                        'id_item' => $item->id_item,
-                        'observaciones' => $partida['observaciones'],
-                        'fecha_entrega' => $partida['fecha']
-                    ]);
-                } else {
-                    $material = Material::where('numero_parte', '=', $partida['numero_parte'])->first();
-                    if ($material) {
-                        $item = $solicitud->partidas()->create([
-                            'id_transaccion' => $solicitud->id_transaccion,
-                            'id_material' => $material['id_material'],
-                            'unidad' => $material['unidad'],
-                            'cantidad' => $partida['cantidad']
-                        ]);
-                        $complemento = $item->complemento()->create([
-                            'id_item' => $item->id_item,
-                            'observaciones' => $partida['observaciones'],
-                            'fecha_entrega' => $partida['fecha']
-                        ]);
-                    } else {
-                        $item = $solicitud->partidas()->create([
-                            'id_transaccion' => $solicitud->id_transaccion,
-                            'id_material' => $partida['material'] ? $partida['material']['id'] : NULL,
-                            'unidad' => $partida['material'] ? $partida['material']['unidad'] : NULL,
-                            'cantidad' => $partida['cantidad']
-                        ]);
-                        $complemento = $item->complemento()->create([
-                            'id_item' => $item->id_item,
-                            'observaciones' => $partida['observaciones'],
-                            'fecha_entrega' => $partida['fecha']
-                        ]);
-                    }
-                }
+
+                $item = $solicitud->partidas()->create([
+                    'id_transaccion' => $solicitud->id_transaccion,
+                    'id_material' => $partida['material']['id'],
+                    'unidad' => $partida['material']['unidad'],
+                    'cantidad' => $partida['cantidad']
+                ]);
+                $complemento = $item->complemento()->create([
+                    'id_item' => $item->id_item,
+                    'observaciones' => $partida['observaciones'],
+                    'fecha_entrega' => $partida['fecha']
+                ]);
+
                 $entrega = Entrega::create([
                     'id_item' => $item->id_item,
-                    'fecha' => $item->fecha,
-                    'numero_entrega' => 1,
+                    'fecha' => $partida['fecha'],
                     'cantidad' => $item->cantidad,
                     'id_concepto' => $partida['destino']['tipo_destino'] == 1 ? $partida['destino']['id_destino'] : NULL,
                     'id_almacen' => $partida['destino']['tipo_destino'] == 2 ? $partida['destino']['id_destino'] : NULL,

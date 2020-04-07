@@ -63,8 +63,8 @@ class SolicitudComplemento extends Model
 
     }
 
-    public function generaFolioCompuesto(){
-
+    public function generaFolioCompuesto()
+    {
         $count = $this->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
         $count++;
 
@@ -74,6 +74,12 @@ class SolicitudComplemento extends Model
         $folio=$area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.$count;
 
         return $folio;
+    }
 
+    public function generarActivoFijo()
+    {
+        $this->activoFijo()->create([
+            'id_transaccion' => $this->id_transaccion
+        ]);
     }
 }
