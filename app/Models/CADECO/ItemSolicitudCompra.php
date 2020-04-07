@@ -54,17 +54,37 @@ class ItemSolicitudCompra extends Item
         return $this->hasMany(ItemOrdenCompra::class, 'item_antecedente', 'id_item');
     }
 
-    public function getOrdenCompraAttribute()
+    public function getCantidadOrdenCompraAttribute()
     {
         return $this->join('transacciones', 'transacciones.id_transaccion', 'items.id_transaccion')
         ->where('tipo_transaccion', '=', 19)->where('opciones', '=', 1)
         ->where('items.id_material', '=', $this->id_material)->sum('cantidad');
     }
 
-    public function getEntradaMaterialAttribute()
+    public function getCantidadOrdenCompraFormatAttribute()
+    {
+        return number_format($this->cantidad_orden_compra, 1,'.',',');
+    }
+
+    public function getCantidadEntradaMaterialAttribute()
     {
         return $this->join('transacciones', 'transacciones.id_transaccion', 'items.id_transaccion')
         ->where('tipo_transaccion', '=', 33)->where('opciones', '=', 1)
         ->where('items.id_material', '=', $this->id_material)->sum('cantidad');
+    }
+
+    public function getCantidadEntradaMaterialFormatAttribute()
+    {
+        return number_format($this->cantidad_entrada_material, 1,'.',',');
+    }
+
+    public function getSolicitadoCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad, 1,'.',',');
+    }
+
+    public function getSumaInventarioFormatAttribute()
+    {
+        return number_format($this->inventario->sum('saldo'), 1,'.',',');
     }
 }

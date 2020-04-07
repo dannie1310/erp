@@ -28,9 +28,7 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'complemento',
         'entrega',
-        'material',
-        'concepto'
-
+        'material'
     ];
 
     /**
@@ -39,23 +37,20 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'material'
     ];
 
     public function transform(ItemSolicitudCompra $model){
          return [
-             'id' =>$model->getKey(),
-             'id_transaccion' => $model->id_transaccion,
-             'id_material' => $model->id_material,
+             'id' => $model->getKey(),
              'unidad' => $model->unidad,
              'cantidad' => $model->cantidad,
-             'solicitado_cantidad' => number_format($model->cantidad, 1,'.',','),
+             'solicitado_cantidad' => $model->solicitado_cantidad_format,
              'id_concepto'=> $model->id_concepto,
-             'id_almacen' =>$model->id_almacen,
-             'orden_compra_cantidad'=>($model->orden_compra) ? number_format($model->orden_compra, 1,'.',',') : '0.0',
-             'surtido_cantidad' =>($model->entrada_material) ? number_format($model->entrada_material, 1,'.',',') : '0.0',
-             'existencia_cantidad' =>(string) number_format($model->inventario->sum('saldo'), 1,'.',',')
-
+             'id_almacen' => $model->id_almacen,
+             'orden_compra_cantidad' => $model->cantidad_orden_compra ? $model->cantidad_orden_compra_format : '0.0',
+             'surtido_cantidad' => $model->cantidad_entrada_material ? $model->cantidad_entrada_material_format : '0.0',
+             'existencia_cantidad' => $model->suma_inventario_format
          ];
 
     }
@@ -99,19 +94,6 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
         if($material = $model->material)
         {
             return $this->item($material, new MaterialTransformer);
-        }
-        return null;
-    }
-
-    /**
-     * @param ItemSolicitudCompra $model
-     * @return \League\Fractal\Resource\Item|null
-     */
-    public function includeConcepto(ItemSolicitudCompra $model)
-    {
-        if($concepto = $model->concepto) {
-            return $this->item($concepto, new ConceptoTransformer);
-
         }
         return null;
     }
