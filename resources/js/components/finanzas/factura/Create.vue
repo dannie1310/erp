@@ -34,11 +34,17 @@
                                 <label class="custom-control-label" for="es_deducible">Es Deducible</label>
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="custom-control custom-switch" v-if="dato.es_nacional && dato.es_deducible">
+                                <input type="checkbox" class="custom-control-input button" id="con_nota_credito" v-model="dato.con_nota_credito" >
+                                <label class="custom-control-label" for="con_nota_credito">Aplicar Nota de Crédito</label>
+                            </div>
+                        </div>
                     </div>
                     <hr v-if="dato.es_deducible && dato.es_nacional" />
                     <div class="row" v-if="dato.es_deducible && dato.es_nacional">
                         <div class="col-md-3">
-                            <label for="archivo">Archivo de comprobante:</label>
+                            <label for="archivo">Archivo de factura:</label>
                         </div>
 
                         <div class="col-md-9">
@@ -48,11 +54,31 @@
                                        row="3"
                                        v-validate="{required: true,  ext: ['xml'], size: 3072}"
                                        name="archivo"
-                                       data-vv-as="Archivo"
+                                       data-vv-as="Archivo de Factura"
                                        ref="archivo"
                                        :class="{'is-invalid': errors.has('archivo')}"
                                 >
                                 <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" v-if="dato.es_deducible && dato.es_nacional && dato.con_nota_credito">
+                        <div class="col-md-3">
+                            <label for="archivo">Archivo de nota de crédito:</label>
+                        </div>
+
+                        <div class="col-md-9">
+                            <div class="form-group error-content" >
+
+                                <input type="file" class="form-control" id="archivo_nc" @change="onFileChangeNC"
+                                       row="3"
+                                       v-validate="{required: true,  ext: ['xml'], size: 3072}"
+                                       name="archivo_nc"
+                                       data-vv-as="Archivo Nota de Crédito"
+                                       ref="archivo_nc"
+                                       :class="{'is-invalid': errors.has('archivo_nc')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('archivo_nc')">{{ errors.first('archivo_nc') }} (xml)</div>
                             </div>
                         </div>
                     </div>
@@ -289,6 +315,7 @@
                 dato:{
                     es_deducible:1,
                     es_nacional:1,
+                    con_nota_credito:0,
                     fecha:'',
                     emision:'',
                     vencimiento:'',
@@ -296,10 +323,12 @@
                     id_moneda:'',
                     id_rubro:'',
                     referencia:'',
-                    total:'',
+                    total:0,
                     observaciones:'',
                     archivo:null,
                     archivo_name:null,
+                    archivo_nc:null,
+                    archivo_nc_name:null,
                 },
             }
         },
@@ -324,10 +353,12 @@
                 this.dato.archivo = '';
                 this.dato.es_deducible = 1;
                 this.dato.es_nacional = 1;
-                this.dato.total = '';
+                this.con_nota_credito = 0;
+                this.dato.total = 0;
                 this.dato.id_empresa = '';
                 this.dato.id_rubro = '';
                 this.$refs.archivo.value='';
+                this.$refs.archivo_nc.value='';
             },
             init() {
                 $(this.$refs.modal).appendTo('body')
@@ -407,7 +438,26 @@
                 if(files[0].type == "text/xml")
                 {
                     setTimeout(() => {
-                        this.cargarXML()
+                        this.cargarXML(1)
+                    }, 500);
+                } else {
+                    swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
+                }
+
+            },
+
+            onFileChangeNC(e){
+                this.dato.archivo_nc = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.dato.archivo_nc_name = files[0].name;
+                this.createImageNC(files[0], 1);
+
+                if(files[0].type == "text/xml")
+                {
+                    setTimeout(() => {
+                        this.cargarXML(2)
                     }, 500);
                 } else {
                     swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
@@ -424,11 +474,28 @@
                 };
                 reader.readAsDataURL(file);
             },
-            cargarXML(){
+            createImageNC(file) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.dato.archivo_nc = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+            cargarXML(tipo){
                 this.cargando = true;
                 var formData = new FormData();
-                formData.append('xml',  this.dato.archivo);
-                formData.append('nombre_archivo',  this.dato.archivo_name);
+                formData.append('tipo',  tipo);
+                formData.append('id_empresa',  this.dato.id_empresa);
+                if(tipo == 1){
+                    formData.append('xml',  this.dato.archivo);
+                    formData.append('nombre_archivo',  this.dato.archivo_name);
+                } else if(tipo == 2){
+                    formData.append('xml',  this.dato.archivo_nc);
+                    formData.append('nombre_archivo',  this.dato.archivo_name_nc);
+                }
+
                 return this.$store.dispatch('finanzas/factura/cargarXML',
                     {
                         data: formData,
@@ -438,13 +505,20 @@
                     })
                     .then(data => {
                         var count = Object.keys(data).length;
+
                         if(count > 0 ){
-                            this.dato.total = data.total;
-                            this.dato.referencia = data.serie + data.folio;
-                            this.dato.emision = data.fecha;
-                            this.dato.id_empresa = data.empresa_bd.id_empresa;
-                            this.dato.id_moneda = data.moneda_bd.id_moneda;
-                            this.empresas.push({id:data.empresa_bd.id_empresa,razon_social:data.empresa_bd.razon_social,rfc:data.empresa_bd.rfc});
+                            if(data.tipo_comprobante === "I"){
+
+                                this.dato.total = (parseFloat(this.dato.total) + parseFloat(data.total)).toFixed(2);
+                                this.dato.referencia = data.serie + data.folio;
+                                this.dato.emision = data.fecha;
+                                this.dato.id_empresa = data.empresa_bd.id_empresa;
+                                this.dato.id_moneda = data.moneda_bd.id_moneda;
+                                this.empresas.push({id:data.empresa_bd.id_empresa,razon_social:data.empresa_bd.razon_social,rfc:data.empresa_bd.rfc});
+                            } else if(data.tipo_comprobante === "E"){
+                                this.dato.total = (parseFloat(this.dato.total) - parseFloat(data.total)).toFixed(2);
+                            }
+
 
                         }else{
                             if(this.$refs.archivo.value !== ''){
