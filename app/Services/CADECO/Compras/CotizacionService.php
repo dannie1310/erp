@@ -25,4 +25,9 @@ class CotizacionService
     {
         return $this->repository->show($id)->descargaLayout();
     }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
 }

@@ -11,6 +11,7 @@ class CotizacionTransformer extends TransformerAbstract
 {
     public function transform(CotizacionCompra $model)
     {
+        // dd($model);
         return [
             'id' => (int)$model->getKey(),
             'fecha' => $model->fecha,
