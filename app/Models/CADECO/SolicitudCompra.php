@@ -132,17 +132,12 @@ class SolicitudCompra extends Transaccion
                 if ($partida['i'] == 0) {
                     $item = $solicitud->partidas()->create([
                         'id_transaccion' => $solicitud->id_transaccion,
-                        'id_concepto' => $partida['clave_concepto']['id'],
                         'id_material' => $partida['material'] ? $partida['material']['id'] : NULL,
                         'unidad' => $partida['material'] ? $partida['material']['unidad'] : NULL,
                         'cantidad' => $partida['cantidad']
                     ]);
-
                     $complemento = $item->complemento()->create([
                         'id_item' => $item->id_item,
-                        'descripcion_material' => $partida['material'] ? NULL : $partida['descripcion'],
-                        'numero_parte' => $partida['material'] ? NULL : $partida['numero_parte'],
-                        'unidad' => $partida['material'] ? NULL : $partida['unidad'],
                         'observaciones' => $partida['observaciones'],
                         'fecha_entrega' => $partida['fecha']
                     ]);
@@ -151,48 +146,37 @@ class SolicitudCompra extends Transaccion
                     if ($material) {
                         $item = $solicitud->partidas()->create([
                             'id_transaccion' => $solicitud->id_transaccion,
-                            'id_concepto' => $partida['clave_concepto']['id'],
                             'id_material' => $material['id_material'],
                             'unidad' => $material['unidad'],
                             'cantidad' => $partida['cantidad']
                         ]);
-
                         $complemento = $item->complemento()->create([
                             'id_item' => $item->id_item,
-                            'descripcion_material' => NULL,
-                            'numero_parte' => NULL,
-                            'unidad' => NULL,
                             'observaciones' => $partida['observaciones'],
                             'fecha_entrega' => $partida['fecha']
                         ]);
                     } else {
                         $item = $solicitud->partidas()->create([
                             'id_transaccion' => $solicitud->id_transaccion,
-                            'id_concepto' => $partida['clave_concepto']['id'],
                             'id_material' => $partida['material'] ? $partida['material']['id'] : NULL,
                             'unidad' => $partida['material'] ? $partida['material']['unidad'] : NULL,
                             'cantidad' => $partida['cantidad']
                         ]);
-
                         $complemento = $item->complemento()->create([
                             'id_item' => $item->id_item,
-                            'descripcion_material' => $partida['material'] ? NULL : $partida['descripcion'],
-                            'numero_parte' => $partida['material'] ? NULL : $partida['numero_parte'],
-                            'unidad' => $partida['material'] ? NULL : $partida['unidad'],
                             'observaciones' => $partida['observaciones'],
                             'fecha_entrega' => $partida['fecha']
                         ]);
                     }
                 }
                 $entrega = Entrega::create([
-                    'id_item' => $partida->id_item,
+                    'id_item' => $item->id_item,
                     'fecha' => $item->fecha,
                     'numero_entrega' => 1,
                     'cantidad' => $item->cantidad,
-                    'id_concepto' => $partida->id_concepto,
-                    'id_almacen' => $partida->id_almacen
+                    'id_concepto' => $partida['destino']['tipo_destino'] == 1 ? $partida['destino']['id_destino'] : NULL,
+                    'id_almacen' => $partida['destino']['tipo_destino'] == 2 ? $partida['destino']['id_destino'] : NULL,
                 ]);
-
             }
             DB::connection('cadeco')->commit();
             return $solicitud;
