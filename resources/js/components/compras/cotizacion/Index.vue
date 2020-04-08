@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="" class="btn btn-app btn-info pull-right">
+            <button @click="create" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
@@ -104,7 +104,7 @@
                 }
             },
             create() {
-                this.$router.push({name: 'solicitud-compra-create'});
+                this.$router.push({name: 'cotizacion-create'});
             },
         },
         computed: {
