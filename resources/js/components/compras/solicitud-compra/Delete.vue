@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> DETALLES DE LA SOLICITUD</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-trash"></i> SOLICITUD DE COMPRA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -130,7 +130,8 @@
         props: ['id'],
         data(){
             return{
-                cargando: false,
+                cargando : false,
+                motivo : ''
             }
         },
         methods: {
@@ -150,7 +151,42 @@
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
                 })
-            }
+            },
+            eliminar() {
+                this.cargando = true;
+                return this.$store.dispatch('compras/solicitud-compra/eliminar', {
+                    id: this.id,
+                    params: {data: this.$data.motivo}
+                })
+                    .then(data => {
+                        this.$store.commit('compras/solicitud-compra/DELETE_SOLICITUD', {id: this.id})
+                        $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('compras/solicitud-compra/paginate', {
+                            params: {
+                                sort: 'numero_folio', order: 'DESC'
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
+                                this.$store.commit('compras/solicitud-compra/SET_META', data.meta);
+                            })
+                    })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        if(this.motivo == '') {
+                            swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
+                        }
+                        else {
+                            this.eliminar()
+                        }
+                    }
+                });
+            },
         },
         computed: {
             solicitud() {
