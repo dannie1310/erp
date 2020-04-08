@@ -78,7 +78,7 @@
                                                         <td style="text-align: center">{{partida.material.descripcion}}</td>
                                                         <td style="text-align: center">{{partida.cantidad}}</td>
                                                         <td style="text-align: center">{{(partida.entrega) ? partida.entrega.fecha_format : '------------'}}</td>
-                                                        <td>{{(partida.entrega.concepto) ? partida.entrega.concepto.path : partida.entrega.almacen ? partida.entrega.almacen.descripcion : '------------'}}</td>
+                                                        <td v-if="partida.entrega">{{(partida.entrega.concepto) ? partida.entrega.concepto.path : partida.entrega.almacen ? partida.entrega.almacen.descripcion : '------------'}}</td>
                                                         <td style="text-align: left">{{(partida.complemento) ? partida.complemento.observaciones : '------------'}}</td>
                                                     </tr>
                                                 </tbody>

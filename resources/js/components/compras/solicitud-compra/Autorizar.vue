@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-success" title="Aprobar" v-show="aprobar">
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-success" title="Aprobar">
             <i class="fa fa-thumbs-o-up" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
@@ -19,30 +19,32 @@
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <table class="table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td class="bg-gray-light"><b>Folio:</b></td>
-                                                            <td class="bg-gray-light">{{res.numero_folio_format}}</td>
-                                                            <td class="bg-gray-light"><b>Fecha Requerido:</b></td>
-                                                            <td class="bg-gray-light">{{res.fecha_format}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="bg-gray-light"><b>Usuario Registró:</b></td>
-                                                            <td class="bg-gray-light">{{usuario}}</td>
-                                                            <td class="bg-gray-light"><b>Fecha / Hora Registro</b></td>
-                                                            <td class="bg-gray-light">{{res.fecha_registro}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="bg-gray-light"><b>Observaciones:</b></td>
-                                                            <td class="bg-gray-light" colspan="3">{{res.observaciones}}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                <div class="row">
-                                        <div class="col-12">
-                                            <h6><b>Detalle de las partidas</b></h6>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="bg-gray-light"><b>Folio:</b></td>
+                                                    <td class="bg-gray-light">{{res.numero_folio_format}}</td>
+                                                    <td class="bg-gray-light"><b>Folio Compuesto:</b></td>
+                                                    <td class="bg-gray-light">{{res.compuesto ? res.compuesto.folio : '----'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="bg-gray-light"><b>Fecha Requerido:</b></td>
+                                                    <td class="bg-gray-light">{{res.fecha_format}}</td>
+                                                    <td class="bg-gray-light"><b>Usuario Registró:</b></td>
+                                                    <td class="bg-gray-light">{{usuario}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="bg-gray-light"><b>Fecha / Hora Registro</b></td>
+                                                    <td class="bg-gray-light">{{res.fecha_registro}}</td>
+                                                    <td class="bg-gray-light"><b>Observaciones:</b></td>
+                                                    <td class="bg-gray-light" colspan="3">{{res.observaciones}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h6><b>Detalle de las partidas</b></h6>
+                                            </div>
                                         </div>
-                                    </div>
                                 <div class="row">
                                     <div class="table-responsive col-md-12">
                                             <table class="table table-striped">
@@ -91,21 +93,20 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || partidas.length == 0">Aprobar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || partidas.length == 0">Aprobar</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-
     </span>
 </template>
+
 <script>
 export default {
-
     name: "aprobar-solicitud-editar",
-    props: ['id', 'aprobar'],
+    props: ['id'],
     data() {
         return {
             cargando: false,
@@ -119,7 +120,6 @@ export default {
     },
     methods: {
         save() {
-
                 return this.$store.dispatch('compras/solicitud-compra/aprobar', {
                 id: this.id,
                 data: this.$data,
@@ -143,7 +143,7 @@ export default {
                 this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
                 return this.$store.dispatch('compras/solicitud-compra/find', {
                     id: this.id,
-                    params: {include: ['partidas.material']}
+                    params: {include: ['partidas.material', 'complemento']}
                 }).then(data => {
 
                     this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);

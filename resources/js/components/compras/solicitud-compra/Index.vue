@@ -131,7 +131,7 @@
                         estado: this.getEstado(solicitud.estado),
                         buttons: $.extend({}, {
                             show: true,
-                            aprobar: (solicitud.estado == 0) ? true : false,
+                            aprobar: (self.$root.can('aprobar_solicitud_compra') && (solicitud.estado == 0)) ? true : false,
                             id: solicitud.id,
                         })
                     }));

@@ -1,6 +1,6 @@
 <template>
     <div class="btn-group">
-        <Aprobar v-if="$root.can('aprobar_solicitud_compra')" v-bind:id="value.id" v-bind:aprobar="value.aprobar"></Aprobar>
+        <Aprobar v-if="$root.can('aprobar_solicitud_compra')" v-bind:id="value.id"></Aprobar>
         <!-- <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar Solicitud"> <i class="fa fa-pencil"></i> </button>-->
         <SolicitudShow v-if="value.show" @click="value.id" v-bind:id="value.id"/>
        <!--  <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Solicitud"><i class="fa fa-trash"></i></button>
