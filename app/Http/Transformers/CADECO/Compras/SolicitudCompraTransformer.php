@@ -40,7 +40,7 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'estado' => (int) $model->estado,
             'fecha_format'=>$model->fecha_format,
             'fecha_registro'=>$model->fecha_hora_registro_format,
-            'observaciones' => $model->observaciones,
+            'observaciones' => $model->observaciones != NULL ? $model->observaciones : '',
             'numero_folio_format'=>(string) $model->numero_folio_format,
         ];
     }

@@ -13,40 +13,45 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" v-if="solicitud">
                         <div class="row">
                             <div class="col-12">
                                 <div class="invoice p-3 mb-3">
-                                    <div class="row">
-                                        <div class="col-12" v-if="solicitud">
+                                    <div class="row col-md-12">
+                                        <div class="col-md-6">
                                             <h5>Folio: &nbsp; <b>{{solicitud.numero_folio_format}}</b></h5>
                                         </div>
+                                        <div class="col-md-6">
+                                            <h5>Folio Compuesto: &nbsp; <b>{{solicitud.complemento ? solicitud.complemento.folio : '---'}}</b></h5>
+                                        </div>
                                     </div>
-                                    <table class="table" v-if="solicitud">
-                                        <tbody>
-                                            <tr>
-                                                <td class="bg-gray-light"><b>Fecha Requisición Origen:</b></td>
-                                                <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.fecha_requisicion_origen_format : '------------'}}</td>
-                                                <td class="bg-gray-light"><b>Fecha:</b></td>
-                                                <td class="bg-gray-light"> {{solicitud.fecha_format}} </td>
-                                                <td class="bg-gray-light"><b>Folio Requisición Origen:</b></td>
-                                                <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.folio : '------------'}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="bg-gray-light"><b>Departamento Responsable:</b></td>
-                                                <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_compradora.descripcion : '------------'}}</td>
-                                                <td class="bg-gray-light"><b>Tipo:</b></td>
-                                                <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.tipo.descripcion : '------------'}}</td>
-                                                <td class="bg-gray-light"><b>Área Solicitante:</b></td>
-                                                <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_solicitante.descripcion : '------------'}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="bg-gray-light"><b>Concepto:</b></td>
-                                                <td class="bg-gray-light" colspan="3">{{(solicitud.complemento) ? solicitud.complemento.concepto : '------------'}}</td>
-                                                <td class="bg-gray-light"><b>Usuario Registró:</b></td>
-                                                <td class="bg-gray-light">{{(solicitud.usuario) ? solicitud.usuario.nombre : '------------'}}</td></tr>
-                                        </tbody>
-                                    </table>
+                                    <div class="table-responsive col-md-12">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="bg-gray-light"><b>Fecha:</b></td>
+                                                    <td class="bg-gray-light"> {{solicitud.fecha_format}} </td>
+                                                    <td class="bg-gray-light"><b>Fecha Requisición Origen:</b></td>
+                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.fecha_requisicion_origen_format : '------------'}}</td>
+                                                    <td class="bg-gray-light"><b>Folio Requisición Origen:</b></td>
+                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.requisicion_origen : '------------'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="bg-gray-light"><b>Departamento Responsable:</b></td>
+                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_compradora.descripcion : '------------'}}</td>
+                                                    <td class="bg-gray-light"><b>Tipo:</b></td>
+                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.tipo.descripcion : '------------'}}</td>
+                                                    <td class="bg-gray-light"><b>Área Solicitante:</b></td>
+                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_solicitante.descripcion : '------------'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="bg-gray-light"><b>Concepto:</b></td>
+                                                    <td class="bg-gray-light" colspan="3">{{(solicitud.complemento) ? solicitud.complemento.concepto : '------------'}}</td>
+                                                    <td class="bg-gray-light"><b>Usuario Registró:</b></td>
+                                                    <td class="bg-gray-light">{{(solicitud.usuario) ? solicitud.usuario.nombre : '------------'}}</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     <div class="row">
                                         <div class="col-12">
                                             <h6><b>Detalle de las partidas</b></h6>
@@ -66,7 +71,7 @@
                                                         <th>Observaciones</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody v-if="solicitud">
+                                                <tbody>
                                                     <tr v-for="(partida, i) in solicitud.partidas.data">
                                                         <td>{{i+1}}</td>
                                                         <td style="text-align: center"><b>{{partida.material.numero_parte}}</b></td>
@@ -80,18 +85,14 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <table class="table table-responsive" v-if="solicitud">
-                                        <tbody>
-                                            <tr>
-                                                <td style="text-align:center;" class="bg-gray-light"><b>Observaciones:</b></td>
-                                                <td class="bg-gray-light">{{solicitud.observaciones}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    <div class="row col-md-12">
+                                        <div class="col-md-2"><b>Observaciones:</b></div>
+                                        <div class="col-md-10">{{solicitud.observaciones}}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div v>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
