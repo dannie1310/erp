@@ -80,17 +80,17 @@ export default{
                     });
             });
         },
-        listLiberaciones(context, payload) {
+        index(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id + '/listLiberaciones', { params: payload.params })
+                    .get(URI, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
                     })
                     .catch(error => {
                         reject(error);
-                    });
+                    })
             });
         },
         store(context, payload) {

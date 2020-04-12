@@ -19,9 +19,7 @@ class SolicitudCompraTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'complemento',
         'partidas',
-        'usuario',
-
-
+        'usuario'
     ];
 
     /**
@@ -41,9 +39,9 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'fecha' => $model->fecha,
             'estado' => (int) $model->estado,
             'fecha_format'=>$model->fecha_format,
-            'observaciones' => $model->observaciones,
-            'numero_folio_format'=>(string)$model->numero_folio_format,
-            'cotizaciones' => $model->cotizaciones->count()
+            'fecha_registro'=>$model->fecha_hora_registro_format,
+            'observaciones' => $model->observaciones != NULL ? $model->observaciones : '',
+            'numero_folio_format'=>(string) $model->numero_folio_format,
         ];
     }
 
@@ -52,7 +50,6 @@ class SolicitudCompraTransformer extends TransformerAbstract
      * @param SolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
-
     public function includeComplemento(SolicitudCompra $model)
     {
         if($complemento =$model->complemento)
@@ -60,13 +57,12 @@ class SolicitudCompraTransformer extends TransformerAbstract
             return $this->item($complemento, new SolicitudComplementoTransformer);
         }
         return null;
-
     }
+
     /**
      * @param SolicitudCompra$model
      * @return \League\Fractal\Resource\Collection|null
      */
-
     public function includePartidas(SolicitudCompra $model)
     {
         if($partidas = $model->partidas)
@@ -74,7 +70,6 @@ class SolicitudCompraTransformer extends TransformerAbstract
             return $this->collection($partidas, new SolicitudCompraPartidaTransformer);
         }
         return null;
-
     }
 
     /**

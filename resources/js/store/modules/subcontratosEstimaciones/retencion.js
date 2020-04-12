@@ -80,19 +80,6 @@ export default{
                 })
             });
         },
-        listRetenciones(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + payload.id + '/listRetenciones', { params: payload.params })
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    });
-            });
-        },
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -129,6 +116,19 @@ export default{
                         });
                     }
                 });
+            });
+        },
+        index(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             });
         },
     },

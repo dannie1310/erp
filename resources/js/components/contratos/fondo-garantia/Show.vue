@@ -120,7 +120,7 @@
 </template>
 
 <script>
-    import DetalleSubcontrato from "../subcontratos/partials/DetalleSubcontrato";
+    import DetalleSubcontrato from "../subcontrato/partials/DetalleSubcontrato";
     export default {
         name: "fondo-garantia-show",
         components: {DetalleSubcontrato},

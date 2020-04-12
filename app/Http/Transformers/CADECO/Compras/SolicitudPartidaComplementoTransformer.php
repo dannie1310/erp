@@ -22,5 +22,4 @@ class SolicitudPartidaComplementoTransformer extends TransformerAbstract
             'observaciones' => $model->observaciones
         ];
     }
-
 }

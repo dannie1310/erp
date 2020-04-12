@@ -12,6 +12,10 @@ class CotizacionCompra  extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
 
+    protected $searchable = [
+        'id_transaccion'
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -31,8 +35,8 @@ class CotizacionCompra  extends Transaccion
         return $this->belongsTo(CotizacionComplemento::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function descargaLayout()
+    public function descargaLayout($id)
     {
-        return Excel::download(new CotizacionLayout($this), 'LayoutCotizacion.xlsx');
+        return Excel::download(new CotizacionLayout(CotizacionCompra::find($id)), 'LayoutCotizacion.xlsx');
     }
 }

@@ -50,13 +50,26 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 return 1;
                 break;
         }
-
-
     }
 
     public function getEmpresa(Array $datos){
         $empresa = Empresa::where("rfc","=",$datos["rfc"])
             ->whereIn("tipo_empresa",[1,2,3,4])->first();
+        $salida = null;
+
+        if($empresa){
+            $salida =[
+                "id_empresa"=>$empresa->id_empresa,
+                "rfc"=>$empresa->rfc,
+                "razon_social"=>$empresa->razon_social,
+                "nuevo"=>0,
+            ];
+        }
+        return $salida;
+    }
+
+    public function getEmpresaPorId($id){
+        $empresa = Empresa::find($id);
         $salida = null;
 
         if($empresa){
