@@ -168,17 +168,17 @@ class SolicitudCompra extends Transaccion
         return $query->has('partidas');
     }
 
-    public function cotizaciones()
-    {
-        try {
-            DB::connection('cadeco')->beginTransaction();
+    // public function cotizaciones()
+    // {
+    //     try {
+    //         DB::connection('cadeco')->beginTransaction();
 
 
-            DB::connection('cadeco')->commit();
-            return $this;
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-        }
-    }
+    //         DB::connection('cadeco')->commit();
+    //         return $this;
+    //     } catch (\Exception $e) {
+    //         DB::connection('cadeco')->rollBack();
+    //         abort(400, $e->getMessage());
+    //     }
+    // }
 }
