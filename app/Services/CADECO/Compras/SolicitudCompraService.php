@@ -50,6 +50,11 @@ class SolicitudCompraService
 
     }
 
+    public function index($data)
+    {
+        return $this->repository->all($data);
+    }
+
     public function store($data)
     {
         /*Validación de Partidas*/

@@ -27,7 +27,7 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="id_area_compradora">Buscar Solicitud:</label>
+                                            <label for="id_solicitud">Buscar Solicitud:</label>
                                             <!-- <select class="form-control"
                                                     name="id_area_compradora"
                                                     data-vv-as="Departamento Responsable"
@@ -40,23 +40,23 @@
                                             </select> -->
                                                  <model-list-select
                                                                 name="id_solicitud"
-                                                                option-value="id"
-                                                                :onchange="cambia(id_solicitud)"                                                                
+                                                                option-value="id"                                                               
                                                                 v-model="id_solicitud"
                                                                 :custom-text="idAndNumeroParteAndDescripcion"
-                                                                :list="materiales"
+                                                                :list="solicitudes"
                                                                 :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'">
                                                             </model-list-select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_compradora')">{{ errors.first('id_area_compradora') }}</div>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <!-- <form role="form" @submit.prevent="validate"> -->
+                                <div class="row">   <!--concepto label-->
                                     <div class="col-md-12">
                                         <label for="concepto" class="col-form-label">Concepto: </label>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row">   <!--Consepto area text-->
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
                                             <textarea
@@ -74,7 +74,7 @@
                                 </div>
                                 <hr />
                                 
-                                <div class="row">
+                                <!-- <div class="row">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
@@ -97,7 +97,7 @@
                                                     </th>
                                                 </tr>
                                                 </thead>
-                                                <!-- <tbody>
+                                                <tbody>
                                                     <tr v-for="(partida, i) in partidas">
                                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                         <td v-if="partida.i === 0 && partida.material === ''">
@@ -210,17 +210,17 @@
                                                             <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                         </td>
                                                     </tr>
-                                                </tbody> -->
+                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
+                                </div> -->
+                                <div class="row">   <!--Obserbaciones label-->
                                     <div class="col-md-12">
                                         <label for="observaciones" class="col-form-label">Observaciones: </label>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row">   <!--Observaciones text area-->
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
                                             <textarea
@@ -236,6 +236,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- </form> -->
                             </div>
                              <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
@@ -246,60 +247,16 @@
                 </div>
             </div>
         </nav>
-        <!-- <nav>
-            <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" >
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form role="form">
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group row error-content">
-                                            <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
-                                            <div class="col-sm-10">
-                                                <concepto-select
-                                                        name="id_concepto"
-                                                        data-vv-as="Concepto"
-                                                        id="id_concepto"
-                                                        v-model="id_concepto_temporal"
-                                                        :error="errors.has('id_concepto')"
-                                                        ref="conceptoSelect"
-                                                        :disableBranchNodes="false"
-                                                ></concepto-select>
-                                                <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
-                             </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </nav> -->
     </span>
 </template>
 
 <script>
-    import MaterialSelect from "../../cadeco/material/SelectAutocomplete"
-    import NumeroParteSelect from "../../cadeco/material/SelectNumeroParteAutocomplete"
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
-    // import Layout from "./CargaLayout";
     import {ModelListSelect} from 'vue-search-select';
-    import ConceptoSelect from "../../cadeco/concepto/Select";
     export default {
         name: "cotizacion-create",
-        components: {MaterialSelect, Datepicker,NumeroParteSelect, ModelListSelect, ConceptoSelect},
+        components: {Datepicker, ModelListSelect},
         data() {
             return {
                 cargando: false,
@@ -316,7 +273,7 @@
                 id_area_compradora : '',
                 id_concepto_temporal : '',
                 id_tipo : '',
-                materiales : [],
+                solicitudes : [],
                 id_area_solicitante : '',
                 concepto : '',
                 observaciones : '',
@@ -343,12 +300,13 @@
             }
         },
         mounted() {
+            // @p_trainer.sunny
             this.$validator.reset();
             this.getAreasCompradoras();
             this.getAreasSolicitantes();
-            this.getTipos();
-            this.getUnidades();
-            this.getMateriales();
+            // this.getTipos();
+            // this.getUnidades();
+            this.getSolicitudes();
         },
         methods : {
             init() {
@@ -376,16 +334,21 @@
                     concepto_temporal : ""
                 }];
             },
-            changeSelect(item){
-                var busqueda = this.materiales.find(x=>x.id === item.id_material);
+            changeSelect(){
+                var busqueda = this.solicitudes.find(x=>x.id === this.id_solicitud);
                 if(busqueda != undefined)
                 {
-                    item.material = busqueda;
+                    // alert(busqueda.descripcion);
+                    this.cambia();
+                    console.log(busqueda, this.id_solicitud, this.fecha);
                 }
+                
+                
             },
-            cambia(x)
+            cambia()
             {
                 console.log('Cambia', this.id_solicitud);
+                this.getTipos();
                 
             },
             modalDestino(i) {
@@ -401,8 +364,9 @@
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
-            idAndNumeroParteAndDescripcion (item) {
-                return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
+            idAndNumeroParteAndDescripcion (item)
+            {
+                return `[${item.numero_folio_format}] ---- [ ${item.observaciones} ]`;
             },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
@@ -429,6 +393,8 @@
                     })
             },
             getTipos() {
+                console.log('tipos', this.id_solicitud);
+                
                 return this.$store.dispatch('configuracion/ctg-tipo/index', {
                     params: {sort: 'descripcion', order: 'asc'}
                 })
@@ -516,24 +482,28 @@
                 this.partidas[index].id_material = ""
                 this.partidas[index].i = 0;
             },
-            getMateriales() {
-                this.materiales = [];
+            getSolicitudes() {
+                this.solicitudes = [];
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/material/index', {
+                return this.$store.dispatch('compras/solicitud-compra/index', {
                     params: {
-                        scope: 'requisicion',
-                        limit: 10
+                        scope: 'conItems',
+                        limit: 100,
+                        order: 'DESC',
+                        sort: 'numero_folio'
                     }
                 })
                     .then(data => {
-                        this.materiales = data.data;
+                        this.solicitudes = data.data;
                         this.cargando = false;
                     })
             },
             validate() {
+                
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        alert('validate');
+                        // this.store()
                     }
                 });
             },
@@ -563,7 +533,17 @@
                     this.destino_seleccionado.id_destino = value;
                     this.getConcepto();
                 }
-                },
+            },
+            id_solicitud(value){
+                console.log('Solicitud watch', this.id_solicitud);
+                this.getTipos();
+                
+                // if(value !== '' && value !== null && value !== undefined){
+                //     this.destino_seleccionado.id_destino = value;
+                //     this.getConcepto();
+                // }
+            }
+
         }
     }
 </script>
