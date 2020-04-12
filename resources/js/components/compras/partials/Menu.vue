@@ -16,12 +16,8 @@
                 <router-link :to="{name: 'solicitud-compra'}" class="nav-link">
                     <i class="fa fa-circle nav-icon"></i>
                     <p>Solicitudes</p>
-            <!--<li class="nav-item" v-if="$root.can('consultar_solicitud_compra')">-->
-                <!--<router-link :to="{name: 'solicitud-compra'}" class="nav-link">-->
-                    <!--<i class="fa fa-circle nav-icon"></i>-->
-                    <!--<p>Solicitudes de Compra</p>-->
-                <!--</router-link>-->
-            <!--</li>-->
+                </router-link>
+            </li>
             <li class="nav-item">
                 <router-link :to="{name: 'cotizacion'}" class="nav-link">
                     <i class="fa fa-circle nav-icon"></i>
