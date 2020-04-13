@@ -21,7 +21,8 @@ class CotizacionCompra  extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 18);
+            return $query->where('tipo_transaccion', '=', 18)
+            ->where('opciones','=', 1)->where('estado', '!=', 2);
         });
     }
 
