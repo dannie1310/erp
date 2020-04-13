@@ -28,21 +28,11 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="id_solicitud">Buscar Solicitud:</label>
-                                            <!-- <select class="form-control"
-                                                    name="id_area_compradora"
-                                                    data-vv-as="Departamento Responsable"
-                                                    v-model="id_area_compradora"
-                                                    v-validate="{required: true}"
-                                                    :error="errors.has('id_area_compradora')"
-                                                    id="id_area_compradora">
-                                                  <option value>-- Seleccionar--</option>
-                                                  <option v-for="area in areas_compradoras" :value="area.id" >{{ area.descripcion}}</option>
-                                            </select> -->
                                                  <model-list-select
                                                                 name="id_solicitud"
                                                                 option-value="id"                                                               
                                                                 v-model="id_solicitud"
-                                                                :custom-text="idAndNumeroParteAndDescripcion"
+                                                                :custom-text="idFolioObservaciones"
                                                                 :list="solicitudes"
                                                                 :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'">
                                                             </model-list-select>
@@ -50,13 +40,30 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <form role="form" @submit.prevent="validate"> -->
-                                <div class="row">   <!--concepto label-->
+                                <div class="row justify-content-between">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="id_area_compradora">Proovedores</label>
+                                            <select class="form-control"
+                                                    name="id_area_compradora"
+                                                    data-vv-as="Departamento Responsable"
+                                                    v-model="id_area_compradora"
+                                                    v-validate="{required: true}"
+                                                    :error="errors.has('id_area_compradora')"
+                                                    id="id_area_compradora">
+                                                <option value>-- Seleccionar--</option>
+                                                <option v-for="area in areas_compradoras" :value="area.id" >{{ area.descripcion}}</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_compradora')">{{ errors.first('id_area_compradora') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="row">   
                                     <div class="col-md-12">
                                         <label for="concepto" class="col-form-label">Concepto: </label>
                                     </div>
-                                </div>
-                                <div class="row">   <!--Consepto area text-->
+                                </div> -->
+                                <!-- <div class="row">   
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
                                             <textarea
@@ -71,10 +78,10 @@
                                             <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <hr />
                                 
-                                <!-- <div class="row">
+                                <div class="row" v-if="id_solicitud != ''">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
@@ -83,21 +90,18 @@
                                                     <th class="index_corto">#</th>
                                                     <th style="width:130px;">No. de Parte</th>
                                                     <th>Descripción</th>
-                                                    <th class="icono"></th>
-                                                    <th class="cantidad_input">Cantidad</th>
                                                     <th class="unidad">Unidad</th>
-                                                    <th style="width:140px;">Fecha Entrega</th>
-                                                    <th class="icono"></th>
-                                                    <th>Destino</th>
+                                                    <th class="cantidad_input">Cantidad Solicitada</th>
+                                                    <th class="cantidad_input">Cantidad Aprobada</th>                                                    
+                                                    <th style="width:140px;">Precio Unitario</th>
+                                                    <th style="width:140px;">% Descuento</th>
+                                                    <th class="money">Precio Total</th>
+                                                    <th class="money">Moneda</th>
+                                                    <th class="money">Precio Total Moneda Conversión</th>
                                                     <th>Observaciones</th>
-                                                    <th class="icono">
-                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
-                                                            <i class="fa fa-plus"></i>
-                                                        </button>
-                                                    </th>
                                                 </tr>
                                                 </thead>
-                                                <tbody>
+                                                <!-- <tbody>
                                                     <tr v-for="(partida, i) in partidas">
                                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                         <td v-if="partida.i === 0 && partida.material === ''">
@@ -210,11 +214,11 @@
                                                             <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                         </td>
                                                     </tr>
-                                                </tbody>
+                                                </tbody> -->
                                             </table>
                                         </div>
                                     </div>
-                                </div> -->
+                                </div>
                                 <div class="row">   <!--Obserbaciones label-->
                                     <div class="col-md-12">
                                         <label for="observaciones" class="col-form-label">Observaciones: </label>
@@ -240,7 +244,7 @@
                             </div>
                              <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Registrar</button>
+                                    <button type="submit" :disabled="id_solicitud == ''" class="btn btn-primary">Registrar</button>
                              </div>
                         </form>
                     </div>
@@ -263,108 +267,24 @@
                 id_solicitud: '',
                 es:es,
                 fechasDeshabilitadas:{},
-                fechasDeshabilitadasHasta:{},
                 fecha : '',
-                fecha_hoy : '',
-                id_material: '',
-                areas_compradoras : [],
-                areas_solicitantes : [],
                 tipos : [],
+                areas_compradoras : [],
                 id_area_compradora : '',
-                id_concepto_temporal : '',
                 id_tipo : '',
                 solicitudes : [],
-                id_area_solicitante : '',
                 concepto : '',
-                observaciones : '',
-                unidades : [],
-                t: '',
-                destino_seleccionado: {
-                    tipo_destino : '',
-                    destino : '',
-                    id_destino : ''
-                },
-                partidas: [
-                    {
-                        i : 0,
-                        material : "",
-                        unidad : "",
-                        numero_parte : "",
-                        descripcion : "",
-                        cantidad : "",
-                        fecha : "",
-                        observaciones : "",
-                        concepto_temporal : ""
-                    }
-                ],
+                observaciones : '',                
             }
         },
         mounted() {
-            // @p_trainer.sunny
+            this.fecha = new Date();
             this.$validator.reset();
-            this.getAreasCompradoras();
-            this.getAreasSolicitantes();
-            // this.getTipos();
-            // this.getUnidades();
             this.getSolicitudes();
+            this.getAreasCompradoras();
         },
         methods : {
-            init() {
-                this.fecha = new Date();
-                this.cargando = true;
-                this.areas_compradoras = '';
-                this.areas_solicitantes = [];
-                this.tipos = [];
-                this.id_area_compradora = '';
-                this.id_tipo = '';
-                this.id_area_solicitante = '';
-                this.concepto = '';
-                this.observaciones = '';
-                this.id_concepto_temporal = '';
-                this.unidades = [];
-                this.partidas = [{
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : "",
-                    fecha : "",
-                    observaciones : "",
-                    concepto_temporal : ""
-                }];
-            },
-            changeSelect(){
-                var busqueda = this.solicitudes.find(x=>x.id === this.id_solicitud);
-                if(busqueda != undefined)
-                {
-                    // alert(busqueda.descripcion);
-                    this.cambia();
-                    console.log(busqueda, this.id_solicitud, this.fecha);
-                }
-                
-                
-            },
-            cambia()
-            {
-                console.log('Cambia', this.id_solicitud);
-                this.getTipos();
-                
-            },
-            modalDestino(i) {
-                this.partidas[i].clave_concepto = '';
-                this.destino_seleccionado.destino = '';
-                this.index_temporal = i;
-                $(this.$refs.modal_destino).modal('show');
-            },
-            cerrarModalDestino(){
-                console.log(this.id_solicitud);
-                
-                this.id_concepto_temporal = '';
-                $(this.$refs.modal_destino).modal('hide');
-                this.$validator.reset();
-            },
-            idAndNumeroParteAndDescripcion (item)
+            idFolioObservaciones (item)
             {
                 return `[${item.numero_folio_format}] ---- [ ${item.observaciones} ]`;
             },
@@ -372,24 +292,11 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             getAreasCompradoras() {
-                this.fecha_hoy = new Date();
-                this.fecha = new Date();
-                this.fechasDeshabilitadas.from= new Date();
-                this.fechasDeshabilitadasHasta.to= new Date();
                 return this.$store.dispatch('configuracion/area-compradora/index', {
                     params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_compradoras = data;
-                        this.disabled = false;
-                    })
-            },
-            getUnidades() {
-                return this.$store.dispatch('cadeco/unidad/index', {
-                    params: {sort: 'unidad',  order: 'asc'}
-                })
-                    .then(data => {
-                        this.unidades= data.data;
                     })
             },
             getTipos() {
@@ -403,84 +310,29 @@
                         this.disabled = false;
                     })
             },
-            seleccionarDestino() {
-                this.partidas[this.index_temporal].destino = this.destino_seleccionado.destino;
-                this.partidas[this.index_temporal].clave_concepto = this.destino_seleccionado.destino;
-                this.index_temporal = '';
-                this.destino_seleccionado = {
-                    tipo_destino : '',
-                    destino : '',
-                    id_destino : ''
-                };
-                this.id_concepto_temporal = '';
-
-                $(this.$refs.modal_destino).modal('hide');
-                this.$validator.reset();
-            },
-            getConcepto() {
-                return this.$store.dispatch('cadeco/concepto/find', {
-                    id: this.destino_seleccionado.id_destino,
-                    params: {
-                    }
-                })
-                    .then(data => {
-                        this.destino_seleccionado.destino = data;
-                        this.seleccionarDestino();
-                    })
-            },
-            getAreasSolicitantes() {
-                return this.$store.dispatch('configuracion/area-solicitante/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
-                })
-                    .then(data => {
-                        this.areas_solicitantes = data;
-                        this.disabled = false;
-                    })
-            },
-            addPartidas(){
-                this.partidas.splice(this.partidas.length + 1, 0, {
-                    i : 0,
-                    material : "",
-                    descripcion : "",
-                    unidad : "",
-                    numero_parte : "",
-                    cantidad : "",
-                    fecha : "",
-                    observaciones : "",
-                    concepto_temporal : ""
-                });
-                this.index = this.index+1;
-            },
             salir(){
                 console.log(this.id_solicitud);
                 
                 this.$router.push({name: 'cotizacion'});
             },
-            destroy(index){
-                this.partidas.splice(index, 1);
-            },
-            lista()
-            {
-                 this.cargando = true;
-                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'requisicion'})
-                    .then(() => {
-                        this.$emit('success')
-                    }).finally(() => {
-                        this.cargando = false;
-                    })
-            },
-            manual(index){
-                this.partidas[index].material = ""
-                this.partidas[index].id_material = ""
-                this.partidas[index].i = 1;
-            },
-            busqueda(index){
-                this.partidas[index].unidad = ""
-                this.partidas[index].descripcion = ""
-                this.partidas[index].numero_parte = ""
-                this.partidas[index].material = ""
-                this.partidas[index].id_material = ""
-                this.partidas[index].i = 0;
+            find() {
+
+                this.cargando = true;
+                this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
+                return this.$store.dispatch('compras/solicitud-compra/find', {
+                    id: this.id_solicitud,
+                    params:{include: [
+                            'complemento',
+                            'partidas.complemento',
+                            'partidas.entrega',
+                            'cotizaciones']}
+                }).then(data => {
+                    this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
+
+                    $(this.$refs.modal).appendTo('body')
+                    $(this.$refs.modal).modal('show')
+                    this.cargando = false;
+                })
             },
             getSolicitudes() {
                 this.solicitudes = [];
@@ -535,8 +387,10 @@
                 }
             },
             id_solicitud(value){
-                console.log('Solicitud watch', this.id_solicitud);
-                this.getTipos();
+                console.log('Solicitud watch', value);
+                // this.getTipos();
+                this.find();
+                
                 
                 // if(value !== '' && value !== null && value !== undefined){
                 //     this.destino_seleccionado.id_destino = value;
