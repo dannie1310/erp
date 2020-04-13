@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-success" title="Aprobar" v-show="aprobar">
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-success" title="Aprobar">
             <i class="fa fa-thumbs-o-up" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
@@ -106,7 +106,7 @@
 <script>
 export default {
     name: "aprobar-solicitud-editar",
-    props: ['id', 'aprobar'],
+    props: ['id'],
     data() {
         return {
             cargando: false,
