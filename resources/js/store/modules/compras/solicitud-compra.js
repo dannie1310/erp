@@ -104,6 +104,21 @@ export default {
             });
 
         },
+        index(context, payload) {
+            console.log('Index solicitud compra', payload);
+            
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         update(context, payload){
             return new Promise((resolve, reject) => {
                 swal({

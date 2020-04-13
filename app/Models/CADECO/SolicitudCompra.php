@@ -158,17 +158,13 @@ class SolicitudCompra extends Transaccion
         }
     }
 
-    public function eliminar($motivo)
+    public function scopeCotizacion($query)
     {
-        try {
-            DB::connection('cadeco')->beginTransaction();
+        return $query->has('cotizaciones');
+    }
 
-
-            DB::connection('cadeco')->commit();
-            return $this;
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-        }
+    public function scopeConItems($query)
+    {
+        return $query->has('partidas');
     }
 }
