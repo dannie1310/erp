@@ -92,7 +92,7 @@
                                         <div class="form-group">
                                             <label>Folio Requisición Origen</label>
                                             <input
-                                                type="text"
+                                                type="number"
                                                 data-vv-as="Folio Requisición"
                                                 class="form-control"
                                                 placeholder="Folio Requisición"
