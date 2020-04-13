@@ -41,20 +41,20 @@
                                     </div>
                                 </div>
                                 <div class="row justify-content-between">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="id_area_compradora">Proovedores</label>
+                                            <label for="id_proveedor">Proovedores</label>
                                             <select class="form-control"
-                                                    name="id_area_compradora"
-                                                    data-vv-as="Departamento Responsable"
-                                                    v-model="id_area_compradora"
+                                                    name="id_proveedor"
+                                                    data-vv-as="Proveedores"
+                                                    v-model="id_proveedor"
                                                     v-validate="{required: true}"
-                                                    :error="errors.has('id_area_compradora')"
-                                                    id="id_area_compradora">
+                                                    :error="errors.has('id_proveedor')"
+                                                    id="id_proveedor">
                                                 <option value>-- Seleccionar--</option>
-                                                <option v-for="area in areas_compradoras" :value="area.id" >{{ area.descripcion}}</option>
+                                                <option v-for="area in proveedores" :value="area.id" >{{ area.razon_social}}</option>
                                             </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_compradora')">{{ errors.first('id_area_compradora') }}</div>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -269,8 +269,8 @@
                 fechasDeshabilitadas:{},
                 fecha : '',
                 tipos : [],
-                areas_compradoras : [],
-                id_area_compradora : '',
+                proveedores : [],
+                id_proveedor : '',
                 id_tipo : '',
                 solicitudes : [],
                 concepto : '',
@@ -280,8 +280,9 @@
         mounted() {
             this.fecha = new Date();
             this.$validator.reset();
+            this.getProveedores();
             this.getSolicitudes();
-            this.getAreasCompradoras();
+            
         },
         methods : {
             idFolioObservaciones (item)
@@ -291,12 +292,18 @@
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
-            getAreasCompradoras() {
-                return this.$store.dispatch('configuracion/area-compradora/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+            getProveedores() {
+                // return this.$store.dispatch('configuracion/area-compradora/index', {
+                //     params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+                // })
+                //     .then(data => {
+                //         this.proveedores = data;
+                //     })
+                return this.$store.dispatch('cadeco/empresa/index', {
+                    params: {sort: 'razon_social', order: 'asc', scope:'proveedor', include: 'sucursales' }
                 })
                     .then(data => {
-                        this.areas_compradoras = data;
+                        this.proveedores = data.data;
                     })
             },
             getTipos() {
