@@ -106,7 +106,7 @@ class SolicitudCompra extends Transaccion
 
         $this->estado = 1;
         $this->save();
-        return $this->partidas;
+        return $this;
     }
 
     public function registrar($data)
