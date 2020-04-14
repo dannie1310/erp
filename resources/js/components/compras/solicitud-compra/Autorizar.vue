@@ -125,15 +125,13 @@ export default {
                 data: this.$data,
             })
                 .then(() => {
-                   return this.$store.dispatch('compras/solicitud-compra/paginate', { params: {sort: 'numero_folio', order: 'DESC'}})
+                    $(this.$refs.modal).modal('hide');
+                    return this.$store.dispatch('compras/solicitud-compra/paginate', { params: {sort: 'numero_folio', order: 'DESC'}})
                     .then(data => {
                         this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
                         this.$store.commit('compras/solicitud-compra/SET_META', data.meta);
                     })
-                   }).finally( ()=>{
-                       $(this.$refs.modal).modal('hide');
-                   });
-
+                })
         },
         find() {
             this.t = 0;
@@ -155,7 +153,7 @@ export default {
                         this.cantidad[this.t] = this.partidas[this.t].cantidad;
                         this.t ++;
                     }
-
+                    $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;
