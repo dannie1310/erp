@@ -79,7 +79,6 @@ class SolicitudCompra extends Transaccion
     {
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
-
     }
 
     /**
@@ -166,5 +165,31 @@ class SolicitudCompra extends Transaccion
     public function scopeConItems($query)
     {
         return $query->has('partidas');
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validarParaEliminar();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function validarParaEliminar()
+    {
+        //revisar transacciones asociadas...
+
+    }
+
+    public function revisarRespaldos($motivo)
+    {
+
     }
 }
