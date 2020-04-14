@@ -1,10 +1,10 @@
 <template>
     <div class="row">
-        <!-- <div class="col-12">
-            <button @click="create_solicitud" v-if="" class="btn btn-app btn-info pull-right">
+        <div class="col-12">
+            <button @click="create" v-if="$root.can('registrar_solicitud_compra')" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
-        </div> -->
+        </div>
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -72,12 +72,12 @@
                     })
                     .finally(() => {
                         this.cargando = false;
-                        
+
                     })
             },
 
             getEstado(estado) {
-                
+
                 let val = parseInt(estado);
                 switch (val) {
                     case 0:
@@ -101,7 +101,10 @@
                             descripcion: 'Desconocido'
                         }
                 }
-            }
+            },
+            create() {
+                this.$router.push({name: 'solicitud-compra-create'});
+            },
         },
         computed: {
             solicitudes(){
@@ -127,7 +130,8 @@
                         observaciones: solicitud.observaciones,
                         estado: this.getEstado(solicitud.estado),
                         buttons: $.extend({}, {
-                            aprobar: (solicitud.estado == 0) ? true : false,
+                            show: true,
+                            aprobar: (self.$root.can('aprobar_solicitud_compra') && (solicitud.estado == 0)) ? true : false,
                             id: solicitud.id,
                         })
                     }));
@@ -136,7 +140,7 @@
             },
             meta: {
                 handler (meta) {
-                    
+
                     let total = meta.pagination.total
                     this.$data.total = total
                 },
@@ -154,7 +158,7 @@
                     this.timer = null;
                 }
                 this.timer = setTimeout(() => {
-                    
+
                     this.query.search = val;
                     this.query.offset = 0;
                     this.paginate();

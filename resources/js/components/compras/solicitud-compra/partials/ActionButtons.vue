@@ -1,16 +1,16 @@
 <template>
     <div class="btn-group">
-            <Aprobar v-if="$root.can('aprobar_solicitud_compra')" v-bind:id="value.id" v-bind:aprobar="value.aprobar"></Aprobar>
-        <!-- <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar Solicitud"> <i class="fa fa-pencil"></i> </button>
+        <Aprobar v-if="value.aprobar" v-bind:id="value.id"></Aprobar>
+        <!-- <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar Solicitud"> <i class="fa fa-pencil"></i> </button>-->
         <SolicitudShow v-if="value.show" @click="value.id" v-bind:id="value.id"/>
-        <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Solicitud"><i class="fa fa-trash"></i></button>
+       <!--  <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Solicitud"><i class="fa fa-trash"></i></button>
         <PDF  v-if="value.id" v-bind:id="value.id" @click="value.id"/> -->
     </div>
 </template>
 <script>
     import SolicitudShow from '../Show.vue';
     import PDF from '../FormatoSolicitudCompra.vue';
-    import Aprobar from '../Approve';
+    import Aprobar from '../Autorizar';
     export default {
         name: "solicitud-compra-buttons",
         components: {PDF, SolicitudShow, Aprobar},

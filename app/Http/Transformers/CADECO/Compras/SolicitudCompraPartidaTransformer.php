@@ -11,9 +11,10 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\Compras\SolicitudPartidaComplementoTransformer;
+use App\Http\Transformers\CADECO\ConceptoTransformer;
 use App\Http\Transformers\CADECO\EntregaTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
-use App\Models\CADECO\SolicitudCompraPartida;
+use App\Models\CADECO\ItemSolicitudCompra;
 use League\Fractal\TransformerAbstract;
 
 class SolicitudCompraPartidaTransformer extends TransformerAbstract
@@ -27,8 +28,7 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'complemento',
         'entrega',
-        'material',
-
+        'material'
     ];
 
     /**
@@ -37,33 +37,28 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'material'
     ];
 
-    public function transform(SolicitudCompraPartida $model){
+    public function transform(ItemSolicitudCompra $model){
          return [
-             'id' =>$model->getKey(),
-             'id_transaccion' => $model->id_transaccion,
-             'id_material' => $model->id_material,
+             'id' => $model->getKey(),
              'unidad' => $model->unidad,
              'cantidad' => $model->cantidad,
-             'solicitado_cantidad' => number_format($model->cantidad, 1,'.',','),
-             'id_concepto'=> $model->id_concepto,
-             'id_almacen' =>$model->id_almacen,
-             'orden_compra_cantidad'=>($model->orden_compra) ? number_format($model->orden_compra, 1,'.',',') : '0.0',
-             'surtido_cantidad' =>($model->entrada_material) ? number_format($model->entrada_material, 1,'.',',') : '0.0',
-             'existencia_cantidad' =>(string) number_format($model->inventario->sum('saldo'), 1,'.',',')
-
+             'solicitado_cantidad' => $model->solicitado_cantidad_format,
+             'orden_compra_cantidad' => $model->cantidad_orden_compra ? $model->cantidad_orden_compra_format : '0.0',
+             'surtido_cantidad' => $model->cantidad_entrada_material ? $model->cantidad_entrada_material_format : '0.0',
+             'existencia_cantidad' => $model->suma_inventario_format
          ];
 
     }
 
     /**
-     * @param SolicitudCompraPartida $model
+     * @param ItemSolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
 
-    public function includeComplemento(SolicitudCompraPartida $model)
+    public function includeComplemento(ItemSolicitudCompra $model)
     {
         if($complemento = $model->complemento)
         {
@@ -74,11 +69,11 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
 
 
     /**
-     * @param SolicitudCompraPartida $model
+     * @param ItemSolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
 
-    public function includeEntrega(SolicitudCompraPartida $model)
+    public function includeEntrega(ItemSolicitudCompra $model)
     {
         if($entrega = $model->entrega)
         {
@@ -88,11 +83,11 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudCompraPartida $model
+     * @param ItemSolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
 
-    public function includeMaterial(SolicitudCompraPartida $model)
+    public function includeMaterial(ItemSolicitudCompra $model)
     {
         if($material = $model->material)
         {
@@ -100,8 +95,4 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
         }
         return null;
     }
-
-
-
-
 }

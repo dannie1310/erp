@@ -509,14 +509,14 @@
                         if(count > 0 ){
                             if(data.tipo_comprobante === "I"){
 
-                                this.dato.total = (parseFloat(this.dato.total) + parseFloat(data.total));
+                                this.dato.total = (parseFloat(this.dato.total) + parseFloat(data.total)).toFixed(2);
                                 this.dato.referencia = data.serie + data.folio;
                                 this.dato.emision = data.fecha;
                                 this.dato.id_empresa = data.empresa_bd.id_empresa;
                                 this.dato.id_moneda = data.moneda_bd.id_moneda;
                                 this.empresas.push({id:data.empresa_bd.id_empresa,razon_social:data.empresa_bd.razon_social,rfc:data.empresa_bd.rfc});
                             } else if(data.tipo_comprobante === "E"){
-                                this.dato.total = (parseFloat(this.dato.total) - parseFloat(data.total));
+                                this.dato.total = (parseFloat(this.dato.total) - parseFloat(data.total)).toFixed(2);
                             }
 
 
