@@ -38,11 +38,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Núm de Solicitud', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Núm de Folio de la Solicitud', field: 'numero_folio', tdClass: 'folio', sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Cotizaciones', field: 'cotizaciones', tdClass: 'icono', sortable: false },
+                    // { title: 'Cotizaciones', field: 'cotizaciones', tdClass: 'icono', sortable: false },
                     { title: 'Usuario Registro', field: 'usuario_registro', sortable: false },
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
