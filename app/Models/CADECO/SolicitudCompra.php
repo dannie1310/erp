@@ -94,10 +94,10 @@ class SolicitudCompra extends Transaccion
 
         foreach($partidas as $partida)
         {
-            if($partida['solicitado_cantidad'] != $cantidades[$x])
+            if($partida['cantidad'] != $cantidades[$x])
             {
                 $items = ItemSolicitudCompra::find($partida['id']);
-                $items->cantidad_original1 = $partida['solicitado_cantidad'];
+                $items->cantidad_original1 = $partida['cantidad'];
                 $items->cantidad = $cantidades[$x];
                 $items->save();
             }
