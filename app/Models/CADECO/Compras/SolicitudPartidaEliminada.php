@@ -19,6 +19,7 @@ class SolicitudPartidaEliminada extends Model
         'unidad',
         'cantidad',
         'estado',
+        'cantidad_original1',
         'fecha_entrega',
         'observaciones'
     ];

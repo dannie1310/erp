@@ -6,6 +6,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\SolicitudComplemento;
+use App\Models\CADECO\Compras\SolicitudEliminada;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
@@ -67,6 +68,11 @@ class SolicitudCompra extends Transaccion
     public function activoFijo()
     {
         return $this->belongsTo(ActivoFijo::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function transaccionesRelacionadas()
+    {
+        return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function getRegistroAttribute()
@@ -184,12 +190,43 @@ class SolicitudCompra extends Transaccion
 
     public function validarParaEliminar()
     {
-        //revisar transacciones asociadas...
+        $mensaje = "";
+        if($this->transaccionesRelacionadas()->count('id_transaccion') > 0)
+        {
+            foreach ($this->transaccionesRelacionadas()->get() as $antecedente)
+            {
+                $mensaje .= "-".$antecedente->tipo->Descripcion." #".$antecedente->numero_folio."\n";
+            }
+            abort(500, "Esta solicitud de compra tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
+        }
+    }
+
+    private function revisarRespaldos($motivo)
+    {
+        if (($solicitud = SolicitudEliminada::where('id_transaccion', $this->id_transaccion)->first()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo la solicitud.');
+        } else {
+            dd($solicitud);
+            $solicitud->motivo = $motivo;
+            $solicitud->save();
+        }
+dd("paso");
+       /* $item = ItemEntradaEliminada::query()->where('id_item', $partida['id_item'])->first();
+        if ($item == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de entrada de almacén, no se respaldo partida.');
+        }*/
 
     }
 
-    public function revisarRespaldos($motivo)
+    /**
+     * Elimina las partidas
+     */
+    public function eliminarPartidas()
     {
-
+        foreach ($this->partidas()->get() as $item) {
+            $item->delete();
+        }
     }
 }
