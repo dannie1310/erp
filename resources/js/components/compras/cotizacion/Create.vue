@@ -120,6 +120,7 @@
                                                     <th style="width:110px;">No. de Parte</th>
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
+                                                    <th></th>
                                                     <th class="cantidad_input">Cantidad Solicitada</th>
                                                     <th class="cantidad_input">Cantidad Aprobada</th>                                                    
                                                     <th class="cantidad_input">Precio Unitario</th>
@@ -136,6 +137,12 @@
                                                         <td style="text-align:center;">{{partida.material.numero_parte}}</td>
                                                         <td>{{partida.material.descripcion}}</td>
                                                         <td style="text-align:center;">{{partida.material.unidad}}</td>
+                                                        <td style="text-align:center; vertical-align:inherit;">
+                                                            <div class="custom-control custom-switch">
+                                                                <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
+                                                                <label class="custom-control-label" :for="`enable[${i}]`"></label>
+                                                            </div>
+                                                        </td>                                                        
                                                         <td style="text-align:center;">{{partida.cantidad_original}}</td>
                                                         <td style="text-align:center;">{{(solicitud.estado === 1) ? partida.solicitado_cantidad : '0.0'}}</td>
                                                         <td>
@@ -177,7 +184,7 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(moneda_input[i] && precio[i]) ? '$ ' + parseFloat((partida.cantidad_original * precio[i] * monedas[moneda_input[i] - 1].tipo_cambio)).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">{{(moneda_input[i] && precio[i]) ? '$ ' + parseFloat((partida.cantidad_original * precio[i] * monedas[moneda_input[i] - 1].tipo_cambio_igh)).formatMoney(2,'.',',') : '$ 0.00'}}</td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -191,6 +198,132 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                    </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">% Descuento:</label>                                        
+                                    </div>
+                                    <div class=" col-md-2" align="right">
+                                        <input
+                                                                :disabled="cargando"
+                                                                type="number"
+                                                                step=".01"
+                                                                name="descuento_cot"
+                                                                v-model="descuento_cot"
+                                                                v-validate="{required: true,}"
+                                                                class="col-sm-6 form-control"
+                                                                id="descuento_cot"
+                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXP)</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(this.pesos)).formatMoney(2,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal Precios Dolar (USD):</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(200)).formatMoney(2,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal Precios EURO:</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(200)).formatMoney(2,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Total:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(2000)).formatMoney(2,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">ToTC USD:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[1].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">ToTC EURO:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">IVA:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Total:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">Pago en Parcialidades (%):</label>                                        
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                                :disabled="cargando"
+                                                                type="number"
+                                                                step=".01"
+                                                                name="descuento_cot"
+                                                                v-model="descuento_cot"
+                                                                v-validate="{required: true,}"
+                                                                class="col-sm-6 form-control"
+                                                                id="descuento_cot"
+                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>                                        
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                                :disabled="cargando"
+                                                                type="number"
+                                                                step=".01"
+                                                                name="descuento_cot"
+                                                                v-model="descuento_cot"
+                                                                v-validate="{required: true,}"
+                                                                class="col-sm-6 form-control"
+                                                                id="descuento_cot"
+                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>                                        
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                                :disabled="cargando"
+                                                                type="number"
+                                                                step=".01"
+                                                                name="descuento_cot"
+                                                                v-model="descuento_cot"
+                                                                v-validate="{required: true,}"
+                                                                class="col-sm-6 form-control"
+                                                                id="descuento_cot"
+                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">Tiempo de Entrega (días):</label>                                        
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                                :disabled="cargando"
+                                                                type="number"
+                                                                step=".01"
+                                                                name="descuento_cot"
+                                                                v-model="descuento_cot"
+                                                                v-validate="{required: true,}"
+                                                                class="col-sm-6 form-control"
+                                                                id="descuento_cot"
+                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>                                        
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                                :disabled="cargando"
+                                                                type="number"
+                                                                step=".01"
+                                                                name="descuento_cot"
+                                                                v-model="descuento_cot"
+                                                                v-validate="{required: true,}"
+                                                                class="col-sm-6 form-control"
+                                                                id="descuento_cot"
+                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -241,6 +374,7 @@
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
+                descuento_cot : '0.00',
                 tipos : [],
                 proveedores : [],
                 sucursales: [],
@@ -250,12 +384,17 @@
                 solicitudes : [],
                 concepto : '',
                 monedas: [],
+                pesos: 0,
+                dolares: 0,
+                euros: 0,
                 moneda_input:[],
                 sucursal: true,
                 observaciones_inputs:[],
                 observaciones : '',
                 precio: [],
+                x: 0,
                 descuento: [],
+                enable: []
                              
             }
         },
@@ -305,7 +444,8 @@
                     })
             },
             salir(){
-                console.log('monedas', this.moneda_input, this.monedas, this.monedas[this.moneda_input[0] - 1].tipo_cambio);
+                console.log('enable', this.moneda_input);
+                
                 
                 // this.$router.push({name: 'cotizacion'});
             },
@@ -322,12 +462,43 @@
                             'cotizaciones']}
                 }).then(data => {
                     this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
-
-
-                    $(this.$refs.modal).appendTo('body')
-                    $(this.$refs.modal).modal('show')
+                    
                     this.cargando = false;
                 })
+            },
+            calcular()
+            {
+                // console.log(this.solicitud.partidas.data, this.solicitud.partidas.data.length);
+                this.x = 0;
+                this.pesos = 0;
+                this.dolares = 0;
+                this.euros = 0;
+                while(this.x < this.solicitud.partidas.data.length)
+                {
+                    if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined)
+                    {
+                        if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
+                        {
+                            this.pesos = (this.pesos + parseFloat(this.precio[this.x]));
+                        }
+                        if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
+                        {
+                            this.dolares = (this.dolares + parseFloat(this.precio[this.x]));
+                        }
+                        if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
+                        {
+                            this.euros = (this.euros + parseFloat(this.precio[this.x]));
+                        }
+
+                        
+                        
+                        
+                    }
+                    this.x ++;
+                    
+                }
+                console.log(this.pesos, this.dolares, this.euros, this.moneda_input, this.precio);
+                
             },
             getSolicitudes() {
                 this.solicitudes = [];
@@ -379,15 +550,13 @@
         computed: {
             solicitud(){
                 return this.$store.getters['compras/solicitud-compra/currentSolicitud'];
+            },
+            peso()
+            {
+                return '$ ' + parseFloat(this.pesos).formatMoney(2,'.',',')
             }
         },
         watch: {
-            // id_concepto_temporal(value){
-            //     if(value !== '' && value !== null && value !== undefined){
-            //         this.destino_seleccionado.id_destino = value;
-            //         this.getConcepto();
-            //     }
-            // },
             id_solicitud(value)
             {
                 if(value !== '' && value !== null && value !== undefined)
@@ -402,6 +571,10 @@
                     this.sucursales = busqueda.sucursales.data;
                     this.sucursal = (busqueda.sucursales.data.length) ? true : false;
                 }
+            },
+            moneda_input(value)
+            {
+                this.calcular()                ;
             }
         }
     }
