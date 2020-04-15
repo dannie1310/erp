@@ -216,19 +216,15 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXP)</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(this.pesos)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(pesos)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Precios Dolar (USD):</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(200)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(dolares * monedas[1].tipo_cambio_igh)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Precios EURO:</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(200)).formatMoney(2,'.',',')}}</label>
-                                    </div>
-                                    <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">Total:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(2000)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros * monedas[2].tipo_cambio_igh)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">ToTC USD:</label>
@@ -444,7 +440,7 @@
                     })
             },
             salir(){
-                console.log('enable', this.moneda_input);
+                console.log('enable', this.solicitud.partidas.data[0].cantidad);
                 
                 
                 // this.$router.push({name: 'cotizacion'});
@@ -479,7 +475,7 @@
                     {
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
-                            this.pesos = (this.pesos + parseFloat(this.precio[this.x]));
+                            this.pesos = (this.pesos + (2 * parseFloat(this.precio[this.x])));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
