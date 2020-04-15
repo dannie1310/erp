@@ -28,4 +28,6 @@ class SolicitudCompraObserver extends TransaccionObserver
         $solicitudCompra->estado = 0;
         $solicitudCompra->opciones = 1;
     }
+
+
 }

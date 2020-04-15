@@ -79,7 +79,6 @@ class SolicitudCompra extends Transaccion
     {
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
-
     }
 
     /**
@@ -94,10 +93,10 @@ class SolicitudCompra extends Transaccion
 
         foreach($partidas as $partida)
         {
-            if($partida['solicitado_cantidad'] != $cantidades[$x])
+            if($partida['cantidad'] != $cantidades[$x])
             {
                 $items = ItemSolicitudCompra::find($partida['id']);
-                $items->cantidad_original1 = $partida['solicitado_cantidad'];
+                $items->cantidad_original1 = $partida['cantidad'];
                 $items->cantidad = $cantidades[$x];
                 $items->save();
             }
@@ -106,7 +105,7 @@ class SolicitudCompra extends Transaccion
 
         $this->estado = 1;
         $this->save();
-        return $this->partidas;
+        return $this;
     }
 
     public function registrar($data)
@@ -166,5 +165,31 @@ class SolicitudCompra extends Transaccion
     public function scopeConItems($query)
     {
         return $query->has('partidas');
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validarParaEliminar();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function validarParaEliminar()
+    {
+        //revisar transacciones asociadas...
+
+    }
+
+    public function revisarRespaldos($motivo)
+    {
+
     }
 }
