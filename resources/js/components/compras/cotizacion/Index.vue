@@ -125,12 +125,12 @@
                     self.$data.data = []
                     self.$data.data = cotizaciones.map((cotizacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: cotizacion.numero_folio_format,
+                        numero_folio: cotizacion.folio_format,
                         fecha: cotizacion.fecha_format,
-                        usuario_registro: cotizacion.usuario.nombre,
+                        // usuario_registro: cotizacion.usuario.nombre,
                         observaciones: cotizacion.observaciones,
-                        cotizaciones: cotizacion.cotizaciones,
-                        estado: this.getEstado(cotizacion.estado),
+                        // cotizaciones: cotizacion.cotizaciones,
+                        // estado: this.getEstado(cotizacion.estado),
                         // buttons: $.extend({}, {
                         //     show: true,
                         //     aprobar: (cotizacion.estado == 0) ? true : false,

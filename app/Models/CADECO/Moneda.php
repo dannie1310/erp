@@ -25,7 +25,6 @@ class Moneda extends Model
 
     public function cambio()
     {
-        // dd('cambio');
         return $this->hasOne(Cambio::class, 'id_moneda', 'id_moneda')->orderByDesc('fecha');
     }
 
@@ -36,6 +35,6 @@ class Moneda extends Model
 
     public function getTipoCambioAttribute()
     {
-        return ($this->cambio) ? $this->cambio->cambio : 1 ;
+        return $this->cambio ? $this->cambio->cambio : $this->tipo == 1 ? 1: null;
     }
 }
