@@ -5,8 +5,10 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Compras\ActivoFijo;
+use App\Models\CADECO\Compras\EntregaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Compras\SolicitudEliminada;
+use App\Models\CADECO\Compras\SolicitudPartidaEliminada;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
@@ -205,19 +207,20 @@ class SolicitudCompra extends Transaccion
     {
         if (($solicitud = SolicitudEliminada::where('id_transaccion', $this->id_transaccion)->first()) == null) {
             DB::connection('cadeco')->rollBack();
-            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo la solicitud.');
+            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo la solicitud correctamente.');
         } else {
-            dd($solicitud);
             $solicitud->motivo = $motivo;
             $solicitud->save();
         }
-dd("paso");
-       /* $item = ItemEntradaEliminada::query()->where('id_item', $partida['id_item'])->first();
-        if ($item == null) {
+        if (($item = SolicitudPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
             DB::connection('cadeco')->rollBack();
-            abort(400, 'Error en el proceso de eliminación de entrada de almacén, no se respaldo partida.');
-        }*/
+            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo los items correctamente.');
+        }
 
+        if (EntregaEliminada::whereIn('id_item', $item->pluck('id_item'))->get() == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo las entregas correctamente.');
+        }
     }
 
     /**
