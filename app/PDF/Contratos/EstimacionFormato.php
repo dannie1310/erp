@@ -648,7 +648,7 @@ class EstimacionFormato extends Rotation
 
     function firmas()
     {
-        if (Context::getDatabase() == "SAO1814_PISTA_AEROPUERTO") {
+        /*if (Context::getDatabase() == "SAO1814_PISTA_AEROPUERTO") {
             $this->SetY(-3.5);
             $this->SetTextColor('0', '0', '0');
             $this->SetFillColor(180, 180, 180);
@@ -721,8 +721,10 @@ class EstimacionFormato extends Rotation
 
 
 
-        } else if (Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO") {
+        }
+        else if (Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO") {
             /*Firmas en Gral*/
+        /*
             $this->SetY(-3.5);
             $this->SetTextColor('0', '0', '0');
             $this->SetFont('Arial', '', 6);
@@ -812,7 +814,9 @@ class EstimacionFormato extends Rotation
             $this->Cell(0.5);
             $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Ing. Martin Morales Sanchéz o'), '', 0, 'R', 0);
 
-        } else if (Context::getDatabase() == "SAO1814_TERMINAL_NAICM") {
+        }
+        */
+        if (Context::getDatabase() == "SAO1814_TERMINAL_NAICM") {
             $this->SetY(-3.5);
             $this->SetTextColor('0', '0', '0');
             $this->SetFont('Arial', '', 6);
@@ -854,7 +858,8 @@ class EstimacionFormato extends Rotation
             $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('DIRECTOR DE ÁREA'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
-        } else {
+        }
+        else {
             /*Firmas en Gral*/
             $this->SetY(-3.5);
             $this->SetTextColor('0', '0', '0');
@@ -863,76 +868,64 @@ class EstimacionFormato extends Rotation
 
             $this->SetFont('Arial', 'B', 4.2);
             $this->Cell(0.7);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Elaboró!!'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo.'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('Vo.Bo'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('AUTORIZÓ'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('RECIBE'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
 
             $this->Ln();
             $this->Cell(0.7);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
 
             $this->SetFont('Arial', 'B', 4.2);
             $this->Ln();
             $this->Cell(0.7);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTRATISTA'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTROL DE ESTIMACIONES'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('SUPERINTENDENCIA DE OBRA'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTROL DE PLANEACIÓN'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('CONTROL DE SEGUIMIENTO'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('SUBCONTRATOS'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('DIRECTOR DE PROYECTO'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.5);
-            $this->Cell(($this->GetPageWidth() - 6) / 9, 0.4, utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Subcontratos'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Construcción'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de ACSMA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Personal'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Control de Proyectos'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Administración'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable del Proyecto'), 'TRLB', 0, 'C', 1);
         }
     }
 
     function Footer()
     {
-//        if (!App::environment('production')) {
-//            $this->SetFont('Arial','B',90);
-//            $this->SetTextColor(155,155,155);
-//            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
-//            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
-//            $this->SetTextColor('0,0,0');
-//        }
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',90);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $this->firmas();
 
         $this->SetY($this->GetPageHeight() - 1);
@@ -954,10 +947,10 @@ class EstimacionFormato extends Rotation
         $this->SetFont('Arial', 'BI', 6);
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de estimaciones. Fecha de registro: ' . date("d-m-Y", strtotime($this->fecha))), 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->fecha))).' Fecha de consulta: '.date("d-m-Y H:i:s").'  Estado: '.$this->estimacion->estado_descripcion, 0, 0, 'L');
         $this->SetXY(22.6,-0.9);
         $this->Cell(5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
-        $this->estatus();
+       // $this->estatus(); /* Marca de agua : "Propuesta de estimación"
     }
 
     public function estatus()
