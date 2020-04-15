@@ -48,7 +48,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC', scope: 'cotizacion'},
+                query: {sort: 'numero_folio', order: 'DESC'},
                 search: '',
                 cargando: false
             }
@@ -64,12 +64,12 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/solicitud-compra/paginate', {
+                return this.$store.dispatch('compras/cotizacion/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
-                        this.$store.commit('compras/solicitud-compra/SET_META', data.meta);
+                        this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
+                        this.$store.commit('compras/cotizacion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -109,10 +109,10 @@
         },
         computed: {
             cotizaciones(){
-                return this.$store.getters['compras/solicitud-compra/solicitudes'];
+                return this.$store.getters['compras/cotizacion/cotizaciones'];
             },
             meta(){
-                return this.$store.getters['compras/solicitud-compra/meta'];
+                return this.$store.getters['compras/cotizacion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
