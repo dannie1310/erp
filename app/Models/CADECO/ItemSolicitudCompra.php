@@ -83,6 +83,11 @@ class ItemSolicitudCompra extends Item
         return number_format($this->cantidad, 1,'.',',');
     }
 
+    public function getCantidadOriginalFormatAttribute()
+    {
+        return number_format($this->cantidad_original1, 1,'.',',');
+    }
+
     public function getSumaInventarioFormatAttribute()
     {
         return number_format($this->inventario->sum('saldo'), 1,'.',',');

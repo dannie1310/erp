@@ -38,17 +38,17 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Núm de Solicitud', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Núm de Folio de la Solicitud', field: 'numero_folio', tdClass: 'folio', sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Cotizaciones', field: 'cotizaciones', tdClass: 'icono', sortable: false },
+                    // { title: 'Cotizaciones', field: 'cotizaciones', tdClass: 'icono', sortable: false },
                     { title: 'Usuario Registro', field: 'usuario_registro', sortable: false },
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC', scope: 'cotizacion'},
+                query: {sort: 'numero_folio', order: 'DESC'},
                 search: '',
                 cargando: false
             }
@@ -64,12 +64,12 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/solicitud-compra/paginate', {
+                return this.$store.dispatch('compras/cotizacion/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
-                        this.$store.commit('compras/solicitud-compra/SET_META', data.meta);
+                        this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
+                        this.$store.commit('compras/cotizacion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -109,10 +109,10 @@
         },
         computed: {
             cotizaciones(){
-                return this.$store.getters['compras/solicitud-compra/solicitudes'];
+                return this.$store.getters['compras/cotizacion/cotizaciones'];
             },
             meta(){
-                return this.$store.getters['compras/solicitud-compra/meta'];
+                return this.$store.getters['compras/cotizacion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -125,12 +125,12 @@
                     self.$data.data = []
                     self.$data.data = cotizaciones.map((cotizacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: cotizacion.numero_folio_format,
+                        numero_folio: cotizacion.folio_format,
                         fecha: cotizacion.fecha_format,
-                        usuario_registro: cotizacion.usuario.nombre,
+                        // usuario_registro: cotizacion.usuario.nombre,
                         observaciones: cotizacion.observaciones,
-                        cotizaciones: cotizacion.cotizaciones,
-                        estado: this.getEstado(cotizacion.estado),
+                        // cotizaciones: cotizacion.cotizaciones,
+                        // estado: this.getEstado(cotizacion.estado),
                         // buttons: $.extend({}, {
                         //     show: true,
                         //     aprobar: (cotizacion.estado == 0) ? true : false,

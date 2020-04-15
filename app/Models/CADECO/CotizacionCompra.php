@@ -39,4 +39,9 @@ class CotizacionCompra  extends Transaccion
     {
         return Excel::download(new CotizacionLayout(CotizacionCompra::find($id)), 'LayoutCotizacion.xlsx');
     }
+
+    public function solicitud()
+    {
+        return $this->belongsTo(SolicitudCompra::class, 'id_antecedente', 'id_transaccion');
+    }
 }

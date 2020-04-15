@@ -40,7 +40,8 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
         'material'
     ];
 
-    public function transform(ItemSolicitudCompra $model){
+    public function transform(ItemSolicitudCompra $model)
+    {
          return [
              'id' => $model->getKey(),
              'unidad' => $model->unidad,
@@ -48,7 +49,8 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
              'solicitado_cantidad' => $model->solicitado_cantidad_format,
              'orden_compra_cantidad' => $model->cantidad_orden_compra ? $model->cantidad_orden_compra_format : '0.0',
              'surtido_cantidad' => $model->cantidad_entrada_material ? $model->cantidad_entrada_material_format : '0.0',
-             'existencia_cantidad' => $model->suma_inventario_format
+             'existencia_cantidad' => $model->suma_inventario_format,
+             'cantidad_original' => ($model->cantidad_original1 > 0) ? $model->cantidad_original_format : $model->solicitado_cantidad_format
          ];
 
     }
