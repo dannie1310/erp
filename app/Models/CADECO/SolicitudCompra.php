@@ -9,6 +9,8 @@ use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 class SolicitudCompra extends Transaccion
@@ -114,9 +116,13 @@ class SolicitudCompra extends Transaccion
     public function registrar($data)
     {
         try {
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_req =New DateTime($data['fecha_requisicion']);
+            $fecha_req->setTimezone(new DateTimeZone('America/Mexico_City'));
             DB::connection('cadeco')->beginTransaction();
             $solicitud = $this->create([
-                'fecha' => $data['fecha'],
+                'fecha' => $fecha->format("Y-m-d H:i:s"),
                 'observaciones' => $data['observaciones']
             ]);
             $solicitud_complemento = $this->complemento()->create([
@@ -125,28 +131,28 @@ class SolicitudCompra extends Transaccion
                 'id_tipo' => $data['id_tipo'],
                 'id_area_solicitante' => $data['id_area_solicitante'],
                 'concepto' => $data['concepto'],
-                'fecha_requisicion_origen' => $data['fecha_requisicion'],
+                'fecha_requisicion_origen' => $fecha_req->format("Y-m-d H:i:s"),
                 'requisicion_origen' => $data['folio_requisicion']
             ]);
 
             /*Registro de partidas*/
             foreach ($data['partidas'] as $partida) {
-
                 $item = $solicitud->partidas()->create([
                     'id_transaccion' => $solicitud->id_transaccion,
                     'id_material' => $partida['material']['id'],
                     'unidad' => $partida['material']['unidad'],
                     'cantidad' => $partida['cantidad']
                 ]);
+                $fecha =New DateTime($partida['fecha']);
+                $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $complemento = $item->complemento()->create([
                     'id_item' => $item->id_item,
                     'observaciones' => $partida['observaciones'],
-                    'fecha_entrega' => $partida['fecha']
+                    'fecha_entrega' => $fecha->format("Y-m-d H:i:s")
                 ]);
-
                 $entrega = Entrega::create([
                     'id_item' => $item->id_item,
-                    'fecha' => $partida['fecha'],
+                    'fecha' => $fecha->format("Y-m-d H:i:s"),
                     'cantidad' => $item->cantidad,
                     'id_concepto' => $partida['destino']['tipo_destino'] == 1 ? $partida['destino']['id_destino'] : NULL,
                     'id_almacen' => $partida['destino']['tipo_destino'] == 2 ? $partida['destino']['id_destino'] : NULL,
