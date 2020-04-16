@@ -101,6 +101,8 @@ class SolicitudCompra extends Transaccion
                 $items = ItemSolicitudCompra::find($partida['id']);
                 $items->cantidad_original1 = $partida['cantidad'];
                 $items->cantidad = $cantidades[$x];
+                $items->entrega->cantidad = $cantidades[$x];
+                $items->entrega->save();
                 $items->save();
             }
             $x ++;
