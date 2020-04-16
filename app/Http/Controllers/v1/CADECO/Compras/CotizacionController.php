@@ -40,6 +40,7 @@ class CotizacionController extends Controller
 
     public function __construct(Manager $fractal, CotizacionService $service, CotizacionTransformer $transformer)
     {
+        // dd('cotizacion controller');
         $this->middleware('auth:api');
         $this->middleware('context');
 //        $this->middleware('permiso:consultar_salida_almacen')->only(['show','paginate','index','find']);

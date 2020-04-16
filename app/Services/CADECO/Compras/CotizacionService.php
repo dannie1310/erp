@@ -30,4 +30,15 @@ class CotizacionService
     {
         return $this->repository->paginate($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function store($data)
+    {
+        dd('Store', $data);
+        return $this->repository->create($data);
+    }
 }

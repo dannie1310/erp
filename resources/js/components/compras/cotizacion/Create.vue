@@ -149,6 +149,7 @@
                                                             <input type="number"
                                                                    min="0.01"
                                                                    step=".01"
+                                                                   :disabled="enable[i] == false"
                                                                    class="form-control"
                                                                    :name="`precio[${i}]`"
                                                                    data-vv-as="Precio"
@@ -160,7 +161,9 @@
                                                         <td>
                                                             <input type="number"
                                                                    min="0.00"
+                                                                   max="100"
                                                                    step=".01"
+                                                                   :disabled="enable[i] == false"
                                                                    class="form-control"
                                                                    :name="`descuento[${i}]`"
                                                                    data-vv-as="Descuento(%)"
@@ -169,26 +172,28 @@
                                                                    v-model="descuento[i]"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(precio[i]) ? '$ ' + parseFloat(partida.cantidad_original * precio[i]).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">{{(precio[i]) ? '$ ' + parseFloat(((solicitud.estado === 0) ? partida.cantidad_original : partida.solicitado_cantidad) * precio[i]).formatMoney(2,'.',',') : '$ 0.00'}}</td>
                                                         <td style="width:120px;" >
                                                             <select
                                                                 type="text"
-                                                                :name="`unidad[${i}]`"
-                                                                data-vv-as="Unidad"
+                                                                :name="`moneda[${i}]`"
+                                                                data-vv-as="Moneda"
+                                                                :disabled="enable[i] == false"
                                                                 v-validate="{required: true}"
                                                                 class="form-control"
-                                                                id="unidad"
+                                                                id="moneda"
                                                                 v-model="moneda_input[i]"
                                                                 :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
                                                                     <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.abreviatura }}</option>
                                                             </select>
-                                                            <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
+                                                            <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(moneda_input[i] && precio[i]) ? '$ ' + parseFloat((partida.cantidad_original * precio[i] * monedas[moneda_input[i] - 1].tipo_cambio_igh)).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">{{(moneda_input[i] && precio[i]) ? '$ ' + parseFloat((((solicitud.estado === 0) ? partida.cantidad_original : partida.solicitado_cantidad) * precio[i] * monedas[moneda_input[i] - 1].tipo_cambio_igh)).formatMoney(2,'.',',') : '$ 0.00'}}</td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
                                                                       data-vv-as="Observaciones"
+                                                                      :disabled="enable[i] == false"
                                                                       v-validate="{required: true}"
                                                                       :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                       v-model="observaciones_inputs[i]"/>
@@ -220,11 +225,11 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Precios Dolar (USD):</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(dolares * monedas[1].tipo_cambio_igh)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(dolares)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Precios EURO:</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros * monedas[2].tipo_cambio_igh)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">ToTC USD:</label>
@@ -236,15 +241,15 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">IVA:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Total:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">Pago en Parcialidades (%):</label>                                        
@@ -254,12 +259,12 @@
                                                                 :disabled="cargando"
                                                                 type="number"
                                                                 step=".01"
-                                                                name="descuento_cot"
-                                                                v-model="descuento_cot"
+                                                                name="pago"
+                                                                v-model="pago"
                                                                 v-validate="{required: true,}"
                                                                 class="col-sm-6 form-control"
-                                                                id="descuento_cot"
-                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                                                id="pago"
+                                                                :class="{'is-invalid': errors.has('pago')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">% Anticipo:</label>                                        
@@ -269,12 +274,12 @@
                                                                 :disabled="cargando"
                                                                 type="number"
                                                                 step=".01"
-                                                                name="descuento_cot"
-                                                                v-model="descuento_cot"
+                                                                name="anticipo"
+                                                                v-model="anticipo"
                                                                 v-validate="{required: true,}"
                                                                 class="col-sm-6 form-control"
-                                                                id="descuento_cot"
-                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                                                id="anticipo"
+                                                                :class="{'is-invalid': errors.has('anticipo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">Crédito (días):</label>                                        
@@ -283,13 +288,13 @@
                                         <input
                                                                 :disabled="cargando"
                                                                 type="number"
-                                                                step=".01"
-                                                                name="descuento_cot"
-                                                                v-model="descuento_cot"
+                                                                step="1"
+                                                                name="credito"
+                                                                v-model="credito"
                                                                 v-validate="{required: true,}"
                                                                 class="col-sm-6 form-control"
-                                                                id="descuento_cot"
-                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                                                id="credito"
+                                                                :class="{'is-invalid': errors.has('credito')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">Tiempo de Entrega (días):</label>                                        
@@ -298,13 +303,13 @@
                                         <input
                                                                 :disabled="cargando"
                                                                 type="number"
-                                                                step=".01"
-                                                                name="descuento_cot"
-                                                                v-model="descuento_cot"
+                                                                step="1"
+                                                                name="tiempo"
+                                                                v-model="tiempo"
                                                                 v-validate="{required: true,}"
                                                                 class="col-sm-6 form-control"
-                                                                id="descuento_cot"
-                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                                                id="tiempo"
+                                                                :class="{'is-invalid': errors.has('tiempo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">Vigencia( días):</label>                                        
@@ -313,13 +318,13 @@
                                         <input
                                                                 :disabled="cargando"
                                                                 type="number"
-                                                                step=".01"
-                                                                name="descuento_cot"
-                                                                v-model="descuento_cot"
+                                                                step="1"
+                                                                name="vigencia"
+                                                                v-model="vigencia"
                                                                 v-validate="{required: true,}"
                                                                 class="col-sm-6 form-control"
-                                                                id="descuento_cot"
-                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                                                id="vigencia"
+                                                                :class="{'is-invalid': errors.has('vigencia')}">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -389,6 +394,30 @@
                 observaciones : '',
                 precio: [],
                 x: 0,
+                pago: 0,
+                post: {
+                    id_solicitud: '',
+                    fecha: '',
+                    id_proveedor: '',
+                    id_sucursal: '',
+                    sucursal: '',
+                    observaciones: [],
+                    moneda: [],
+                    precio: [],
+                    enable: [],
+                    descuento: [],
+                    partidas: [],
+                    descuento_cot: '',
+                    pago: '',
+                    anticipo: '',
+                    credito: '',
+                    tiempo: '',
+                    vigencia: ''
+                },
+                anticipo: 0,
+                credito: 0,
+                tiempo: 0,
+                vigencia: 0,
                 descuento: [],
                 enable: []
                              
@@ -440,7 +469,7 @@
                     })
             },
             salir(){
-                console.log('enable', this.solicitud.partidas.data[0].cantidad);
+                console.log('Pago', this.pago, this.anticipo, this.credito, this.tiempo, this.vigencia);
                 
                 
                 // this.$router.push({name: 'cotizacion'});
@@ -464,31 +493,35 @@
             },
             calcular()
             {
-                // console.log(this.solicitud.partidas.data, this.solicitud.partidas.data.length);
                 this.x = 0;
                 this.pesos = 0;
                 this.dolares = 0;
                 this.euros = 0;
                 while(this.x < this.solicitud.partidas.data.length)
                 {
-                    if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined)
+                    if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
                     {
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
-                            this.pesos = (this.pesos + (2 * parseFloat(this.precio[this.x])));
+                            this.pesos = (this.pesos + parseFloat(((this.solicitud.estado === 0) ? 
+                            this.solicitud.partidas.data[this.x].cantidad_original : 
+                            this.solicitud.partidas.data[this.x].solicitado_cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? 
+                            this.descuento[this.x] : 0))/100))));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
-                            this.dolares = (this.dolares + parseFloat(this.precio[this.x]));
+                            this.dolares = (this.dolares + parseFloat(((this.solicitud.estado === 0) ? 
+                            this.solicitud.partidas.data[this.x].cantidad_original : 
+                            this.solicitud.partidas.data[this.x].solicitado_cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? 
+                            this.descuento[this.x] : 0))/100))));
                         }
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
-                            this.euros = (this.euros + parseFloat(this.precio[this.x]));
-                        }
-
-                        
-                        
-                        
+                            this.euros = (this.euros + parseFloat(((this.solicitud.estado === 0) ? 
+                            this.solicitud.partidas.data[this.x].cantidad_original : 
+                            this.solicitud.partidas.data[this.x].solicitado_cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? 
+                            this.descuento[this.x] : 0))/100))));
+                        }                       
                     }
                     this.x ++;
                     
@@ -516,31 +549,35 @@
                 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        console.log('solicitud del computed', this.solicitud);
-                        
-                        alert('validate');
-                        // this.store()
+                        this.post.partidas = this.solicitud.partidas.data;
+                        this.post.id_solicitud = this.id_solicitud;
+                        this.post.id_proveedor = this.id_proveedor;
+                        this.post.sucursal = this.sucursal;
+                        this.post.observaciones = this.observaciones_inputs;
+                        this.post.moneda = this.moneda_input;
+                        this.post.precio = this.precio;
+                        this.post.enable = this.enable;
+                        this.post.descuento = this.descuento;
+                        this.post.descuento_cot = this.descuento_cot;
+                        this.post.pago = this.pago;
+                        this.post.anticipo = this.anticipo;
+                        this.post.credito = this.credito;
+                        this.post.tiempo = this.tiempo;
+                        this.post.vigencia = this.vigencia;
+                        this.post.fecha = this.fecha;
+                        this.store()
                     }
                 });
             },
             store() {
-                this.t = 0;
-                this.m = 0;
-                 while(this.t < this.partidas.length){
-                     if(typeof this.partidas[this.t].clave_concepto === 'undefined' || this.partidas[this.t].clave_concepto === '')
-                        {
-                            this.m ++;
-                            swal('¡Error!', 'Ingrese un destino válido en partida '+(this.t + 1) +'.', 'error');
-                        }
-                        this.t ++;
-                }if(this.m == 0)
-                {
-                    return this.$store.dispatch('compras/requisicion/store', this.$data)
+
+
+                    return this.$store.dispatch('compras/cotizacion/store', this.post)
                     .then((data) => {
-                        this.$router.push({name: 'requisicion'});
+                        // this.$router.push({name: 'requisicion'});
                     });
 
-                }
+                
             },
         },
         computed: {
@@ -550,6 +587,20 @@
             peso()
             {
                 return '$ ' + parseFloat(this.pesos).formatMoney(2,'.',',')
+            },
+            subtotal()
+            {
+                return (this.pesos + (this.dolares * this.monedas[1].tipo_cambio_igh) + (this.euros * this.monedas[2].tipo_cambio_igh) - 
+                        ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.monedas[1].tipo_cambio_igh) + (this.euros * 
+                        this.monedas[2].tipo_cambio_igh)) * parseFloat(this.descuento_cot))/100) : 0));
+            },
+            iva()
+            {
+                return this.subtotal * 0.16;
+            },
+            total()
+            {
+                return this.subtotal + this.iva;
             }
         },
         watch: {
@@ -568,10 +619,23 @@
                     this.sucursal = (busqueda.sucursales.data.length) ? true : false;
                 }
             },
-            moneda_input(value)
+            moneda_input()
             {
                 this.calcular()                ;
+            },
+            precio()
+            {
+                this.calcular();
+            },
+            descuento()
+            {
+                this.calcular();
+            },
+            enable()
+            {
+                this.calcular();
             }
+            
         }
     }
 </script>

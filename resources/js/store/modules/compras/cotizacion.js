@@ -33,6 +33,46 @@ export default {
                     })
             })
         },
+        store(context,payload){
+            console.log(payload);
+            
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Cotizacion de Compra",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cotización de Compra registrada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+
+        }
     },
 
     getters: {
