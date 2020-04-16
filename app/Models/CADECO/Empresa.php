@@ -206,6 +206,21 @@ class Empresa extends Model
         }
     }
 
+    public function getPersonalidadDefinicionAttribute()
+    {
+        switch ($this->personalidad)
+        {
+            case(1):
+                return 'Persona Física';
+                break;
+            case(2):
+                return 'Persona Moral';
+                break;
+        }
+
+        return '---------';
+    }
+
     public function scopeBeneficiarioCuentaBancaria($query)
     {
         return $query->has('cuentasBancarias');

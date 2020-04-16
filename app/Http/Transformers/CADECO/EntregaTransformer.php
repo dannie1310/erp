@@ -29,7 +29,8 @@ class EntregaTransformer extends TransformerAbstract{
      * @var array
      */
     protected $defaultIncludes = [
-
+        'concepto',
+        'almacen'
     ];
 
 
@@ -48,14 +49,10 @@ class EntregaTransformer extends TransformerAbstract{
         ];
     }
 
-
-
-
     /**
      * @param Entrega $model
      * @return \League\Fractal\Resource\Item|null
      */
-
     public function includeAlmacen(Entrega $model)
     {
         if($almacen = $model->almacen)
@@ -64,11 +61,11 @@ class EntregaTransformer extends TransformerAbstract{
         }
         return null;
     }
+
     /**
      * @param Entrega $model
      * @return \League\Fractal\Resource\Item|null
      */
-
     public function includeConcepto(Entrega $model)
     {
         if($concepto = $model->concepto)
@@ -77,5 +74,4 @@ class EntregaTransformer extends TransformerAbstract{
         }
         return null;
     }
-
 }

@@ -6,7 +6,7 @@
  * Time: 17:50 PM
  */
 
-namespace App\Http\Controllers\v1\CADECO\subcontratosEstimaciones;
+namespace App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones;
 
 use League\Fractal\Manager;
 use Illuminate\Http\Request;
@@ -45,17 +45,12 @@ class RetencionController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        
+
         $this->middleware('permiso:registrar_retencion_estimacion_subcontrato')->only(['store']);
         $this->middleware('permiso:eliminar_retencion_estimacion_subcontrato')->only(['delete']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
-    }
-
-    public function list($id){
-        $list = $this->service->list($id);
-        return $this->respondWithCollection($list);
     }
 }

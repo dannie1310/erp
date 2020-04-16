@@ -2,11 +2,14 @@
      <span>
        <div class="d-flex flex-row-reverse" v-if="!cargando">
            <div class="p-2">
+                <Penalizacion v-bind:id="id"></Penalizacion>
+            </div>
+           <div class="p-2">
                 <Resumen v-bind:id="id" v-bind:cargando="cargando"></Resumen>
             </div>
            <div class="p-2">
                 <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
-            </div>
+            </div>            
             <div class="p-2">
                 <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
@@ -249,14 +252,15 @@
     import RetencionIvaCreate from './retencion-iva/create'
     import DeductivaEdit from './deductivas/Edit'
     import RetencionIndex from './retenciones/Index';
-    import Amortizacion from './amortizacion/Edit'
+    import Amortizacion from './amortizacion/Edit';
+    import Penalizacion from './penalizacion/Index';
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import Resumen from './resumen/Show'
 
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es, Resumen},
+        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es, Resumen, Penalizacion},
         props: ['id'],
         data() {
             return {

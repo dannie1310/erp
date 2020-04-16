@@ -22,12 +22,10 @@ class SolicitudCompraObserver extends TransaccionObserver
 
     public function creating(Transaccion $solicitudCompra)
     {
-
         parent::creating($solicitudCompra);
 
         $solicitudCompra->tipo_transaccion = 17;
-        $solicitudCompra->fecha = date('Y-m-d H:i:s');
         $solicitudCompra->estado = 0;
+        $solicitudCompra->opciones = 1;
     }
-
 }

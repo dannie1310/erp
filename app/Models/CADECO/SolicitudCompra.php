@@ -4,13 +4,14 @@
 namespace App\Models\CADECO;
 
 
-use App\CSV\CotizacionLayout;
+use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\SolicitudComplemento;
+use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
-use App\Models\CADECO\SolicitudCompraPartida;
 use App\Models\IGH\Usuario;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Http\Request;
+use DateTime;
+use DateTimeZone;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudCompra extends Transaccion
 {
@@ -21,11 +22,11 @@ class SolicitudCompra extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 17);
+            return $query->where('tipo_transaccion', '=', 17)
+            ->where('opciones', '=', 1)
+            ->where('estado', '!=', 2);
         });
     }
-
-
 
     protected $fillable = [
         'id_transaccion',
@@ -39,12 +40,36 @@ class SolicitudCompra extends Transaccion
         'FechaHoraRegistro'
     ];
 
-
     public $searchable = [
         'numero_folio',
         'observaciones',
         'fecha'
     ];
+
+    public function complemento()
+    {
+        return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
+    }
+
+    public function partidas()
+    {
+        return $this->hasMany(ItemSolicitudCompra::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'registro', 'usuario');
+    }
+
+    public function cotizaciones()
+    {
+        return $this->hasMany(CotizacionCompra::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function activoFijo()
+    {
+        return $this->belongsTo(ActivoFijo::class, 'id_transaccion', 'id_transaccion');
+    }
 
     public function getRegistroAttribute()
     {
@@ -59,22 +84,85 @@ class SolicitudCompra extends Transaccion
 
     }
 
-    public function complemento(){
-        return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
+    /**
+     * Acciones
+     */
+    public function aprobarSolicitud($data)
+    {
+        $x = 0;
+        $partidas = $data['partidas'];
+        $cantidades = $data['cantidad'];
+        $res = array();
+
+        foreach($partidas as $partida)
+        {
+            if($partida['cantidad'] != $cantidades[$x])
+            {
+                $items = ItemSolicitudCompra::find($partida['id']);
+                $items->cantidad_original1 = $partida['cantidad'];
+                $items->cantidad = $cantidades[$x];
+                $items->entrega->cantidad = $cantidades[$x];
+                $items->entrega->save();
+                $items->save();
+            }
+            $x ++;
+        }
+
+        $this->estado = 1;
+        $this->save();
+        return $this;
     }
 
-    public function partidas()
+    public function registrar($data)
     {
-        return $this->hasMany(SolicitudCompraPartida::class, 'id_transaccion', 'id_transaccion');
-    }
+        try {
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_req =New DateTime($data['fecha_requisicion']);
+            $fecha_req->setTimezone(new DateTimeZone('America/Mexico_City'));
+            DB::connection('cadeco')->beginTransaction();
+            $solicitud = $this->create([
+                'fecha' => $fecha->format("Y-m-d H:i:s"),
+                'observaciones' => $data['observaciones']
+            ]);
+            $solicitud_complemento = $this->complemento()->create([
+                'id_transaccion' => $solicitud->id_transaccion,
+                'id_area_compradora' => $data['id_area_compradora'],
+                'id_tipo' => $data['id_tipo'],
+                'id_area_solicitante' => $data['id_area_solicitante'],
+                'concepto' => $data['concepto'],
+                'fecha_requisicion_origen' => $fecha_req->format("Y-m-d H:i:s"),
+                'requisicion_origen' => $data['folio_requisicion']
+            ]);
 
-    public function usuario()
-    {
-        return $this->belongsTo(Usuario::class, 'registro', 'usuario');
-    }
-
-    public function cotizaciones()
-    {
-        return $this->hasMany(CotizacionCompra::class, 'id_antecedente', 'id_transaccion');
+            /*Registro de partidas*/
+            foreach ($data['partidas'] as $partida) {
+                $item = $solicitud->partidas()->create([
+                    'id_transaccion' => $solicitud->id_transaccion,
+                    'id_material' => $partida['material']['id'],
+                    'unidad' => $partida['material']['unidad'],
+                    'cantidad' => $partida['cantidad']
+                ]);
+                $fecha =New DateTime($partida['fecha']);
+                $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+                $complemento = $item->complemento()->create([
+                    'id_item' => $item->id_item,
+                    'observaciones' => $partida['observaciones'],
+                    'fecha_entrega' => $fecha->format("Y-m-d H:i:s")
+                ]);
+                $entrega = Entrega::create([
+                    'id_item' => $item->id_item,
+                    'fecha' => $fecha->format("Y-m-d H:i:s"),
+                    'cantidad' => $item->cantidad,
+                    'id_concepto' => $partida['destino']['tipo_destino'] == 1 ? $partida['destino']['id_destino'] : NULL,
+                    'id_almacen' => $partida['destino']['tipo_destino'] == 2 ? $partida['destino']['id_destino'] : NULL,
+                ]);
+            }
+            DB::connection('cadeco')->commit();
+            return $solicitud;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 }
