@@ -21,7 +21,8 @@ class CotizacionCompra  extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 18);
+            return $query->where('tipo_transaccion', '=', 18)
+            ->where('opciones','=', 1)->where('estado', '!=', 2);
         });
     }
 
@@ -37,5 +38,10 @@ class CotizacionCompra  extends Transaccion
     public function descargaLayout($id)
     {
         return Excel::download(new CotizacionLayout(CotizacionCompra::find($id)), 'LayoutCotizacion.xlsx');
+    }
+
+    public function solicitud()
+    {
+        return $this->belongsTo(SolicitudCompra::class, 'id_antecedente', 'id_transaccion');
     }
 }

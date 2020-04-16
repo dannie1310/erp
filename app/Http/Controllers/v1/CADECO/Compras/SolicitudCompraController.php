@@ -43,7 +43,7 @@ class SolicitudCompraController extends Controller
         $this->middleware('permiso:registrar_solicitud_compra')->only('store');
         $this->middleware('permiso:consultar_solicitud_compra')->only(['paginate', 'show']);
         $this->middleware('permiso:aprobar_solicitud_compra')->only('aprobar');
-
+        $this->middleware('permiso:eliminar_solicitud_compra')->only('destroy');
 
         $this->fractal = $fractal;
         $this->service = $service;

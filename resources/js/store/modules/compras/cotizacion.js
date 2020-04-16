@@ -19,6 +19,8 @@ export default {
 
     actions: {
         paginate (context, payload) {
+            console.log('paginate cotizaciones', payload);
+            
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', { params: payload.params })

@@ -4,12 +4,7 @@
 namespace App\Services\CADECO\Compras;
 
 
-use App\Models\CADECO\Compras\ActivoFijo;
-use App\Models\CADECO\Compras\SolicitudComplemento;
-use App\Models\CADECO\Compras\SolicitudPartidaComplemento;
-use App\Models\CADECO\Entrega;
 use App\Models\CADECO\SolicitudCompra;
-use App\Models\CADECO\ItemSolicitudCompra;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Solicitud\Repository;
@@ -34,6 +29,7 @@ class SolicitudCompraService
     public function paginate($data)
     {
         $solicitudes = $this->repository;
+        $solicitudes = $this->repository;
 
         if(isset($data['numero_folio']))
         {
@@ -47,6 +43,11 @@ class SolicitudCompraService
 
         return $solicitudes->paginate($data);
 
+    }
+
+    public function index($data)
+    {
+        return $this->repository->all($data);
     }
 
     public function store($data)
@@ -87,7 +88,7 @@ class SolicitudCompraService
 
     public function delete($data, $id)
     {
-
+        return $this->repository->show($id)->eliminar($data['data']);
     }
 
     public function show($id)

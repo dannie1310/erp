@@ -63,6 +63,11 @@ class Empresa extends Model
         return $this->hasMany(Estimacion::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursales()
+    {
+        return $this->hasMany(Sucursal::class, 'id_empresa');
+    }
+
     public function facturas(){
         return $this->belongsTo(Documento::class, 'id_empresa', 'IDDestinatario');
     }
