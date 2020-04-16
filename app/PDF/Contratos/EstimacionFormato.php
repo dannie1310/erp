@@ -623,7 +623,7 @@ class EstimacionFormato extends Rotation
             $total_a_estimar -= $fondo_garantia_saldo;
 
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row([utf8_decode('Fondo de Garantía'), ' ', '%', $this->estimacion->subcontratoEstimacion->PorcentajeFondoGarantia, ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
+            $this->Row([ $this->estimacion->configuracion->ret_fon_gar_con_iva == 1 ? utf8_decode('Fondo de Garantía + IVA') : utf8_decode('Fondo de Garantía') , ' ', '%', $this->estimacion->subcontratoEstimacion->PorcentajeFondoGarantia, ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
         }
 
 
