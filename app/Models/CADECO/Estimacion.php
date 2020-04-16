@@ -968,6 +968,24 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->retencionIVA_2_3, 2);
     }
 
+    public function getEstadoDescripcionAttribute()
+    {
+        switch ($this->estado) {
+            case 0:
+                return 'Registrada';
+                break;
+            case 1:
+                return 'Aprobada';
+                break;
+            case 2:
+                return 'Revisada';
+                break;
+            default:
+                return 'Desconocido';
+                break;
+        }
+    }
+
     public function getIvaRetenidoCalculadoAnteriorAttribute()
     {
         $iva_retenido = 0;
