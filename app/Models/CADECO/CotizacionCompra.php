@@ -6,15 +6,19 @@ namespace App\Models\CADECO;
 
 use App\CSV\CotizacionLayout;
 use App\Models\CADECO\Compras\CotizacionComplemento;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CotizacionCompra  extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
+    public const OPCION_ANTECEDENTE = 1;
 
     protected $fillable = [
         'id_transaccion',
+        'id_antecedente',
         'tipo_transaccion',
         'numero_folio',
         'fecha',
@@ -60,21 +64,20 @@ class CotizacionCompra  extends Transaccion
 
     public function crear($data)
     {
-        $cotizacion = $this->create([
-            'fecha' => '2020-02-03',
-            'observaciones' => $data['observacion']
-        ]);
-        dd('fin', $cotizacion);
-
-        
         try
         {
             DB::connection('cadeco')->beginTransaction();
+
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             $cotizacion = $this->create([
-                'fecha' => '2020-02-03',
-                'observaciones' => 'jorge'
-            ]);
-            dd('fin', $cotizacion);
+            'id_antecedente' => $data['id_solicitud'],
+            'id_empresa' => $data['id_proveedor'],
+            'id_sucursal' => ($data['sucursal']) ? $data['id_sucursal'] : null,
+            'id_moneda' => 1,
+            'observaciones' => $data['observacion'],
+            'fecha' => $fecha->format("Y-m-d")
+        ]);
 
 
             DB::connection('cadeco')->commit();
