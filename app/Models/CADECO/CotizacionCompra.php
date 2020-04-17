@@ -13,6 +13,18 @@ class CotizacionCompra  extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
 
+    protected $fillable = [
+        'id_transaccion',
+        'tipo_transaccion',
+        'numero_folio',
+        'fecha',
+        'estado',
+        'id_obra',
+        'comentario',
+        'observaciones',
+        'FechaHoraRegistro' 
+    ];
+
     protected $searchable = [
         'id_transaccion'
     ];
@@ -48,13 +60,25 @@ class CotizacionCompra  extends Transaccion
 
     public function crear($data)
     {
-        dd('funcion crea' , ($data['enable'][3] !== false) ? true : false, $data);
+        $cotizacion = $this->create([
+            'fecha' => '2020-02-03',
+            'observaciones' => $data['observacion']
+        ]);
+        dd('fin', $cotizacion);
+
         
         try
         {
             DB::connection('cadeco')->beginTransaction();
+            $cotizacion = $this->create([
+                'fecha' => '2020-02-03',
+                'observaciones' => 'jorge'
+            ]);
+            dd('fin', $cotizacion);
+
 
             DB::connection('cadeco')->commit();
+            return $cotizacion;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());

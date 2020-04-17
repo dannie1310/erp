@@ -12,4 +12,11 @@ class CotizacionComplemento extends Model
     protected $table = 'Compras.cotizacion_complemento';
     protected $primaryKey = 'id_transaccion';
     public $timestamps = false;
+
+    protected $fillable = [
+        'id_transaccion',
+        'importe',
+        'registro',
+        'timestamp_registro'
+    ];
 }
