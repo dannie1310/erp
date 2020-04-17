@@ -3,14 +3,14 @@
         <nav>
             <div class="row">
                 <div class="col-12">
-                    <div class="invoice p-3 mb-3">
+                    <div class="invoice p-3 mb-3" v-if="solicitud">
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group error-content">
                                             <label class="col-form-label">Fecha:</label>
-                                            <datepicker v-model = "fecha"
+                                            <datepicker v-model = "solicitud.fecha"
                                                         name = "fecha"
                                                         :format = "formatoFecha"
                                                         :language = "es"
@@ -31,7 +31,7 @@
                                             <select class="form-control"
                                                     name="id_area_compradora"
                                                     data-vv-as="Departamento Responsable"
-                                                    v-model="id_area_compradora"
+                                                    v-model="solicitud.complemento ? solicitud.complemento.id_area_compradora : solicitud.id_area_compradora"
                                                     v-validate="{required: true}"
                                                     :error="errors.has('id_area_compradora')"
                                                     id="id_area_compradora">
@@ -50,7 +50,7 @@
                                                     name="id_tipo"
                                                     :error="errors.has('id_tipo')"
                                                     v-validate="{required: true}"
-                                                    v-model="id_tipo">
+                                                    v-model="solicitud.complemento ? solicitud.complemento.id_tipo : solicitud.id_tipo">
                                                 <option value>-- Selecionar --</option>
                                                 <option v-for="(tipo, index) in tipos" :value="tipo.id" >{{ tipo.descripcion}}</option>
                                             </select>
@@ -64,7 +64,7 @@
                                                     id="id_area_solicitante"
                                                     data-vv-as="Área Solicitante"
                                                     name="id_area_solicitante"
-                                                    v-model="id_area_solicitante"
+                                                    v-model="solicitud.complemento ? solicitud.complemento.id_area_solicitante : solicitud.id_area_solicitante"
                                                     v-validate="{required: true}"
                                                     :error="errors.has('id_area_solicitante')">
                                                 <option value>-- Seleccionar --</option>
@@ -76,7 +76,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Fecha Requisición Origen:</label>
-                                            <datepicker v-model = "fecha_requisicion"
+                                            <datepicker v-model = "solicitud.complemento ? solicitud.complemento.fecha_requisicion_origen : solicitud.fecha_requisicion_origen"
                                                         name = "fecha_requisicion"
                                                         :format = "formatoFecha"
                                                         :language = "es"
@@ -96,7 +96,7 @@
                                                 data-vv-as="Folio Requisición"
                                                 class="form-control"
                                                 placeholder="Folio Requisición"
-                                                v-model="folio_req"/>
+                                                v-model="solicitud.complemento ? solicitud.complemento.requisicion_origen : solicitud.requisicion_origen"/>
                                         </div>
                                     </div>
                                 </div>
@@ -112,7 +112,7 @@
                                                     name="concepto"
                                                     id="concepto"
                                                     class="form-control"
-                                                    v-model="concepto"
+                                                    v-model="solicitud.complemento ? solicitud.complemento.concepto : solicitud.concepto"
                                                     v-validate="{required: true}"
                                                     data-vv-as="Concepto"
                                                     :class="{'is-invalid': errors.has('concepto')}"
@@ -144,13 +144,13 @@
                                                     </th>
                                                 </tr>
                                                 </thead>
-                                                <tbody>
-                                                <tr v-for="(partida, i) in partidas">
-                                                    <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                    <td v-if="partida.material === ''">
-                                                    </td>
+                                                <tbody v-if="solicitud.partidas">
+                                                <tr v-for="(partida, i) in solicitud.partidas.data">
+                                                   <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
+                                                    <td v-if="partida.material === ''" />
                                                     <td v-else>{{partida.material.numero_parte}}</td>
-                                                    <td v-if="partida.material === ''">
+                                                    <td v-if="partida.material">{{partida.material.descripcion}}</td>
+                                                    <td v-else>
                                                         <model-list-select
                                                             :name="`material[${i}]`"
                                                             v-validate="{required: true}"
@@ -164,8 +164,7 @@
                                                         </model-list-select>
                                                         <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                                     </td>
-                                                    <td v-else>{{partida.material.descripcion}}</td>
-                                                    <td>
+                                                     <td>
                                                         <input type="number"
                                                                min="0.01"
                                                                step=".01"
@@ -180,7 +179,7 @@
                                                     <td style="width:120px;" v-if="partida.material">{{partida.material.unidad}}</td>
                                                     <td style="width:120px;" v-else></td>
                                                     <td class="fecha">
-                                                        <datepicker v-model="partida.fecha"
+                                                        <datepicker v-model="partida.entrega ? partida.entrega.fecha : partida.fecha_entrega"
                                                                     :name="`fecha[${i}]`"
                                                                     :format = "formatoFecha"
                                                                     :language = "es"
@@ -197,7 +196,17 @@
                                                             <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
                                                     </td>
-                                                    <td v-else>
+                                                    <td v-else-if="partida.entrega">
+                                                        <small class="badge badge-success" v-if="partida.entrega.id_destino != null" >
+                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                        </small>
+                                                        <small class="badge badge-success" v-else>
+                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                        </small>
+                                                        <span v-if="partida.entrega.id_concepto != null" style="text-decoration: underline"  :title="partida.entrega.concepto.path">{{partida.entrega.concepto.descripcion}}</span>
+                                                        <span v-if="partida.entrega.id_almacen != null">{{partida.entrega.almacen.descripcion}}</span>
+                                                    </td>
+                                                    <td  v-else>
                                                         <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
                                                             <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
@@ -217,7 +226,7 @@
                                                                   data-vv-as="Observaciones"
                                                                   v-validate="{required: true}"
                                                                   :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
-                                                                  v-model="partida.observaciones"/>
+                                                                  v-model="partida.complemento ? partida.complemento.observaciones : partida.observaciones"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                     </td>
                                                     <td>
@@ -241,7 +250,7 @@
                                                     name="observaciones"
                                                     id="observaciones"
                                                     class="form-control"
-                                                    v-model="observaciones"
+                                                    v-model="solicitud.observaciones"
                                                     v-validate="{required: true}"
                                                     data-vv-as="Observaciones"
                                                     :class="{'is-invalid': errors.has('observaciones')}"
@@ -330,6 +339,7 @@
     export default {
         name: "solicitud-compra-edit",
         components: {Datepicker, ModelListSelect, es,ConceptoSelect},
+        props: ['id'],
         data(){
             return{
                 cargando: false,
@@ -389,26 +399,13 @@
                 this.concepto = '';
                 this.observaciones = '';
                 this.id_concepto_temporal = '';
-                this.partidas = [{
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : "",
-                    fecha : "",
-                    observaciones : "",
-                    concepto_temporal : "",
-                    destino :  ""
-                }];
             },
             find() {
                 return this.$store.dispatch('compras/solicitud-compra/find', {
                     id: this.id,
-                    params: {}
+                    params: { include : ['partidas.complemento', 'complemento', 'partidas.entrega']}
                 }).then(data => {
-                    this.estimacion = data;
-                    this.partidas = data.subcontrato.partidas
+                    this.solicitud = data;
                 }).finally(() => {
                     this.cargando = false;
                 })
@@ -451,12 +448,24 @@
             },
             modalDestino(i) {
                 this.index_temporal = i;
-                if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
+                if(this.solicitud.partidas.data[this.index_temporal].destino == '')
+                {
                     this.destino_seleccionado.tipo_destino =  '';
                     this.destino_seleccionado.destino = '';
                     this.destino_seleccionado.id_destino = '';
-                }else {
-                    this.destino_seleccionado = this.partidas[this.index_temporal].destino;
+                }
+                else {
+                    this.destino_seleccionado = this.solicitud.partidas.data[this.index_temporal].destino;
+                }
+
+                if(this.solicitud.partidas.data[this.index_temporal].entrega != undefined && (this.solicitud.partidas.data[this.index_temporal].entrega.almacen == undefined || this.solicitud.partidas.data[this.index_temporal].entrega.concepto == undefined))
+                {
+                    this.destino_seleccionado.tipo_destino =  '';
+                    this.destino_seleccionado.destino = '';
+                    this.destino_seleccionado.id_destino = '';
+                }
+                else {
+                    this.destino_seleccionado = this.solicitud.partidas.data[this.index_temporal].entrega.almacen == undefined ? this.solicitud.partidas.data[this.index_temporal].entrega.concepto : this.solicitud.partidas.data[this.index_temporal].entrega.almacen;
                 }
 
                 if(this.almacenes.length == 0) {
@@ -466,7 +475,7 @@
                 $(this.$refs.modal_destino).modal('show');
             },
             seleccionarDestino() {
-                this.partidas[this.index_temporal].destino = this.destino_seleccionado;
+                this.solicitud.partidas.data[this.index_temporal].destino = this.destino_seleccionado;
                 this.index_temporal = '';
                 this.destino_seleccionado = {
                     tipo_destino : '',
@@ -539,7 +548,7 @@
                     })
             },
             addPartidas(){
-                this.partidas.splice(this.partidas.length + 1, 0, {
+                this.solicitud.partidas.data.splice(this.solicitud.partidas.data.length + 1, 0, {
                     material : "",
                     descripcion : "",
                     unidad : "",
@@ -547,7 +556,6 @@
                     cantidad : "",
                     fecha : "",
                     observaciones : "",
-                    concepto_temporal : "",
                     destino :  ""
                 });
                 this.index = this.index+1;
@@ -556,7 +564,7 @@
                 this.$router.push({name: 'solicitud-compra'});
             },
             destroy(index){
-                this.partidas.splice(index, 1);
+                this.solicitud.partidas.data.splice(index, 1);
             },
             getMateriales() {
                 this.materiales = [];
@@ -577,8 +585,8 @@
                     if (result) {
                         var t = 0;
                         var m = 0;
-                        while(t < this.partidas.length){
-                            if(this.partidas[t].destino === '' || typeof this.partidas[t].destino.destino === 'undefined' )
+                        while(t < this.solicitud.partidas.data.length){
+                            if(this.solicitud.partidas.data[t].destino === '' || typeof this.solicitud.partidas.data[t].destino.destino === 'undefined' )
                             {
                                 this.m ++;
                                 swal('¡Error!', 'Ingrese un destino válido en partida '+(t + 1) +'.', 'error');
