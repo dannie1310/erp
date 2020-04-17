@@ -197,10 +197,10 @@
                                                         </small>
                                                     </td>
                                                     <td v-else-if="partida.entrega">
-                                                        <small class="badge badge-success" v-if="partida.entrega.id_destino != null" >
+                                                        <small class="badge badge-success" v-if="partida.entrega.id_concepto != null" >
                                                             <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
-                                                        <small class="badge badge-success" v-else>
+                                                        <small class="badge badge-success" v-if="partida.entrega.id_almacen != null">
                                                             <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
                                                         <span v-if="partida.entrega.id_concepto != null" style="text-decoration: underline"  :title="partida.entrega.concepto.path">{{partida.entrega.concepto.descripcion}}</span>
@@ -210,7 +210,7 @@
                                                         <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
                                                             <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
-                                                        <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
+                                                        <small class="badge badge-success" v-if="partida.destino.tipo_destino === 2" >
                                                             <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
                                                         <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
@@ -448,24 +448,25 @@
             },
             modalDestino(i) {
                 this.index_temporal = i;
-                if(this.solicitud.partidas.data[this.index_temporal].destino == '')
-                {
-                    this.destino_seleccionado.tipo_destino =  '';
-                    this.destino_seleccionado.destino = '';
-                    this.destino_seleccionado.id_destino = '';
-                }
-                else {
-                    this.destino_seleccionado = this.solicitud.partidas.data[this.index_temporal].destino;
-                }
 
-                if(this.solicitud.partidas.data[this.index_temporal].entrega != undefined && (this.solicitud.partidas.data[this.index_temporal].entrega.almacen == undefined || this.solicitud.partidas.data[this.index_temporal].entrega.concepto == undefined))
+                if(this.solicitud.partidas.data[this.index_temporal].entrega != undefined)
                 {
-                    this.destino_seleccionado.tipo_destino =  '';
-                    this.destino_seleccionado.destino = '';
-                    this.destino_seleccionado.id_destino = '';
-                }
-                else {
-                    this.destino_seleccionado = this.solicitud.partidas.data[this.index_temporal].entrega.almacen == undefined ? this.solicitud.partidas.data[this.index_temporal].entrega.concepto : this.solicitud.partidas.data[this.index_temporal].entrega.almacen;
+                    this.destino_seleccionado =  this.solicitud.partidas.data[this.index_temporal].entrega.almacen == undefined ? this.solicitud.partidas.data[this.index_temporal].entrega.concepto : this.solicitud.partidas.data[this.index_temporal].entrega.almacen;
+                    this.destino_seleccionado.tipo_destino =   this.solicitud.partidas.data[this.index_temporal].entrega.concepto == undefined ? 1 : 2;
+                    this.solicitud.partidas.data[this.index_temporal].entrega.concepto = '';
+                    this.solicitud.partidas.data[this.index_temporal].entrega.almacen = '';
+                    this.solicitud.partidas.data[this.index_temporal].destino =  this.destino_seleccionado
+
+                }else{
+                    if(this.solicitud.partidas.data[this.index_temporal].destino == '')
+                    {
+                        this.destino_seleccionado.tipo_destino =  '';
+                        this.destino_seleccionado.destino = '';
+                        this.destino_seleccionado.id_destino = '';
+                    }
+                    else {
+                        this.destino_seleccionado = this.solicitud.partidas.data[this.index_temporal].destino;
+                    }
                 }
 
                 if(this.almacenes.length == 0) {
