@@ -1117,7 +1117,7 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Editar Solicitud',
-                            breadcrumb: { parent: 'compras', name: 'EDITAR'},
+                            breadcrumb: { parent: 'compras', name: 'EDITAR SOLICITUD'},
                             middleware: [auth, context],
                             permission: 'editar_solicitud_compra'
                         }

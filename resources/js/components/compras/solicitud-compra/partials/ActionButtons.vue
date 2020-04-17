@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
         <Aprobar v-if="value.aprobar" v-bind:id="value.id"></Aprobar>
-        <!-- <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar Solicitud"> <i class="fa fa-pencil"></i> </button>-->
+        <button v-if="value.edit" @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar Solicitud"> <i class="fa fa-pencil"></i></button>
         <SolicitudShow v-if="value.show" @click="value.id" v-bind:id="value.id"/>
        <!--  <PDF  v-if="value.id" v-bind:id="value.id" @click="value.id"/> -->
         <Delete v-if="value.delete" v-bind:id="value.id"/>

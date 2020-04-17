@@ -68,6 +68,4 @@ class Entrega extends Model
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
-
-
 }
