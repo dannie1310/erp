@@ -402,6 +402,7 @@
                     id_sucursal: '',
                     sucursal: '',
                     observaciones: [],
+                    observacion: '',
                     moneda: [],
                     precio: [],
                     enable: [],
@@ -553,8 +554,10 @@
                         this.post.id_solicitud = this.id_solicitud;
                         this.post.id_proveedor = this.id_proveedor;
                         this.post.sucursal = this.sucursal;
+                        this.post.id_sucursal = this.id_sucursal;
                         this.post.observaciones = this.observaciones_inputs;
                         this.post.moneda = this.moneda_input;
+                        this.post.observacion = this.observaciones;
                         this.post.precio = this.precio;
                         this.post.enable = this.enable;
                         this.post.descuento = this.descuento;

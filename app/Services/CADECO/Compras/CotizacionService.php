@@ -38,7 +38,6 @@ class CotizacionService
 
     public function store($data)
     {
-        dd('Store', $data);
         return $this->repository->create($data);
     }
 }

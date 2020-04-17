@@ -38,7 +38,7 @@ export default {
             
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Cotizacion de Compra",
+                    title: "Registrar Cotización de Compra",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     buttons: {
