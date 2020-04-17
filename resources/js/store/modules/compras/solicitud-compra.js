@@ -32,7 +32,7 @@ export default {
             state.currentSolicitud[data.attribute] = data.value
         },
         DELETE_SOLICITUD(state, id){
-            state.solicitudes = state.solicitudes.filter(marbete => {
+            state.solicitudes = state.solicitudes.filter(solicitud => {
                 return solicitud.id != id
             });
         }
@@ -106,7 +106,7 @@ export default {
         },
         index(context, payload) {
             console.log('Index solicitud compra', payload);
-            
+
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI, { params: payload.params })
@@ -160,7 +160,7 @@ export default {
             });
         },
         aprobar(context, payload) {
-            
+
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",

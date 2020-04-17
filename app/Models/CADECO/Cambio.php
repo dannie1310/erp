@@ -25,5 +25,4 @@ class Cambio extends Model
     public function getCambioFormatAttribute(){
         return '$ ' . number_format($this->cambio, 4);
     }
-
 }
