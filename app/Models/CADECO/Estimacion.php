@@ -997,6 +997,24 @@ class Estimacion extends Transaccion
         return $this->suma_importes - $this->monto_anticipo_aplicado;
     }
 
+    public function getEstadoDescripcionAttribute()
+    {
+        switch ($this->estado) {
+            case 0:
+                return 'Registrada';
+                break;
+            case 1:
+                return 'Aprobada';
+                break;
+            case 2:
+                return 'Revisada';
+                break;
+            default:
+                return 'Desconocido';
+                break;
+        }
+    }
+
     public function getIvaRetenidoCalculadoAnteriorAttribute()
     {
         $iva_retenido = 0;
