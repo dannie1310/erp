@@ -61,7 +61,11 @@ class SolicitudCompraObserver extends TransaccionObserver
                 'fecha_eliminacion' => date('Y-m-d H:i:s')
             ]
         );
-        $solicitudCompra->complemento->delete();
+
+        if($solicitudCompra->complemento)
+        {
+            $solicitudCompra->complemento->delete();
+        }
     }
 
     public function deleted(SolicitudCompra $solicitudCompra)
