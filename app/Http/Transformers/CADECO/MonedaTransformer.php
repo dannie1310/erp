@@ -30,6 +30,7 @@ class MonedaTransformer extends TransformerAbstract
             'tipo' => $model->tipo,
             'abreviatura'=>(string)$model->abreviatura,
             'tipo_cambio' => $model->tipo_cambio,
+            'tipo_cambio_igh' => $model->tipo_cambio_igh
         ];
     }
 }

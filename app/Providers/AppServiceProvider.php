@@ -11,6 +11,7 @@ use App\Models\CADECO\Almacenes\EntregaContratista;
 use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Cliente;
+use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\RequisicionComplemento;
 use App\Models\CADECO\Compras\RequisicionEliminada;
@@ -35,6 +36,7 @@ use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use App\Models\CADECO\Contabilidad\TipoCuentaContable;
 use App\Models\CADECO\ContraRecibo;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
+use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Credito;
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Debito;
@@ -258,6 +260,8 @@ use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
 use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\Unidad;
 use App\Models\CADECO\UnidadComplemento;
+use App\Observers\CADECO\Compras\CotizacionComplementoObserver;
+use App\Observers\CADECO\CotizacionCompraObserver;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionLiberacionObserver;
@@ -295,6 +299,7 @@ class AppServiceProvider extends ServiceProvider
             /**
              * Compras
              */
+            CotizacionComplemento::observe(CotizacionComplementoObserver::class);
             EntradaEliminada::observe(EntradaEliminadaObserver::class);
             RequisicionComplemento::observe(RequisicionComplementoObserver::class);
             RequisicionEliminada::observe(RequisicionEliminadaObserver::class);
@@ -412,6 +417,7 @@ class AppServiceProvider extends ServiceProvider
             Cliente::observe(ClienteObserver::class);
             Credito::observe(CreditoObserver::class);
             Cuenta::observe(CuentaObserver::class);
+            CotizacionCompra::observe(CotizacionCompraObserver::class);
             ContraRecibo::observe(ContrareciboObserver::class);
             Debito::observe(DebitoObserver::class);
             DepositoCliente::observe(DepositoClienteObserver::class);
