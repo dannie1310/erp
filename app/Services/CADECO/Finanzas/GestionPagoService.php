@@ -464,7 +464,7 @@ class GestionPagoService
                 abort(403, 'Archivo de bitácora procesado previamente.');
             }
         
-            $cod_operacion = ['FUE542'];
+            $cod_operacion = ['FUE001', 'FUE002'];
             $myfile = fopen($bitacora, "r") or die("Unable to open file!");
             $content = array();
             while(!feof($myfile)) {
@@ -495,7 +495,7 @@ class GestionPagoService
             if(count(explode("|",$content[0])) == 9){
                 foreach($content as $line){
                     $linea = explode("|",$line);
-                    if(in_array($linea[1], $cod_operacion) && $linea[6] == 'Aceptada') {
+                    if(in_array($linea[1], $cod_operacion) && ($linea[6] == 'Aceptada' || $linea[6] == 'Ejecutada')) {
                         $fecha_format = explode(" ",$linea[0])[0];
                         $fecha_format = str_replace('-', '/', $fecha_format);
                         $data[] = array(
