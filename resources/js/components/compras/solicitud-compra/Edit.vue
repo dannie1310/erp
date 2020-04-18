@@ -586,12 +586,12 @@
                 }
                 if(partida.entrega != undefined)
                 {
-                    if(partida.entrega.almacen != undefined)
+                    if(partida.entrega.almacen != undefined || partida.entrega.almacen != '')
                     {
                         this.destino_copiado.tipo_destino = 2
                         this.destino_copiado.destino = partida.entrega.almacen
                     }
-                    if(partida.entrega.concepto != undefined)
+                    if(partida.entrega.concepto != undefined || partida.entrega.almacen != '')
                     {
                         this.destino_copiado.tipo_destino = 1
                         this.destino_copiado.destino = partida.entrega.concepto
