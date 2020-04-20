@@ -1029,6 +1029,16 @@ export const routes = [
                             middleware: [auth, context],
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'cotizacion-create',
+                        component: require('./components/compras/cotizacion/Create').default,
+                        meta: {
+                            title: 'Registrar Cotización',
+                        breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR COTIZACIÓN'},
+                            middleware: [auth, context],
+                        }
+                    },
                 ]
             },
             {

@@ -22,6 +22,7 @@ class EmpresaTransformer extends TransformerAbstract
         'cuentasEmpresa',
         'cuentas',
         'subcontratos',
+        'sucursales',
         'ordenes_compra',
         'cuentas_bancarias',
         'efos'
@@ -47,6 +48,19 @@ class EmpresaTransformer extends TransformerAbstract
     {
         if ($cuentas = $model->cuentasEmpresa) {
             return $this->collection($cuentas, new CuentaEmpresaTransformer);
+        }
+        return null;
+    }
+    
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeSucursales(Empresa $model)
+    {
+        if($sucursales = $model->sucursales)
+        {
+            return $this->collection($sucursales, new SucursalTransformer);
         }
         return null;
     }

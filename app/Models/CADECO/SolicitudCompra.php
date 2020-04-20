@@ -5,7 +5,10 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Compras\ActivoFijo;
+use App\Models\CADECO\Compras\EntregaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
+use App\Models\CADECO\Compras\SolicitudEliminada;
+use App\Models\CADECO\Compras\SolicitudPartidaEliminada;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
@@ -71,6 +74,11 @@ class SolicitudCompra extends Transaccion
         return $this->belongsTo(ActivoFijo::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function transaccionesRelacionadas()
+    {
+        return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function getRegistroAttribute()
     {
         $comentario = explode('|', $this->comentario);
@@ -81,7 +89,6 @@ class SolicitudCompra extends Transaccion
     {
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
-
     }
 
     /**
@@ -163,6 +170,74 @@ class SolicitudCompra extends Transaccion
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    public function scopeCotizacion($query)
+    {
+        return $query->has('cotizaciones');
+    }
+
+    public function scopeConItems($query)
+    {
+        return $query->has('partidas');
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validarParaEliminar();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function validarParaEliminar()
+    {
+        $mensaje = "";
+        if($this->transaccionesRelacionadas()->count('id_transaccion') > 0)
+        {
+            foreach ($this->transaccionesRelacionadas()->get() as $antecedente)
+            {
+                $mensaje .= "-".$antecedente->tipo->Descripcion." #".$antecedente->numero_folio."\n";
+            }
+            abort(500, "Esta solicitud de compra tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
+        }
+    }
+
+    private function revisarRespaldos($motivo)
+    {
+        if (($solicitud = SolicitudEliminada::where('id_transaccion', $this->id_transaccion)->first()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo la solicitud correctamente.');
+        } else {
+            $solicitud->motivo = $motivo;
+            $solicitud->save();
+        }
+        if (($item = SolicitudPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo los items correctamente.');
+        }
+
+        if (EntregaEliminada::whereIn('id_item', $item->pluck('id_item'))->get() == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo las entregas correctamente.');
+        }
+    }
+
+    /**
+     * Elimina las partidas
+     */
+    public function eliminarPartidas()
+    {
+        foreach ($this->partidas()->get() as $item) {
+            $item->delete();
         }
     }
 }

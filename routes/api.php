@@ -522,6 +522,7 @@ $api->version('v1', function ($api) {
 
         // SOLICITUD DE COMPRA
         $api->group(['prefix' => 'solicitud-compra'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@paginate');
             $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@aprobar')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@store');
