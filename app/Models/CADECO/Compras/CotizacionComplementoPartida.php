@@ -13,4 +13,11 @@ class CotizacionComplementoPartida extends Model
     protected $primaryKey = 'id_transaccion';
     public $timestamps = false;
 
+    protected $fillable = [
+        'id_transaccion',
+        'id_material',
+        'descuento_partida',
+        'observaciones',
+        'estatus'
+    ];
 }

@@ -15,7 +15,15 @@ class CotizacionComplemento extends Model
 
     protected $fillable = [
         'id_transaccion',
+        'parcialidades',
+        'dias_credito',
+        'vigencia',
+        'descuento',
+        'plazo_entrega',
+        'anticipo',
         'importe',
+        'tc_usd',
+        'tc_eur',
         'registro',
         'timestamp_registro'
     ];

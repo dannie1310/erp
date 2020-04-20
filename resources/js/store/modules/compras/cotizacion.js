@@ -19,7 +19,6 @@ export default {
 
     actions: {
         paginate (context, payload) {
-            console.log('paginate cotizaciones', payload);
             
             return new Promise((resolve, reject) => {
                 axios
@@ -34,7 +33,6 @@ export default {
             })
         },
         store(context,payload){
-            console.log(payload);
             
             return new Promise((resolve, reject) => {
                 swal({
