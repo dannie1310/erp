@@ -40,6 +40,9 @@ class SolicitudCompraPartidaObserver
             ]
         );
         $partida->entrega->delete();
-        $partida->complemento->delete();
+        if($partida->complemento)
+        {
+            $partida->complemento->delete();
+        }
     }
 }
