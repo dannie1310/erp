@@ -37,8 +37,10 @@ class CotizacionCompra  extends Transaccion
         'porcentaje_anticipo_pactado' 
     ];
 
-    protected $searchable = [
-        'id_transaccion'
+    public $searchable = [
+        'numero_folio',
+        'observaciones',
+        'fecha'
     ];
 
     protected static function boot()
@@ -63,6 +65,11 @@ class CotizacionCompra  extends Transaccion
     public function descargaLayout($id)
     {
         return Excel::download(new CotizacionLayout(CotizacionCompra::find($id)), 'LayoutCotizacion.xlsx');
+    }
+
+    public function empresa()
+    {
+        return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
     public function solicitud()
