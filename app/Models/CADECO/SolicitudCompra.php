@@ -120,6 +120,11 @@ class SolicitudCompra extends Transaccion
         return $this;
     }
 
+    /**
+     * Registrar solicitud de compra
+     * @param $data
+     * @return mixed
+     */
     public function registrar($data)
     {
         try {
@@ -183,11 +188,16 @@ class SolicitudCompra extends Transaccion
         return $query->has('partidas');
     }
 
+    /**
+     * Eliminar solicitud de compra
+     * @param $motivo
+     * @return $this
+     */
     public function eliminar($motivo)
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            $this->validarParaEliminar();
+            $this->validar();
             $this->delete();
             $this->revisarRespaldos($motivo);
             DB::connection('cadeco')->commit();
@@ -198,8 +208,15 @@ class SolicitudCompra extends Transaccion
         }
     }
 
-    public function validarParaEliminar()
+    /**
+     * Validar la solicitud para poder realizar cambios.
+     */
+    private function validar()
     {
+        if($this->estado == 1)
+        {
+            abort(500, "Esta solicitud de compra se encuentra aprobada.");
+        }
         $mensaje = "";
         if($this->transaccionesRelacionadas()->count('id_transaccion') > 0)
         {
@@ -239,5 +256,89 @@ class SolicitudCompra extends Transaccion
         foreach ($this->partidas()->get() as $item) {
             $item->delete();
         }
+    }
+
+
+    /**
+     * Editar la solicitud de compra
+     * @param $datos
+     * @return SolicitudCompra
+     */
+    public function editar($datos)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validar();
+            $this->editarPartidas($this->dividirPartidas($datos['partidas']['data']));
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function editarPartidas($datos)
+    {
+        //anteriores
+        foreach($this->partidas as $partida) {
+            foreach ($datos['anteriores'] as $key => $cambios) {
+                while ($cambios['id'] === $partida->id_item) {
+                    $fecha = New DateTime($cambios['entrega'] ? $cambios['entrega']['fecha'] : $cambios['fecha_entrega']);
+                    $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+                    $partida->update([
+                        'cantidad' => $cambios['cantidad']
+                    ]);
+                    if ($partida->complemento) {
+                        $partida->complemento->update([
+                            'fecha_entrega' => $fecha->format("Y-m-d H:i:s"),
+                            'observaciones' => $cambios['complemento']['observaciones']
+                        ]);
+                    } else {
+                        $partida->complemento()->create([
+                            'id_item' => $partida->id_item,
+                            'observaciones' => $cambios['observaciones'],
+                            'fecha_entrega' => $fecha->format("Y-m-d H:i:s")
+                        ]);
+                    }
+                    $partida->entrega->update([
+                        'fecha' => $fecha->format("Y-m-d H:i:s"),
+                        'cantidad' => $cambios['cantidad']
+                    ]);
+
+                    if (array_key_exists('destino', $cambios)) {
+                        $partida->entrega->update([
+                            'id_concepto' => $cambios['destino']['tipo_destino'] == 1 ? $partida['destino']['id_destino'] : NULL,
+                            'id_almacen' => $partida['destino']['tipo_destino'] == 2 ? $partida['destino']['id_destino'] : NULL
+                        ]);
+                    }
+                    unset($datos['anteriores'][$key]);
+                    var_dump("validar", $partida->id_item, $cambios['id']);
+                }
+            }
+            var_dump("fin", $partida->id_item, $cambios['id']);
+            die();
+        }
+
+        //nuevas partidas
+        dd("nuvasssss");
+    }
+
+    private function dividirPartidas($datos)
+    {
+        $nuevos = array();
+        $anteriores = array();
+        foreach ($datos as $dato)
+        {
+            if(array_key_exists('id',$dato)){
+                $anteriores[] = $dato;
+            }else{
+                $nuevos[] = $dato;
+            }
+        }
+        return [
+            'nuevos' => $nuevos,
+            'anteriores' => $anteriores
+        ];
     }
 }

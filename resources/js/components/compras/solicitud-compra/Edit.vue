@@ -284,29 +284,29 @@
                                                         ></datepicker>
                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                     </td>
-                                                    <td v-if="partida.entrega != undefined && ((partida.entrega.concepto != '' && partida.entrega.concepto != null) || (partida.entrega.almacen != '' && partida.entrega.almacen != null))">
-                                                        <small class="badge badge-success" v-if="partida.entrega.id_concepto != null">
-                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                    <td v-if="partida.destino == undefined && (partida.entrega != undefined && (partida.entrega.concepto != undefined || partida.entrega.almacen != undefined))">
+                                                        <small class="badge badge-success" v-if="partida.entrega.concepto != undefined && partida.entrega.concepto != null">
+                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" >1</i>
                                                         </small>
-                                                        <small class="badge badge-success" v-if="partida.entrega.id_almacen != null">
-                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                        <small class="badge badge-success" v-if="partida.entrega.almacen != undefined && partida.entrega.almacen != null">
+                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" >2</i>
                                                         </small>
-                                                        <span v-if="partida.entrega.id_concepto != null" style="text-decoration: underline" :title="partida.entrega.concepto.path">{{partida.entrega.concepto.descripcion}}</span>
-                                                        <span v-if="partida.entrega.id_almacen != null">{{partida.entrega.almacen.descripcion}}</span>
+                                                        <span v-if="partida.entrega.concepto != undefined && partida.entrega.concepto != null" style="text-decoration: underline" :title="partida.entrega.concepto.path">1{{partida.entrega.concepto.descripcion}}</span>
+                                                        <span v-if="partida.entrega.almacen != undefined && partida.entrega.almacen != null">2{{partida.entrega.almacen.descripcion}}</span>
                                                     </td>
                                                     <td v-else-if="partida.destino">
-                                                        <small class="badge badge-success" v-if="partida.destino.tipo_destino == 1" >
-                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                        <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
+                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" >3</i>
                                                         </small>
-                                                        <small class="badge badge-success" v-if="partida.destino.tipo_destino == 2">
-                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                        <small class="badge badge-success" v-if="partida.destino.tipo_destino === 2">
+                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" >4</i>
                                                         </small>
-                                                        <span v-if="partida.destino.tipo_destino == 1" style="text-decoration: underline" :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
-                                                        <span v-if="partida.destino.tipo_destino == 2">{{partida.destino.destino.descripcion}}</span>
+                                                        <span v-if="partida.destino.tipo_destino === 1 && partida.destino.destino" style="text-decoration: underline" :title="partida.destino.destino.path">3{{partida.destino.destino.descripcion}}</span>
+                                                        <span v-if="partida.destino.tipo_destino === 2">4{{partida.destino.destino.descripcion}}</span>
                                                     </td>
                                                     <td v-else>
                                                         <small class="badge badge-secondary">
-                                                            <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" >5</i>
                                                         </small>
                                                     </td>
                                                     <td class="icono">
@@ -364,7 +364,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Registrar</button>
+                               <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0">Guardar </button>
                             </div>
                         </form>
                     </div>
@@ -539,8 +539,8 @@
                 {
                     this.destino_seleccionado.destino =  this.solicitud.partidas.data[this.index_temporal].entrega.almacen == undefined ? this.solicitud.partidas.data[this.index_temporal].entrega.concepto : this.solicitud.partidas.data[this.index_temporal].entrega.almacen;
                     this.destino_seleccionado.tipo_destino =   this.solicitud.partidas.data[this.index_temporal].entrega.concepto == undefined ? 1 : 2;
-                    this.solicitud.partidas.data[this.index_temporal].entrega.concepto = '';
-                    this.solicitud.partidas.data[this.index_temporal].entrega.almacen = '';
+                    this.solicitud.partidas.data[this.index_temporal].entrega.concepto = null;
+                    this.solicitud.partidas.data[this.index_temporal].entrega.almacen = null;
                     this.solicitud.partidas.data[this.index_temporal].destino = this.destino_seleccionado;
                 }else{
                     if(this.solicitud.partidas.data[this.index_temporal].destino == '')
@@ -583,41 +583,50 @@
                 if(partida.destino != undefined)
                 {
                     this.destino_copiado = partida.destino
+                    console.log("copiando...", 1 )
                 }
                 if(partida.entrega != undefined)
                 {
-                    if(partida.entrega.almacen != undefined || partida.entrega.almacen != '')
+                    console.log("copiando...", 2,partida.entrega.almacen != undefined && partida.entrega.almacen != null, partida.entrega.almacen != undefined , partida.entrega.almacen != null, partida.entrega.almacen)
+                    if(partida.entrega.almacen != undefined && partida.entrega.almacen != null)
                     {
                         this.destino_copiado.tipo_destino = 2
                         this.destino_copiado.destino = partida.entrega.almacen
+                        this.destino_copiado.id_destino = partida.entrega.almacen.id
                     }
-                    if(partida.entrega.concepto != undefined || partida.entrega.almacen != '')
+                console.log(partida.entrega.concepto != undefined && partida.entrega.concepto != null, partida.entrega.concepto != undefined,partida.entrega.concepto != null,partida.entrega.concepto)
+                    if(partida.entrega.concepto != undefined && partida.entrega.concepto != null)
                     {
                         this.destino_copiado.tipo_destino = 1
                         this.destino_copiado.destino = partida.entrega.concepto
+                        this.destino_copiado.id_destino = partida.entrega.concepto.id
                     }
                 }
+                console.log("copiando...",5, this.destino_copiado)
             },
             pegar_destino(partida){
+                console.log("pegando...", 1 , this.destino_copiado)
+                if(partida.entrega != undefined)
+                {
+                    if(partida.entrega.almacen != undefined && partida.entrega.almacen != null)
+                    {
+                        partida.entrega.almacen = null
+                    }
+                    if(partida.entrega.concepto != undefined && partida.entrega.concepto != null)
+                    {
+                        partida.entrega.concepto = null
+                    }
+                }
                 partida.destino = {
                     tipo_destino : '',
                     destino : '',
                     id_destino : ''
                 };
+                console.log("pegando...", 2 , partida.destino, partida.entrega ?  partida.entrega.concepto : '', partida.entrega ?  partida.entrega.almacen :'')
                 partida.destino.id_destino = this.destino_copiado.destino.id;
                 partida.destino.tipo_destino = this.destino_copiado.tipo_destino;
                 partida.destino.destino = this.destino_copiado.destino;
-                if(partida.entrega != undefined)
-                {
-                    if(partida.entrega.almacen != undefined)
-                    {
-                        partida.entrega.almacen = ''
-                    }
-                    if(partida.entrega.concepto != undefined)
-                    {
-                        partida.entrega.concepto = ''
-                    }
-                }
+                console.log("pegando...", 3 , partida.destino)
             },
             getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
@@ -698,36 +707,30 @@
                     if (result) {
                         var t = 0;
                         var m = 0;
-                        console.log( this.solicitud.partidas.data.length)
-                        while(t < this.solicitud.partidas.data.length){
-                            if(this.solicitud.partidas.data[t].destino === '' || typeof this.solicitud.partidas.data[t].destino.destino === 'undefined' )
+                        console.log( this.solicitud.partidas.data.length, this.solicitud.partidas.data[t].entrega.almacen, this.solicitud.partidas.data[t].entrega.concepto)
+                       /* while(t < this.solicitud.partidas.data.length){
+                            if(((typeof this.solicitud.partidas.data[t].entrega.almacen === 'undefined' && typeof this.solicitud.partidas.data[t].entrega.concepto === 'undefined')) && (this.solicitud.partidas.data[t].destino === '' || typeof this.solicitud.partidas.data[t].destino.destino === 'undefined' ))
                             {
                                 this.m ++;
                                 swal('¡Error!', 'Ingrese un destino válido en partida '+(t + 1) +'.', 'error');
                             }
                             t ++;
-                        }if(m == 0) {
-                            this.store()
-                        }
+                        }if(m == 0) {*/
+                            this.update()
+                        //}
                     }
                 });
             },
-            store() {
-                return this.$store.dispatch('compras/solicitud-compra/store', {
-                    concepto: this.concepto,
-                    fecha: this.fecha,
-                    fecha_requisicion: this.fecha_requisicion,
-                    partidas: this.partidas,
-                    id_area_compradora: this.id_area_compradora,
-                    id_area_solicitante: this.id_area_solicitante,
-                    folio_requisicion: this.folio_req,
-                    observaciones: this.observaciones,
-                    id_tipo: this.id_tipo
+            update() {
+                return this.$store.dispatch('compras/solicitud-compra/update',
+                    {
+                        id: this.id,
+                        data: this.solicitud
                 })
                     .then((data) => {
-                        this.$router.push({name: 'solicitud-compra'});
+                        //this.$router.push({name: 'solicitud-compra'});
                     });
-            },
+            }
         },
         watch: {
             id_concepto_temporal(value){
