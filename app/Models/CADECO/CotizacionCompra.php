@@ -72,6 +72,11 @@ class CotizacionCompra  extends Transaccion
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'id_sucursal');
+    }
+
     public function solicitud()
     {
         return $this->belongsTo(SolicitudCompra::class, 'id_antecedente', 'id_transaccion');
