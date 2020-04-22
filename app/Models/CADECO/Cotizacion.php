@@ -15,6 +15,18 @@ class Cotizacion extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'id_transaccion',
+        'id_material',
+        'precio_unitario',
+        'cantidad',
+        'descuento',
+        'anticipo',
+        'disponibles',
+        'id_moneda',
+        'no_cotizado'
+    ];
+
 
     public function partida(){
         return $this->belongsTo(CotizacionComplementoPartida::class,'id_transaccion', 'id_transaccion')->where('id_material', '=', $this->id_material);

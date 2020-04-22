@@ -19,6 +19,7 @@ class CotizacionCompraObserver extends TransaccionObserver
         $cotizacionCompra->tipo_transaccion = 18;
         $cotizacionCompra->estado = 1;
         $cotizacionCompra->opciones = 1;
+        $cotizacionCompra->id_moneda = 1;
         
     }
 }

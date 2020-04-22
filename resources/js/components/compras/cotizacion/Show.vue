@@ -1,58 +1,51 @@
 <template>
     <span>
-        <button @click="find()" v-if="boton" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver Solicitud">
-            <i style="width:40px;" v-if="!cargando">{{boton.numero_folio_format}}</i>
-            <i class="fa fa-spinner fa-spin" style="width:40px;" v-else></i>
-        </button>
-        <button @click="find()" v-else type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Solicitud">
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" v-show="show" :disabled="cargando" title="Ver Cotización">
             <i class="fa fa-eye" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> DETALLES DE LA SOLICITUD</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> DETALLES DE LA COTIZACIÓN</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" v-if="solicitud">
+                    <div class="modal-body" v-if="cotizacion">
                         <div class="row">
                             <div class="col-12">
                                 <div class="invoice p-3 mb-3">
                                     <div class="row col-md-12">
                                         <div class="col-md-6">
-                                            <h5>Folio: &nbsp; <b>{{solicitud.numero_folio_format}}</b></h5>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h5>Folio Compuesto: &nbsp; <b>{{solicitud.complemento ? solicitud.complemento.folio : '---'}}</b></h5>
+                                            <h5>Folio: &nbsp; <b>{{cotizacion.folio_format}}</b></h5>
                                         </div>
                                     </div>
                                     <div class="table-responsive col-md-12">
                                         <table class="table">
                                             <tbody>
                                                 <tr>
-                                                    <td class="bg-gray-light"><b>Fecha:</b></td>
-                                                    <td class="bg-gray-light"> {{solicitud.fecha_format}} </td>
+                                                    <td class="bg-gray-light" colspan="6"><b>{{(cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----'}}</b></td>
+                                                    <!-- <td class="bg-gray-light">20/02/2020</td>
                                                     <td class="bg-gray-light"><b>Fecha Requisición Origen:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.fecha_requisicion_origen_format : '------------'}}</td>
+                                                    <td class="bg-gray-light">20/02/2020</td>
                                                     <td class="bg-gray-light"><b>Folio Requisición Origen:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.requisicion_origen : '------------'}}</td>
+                                                    <td class="bg-gray-light">20/02/2020</td> -->
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Departamento Responsable:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_compradora.descripcion : '------------'}}</td>
+                                                    <td class="bg-gray-light">departamento</td>
                                                     <td class="bg-gray-light"><b>Tipo:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.tipo.descripcion : '------------'}}</td>
+                                                    <td class="bg-gray-light">Tipo</td>
                                                     <td class="bg-gray-light"><b>Área Solicitante:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_solicitante.descripcion : '------------'}}</td>
+                                                    <td class="bg-gray-light">Area</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Concepto:</b></td>
-                                                    <td class="bg-gray-light" colspan="3">{{(solicitud.complemento) ? solicitud.complemento.concepto : '------------'}}</td>
+                                                    <td class="bg-gray-light" colspan="3">Concepto</td>
                                                     <td class="bg-gray-light"><b>Usuario Registró:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.usuario) ? solicitud.usuario.nombre : '------------'}}</td></tr>
+                                                    <td class="bg-gray-light">Usuario</td></tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -75,7 +68,7 @@
                                                         <th>Observaciones</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <!-- <tbody>
                                                     <tr v-for="(partida, i) in solicitud.partidas.data">
                                                         <td>{{i+1}}</td>
                                                         <td style="text-align: center"><b>{{partida.material.numero_parte}}</b></td>
@@ -85,13 +78,13 @@
                                                         <td v-if="partida.entrega">{{(partida.entrega.concepto) ? partida.entrega.concepto.path : partida.entrega.almacen ? partida.entrega.almacen.descripcion : '------------'}}</td>
                                                         <td style="text-align: left">{{(partida.complemento) ? partida.complemento.observaciones : '------------'}}</td>
                                                     </tr>
-                                                </tbody>
+                                                </tbody> -->
                                             </table>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="col-md-2"><b>Observaciones:</b></div>
-                                        <div class="col-md-10">{{solicitud.observaciones}}</div>
+                                        <div class="col-md-10">Observaciones</div>
                                     </div>
                                 </div>
                             </div>
@@ -108,8 +101,8 @@
 
 <script>
     export default {
-        name: "solicitud-show",
-        props: ['id', 'cotizacion'],
+        name: "cotizacion-show",
+        props: ['id', 'show'],
         data(){
             return{
                 cargando: false,
@@ -119,14 +112,12 @@
             find() {
 
                 this.cargando = true;
-                this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
-                return this.$store.dispatch('compras/solicitud-compra/find', {
+                this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
+                return this.$store.dispatch('compras/cotizacion/find', {
                     id: this.id,
-                    params:{include: [
-                            'complemento',
-                            'partidas.complemento', 'partidas.entrega']}
+                    params:{include: ['empresa']}
                 }).then(data => {
-                    this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
+                    this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
 
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
@@ -136,12 +127,8 @@
             }
         },
         computed: {
-            solicitud() {
-                return this.$store.getters['compras/solicitud-compra/currentSolicitud']
-            },
-            boton()
-            {
-                return (this.cotizacion) ? this.cotizacion :false;
+            cotizacion() {
+                return this.$store.getters['compras/cotizacion/currentCotizacion']
             }
         }
     }

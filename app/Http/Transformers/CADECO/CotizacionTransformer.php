@@ -3,12 +3,24 @@
 
 namespace App\Http\Transformers\CADECO;
 
-
+use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\CotizacionCompra;
+use App\Models\CADECO\Transaccion;
 use League\Fractal\TransformerAbstract;
 
 class CotizacionTransformer extends TransformerAbstract
 {
+    /**
+     * List of resources possible to include
+     * 
+     * @var array
+     */
+    protected $availableIncludes = [
+        'solicitud',
+        'empresa'
+    ];
+
     public function transform(CotizacionCompra $model)
     {
         return [
@@ -27,4 +39,31 @@ class CotizacionTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param CotizacionCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSolicitud(CotizacionCompra $model)
+    {
+        if($solicitud = $model->solicitud)
+        {
+            return $this->item($solicitud, new SolicitudCompraTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Empresa
+     *
+     * @param OrdenCompra $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeEmpresa(CotizacionCompra $model)
+    {
+        if($empresa = $model->empresa)
+        {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
 }

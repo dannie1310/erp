@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" class="btn btn-app btn-info pull-right">
+            <button @click="create" v-if="$root.can('registrar_cotizacion_compra')" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
@@ -38,17 +38,17 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Núm de Folio de la Solicitud', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Núm de Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
-                    // { title: 'Cotizaciones', field: 'cotizaciones', tdClass: 'icono', sortable: false },
-                    { title: 'Usuario Registro', field: 'usuario_registro', sortable: false },
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Núm de Folio de la Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC'},
+                query: {sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa']},
                 search: '',
                 cargando: false
             }
@@ -99,7 +99,7 @@
                     default:
                         return {
                             color: '#d2d6de',
-                            descripcion: 'Desconocido'
+                            descripcion: 'Sin solicitud'
                         }
                 }
             },
@@ -127,15 +127,18 @@
                         index: (i + 1) + self.query.offset,
                         numero_folio: cotizacion.folio_format,
                         fecha: cotizacion.fecha_format,
-                        // usuario_registro: cotizacion.usuario.nombre,
+                        empresa: (cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----',
                         observaciones: cotizacion.observaciones,
-                        // cotizaciones: cotizacion.cotizaciones,
-                        // estado: this.getEstado(cotizacion.estado),
-                        // buttons: $.extend({}, {
-                        //     show: true,
-                        //     aprobar: (cotizacion.estado == 0) ? true : false,
-                        //     id: cotizacion.id,
-                        // })
+                        estado: this.getEstado((cotizacion.solicitud) ? cotizacion.solicitud.estado : null),
+                        solicitud: $.extend({}, {
+                            show: (cotizacion.solicitud) ? true : false,
+                            id: (cotizacion.solicitud) ? cotizacion.solicitud.id : null,
+                            cotizacion: (cotizacion.solicitud) ? cotizacion.solicitud : null
+                        }),
+                        buttons: $.extend({}, {
+                            show: true,
+                            id: cotizacion.id,
+                        })
                     }));
                 },
                 deep: true
