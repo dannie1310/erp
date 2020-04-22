@@ -270,6 +270,36 @@ class SolicitudCompra extends Transaccion
             DB::connection('cadeco')->beginTransaction();
             $this->validar();
             $this->editarPartidas($this->dividirPartidas($datos['partidas']['data']));
+            $fecha =New DateTime($datos['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_req =New DateTime($datos['complemento'] ? $datos['complemento']['fecha_requisicion_origen'] : $datos['fecha_requisicion_origen']);
+            $fecha_req->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+            $this->update([
+                'fecha' => $fecha->format("Y-m-d H:i:s"),
+                'observaciones' => $datos['observaciones']
+            ]);
+            if($this->complemento) {
+                $this->complemento()->update([
+                    'id_transaccion' => $this->id_transaccion,
+                    'id_area_compradora' => $datos['complemento'] ? $datos['complemento']['id_area_compradora'] : $datos['id_area_compradora'],
+                    'id_tipo' => $datos['complemento'] ? $datos['complemento']['id_tipo'] : $datos['id_tipo'],
+                    'id_area_solicitante' => $datos['complemento'] ? $datos['complemento']['id_area_solicitante'] : $datos['id_area_solicitante'],
+                    'concepto' => $datos['complemento'] ? $datos['complemento']['concepto'] : $datos['concepto'],
+                    'fecha_requisicion_origen' => $fecha_req->format("Y-m-d H:i:s"),
+                    'requisicion_origen' => $datos['complemento'] ? $datos['complemento']['requisicion_origen'] : $datos['requisicion_origen']
+                ]);
+            }else{
+                $this->complemento()->create([
+                    'id_transaccion' => $this->id_transaccion,
+                    'id_area_compradora' => $datos['complemento'] ? $datos['complemento']['id_area_compradora'] : $datos['id_area_compradora'],
+                    'id_tipo' =>  $datos['complemento'] ? $datos['complemento']['id_tipo'] : $datos['id_tipo'],
+                    'id_area_solicitante' =>  $datos['complemento'] ? $datos['complemento']['id_area_solicitante'] : $datos['id_area_solicitante'],
+                    'concepto' => $datos['complemento'] ? $datos['complemento']['concepto'] : $datos['concepto'],
+                    'fecha_requisicion_origen' => $fecha_req->format("Y-m-d H:i:s"),
+                    'requisicion_origen' => $datos['complemento'] ? $datos['complemento']['folio_requisicion'] : $datos['folio_requisicion']
+                ]);
+            }
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -280,10 +310,11 @@ class SolicitudCompra extends Transaccion
 
     private function editarPartidas($datos)
     {
-        //anteriores
+        //Editar partidas existentes
         foreach($this->partidas as $partida) {
+            $encontrada = 0;
             foreach ($datos['anteriores'] as $key => $cambios) {
-                while ($cambios['id'] === $partida->id_item) {
+                if ($cambios['id'] === $partida->id_item) {
                     $fecha = New DateTime($cambios['entrega'] ? $cambios['entrega']['fecha'] : $cambios['fecha_entrega']);
                     $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                     $partida->update([
@@ -312,16 +343,38 @@ class SolicitudCompra extends Transaccion
                             'id_almacen' => $partida['destino']['tipo_destino'] == 2 ? $partida['destino']['id_destino'] : NULL
                         ]);
                     }
-                    unset($datos['anteriores'][$key]);
-                    var_dump("validar", $partida->id_item, $cambios['id']);
+                    $encontrada = 1;
                 }
             }
-            var_dump("fin", $partida->id_item, $cambios['id']);
-            die();
+            if($encontrada == 0)
+            {
+                $partida->delete();
+            }
         }
 
-        //nuevas partidas
-        dd("nuvasssss");
+        /*Registro de partidas nuevas*/
+        foreach ($datos['nuevos'] as $partida) {
+            $item = $this->partidas()->create([
+                'id_transaccion' => $this->id_transaccion,
+                'id_material' => $partida['material']['id'],
+                'unidad' => $partida['material']['unidad'],
+                'cantidad' => $partida['cantidad']
+            ]);
+            $fecha =New DateTime($partida['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $complemento = $item->complemento()->create([
+                'id_item' => $item->id_item,
+                'observaciones' => $partida['observaciones'],
+                'fecha_entrega' => $fecha->format("Y-m-d H:i:s")
+            ]);
+            $entrega = Entrega::create([
+                'id_item' => $item->id_item,
+                'fecha' => $fecha->format("Y-m-d H:i:s"),
+                'cantidad' => $item->cantidad,
+                'id_concepto' => $partida['destino']['tipo_destino'] == 1 ? $partida['destino']['id_destino'] : NULL,
+                'id_almacen' => $partida['destino']['tipo_destino'] == 2 ? $partida['destino']['id_destino'] : NULL,
+            ]);
+        }
     }
 
     private function dividirPartidas($datos)

@@ -583,18 +583,15 @@
                 if(partida.destino != undefined)
                 {
                     this.destino_copiado = partida.destino
-                    console.log("copiando...", 1 )
                 }
                 if(partida.entrega != undefined)
                 {
-                    console.log("copiando...", 2,partida.entrega.almacen != undefined && partida.entrega.almacen != null, partida.entrega.almacen != undefined , partida.entrega.almacen != null, partida.entrega.almacen)
                     if(partida.entrega.almacen != undefined && partida.entrega.almacen != null)
                     {
                         this.destino_copiado.tipo_destino = 2
                         this.destino_copiado.destino = partida.entrega.almacen
                         this.destino_copiado.id_destino = partida.entrega.almacen.id
                     }
-                console.log(partida.entrega.concepto != undefined && partida.entrega.concepto != null, partida.entrega.concepto != undefined,partida.entrega.concepto != null,partida.entrega.concepto)
                     if(partida.entrega.concepto != undefined && partida.entrega.concepto != null)
                     {
                         this.destino_copiado.tipo_destino = 1
@@ -602,10 +599,8 @@
                         this.destino_copiado.id_destino = partida.entrega.concepto.id
                     }
                 }
-                console.log("copiando...",5, this.destino_copiado)
             },
             pegar_destino(partida){
-                console.log("pegando...", 1 , this.destino_copiado)
                 if(partida.entrega != undefined)
                 {
                     if(partida.entrega.almacen != undefined && partida.entrega.almacen != null)
@@ -622,11 +617,9 @@
                     destino : '',
                     id_destino : ''
                 };
-                console.log("pegando...", 2 , partida.destino, partida.entrega ?  partida.entrega.concepto : '', partida.entrega ?  partida.entrega.almacen :'')
                 partida.destino.id_destino = this.destino_copiado.destino.id;
                 partida.destino.tipo_destino = this.destino_copiado.tipo_destino;
                 partida.destino.destino = this.destino_copiado.destino;
-                console.log("pegando...", 3 , partida.destino)
             },
             getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
@@ -722,6 +715,7 @@
                 });
             },
             update() {
+                console.log( solicitud.indexOf('partidas'))
                 return this.$store.dispatch('compras/solicitud-compra/update',
                     {
                         id: this.id,

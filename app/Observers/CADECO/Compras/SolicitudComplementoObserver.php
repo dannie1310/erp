@@ -29,4 +29,22 @@ class SolicitudComplementoObserver
             $solicitudComplemento->generarActivoFijo();
         }
     }
+
+    public function updating(SolicitudComplemento $solicitudComplemento)
+    {
+        if($solicitudComplemento->id_area_compradora == $solicitudComplemento->getOriginal('id_area_compradora') || $solicitudComplemento->id_tipo !=  $solicitudComplemento->getOriginal('id_tipo') || $solicitudComplemento->id_area_solicitante != (int) $solicitudComplemento->getOriginal('id_area_solicitante'))
+        {
+            $solicitudComplemento->generaFolioCompuesto();
+        }
+    }
+
+    public function updated(SolicitudComplemento $solicitudComplemento)
+    {
+        if ($solicitudComplemento->getOriginal('id_tipo') == 3 && $solicitudComplemento->id_tipo === 3 && is_null($solicitudComplemento->activoFijo))
+        {
+            $solicitudComplemento->generarActivoFijo();
+        }elseif($solicitudComplemento->getOriginal('id_tipo') == 3 && !is_null($solicitudComplemento->activoFijo)){
+            $solicitudComplemento->activoFijo->delete();
+        }
+    }
 }
