@@ -26,7 +26,7 @@
                                         <table class="table">
                                             <tbody>
                                                 <tr>
-                                                    <td class="bg-gray-light" colspan="6"><b>{{(cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----'}}</b></td>
+                                                    <td class="bg-gray-light" align="center" colspan="4"><b>{{(cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----'}}</b></td>
                                                     <!-- <td class="bg-gray-light">20/02/2020</td>
                                                     <td class="bg-gray-light"><b>Fecha Requisición Origen:</b></td>
                                                     <td class="bg-gray-light">20/02/2020</td>
@@ -34,16 +34,14 @@
                                                     <td class="bg-gray-light">20/02/2020</td> -->
                                                 </tr>
                                                 <tr>
-                                                    <td class="bg-gray-light"><b>Departamento Responsable:</b></td>
-                                                    <td class="bg-gray-light">departamento</td>
-                                                    <td class="bg-gray-light"><b>Tipo:</b></td>
-                                                    <td class="bg-gray-light">Tipo</td>
-                                                    <td class="bg-gray-light"><b>Área Solicitante:</b></td>
-                                                    <td class="bg-gray-light">Area</td>
+                                                    <td class="bg-gray-light"><b>Sucursal:</b></td>
+                                                    <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.descripcion : '------ Sin Sucursal ------'}}</td>
+                                                    <td class="bg-gray-light"><b>Fecha:</b></td>
+                                                    <td class="bg-gray-light">{{cotizacion.fecha_format}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="bg-gray-light"><b>Concepto:</b></td>
-                                                    <td class="bg-gray-light" colspan="3">Concepto</td>
+                                                    <td class="bg-gray-light"><b>Direccion:</b></td>
+                                                    <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.direccion : '--------------------'}}</td>
                                                     <td class="bg-gray-light"><b>Usuario Registró:</b></td>
                                                     <td class="bg-gray-light">Usuario</td></tr>
                                             </tbody>
@@ -115,7 +113,7 @@
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
                 return this.$store.dispatch('compras/cotizacion/find', {
                     id: this.id,
-                    params:{include: ['empresa']}
+                    params:{include: ['empresa', 'sucursal']}
                 }).then(data => {
                     this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
 

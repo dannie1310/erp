@@ -18,7 +18,8 @@ class CotizacionTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'solicitud',
-        'empresa'
+        'empresa',
+        'sucursal'
     ];
 
     public function transform(CotizacionCompra $model)
@@ -63,6 +64,21 @@ class CotizacionTransformer extends TransformerAbstract
         if($empresa = $model->empresa)
         {
             return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Sucursal
+     *
+     * @param OrdenCompra $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeSucursal(CotizacionCompra $model)
+    {
+        if($sucursal = $model->sucursal)
+        {
+            return $this->item($sucursal, new SucursalTransformer);
         }
         return null;
     }
