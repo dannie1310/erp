@@ -79,7 +79,9 @@ class EstimacionTransformer extends TransformerAbstract
             'total_orden_pago' => $model->total_orden_pago_format,
             'total_anticipo_liberar' => $model->anticipo_a_liberar_format,
             'monto_pagar' => $model->monto_a_pagar,
-            'monto_pagar_format' => $model->monto_a_pagar_format
+            'monto_pagar_format' => $model->monto_a_pagar_format,
+            'suma_penalizaciones' => $model->suma_penalizaciones_format,
+            'suma_penalizaciones_liberadas' => $model->suma_penalizaciones_liberadas_format
         ];
     }
 
