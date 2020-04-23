@@ -42,8 +42,8 @@ class CotizacionController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-//        $this->middleware('permiso:consultar_salida_almacen')->only(['show','paginate','index','find']);
-//        $this->middleware('permiso:eliminar_salida_almacen')->only(['destroy']);
+        $this->middleware('permiso:registrar_cotizacion_compra')->only(['store']);
+        $this->middleware('permiso:consultar_cotizacion_compra')->only(['show','paginate','index','find']);
 
         $this->fractal = $fractal;
         $this->service = $service;

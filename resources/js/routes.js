@@ -1026,7 +1026,8 @@ export const routes = [
                         meta: {
                             title: 'Cotizaciones',
                             breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_cotizacion_compra']
                         }
                     },
                     {
@@ -1036,7 +1037,8 @@ export const routes = [
                         meta: {
                             title: 'Registrar Cotización',
                         breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR COTIZACIÓN'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_cotizacion_compra']
                         }
                     },
                 ]
@@ -1117,7 +1119,7 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Editar Solicitud',
-                            breadcrumb: { parent: 'compras', name: 'EDITAR'},
+                            breadcrumb: { parent: 'compras', name: 'EDITAR SOLICITUD'},
                             middleware: [auth, context],
                             permission: 'editar_solicitud_compra'
                         }

@@ -105,7 +105,6 @@ export default {
 
         },
         index(context, payload) {
-            console.log('Index solicitud compra', payload);
 
             return new Promise((resolve, reject) => {
                 axios
