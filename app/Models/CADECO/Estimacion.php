@@ -526,8 +526,8 @@ class Estimacion extends Transaccion
         }
         if($this->configuracion->penalizacion_antes_iva == 1)
         {
-            $subtotal -= $this->penalizaciones->sum('importe');
-            $subtotal += $this->penalizacionLiberaciones->sum('importe');
+            $subtotal -= $this->suma_penalizaciones;
+            $subtotal += $this->suma_penalizaciones_liberadas;
         }
         return $subtotal;
     }
@@ -1026,5 +1026,50 @@ class Estimacion extends Transaccion
             $iva_retenido += $estimacion->iva_retenido_calculado;
         }
         return $iva_retenido;
+    }
+
+    public function getAcumuladoPenalizacionesAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_penalizaciones;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoPenalizacionesLiberadaAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_penalizaciones_liberadas;
+        }
+        return $acumulado;
+    }
+
+    public function getSumaPenalizacionesAttribute()
+    {
+        return $this->penalizaciones->sum('importe');
+    }
+
+    public function getSumaPenalizacionesLiberadasAttribute()
+    {
+        return $this->penalizacionLiberaciones->sum('importe');
+    }
+
+    public function getSumaPenalizacionesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_penalizaciones, 2);
+    }
+
+    public function getSumaPenalizacionesLiberadasFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_penalizaciones_liberadas, 2);
     }
 }

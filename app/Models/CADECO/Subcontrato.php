@@ -167,7 +167,6 @@ class Subcontrato extends Transaccion
 
     public function getSubtotalAntesDescuentoAttribute()
     {
-        
         return (($this->monto - $this->impuesto + $this->impuesto_retenido) * 100) / (100 - $this->PorcentajeDescuento);
     }
 
@@ -321,7 +320,8 @@ class Subcontrato extends Transaccion
         return $acumulado;
     }
 
-    public function getImporteFondoGarantiaAttribute(){
+    public function getImporteFondoGarantiaAttribute()
+    {
         return ($this->monto - $this->impuesto) * $this->retencion / 100;
     }
 }
