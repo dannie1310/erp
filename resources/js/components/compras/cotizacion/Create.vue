@@ -212,6 +212,7 @@
                                                                 :disabled="cargando"
                                                                 type="number"
                                                                 step=".01"
+                                                                max="100"
                                                                 name="descuento_cot"
                                                                 v-model="descuento_cot"
                                                                 v-validate="{required: true,}"
@@ -258,7 +259,8 @@
                                         <input
                                                                 :disabled="cargando"
                                                                 type="number"
-                                                                step=".01"
+                                                                step="1"
+                                                                max="100"
                                                                 name="pago"
                                                                 v-model="pago"
                                                                 v-validate="{required: true,}"
@@ -274,6 +276,7 @@
                                                                 :disabled="cargando"
                                                                 type="number"
                                                                 step=".01"
+                                                                max="100"
                                                                 name="anticipo"
                                                                 v-model="anticipo"
                                                                 v-validate="{required: true,}"
@@ -376,7 +379,6 @@
                 fechasDeshabilitadas:{},
                 fecha : '',
                 descuento_cot : '0.00',
-                tipos : [],
                 proveedores : [],
                 sucursales: [],
                 id_sucursal: '',
@@ -404,6 +406,8 @@
                     observaciones: [],
                     observacion: '',
                     moneda: [],
+                    importe: '',
+
                     precio: [],
                     enable: [],
                     descuento: [],
@@ -458,25 +462,16 @@
 
                 })
             },
-            getTipos() {
-                console.log('tipos', this.id_solicitud);
-                
-                return this.$store.dispatch('configuracion/ctg-tipo/index', {
-                    params: {sort: 'descripcion', order: 'asc'}
-                })
-                    .then(data => {
-                        this.tipos = data.data;
-                        this.disabled = false;
-                    })
-            },
-            salir(){
-                console.log('Pago', this.pago, this.anticipo, this.credito, this.tiempo, this.vigencia);
-                
-                
-                // this.$router.push({name: 'cotizacion'});
+            salir()
+            {
+                 this.$router.push({name: 'cotizacion'});
             },
             find() {
-
+                this.enable = [];
+                this.precio = [];
+                this.moneda_input = [];
+                this.observaciones_inputs = [];
+                this.descuento = [];
                 this.cargando = true;
                 this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
                 return this.$store.dispatch('compras/solicitud-compra/find', {
@@ -526,9 +521,7 @@
                     }
                     this.x ++;
                     
-                }
-                console.log(this.pesos, this.dolares, this.euros, this.moneda_input, this.precio);
-                
+                }                
             },
             getSolicitudes() {
                 this.solicitudes = [];
@@ -536,7 +529,6 @@
                 return this.$store.dispatch('compras/solicitud-compra/index', {
                     params: {
                         scope: 'conItems',
-                        limit: 300,
                         order: 'DESC',
                         sort: 'numero_folio'
                     }
@@ -568,28 +560,29 @@
                         this.post.tiempo = this.tiempo;
                         this.post.vigencia = this.vigencia;
                         this.post.fecha = this.fecha;
+                        this.post.importe = this.total;
+                        this.post.impuesto = this.iva;
                         this.store()
                     }
                 });
             },
             store() {
-
-
-                    return this.$store.dispatch('compras/cotizacion/store', this.post)
-                    .then((data) => {
-                        // this.$router.push({name: 'requisicion'});
-                    });
-
                 
+                if(this.total == 0)
+                {
+                    swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
+                }
+                else
+                {   return this.$store.dispatch('compras/cotizacion/store', this.post)
+                    .then((data) => {
+                        this.$router.push({name: 'cotizacion'});
+                    });                
+                }
             },
         },
         computed: {
             solicitud(){
                 return this.$store.getters['compras/solicitud-compra/currentSolicitud'];
-            },
-            peso()
-            {
-                return '$ ' + parseFloat(this.pesos).formatMoney(2,'.',',')
             },
             subtotal()
             {
@@ -624,19 +617,31 @@
             },
             moneda_input()
             {
-                this.calcular()                ;
+                if(this.moneda_input.length > 0)
+                {
+                    this.calcular();
+                }
             },
             precio()
             {
-                this.calcular();
+                if(this.precio.length > 0)
+                {
+                    this.calcular();
+                }
             },
             descuento()
             {
-                this.calcular();
+                if(this.descuento.length > 0)
+                {
+                    this.calcular();
+                }
             },
             enable()
             {
-                this.calcular();
+                if(this.enable.length > 0)
+                {
+                    this.calcular();
+                }                
             }
             
         }

@@ -8,11 +8,11 @@ use App\Models\CADECO\Compras\CotizacionComplemento;
 class CotizacionComplementoObserver
 {
     /**
-     * @param CotizacionComplemeto $CotizacionComplemento
+     * @param CotizacionComplemento $cotizacionComplemento
      */
 
      public function creating(CotizacionComplemento $cotizacionComplemento)
      {
-         dd('cotizacionComplemento');
+         $cotizacionComplemento->registro = auth()->id();
      }
 }

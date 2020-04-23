@@ -4,6 +4,7 @@ export default {
     namespaced: true,
     state: {
         cotizaciones: [],
+        currentCotizacion: null,
         meta: {}
     },
 
@@ -14,12 +15,15 @@ export default {
 
         SET_META(state, data) {
             state.meta = data;
+        },
+
+        SET_COTIZACION(state, data) {
+            state.currentCotizacion = data;
         }
     },
 
     actions: {
         paginate (context, payload) {
-            console.log('paginate cotizaciones', payload);
             
             return new Promise((resolve, reject) => {
                 axios
@@ -33,8 +37,20 @@ export default {
                     })
             })
         },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },        
         store(context,payload){
-            console.log(payload);
             
             return new Promise((resolve, reject) => {
                 swal({
@@ -82,6 +98,10 @@ export default {
 
         meta(state) {
             return state.meta
+        },
+        
+        currentCotizacion(state) {
+            return state.currentCotizacion;
         }
     }
 }
