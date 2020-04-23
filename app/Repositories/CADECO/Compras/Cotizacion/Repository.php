@@ -32,4 +32,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         return $this->model->descargaLayout($id);
     }
+
+    public function create(array $data)
+    {
+        return $this->model->crear($data);        
+    }
 }
