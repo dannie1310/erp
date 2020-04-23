@@ -27,4 +27,29 @@ class CotizacionComplemento extends Model
         'registro',
         'timestamp_registro'
     ];
+
+    public function getTipoCambioUsdFormatAttribute()
+    {
+        return '$ ' . number_format($this->tc_usd, 4, '.', ',');
+    }
+
+    public function getTipoCambioEurFormatAttribute()
+    {
+        return '$ ' . number_format($this->tc_eur, 4, '.', ',');
+    }
+
+    public function getDescuentoFormatAttribute()
+    {
+        return number_format($this->descuento, 2, '.', ',') . ' %';
+    }
+
+    public function getParcialidadesFormatAttribute()
+    {
+        return number_format($this->parcialidades, 2, '.', ',') . ' %';
+    }
+
+    public function getAnticipoFormatAttribute()
+    {
+        return number_format($this->anticipo, 2, '.', ',') . ' %';
+    }
 }
