@@ -30,8 +30,8 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio Solicitud', field: 'folio_solicitud', tdClass: 'td_money',sortable: true},
-                    { title: 'Folio Cotización', field: 'folio_cotizacion', tdClass: 'td_money',sortable: true},
-                    { title: 'Razón Social', field: 'razon_social', tdClass: 'td_money',sortable: true},
+                    { title: 'Folio Asignación', field: 'folio_cotizacion', tdClass: 'td_money',sortable: true},
+                    { title: 'Concepto', field: 'razon_social', tdClass: 'td_money',sortable: true},
                     { title: 'Fecha/Hora', field: 'fecha_format', tdClass: 'td_money',sortable: true},
                     { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
