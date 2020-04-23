@@ -13,6 +13,11 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
     {
         return [
             'id' => (int) $model->getKey(),
+            'folio_solicitud' => $model->solicitud->numero_folio_format,
+            'folio_cotizacion' => $model->folio_format,
+            'concepto' => $model->solicitud->concepto,
+            'fecha_format' => $model->timestamp_registro,
+            'estado' => $model->estado->descripcion,
         ];
     }
 }

@@ -34,6 +34,10 @@ class AsignacionProveedores extends Model
     //     });
     // }
 
+    public function estado(){
+        return $this->belongsTo(CtgEstadoAsignacionProveedor::class, 'estado', 'id');
+    }
+
     public function solicitud()
     {
         return $this->belongsTo(SolicitudCompra::class, 'id_transaccion', 'id_transaccion_solicitud');
@@ -41,5 +45,9 @@ class AsignacionProveedores extends Model
 
     public function usuarioRegistro(){
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
+    }
+
+    public function getFolioFormatAttribute(){
+        return '#' . sprintf("%05d", $this->id);
     }
 }

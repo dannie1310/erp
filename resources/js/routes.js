@@ -954,6 +954,30 @@ export const routes = [
                             middleware: [auth, context],
                         }
                     },
+                    {
+                        path: 'show',
+                        name: 'asignacion-proveedores-show',
+                        component: require('./components/compras/asignacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Ver Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedores', name: 'VER'},
+                            middleware: [auth, context],
+                            // permission: 'registrar_proveedor'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'asignacion-proveedores-create',
+                        component: require('./components/compras/asignacion/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedores', name: 'REGISTRAR'},
+                            middleware: [auth, context],
+                            // permission: 'registrar_proveedor'
+                        }
+                    },
                 ]
             },
             {

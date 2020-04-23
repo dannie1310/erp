@@ -1,7 +1,11 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <Layout @change="paginate()"></Layout>
+            <!-- v-if="$root.can('registrar_requisicion_compra')" -->
+            <button @click="create" class="btn btn-app btn-default pull-right" :disabled="cargando">
+                <i class="fa fa-plus"></i> Registrar
+            </button>
+            <!-- <Layout @change="paginate()"></Layout> -->
         </div>
         <div class="col-12">
             <div class="card">
@@ -31,37 +35,38 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio Solicitud', field: 'folio_solicitud', tdClass: 'td_money',sortable: true},
                     { title: 'Folio Asignación', field: 'folio_cotizacion', tdClass: 'td_money',sortable: true},
-                    { title: 'Concepto', field: 'razon_social', tdClass: 'td_money',sortable: true},
+                    { title: 'Concepto', field: 'concepto', tdClass: 'td_money',sortable: true},
                     { title: 'Fecha/Hora', field: 'fecha_format', tdClass: 'td_money',sortable: true},
                     { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'verCotizaciones', sort: 'id_transaccion', order: 'desc'},
+                query: {scope:'', sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false
             }
         },
 
         mounted() {
+            this.cargando = true;
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
+                    this.cargando = false;
                 })
         },
 
         methods: {
+            create(){
+                this.$router.push({name: 'asignacion-proveedores-create'});
+            },
             paginate() {
-                this.cargando = true;
                 return this.$store.dispatch('compras/asignacion/paginate', { params: this.query})
                     .then(data => {
                         this.$store.commit('compras/asignacion/SET_ASIGNACIONES', data.data);
                         this.$store.commit('compras/asignacion/SET_META', data.meta);
-                    })
-                    .finally(() => {
-                        this.cargando = false;
                     })
             }
         },
