@@ -715,7 +715,7 @@
                 });
             },
             update() {
-                console.log( solicitud.indexOf('partidas'))
+             //  console.log( solicitud.indexOf('partidas'))
                 return this.$store.dispatch('compras/solicitud-compra/update',
                     {
                         id: this.id,

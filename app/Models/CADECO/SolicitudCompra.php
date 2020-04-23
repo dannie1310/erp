@@ -337,10 +337,12 @@ class SolicitudCompra extends Transaccion
                         'cantidad' => $cambios['cantidad']
                     ]);
 
-                    if (array_key_exists('destino', $cambios)) {
+
+                    if (array_key_exists('destino', $cambios))
+                    {
                         $partida->entrega->update([
-                            'id_concepto' => $cambios['destino']['tipo_destino'] == 1 ? $partida['destino']['id_destino'] : NULL,
-                            'id_almacen' => $partida['destino']['tipo_destino'] == 2 ? $partida['destino']['id_destino'] : NULL
+                            'id_concepto' => $cambios['destino']['tipo_destino'] == 1 ? $cambios['destino']['id_destino'] : NULL,
+                            'id_almacen' => $cambios['destino']['tipo_destino'] == 2 ? $cambios['destino']['id_destino'] : NULL
                         ]);
                     }
                     $encontrada = 1;
