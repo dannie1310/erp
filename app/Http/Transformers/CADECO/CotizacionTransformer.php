@@ -3,6 +3,8 @@
 
 namespace App\Http\Transformers\CADECO;
 
+use App\Http\Transformers\CADECO\Compras\CotizacionComplementoTransaformer;
+use App\Http\Transformers\CADECO\Compras\CotizacionComplementoTransformer;
 use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\CotizacionCompra;
@@ -19,7 +21,9 @@ class CotizacionTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'solicitud',
         'empresa',
-        'sucursal'
+        'sucursal',
+        'complemento',
+        'cotizaciones'
     ];
 
     public function transform(CotizacionCompra $model)
@@ -36,11 +40,16 @@ class CotizacionTransformer extends TransformerAbstract
             'operacion' => $model->operacion,
             'opciones' => $model->opciones,
             'folio_format' => $model->numero_folio_format,
-            'usuario_registro' => ($model->id_usuario) ? $model->id_usuario : '--------------'
+            'usuario_registro' => ($model->id_usuario) ? $model->id_usuario : '--------------',
+            'importe' => $model->monto_format,
+            'subtotal' => $model->subtotal_format,
+            'impuesto' => $model->impuesto_format
         ];
     }
 
     /**
+     * Include Solicitud
+     * 
      * @param CotizacionCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
@@ -56,7 +65,7 @@ class CotizacionTransformer extends TransformerAbstract
     /**
      * Include Empresa
      *
-     * @param OrdenCompra $model
+     * @param CotizacionCompra $model
      * @return \League\Fractal\Resource\Item
      */
     public function includeEmpresa(CotizacionCompra $model)
@@ -69,9 +78,39 @@ class CotizacionTransformer extends TransformerAbstract
     }
 
     /**
+     * Include Complemento
+     *
+     * @param CotizacionCompra $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeComplemento(CotizacionCompra $model)
+    {
+        if($complemento = $model->complemento)
+        {
+            return $this->item($complemento, new CotizacionComplementoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Cotizaciones
+     *
+     * @param CotizacionCompra $model
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeCotizaciones(CotizacionCompra $model)
+    {
+        if($cotizaciones = $model->cotizaciones)
+        {
+            return $this->collection($cotizaciones, new CotizacionesTransformer);
+        }
+        return null;
+    }
+
+    /**
      * Include Sucursal
      *
-     * @param OrdenCompra $model
+     * @param CotizacionCompra $model
      * @return \League\Fractal\Resource\Item
      */
     public function includeSucursal(CotizacionCompra $model)

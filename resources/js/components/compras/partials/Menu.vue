@@ -18,12 +18,12 @@
                     <p>Solicitudes</p>
                 </router-link>
             </li>
-            <!-- <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('consultar_cotizacion_compra')">
                 <router-link :to="{name: 'cotizacion'}" class="nav-link">
                     <i class="fa fa-circle nav-icon"></i>
                     <p>Cotizaciones</p>
                 </router-link>
-            </li> -->
+            </li>
             <!--<li class="nav-item" v-if="$root.can('consultar_banco')">-->
                 <!--<router-link :to="{name: 'asignacion-proveedores'}" class="nav-link">-->
                     <!--<i class="fa fa-circle nav-icon"></i>-->

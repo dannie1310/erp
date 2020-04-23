@@ -42,6 +42,7 @@
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
+                    { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Núm de Folio de la Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtons').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
@@ -129,6 +130,7 @@
                         fecha: cotizacion.fecha_format,
                         empresa: (cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----',
                         observaciones: cotizacion.observaciones,
+                        importe: cotizacion.importe,
                         estado: this.getEstado((cotizacion.solicitud) ? cotizacion.solicitud.estado : null),
                         solicitud: $.extend({}, {
                             show: (cotizacion.solicitud) ? true : false,
