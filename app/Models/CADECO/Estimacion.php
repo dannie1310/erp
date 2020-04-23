@@ -1053,6 +1053,30 @@ class Estimacion extends Transaccion
         return $acumulado;
     }
 
+    public function getAcumuladoRetencionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_retenciones;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoLiberacionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_liberaciones;
+        }
+        return $acumulado;
+    }
+
     public function getSumaPenalizacionesAttribute()
     {
         return $this->penalizaciones->sum('importe');

@@ -686,13 +686,6 @@ class EstimacionFormato extends Rotation
         $this->SetHeights([0.4]);
         $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
 
-        //Retenciones
-        $retencion_subcontrato = 0;
-        $retencion_acum_estim_anterior = ($this->estimacion->subcontrato->acumulado_retencion_anteriores+$this->estimacion->subcontrato->acumulado_liberacion_anteriores)-($this->estimacion->retenciones->sum('importe')+$this->estimacion->liberaciones->sum('importe'));
-        $retencion_estimacion = ($this->estimacion->retenciones->sum('importe')+$this->estimacion->liberaciones->sum('importe'));
-        $retencion_a_esta_estimacion = $this->deductivas['$importe_acumulado'] + $this->estimacion->subcontrato->acumulado_retencion_anteriores+$this->estimacion->subcontrato->acumulado_liberacion_anteriores;
-        $retencion_porEstimar = $retencion_subcontrato - $retencion_estimacion;
-
         /// Calculos Resumen Amortizacion Anticpo
         $amort_anticipo_anterior = $this->estimacion->anticipo_anterior;
         $amortizacion_anticipo =  $this->estimacion->monto_anticipo_aplicado;
@@ -706,17 +699,9 @@ class EstimacionFormato extends Rotation
         $fondo_garantia_actual = $fondo_garantia_anterior + $fondo_garantia;
         $fondo_garantia_saldo = $fondo_garantia_contrato - $fondo_garantia_actual;
 
-       /* $subtotal_contrato = $this->suma_contrato - ($this->deductivas['importe_total_original'] + $this->estimacion->subcontrato->anticipo_monto + $fondo_garantia_contrato);
-        $subtotal_acum_estimado_anterior = $this->suma_estimacionAnterior - ($this->deductivas['importe_descuento_anterior'] + $retencion_acum_estim_anterior + $this->estimacion->anticipo_anterior + $fondo_garantia_anterior);
-        $subtotal_estimacion = $this->estimacion->subtotal_orden_pago;
-        $subtotal_acumulado =  $this->suma_acumulada - ($this->deductivas['$importe_acumulado'] + $retencion_a_esta_estimacion + $anticipo_actual + $fondo_garantia_actual);
-        $subtotal_a_estimar = $this->suma_porEstimar - ($this->deductivas['importe_porEstimar'] + $retencion_porEstimar + $anticipo_saldo + $fondo_garantia_saldo);
-        */
-
         $subtotal_contrato = $this->suma_contrato;
         $subtotal_acum_estimado_anterior = $this->suma_estimacionAnterior - $amort_anticipo_anterior;
         $subtotal_estimacion = $this->suma_estimacion - $amortizacion_anticipo;
-        //$this->estimacion->subtotal_orden_pago;
         $subtotal_acumulado =  $this->suma_acumulada - $anticipo_actual;
         $subtotal_a_estimar = $this->suma_porEstimar - $anticipo_saldo;
 
@@ -735,12 +720,15 @@ class EstimacionFormato extends Rotation
 
         if($this->estimacion->configuracion->retenciones_antes_iva==1)
         {
-            $subtotal_contrato -= $retencion_subcontrato;
-            $subtotal_acum_estimado_anterior -= $retencion_acum_estim_anterior;
-            $subtotal_estimacion -= $retencion_estimacion;
-            $subtotal_acumulado -=  $retencion_a_esta_estimacion;
-            $subtotal_a_estimar -= $retencion_porEstimar;
-            $this->Row(['Total Retenciones', '', '', '', '', number_format($retencion_subcontrato, 4, ".", ","), '', number_format($retencion_acum_estim_anterior, 4, ".", ","), '', number_format($retencion_estimacion, 4, ".", ","), '',  number_format($retencion_a_esta_estimacion, 4, ".", ","), '', number_format($retencion_porEstimar, 4, ".", ",")]);
+            $subtotal_acum_estimado_anterior -= $this->estimacion->acumulado_retencion_anteriores;
+            $subtotal_acum_estimado_anterior += $this->estimacion->acumulado_liberacion_anteriores;
+            $subtotal_estimacion -= $this->estimacion->suma_retenciones;
+            $subtotal_estimacion += $this->estimacion->suma_liberaciones;
+            $subtotal_acumulado -=  ($this->estimacion->acumulado_retencion_anteriores + $this->estimacion->suma_retenciones);
+            $subtotal_acumulado +=  ($this->estimacion->acumulado_liberacion_anteriores + $this->estimacion->suma_liberaciones);
+
+            $this->Row(['Total Retenciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->acumulado_retencion_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_retenciones, 4, ".", ","), '',  number_format(($this->estimacion->acumulado_retencion_anteriores + $this->estimacion->suma_retenciones), 4, ".", ","), '', '']);
+            $this->Row(['Total Retenciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->acumulado_liberacion_anteriores, 4, ".", ","), '', number_format( $this->estimacion->suma_liberaciones, 4, ".", ","), '',  number_format(($this->estimacion->acumulado_liberacion_anteriores + $this->estimacion->suma_liberaciones), 4, ".", ","), '', '']);
         }
 
         if($this->estimacion->configuracion->desc_pres_mat_antes_iva == 1)
@@ -763,9 +751,9 @@ class EstimacionFormato extends Rotation
             $subtotal_acumulado +=  ($this->estimacion->acumulado_penalizaciones_liberada_anteriores + $this->estimacion->suma_penalizaciones_liberadas);
 
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row(['Total Penalizaciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->subcontrato->acumulado_penalizaciones_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones, 4, ".", ","), '',  number_format($this->estimacion->subcontrato->acumulado_penalizaciones_anteriores + $this->estimacion->suma_penalizaciones, 4, ".", ","), '', number_format(0, 4, ".", ",")]);
+            $this->Row(['Total Penalizaciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->subcontrato->acumulado_penalizaciones_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones, 4, ".", ","), '',  number_format($this->estimacion->subcontrato->acumulado_penalizaciones_anteriores + $this->estimacion->suma_penalizaciones, 4, ".", ","), '', '']);
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row(['Total Penalizaciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '',  number_format( $this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores + $this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '', number_format(0, 4, ".", ",")]);
+            $this->Row(['Total Penalizaciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '',  number_format( $this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores + $this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '', '']);
         }
 
         $total_contrato = $subtotal_contrato;
@@ -822,17 +810,20 @@ class EstimacionFormato extends Rotation
             $this->Row(['Deductivas y Descuentos', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","),'', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '', number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
         }
 
-        if($this->estimacion->configuracion->retenciones_antes_iva==0)
-        {
-            $total_contrato -= $retencion_subcontrato;
-            $total_acum_estimado_anterior -= $retencion_acum_estim_anterior;
-            $total_estimacion -= $retencion_estimacion;
-            $total_acumulado -= $retencion_a_esta_estimacion;
-            $total_a_estimar -= $retencion_porEstimar;
-            $this->Row(['Total Retenciones', '', '', '', '', number_format($retencion_subcontrato, 4, ".", ","), '', number_format($retencion_acum_estim_anterior, 4, ".", ","), '', number_format($retencion_estimacion, 4, ".", ","), '',  number_format($retencion_a_esta_estimacion, 4, ".", ","), '', number_format($retencion_porEstimar, 4, ".", ",")]);
+        if($this->estimacion->configuracion->retenciones_antes_iva==0) {
+
+            $total_acum_estimado_anterior -= $this->estimacion->acumulado_retencion_anteriores;
+            $total_acum_estimado_anterior += $this->estimacion->acumulado_liberacion_anteriores;
+            $total_estimacion -= $this->estimacion->suma_retenciones;
+            $total_estimacion += $this->estimacion->suma_liberaciones;
+            $total_acumulado -= ($this->estimacion->acumulado_retencion_anteriores + $this->estimacion->suma_retenciones);
+            $total_acumulado += ($this->estimacion->acumulado_liberacion_anteriores + $this->estimacion->suma_liberaciones);
+
+            $this->Row(['Total Retenciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->acumulado_retencion_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_retenciones, 4, ".", ","), '', number_format(($this->estimacion->acumulado_retencion_anteriores + $this->estimacion->suma_retenciones), 4, ".", ","), '', '']);
+            $this->Row(['Total Retenciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->acumulado_liberacion_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_liberaciones, 4, ".", ","), '', number_format(($this->estimacion->acumulado_liberacion_anteriores + $this->estimacion->suma_liberaciones), 4, ".", ","), '', '']);
         }
 
-        if($this->estimacion->configuracion->penalizacion_antes_iva == 0)
+            if($this->estimacion->configuracion->penalizacion_antes_iva == 0)
         {
             $total_acum_estimado_anterior -= $this->estimacion->subcontrato->acumulado_penalizaciones_anteriores;
             $total_acum_estimado_anterior += $this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores;
@@ -842,9 +833,9 @@ class EstimacionFormato extends Rotation
             $total_acumulado += $this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores + $this->estimacion->suma_penalizaciones_liberadas;
 
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row(['Total Penalizaciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->subcontrato->acumulado_penalizaciones_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones, 4, ".", ","), '',  number_format($this->estimacion->subcontrato->acumulado_penalizaciones_anteriores + $this->estimacion->suma_penalizaciones, 4, ".", ","), '', number_format(0, 4, ".", ",")]);
+            $this->Row(['Total Penalizaciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->subcontrato->acumulado_penalizaciones_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones, 4, ".", ","), '',  number_format($this->estimacion->subcontrato->acumulado_penalizaciones_anteriores + $this->estimacion->suma_penalizaciones, 4, ".", ","), '', '']);
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row(['Total Penalizaciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '',  number_format( $this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores + $this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '', number_format(0, 4, ".", ",")]);
+            $this->Row(['Total Penalizaciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '',  number_format( $this->estimacion->subcontrato->acumulado_penalizaciones_liberada_anteriores + $this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '', '']);
         }
 
         $total_contrato += $this->estimacion->subcontrato->anticipo_monto;
@@ -1149,8 +1140,8 @@ class EstimacionFormato extends Rotation
         if (!App::environment('production')) {
             $this->SetFont('Arial','B',90);
             $this->SetTextColor(155,155,155);
-            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
-            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
+          //  $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+           // $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
         }
         $this->firmas();

@@ -302,24 +302,6 @@ class Subcontrato extends Transaccion
         return $respuesta;
     }
 
-    public function getAcumuladoRetencionAnterioresAttribute()
-    {
-        $acumulado = 0;
-        foreach ($this->estimaciones as $estimacion) {
-            $acumulado += $estimacion->retenciones->sum('importe');
-        }
-        return $acumulado;
-    }
-
-    public function getAcumuladoLiberacionAnterioresAttribute()
-    {
-        $acumulado = 0;
-        foreach ($this->estimaciones as $estimacion) {
-            $acumulado += $estimacion->liberaciones->sum('importe');
-        }
-        return $acumulado;
-    }
-
     public function getImporteFondoGarantiaAttribute()
     {
         return ($this->monto - $this->impuesto) * $this->retencion / 100;
