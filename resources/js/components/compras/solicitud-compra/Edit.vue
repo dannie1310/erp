@@ -286,27 +286,27 @@
                                                     </td>
                                                     <td v-if="partida.destino == undefined && (partida.entrega != undefined && (partida.entrega.concepto != undefined || partida.entrega.almacen != undefined))">
                                                         <small class="badge badge-success" v-if="partida.entrega.concepto != undefined && partida.entrega.concepto != null">
-                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" >1</i>
+                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
                                                         <small class="badge badge-success" v-if="partida.entrega.almacen != undefined && partida.entrega.almacen != null">
-                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" >2</i>
+                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
-                                                        <span v-if="partida.entrega.concepto != undefined && partida.entrega.concepto != null" style="text-decoration: underline" :title="partida.entrega.concepto.path">1{{partida.entrega.concepto.descripcion}}</span>
-                                                        <span v-if="partida.entrega.almacen != undefined && partida.entrega.almacen != null">2{{partida.entrega.almacen.descripcion}}</span>
+                                                        <span v-if="partida.entrega.concepto != undefined && partida.entrega.concepto != null" style="text-decoration: underline" :title="partida.entrega.concepto.path">{{partida.entrega.concepto.descripcion}}</span>
+                                                        <span v-if="partida.entrega.almacen != undefined && partida.entrega.almacen != null">{{partida.entrega.almacen.descripcion}}</span>
                                                     </td>
                                                     <td v-else-if="partida.destino">
                                                         <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
-                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" >3</i>
+                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
                                                         <small class="badge badge-success" v-if="partida.destino.tipo_destino === 2">
-                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" >4</i>
+                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
-                                                        <span v-if="partida.destino.tipo_destino === 1 && partida.destino.destino" style="text-decoration: underline" :title="partida.destino.destino.path">3{{partida.destino.destino.descripcion}}</span>
-                                                        <span v-if="partida.destino.tipo_destino === 2">4{{partida.destino.destino.descripcion}}</span>
+                                                        <span v-if="partida.destino.tipo_destino === 1 && partida.destino.destino" style="text-decoration: underline" :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
+                                                        <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
                                                     </td>
                                                     <td v-else>
                                                         <small class="badge badge-secondary">
-                                                            <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" >5</i>
+                                                            <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                         </small>
                                                     </td>
                                                     <td class="icono">
