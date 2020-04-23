@@ -49,77 +49,9 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                <!-- <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="id_proveedor">Proveedores</label>
-                                            <select class="form-control"
-                                                    name="id_proveedor"
-                                                    data-vv-as="Proveedores"
-                                                    v-model="id_proveedor"
-                                                    v-validate="{required: true}"
-                                                    :error="errors.has('id_proveedor')"
-                                                    id="id_proveedor">
-                                                <option value>-- Seleccionar--</option>
-                                                <option v-for="proveedor in proveedores" :value="proveedor.id" >{{ proveedor.razon_social}}</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 offset-1" v-if="sucursal">
-                                        <div class="form-group">
-                                            <label for="id_sucursal">Sucursal</label>
-                                            <select class="form-control"
-                                                    name="id_sucursal"
-                                                    data-vv-as="Sucursal"
-                                                    v-model="id_sucursal"
-                                                    v-validate="{required: true}"
-                                                    :error="errors.has('id_sucursal')"
-                                                    id="id_sucursal">
-                                                <option value>-- Seleccionar--</option>
-                                                <option v-for="sucursal in sucursales" :value="sucursal.id" >{{ sucursal.descripcion}}</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_sucursal')">{{ errors.first('id_sucursal') }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 offset-1" v-else>
-                                        <div class="form-group">
-                                            <label for="id_sucursal">Sucursal</label>
-                                            <select class="form-control"
-                                                    name="id_sucursal"
-                                                    :disabled="true"
-                                                    v-model="id_sucursal"
-                                                    :error="errors.has('id_sucursal')"
-                                                    id="id_sucursal">
-                                                <option value>-- Sin Sucursal--</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="row">   
-                                    <div class="col-md-12">
-                                        <label for="concepto" class="col-form-label">Concepto: </label>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="row">   
-                                    <div class="col-md-12">
-                                        <div class="form-group row error-content">
-                                            <textarea
-                                                name="concepto"
-                                                id="concepto"
-                                                class="form-control"
-                                                v-model="concepto"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Concepto"
-                                                :class="{'is-invalid': errors.has('concepto')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
-                                        </div>
-                                    </div>
-                                </div> -->
                                 <hr />
                                 
-                                <div class="row" v-if="id_solicitud != ''">
+                                <!-- <div class="row" v-if="id_solicitud != ''">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
@@ -338,7 +270,7 @@
                                                                 id="vigencia"
                                                                 :class="{'is-invalid': errors.has('vigencia')}">
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label for="observaciones" class="col-form-label">Observaciones: </label>
@@ -379,8 +311,9 @@
     import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "cotizacion-edit",
-        
+
         components: {Datepicker, ModelListSelect},
+        props: ['id'],
         data() {
             return {
                 cargando: false,
@@ -440,10 +373,8 @@
         },
         mounted() {
             this.fecha = new Date();
+            this.find();
             this.$validator.reset();
-            this.getProveedores();
-            this.getMonedas();
-            this.getSolicitudes();
             
         },
         methods : {
@@ -477,22 +408,24 @@
                  this.$router.push({name: 'cotizacion'});
             },
             find() {
-                this.enable = [];
-                this.precio = [];
-                this.moneda_input = [];
-                this.observaciones_inputs = [];
-                this.descuento = [];
-                this.cargando = true;
-                this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
-                return this.$store.dispatch('compras/solicitud-compra/find', {
-                    id: this.id_solicitud,
-                    params:{include: [
-                            'complemento',
-                            'partidas.complemento',
-                            'partidas.entrega',
-                            'cotizaciones']}
+                console.log('id a localizar', this.id);
+                
+                // this.enable = [];
+                // this.precio = [];
+                // this.moneda_input = [];
+                // this.observaciones_inputs = [];
+                // this.descuento = [];
+                // this.cargando = true;
+                this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
+                return this.$store.dispatch('compras/cotizacion/find', {
+                    id: this.id,
+                    // params:{include: [
+                    //         'complemento',
+                    //         'partidas.complemento',
+                    //         'partidas.entrega',
+                    //         'cotizaciones']}
                 }).then(data => {
-                    this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
+                    this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
                     
                     this.cargando = false;
                     console.log('termina de cargar las solicitudes');
