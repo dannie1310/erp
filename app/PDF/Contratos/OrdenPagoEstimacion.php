@@ -345,6 +345,21 @@ class OrdenPagoEstimacion extends Rotation
             $this->Ln(0.1);
         }
 
+        if($this->estimacion->configuracion->penalizacion_antes_iva == 1)
+        {
+            $this->SetX(($this->w) * 0.45);
+            $this->SetFont('Arial', '', 8);
+            $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Penalizaciones :', 0, 0, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_penalizaciones_format, 'B', 1, 'R');
+            $this->Ln(0.1);
+
+            $this->SetX(($this->w) * 0.45);
+            $this->SetFont('Arial', '', 8);
+            $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Penalizaciones Liberadas:', 0, 0, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_penalizaciones_liberadas_format, 'B', 1, 'R');
+            $this->Ln(0.1);
+        }
+
         /*
          *  INICIA SUBTOTAL
          * */
@@ -418,6 +433,21 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones Liberadas :', 0, 0, 'R');
             $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_liberaciones_format, 'B', 1, 'R');
+            $this->Ln(0.1);
+        }
+
+        if($this->estimacion->configuracion->penalizacion_antes_iva == 0)
+        {
+            $this->SetX(($this->w) * 0.45);
+            $this->SetFont('Arial', '', 8);
+            $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Penalizaciones :', 0, 0, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_penalizaciones_format, 'B', 1, 'R');
+            $this->Ln(0.1);
+
+            $this->SetX(($this->w) * 0.45);
+            $this->SetFont('Arial', '', 8);
+            $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Penalizaciones Liberadas:', 0, 0, 'R');
+            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->suma_penalizaciones_liberadas_format, 'B', 1, 'R');
             $this->Ln(0.1);
         }
 
