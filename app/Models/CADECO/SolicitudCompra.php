@@ -272,7 +272,7 @@ class SolicitudCompra extends Transaccion
             $this->editarPartidas($this->dividirPartidas($datos['partidas']['data']));
             $fecha =New DateTime($datos['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $fecha_req =New DateTime($datos['complemento'] ? $datos['complemento']['fecha_requisicion_origen'] : $datos['fecha_requisicion_origen']);
+            $fecha_req =New DateTime(array_key_exists('complemento', $datos) ? $datos['complemento']['fecha_requisicion_origen'] : $datos['fecha_requisicion_origen']);
             $fecha_req->setTimezone(new DateTimeZone('America/Mexico_City'));
 
             $this->update([
@@ -292,12 +292,12 @@ class SolicitudCompra extends Transaccion
             }else{
                 $this->complemento()->create([
                     'id_transaccion' => $this->id_transaccion,
-                    'id_area_compradora' => $datos['complemento'] ? $datos['complemento']['id_area_compradora'] : $datos['id_area_compradora'],
-                    'id_tipo' =>  $datos['complemento'] ? $datos['complemento']['id_tipo'] : $datos['id_tipo'],
-                    'id_area_solicitante' =>  $datos['complemento'] ? $datos['complemento']['id_area_solicitante'] : $datos['id_area_solicitante'],
-                    'concepto' => $datos['complemento'] ? $datos['complemento']['concepto'] : $datos['concepto'],
+                    'id_area_compradora' => $datos['id_area_compradora'],
+                    'id_tipo' =>  $datos['id_tipo'],
+                    'id_area_solicitante' =>  $datos['id_area_solicitante'],
+                    'concepto' => $datos['concepto'],
                     'fecha_requisicion_origen' => $fecha_req->format("Y-m-d H:i:s"),
-                    'requisicion_origen' => $datos['complemento'] ? $datos['complemento']['folio_requisicion'] : $datos['folio_requisicion']
+                    'requisicion_origen' => $datos['requisicion_origen']
                 ]);
             }
             DB::connection('cadeco')->commit();
