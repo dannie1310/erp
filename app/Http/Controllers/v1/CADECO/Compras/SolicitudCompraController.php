@@ -68,4 +68,8 @@ class SolicitudCompraController extends Controller
     {
         return $this->service->aprobar($request->all(), $id);
     }
+
+    public function getCotizaciones($id){
+        return $this->service->getCotizaciones($id);
+    }
 }

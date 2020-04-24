@@ -4,8 +4,9 @@
 namespace App\Models\CADECO;
 
 
-use App\Models\CADECO\Compras\CotizacionComplementoPartida;
+use App\Models\CADECO\Moneda;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 
 class Cotizacion extends Model
 {
@@ -33,5 +34,9 @@ class Cotizacion extends Model
     }
     public function material(){
         return $this->belongsTo(Material::class,'id_material', 'id_material');
+    }
+
+    public function moneda(){
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 }
