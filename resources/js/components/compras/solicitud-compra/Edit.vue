@@ -474,11 +474,11 @@
         mounted() {
             this.$validator.reset();
             this.cargando = true;
-            this.getMateriales();
             this.find()
             this.getAreasCompradoras();
             this.getAreasSolicitantes();
             this.getTipos();
+            this.getMateriales();
             this.getAlmacenes();
         },
         methods : {
@@ -530,6 +530,7 @@
                     .then(data => {
                         this.tipos = data.data;
                         this.disabled = false;
+                        this.cargando = false;
                     })
             },
             modalDestino(i) {
@@ -700,29 +701,27 @@
                     if (result) {
                         var t = 0;
                         var m = 0;
-                        console.log( this.solicitud.partidas.data.length, this.solicitud.partidas.data[t].entrega.almacen, this.solicitud.partidas.data[t].entrega.concepto)
-                       /* while(t < this.solicitud.partidas.data.length){
-                            if(((typeof this.solicitud.partidas.data[t].entrega.almacen === 'undefined' && typeof this.solicitud.partidas.data[t].entrega.concepto === 'undefined')) && (this.solicitud.partidas.data[t].destino === '' || typeof this.solicitud.partidas.data[t].destino.destino === 'undefined' ))
+                        while(t < this.solicitud.partidas.data.length) {
+                            if (typeof this.solicitud.partidas.data[t].entrega === 'undefined' && (this.solicitud.partidas.data[t].destino === '' || typeof this.solicitud.partidas.data[t].destino === 'undefined'))
                             {
-                                this.m ++;
-                                swal('¡Error!', 'Ingrese un destino válido en partida '+(t + 1) +'.', 'error');
+                                this.m++;
+                                swal('¡Error!', 'Ingrese un destino válido en partida ' + (t + 1) + '.', 'error');
                             }
                             t ++;
-                        }if(m == 0) {*/
+                        }if(m == 0) {
                             this.update()
-                        //}
+                        }
                     }
                 });
             },
             update() {
-             //  console.log( solicitud.indexOf('partidas'))
                 return this.$store.dispatch('compras/solicitud-compra/update',
                     {
                         id: this.id,
                         data: this.solicitud
                 })
                     .then((data) => {
-                        //this.$router.push({name: 'solicitud-compra'});
+                        this.$router.push({name: 'solicitud-compra'});
                     });
             }
         },

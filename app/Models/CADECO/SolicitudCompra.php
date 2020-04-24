@@ -332,17 +332,25 @@ class SolicitudCompra extends Transaccion
                             'fecha_entrega' => $fecha->format("Y-m-d H:i:s")
                         ]);
                     }
-                    $partida->entrega->update([
-                        'fecha' => $fecha->format("Y-m-d H:i:s"),
-                        'cantidad' => $cambios['cantidad']
-                    ]);
-
 
                     if (array_key_exists('destino', $cambios))
                     {
+                        $id_almacen = $cambios['destino']['tipo_destino'] == 2 ? $cambios['destino']['id_destino'] : NULL;
+                        $id_concepto = $cambios['destino']['tipo_destino'] == 1 ? $cambios['destino']['id_destino'] : NULL;
+                        if($id_concepto == null && $id_almacen == null)
+                        {
+                            abort(500, "El material ". $partida->material->descripcion. " debe contar con un destino asignado.");
+                        }
                         $partida->entrega->update([
-                            'id_concepto' => $cambios['destino']['tipo_destino'] == 1 ? $cambios['destino']['id_destino'] : NULL,
-                            'id_almacen' => $cambios['destino']['tipo_destino'] == 2 ? $cambios['destino']['id_destino'] : NULL
+                            'id_concepto' => $id_concepto,
+                            'id_almacen' => $id_almacen,
+                            'fecha' => $fecha->format("Y-m-d H:i:s"),
+                            'cantidad' => $cambios['cantidad']
+                        ]);
+                    } else{
+                        $partida->entrega->update([
+                            'fecha' => $fecha->format("Y-m-d H:i:s"),
+                            'cantidad' => $cambios['cantidad']
                         ]);
                     }
                     $encontrada = 1;
