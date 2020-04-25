@@ -32,9 +32,9 @@
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.descripcion : '------ Sin Sucursal ------'}}</td>
                                                     <td class="bg-gray-light"><b>ToTC USD:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd : '---------------'}}</td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : '---------------'}}</td>
                                                     <td class="bg-gray-light"><b>ToTC EURO:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur : '---------------'}}</td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : '---------------'}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Direccion:</b></td>
@@ -77,7 +77,7 @@
                                                         <td style="text-align: center">{{(partida.material) ? partida.material.descripcion : '------------'}}</td>
                                                         <td style="text-align: center">{{(partida.material) ? partida.material.unidad : '-----'}}</td>
                                                         <td style="text-align: center">{{partida.cantidad}}</td>
-                                                        <td class="money">{{partida.precio_unitario}}</td>
+                                                        <td class="money">{{partida.precio_unitario_format}}</td>
                                                         <td style="text-align: center">{{partida.descuento}}</td>
                                                         <td class="money">{{partida.precio_total}}</td>
                                                         <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>

@@ -33,7 +33,6 @@ class CotizacionService
 
     public function show($id)
     {
-        dd('Cotizacion service', ['id' => $id]);
         return $this->repository->show($id);
     }
 
