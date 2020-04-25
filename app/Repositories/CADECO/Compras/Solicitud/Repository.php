@@ -19,4 +19,19 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     {
         return $this->model->registrar($datos);
     }
+
+    public function update(array $datos, $id)
+    {
+        return $this->show($id)->editar($datos);
+    }
+
+    public function delete(array $data, $id)
+    {
+        return $this->show($id)->eliminar($data);
+    }
+
+    public function aprobar($data, $id)
+    {
+        return $this->show($id)->aprobarSolicitud($data);
+    }
 }

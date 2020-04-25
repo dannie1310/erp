@@ -89,7 +89,7 @@ class SolicitudCompraService
 
     public function delete($data, $id)
     {
-        return $this->repository->show($id)->eliminar($data['data']);
+        return $this->repository->delete($data['data'], $id);
     }
 
     public function show($id)
@@ -99,13 +99,12 @@ class SolicitudCompraService
 
     public function aprobar($data, $id)
     {
-        $solicitud = $this->repository->show($id);
-        return $solicitud->aprobarSolicitud($data);
+        return $this->repository->aprobar($data, $id);
     }
 
     public function update(array $data, $id)
     {
-//        return $this->repository->update($data, $id);
+        return $this->repository->update($data, $id);
     }
 
     public function pdfSolicitudCompra($id)

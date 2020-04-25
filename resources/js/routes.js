@@ -1050,7 +1050,8 @@ export const routes = [
                         meta: {
                             title: 'Cotizaciones',
                             breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_cotizacion_compra']
                         }
                     },
                     {
