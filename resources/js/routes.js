@@ -1065,6 +1065,30 @@ export const routes = [
                             permission: ['registrar_cotizacion_compra']
                         }
                     },
+                    {
+                        path: ':id/editar',
+                        name: 'cotizacion-edit',
+                        props: true,
+                        component: require('./components/compras/cotizacion/Edit').default,
+                        meta: {
+                            title: 'Editar Cotización',
+                            breadcrumb: { parent: 'cotizacion', name: 'EDITAR COTIZACIÓN'},
+                            middleware: [auth, context]
+                        }
+                    },
+                    // {
+                    //     path: ':id/editar',
+                    //     name: 'estimacion-edit',
+                    //     props: true,
+                    //     component: require('./components/contratos/estimacion/Edit').default,
+                    //     meta: {
+                    //         title: 'Editar Estimación',
+                    //         breadcrumb: {parent: 'estimacion', name: 'EDITAR'},
+                    //         middleware: [auth, context, permission],
+                    //         permission: 'editar_estimacion_subcontrato'
+
+                    //     }
+                    // },
                 ]
             },
             {
