@@ -24,12 +24,13 @@
                     <p>Cotizaciones</p>
                 </router-link>
             </li>
-            <!--<li class="nav-item" v-if="$root.can('consultar_banco')">-->
-                <!--<router-link :to="{name: 'asignacion-proveedores'}" class="nav-link">-->
-                    <!--<i class="fa fa-circle nav-icon"></i>-->
-                    <!--<p>Asignación de Proveedores</p>-->
-                <!--</router-link>-->
-            <!--</li>-->
+            <li class="nav-item">
+                <router-link :to="{name: 'asignacion-proveedores'}" class="nav-link">
+                    <i class="fa fa-circle nav-icon"></i>
+                    <p>Asignación de Proveedores</p>
+                </router-link>
+            </li>
+
             <li class="nav-item" v-if="gestion_orden_compra">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-circle"></i>
