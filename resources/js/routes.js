@@ -1051,20 +1051,7 @@ export const routes = [
                             breadcrumb: { parent: 'cotizacion', name: 'EDITAR COTIZACIÓN'},
                             middleware: [auth, context]
                         }
-                    },
-                    // {
-                    //     path: ':id/editar',
-                    //     name: 'estimacion-edit',
-                    //     props: true,
-                    //     component: require('./components/contratos/estimacion/Edit').default,
-                    //     meta: {
-                    //         title: 'Editar Estimación',
-                    //         breadcrumb: {parent: 'estimacion', name: 'EDITAR'},
-                    //         middleware: [auth, context, permission],
-                    //         permission: 'editar_estimacion_subcontrato'
-
-                    //     }
-                    // },
+                    }
                 ]
             },
             {
