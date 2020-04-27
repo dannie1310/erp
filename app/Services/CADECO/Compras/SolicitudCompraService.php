@@ -133,6 +133,8 @@ class SolicitudCompraService
                 'cantidad_solicitada' => $partida->cantidad,
                 'cantidad_asignada' => 0,
                 'cantidad_disponible' => $partida->cantidad - 0,
+                'cantidad_base' => $partida->cantidad - 0,
+                'item_pendiente' => $partida->cantidad - 0 > 0?true:false,
             ];
             foreach($solicitud_cotizaciones as $cotizacion){
                 if(!$cotizacion->id_empresa)continue;
@@ -154,7 +156,8 @@ class SolicitudCompraService
                         'moneda' => $cot->moneda->abreviatura,
                         'tipo_cambio' => $cot->moneda->tipo == 1?1: $cot->moneda->cambio->cambio,
                         'importe' => 0,
-                        'descuento' => $cot->descuento,
+                        'importe_moneda_conversion' => 0,
+                        'descuento' => $cot->descuento?$cot->descuento:0,
                     ];
                 }else{
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = null;
