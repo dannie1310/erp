@@ -322,7 +322,6 @@
         </nav>
     </span>
 </template>
-
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';

@@ -19,9 +19,7 @@ class ItemSolicitudCompra extends Item
         'id_transaccion',
         'id_material',
         'unidad',
-        'cantidad',
-        'id_concepto',
-        'id_almacen'
+        'cantidad'
     ];
 
     public function complemento()

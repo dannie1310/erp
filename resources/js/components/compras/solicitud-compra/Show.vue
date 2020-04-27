@@ -1,6 +1,10 @@
 <template>
     <span>
-        <button @click="find()" type="button"class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Solicitud">
+        <button @click="find()" v-if="boton" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver Solicitud">
+            <i style="width:40px;" v-if="!cargando">{{boton.numero_folio_format}}</i>
+            <i class="fa fa-spinner fa-spin" style="width:40px;" v-else></i>
+        </button>
+        <button @click="find()" v-else type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Solicitud">
             <i class="fa fa-eye" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
@@ -105,7 +109,7 @@
 <script>
     export default {
         name: "solicitud-show",
-        props: ['id'],
+        props: ['id', 'cotizacion'],
         data(){
             return{
                 cargando: false,
@@ -127,12 +131,17 @@
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
+                    
                 })
             }
         },
         computed: {
             solicitud() {
                 return this.$store.getters['compras/solicitud-compra/currentSolicitud']
+            },
+            boton()
+            {
+                return (this.cotizacion) ? this.cotizacion :false;
             }
         }
     }
