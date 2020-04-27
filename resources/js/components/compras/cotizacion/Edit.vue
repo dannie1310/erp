@@ -79,18 +79,17 @@
                                                         <td style="text-align:center;">{{partida.material.unidad}}</td>
                                                          <td style="text-align:center; vertical-align:inherit;">
                                                             <div class="custom-control custom-switch">
-                                                                <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="partida.no_cotizado" checked>
+                                                                <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
                                                         </td>                                                        
                                                         <td style="text-align:center;">{{partida.cantidad}}</td>
-                                                    <!--    <td style="text-align:center;">{{(solicitud.estado === 1) ? partida.solicitado_cantidad : '0.0'}}</td>
                                                         <td>
                                                             <input type="number"
                                                                    min="0.01"
                                                                    step=".01"
-                                                                   :disabled="enable[i] == false"
                                                                    class="form-control"
+                                                                   :disabled="enable[i] == false"
                                                                    :name="`precio[${i}]`"
                                                                    data-vv-as="Precio"
                                                                    v-validate="{required: true}"
@@ -109,10 +108,10 @@
                                                                    data-vv-as="Descuento(%)"
                                                                    v-validate="{required: true}"
                                                                    :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
-                                                                   v-model="descuento[i]"/>
+                                                                   v-model="partida.descuento"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(precio[i]) ? '$ ' + parseFloat(((solicitud.estado === 0) ? partida.cantidad_original : partida.solicitado_cantidad) * precio[i]).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">{{'$ ' + parseFloat((partida.cantidad) * precio[i]).formatMoney(2,'.',',')}}</td>
                                                         <td style="width:120px;" >
                                                             <select
                                                                 type="text"
@@ -128,7 +127,8 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(moneda_input[i] && precio[i]) ? '$ ' + parseFloat((((solicitud.estado === 0) ? partida.cantidad_original : partida.solicitado_cantidad) * precio[i] * monedas[moneda_input[i] - 1].tipo_cambio_igh)).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">$$$$$$</td>
+                                                    <!--    <td style="text-align:right;">{{(moneda_input[i] && precio[i]) ? '$ ' + parseFloat((((solicitud.estado === 0) ? partida.cantidad_original : partida.solicitado_cantidad) * precio[i] * monedas[moneda_input[i] - 1].tipo_cambio_igh)).formatMoney(2,'.',',') : '$ 0.00'}}</td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -377,6 +377,7 @@
             this.observaciones_inputs = [];
             this.descuento = [];
             this.find();
+            this.getMonedas();
             this.$validator.reset();
             
         },
@@ -428,7 +429,8 @@
                 }).then(data => {         
                     this.cotizacion = data;           
                     this.cargando = false;
-                    this.fecha = data.fecha;               
+                    this.fecha = data.fecha;
+                    this.ordenar();
                 })
             },
             calcular()
@@ -466,6 +468,23 @@
                     this.x ++;
                     
                 }                
+            },
+            ordenar()
+            {
+                console.log('atributo de ordenar', this.cotizacion.cotizaciones.data[0]);
+                this.x = 0;
+                while(this.x < this.cotizacion.cotizaciones.data.length)
+                {
+                    console.log('valor x', this.x);
+                    this.enable[this.x] = this.cotizacion.cotizaciones.data[this.x].no_cotizado;
+                    this.precio[this.x] = this.cotizacion.cotizaciones.data[this.x].precio_unitario;
+                    this.moneda_input[this.x] = this.cotizacion.cotizaciones.data[this.x].id_moneda;
+
+                    this.x ++;                    
+                }
+
+                console.log('Enable', this.enable, this.precio, this.moneda_input);
+                
             },
             getSolicitudes() {
                 this.solicitudes = [];
@@ -546,43 +565,42 @@
             }
         },
         watch: {
-            id_proveedor(value){
-                this.id_sucursal = '';
-                if(value !== '' && value !== null && value !== undefined){
-                    var busqueda = this.proveedores.find(x=>x.id === value);
-                    this.sucursales = busqueda.sucursales.data;
-                    this.sucursal = (busqueda.sucursales.data.length) ? true : false;
-                }
-            },
-            moneda_input()
-            {
-                if(this.moneda_input.length > 0)
-                {
-                    this.calcular();
-                }
-            },
-            precio()
-            {
-                if(this.precio.length > 0)
-                {
-                    this.calcular();
-                }
-            },
-            descuento()
-            {
-                if(this.descuento.length > 0)
-                {
-                    this.calcular();
-                }
-            },
-            enable()
-            {
-                if(this.enable.length > 0)
-                {
-                    this.calcular();
-                }                
-            }
-            
+            // id_proveedor(value){
+            //     this.id_sucursal = '';
+            //     if(value !== '' && value !== null && value !== undefined){
+            //         var busqueda = this.proveedores.find(x=>x.id === value);
+            //         this.sucursales = busqueda.sucursales.data;
+            //         this.sucursal = (busqueda.sucursales.data.length) ? true : false;
+            //     }
+            // },
+            // moneda_input()
+            // {
+            //     if(this.moneda_input.length > 0)
+            //     {
+            //         this.calcular();
+            //     }
+            // },
+            // precio()
+            // {
+            //     if(this.precio.length > 0)
+            //     {
+            //         this.calcular();
+            //     }
+            // },
+            // descuento()
+            // {
+            //     if(this.descuento.length > 0)
+            //     {
+            //         this.calcular();
+            //     }
+            // },
+            // enable()
+            // {
+            //     if(this.enable.length > 0)
+            //     {
+            //         this.calcular();
+            //     }                
+            // }            
         }
     }
 </script>
