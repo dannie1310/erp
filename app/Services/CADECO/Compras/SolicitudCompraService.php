@@ -109,8 +109,7 @@ class SolicitudCompraService
 
     public function pdfSolicitudCompra($id)
     {
-        $pdf = new SolicitudCompraFormato($id);
-        return $pdf;
+        return $this->repository->show($id)->pdfSolicitudCompra();
     }
 
     public function pdfCotizacion($id)

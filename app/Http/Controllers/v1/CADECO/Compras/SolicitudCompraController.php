@@ -38,6 +38,7 @@ class SolicitudCompraController extends Controller
      */
     public function __construct(Manager $fractal, SolicitudCompraService $service, SolicitudCompraTransformer $transformer)
     {
+        $this->middleware('addAccessToken')->only('pdfSolicitudCompra');
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:registrar_solicitud_compra')->only('store');
@@ -57,12 +58,11 @@ class SolicitudCompraController extends Controller
             return $this->service->pdfCotizacion($id)->create();
         }
         dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
-
     }
 
     public function pdfSolicitudCompra($id)
     {
-        return $this->service->pdfSolicitudCompra($id)->create();
+        return $this->service->pdfSolicitudCompra($id);
     }
 
     public function aprobar(Request $request, $id)

@@ -13,17 +13,19 @@ namespace App\PDF\CADECO\Compras;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudCompra;
+use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
-use SimpleSoftwareIO\QrCode\BaconQrCodeGenerator;
-
 
 class SolicitudCompraFormato extends Rotation
 {
-
+    protected $solicitud;
     protected $obra;
     private $encabezado_pdf = '';
     var $encola = '';
-
+    private $cadena_qr = '';
+    private $cadena = '';
+    private $dato = '';
+    private $qr_name = '';
 
     const DPI = 96;
     const MM_IN_INCH = 25.4;
@@ -38,14 +40,12 @@ class SolicitudCompraFormato extends Rotation
      * @param $solicitudCompra
      */
 
-    public function __construct($id)
+    public function __construct(SolicitudCompra $solicitudCompra)
     {
 
-        parent::__construct('P', 'cm', 'A4');
+        parent::__construct('P', 'cm', 'Letter');
         $this->obra = Obra::find(Context::getIdObra());
-        $this->solicitud = SolicitudCompra::find($id);
-
-
+        $this->solicitud = $solicitudCompra;
 
         $this->SetAutoPageBreak(true, 5);
         $this->WidthTotal = $this->GetPageWidth() - 2;
@@ -55,6 +55,7 @@ class SolicitudCompraFormato extends Rotation
         $this->txtContenidoTam = 11;
         $this->txtFooterTam = 6;
         $this->encabezado_pdf = utf8_decode('SOLICITUD DE COMPRA');
+        $this->createQR();
     }
 
     function Header()
@@ -340,56 +341,46 @@ RFC: ' . $this->obra->rfc), '', 'J');
     }
 
     function firmas(){
-        $this->SetY(-4.5);
+
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
+        $this->SetY(-6);
 
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
+        $this->Cell(1.2);
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+        $this->Cell(1.2);
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
 
-        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+        $this->SetY(-5.59);
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 1.2, '', 'TRLB', 0, 'C');
+        $this->Cell(1.2);
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 1.2, '', 'TRLB', 0, 'C');
+        $this->Cell(1.2);
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 1.2, '', 'TRLB', 0, 'C');
 
-
-
-        $this->SetY(-4.11);
-        $this->Cell(($this->GetPageWidth() - 3) / 3, 1.2, '', 'TRLB', 0, 'C');
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 3) / 3, 1.2, '', 'TRLB', 0, 'C');
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 3) / 3, 1.2, '', 'TRLB', 0, 'C');
-
-
-
-        $this->SetY(-3.0);
-        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
-        $this->Cell(0.73);
-
-        /*Code for QR CODE*/
-        $image = new BaconQrCodeGenerator;
-        $pic = $image->format('png')->generate('Bugs everywhere, regards');
-        $dataUri= 'data:image/png;base64,'.base64_encode($pic);
-        $pr = $this->getImage($dataUri);
-        $this->image($pr[0], 1,22.1,3,3, $pr[1]);
-
+        $this->SetY(-4.4);
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
+        $this->Cell(1.2);
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
+        $this->Cell(1.2);
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
     }
 
-    function getImage($dataURI){
-        $img = explode(',',$dataURI,2);
-        $pic = 'data://text/plain;base64,'.$img[1];
-        $type = explode("/", explode(':', substr($dataURI, 0, strpos($dataURI, ';')))[1])[1]; //get the image type
-        if ($type=="png"||$type=="jpeg"||$type=="gif") return array($pic, $type);
-        return false;
-    }
     function Footer()
     {
         $this->firmas();
+
+        $this->SetY(-3.8);
+        //$this->image("http://saoweb.grupohi.mx/libraries/PHPQRCode/qr.php?cadena=".urlencode($this->cadena_qr), 0.75, $this->GetY(), 2.5, 2.5,'PNG');
+        $this->image("http://172.20.74.94/libraries/PHPQRCode/qr.php?cadena=".urlencode($this->cadena_qr), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
+        $this->SetY(-3.6);
+        $this->SetX(-17);
+        $this->SetFont('Arial', '', 5);
+        $this->MultiCell(16, .3, utf8_decode($this->cadena), 0, 'L');
+        $this->Ln(.2);
+
         $this->SetY($this->GetPageHeight() - 1);
         $this->SetFont('Arial', '', 6);
 
@@ -411,6 +402,30 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->Cell(19.5, .5, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
+    public function createQR()
+    {
+        $verifica = new ValidacionSistema();
+        $datos_qr[] = "TABLA COMPARATIVA DE COTIZACIONES prueba";
+        $datos_qr[] = date("d-m-Y");
+//        $datos_qr[] = $this->solicitud_compra->complemento->folio_compuesto;
+        $datos_qr[] = $this->solicitud->numero_folio_format;
+        $datos_qr2["tipo"] = "prueba de  solicitud compraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        $datos_qr2["base"] = Context::getDatabase();
+        $datos_qr2["tabla"] = "transacciones";
+        $datos_qr2["campo_id"] = "id_transaccion";
+        $datos_qr2["id"] = $this->solicitud->id_transaccion;
+        $cadena_json_id = json_encode($datos_qr2);
+        $cadena_encriptar = $cadena_json_id . ">";
+        $cadena_encriptar .= implode("_",$datos_qr);
+        $firmada = $verifica->encripta($cadena_encriptar);
+        $this->cadena_qr = "http://portal-aplicaciones.grupohi.mx/sao/api/compras/solicitud-compra" . urlencode($firmada);
+        $this->cadena = $firmada;
+
+        $this->dato = $verifica->encripta($cadena_encriptar);
+
+        $this->qr_name = 'qrcode_'. mt_rand() .'.png';
+
+    }
 
    function create() {
        $this->SetMargins(1, 0.5, 1);
