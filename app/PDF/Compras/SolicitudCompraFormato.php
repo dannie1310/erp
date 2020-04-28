@@ -418,7 +418,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
        $this->partidas();
 
        try {
-           $this->Output('I', 'Formato - Pago Anticipado.pdf', 1);
+           $this->Output('I', "Formato - Solicitud Compra_".$this->solicitud->numero_folio.".pdf", 1);
        } catch (\Exception $ex) {
            dd("error",$ex);
        }
