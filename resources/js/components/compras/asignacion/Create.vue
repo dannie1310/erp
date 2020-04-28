@@ -55,36 +55,37 @@
                                             </tr>
                                             <tr>
                                                 <th>#</th>
-                                                <th style="width: 25%;">Descripción</th>
-                                                <th>Unidad</th>
-                                                <th>Cantidad Solicitada</th>
-                                                <th>Cantidad Asignada Previamente</th>
-                                                <th>Cantidad Pendiente Asignar</th>
+                                                <th style="width: 20%;">Descripción</th>
+                                                <th style="width: 6%;">Unidad</th>
+                                                <th style="width: 6%;">Cantidad Solicitada</th>
+                                                <th style="width: 6%;">Cantidad Asignada Previamente</th>
+                                                <th style="width: 6%;">Cantidad Pendiente Asignar</th>
                                              
-                                                <th class="bg-gray-light">Precio Unitario</th>
+                                                <th class="bg-gray-light ">Precio Unitario</th>
                                                 <th class="bg-gray-light">% Descuento</th>
-                                                <th class="bg-gray-light">Precio Total</th>
+                                                <th class="bg-gray-light ">Precio Total</th>
                                                 <th class="bg-gray-light">Moneda</th>
-                                                <th class="bg-gray-light">Precio Total Moneda Conversión</th>
-                                                <th class="bg-gray-light">Cantidad Asignada</th>
+                                                <th class="bg-gray-light ">Precio Total Moneda Conversión</th>
+                                                <th class="bg-gray-light th_money_input">Cantidad Asignada</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr v-for="(item, i) in data.items" v-if="item.item_pendiente">
                                                 <td>{{ i+1}}</td>
-                                                <td :title="item.descripcion">{{item.descripcion}}</td>
+                                                <td :title="item.descripcion">{{item.descripcion_corta}}</td>
                                                 <td>{{item.unidad}}</td>
                                                 <td>{{item.cantidad_solicitada}}</td>
                                                 <td>{{item.cantidad_asignada}}</td>
                                                 <td>{{item.cantidad_disponible}}</td>
-                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].precio_unitario}}</td><td v-else></td>
+                                                <td style="text-align: right" v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].precio_unitario_format}}</td><td v-else></td>
                                                 <td v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].descuento}}</td><td v-else></td>
-                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].importe}}</td><td v-else></td>
+                                                <td style="text-align: right" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe}}</td><td v-else></td>
                                                 <td v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].moneda}}</td><td v-else></td>
-                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
-                                                <td style="width: 10%;">
+                                                <td style="text-align: right" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
+                                                <td>
                                                     <span  v-if="data.cotizaciones[id_empresa].partidas[i]">
                                                         <input type="numeric"
+                                                            :disabled="item.cantidad_disponible == 0 && data.cotizaciones[id_empresa].partidas[i].cantidad_asignada == ''"
                                                             v-on:keyup="recalcular(i)"
                                                             class="form-control"
                                                             :name="`cantidad_asignada[${item.id_material}]`"
@@ -137,7 +138,7 @@ export default {
         getSolicitudes(){
             this.cargando = true;
             this.solicitudes = [];
-            this.cotizaciones = null;
+            this.data = null;
             return this.$store.dispatch('compras/solicitud-compra/index', {
                 params: {
                     scope: ['cotizacion'],
@@ -154,7 +155,7 @@ export default {
         },
         getCotizaciones(id){
             this.cargando = true;
-            this.cotizaciones = null;
+            this.data = null;
             return this.$store.dispatch('compras/solicitud-compra/getCotizaciones', {
                 id: id,
                 params: {}
@@ -168,27 +169,34 @@ export default {
             })
         },
         recalcular(i){
-            if(this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada > this.data.items[i].cantidad_disponible){
-                swal('¡Aviso!', 'El insumo ya no tiene cantidad pendiente por asignar', 'warning');
+            let asignadas = 0.0;
+
+            Object.values(this.data.cotizaciones).forEach(partida =>{
+                if(partida.partidas[i] && partida.partidas[i].cantidad_asignada !== ''){
+                    asignadas = +asignadas + +partida.partidas[i].cantidad_asignada;
+                }                   
+            });
+
+            if(asignadas > this.data.items[i].cantidad_base){
+                if(this.data.items[i].cantidad_disponible === 0){
+                    swal('¡Aviso!', 'El insumo ya no tiene cantidad pendiente por asignar', 'warning');
+                }else{
+                    swal('¡Aviso!', 'La cantidad asignada es mayor a la pendiente por asignar.', 'warning');
+                }
+                asignadas = +asignadas - +this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada;
                 this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada = '';
             }else{
-                let p_u = 0;
+                let p_unitario = 0;
                 this.data.cotizaciones[this.id_empresa].partidas[i].descuento > 0?
-                    p_u = this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario - (this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario * (this.data.cotizaciones[this.id_empresa].partidas[i].descuento / 100))
-                    :p_u =this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario;
-                
-                this.data.cotizaciones[this.id_empresa].partidas[i].importe = p_u * this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada;
-                this.data.cotizaciones[this.id_empresa].partidas[i].importe_moneda_conversion = this.data.cotizaciones[this.id_empresa].partidas[i].importe * this.data.cotizaciones[this.id_empresa].partidas[i].tipo_cambio;
-                let asignadas = 0
-
-                Object.values(this.data.cotizaciones).forEach(partida =>{
-                    if(partida.partidas[i]){
-                        asignadas = asignadas + partida.partidas[i].cantidad_asignada
-                    }                   
-                });
-                this.data.items[i].cantidad_disponible = this.data.items[i].cantidad_base;
-                this.data.items[i].cantidad_disponible = this.data.items[i].cantidad_disponible - asignadas;
+                    p_unitario = this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario - (this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario * (this.data.cotizaciones[this.id_empresa].partidas[i].descuento / 100))
+                    :p_unitario =this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario;
+                let c_asignada =this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada !== ''?this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada:0;
+                this.data.cotizaciones[this.id_empresa].partidas[i].importe = parseFloat(p_unitario * c_asignada).formatMoney(2);
+                this.data.cotizaciones[this.id_empresa].partidas[i].importe_moneda_conversion = parseFloat((p_unitario * c_asignada) * this.data.cotizaciones[this.id_empresa].partidas[i].tipo_cambio).formatMoney(2);
+     
             }
+            this.data.items[i].cantidad_disponible = this.data.items[i].cantidad_base;
+            this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_disponible - asignadas).toFixed(4);
         },
     },
     watch:{

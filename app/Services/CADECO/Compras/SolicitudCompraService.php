@@ -130,10 +130,12 @@ class SolicitudCompraService
                 'id_item' => $partida->id_item,
                 'id_material' => $partida->id_material,
                 'descripcion' => $partida->material->descripcion,
-                'cantidad_solicitada' => $partida->cantidad,
-                'cantidad_asignada' => 0,
-                'cantidad_disponible' => $partida->cantidad - 0,
-                'cantidad_base' => $partida->cantidad - 0,
+                'descripcion_corta' => substr($partida->material->descripcion, 0, 35),
+                'unidad' => $partida->material->unidad,
+                'cantidad_solicitada' => number_format($partida->cantidad, 4, '.', ''),
+                'cantidad_asignada' => number_format(0, 4, '.', ''),
+                'cantidad_disponible' => number_format($partida->cantidad - 0, 4, '.', ''),
+                'cantidad_base' => number_format($partida->cantidad - 0, 4, '.', ''),
                 'item_pendiente' => $partida->cantidad - 0 > 0?true:false,
             ];
             foreach($solicitud_cotizaciones as $cotizacion){
@@ -153,11 +155,12 @@ class SolicitudCompraService
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = [
                         'cantidad_asignada' => '',
                         'precio_unitario' => $cot->precio_unitario,
+                        'precio_unitario_format' => '$ ' . number_format($cot->precio_unitario, 2, '.', ','),
                         'moneda' => $cot->moneda->abreviatura,
-                        'tipo_cambio' => $cot->moneda->tipo == 1?1: $cot->moneda->cambio->cambio,
+                        'tipo_cambio' => $cot->moneda->tipo == 1?1: number_format($cot->moneda->cambio->cambio, 4, '.', ','),
                         'importe' => 0,
                         'importe_moneda_conversion' => 0,
-                        'descuento' => $cot->descuento?$cot->descuento:0,
+                        'descuento' => $cot->descuento?number_format($cot->descuento, 2, '.', ','):0,
                     ];
                 }else{
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = null;
