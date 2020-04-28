@@ -177,7 +177,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetX($x);
         $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FOLIO'), 'LT', 0, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.207 * $this->WidthTotal, 0.5, ''.utf8_decode($this->solicitud->complemento->folio_compuesto), 'RT', 1, 'R');
+        $this->Cell(0.207 * $this->WidthTotal, 0.5, ''.$this->solicitud->complemento ? utf8_decode($this->solicitud->complemento->folio_compuesto) : '', 'RT', 1, 'R');
 
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->SetX($x);
@@ -191,11 +191,11 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->SetX($x);
             $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FECHA REQ. O.'), 'L', 0, 'L');
             $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-            $this->Cell(0.207 * $this->WidthTotal, 0.5, ''.date("d/m/Y", strtotime($this->solicitud->complemento->fecha_requisicion_origen)), 'R', 1, 'R');
+            $this->Cell(0.207 * $this->WidthTotal, 0.5, ''.$this->solicitud->complemento ? date("d/m/Y", strtotime($this->solicitud->complemento->fecha_requisicion_origen)) : '', 'R', 1, 'R');
         }
 
 
-        if(!is_null($this->solicitud->complemento->requisicion_origen))
+        if(!is_null($this->solicitud->complemento))
         {
             $this->SetFont('Arial', 'B', $this->txtContenidoTam);
             $this->SetX($x);
@@ -217,7 +217,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
     function partidas(){
 
         /*Concepto*/
-        if(!is_null($this->solicitud->complemento->concepto)){
+        if(!is_null($this->solicitud->complemento)){
             $this->Ln(.7);
             $this->SetWidths(array(19.5));
             $this->SetRounds(array('12'));
@@ -240,10 +240,6 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', "".$this->solicitud->complemento->concepto))));
 
         }
-
-
-
-
 
         /*Partidas*/
         $this->Ln(.7);
@@ -287,10 +283,10 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->SetRadius([0,0,0,0,0,0,0,0,0]);
             $this->SetWidths([19.5]);
             $this->SetAligns(['L']);
-            if(!is_null($item->entrega->concepto)){
+            if($item->entrega->concepto){
                 $this->Row([utf8_decode($item->entrega->concepto->path)]);
             }
-            if(!is_null($item->entrega->almacen)){
+            if($item->entrega->almacen){
                 $this->Row([utf8_decode($item->entrega->almacen->descripcion)]);
             }
 
@@ -300,16 +296,11 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->SetWidths([19.5]);
             $this->SetAligns(['L']);
 
-            if(!is_null($item->complemento->observaciones))
+            if($item->complemento)
             {
                 $this->Row([utf8_decode($item->complemento->observaciones)]);
             }
-
-
-
         }
-
-
 
         /*Observaciones de la Solicitud*/
         if(!is_null($this->solicitud->observaciones)){
@@ -333,11 +324,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
             $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', "".$this->solicitud->observaciones))));
-
         }
-
-
-
     }
 
     function firmas(){
@@ -405,26 +392,22 @@ RFC: ' . $this->obra->rfc), '', 'J');
     public function createQR()
     {
         $verifica = new ValidacionSistema();
-        $datos_qr[] = "TABLA COMPARATIVA DE COTIZACIONES prueba";
-        $datos_qr[] = date("d-m-Y");
-//        $datos_qr[] = $this->solicitud_compra->complemento->folio_compuesto;
-        $datos_qr[] = $this->solicitud->numero_folio_format;
-        $datos_qr2["tipo"] = "prueba de  solicitud compraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        $datos_qr2['titulo'] = "Formato Solicitud de Compra_".date("d-m-Y")."_".($this->solicitud->complemento ? $this->solicitud->complemento->folio_compuesto : '')."_".$this->solicitud->numero_folio_format;
         $datos_qr2["base"] = Context::getDatabase();
+        $datos_qr2["obra"] = $this->obra->nombre;
         $datos_qr2["tabla"] = "transacciones";
         $datos_qr2["campo_id"] = "id_transaccion";
         $datos_qr2["id"] = $this->solicitud->id_transaccion;
         $cadena_json_id = json_encode($datos_qr2);
-        $cadena_encriptar = $cadena_json_id . ">";
-        $cadena_encriptar .= implode("_",$datos_qr);
-        $firmada = $verifica->encripta($cadena_encriptar);
-        $this->cadena_qr = "http://portal-aplicaciones.grupohi.mx/sao/api/compras/solicitud-compra" . urlencode($firmada);
+
+        $firmada = $verifica->encripta($cadena_json_id);
+
+        $this->cadena_qr = "http://172.20.240.1:808/api/compras/solicitud-compra/leerQR?data=" . urlencode($firmada);
         $this->cadena = $firmada;
 
-        $this->dato = $verifica->encripta($cadena_encriptar);
+        $this->dato = $verifica->encripta($cadena_json_id);
 
         $this->qr_name = 'qrcode_'. mt_rand() .'.png';
-
     }
 
    function create() {
@@ -441,8 +424,4 @@ RFC: ' . $this->obra->rfc), '', 'J');
        }
        exit;
     }
-
-
-
-
     }

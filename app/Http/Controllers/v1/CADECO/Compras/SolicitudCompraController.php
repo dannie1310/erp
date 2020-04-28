@@ -39,8 +39,9 @@ class SolicitudCompraController extends Controller
     public function __construct(Manager $fractal, SolicitudCompraService $service, SolicitudCompraTransformer $transformer)
     {
         $this->middleware('addAccessToken')->only('pdfSolicitudCompra');
-        $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('auth:api')->except('leerQR');
+        $this->middleware('context')->except('leerQR');
+
         $this->middleware('permiso:registrar_solicitud_compra')->only('store');
         $this->middleware('permiso:consultar_solicitud_compra')->only(['paginate', 'show']);
         $this->middleware('permiso:aprobar_solicitud_compra')->only('aprobar');
@@ -72,5 +73,10 @@ class SolicitudCompraController extends Controller
 
     public function getCotizaciones($id){
         return $this->service->getCotizaciones($id);
+    }
+
+    public function leerQR(Request $request)
+    {
+        return $this->service->leerQR($request->all()['data']);
     }
 }
