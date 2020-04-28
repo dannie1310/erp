@@ -40,7 +40,8 @@ class CotizacionCompra  extends Transaccion
     public $searchable = [
         'numero_folio',
         'observaciones',
-        'fecha'
+        'fecha',
+        'empresa.razon_social'
     ];
 
     protected static function boot()
