@@ -1,7 +1,7 @@
 <template>
     <span>
         <nav>
-            <div class="row">
+            <div class="row" v-if="cotizacion != ''">
                 <div class="col-12">
                     <div class="invoice p-3 mb-3">
                         <form role="form" @submit.prevent="validate">
@@ -10,7 +10,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group error-content">
                                             <label for="fecha" class="col-form-label">Fecha:</label>
-                                            <datepicker v-model = "fecha"
+                                            <datepicker v-model = "cotizacion.fecha"
                                                         name = "fecha"
                                                         :format = "formatoFecha"
                                                         :language = "es"
@@ -24,93 +24,34 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row justify-content-between">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="id_solicitud">Buscar Solicitud:</label>
-                                                 <model-list-select
-                                                                name="id_solicitud"
-                                                                option-value="id"                                                               
-                                                                v-model="id_solicitud"
-                                                                :custom-text="idFolioObservaciones"
-                                                                :list="solicitudes"
-                                                                :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'">
-                                                            </model-list-select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
-                                        </div>
+                                <div class="table-responsive col-md-12">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="bg-gray-light" align="center" colspan="6"><b>{{(cotizacion.empresa) ? cotizacion.empresa.razon_social : '-----------'}}</b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="bg-gray-light"><b>Sucursal:</b></td>
+                                                    <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.descripcion : '----------'}}</td>
+                                                    <td class="bg-gray-light"><b>ToTC USD:</b></td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : '----------'}}</td>
+                                                    <td class="bg-gray-light"><b>ToTC EURO:</b></td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : '----------'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="bg-gray-light"><b>Direccion:</b></td>
+                                                    <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.direccion : '----------'}}</td>
+                                                    <td class="bg-gray-light"><b>Folio:</b></td>
+                                                    <td class="bg-gray-light">{{cotizacion.folio_format}}</td>
+                                                    <td class="bg-gray-light"><b>Importe:</b></td>
+                                                    <td class="bg-gray-light">{{cotizacion.importe}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="id_proveedor">Proveedores</label>
-                                            <select class="form-control"
-                                                    name="id_proveedor"
-                                                    data-vv-as="Proveedores"
-                                                    v-model="id_proveedor"
-                                                    v-validate="{required: true}"
-                                                    :error="errors.has('id_proveedor')"
-                                                    id="id_proveedor">
-                                                <option value>-- Seleccionar--</option>
-                                                <option v-for="proveedor in proveedores" :value="proveedor.id" >{{ proveedor.razon_social}}</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 offset-1" v-if="sucursal">
-                                        <div class="form-group">
-                                            <label for="id_sucursal">Sucursal</label>
-                                            <select class="form-control"
-                                                    name="id_sucursal"
-                                                    data-vv-as="Sucursal"
-                                                    v-model="id_sucursal"
-                                                    v-validate="{required: true}"
-                                                    :error="errors.has('id_sucursal')"
-                                                    id="id_sucursal">
-                                                <option value>-- Seleccionar--</option>
-                                                <option v-for="sucursal in sucursales" :value="sucursal.id" >{{ sucursal.descripcion}}</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_sucursal')">{{ errors.first('id_sucursal') }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 offset-1" v-else>
-                                        <div class="form-group">
-                                            <label for="id_sucursal">Sucursal</label>
-                                            <select class="form-control"
-                                                    name="id_sucursal"
-                                                    :disabled="true"
-                                                    v-model="id_sucursal"
-                                                    :error="errors.has('id_sucursal')"
-                                                    id="id_sucursal">
-                                                <option value>-- Sin Sucursal--</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- <div class="row">   
-                                    <div class="col-md-12">
-                                        <label for="concepto" class="col-form-label">Concepto: </label>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="row">   
-                                    <div class="col-md-12">
-                                        <div class="form-group row error-content">
-                                            <textarea
-                                                name="concepto"
-                                                id="concepto"
-                                                class="form-control"
-                                                v-model="concepto"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Concepto"
-                                                :class="{'is-invalid': errors.has('concepto')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
-                                        </div>
-                                    </div>
-                                </div> -->
                                 <hr />
                                 
-                                <div class="row" v-if="id_solicitud != ''">
+                                <div class="row" v-if="cotizacion.cotizaciones">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
@@ -121,8 +62,7 @@
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
                                                     <th></th>
-                                                    <th class="cantidad_input">Cantidad Solicitada</th>
-                                                    <th class="cantidad_input">Cantidad Aprobada</th>                                                    
+                                                    <th class="cantidad_input">Cantidad</th>                                                  
                                                     <th class="cantidad_input">Precio Unitario</th>
                                                     <th class="cantidad_input">% Descuento</th>
                                                     <th class="money">Precio Total</th>
@@ -131,20 +71,20 @@
                                                     <th>Observaciones</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody v-if="solicitud">
-                                                    <tr v-for="(partida, i) in solicitud.partidas.data">
+                                                <tbody v-if="cotizacion.cotizaciones">
+                                                    <tr v-for="(partida, i) in cotizacion.cotizaciones.data">
                                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                         <td style="text-align:center;">{{partida.material.numero_parte}}</td>
                                                         <td>{{partida.material.descripcion}}</td>
                                                         <td style="text-align:center;">{{partida.material.unidad}}</td>
-                                                        <td style="text-align:center; vertical-align:inherit;">
+                                                         <td style="text-align:center; vertical-align:inherit;">
                                                             <div class="custom-control custom-switch">
-                                                                <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
+                                                                <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="partida.no_cotizado" checked>
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
                                                         </td>                                                        
-                                                        <td style="text-align:center;">{{partida.cantidad_original}}</td>
-                                                        <td style="text-align:center;">{{(solicitud.estado === 1) ? partida.solicitado_cantidad : '0.0'}}</td>
+                                                        <td style="text-align:center;">{{partida.cantidad}}</td>
+                                                    <!--    <td style="text-align:center;">{{(solicitud.estado === 1) ? partida.solicitado_cantidad : '0.0'}}</td>
                                                         <td>
                                                             <input type="number"
                                                                    min="0.01"
@@ -198,13 +138,13 @@
                                                                       :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                       v-model="observaciones_inputs[i]"/>
                                                              <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
-                                                        </td>
+                                                        </td> -->
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div class=" col-md-10" align="right">
+                                    <!-- <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">% Descuento:</label>                                        
                                     </div>
                                     <div class=" col-md-2" align="right">
@@ -328,7 +268,7 @@
                                                                 class="col-sm-6 form-control"
                                                                 id="vigencia"
                                                                 :class="{'is-invalid': errors.has('vigencia')}">
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
@@ -342,7 +282,7 @@
                                                 name="observaciones"
                                                 id="observaciones"
                                                 class="form-control"
-                                                v-model="observaciones"
+                                                v-model="cotizacion.observaciones"
                                                 v-validate="{required: true}"
                                                 data-vv-as="Observaciones"
                                                 :class="{'is-invalid': errors.has('observaciones')}"
@@ -354,7 +294,7 @@
                             </div>
                              <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" :disabled="id_solicitud == ''" class="btn btn-primary">Registrar</button>
+                                    <button type="submit" class="btn btn-primary">Registrar</button>
                              </div>
                         </form>
                     </div>
@@ -369,12 +309,13 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
     export default {
-        name: "cotizacion-create",
+        name: "cotizacion-edit",
+
         components: {Datepicker, ModelListSelect},
+        props: ['id'],
         data() {
             return {
                 cargando: false,
-                id_solicitud: '',
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
@@ -390,6 +331,7 @@
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
+                cotizacion: [],
                 moneda_input:[],
                 sucursal: true,
                 observaciones_inputs:[],
@@ -429,11 +371,13 @@
             }
         },
         mounted() {
-            this.fecha = new Date();
+            this.enable = [];
+            this.precio = [];
+            this.moneda_input = [];
+            this.observaciones_inputs = [];
+            this.descuento = [];
+            this.find();
             this.$validator.reset();
-            this.getProveedores();
-            this.getMonedas();
-            this.getSolicitudes();
             
         },
         methods : {
@@ -464,27 +408,27 @@
             },
             salir()
             {
-                 this.$router.push({name: 'cotizacion'});
+                //  this.$router.push({name: 'cotizacion'});
+                console.log(this.cotizacion);
+                
+                 
             },
-            find() {
-                this.enable = [];
-                this.precio = [];
-                this.moneda_input = [];
-                this.observaciones_inputs = [];
-                this.descuento = [];
+            find() {                
+                
                 this.cargando = true;
-                this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
-                return this.$store.dispatch('compras/solicitud-compra/find', {
-                    id: this.id_solicitud,
+                this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
+                return this.$store.dispatch('compras/cotizacion/find', {
+                    id: this.id,
                     params:{include: [
-                            'complemento',
-                            'partidas.complemento',
-                            'partidas.entrega',
-                            'cotizaciones']}
-                }).then(data => {
-                    this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
-                    
+                        'empresa',
+                        'sucursal',
+                        'complemento',
+                        'cotizaciones.material'
+                    ]}
+                }).then(data => {         
+                    this.cotizacion = data;           
                     this.cargando = false;
+                    this.fecha = data.fecha;               
                 })
             },
             calcular()
@@ -530,6 +474,7 @@
                     params: {
                         scope: 'conItems',
                         order: 'DESC',
+                        limit: 100,
                         sort: 'numero_folio'
                     }
                 })
@@ -542,27 +487,28 @@
                 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.post.partidas = this.solicitud.partidas.data;
-                        this.post.id_solicitud = this.id_solicitud;
-                        this.post.id_proveedor = this.id_proveedor;
-                        this.post.sucursal = this.sucursal;
-                        this.post.id_sucursal = this.id_sucursal;
-                        this.post.observaciones = this.observaciones_inputs;
-                        this.post.moneda = this.moneda_input;
-                        this.post.observacion = this.observaciones;
-                        this.post.precio = this.precio;
-                        this.post.enable = this.enable;
-                        this.post.descuento = this.descuento;
-                        this.post.descuento_cot = this.descuento_cot;
-                        this.post.pago = this.pago;
-                        this.post.anticipo = this.anticipo;
-                        this.post.credito = this.credito;
-                        this.post.tiempo = this.tiempo;
-                        this.post.vigencia = this.vigencia;
-                        this.post.fecha = this.fecha;
-                        this.post.importe = this.total;
-                        this.post.impuesto = this.iva;
-                        this.store()
+                        alert('empezar');
+                        // this.post.partidas = this.solicitud.partidas.data;
+                        // // this.post.id_solicitud = this.id_solicitud;
+                        // this.post.id_proveedor = this.id_proveedor;
+                        // this.post.sucursal = this.sucursal;
+                        // this.post.id_sucursal = this.id_sucursal;
+                        // this.post.observaciones = this.observaciones_inputs;
+                        // this.post.moneda = this.moneda_input;
+                        // this.post.observacion = this.observaciones;
+                        // this.post.precio = this.precio;
+                        // this.post.enable = this.enable;
+                        // this.post.descuento = this.descuento;
+                        // this.post.descuento_cot = this.descuento_cot;
+                        // this.post.pago = this.pago;
+                        // this.post.anticipo = this.anticipo;
+                        // this.post.credito = this.credito;
+                        // this.post.tiempo = this.tiempo;
+                        // this.post.vigencia = this.vigencia;
+                        // this.post.fecha = this.fecha;
+                        // this.post.importe = this.total;
+                        // this.post.impuesto = this.iva;
+                        // this.store()
                     }
                 });
             },
@@ -600,13 +546,6 @@
             }
         },
         watch: {
-            id_solicitud(value)
-            {
-                if(value !== '' && value !== null && value !== undefined)
-                {
-                    this.find();
-                }
-            },
             id_proveedor(value){
                 this.id_sucursal = '';
                 if(value !== '' && value !== null && value !== undefined){

@@ -22,7 +22,10 @@ class Entrega extends Model
         'surtida',
     ];
 
-
+    public function itemSolicitudCompra()
+    {
+        return $this->belongsTo(ItemSolicitudCompra::class, 'id_item');
+    }
 
     public function ordenCompraPartida()
     {
@@ -68,6 +71,4 @@ class Entrega extends Model
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
-
-
 }

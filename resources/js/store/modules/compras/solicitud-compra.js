@@ -65,8 +65,20 @@ export default {
                     })
             });
         },
+        getCotizaciones(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/getCotizaciones', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         store(context,payload){
-
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Solicitud de Compra",
@@ -105,8 +117,6 @@ export default {
 
         },
         index(context, payload) {
-            console.log('Index solicitud compra', payload);
-
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI, { params: payload.params })
@@ -137,7 +147,6 @@ export default {
                     }
                 })
                     .then((value) => {
-
                         if (value) {
                             axios
                                 .patch(URI + payload.id, payload.data)
