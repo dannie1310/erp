@@ -4,13 +4,15 @@
         <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
                 <i class="fa fa-pencil"></i>
         </button>
+        <Delete v-bind:id="value.id" v-if="value.delete"/>
     </div>
 </template>
 <script>
 import Show from '../Show';
+import Delete from "../Delete";
     export default {
         name: "cotizacion-buttons",
-        components: {Show},
+        components: {Delete, Show},
         props: ['value'],
 
         methods: {
