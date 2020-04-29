@@ -9,6 +9,7 @@ use App\Models\CADECO\SolicitudCompra;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Solicitud\Repository;
+use App\Utils\ValidacionSistema;
 
 
 class SolicitudCompraService
@@ -109,8 +110,7 @@ class SolicitudCompraService
 
     public function pdfSolicitudCompra($id)
     {
-        $pdf = new SolicitudCompraFormato($id);
-        return $pdf;
+        return $this->repository->show($id)->pdfSolicitudCompra();
     }
 
     public function pdfCotizacion($id)
@@ -162,5 +162,18 @@ class SolicitudCompraService
             }
         }
         return ['items'=>$items,'cotizaciones'=> $cotizaciones];
+    }
+
+    public function leerQR($data)
+    {
+        $verifica = new ValidacionSistema();
+        $datos = $verifica->desencripta($data);
+        $json = json_decode($datos);
+
+        if($json) {
+            return $json->titulo . "_" . $json->obra;
+        }else{
+            return "Error de lectura";
+        }
     }
 }
