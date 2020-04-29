@@ -1321,6 +1321,17 @@ export const routes = [
 
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'proyectado-create',
+                        component: require('./components/contratos/proyectado/Create').default,
+                        meta: {
+                            title: 'Registrar Contratos Proyectados',
+                            breadcrumb: {parent: 'proyectado', name: 'REGISTRAR'},
+                            middleware: [auth, context],
+
+                        }
+                    },
                 ]
             },
             {
