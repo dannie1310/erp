@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12">
             <!-- v-if="$root.can('registrar_requisicion_compra')" -->
-            <button @click="create" class="btn btn-app btn-default pull-right" :disabled="cargando">
+            <button @click="create" class="btn btn-app btn-default pull-right" v-if="$root.can('registrar_asignacion_proveedor')" :disabled="cargando">
                 <i class="fa fa-plus"></i> Registrar
             </button>
             <!-- <Layout @change="paginate()"></Layout> -->
@@ -33,10 +33,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio Solicitud', field: 'folio_solicitud', tdClass: 'td_money',sortable: true},
-                    { title: 'Folio Asignación', field: 'folio_cotizacion', tdClass: 'td_money',sortable: true},
-                    { title: 'Concepto', field: 'concepto', tdClass: 'td_money',sortable: true},
-                    { title: 'Fecha/Hora', field: 'fecha_format', tdClass: 'td_money',sortable: true},
+                    { title: 'Folio Solicitud', field: 'folio_solicitud',sortable: true},
+                    { title: 'Folio Asignación', field: 'folio_cotizacion',sortable: true},
+                    { title: 'Concepto', field: 'concepto',sortable: true},
+                    { title: 'Fecha/Hora', field: 'fecha_format',sortable: true},
                     { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
@@ -89,10 +89,11 @@
                     asignaciones.forEach(function (asignacion, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: asignacion.folio_format,
-                            id_tipo: asignacion.id_tipo,
+                            folio_solicitud: asignacion.folio_solicitud_format,
+                            folio_cotizacion: asignacion.folio_asignacion_format,
+                            concepto: asignacion.observaciones,
+                            estado: asignacion.estado,
                             fecha_format: asignacion.fecha_format,
-                            observaciones: asignacion.observaciones,
                             // buttons: $.extend({}, {
                             //     id:inventario.id,
                             //     marbete: self.$root.can('generar_marbetes'),

@@ -12,7 +12,7 @@
                                         name="id_solicitud"
                                         option-value="id"                                                               
                                         v-model="id_solicitud"
-                                        option-text="observaciones"
+                                        :custom-text="numeroFolioFormatAndObservaciones"
                                         :list="solicitudes"
                                         :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
                                         :isError="errors.has(`id_solicitud`)">
@@ -106,8 +106,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Registrar</button>
+                        <button type="button" @click=cerrar() class="btn btn-secondary">Cerrar</button>
+                        <button type="button" @click="validate()" class="btn btn-primary">Registrar</button>
                     </div>
                 </div>
             </div>
@@ -136,6 +136,31 @@ export default {
         
     },
     methods: {
+        numeroFolioFormatAndObservaciones(item){
+            return `[${item.numero_folio_format}] - [${item.observaciones}]`
+        },
+        cerrar(){
+            swal({
+                title: "Cerrar Asignación de Proveedores",
+                text: "¿Está seguro/a de que quiere salir del registro de asignación de proveedores?",
+                icon: "info",
+                buttons: {
+                    cancel: {
+                        text: 'Cancelar',
+                        visible: true
+                    },
+                    confirm: {
+                        text: 'Si, Salir',
+                        closeModal: true,
+                    }
+                }
+            })
+            .then((value) => {
+                if (value) {
+                    this.$router.push({name: 'asignacion-proveedores'});
+                }
+            });
+        },
         getSolicitudes(){
             this.cargando = true;
             this.solicitudes = [];
@@ -143,7 +168,7 @@ export default {
             return this.$store.dispatch('compras/solicitud-compra/index', {
                 params: {
                     scope: ['cotizacion'],
-                    limit: 50,
+                    limit: 200,
                     order: 'DESC',
                     sort: 'numero_folio'
                 }
@@ -201,6 +226,26 @@ export default {
             this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_base - asignadas).toFixed(4);
             console.log(this.data.items[i].cantidad_disponible);
         },
+        store() {
+            this.cargando = true;
+            return this.$store.dispatch('compras/asignacion/store', {
+                id_solicitud:this.id_solicitud,
+                cotizaciones:this.data.cotizaciones
+            })
+            .then((data) => {
+                this.$router.push({name: 'asignacion-proveedores'});
+            })
+            .finally(() => {
+                this.cargando = false;
+            })
+        },
+        validate() {
+            this.$validator.validate().then(result => {
+                if (result){
+                    this.store();
+                }
+            });
+        }
     },
     watch:{
         id_solicitud(value){

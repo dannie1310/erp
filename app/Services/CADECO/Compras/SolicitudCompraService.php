@@ -126,6 +126,7 @@ class SolicitudCompraService
         $solicitud_partidas = $solicitud->partidas;
         $solicitud_cotizaciones = $solicitud->cotizaciones;
         foreach($solicitud_partidas as $i => $partida){
+            $cantidad_asig_previamente = $partida->asignaciones()->sum('cantidad_asignada');
             $items[$i] = [
                 'id_item' => $partida->id_item,
                 'id_material' => $partida->id_material,
@@ -133,10 +134,10 @@ class SolicitudCompraService
                 'descripcion_corta' => substr($partida->material->descripcion, 0, 35),
                 'unidad' => $partida->material->unidad,
                 'cantidad_solicitada' => number_format($partida->cantidad, 4, '.', ''),
-                'cantidad_asignada' => number_format(0, 4, '.', ''),
-                'cantidad_disponible' => number_format($partida->cantidad - 0, 4, '.', ''),
-                'cantidad_base' => number_format($partida->cantidad - 0, 4, '.', ''),
-                'item_pendiente' => $partida->cantidad - 0 > 0?true:false,
+                'cantidad_asignada' => number_format($cantidad_asig_previamente, 4, '.', ''),
+                'cantidad_disponible' => number_format($partida->cantidad - $cantidad_asig_previamente, 4, '.', ''),
+                'cantidad_base' => number_format($partida->cantidad - $cantidad_asig_previamente, 4, '.', ''),
+                'item_pendiente' => $partida->cantidad - $cantidad_asig_previamente > 0?true:false,
             ];
             foreach($solicitud_cotizaciones as $cotizacion){
                 if(!$cotizacion->id_empresa)continue;

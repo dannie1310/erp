@@ -18,7 +18,7 @@ class AsignacionProveedoresPartida extends Model
     public    $timestamps = false;
 
     protected $fillable = [
-        'id_asignacion_proveedor',
+        'id_asignacion_proveedores',
         'id_transaccion_cotizacion',
         'id_item_solicitud',
         'id_material',

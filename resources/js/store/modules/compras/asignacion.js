@@ -100,8 +100,8 @@ export default{
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar inventario fisico",
-                    text: "¿Está seguro/a de que quiere registrar un nuevo inventario físico?",
+                    title: "Registrar Asignación de Proveedores",
+                    text: "¿Está seguro/a de que quiere registrar registrar la asignación de proveedores?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -120,7 +120,7 @@ export default{
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Inventario físico registrado correctamente", {
+                                    swal("Asignación de proveedores registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
