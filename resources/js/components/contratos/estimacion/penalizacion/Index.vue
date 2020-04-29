@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargando" v-if="$root.can('registrar_penalizacion_estimacion_subcontrato') || $root.can('registrar_liberacion_penalizacion_estimacion_subcontrato') || $root.can('eliminar_penalizacion_estimacion_subcontrato') || $root.can('eliminar_liberacion_penalizacion_estimacion_subcontrato')" >
+        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargando" v-if="$root.can(['registrar_penalizacion_estimacion_subcontrato', 'registrar_liberacion_penalizacion_estimacion_subcontrato', 'eliminar_penalizacion_estimacion_subcontrato', 'eliminar_liberacion_penalizacion_estimacion_subcontrato'])" >
             Penalizaciones
         </button>
         <div class="row">
