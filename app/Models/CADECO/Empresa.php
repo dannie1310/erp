@@ -63,6 +63,11 @@ class Empresa extends Model
         return $this->hasMany(Estimacion::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursales()
+    {
+        return $this->hasMany(Sucursal::class, 'id_empresa');
+    }
+
     public function facturas(){
         return $this->belongsTo(Documento::class, 'id_empresa', 'IDDestinatario');
     }
@@ -204,6 +209,21 @@ class Empresa extends Model
         if($this->tipo_empresa == 32){
             return 'Responsables Fondos Fijos';
         }
+    }
+
+    public function getPersonalidadDefinicionAttribute()
+    {
+        switch ($this->personalidad)
+        {
+            case(1):
+                return 'Persona Física';
+                break;
+            case(2):
+                return 'Persona Moral';
+                break;
+        }
+
+        return '---------';
     }
 
     public function scopeBeneficiarioCuentaBancaria($query)

@@ -8,6 +8,8 @@
 
 namespace App\Models\CADECO;
 use App\Facades\Context;
+use App\Models\CADECO\Subcontratos\ClasificacionSubcontrato;
+use App\Models\CADECO\Subcontratos\Subcontratos;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use Illuminate\Support\Facades\DB;
@@ -35,12 +37,16 @@ class Subcontrato extends Transaccion
         'observaciones',
         'id_usuario'
     ];
-    protected $with = array('estimacion');
+    protected $with = array('estimaciones');
     public $usuario_registra = 1;
 
     public $searchable = [
         'numero_folio',
-        'referencia'
+        'referencia',
+        'observaciones',
+        'empresa.razon_social',
+        'monto',
+        'impuesto'
     ];
 
     protected static function boot()
@@ -78,14 +84,24 @@ class Subcontrato extends Transaccion
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function estimacion()
+    public function clasificacionSubcontrato()
     {
-        return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
+        return $this->belongsTo(ClasificacionSubcontrato::class, 'id_transaccion');
     }
 
     public function estimaciones()
     {
         return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function subcontratos()
+    {
+        return $this->belongsTo(Subcontratos::class, 'id_transaccion');
+    }
+
+    public function costo()
+    {
+        return $this->belongsTo(Costo::class, 'id_costo');
     }
 
     public function partidas()
@@ -118,6 +134,11 @@ class Subcontrato extends Transaccion
         return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function getAnticipoFormatAttribute()
+    {
+        return number_format(abs($this->anticipo), 2) . '%';
+    }
+
     public function generaFondoGarantia()
     {
         if (is_null($this->fondo_garantia)) {
@@ -141,7 +162,12 @@ class Subcontrato extends Transaccion
 
     public function getSubtotalAttribute()
     {
-        return $this->monto - $this->impuesto;
+        return $this->monto - $this->impuesto + $this->impuesto_retenido;
+    }
+
+    public function getSubtotalAntesDescuentoAttribute()
+    {
+        return (($this->monto - $this->impuesto + $this->impuesto_retenido) * 100) / (100 - $this->PorcentajeDescuento);
     }
 
     public function scopeEstimable($query)
@@ -276,25 +302,8 @@ class Subcontrato extends Transaccion
         return $respuesta;
     }
 
-    public function getAcumuladoRetencionAnterioresAttribute()
+    public function getImporteFondoGarantiaAttribute()
     {
-        $acumulado = 0;
-        foreach ($this->estimaciones as $estimacion) {
-            $acumulado += $estimacion->retenciones->sum('importe');
-        }
-        return $acumulado;
-    }
-
-    public function getAcumuladoLiberacionAnterioresAttribute()
-    {
-        $acumulado = 0;
-        foreach ($this->estimaciones as $estimacion) {
-            $acumulado += $estimacion->liberaciones->sum('importe');
-        }
-        return $acumulado;
-    }
-
-    public function getImporteFondoGarantiaAttribute(){
         return ($this->monto - $this->impuesto) * $this->retencion / 100;
     }
 }

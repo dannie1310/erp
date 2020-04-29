@@ -1,19 +1,22 @@
 <template>
      <span>
        <div class="d-flex flex-row-reverse" v-if="!cargando">
+           <div class="p-2" v-if="estimacion.estado == 0">
+                <Penalizacion v-bind:id="id"></Penalizacion>
+            </div>
            <div class="p-2">
                 <Resumen v-bind:id="id" v-bind:cargando="cargando"></Resumen>
             </div>
-           <div class="p-2">
+           <div class="p-2" v-if="estimacion.estado == 0">
                 <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
             </div>
-            <div class="p-2">
+            <div class="p-2" v-if="estimacion.estado == 0">
                 <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
-            <div class="p-2">
+            <div class="p-2" v-if="estimacion.estado == 0">
                 <RetencionIvaCreate v-bind:id="id"></RetencionIvaCreate>
             </div>
-            <div class="p-2">
+            <div class="p-2" v-if="estimacion.estado == 0">
                 <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
             </div>
         </div>
@@ -237,9 +240,12 @@
 				</table>
 			</div>
 
-            <div class="modal-footer">
+            <div class="modal-footer" v-if="estimacion.estado == 0">
                 <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
                 <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0">Guardar </button>
+            </div>
+            <div class="modal-footer" v-else>
+                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
             </div>
         </div>
      </span>
@@ -249,14 +255,15 @@
     import RetencionIvaCreate from './retencion-iva/create'
     import DeductivaEdit from './deductivas/Edit'
     import RetencionIndex from './retenciones/Index';
-    import Amortizacion from './amortizacion/Edit'
+    import Amortizacion from './amortizacion/Edit';
+    import Penalizacion from './penalizacion/Index';
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import Resumen from './resumen/Show'
 
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es, Resumen},
+        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es, Resumen, Penalizacion},
         props: ['id'],
         data() {
             return {

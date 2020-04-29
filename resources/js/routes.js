@@ -1026,7 +1026,19 @@ export const routes = [
                         meta: {
                             title: 'Cotizaciones',
                             breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_cotizacion_compra']
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'cotizacion-create',
+                        component: require('./components/compras/cotizacion/Create').default,
+                        meta: {
+                            title: 'Registrar Cotización',
+                        breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR COTIZACIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_cotizacion_compra']
                         }
                     },
                 ]
@@ -1034,9 +1046,6 @@ export const routes = [
             {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue').default,
-                meta: {
-                    middleware: [auth, context]
-                },
                 children: [{
                     path: '/',
                     name: 'orden-compra',
@@ -1070,8 +1079,8 @@ export const routes = [
                         meta: {
                             title: 'Registrar Requisición de Compra',
                         breadcrumb: { parent: 'requisicion', name: 'REGISTRAR REQUISICIÓN'},
-                            middleware: [auth, context],
-                            // permission: 'registrar_solicitud_compra'
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_requisicion_compra'
                         }
                     },
 
@@ -1086,8 +1095,8 @@ export const routes = [
                         name: 'solicitud-compra',
                         component: require('./components/compras/solicitud-compra/Index').default,
                         meta: {
-                            title: 'SOLICITUDES DE COMPRA',
-                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA'},
+                            title: 'Solicitudes',
+                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_solicitud_compra'
                         }
@@ -1097,22 +1106,22 @@ export const routes = [
                         name: 'solicitud-compra-create',
                         component: require('./components/compras/solicitud-compra/Create').default,
                         meta: {
-                            title: 'Registrar Solicitud de Compra',
-                            breadcrumb: { parent: 'compras', name: 'REGISTRAR SOLICITUD DE COMPRA'},
-                            middleware: [auth, context],
-                            // permission: 'registrar_solicitud_compra'
+                            title: 'Registrar Solicitud',
+                            breadcrumb: { parent: 'compras', name: 'REGISTRAR SOLICITUD'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_solicitud_compra'
                         }
                     },
                     {
-                        path: ':id',
+                        path: ':id/editar',
                         name: 'solicitud-compra-edit',
                         component: require('./components/compras/solicitud-compra/Edit').default,
                         props: true,
                         meta: {
-                            title: 'Editar Solicitud de Compra',
-                            breadcrumb: { parent: 'compras', name: 'EDITAR'},
-                            middleware: [auth, context],
-                            // permission: 'editar_solicitud_compra'
+                            title: 'Editar Solicitud',
+                            breadcrumb: { parent: 'compras', name: 'EDITAR SOLICITUD'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_solicitud_compra'
                         }
                     }
                 ]
@@ -1319,6 +1328,23 @@ export const routes = [
                             breadcrumb: {parent: 'contratos', name: 'PROYECTADOS'},
                             middleware: [auth, context],
 
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'subcontrato',
+                component: require('./components/contratos/subcontrato/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'subcontrato',
+                        component: require('./components/contratos/subcontrato/Index').default,
+                        meta: {
+                            title: 'Subcontratos',
+                            breadcrumb: {parent: 'contratos', name: 'SUBCONTRATOS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_listado_subcontratos'
                         }
                     },
                 ]

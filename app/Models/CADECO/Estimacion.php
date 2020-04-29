@@ -17,6 +17,8 @@ use App\Models\CADECO\Moneda;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
+use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
+use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use DateTime;
@@ -104,6 +106,16 @@ class Estimacion extends Transaccion
     public function items()
     {
         return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function penalizaciones()
+    {
+        return $this->hasMany(Penalizacion::class, 'id_transaccion');
+    }
+
+    public function penalizacionLiberaciones()
+    {
+        return $this->hasMany(PenalizacionLiberacion::class, 'id_transaccion');
     }
 
     public function movimientos()
@@ -512,6 +524,11 @@ class Estimacion extends Transaccion
         if ($this->configuracion->ret_fon_gar_antes_iva == 1) {
             $subtotal -= $this->retencion_fondo_garantia_orden_pago;
         }
+        if($this->configuracion->penalizacion_antes_iva == 1)
+        {
+            $subtotal -= $this->suma_penalizaciones;
+            $subtotal += $this->suma_penalizaciones_liberadas;
+        }
         return $subtotal;
     }
 
@@ -625,6 +642,11 @@ class Estimacion extends Transaccion
             $monto_pagar -= $this->retencion_fondo_garantia_orden_pago;
         }
         $monto_pagar -= $this->retencionIVA_2_3;
+        if($this->configuracion->penalizacion_antes_iva == 0)
+        {
+            $monto_pagar -= $this->penalizaciones->sum('importe');
+            $monto_pagar += $this->penalizacionLiberaciones->sum('importe');
+        }
         return $monto_pagar;
     }
 
@@ -677,6 +699,8 @@ class Estimacion extends Transaccion
 
     public function recalculaDatosGenerales()
     {
+        $this->refresh();
+
         $this->monto = $this->monto_a_pagar;
         $this->saldo = $this->monto_a_pagar;
         $this->impuesto = $this->iva_orden_pago;
@@ -769,6 +793,8 @@ class Estimacion extends Transaccion
             'id_empresa'              => $this->empresa->id_empresa,
             'anticipo_format'         => $this->anticipo_format,
             'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
+            'estado'                  => $this->estado,
+            'estado_format'           => $this->estado_descripcion,
             'subcontrato'             => $this->subcontrato->subcontratoParaEstimar($this->id_transaccion)
         ];
     }
@@ -968,6 +994,11 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->retencionIVA_2_3, 2);
     }
 
+    public function getRestaImportesAmortizacionAttribute()
+    {
+        return $this->suma_importes - $this->monto_anticipo_aplicado;
+    }
+
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
@@ -997,5 +1028,74 @@ class Estimacion extends Transaccion
             $iva_retenido += $estimacion->iva_retenido_calculado;
         }
         return $iva_retenido;
+    }
+
+    public function getAcumuladoPenalizacionesAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_penalizaciones;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoPenalizacionesLiberadaAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_penalizaciones_liberadas;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoRetencionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_retenciones;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoLiberacionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_liberaciones;
+        }
+        return $acumulado;
+    }
+
+    public function getSumaPenalizacionesAttribute()
+    {
+        return $this->penalizaciones->sum('importe');
+    }
+
+    public function getSumaPenalizacionesLiberadasAttribute()
+    {
+        return $this->penalizacionLiberaciones->sum('importe');
+    }
+
+    public function getSumaPenalizacionesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_penalizaciones, 2);
+    }
+
+    public function getSumaPenalizacionesLiberadasFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_penalizaciones_liberadas, 2);
     }
 }

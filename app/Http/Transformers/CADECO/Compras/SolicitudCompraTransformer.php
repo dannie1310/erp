@@ -5,6 +5,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\Compras\SolicitudComplementoTransformer;
+use App\Http\Transformers\CADECO\CotizacionTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\SolicitudCompra;
 use League\Fractal\TransformerAbstract;
@@ -20,8 +21,7 @@ class SolicitudCompraTransformer extends TransformerAbstract
         'complemento',
         'partidas',
         'usuario',
-
-
+        'cotizaciones'
     ];
 
     /**
@@ -39,9 +39,12 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
             'fecha' => $model->fecha,
+            'estado' => (int) $model->estado,
             'fecha_format'=>$model->fecha_format,
-            'observaciones' => $model->observaciones,
-            'numero_folio_format'=>(string)$model->numero_folio_format,
+            'fecha_registro'=>$model->fecha_hora_registro_format,
+            'observaciones' => $model->observaciones != NULL ? $model->observaciones : '',
+            'numero_folio_format'=>(string) $model->numero_folio_format,
+            'cotizaciones' => ($model->cotizaciones) ? $model->cotizaciones->count() : null
         ];
     }
 
@@ -50,7 +53,6 @@ class SolicitudCompraTransformer extends TransformerAbstract
      * @param SolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
-
     public function includeComplemento(SolicitudCompra $model)
     {
         if($complemento =$model->complemento)
@@ -58,13 +60,12 @@ class SolicitudCompraTransformer extends TransformerAbstract
             return $this->item($complemento, new SolicitudComplementoTransformer);
         }
         return null;
-
     }
+
     /**
      * @param SolicitudCompra$model
      * @return \League\Fractal\Resource\Collection|null
      */
-
     public function includePartidas(SolicitudCompra $model)
     {
         if($partidas = $model->partidas)
@@ -72,7 +73,19 @@ class SolicitudCompraTransformer extends TransformerAbstract
             return $this->collection($partidas, new SolicitudCompraPartidaTransformer);
         }
         return null;
+    }
 
+    /**
+     * @param SolicitudCompra $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeCotizaciones(SolicitudCompra $model)
+    {
+        if($cotizaciones = $model->cotizaciones)
+        {
+            return $this->collection($cotizaciones, new CotizacionTransformer);
+        }
+        return null;
     }
 
     /**
