@@ -153,6 +153,9 @@ class SolicitudCompraService
                 $cot = Cotizacion::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->first();
                 if($cot && $cot->precio_unitario > 0){
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = [
+                        'id_material' => $cot->id_material,
+                        'id_item' => $partida->id_item,
+                        'id_transaccion' => $cot->id_transaccion,
                         'cantidad_asignada' => '',
                         'precio_unitario' => $cot->precio_unitario,
                         'precio_unitario_format' => '$ ' . number_format($cot->precio_unitario, 2, '.', ','),
