@@ -464,7 +464,7 @@ class GestionPagoService
                 abort(403, 'Archivo de bitácora procesado previamente.');
             }
         
-            $cod_operacion = ['FUE001', 'FUE002'];
+            $cod_operacion = ['FUE001', 'FUE002', 'FUE003'];
             $myfile = fopen($bitacora, "r") or die("Unable to open file!");
             $content = array();
             while(!feof($myfile)) {

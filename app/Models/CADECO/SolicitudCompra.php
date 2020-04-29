@@ -12,6 +12,7 @@ use App\Models\CADECO\Compras\SolicitudPartidaEliminada;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
@@ -403,5 +404,11 @@ class SolicitudCompra extends Transaccion
             'nuevos' => $nuevos,
             'anteriores' => $anteriores
         ];
+    }
+
+    public function pdfSolicitudCompra()
+    {
+        $pdf = new SolicitudCompraFormato($this);
+        return $pdf->create();
     }
 }
