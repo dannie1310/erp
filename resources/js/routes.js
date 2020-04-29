@@ -1148,7 +1148,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id',
+                        path: ':id/editar',
                         name: 'solicitud-compra-edit',
                         component: require('./components/compras/solicitud-compra/Edit').default,
                         props: true,

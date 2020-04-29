@@ -20,6 +20,5 @@ class CotizacionCompraObserver extends TransaccionObserver
         $cotizacionCompra->estado = 1;
         $cotizacionCompra->opciones = 1;
         $cotizacionCompra->id_moneda = 1;
-        
     }
 }

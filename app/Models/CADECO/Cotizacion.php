@@ -28,11 +28,13 @@ class Cotizacion extends Model
         'no_cotizado'
     ];
 
-
-    public function partida(){
+    public function partida()
+    {
         return $this->belongsTo(CotizacionComplementoPartida::class,'id_transaccion', 'id_transaccion')->where('id_material', '=', $this->id_material);
     }
-    public function material(){
+
+    public function material()
+    {
         return $this->belongsTo(Material::class,'id_material', 'id_material');
     }
 
@@ -54,7 +56,7 @@ class Cotizacion extends Model
     public function getPrecioUnitarioFormatAttribute()
     {
         return '$ '. number_format($this->precio_unitario, 2, '.', ',');
-    }    
+    }
 
     public function getPrecioTotalAttribute()
     {
