@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargando" v-if="$root.can('registrar_penalizacion_estimacion_subcontrato')" >
+        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargando" v-if="$root.can('registrar_penalizacion_estimacion_subcontrato') || $root.can('registrar_liberacion_penalizacion_estimacion_subcontrato') || $root.can('eliminar_penalizacion_estimacion_subcontrato') || $root.can('eliminar_liberacion_penalizacion_estimacion_subcontrato')" >
             Penalizaciones
         </button>
         <div class="row">
@@ -26,7 +26,7 @@
                                             <th class="index_corto">#</th>
                                             <th style="width:5%;"></th>
                                             <th style="width:20%;">Importe</th>
-                                            <th>Concepto</th>                                            
+                                            <th>Concepto</th>
                                             <th style="width:10%;"></th>
                                         </tr>
                                     </thead>
@@ -107,14 +107,14 @@ export default {
             $(this.$refs.modalPenalizaciones).modal('hide');
         },
         destroyPenalizacion(id){
-                        
+
             return this.$store.dispatch('subcontratosEstimaciones/penalizacion/delete', id)
                 .then(() => {
                     this.$store.commit('subcontratosEstimaciones/penalizacion/DELETE_PENALIZACION', id)
                 })
         },
         destroyLiberacion(id){
-            
+
             return this.$store.dispatch('subcontratosEstimaciones/penalizacion-liberacion/delete', id)
                 .then(() => {
                     this.$store.commit('subcontratosEstimaciones/penalizacion-liberacion/DELETE_LIBERACION', id)
