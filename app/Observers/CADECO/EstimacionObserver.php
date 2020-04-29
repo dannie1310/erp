@@ -53,7 +53,6 @@ class EstimacionObserver extends TransaccionObserver
         {
             abort(400, "Esta estimación no puede ser editada se encuentra con estado ".$estimacion->estado_descripcion.".");
         }
-        dd("paso");
     }
 
     public function deleting(Estimacion $estimacion)
