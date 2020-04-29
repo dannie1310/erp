@@ -1079,8 +1079,8 @@ export const routes = [
                         meta: {
                             title: 'Registrar Requisición de Compra',
                         breadcrumb: { parent: 'requisicion', name: 'REGISTRAR REQUISICIÓN'},
-                            middleware: [auth, context],
-                            // permission: 'registrar_solicitud_compra'
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_requisicion_compra'
                         }
                     },
 
@@ -1108,19 +1108,19 @@ export const routes = [
                         meta: {
                             title: 'Registrar Solicitud',
                             breadcrumb: { parent: 'compras', name: 'REGISTRAR SOLICITUD'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
                             permission: 'registrar_solicitud_compra'
                         }
                     },
                     {
-                        path: ':id',
+                        path: ':id/editar',
                         name: 'solicitud-compra-edit',
                         component: require('./components/compras/solicitud-compra/Edit').default,
                         props: true,
                         meta: {
                             title: 'Editar Solicitud',
                             breadcrumb: { parent: 'compras', name: 'EDITAR SOLICITUD'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
                             permission: 'editar_solicitud_compra'
                         }
                     }

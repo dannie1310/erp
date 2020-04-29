@@ -793,6 +793,8 @@ class Estimacion extends Transaccion
             'id_empresa'              => $this->empresa->id_empresa,
             'anticipo_format'         => $this->anticipo_format,
             'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
+            'estado'                  => $this->estado,
+            'estado_format'           => $this->estado_descripcion,
             'subcontrato'             => $this->subcontrato->subcontratoParaEstimar($this->id_transaccion)
         ];
     }
