@@ -170,6 +170,10 @@ class SolicitudCompraService
         $datos = $verifica->desencripta($data);
         $json = json_decode($datos);
 
-        return $json->titulo."_".$json->obra;
+        if($json) {
+            return $json->titulo . "_" . $json->obra;
+        }else{
+            return "Error de lectura";
+        }
     }
 }
