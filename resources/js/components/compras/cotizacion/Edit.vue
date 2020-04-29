@@ -34,9 +34,9 @@
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.descripcion : '----------'}}</td>
                                                     <td class="bg-gray-light"><b>ToTC USD:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : '----------'}}</td>
+                                                    <td class="bg-gray-light">{{(!cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : '----------'}}</td>
                                                     <td class="bg-gray-light"><b>ToTC EURO:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : '----------'}}</td>
+                                                    <td class="bg-gray-light">{{(!cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : '----------'}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Direccion:</b></td>
@@ -184,7 +184,7 @@
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                                     </div>
-                                    <!--<div class=" col-md-12" align="right">
+                                    <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">IVA:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
                                     </div>
@@ -199,7 +199,7 @@
                                         <input
                                                                 :disabled="cargando"
                                                                 type="number"
-                                                                step="1"
+                                                                step="0.1"
                                                                 max="100"
                                                                 name="pago"
                                                                 v-model="pago"
@@ -268,7 +268,7 @@
                                                                 class="col-sm-6 form-control"
                                                                 id="vigencia"
                                                                 :class="{'is-invalid': errors.has('vigencia')}">
-                                    </div> -->
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
@@ -403,7 +403,7 @@
             salir()
             {
                 //  this.$router.push({name: 'cotizacion'});
-                console.log(this.enable, this.precio, 'monedas', this.moneda_input, 'this.tipo_cambio', this.descuento);
+                console.log('salirr', this.monedas);
                 
                 
                  
@@ -463,11 +463,15 @@
                 this.x = 0;
                 while(this.x < this.cotizacion.cotizaciones.data.length)
                 {
-                    console.log('valor x', this.x);
                     this.enable[this.x] = this.cotizacion.cotizaciones.data[this.x].no_cotizado;
                     this.precio[this.x] = this.cotizacion.cotizaciones.data[this.x].precio_unitario;
                     this.moneda_input[this.x] = (this.cotizacion.cotizaciones.data[this.x].id_moneda != 0) ? this.cotizacion.cotizaciones.data[this.x].id_moneda : 1;
                     this.descuento[this.x] = (this.cotizacion.cotizaciones.data[this.x].descuento != '') ? this.cotizacion.cotizaciones.data[this.x].descuento : 0;
+                    this.pago = (this.cotizacion.complemento) ? this.cotizacion.complemento.parcialidades : 0;
+                    this.anticipo = (this.cotizacion.complemento) ? this.cotizacion.complemento.anticipo : 0;
+                    this.credito = (this.cotizacion.complemento) ? this.cotizacion.complemento.dias_credito : 0;
+                    this.tiempo = (this.cotizacion.complemento) ? this.cotizacion.complemento.entrega : 0;
+                    this.vigencia = (this.cotizacion.complemento) ? this.cotizacion.complemento.vigencia : 0;
                     this.tipo_cambio[1] = 1;
                     this.tipo_cambio[2] = this.cotizacion.complemento.tc_usd;
                     this.tipo_cambio[3] = this.cotizacion.complemento.tc_eur;
@@ -530,7 +534,8 @@
             },
             subtotal()
             {
-                return (this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]));
+                return ((this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3])) - 
+                ((this.descuento_cot * (this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]))) / 100 ));
             },
             iva()
             {
