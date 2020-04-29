@@ -548,6 +548,8 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'cotizacion'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@paginate');
             $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@descargaLayout')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\Compras\CotizacionController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@show')->where(['id' => '[0-9]+']);
 
         });
 
@@ -572,12 +574,15 @@ $api->version('v1', function ($api) {
 
         // SOLICITUD DE COMPRA
         $api->group(['prefix' => 'solicitud-compra'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@paginate');
+            $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@aprobar')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@update')->where(['id' => '[0-9]+']);
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@destroy')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato-cotizacion', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@pdfCotizacion')->where(['id' => '[0-9]+']);
         });
     });
 

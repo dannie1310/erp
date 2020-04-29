@@ -20,7 +20,7 @@ class Penalizacion extends Model
         'concepto',
         'estatus'
     ];
-    
+
     public function getImporteFormatAttribute()
     {
         return '$ '. number_format($this->importe, 2, '.', ',');
@@ -56,10 +56,9 @@ class Penalizacion extends Model
 
     public function validarEstadoPenalizacion($tipo)
     {
-        if($this->estimacion->estado >= 1)
+        if($this->estimacion->estado > 0)
         {
-            $estado = ($this->estimacion->estado == 1) ? 'aprobada' : 'revisada';
-            abort(403, 'La penalizacion no puede ser '.$tipo.' porque la estimación se encuentra '.$estado.'.');
+            abort(403, 'La penalizacion no puede ser '.$tipo.' porque la estimación se encuentra '.$this->estimacion->estado_descripcion.'.');
         }
     }
 

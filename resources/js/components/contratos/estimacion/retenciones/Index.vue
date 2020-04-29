@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargando" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" >
+        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargando" v-if="$root.can(['registrar_retencion_estimacion_subcontrato', 'registrar_liberacion_estimacion_subcontrato', 'eliminar_retencion_estimacion_subcontrato', 'eliminar_liberacion_estimacion_subcontrato'])" >
             Retenciones
         </button>
         <div class="row">
