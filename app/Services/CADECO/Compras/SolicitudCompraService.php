@@ -4,10 +4,12 @@
 namespace App\Services\CADECO\Compras;
 
 
+use App\Models\CADECO\Cotizacion;
 use App\Models\CADECO\SolicitudCompra;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Solicitud\Repository;
+use App\Utils\ValidacionSistema;
 
 
 class SolicitudCompraService
@@ -88,7 +90,7 @@ class SolicitudCompraService
 
     public function delete($data, $id)
     {
-        return $this->repository->show($id)->eliminar($data['data']);
+        return $this->repository->delete($data['data'], $id);
     }
 
     public function show($id)
@@ -98,24 +100,80 @@ class SolicitudCompraService
 
     public function aprobar($data, $id)
     {
-        $solicitud = $this->repository->show($id);
-        return $solicitud->aprobarSolicitud($data);
+        return $this->repository->aprobar($data, $id);
     }
 
     public function update(array $data, $id)
     {
-//        return $this->repository->update($data, $id);
+        return $this->repository->update($data, $id);
     }
 
     public function pdfSolicitudCompra($id)
     {
-        $pdf = new SolicitudCompraFormato($id);
-        return $pdf;
+        return $this->repository->show($id)->pdfSolicitudCompra();
     }
 
     public function pdfCotizacion($id)
     {
         $pdf = new CotizacionTablaComparativaFormato($id);
         return $pdf;
+    }
+
+    public function getCotizaciones($id){
+        $items = array();
+        $cotizaciones = array();
+        $solicitud = $this->repository->show($id);
+        $solicitud_partidas = $solicitud->partidas;
+        $solicitud_cotizaciones = $solicitud->cotizaciones;
+        foreach($solicitud_partidas as $i => $partida){
+            $items[$i] = [
+                'id_item' => $partida->id_item,
+                'id_material' => $partida->id_material,
+                'descripcion' => $partida->material->descripcion,
+                'cantidad_solicitada' => $partida->cantidad,
+                'cantidad_asignada' => 0,
+                'cantidad_disponible' => $partida->cantidad - 0,
+            ];
+            foreach($solicitud_cotizaciones as $cotizacion){
+                if(!$cotizacion->id_empresa)continue;
+                if(!array_key_exists($cotizacion->id_transaccion, $cotizaciones)){
+                    $cotizaciones[$cotizacion->id_transaccion] = [
+                        'id_transaccion' => $cotizacion->id_transaccion,
+                        'razon_social' => $cotizacion->empresa->razon_social,
+                        'sucursal' => $cotizacion->sucursal->descripcion,
+                        'direccion' => $cotizacion->sucursal->direccion,
+                    ];
+                    $cotizaciones[$cotizacion->id_transaccion]['partidas'] = array();
+                }
+                array_key_exists($cotizacion->id_transaccion, $cotizaciones)?'': $cotizaciones[$cotizacion->id_transaccion] = array();
+                $cot = Cotizacion::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->first();
+                if($cot && $cot->precio_unitario > 0){
+                    $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = [
+                        'cantidad_asignada' => '',
+                        'precio_unitario' => $cot->precio_unitario,
+                        'moneda' => $cot->moneda->abreviatura,
+                        'tipo_cambio' => $cot->moneda->tipo == 1?1: $cot->moneda->cambio->cambio,
+                        'importe' => 0,
+                        'descuento' => $cot->descuento,
+                    ];
+                }else{
+                    $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = null;
+                }
+            }
+        }
+        return ['items'=>$items,'cotizaciones'=> $cotizaciones];
+    }
+
+    public function leerQR($data)
+    {
+        $verifica = new ValidacionSistema();
+        $datos = $verifica->desencripta($data);
+        $json = json_decode($datos);
+
+        if($json) {
+            return $json->titulo . "_" . $json->obra;
+        }else{
+            return "Error de lectura";
+        }
     }
 }

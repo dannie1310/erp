@@ -70,9 +70,9 @@ class SolicitudCompraObserver extends TransaccionObserver
 
     public function deleted(SolicitudCompra $solicitudCompra)
     {
-      if($solicitudCompra->activoFijo)
-      {
-          $solicitudCompra->activoFijo->delete();
-      }
+        if ($solicitudCompra->activoFijo)
+        {
+            $solicitudCompra->activoFijo->delete();
+        }
     }
 }
