@@ -34,9 +34,9 @@
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.descripcion : '----------'}}</td>
                                                     <td class="bg-gray-light"><b>ToTC USD:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : '----------'}}</td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</td>
                                                     <td class="bg-gray-light"><b>ToTC EURO:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : '----------'}}</td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Direccion:</b></td>
@@ -74,16 +74,16 @@
                                                 <tbody v-if="cotizacion.cotizaciones">
                                                     <tr v-for="(partida, i) in cotizacion.cotizaciones.data">
                                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                        <td style="text-align:center;">{{partida.material.numero_parte}}</td>
-                                                        <td>{{partida.material.descripcion}}</td>
-                                                        <td style="text-align:center;">{{partida.material.unidad}}</td>
+                                                        <td style="text-align:center;">{{(partida.material) ? partida.material.numero_parte : '----'}}</td>
+                                                        <td>{{(partida.material) ? partida.material.descripcion : '----'}}</td>
+                                                        <td style="text-align:center;">{{(partida.material) ? partida.material.unidad : '----'}}</td>
                                                          <td style="text-align:center; vertical-align:inherit;">
                                                             <div class="custom-control custom-switch">
                                                                 <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
                                                         </td>                                                        
-                                                        <td style="text-align:center;">{{partida.cantidad}}</td>
+                                                        <td style="text-align:center;">{{partida.cantidad_format}}</td>
                                                         <td>
                                                             <input type="number"
                                                                    min="0.01"
@@ -128,7 +128,6 @@
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
                                                         <td style="text-align:right;">{{'$ ' + parseFloat(partida.cantidad * precio[i] * tipo_cambio[moneda_input[i]]).formatMoney(2, '.', ',')}}</td>
-                                                        <!-- <td style="text-align:right;">{{'$ ' + parseFloat((partida.cantidad * precio[i] * monedas[1].tipo_cambio_igh)).formatMoney(2,'.',',')}}</td> -->
                                                        <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -174,17 +173,17 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">ToTC USD:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{cotizacion.complemento.tc_usd_format}}</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">ToTC EURO:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{cotizacion.complemento.tc_eur_format}}</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                                     </div>
-                                    <!--<div class=" col-md-12" align="right">
+                                    <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">IVA:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
                                     </div>
@@ -199,7 +198,7 @@
                                         <input
                                                                 :disabled="cargando"
                                                                 type="number"
-                                                                step="1"
+                                                                step="0.1"
                                                                 max="100"
                                                                 name="pago"
                                                                 v-model="pago"
@@ -268,7 +267,7 @@
                                                                 class="col-sm-6 form-control"
                                                                 id="vigencia"
                                                                 :class="{'is-invalid': errors.has('vigencia')}">
-                                    </div> -->
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
@@ -341,26 +340,22 @@
                 x: 0,
                 pago: 0,
                 post: {
-                    id_solicitud: '',
+                    id_cotizacion: '',
                     fecha: '',
-                    id_proveedor: '',
-                    id_sucursal: '',
-                    sucursal: '',
-                    observaciones: [],
-                    observacion: '',
                     moneda: [],
-                    importe: '',
-
                     precio: [],
                     enable: [],
                     descuento: [],
-                    partidas: [],
                     descuento_cot: '',
                     pago: '',
                     anticipo: '',
                     credito: '',
                     tiempo: '',
-                    vigencia: ''
+                    vigencia: '',
+                    importe: '',
+                    impuesto: '',
+                    observaciones: '',
+                    tipo_cambio: []
                 },
                 anticipo: 0,
                 credito: 0,
@@ -372,21 +367,17 @@
             }
         },
         mounted() {
+            this.getMonedas();
             this.enable = [];
             this.precio = [];
             this.moneda_input = [];
             this.observaciones_inputs = [];
             this.descuento = [];
-            this.find();
-            this.getMonedas();
+            this.find();            
             this.$validator.reset();
             
         },
         methods : {
-            idFolioObservaciones (item)
-            {
-                return `[${item.numero_folio_format}] ---- [ ${item.observaciones} ]`;
-            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
@@ -402,11 +393,7 @@
             },
             salir()
             {
-                //  this.$router.push({name: 'cotizacion'});
-                console.log(this.enable, this.precio, 'monedas', this.moneda_input, 'this.tipo_cambio', this.descuento);
-                
-                
-                 
+                 this.$router.push({name: 'cotizacion'}); 
             },
             find() {                
                 
@@ -454,70 +441,68 @@
                         }                       
                     }
                     this.x ++;                    
-                }
-                console.log('total pesos', this.pesos);                
+                }         
             },
             ordenar()
             {
-                console.log('atributo de ordenar', this.cotizacion.cotizaciones.data[0]);
                 this.x = 0;
                 while(this.x < this.cotizacion.cotizaciones.data.length)
                 {
-                    console.log('valor x', this.x);
                     this.enable[this.x] = this.cotizacion.cotizaciones.data[this.x].no_cotizado;
                     this.precio[this.x] = this.cotizacion.cotizaciones.data[this.x].precio_unitario;
                     this.moneda_input[this.x] = (this.cotizacion.cotizaciones.data[this.x].id_moneda != 0) ? this.cotizacion.cotizaciones.data[this.x].id_moneda : 1;
-                    this.descuento[this.x] = (this.cotizacion.cotizaciones.data[this.x].descuento != '') ? this.cotizacion.cotizaciones.data[this.x].descuento : 0;
+                    this.descuento[this.x] = (this.cotizacion.cotizaciones.data[this.x].descuento > 0) ? this.cotizacion.cotizaciones.data[this.x].descuento : 0;
+                    this.pago = (this.cotizacion.complemento) ? this.cotizacion.complemento.parcialidades : 0;
+                    this.anticipo = (this.cotizacion.complemento) ? this.cotizacion.complemento.anticipo : 0;
+                    this.credito = (this.cotizacion.complemento) ? this.cotizacion.complemento.dias_credito : 0;
+                    this.tiempo = (this.cotizacion.complemento) ? this.cotizacion.complemento.entrega : 0;
+                    this.vigencia = (this.cotizacion.complemento) ? this.cotizacion.complemento.vigencia : 0;
                     this.tipo_cambio[1] = 1;
-                    this.tipo_cambio[2] = this.cotizacion.complemento.tc_usd;
-                    this.tipo_cambio[3] = this.cotizacion.complemento.tc_eur;
+                    this.tipo_cambio[2] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_igh;
+                    this.tipo_cambio[3] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_eur : this.monedas[2].tipo_cambio_igh;
                     this.tipo_cambio[4] = 1;
-                    this.descuento_cot = this.cotizacion.complemento.descuento;
+                    this.descuento_cot = (this.cotizacion.complemento) ? this.cotizacion.complemento.descuento : 0;
 
                     this.x ++;                    
                 }
-                console.log('Enable', this.enable, this.precio, this.moneda_input, 'descuento', this.descuento);
-
-                this.calcular();
-                
+                this.calcular();                
             },
             validate() {
                 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        alert('empezar');
-                        // this.post.partidas = this.solicitud.partidas.data;
-                        // // this.post.id_solicitud = this.id_solicitud;
-                        // this.post.id_proveedor = this.id_proveedor;
-                        // this.post.sucursal = this.sucursal;
-                        // this.post.id_sucursal = this.id_sucursal;
-                        // this.post.observaciones = this.observaciones_inputs;
-                        // this.post.moneda = this.moneda_input;
-                        // this.post.observacion = this.observaciones;
-                        // this.post.precio = this.precio;
-                        // this.post.enable = this.enable;
-                        // this.post.descuento = this.descuento;
-                        // this.post.descuento_cot = this.descuento_cot;
-                        // this.post.pago = this.pago;
-                        // this.post.anticipo = this.anticipo;
-                        // this.post.credito = this.credito;
-                        // this.post.tiempo = this.tiempo;
-                        // this.post.vigencia = this.vigencia;
-                        // this.post.fecha = this.fecha;
-                        // this.post.importe = this.total;
-                        // this.post.impuesto = this.iva;
-                        // this.store()
-                    }
+                        this.post.partidas = this.cotizacion.cotizaciones.data;
+                        this.post.id_cotizacion = this.id;
+                        this.post.fecha = this.cotizacion.fecha;
+                        this.post.moneda = this.moneda_input;
+                        this.post.precio = this.precio;
+                        this.post.enable = this.enable;
+                        this.post.descuento = this.descuento;
+                        this.post.descuento_cot = this.descuento_cot;
+                        this.post.pago = this.pago;
+                        this.post.anticipo = this.anticipo;
+                        this.post.credito = this.credito;
+                        this.post.tiempo = this.tiempo;
+                        this.post.vigencia = this.vigencia;
+                        this.post.importe = this.total;
+                        this.post.impuesto = this.iva;
+                        this.post.observaciones = this.cotizacion.observaciones;
+                        this.post.tipo_cambio = this.tipo_cambio;
+                        this.save()
+                    }                    
                 });
             },
-            store() {
+            save() {
                 
                 if(this.total == 0)
                 {
                     swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
                 }
                 else
-                {   return this.$store.dispatch('compras/cotizacion/store', this.post)
+                {   return this.$store.dispatch('compras/cotizacion/update', {
+                    id: this.id,
+                    post: this.post
+                })
                     .then((data) => {
                         this.$router.push({name: 'cotizacion'});
                     });                
@@ -530,7 +515,8 @@
             },
             subtotal()
             {
-                return (this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]));
+                return ((this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3])) - 
+                ((this.descuento_cot * (this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]))) / 100 ));
             },
             iva()
             {
@@ -539,17 +525,17 @@
             total()
             {
                 return this.subtotal + this.iva;
+            },
+            dolar()
+            {
+                return '$ ' + this.monedas[1].tipo_cambio_igh;
+            },
+            euro()
+            {
+                return '$ ' + this.monedas[2].tipo_cambio_igh;
             }
         },
         watch: {
-            // id_proveedor(value){
-            //     this.id_sucursal = '';
-            //     if(value !== '' && value !== null && value !== undefined){
-            //         var busqueda = this.proveedores.find(x=>x.id === value);
-            //         this.sucursales = busqueda.sucursales.data;
-            //         this.sucursal = (busqueda.sucursales.data.length) ? true : false;
-            //     }
-            // },
             moneda_input()
             {
                 if(this.moneda_input.length > 0)
