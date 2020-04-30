@@ -30,18 +30,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                    <!-- <div class="col-md-4  text-left" >
-                                        <label class="text-secondary"> </label>
-                                        <hr style="color: #0056b2; margin-top:auto;" width="95%" size="10" />
-                                    </div> -->
-                                    <div class="col-md-4 offset-md-8 mt-3 text-left" >
-                                        <label class="text-secondary">Fechas Límite </label>
-                                        <hr style="color: #0056b2; margin-top:auto;" width="95%" size="10" />
-                                    </div>
-                               
-
-
+                                <div class="col-md-4 offset-md-8 mt-3 text-left" >
+                                    <label class="text-secondary">Fechas Límite </label>
+                                    <hr style="color: #0056b2; margin-top:auto;" width="95%" size="10" />
+                                </div>
                                 <div class="col-md-8">
                                     <div class="form-group error-content">
                                         <label for="numero">Referencia:</label>
@@ -84,10 +76,64 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                     <div class="form-group error-content">
+                                        <label for="id_area">Área Subcontratante</label>
+                                        <select
+                                                type="text"
+                                                name="id_area"
+                                                data-vv-as="Area"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="id_area"
+                                                v-model="id_area"
+                                                :class="{'is-invalid': errors.has('id_area')}"
+                                        >
+                                        <option  value selected>--- Seleccione Área Subcontratante ---</option>
+                                        <option v-for="area in areas_subcontratantes" :value="area.id">{{ `${area.descripcion} ` }}</option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_area')">{{ errors.first('id_area') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-md-12  text-left" >
+                                <label class="text-secondary"> </label>
+                                <hr style="color: #0056b2; margin-top:auto;" width="95%" size="20" />
                             </div>
                             <!-- Seccion de partidas -->
                             <div class="row">
-
+                                 <div  class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:2%"></th>
+                                                    <th style="width:2%"></th>
+                                                    <th style="width:13%">Clave</th>
+                                                    <th style="width:13%">Insumo</th>
+                                                    <th style="width:24%">Descripción</th>
+                                                    <th style="width:13%">Unidad</th>
+                                                    <th style="width:13%">Cantidad</th>
+                                                    <th style="width:15%">Destinos</th>
+                                                    <th style="width:5%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>A</td>
+                                                    <td>B</td>
+                                                    <td>CLAVE</td>
+                                                    <td>INSUMO</td>
+                                                    <td>DESCRIPCION</td>
+                                                    <td>Select UNIDAD</td>
+                                                    <td>CANTIDAD</td>
+                                                    <td>Select DESTINOS</td>
+                                                    <td>OPT</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
 
 
@@ -119,11 +165,24 @@
                 fecha_cotizacion: '',
                 fecha_contrato: '',
                 referencia: '',
+                areas_subcontratantes:[],
+                id_area:'',
+                partidas:[],
             }
+        },
+        mounted(){
+            this.getAreaSub();
         },
         methods: {
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
+            },
+            getAreaSub() {
+                this.areas_disponibles = [];
+                return this.$store.dispatch('configuracion/area-subcontratante/index')
+                    .then(data => {
+                        this.areas_subcontratantes = data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
+                    });
             },
         },
     }
