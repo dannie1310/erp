@@ -23,14 +23,14 @@
                 </ul>
             </li>
 
-             <li class="nav-item" v-if="$root.can('consultar_listado_subcontratos')">
+             <li class="nav-item" v-if="$root.can('consultar_subcontrato')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>
                         Gestión de Subcontratos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
-                <ul class="nav nav-treeview" v-if="$root.can('consultar_listado_subcontratos')">
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_subcontrato')">
                     <li class="nav-item">
                         <router-link :to="{name: 'subcontrato'}" class="nav-link" :class="{active: this.$route.name == 'subcontrato'}">
                             <i class="fa fa-circle-o nav-icon"></i>
