@@ -104,14 +104,13 @@
                             <div class="row">
                                  <div  class="col-12">
                                     <div class="table-responsive">
-                                        <table class="table table-striped">
+                                        <table class="table table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th style="width:2%"></th>
-                                                    <th style="width:2%"></th>
+                                                    <th style="width:3%"></th>
                                                     <th style="width:13%">Clave</th>
                                                     <th style="width:13%">Insumo</th>
-                                                    <th style="width:24%">Descripción</th>
+                                                    <th style="width:25%">Descripción</th>
                                                     <th style="width:13%">Unidad</th>
                                                     <th style="width:13%">Cantidad</th>
                                                     <th style="width:15%">Destinos</th>
@@ -119,32 +118,121 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>A</td>
-                                                    <td>B</td>
-                                                    <td>CLAVE</td>
-                                                    <td>INSUMO</td>
-                                                    <td>DESCRIPCION</td>
-                                                    <td>Select UNIDAD</td>
-                                                    <td>CANTIDAD</td>
+                                                <tr v-for="(partida, i) in partidas">
+                                                    <td>
+                                                        <button @click="agregarPartida(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar">
+                                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                            <i class="fa fa-plus" v-else></i>
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            :name="`clave[${i}]`"
+                                                            data-vv-as="Clave"
+                                                            v-model="partida.clave"
+                                                            v-validate="{}"
+                                                            :class="{'is-invalid': errors.has(`clave[${i}]`)}"
+                                                            id="clave">
+                                                        <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            :name="`insumo[${i}]`"
+                                                            data-vv-as="Insumo"
+                                                            v-model="partida.insumo"
+                                                            v-validate="{}"
+                                                            :class="{'is-invalid': errors.has(`insumo[${i}]`)}"
+                                                            id="insumo">
+                                                        <div class="invalid-feedback" v-show="errors.has(`insumo[${i}]`)">{{ errors.first(`insumo[${i}]`) }}</div>
+                                                    </td>
+                                                    <td>
+                                                         <input type="text" class="form-control"
+                                                            readonly="readonly"
+                                                            @click="editConcepto(i)"
+                                                            :name="`descripcion[${i}]`"
+                                                            data-vv-as="Descripción"
+                                                            :placeholder="descripcionFormat(i)"
+                                                            v-validate="{required: partida.descripcion ===''}"
+                                                            :class="{'is-invalid': errors.has(`descripcion[${i}]`)}"
+                                                            id="descripcion">
+                                                        <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <select
+                                                            :disabled="!partida.es_hoja"
+                                                            type="text"
+                                                            name="unidad"
+                                                            data-vv-as="Unidad"
+                                                            v-validate="{required: partida.es_hoja}"
+                                                            class="form-control"
+                                                            id="unidad"
+                                                            v-model="partida.unidad"
+                                                            :class="{'is-invalid': errors.has('unidad')}">
+                                                            <option value>--Unidad--</option>
+                                                            <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
+                                                        </select>
+                                                        <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            :name="`cantidad[${i}]`"
+                                                            data-vv-as="Cantidad"
+                                                            v-model="partida.cantidad"
+                                                            v-validate="{}"
+                                                            :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                            id="cantidad">
+                                                        <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
+                                                    </td>
                                                     <td>Select DESTINOS</td>
-                                                    <td>OPT</td>
+                                                    <td>
+                                                        <button @click="agregarPartida(i)" type="button" class="btn btn-sm btn-outline-danger" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
+                                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                            <i class="fa fa-trash" v-else></i>
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
-
-
-
-
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary">Cerrar</button>
                             <button type="submit" class="btn btn-primary">Guardar</button>
                          </div>    
                     </form>
+                </div>
+            </div>
+        </div>
+        <div ref="modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-list" style="padding-right:3px"></i>Agregar Descripción</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" v-if="edit_concepto_index >=0">
+                        <div class="col-md-12">
+                            <div class="form-group error-content">
+                                <input type="text" class="form-control"
+                                    name="descripcion"
+                                    data-vv-as="Descripción"
+                                    v-model="descrip_temporal"
+                                    v-validate="{required: edit_concepto_index !== ''}"
+                                    :class="{'is-invalid': errors.has('descripcion')}"
+                                    id="descripcion">
+                                <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
+                                
+                            </div>
+                       </div>
+                       <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" @click="cambiarDesc()" class="btn btn-primary">Actualizar</button>
+                       </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -168,12 +256,85 @@
                 areas_subcontratantes:[],
                 id_area:'',
                 partidas:[],
+                unidades:[],
+                edit_concepto_index:'',
+                descrip_temporal:'',
             }
         },
         mounted(){
             this.getAreaSub();
+            this.getUnidades();
+            this.partidas.push({
+                clave:'',
+                insumo:'',
+                descripcion:'',
+                unidad:'',
+                cantidad:'',
+                destino:'',
+                nivel:1,
+                indice:1,
+                es_hoja:true,
+                es_rama:false,
+                cantidad_hijos:0,
+            });
         },
         methods: {
+            agregarPartida(index){
+                if(index === 0){
+                    this.partidas.push({
+                        clave:'',
+                        insumo:'',
+                        descripcion:'',
+                        unidad:'',
+                        cantidad:'',
+                        destino:'',
+                        nivel:this.partidas[index].nivel + 1,
+                        indice:1,
+                        es_hoja:true,
+                        es_rama:false,
+                        cantidad_hijos:0,
+                    });
+                }else{
+                    let temp_index = index + 1;
+                    while(temp_index in this.partidas && this.partidas[temp_index].nivel >= +this.partidas[index].nivel + 1){
+                        temp_index= temp_index + 1;
+                    }
+                    this.partidas.splice(temp_index, 0, {
+                        clave:'',
+                        insumo:'',
+                        descripcion:'',
+                        unidad:'',
+                        cantidad:'',
+                        destino:'',
+                        nivel:this.partidas[index].nivel + 1,
+                        indice:1,
+                        es_hoja:true,
+                        es_rama:false,
+                        cantidad_hijos:0,
+                    });
+                }
+                this.partidas[index].es_hoja = false;
+                this.partidas[index].es_rama = true;
+                this.partidas[index].cantidad_hijos = this.partidas[index].cantidad_hijos + 1;
+                
+            },
+            cambiarDesc(){
+                this.partidas[this.edit_concepto_index].descripcion = this.descrip_temporal;
+                this.edit_concepto_index='';
+                this.descrip_temporal='',
+                $(this.$refs.modal).modal('hide')
+            },
+            descripcionFormat(i){
+                var len = this.partidas[i].descripcion.length + (+this.partidas[i].nivel * 3);
+                return this.partidas[i].descripcion.padStart(len, "_")
+            },
+            editConcepto(index){
+                this.edit_concepto_index = index;
+                this.descrip_temporal = this.partidas[index].descripcion;
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show')
+
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
@@ -183,6 +344,14 @@
                     .then(data => {
                         this.areas_subcontratantes = data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
                     });
+            },
+            getUnidades() {
+                return this.$store.dispatch('cadeco/unidad/index', {
+                    params: {sort: 'unidad',  order: 'asc'}
+                })
+                    .then(data => {
+                        this.unidades= data.data;
+                    })
             },
         },
     }
