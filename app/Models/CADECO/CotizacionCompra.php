@@ -154,7 +154,6 @@ class CotizacionCompra  extends Transaccion
 
                     if($item->first()->partida)
                     {
-                        // dd($data['enable']);
                         CotizacionComplementoPartida::where('id_transaccion', '=', $this->id_transaccion)
                         ->where('id_material', '=', $partida['material']['id'])->update([
                             'descuento_partida' => ($data['enable'][$i]) ? $data['descuento'][$i] : 0,

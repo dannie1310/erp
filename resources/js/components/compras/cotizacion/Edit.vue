@@ -128,7 +128,6 @@
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
                                                         <td style="text-align:right;">{{'$ ' + parseFloat(partida.cantidad * precio[i] * tipo_cambio[moneda_input[i]]).formatMoney(2, '.', ',')}}</td>
-                                                        <!-- <td style="text-align:right;">{{'$ ' + parseFloat((partida.cantidad * precio[i] * monedas[1].tipo_cambio_igh)).formatMoney(2,'.',',')}}</td> -->
                                                        <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -452,7 +451,7 @@
                     this.enable[this.x] = this.cotizacion.cotizaciones.data[this.x].no_cotizado;
                     this.precio[this.x] = this.cotizacion.cotizaciones.data[this.x].precio_unitario;
                     this.moneda_input[this.x] = (this.cotizacion.cotizaciones.data[this.x].id_moneda != 0) ? this.cotizacion.cotizaciones.data[this.x].id_moneda : 1;
-                    this.descuento[this.x] = (this.cotizacion.cotizaciones.data[this.x].descuento != '') ? this.cotizacion.cotizaciones.data[this.x].descuento : 0;
+                    this.descuento[this.x] = (this.cotizacion.cotizaciones.data[this.x].descuento > 0) ? this.cotizacion.cotizaciones.data[this.x].descuento : 0;
                     this.pago = (this.cotizacion.complemento) ? this.cotizacion.complemento.parcialidades : 0;
                     this.anticipo = (this.cotizacion.complemento) ? this.cotizacion.complemento.anticipo : 0;
                     this.credito = (this.cotizacion.complemento) ? this.cotizacion.complemento.dias_credito : 0;
