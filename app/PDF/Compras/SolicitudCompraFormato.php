@@ -360,8 +360,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->firmas();
 
         $this->SetY(-3.8);
-        //$this->image("http://saoweb.grupohi.mx/libraries/PHPQRCode/qr.php?cadena=".urlencode($this->cadena_qr), 0.75, $this->GetY(), 2.5, 2.5,'PNG');
-        $this->image("http://172.20.74.94/libraries/PHPQRCode/qr.php?cadena=".urlencode($this->cadena_qr), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
+          $this->image("http://172.20.74.94/libraries/PHPQRCode/qr.php?cadena=".urlencode($this->cadena_qr), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
         $this->SetY(-3.6);
         $this->SetX(-17);
         $this->SetFont('Arial', '', 5);
@@ -401,8 +400,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $cadena_json_id = json_encode($datos_qr2);
 
         $firmada = $verifica->encripta($cadena_json_id);
-
-        $this->cadena_qr = "http://172.20.240.1:808/api/compras/solicitud-compra/leerQR?data=" . urlencode($firmada);
+        $this->cadena_qr = "http://".$_SERVER['SERVER_NAME'].":". $_SERVER['SERVER_PORT']."/api/compras/solicitud-compra/leerQR?data=" . urlencode($firmada);
         $this->cadena = $firmada;
 
         $this->dato = $verifica->encripta($cadena_json_id);
