@@ -104,7 +104,7 @@
                             <div class="row">
                                  <div  class="col-12">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered">
+                                        <table class="table table-striped">
                                             <thead>
                                                 <tr>
                                                     <th style="width:3%"></th>
@@ -174,7 +174,7 @@
                                                         <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control"
+                                                        <input type="text" class="form-control" :disabled="!partida.es_hoja"
                                                             :name="`cantidad[${i}]`"
                                                             data-vv-as="Cantidad"
                                                             v-model="partida.cantidad"
@@ -185,7 +185,7 @@
                                                     </td>
                                                     <td>Select DESTINOS</td>
                                                     <td>
-                                                        <button @click="agregarPartida(i)" type="button" class="btn btn-sm btn-outline-danger" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
+                                                        <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar" v-if="i>0">
                                                             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                             <i class="fa fa-trash" v-else></i>
                                                         </button>
@@ -315,6 +315,8 @@
                 }
                 this.partidas[index].es_hoja = false;
                 this.partidas[index].es_rama = true;
+                this.partidas[index].unidad = '';
+                this.partidas[index].cantidad = '';
                 this.partidas[index].cantidad_hijos = this.partidas[index].cantidad_hijos + 1;
                 
             },
@@ -335,6 +337,17 @@
                 $(this.$refs.modal).modal('show')
 
             },
+            eliminarPartida(index){
+                let temp_index = index - 1;
+                while(temp_index in this.partidas && this.partidas[temp_index].nivel == +this.partidas[index].nivel){
+                    temp_index= temp_index - 1;
+                }
+                this.partidas[temp_index].cantidad_hijos = this.partidas[temp_index].cantidad_hijos - 1;
+                this.partidas.splice(index, 1);
+                if(this.partidas[temp_index].cantidad_hijos == 0){
+                    this.partidas[temp_index].es_hoja = true;
+                }
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
@@ -353,6 +366,16 @@
                         this.unidades= data.data;
                     })
             },
+            store(){
+                console.log('panda');
+            },
+            validate() {
+            this.$validator.validate().then(result => {
+                if (result){
+                    this.store();
+                }
+            });
+        }
         },
     }
 </script>
