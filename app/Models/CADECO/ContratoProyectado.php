@@ -67,8 +67,13 @@ class ContratoProyectado extends Transaccion
         });
     }
 
-    public function conceptos_antecedentes()
+    public function efoTransaccion()
     {
+        return $this->hasManyThrough(CtgEfos::class, Empresa::class, 'id_empresa', 'rfc', 'id_empresa', 'rfc');
+    }
 
+    public function usuario()
+    {
+        return $this->hasManyThrough();
     }
 }
