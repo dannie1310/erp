@@ -28,25 +28,14 @@
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Fecha:</b></td>
                                                     <td class="bg-gray-light"> {{contrato.fecha}} </td>
-                                                    <!-- <td class="bg-gray-light"><b>Fecha Requisición Origen:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.fecha_requisicion_origen_format : '------------'}}</td>
-                                                    <td class="bg-gray-light"><b>Folio Requisición Origen:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.requisicion_origen : '------------'}}</td> -->
-                                                </tr>
-                                                <!-- <tr>
-                                                    <td class="bg-gray-light"><b>Departamento Responsable:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_compradora.descripcion : '------------'}}</td>
-                                                    <td class="bg-gray-light"><b>Tipo:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.tipo.descripcion : '------------'}}</td>
-                                                    <td class="bg-gray-light"><b>Área Solicitante:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_solicitante.descripcion : '------------'}}</td>
+                                                    <td class="bg-gray-light"><b>Área Subcontratante:</b></td>
+                                                    <td class="bg-gray-light">{{contrato.area_subcontratante}}</td>
+                                                    <td class="bg-gray-light"><b>Usuario Asignó:</b></td>
+                                                    <td class="bg-gray-light">{{contrato.usuario}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="bg-gray-light"><b>Concepto:</b></td>
-                                                    <td class="bg-gray-light" colspan="3">{{(solicitud.complemento) ? solicitud.complemento.concepto : '------------'}}</td>
-                                                    <td class="bg-gray-light"><b>Usuario Registró:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.usuario) ? solicitud.usuario.nombre : '------------'}}</td>
-                                                </tr> -->
+                                                    <td class="bg-gray-light" align="center" colspan="6"><h6><b>{{contrato.referencia}}</b></h6></td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -55,38 +44,26 @@
                                             <h6><b>Detalle de las partidas</b></h6>
                                         </div>
                                     </div>
-                                    <!-- <div class="row">
+                                    <div class="row">
                                         <div class="table-responsive col-md-12">
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
-                                                        <th>#</th>
-                                                        <th class="no_parte">Núm de Parte</th>
                                                         <th>Descripción</th>
-                                                        <th class="no_parte">Cantidad</th>
-                                                        <th class="no_parte">Fecha Entrega</th>
-                                                        <th>Destino</th>
-                                                        <th>Observaciones</th>
+                                                        <th class="unidad">Unidad</th>
+                                                        <th class="col-4">Destino</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr v-for="(partida, i) in solicitud.partidas.data">
-                                                        <td>{{i+1}}</td>
-                                                        <td style="text-align: center"><b>{{partida.material.numero_parte}}</b></td>
-                                                        <td style="text-align: center">{{partida.material.descripcion}}</td>
-                                                        <td style="text-align: center">{{partida.cantidad}}</td>
-                                                        <td style="text-align: center">{{(partida.entrega) ? partida.entrega.fecha_format : '------------'}}</td>
-                                                        <td v-if="partida.entrega">{{(partida.entrega.concepto) ? partida.entrega.concepto.path : partida.entrega.almacen ? partida.entrega.almacen.descripcion : '------------'}}</td>
-                                                        <td style="text-align: left">{{(partida.complemento) ? partida.complemento.observaciones : '------------'}}</td>
+                                                <tbody v-if="contrato.conceptos">
+                                                    <tr v-for="(partida, i) in contrato.conceptos.data">
+                                                        <td style="text-align: left" v-html="partida.descripcion_formato"></td>
+                                                        <td style="text-align: center">{{partida.unidad}}</td>
+                                                        <td style="text-align: center">{{(partida.destino) ? partida.destino.descripcion : null}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="row col-md-12">
-                                        <div class="col-md-2"><b>Observaciones:</b></div>
-                                        <div class="col-md-10">{{solicitud.observaciones}}</div>
-                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -106,20 +83,18 @@
         props: ['id'],
         data(){
             return{
-                cargando: false,
+                cargando: false
             }
         },
         methods: {
             find() {
-                console.log('Empieza', this.id);
-
                 
                 this.cargando = true;
                 this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', null);
                 return this.$store.dispatch('contratos/contrato-proyectado/find', {
                     id: this.id,
                     params:{include: [
-                        'areasSubcontratantes'
+                        'conceptos.destino'
                     ]}
                 }).then(data => {
                     this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', data);

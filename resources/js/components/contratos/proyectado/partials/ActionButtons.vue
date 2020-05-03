@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
         <cambiar-area-subcontratante :id="value.id" :value="value"></cambiar-area-subcontratante>
-        <Show v-bind:id="value.id"></Show>
+        <Show v-if="$root.can('consultar_contrato_proyectado')" v-bind:id="value.id"></Show>
     </div>
 </template>
 
