@@ -112,8 +112,9 @@
                                                     <th style="width:13%">Insumo</th>
                                                     <th style="width:25%">Descripción</th>
                                                     <th style="width:13%">Unidad</th>
-                                                    <th style="width:13%">Cantidad</th>
+                                                    <th style="width:10%">Cantidad</th>
                                                     <th style="width:15%">Destinos</th>
+                                                    <th style="width:8%"></th>
                                                     <th style="width:5%"></th>
                                                 </tr>
                                             </thead>
@@ -183,7 +184,24 @@
                                                             id="cantidad">
                                                         <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                                     </td>
-                                                    <td>Select DESTINOS</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            readonly="readonly"
+                                                            :name="`destino_path[${i}]`"
+                                                            data-vv-as="Destino"
+                                                            v-model="partida.destino_path"
+                                                            v-validate="{required: partida.es_hoja}"
+                                                            :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
+                                                            id="destino_path">
+                                                        <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <small class="badge badge-secondary">
+                                                            <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                        </small>
+                                                        <i class="far fa-copy button" v-on:click="copiar_destino(partida)" :disabled="partida.destino == ''" ></i>
+                                                        <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" :disabled="partida.destino == ''"></i>
+                                                    </td>
                                                     <td>
                                                         <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar" v-if="i>0">
                                                             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
@@ -236,15 +254,56 @@
                 </div>
             </div>
         </div>
+         <nav>
+            <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form role="form">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group row error-content">
+                                            <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
+                                            <div class="col-sm-10">
+                                                <concepto-select
+                                                        name="id_concepto"
+                                                        data-vv-as="Concepto"
+                                                        id="id_concepto"
+                                                        v-model="destino_temp"
+                                                        :error="errors.has('id_concepto')"
+                                                        ref="conceptoSelect"
+                                                        :disableBranchNodes="true"
+                                                ></concepto-select>
+                                                <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
+                             </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </span>
 </template>
 
 <script>
+    import  ConceptoSelect from "../../cadeco/concepto/Select";
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "contrato-proyectado-create",
-        components: {Datepicker},
+        components: {Datepicker, ConceptoSelect},
         data() {
             return {
                 es: es,
@@ -258,7 +317,10 @@
                 partidas:[],
                 unidades:[],
                 edit_concepto_index:'',
+                edit_destino_index:'',
                 descrip_temporal:'',
+                destino_temp:'',
+                destino_copia:'',
             }
         },
         mounted(){
@@ -271,6 +333,7 @@
                 unidad:'',
                 cantidad:'',
                 destino:'',
+                destino_path:'',
                 nivel:1,
                 indice:1,
                 es_hoja:true,
@@ -326,6 +389,20 @@
                 this.descrip_temporal='',
                 $(this.$refs.modal).modal('hide')
             },
+            cambiarDestino(){
+                this.partidas[this.edit_destino_index].destino = this.destino_temp;
+                this.edit_destino_index='';
+                this.destino_temp='',
+                $(this.$refs.modalDestino).modal('hide')
+            },
+            cerrarModalDestino(){
+                this.destino_temp = '';
+                $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
+            },
+            copiar_destino(partida){
+                this.destino_copia = partida;
+            },
             descripcionFormat(i){
                 var len = this.partidas[i].descripcion.length + (+this.partidas[i].nivel * 3);
                 return this.partidas[i].descripcion.padStart(len, "_")
@@ -335,6 +412,13 @@
                 this.descrip_temporal = this.partidas[index].descripcion;
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show')
+
+            },
+            editDestino(index){
+                this.edit_destino_index = index;
+                this.destino_temp = this.partidas[index].destino;
+                $(this.$refs.modalDestino).appendTo('body')
+                $(this.$refs.modalDestino).modal('show')
 
             },
             eliminarPartida(index){
@@ -365,6 +449,14 @@
                     .then(data => {
                         this.unidades= data.data;
                     })
+            },
+            modalDestino(i) {
+                this.$validator.reset();
+                $(this.$refs.modal_destino).modal('show');
+            },
+            pegar_destino(partida){
+                this.partida.destino = this.destino_copia.destino;
+                this.partida.destino_path = this.destino_copia.destino_path;
             },
             store(){
                 console.log('panda');
