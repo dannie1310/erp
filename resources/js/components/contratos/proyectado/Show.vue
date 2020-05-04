@@ -46,7 +46,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="table-responsive col-md-12">
-                                            <table class="table table-striped">
+                                            <table class="table">
                                                 <thead>
                                                     <tr>
                                                         <th>Descripción</th>
