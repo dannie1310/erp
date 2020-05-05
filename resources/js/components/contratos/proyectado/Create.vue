@@ -133,7 +133,7 @@
                                                             v-model="partida.clave"
                                                             v-validate="{}"
                                                             :class="{'is-invalid': errors.has(`clave[${i}]`)}"
-                                                            id="clave">
+                                                            :id="`clave[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
                                                     </td>
                                                     <td>
@@ -143,7 +143,7 @@
                                                             v-model="partida.insumo"
                                                             v-validate="{}"
                                                             :class="{'is-invalid': errors.has(`insumo[${i}]`)}"
-                                                            id="insumo">
+                                                            :id="`insumo[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`insumo[${i}]`)">{{ errors.first(`insumo[${i}]`) }}</div>
                                                     </td>
                                                     <td>
@@ -155,24 +155,24 @@
                                                             :placeholder="descripcionFormat(i)"
                                                             v-validate="{required: partida.descripcion ===''}"
                                                             :class="{'is-invalid': errors.has(`descripcion[${i}]`)}"
-                                                            id="descripcion">
+                                                            :id="`descripcion[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
                                                     </td>
                                                     <td>
                                                         <select
                                                             :disabled="!partida.es_hoja"
                                                             type="text"
-                                                            name="unidad"
+                                                            :name="`unidad[${i}]`"
                                                             data-vv-as="Unidad"
                                                             v-validate="{required: partida.es_hoja}"
                                                             class="form-control"
-                                                            id="unidad"
+                                                            :id="`unidad[${i}]`"
                                                             v-model="partida.unidad"
-                                                            :class="{'is-invalid': errors.has('unidad')}">
+                                                            :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
                                                             <option value>--Unidad--</option>
                                                             <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
                                                         </select>
-                                                        <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
+                                                        <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
                                                     </td>
                                                     <td>
                                                         <input type="text" class="form-control" :disabled="!partida.es_hoja"
@@ -181,7 +181,7 @@
                                                             v-model="partida.cantidad"
                                                             v-validate="{}"
                                                             :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
-                                                            id="cantidad">
+                                                            :id="`cantidad[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                                     </td>
                                                     <td>
@@ -192,15 +192,15 @@
                                                             v-model="partida.destino_path"
                                                             v-validate="{required: partida.es_hoja}"
                                                             :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
-                                                            id="destino_path">
+                                                            :id="`destino_path[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
                                                     </td>
                                                     <td>
                                                         <small class="badge badge-secondary">
-                                                            <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="partida.es_hoja"></i>
                                                         </small>
-                                                        <i class="far fa-copy button" v-on:click="copiar_destino(partida)" :disabled="partida.destino == ''" ></i>
-                                                        <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" :disabled="partida.destino == ''"></i>
+                                                        <i class="far fa-copy button" v-on:click="copiar_destino(partida)" v-if="partida.es_hoja"></i>
+                                                        <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="partida.es_hoja"></i>
                                                     </td>
                                                     <td>
                                                         <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar" v-if="i>0">
@@ -287,7 +287,9 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
+                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino" :disabled="cargando">
+                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                    <i class="fa fa-close" v-else ></i> Cerrar</button>
                              </div>
                         </form>
                     </div>
@@ -320,7 +322,8 @@
                 edit_destino_index:'',
                 descrip_temporal:'',
                 destino_temp:'',
-                destino_copia:'',
+                partida_copia:[],
+                partida_index:'',
             }
         },
         mounted(){
@@ -380,6 +383,8 @@
                 this.partidas[index].es_rama = true;
                 this.partidas[index].unidad = '';
                 this.partidas[index].cantidad = '';
+                this.partidas[index].destino = '';
+                this.partidas[index].destino_path = '';
                 this.partidas[index].cantidad_hijos = this.partidas[index].cantidad_hijos + 1;
                 
             },
@@ -401,7 +406,7 @@
                 this.$validator.reset();
             },
             copiar_destino(partida){
-                this.destino_copia = partida;
+                this.partida_copia = partida;
             },
             descripcionFormat(i){
                 var len = this.partidas[i].descripcion.length + (+this.partidas[i].nivel * 3);
@@ -442,6 +447,25 @@
                         this.areas_subcontratantes = data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
                     });
             },
+            getConcepto(id_concepto) {
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: id_concepto,
+                    params: {
+                    }
+                })
+                .then(data => {
+                    let path = data.path.split('->');
+                    this.partidas[this.partida_index].destino_path = path[path.length - 2] + ' -> ' + data.descripcion;
+                    this.partidas[this.partida_index].destino = data.id;
+                })
+                .finally(()=> {
+                    this.partida_index = '';
+                    this.cargando = false;
+                    $(this.$refs.modal_destino).modal('hide');
+
+                })
+            },
             getUnidades() {
                 return this.$store.dispatch('cadeco/unidad/index', {
                     params: {sort: 'unidad',  order: 'asc'}
@@ -450,24 +474,33 @@
                         this.unidades= data.data;
                     })
             },
-            modalDestino(i) {
+            modalDestino(index) {
+                this.partida_index = index;
                 this.$validator.reset();
                 $(this.$refs.modal_destino).modal('show');
             },
-            pegar_destino(partida){
-                this.partida.destino = this.destino_copia.destino;
-                this.partida.destino_path = this.destino_copia.destino_path;
+            pegar_destino(index){
+                this.partidas[index].destino = this.partida_copia.destino;
+                this.partidas[index].destino_path = this.partida_copia.destino_path;
+                this.$forceUpdate();
             },
             store(){
                 console.log('panda');
             },
             validate() {
-            this.$validator.validate().then(result => {
-                if (result){
-                    this.store();
+                this.$validator.validate().then(result => {
+                    if (result){
+                        this.store();
+                    }
+                });
+            }
+        },
+        watch: {
+            destino_temp(value){
+                if(value !== '' && value !== null && value !== undefined){
+                    this.getConcepto(value);
                 }
-            });
-        }
+            },
         },
     }
 </script>
