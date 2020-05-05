@@ -1,16 +1,17 @@
 <template>
     <div class="btn-group">
         <cambiar-area-subcontratante :id="value.id" :value="value"></cambiar-area-subcontratante>
+        <Editar v-bind:id="value.id" v-if="$root.can('editar_contrato_proyectado')"></Editar>
 
     </div>
 </template>
 
 <script>
     import CambiarAreaSubcontratante from "../CambiarAreaSubcontratante";
-
+    import Editar from '../Edit';
     export default {
         name: "action-buttons",
-        components: {CambiarAreaSubcontratante},
+        components: {CambiarAreaSubcontratante, Editar},
         props: ['value'],
         methods: {
             cambiar_area() {
