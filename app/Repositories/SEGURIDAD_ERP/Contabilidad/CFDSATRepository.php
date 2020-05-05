@@ -33,15 +33,19 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return DB::raw("CONVERT(VARBINARY(MAX), '" . $archivo . "')");
     }
 
-    public function getIdEmpresa($rfc){
-        $empresa = EmpresaSAT::where("rfc","=",$rfc)
+    public function getIdEmpresa($datos_receptor){
+        $empresa = EmpresaSAT::where("rfc","=",$datos_receptor["rfc"])
             ->first();
         $salida = null;
 
         if($empresa){
             return $empresa->id;
+        } else {
+            $empresa = EmpresaSAT::create(
+                ["rfc"=>$datos_receptor["rfc"], "razon_social"=>$datos_receptor["nombre"]]
+            );
+            return $empresa->id;
         }
-        return $salida;
     }
 
     public function iniciaCarga($nombre_archivo){
