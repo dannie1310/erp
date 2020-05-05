@@ -167,7 +167,9 @@ class SolicitudCompraService
     public function leerQR($data)
     {
         $verifica = new ValidacionSistema();
-        $datos = $verifica->desencripta($data);
+       // dd($data, urldecode($data));
+        $datos = $verifica->desencripta(urldecode($data));
+       // dd($datos);
         $json = json_decode($datos);
 
         if($json) {
