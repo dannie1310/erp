@@ -21,11 +21,16 @@
                                                 <label><b>Fecha</b></label>
                                                 <datepicker v-model = "fecha"
                                                             name = "fecha"
+                                                            data-vv-as="Fecha"
                                                             :language = "es"
                                                             :format = "formatoFecha"
                                                             :bootstrap-styling = "true"
+                                                            v-validate="{required: true}"
+                                                            :class="{'is-invalid': errors.has('fecha')}"
                                                             class = "form-control">
+                                                            
                                                 </datepicker>
+                                                <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -51,28 +56,37 @@
                                 <div class="col-md-2">
                                     <div class="form-group error-content">
                                         <div class="form-group">
-                                            <label><b>Fecha Cotización</b></label>
+                                            <label><b>Cotización</b></label>
                                             <datepicker v-model = "fecha_cotizacion"
                                                         name = "fecha_cotizacion"
+                                                        data-vv-as="Fecha Cotización"
                                                         :language = "es"
                                                         :format = "formatoFecha"
                                                         :bootstrap-styling = "true"
+                                                        v-validate="{required: true}"
+                                                        :class="{'is-invalid': errors.has('fecha_cotizacion')}"
                                                         class = "form-control">
                                             </datepicker>
+                                            <div class="invalid-feedback" v-show="errors.has('fecha_cotizacion')">{{ errors.first('fecha_cotizacion') }}</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group error-content">
                                         <div class="form-group">
-                                            <label><b>Fecha Contratación</b></label>
+                                            <label><b>Contratación</b></label>
                                             <datepicker v-model = "fecha_contrato"
                                                         name = "fecha_contrato"
+                                                        data-vv-as="Fecha Contratación"
                                                         :language = "es"
                                                         :format = "formatoFecha"
                                                         :bootstrap-styling = "true"
+                                                        v-validate="{required: true}"
+                                                        :class="{'is-invalid': errors.has('fecha_contrato')}"
+                                                        :disabled-dates="fechasDeshabilitadas"
                                                         class = "form-control">
                                             </datepicker>
+                                            <div class="invalid-feedback" v-show="errors.has('fecha_contrato')">{{ errors.first('fecha_contrato') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -179,7 +193,7 @@
                                                             :name="`cantidad[${i}]`"
                                                             data-vv-as="Cantidad"
                                                             v-model="partida.cantidad"
-                                                            v-validate="{}"
+                                                            v-validate="{required: partida.es_hoja}"
                                                             :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                             :id="`cantidad[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
@@ -309,6 +323,7 @@
         data() {
             return {
                 es: es,
+                fechasDeshabilitadas:{},
                 cargando: false,
                 fecha: '',
                 fecha_cotizacion: '',
@@ -343,6 +358,8 @@
                 es_rama:false,
                 cantidad_hijos:0,
             });
+        },
+        computed: {
         },
         methods: {
             agregarPartida(index){
@@ -484,8 +501,22 @@
                 this.partidas[index].destino_path = this.partida_copia.destino_path;
                 this.$forceUpdate();
             },
-            store(){
-                console.log('panda');
+            setFechasDeshabilitadas(fecha){
+                this.fechasDeshabilitadas.to = fecha;
+            },
+            store() {
+                let datos = {
+                    'fecha':this.fecha,
+                    'cumplimineto':this.$data.fecha_cotizacion,
+                    'vencimiento':this.$data.fecha_contrato,
+                    'referencia':this.$data.referencia,
+                    'id_area_subcontratante':this.$data.id_area,
+                    'contratos':this.$data.partidas
+                };
+                return this.$store.dispatch('contratos/contrato-proyectado/store',  datos)
+                    .then((data) => {
+                        this.$router.push({name: 'proyectado'});
+                    })
             },
             validate() {
                 this.$validator.validate().then(result => {
@@ -501,6 +532,12 @@
                     this.getConcepto(value);
                 }
             },
+            fecha_cotizacion(value){
+                if(value !== '' && value !== null && value !== undefined){
+                    this.setFechasDeshabilitadas(value);
+                    this.$forceUpdate();
+                }
+            }
         },
     }
 </script>

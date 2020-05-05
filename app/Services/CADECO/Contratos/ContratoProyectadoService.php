@@ -46,6 +46,10 @@ class ContratoProyectadoService
         return $this->repository->show($id);
     }
 
+    public function store($data){
+        dd('panda', $data);
+    }
+
     public function paginate($data)
     {
         $cp_area = new AreaSubcontratante();
