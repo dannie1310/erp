@@ -51,7 +51,7 @@
                                                     <tr>
                                                         <th>Descripción</th>
                                                         <th class="unidad">Unidad</th>
-                                                        <th class="col-4">Destino</th>
+                                                        <th style="width:35%;">Destino</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody v-if="contrato.conceptos">
