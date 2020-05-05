@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
         <cambiar-area-subcontratante :id="value.id" :value="value"></cambiar-area-subcontratante>
-        <Editar v-bind:id="value.id"></Editar>
+        <Editar v-bind:id="value.id" v-if="$root.can('editar_contrato_proyectado')"></Editar>
 
     </div>
 </template>

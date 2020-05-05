@@ -11,6 +11,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\SEGURIDAD_ERP\TipoAreaSubcontratanteTransformer;
 use App\Models\CADECO\ContratoProyectado;
+use DateTime;
 use League\Fractal\TransformerAbstract;
 
 class ContratoProyectadoTransformer extends TransformerAbstract
@@ -24,7 +25,10 @@ class ContratoProyectadoTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'numeroFolio' => $model->numero_folio,
             'fecha' => $model->fecha_format,
+            'fecha_date' => $model->fecha,
             'referencia' => (string)$model->referencia,
+            'cumplimiento' => $model->cumplimiento,
+            'vencimiento' => date_format(new DateTime($model->vencimiento), 'Y-m-d')
         ];
     }
 

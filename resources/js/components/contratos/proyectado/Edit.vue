@@ -18,8 +18,8 @@
                             <div class="row">
                                     <div class="col-md-5">
                                         <div class="form-group error-content">
-                                            <label class="col-form-label">Fecha:</label>
-                                            <datepicker 
+                                            <label class="col-form-label">Fecha</label>
+                                            <datepicker v-model="contrato.fecha_date"
                                                         name = "fecha"
                                                         :format = "formatoFecha"
                                                         :language = "es"
@@ -32,20 +32,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <br>
-                                <!-- <hr> -->
+                                <hr>
                                 <div class="row">
                                         <div class="col-12">
                                             <h6><b>Fechas Límite</b></h6>
                                         </div>
                                     </div>
+                                <br>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="cotizacion">Cotización</label>
-                                        <input
+                                        <input  v-model="contrato.cumplimiento"
                                                 type="date"
                                                 name="cotizacion"
                                                 id="cotizacion"
@@ -61,7 +61,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="contratacion">Contratación</label>
-                                        <input
+                                        <input  v-model="contrato.vencimiento"
                                                 type="date"
                                                 name="contratacion"
                                                 id="contratacion"
@@ -80,18 +80,19 @@
                             <div class="row">
                                <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="descripcion" class="col-sm-2 col-form-label">Descripción:</label>
+                                        <label for="referencia" class="col-sm-2 col-form-label">Referencia</label>
                                         <div class="col-sm-12">
                                             <input
+                                                v-model="contrato.referencia"
                                                 type="text"
-                                                name="descripcion"
-                                                data-vv-as="Descripcion"
+                                                name="referencia"
+                                                data-vv-as="Referencia"
                                                 v-validate="{required: true}"
                                                 class="form-control"
-                                                id="descripcion"
-                                                placeholder="Descripcion"
-                                                :class="{'is-invalid': errors.has('descripcion')}">
-                                            <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
+                                                id="referencia"
+                                                placeholder="Referencia"
+                                                :class="{'is-invalid': errors.has('referencia')}">
+                                            <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -119,25 +120,33 @@ export default {
     data() {
         return {
             cargando: false,
-            es:es,            
+            es:es,
+            contrato: [],
+            fecha: '',
+            vencimiento: '',
+            cumplimiento: '',
+            referencia: ''
+
         }
     },
-    methods: {
+    methods: {       
+        
         save() {
-            if(this.service.descripcion == this.res.descripcion && this.service.tipo == this.res.nivel_padre && this.service.numero_parte == this.res.numero_parte && this.service.unidad == this.res.unidad)
+            
+            if(this.contrato.fecha_date == this.fecha && this.contrato.vencimiento == this.vencimiento && this.contrato.cumplimiento == this.cumplimiento && this.contrato.referencia == this.referencia)
             {
                 swal('¡Error!', 'Favor de ingresar datos actualizados.', 'error')
             }else{
 
-                return this.$store.dispatch('cadeco/material/update', {
+                return this.$store.dispatch('contratos/contrato-proyectado/update', {
                 id: this.id,
-                data: this.service,
+                data: this.contrato,
             })
                 .then(() => {
-                   return this.$store.dispatch('cadeco/material/paginate', { params: {scope:['servicios','insumos'], sort: 'descripcion', order: 'asc'}})
+                   return this.$store.dispatch('contratos/contrato-proyectado/paginate', { params: {include: 'areasSubcontratantes', sort: 'numero_folio', order: 'DESC'}})
                     .then(data => {
-                        this.$store.commit('cadeco/material/SET_MATERIALES', data.data);
-                        this.$store.commit('cadeco/material/SET_META', data.meta);
+                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADO', data.data);
+                        this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
                     })
                    }).finally( ()=>{
                        $(this.$refs.modal).modal('hide');
@@ -150,44 +159,22 @@ export default {
         },    
         find()
         {
-            console.log('Comienza a buscar');
+            console.log('Comienza a buscar', this.id);
             this.cargando = true;
-            // this.res = '';
-            // // this.id = servicio;    
-
-            //     this.$store.commit('cadeco/unidad/SET_UNIDAD', null);
-            //     return this.$store.dispatch('cadeco/material/find', {
-            //         id: servicio,
-            //         params: {scope: 'servicios'}
-            //     }).then(data => {
-
-            //         this.$store.commit('cadeco/material/SET_MATERIAL', data);
-            //         this.res = data;
-            //         this.service.tipo = this.res.nivel_padre;
-            //         this.service.descripcion = this.res.descripcion;
-            //         this.service.unidad = this.res.unidad;
-            //         this.service.numero_parte = this.res.numero_parte;                                        
+                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', null);
+                return this.$store.dispatch('contratos/contrato-proyectado/find', {
+                    id: this.id
+                }).then(data => {
+                    this.contrato = data;
+                    this.fecha = data.fecha_date;
+                    this.referencia = data.referencia;
+                    this.cumplimiento = data.cumplimiento;
+                    this.vencimiento = data.vencimiento;
                     $(this.$refs.modal).appendTo('body');
                     $(this.$refs.modal).modal('show');
-            //     }).finally(() => {
-                    this.cargando = false;
-            //     })
-        },
-        getUnidades() {
-                return this.$store.dispatch('cadeco/unidad/index', {
-                    params: {sort: 'unidad',  order: 'asc'}
+                }).finally(() => {
+                    this.cargando = false;                    
                 })
-                    .then(data => {
-                        this.unidades= data.data;
-                    })
-        },
-         getFamiliasMOyS(){
-                return this.$store.dispatch('cadeco/familia/index', {
-                    params: {sort: 'descripcion',  order: 'asc', scope:'tipo:2'}
-                })
-                    .then(data => {
-                        this.familias_moys= data.data;                        
-                    })
         },
         validate() {
                 this.$validator.validate().then(result => {
@@ -196,7 +183,7 @@ export default {
                     }
                 });
             },
-    },
+    }
 }
 </script>
 <style>
