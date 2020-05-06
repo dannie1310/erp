@@ -33,9 +33,9 @@
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.descripcion : '----------'}}</td>
-                                                    <td class="bg-gray-light"><b>ToTC USD:</b></td>
+                                                    <td class="bg-gray-light"><b>TC USD:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</td>
-                                                    <td class="bg-gray-light"><b>ToTC EURO:</b></td>
+                                                    <td class="bg-gray-light"><b>TC EURO:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</td>
                                                 </tr>
                                                 <tr>
@@ -172,11 +172,11 @@
                                         <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">ToTC USD:</label>
+                                        <label class="col-sm-2 col-form-label">TC USD:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">ToTC EURO:</label>
+                                        <label class="col-sm-2 col-form-label">TC EURO:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
