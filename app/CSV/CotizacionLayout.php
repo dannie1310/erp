@@ -59,6 +59,8 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getColumnDimension('C')->setWidth(15);
                 $event->sheet->getColumnDimension('J')->setAutoSize(false);
                 $event->sheet->getColumnDimension('J')->setWidth(12.5);
+                $event->sheet->getColumnDimension('G')->setAutoSize(false);
+                $event->sheet->getColumnDimension('G')->setWidth(20);
                 $event->sheet->getColumnDimension('L')->setAutoSize(true);
 
                 $i=2;
@@ -137,11 +139,13 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("F".($i+13), '% Anticipo');
                 $event->sheet->setCellValue("G".($i+13), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->anticipo : 0);
                 $event->sheet->setCellValue("F".($i+14), 'Credito (dias)');
-                $event->sheet->setCellValue("G".($i+14), 0);
+                $event->sheet->setCellValue("G".($i+14), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->dias_credito : 0);
                 $event->sheet->setCellValue("F".($i+15), 'Tiempo de Entraga (dias)');
-                $event->sheet->setCellValue("G".($i+15), 0);
+                $event->sheet->setCellValue("G".($i+15), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->plazo_entrega : 0);
                 $event->sheet->setCellValue("F".($i+16), 'Vigencia (dias)');
+                $event->sheet->setCellValue("G".($i+16), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->vigencia : 0);
                 $event->sheet->setCellValue("F".($i+17), 'Observaciones Generales');
+                $event->sheet->setCellValue("G".($i+17), $this->cotizacion->observaciones);
                 $event->sheet->setCellValue("G".($i+5), $this->tc_partida_dlls);
                 $event->sheet->setCellValue("G".($i+6), $this->tc_partida_euro);
                 $event->sheet->setCellValue("G".($i+7), "PESO MX");
@@ -161,7 +165,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
 
     public function headings(): array
     {
-        return array([' ',' ',' ',' ',' ',' ',$this->cotizacion->empresa->razon_social],
+        return array([' ',' ',' ',' ',' ',' ',($this->cotizacion->empresa) ? $this->cotizacion->empresa->razon_social : '----- Proveedor Desconocido ----- '],
         ['#','DESCRIPCION','IDENTIFICADOR','UNIDAD','CANTIDAD_SOLICITADA','CANTIDAD_APROBADA','Precio Unitario','% Descuento','Precio Total','Moneda',
             'Precio Total Moneda Conversión','Observaciones']);
     }
