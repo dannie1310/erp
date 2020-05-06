@@ -45,4 +45,9 @@ class CotizacionService
     {
         return $this->repository->show($id)->actualizar($data);
     }
+
+    public function delete(array $data, $id)
+    {
+        return $this->repository->show($id)->eliminar($data);
+    }
 }

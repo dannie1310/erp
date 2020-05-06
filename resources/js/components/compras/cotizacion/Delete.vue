@@ -180,7 +180,42 @@
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
                 })
-            }
+            },
+            eliminar() {
+                this.cargando = true;
+                return this.$store.dispatch('compras/cotizacion/eliminar', {
+                    id: this.id,
+                    params: {data: this.$data.motivo}
+                })
+                    .then(data => {
+                        this.$store.commit('compras/cotizacion/DELETE_COTIZACION', {id: this.id})
+                        $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('compras/cotizacion/paginate', {
+                            params: {
+                                sort: 'numero_folio', order: 'DESC'
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
+                                this.$store.commit('compras/cotizacion/SET_META', data.meta);
+                            })
+                    })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        if(this.motivo == '') {
+                            swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
+                        }
+                        else {
+                            this.eliminar()
+                        }
+                    }
+                });
+            },
         },
         computed: {
             cotizacion() {

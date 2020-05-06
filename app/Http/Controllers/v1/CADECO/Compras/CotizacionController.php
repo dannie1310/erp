@@ -45,6 +45,7 @@ class CotizacionController extends Controller
         $this->middleware('permiso:registrar_cotizacion_compra')->only(['store']);
         $this->middleware('permiso:consultar_cotizacion_compra')->only(['show','paginate','index','find']);
         $this->middleware('permiso:editar_cotizacion_compra')->only(['update']);
+        $this->middleware('permiso:eliminar_cotizacion_compra')->only(['destroy']);
 
         $this->fractal = $fractal;
         $this->service = $service;

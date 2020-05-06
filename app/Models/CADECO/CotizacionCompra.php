@@ -304,4 +304,24 @@ class CotizacionCompra  extends Transaccion
     {
         return $this->whereNotNull('id_empresa');
     }
+
+    /**
+     * Eliminar cotización de compra
+     * @param $motivo
+     * @return $this
+     */
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validar();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
 }
