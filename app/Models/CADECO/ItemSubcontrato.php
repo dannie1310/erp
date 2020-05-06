@@ -79,7 +79,7 @@ class ItemSubcontrato extends Item
         return array(
             'id' => $this->id_item,
             'id_concepto' => $this->id_concepto,
-            'unidad' => $contrato->unidad,
+            'unidad' => $contrato->unidad ? $contrato->unidad : '',
             'clave' => $contrato->clave,
             'descripcion_concepto' => $contrato->descripcion,
             'cantidad_subcontrato' => $this->cantidad,
