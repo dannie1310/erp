@@ -143,8 +143,8 @@
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
                                                         </td>                                                        
-                                                        <td style="text-align:center;">{{partida.cantidad_original}}</td>
-                                                        <td style="text-align:center;">{{(solicitud.estado === 1) ? partida.solicitado_cantidad : '0.0'}}</td>
+                                                        <td style="text-align:center;">{{partida.cantidad_original_num}}</td>
+                                                        <td style="text-align:center;">{{(solicitud.estado === 1) ? partida.cantidad : '0.0'}}</td>
                                                         <td>
                                                             <input type="number"
                                                                    min="0.01"
@@ -172,7 +172,7 @@
                                                                    v-model="descuento[i]"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(precio[i]) ? '$ ' + parseFloat(((solicitud.estado === 0) ? partida.cantidad_original : partida.solicitado_cantidad) * precio[i]).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">{{(precio[i]) ? '$ ' + parseFloat(((solicitud.estado === 0) ? partida.cantidad_original_num : partida.cantidad) * precio[i]).formatMoney(2,'.',',') : '$ 0.00'}}</td>
                                                         <td style="width:120px;" >
                                                             <select
                                                                 type="text"
@@ -188,7 +188,7 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(moneda_input[i] && precio[i]) ? '$ ' + parseFloat((((solicitud.estado === 0) ? partida.cantidad_original : partida.solicitado_cantidad) * precio[i] * monedas[moneda_input[i] - 1].tipo_cambio_igh)).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">{{(moneda_input[i] && precio[i]) ? '$ ' + parseFloat((((solicitud.estado === 0) ? partida.cantidad_original_num : partida.cantidad) * precio[i] * monedas[moneda_input[i] - 1].tipo_cambio_igh)).formatMoney(2,'.',',') : '$ 0.00'}}</td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -233,11 +233,11 @@
                                         <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">ToTC USD:</label>
+                                        <label class="col-sm-2 col-form-label">TC USD:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[1].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">ToTC EURO:</label>
+                                        <label class="col-sm-2 col-form-label">TC EURO:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
@@ -500,22 +500,22 @@
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
                             this.pesos = (this.pesos + parseFloat(((this.solicitud.estado === 0) ? 
-                            this.solicitud.partidas.data[this.x].cantidad_original : 
-                            this.solicitud.partidas.data[this.x].solicitado_cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? 
+                            this.solicitud.partidas.data[this.x].cantidad_original_num : 
+                            this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? 
                             this.descuento[this.x] : 0))/100))));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
                             this.dolares = (this.dolares + parseFloat(((this.solicitud.estado === 0) ? 
-                            this.solicitud.partidas.data[this.x].cantidad_original : 
-                            this.solicitud.partidas.data[this.x].solicitado_cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? 
+                            this.solicitud.partidas.data[this.x].cantidad_original_num : 
+                            this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? 
                             this.descuento[this.x] : 0))/100))));
                         }
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
                             this.euros = (this.euros + parseFloat(((this.solicitud.estado === 0) ? 
-                            this.solicitud.partidas.data[this.x].cantidad_original : 
-                            this.solicitud.partidas.data[this.x].solicitado_cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? 
+                            this.solicitud.partidas.data[this.x].cantidad_original_num : 
+                            this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? 
                             this.descuento[this.x] : 0))/100))));
                         }                       
                     }
