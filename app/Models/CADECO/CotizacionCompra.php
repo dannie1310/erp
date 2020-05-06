@@ -5,7 +5,9 @@ namespace App\Models\CADECO;
 
 
 use App\CSV\CotizacionLayout;
+use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
 use App\Models\CADECO\Compras\CotizacionComplemento;
+use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
@@ -67,6 +69,11 @@ class CotizacionCompra  extends Transaccion
         return Excel::download(new CotizacionLayout(CotizacionCompra::find($id)), 'LayoutCotizacion.xlsx');
     }
 
+    public function asignacionPartida()
+    {
+        return $this->hasOne(AsignacionProveedoresPartida::class, 'id_transaccion_cotizacion', 'id_transaccion');
+    }
+
     public function empresa()
     {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
@@ -80,6 +87,97 @@ class CotizacionCompra  extends Transaccion
     public function solicitud()
     {
         return $this->belongsTo(SolicitudCompra::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function validarAsignacion($motivo)
+    {
+        if($this->asignacionPartida)
+        {
+            throw New \Exception('No se puede '. $motivo.' la cotización '. $this->numero_folio_format .' debido a que ya han sido asignados algunos materiales');
+        }
+    }
+
+    public function actualizar($data)
+    {
+        try
+        {
+            DB::connection('cadeco')->beginTransaction();
+                $fecha =New DateTime($data['fecha']);
+                $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+                $this->update([
+                    'observaciones' => $data['observaciones'],
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'monto' => $data['importe'],
+                    'impuesto' => $data['impuesto'],
+                    'porcentaje_anticipo_pactado' => $data['pago']
+                ]);
+
+                if($this->complemento)
+                {
+                    $this->complemento->parcialidades = $data['pago'];
+                    $this->complemento->dias_credito = $data['credito'];
+                    $this->complemento->vigencia = $data['vigencia'];
+                    $this->complemento->plazo_entrega = $data['tiempo'];
+                    $this->complemento->descuento = $data['descuento_cot'];
+                    $this->complemento->anticipo = $data['anticipo'];
+                    $this->complemento->importe = $data['importe'];
+                    $this->complemento->tc_usd = $data['tipo_cambio'][2];
+                    $this->complemento->tc_eur = $data['tipo_cambio'][3];
+                    $this->complemento->save();
+                }
+                else{
+                    $this->complemento()->create([
+                        'id_transaccion' => $this->id_transaccion,
+                        'parcialidades' => $data['pago'],
+                        'dias_credito' => $data['credito'],
+                        'vigencia' => $data['vigencia'],
+                        'plazo_entrega' => $data['tiempo'],
+                        'descuento' => $data['descuento_cot'],
+                        'anticipo' => $data['anticipo'],
+                        'importe' => $data['importe'],
+                        'tc_usd' => $data['tipo_cambio'][2],
+                        'tc_eur' => $data['tipo_cambio'][3],
+                        'timestamp_registro' => $fecha->format("Y-m-d")
+                    ]);
+                }
+
+                $i = 0;
+                foreach($data['partidas'] as $partida)
+                {
+                    $item = Cotizacion::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion);
+                    $item->update([
+                        'precio_unitario' => ($data['enable'][$i]) ? $data['precio'][$i] : 0,
+                        'descuento' => ($data['enable'][$i]) ? $data['descuento'][$i] : 0,
+                        'no_cotizado' => (!$data['enable'][$i]) ? 1 : 0,
+                        'id_moneda' => ($data['enable'][$i]) ? $data['moneda'][$i] : null
+                    ]);
+
+                    if($item->first()->partida)
+                    {
+                        CotizacionComplementoPartida::where('id_transaccion', '=', $this->id_transaccion)
+                        ->where('id_material', '=', $partida['material']['id'])->update([
+                            'descuento_partida' => ($data['enable'][$i]) ? $data['descuento'][$i] : 0,
+                            'observaciones' => ($data['enable'][$i]) ? $partida['observacion'] : null,
+                            'estatus' => ($data['enable'][$i]) ? 3 : 1
+                        ]);
+                    }
+                    else{
+                        CotizacionComplementoPartida::create([
+                            'id_transaccion' => $this->id_transaccion,
+                            'id_material' => $partida['material']['id'],
+                            'descuento_partida' => ($data['enable'][$i]) ? $data['descuento'][$i] : 0,
+                            'observaciones' => ($data['enable'][$i]) ? $partida['observacion'] : null,
+                            'estatus' => ($data['enable'][$i]) ? 3 : 1
+                        ]);
+                    }
+                $i ++;
+                }
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 
     public function crear($data)

@@ -106,9 +106,9 @@
                                     </div>
                                     <div class="row col-md-12" v-if="cotizacion.complemento">
                                         <div class="col-md-2"><b>Pago en Parcialidades (%):</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.parcialidades}}</div>
+                                        <div class="col-md-2">{{cotizacion.complemento.parcialidades_format}}</div>
                                         <div class="col-md-2"><b>Anticipo:</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.anticipo}}</div>
+                                        <div class="col-md-2">{{cotizacion.complemento.anticipo_format}}</div>
                                     </div>
                                     <div class="row col-md-12" v-if="cotizacion.complemento">
                                         <div class="col-md-2"><b>Crédito (días):</b></div>
