@@ -47,6 +47,29 @@ class ContratoProyectadoService
     }
 
     public function store($data){
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $contrato_proyectado = $this->repository->create([
+                'fecha' => $data['fecha'],
+                'cumplimineto' => $data['cumplimineto'],
+                'vencimiento' => $data['vencimiento'],
+                'referencia' => $data['referencia'],
+            ]);
+            $contrato_proyectado = $this->repository->show($contrato_proyectado->id_transaccion);
+            $contrato_proyectado->areaSubcontratante()->create([
+                'id_transaccion' => $contrato_proyectado->id_transaccion,
+                'id_area_subcontratante' => $data['id_area_subcontratante'],
+            ]);
+            
+            dd($contrato_proyectado->areaSubcontratante);
+
+            DB::connection('cadeco')->commit();
+            
+            return $factura;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
         dd('panda', $data);
     }
 
