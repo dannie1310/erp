@@ -4,9 +4,10 @@
 namespace App\Services\CADECO\Compras;
 
 
-use App\Models\CADECO\Compras\Asignacion;
-use App\PDF\Compras\AsignacionFormato;
 use App\Repositories\Repository;
+use App\PDF\Compras\AsignacionFormato;
+use App\Models\CADECO\Compras\Asignacion;
+use App\Models\CADECO\Compras\AsignacionProveedores;
 
 class AsignacionService
 {
@@ -15,7 +16,7 @@ class AsignacionService
      */
     protected $repository;
 
-    public function __construct(Asignacion $model)
+    public function __construct(AsignacionProveedores $model)
     {
         $this->repository = new Repository($model);
     }

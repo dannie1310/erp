@@ -18,8 +18,8 @@ class CotizacionComplementoTransformer extends TransformerAbstract
             'dias_credito' => (int) $model->dias_credito,
             'vigencia' => (int) $model->vigencia,
             'entrega' => (int) $model->plazo_entrega,
-            'tc_usd' => $model->tipo_cambio_usd_format,
-            'tc_eur' => $model->tipo_cambio_eur_format
+            'tc_usd_format' => $model->tipo_cambio_usd_format,
+            'tc_eur_format' => $model->tipo_cambio_eur_format
         ];
     }
 }

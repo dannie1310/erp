@@ -131,7 +131,7 @@ class CotizacionCompra  extends Transaccion
                         $cotizaciones = $cotizacion->cotizaciones()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],
-                            'cantidad' => ($solicitud->estado == 1) ? $partida['solicitado_cantidad'] : $partida['cantidad_original'],
+                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
                             'precio_unitario' => ($data['enable'][$x] !== false) ? $data['precio'][$x] : 0,
                             'descuento' => ($data['enable'][$x] !== false) ? ($data['descuento_cot'] + $data['descuento'][$x] - (($data['descuento_cot'] * $data['descuento'][$x]) / 100)) : 0,
                             'anticipo' => ($data['enable'][$x] !== false) ? $data['anticipo'] : 0,
@@ -155,7 +155,7 @@ class CotizacionCompra  extends Transaccion
                        $cotizaciones = $cotizacion->cotizaciones()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],
-                            'cantidad' => ($solicitud->estado == 1) ? $partida['solicitado_cantidad'] : $partida['cantidad_original'],
+                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
                             'precio_unitario' => $data['precio'][$x],
                             'descuento' => ($data['descuento_cot'] + $data['descuento'][$x] - (($data['descuento_cot'] * $data['descuento'][$x]) / 100)),
                             'anticipo' => $data['anticipo'],
@@ -208,5 +208,9 @@ class CotizacionCompra  extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
+    }
+
+    public function scopeConEmpresa(){
+        return $this->whereNotNull('id_empresa');
     }
 }
