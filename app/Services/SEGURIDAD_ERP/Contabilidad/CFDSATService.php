@@ -313,7 +313,7 @@ class CFDSATService
             $this->log["archivos_no_cargados_error_app"] +=1;
         }
         $this->arreglo_factura["subtotal"] = $this->arreglo_factura["total"] - $this->arreglo_factura["total_impuestos_trasladados"];
-        $this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]["rfc"]);
+        $this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]);
         $proveedor = $this->repository->getProveedorSAT($this->arreglo_factura["emisor"], $this->arreglo_factura["id_empresa_sat"]);
         $this->arreglo_factura["id_proveedor_sat"] = $proveedor["id_proveedor"];
 
@@ -428,7 +428,7 @@ class CFDSATService
             abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] +=1;
         }
-        $this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]["rfc"]);
+        $this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]);
         $proveedor = $this->repository->getProveedorSAT($this->arreglo_factura["emisor"], $this->arreglo_factura["id_empresa_sat"]);
         $this->arreglo_factura["id_proveedor_sat"] = $proveedor["id_proveedor"];
         if($proveedor["nuevo"]>0){
