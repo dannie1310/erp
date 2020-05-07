@@ -10,9 +10,10 @@
 <script>
     import CambiarAreaSubcontratante from "../CambiarAreaSubcontratante";
     import Show from '../Show';
+    import Editar from '../Edit';
     export default {
         name: "action-buttons",
-        components: {CambiarAreaSubcontratante, Show},
+        components: {CambiarAreaSubcontratante, Show, Editar},
         props: ['value'],
         methods: {
             cambiar_area() {

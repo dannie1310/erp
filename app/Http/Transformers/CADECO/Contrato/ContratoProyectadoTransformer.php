@@ -30,7 +30,7 @@ class ContratoProyectadoTransformer extends TransformerAbstract
             'fecha_date' => $model->fecha,
             'referencia' => (string)$model->referencia,
             'area_subcontratante' => ($model->cpAreasSubcontratantes) ? $model->cpAreasSubcontratantes->tipoAreaSubcontratante->descripcion : 'Sin Área Subcontratante Asignada',
-            'usuario' => ($model->cpAreasSubcontratantes) ? $model->cpAreasSubcontratantes->nombre_completo : '-------------'
+            'usuario' => ($model->cpAreasSubcontratantes) ? $model->cpAreasSubcontratantes->nombre_completo : '-------------',
             'cumplimiento' => $model->cumplimiento,
             'vencimiento' => date_format(new DateTime($model->vencimiento), 'Y-m-d')
         ];

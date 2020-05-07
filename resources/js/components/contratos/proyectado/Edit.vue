@@ -159,7 +159,6 @@ export default {
         },    
         find()
         {
-            console.log('Comienza a buscar', this.id);
             this.cargando = true;
                 this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', null);
                 return this.$store.dispatch('contratos/contrato-proyectado/find', {
