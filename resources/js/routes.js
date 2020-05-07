@@ -1076,19 +1076,6 @@ export const routes = [
                             middleware: [auth, context]
                         }
                     },
-                    // {
-                    //     path: ':id/editar',
-                    //     name: 'estimacion-edit',
-                    //     props: true,
-                    //     component: require('./components/contratos/estimacion/Edit').default,
-                    //     meta: {
-                    //         title: 'Editar Estimación',
-                    //         breadcrumb: {parent: 'estimacion', name: 'EDITAR'},
-                    //         middleware: [auth, context, permission],
-                    //         permission: 'editar_estimacion_subcontrato'
-
-                    //     }
-                    // },
                 ]
             },
             {
@@ -1126,9 +1113,9 @@ export const routes = [
                         component: require('./components/compras/requisicion/Create').default,
                         meta: {
                             title: 'Registrar Requisición de Compra',
-                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR'},
-                            middleware: [auth, context],
-                            // permission: 'registrar_solicitud_compra'
+                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR REQUISICIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_requisicion_compra'
                         }
                     },
 
@@ -1161,7 +1148,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id',
+                        path: ':id/editar',
                         name: 'solicitud-compra-edit',
                         component: require('./components/compras/solicitud-compra/Edit').default,
                         props: true,
@@ -1392,7 +1379,7 @@ export const routes = [
                             title: 'Subcontratos',
                             breadcrumb: {parent: 'contratos', name: 'SUBCONTRATOS'},
                             middleware: [auth, context, permission],
-                            permission: 'consultar_listado_subcontratos'
+                            permission: 'consultar_subcontrato'
                         }
                     },
                 ]
