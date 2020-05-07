@@ -65,7 +65,8 @@ class CotizacionCompra  extends Transaccion
 
     public function descargaLayout($id)
     {
-        return Excel::download(new CotizacionLayout(CotizacionCompra::find($id)), 'LayoutCotizacion.xlsx');
+        $find = CotizacionCompra::find($id);
+        return Excel::download(new CotizacionLayout($find), str_replace('/', '-',$find->observaciones).'.xlsx');
     }
 
     public function empresa()
