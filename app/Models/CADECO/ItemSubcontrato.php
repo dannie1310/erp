@@ -65,7 +65,7 @@ class ItemSubcontrato extends Item
      * Función para obtener cifras utilizadas en estimaciones (creación, edición, consulta)
      * @return array
      */
-    public function partidasEstimadas($id_estimacion, $id_contrato, $nivel)
+    public function partidasEstimadas($id_estimacion, $id_contrato, $contrato)
     {
        $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
            ->where('id_antecedente', $this->id_transaccion)
@@ -74,14 +74,7 @@ class ItemSubcontrato extends Item
         $precio_unitario = $estimacion ? $estimacion->precio_unitario : $this->precio_unitario;
         $cantidad_estimada_total = $this->cantidad_total_estimada ? $this->cantidad_total_estimada : 0;
         $cantidad_estimado_anterior = $estimacion ?  $cantidad_estimada_total - $estimacion->cantidad : $cantidad_estimada_total;
-        $contrato = Contrato::where('id_transaccion', '=', $id_contrato)->where("id_concepto", "=",$this->id_concepto)->first();
-        $destino = $this->destino()->where('id_transaccion', '=', $id_contrato)->first();
-
-        if($contrato == null)
-        {
-            $contrato = Contrato::where('id_transaccion', '=', $id_contrato)->where("nivel", "=", $nivel)->first();
-            $destino = Destino::where('id_transaccion', '=', $id_contrato)->where('id_concepto_contrato', '=', $contrato->id_concepto)->first();
-        }
+        $destino = Destino::where('id_transaccion', '=', $id_contrato)->where('id_concepto_contrato', '=', $contrato->id_concepto)->first();
 
         return array(
             'id' => $this->id_item,
@@ -104,12 +97,12 @@ class ItemSubcontrato extends Item
             'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
             'porcentaje_estimado' => (float) number_format(((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100), 3, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
-            'destino_path' => $destino ? $destino->ruta_destino : '-',
-            'id_destino' => $destino ? $destino->id_concepto : '-'
+            'destino_path' => $destino->ruta_destino,
+            'id_destino' => $destino->id_concepto,
         );
     }
 
-    public function partidasFormatoEstimacion($id_estimacion)
+    public function partidasFormatoEstimacion($id_estimacion, $nivel)
     {
         $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
             ->where('id_antecedente', $this->id_transaccion)
@@ -117,6 +110,11 @@ class ItemSubcontrato extends Item
 
         $acumulado_anterior = $this->acumulado_anterior->where('id_transaccion', '<', $id_estimacion);
         $contrato = $this->contrato()->where('id_transaccion', '=', $this->subcontrato->id_antecedente)->first();
+
+        if($contrato == null)
+        {
+            $contrato = Contrato::where('id_transaccion', '=', $this->subcontrato->id_antecedente)->where("nivel", "=", $nivel)->first();
+        }
         $cantidad_estimacion = $estimacion ? $estimacion->cantidad : 0;
         $importe_estimacion =  $estimacion ? $estimacion->importe : 0;
 
