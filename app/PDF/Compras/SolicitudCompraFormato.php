@@ -15,6 +15,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SolicitudCompraFormato extends Rotation
 {
@@ -185,7 +186,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.207 * $this->WidthTotal, 0.5, ''.$this->solicitud->fecha_format, 'R', 1, 'R');
 
-        if(!is_null($this->solicitud->complemento->fecha_requisicion_origen))
+        if(!is_null($this->solicitud->complemento))
         {
             $this->SetFont('Arial', 'B', $this->txtContenidoTam);
             $this->SetX($x);
@@ -268,8 +269,8 @@ RFC: ' . $this->obra->rfc), '', 'J');
 
             $this->Row([
                 $i+1,
-                $item->entrega->cantidad,
-                "-",
+                $item->cantidad_original1 > 0 ? $item->cantidad_original1 : $item->cantidad,
+                $item->cantidad_original1 > 0 ? $item->cantidad : '-',
                 $item->unidad,
                 utf8_decode($item->material->numero_parte),
                 utf8_decode( $item->material->descripcion),
@@ -360,7 +361,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->firmas();
 
         $this->SetY(-3.8);
-          $this->image("http://172.20.74.94/libraries/PHPQRCode/qr.php?cadena=".urlencode($this->cadena_qr), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
+        $this->image("data:image/png;base64,".base64_encode(QrCode::format('png')->generate($this->cadena_qr)), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
         $this->SetY(-3.6);
         $this->SetX(-17);
         $this->SetFont('Arial', '', 5);
@@ -372,14 +373,14 @@ RFC: ' . $this->obra->rfc), '', 'J');
 
         $this->SetFont('Arial', 'B', 6);
         $this->SetTextColor('100,100,100');
-        $this->SetY(28.5);
+        $this->SetY(-1.3);
         $this->Cell(19.5, .4, utf8_decode('Sistema de Administración de Obra'), 0, 0, 'R');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->SetY(28.5);
-        $this->setX(1);
+        $this->SetY(-0.8);
+        $this->setX(4.5);
         $this->SetTextColor('0,0,0');
-        $this->Cell(7, .4, utf8_decode('Formato generado desde el módulo de Compras. Fecha de registro: '.$this->solicitud->fecha_format), 0, 0, 'L');
+        $this->Cell(7, .4, utf8_decode('Formato generado desde el sistema de compras. Fecha de registro: '.$this->solicitud->fecha_format), 0, 0, 'L');
 
         $this->Ln(.5);
         $this->SetY(-0.9);

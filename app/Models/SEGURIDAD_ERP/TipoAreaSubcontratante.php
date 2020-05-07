@@ -10,6 +10,7 @@ class TipoAreaSubcontratante extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'SEGURIDAD_ERP.dbo.ctg_areas_subcontratantes';
+    protected $primaryKey = 'id';
 
     public function usuariosAreasSubcontratantes()
     {
