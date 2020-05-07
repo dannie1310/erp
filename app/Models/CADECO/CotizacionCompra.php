@@ -209,4 +209,8 @@ class CotizacionCompra  extends Transaccion
             abort(400, $e->getMessage());
         }
     }
+
+    public function scopeConEmpresa(){
+        return $this->whereNotNull('id_empresa');
+    }
 }

@@ -1,8 +1,8 @@
 <template>
     <div class="btn-group">
-        <button @click="descargaLayout" type="button"
-                class="btn btn-sm btn-outline-success" title="Descargar Layout">
-            <i class="fa fa-download"></i>
+        <button @click="show" type="button"
+                class="btn btn-sm btn-outline-default" title="Ver">
+            <i class="fa fa-eye"></i>
         </button>
         <PDF></PDF>
     </div>
@@ -19,14 +19,17 @@
             }
         },
         methods:{
-            descargaLayout() {
-                console.log('Descarga de Layouts');
-                return this.$store.dispatch('compras/asignacion/descargaLayout',{id: 5})
-                    .then(() => {
-                        this.$emit('success')
-
-                    })
+            show(){
+                this.$router.push({name: 'asignacion-proveedores-show'});
             },
+            // descargaLayout() {
+            //     console.log('Descarga de Layouts');
+            //     return this.$store.dispatch('compras/asignacion/descargaLayout',{id: 5})
+            //         .then(() => {
+            //             this.$emit('success')
+
+            //         })
+            // },
         }
     }
 
