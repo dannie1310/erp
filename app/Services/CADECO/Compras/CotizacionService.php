@@ -40,4 +40,9 @@ class CotizacionService
     {
         return $this->repository->create($data);
     }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->show($id)->actualizar($data);
+    }
 }

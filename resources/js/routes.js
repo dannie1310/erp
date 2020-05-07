@@ -954,6 +954,30 @@ export const routes = [
                             middleware: [auth, context],
                         }
                     },
+                    {
+                        path: 'show',
+                        name: 'asignacion-proveedores-show',
+                        component: require('./components/compras/asignacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Ver Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedores', name: 'VER'},
+                            middleware: [auth, context],
+                            // permission: 'registrar_proveedor'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'asignacion-proveedores-create',
+                        component: require('./components/compras/asignacion/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedores', name: 'REGISTRAR'},
+                            middleware: [auth, context],
+                            // permission: 'registrar_proveedor'
+                        }
+                    },
                 ]
             },
             {
@@ -1041,6 +1065,18 @@ export const routes = [
                             permission: ['registrar_cotizacion_compra']
                         }
                     },
+                    {
+                        path: ':id/editar',
+                        name: 'cotizacion-edit',
+                        props: true,
+                        component: require('./components/compras/cotizacion/Edit').default,
+                        meta: {
+                            title: 'Editar Cotización',
+                            breadcrumb: { parent: 'cotizacion', name: 'EDITAR COTIZACIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: ['editar_cotizacion_compra']
+                        }
+                    }
                 ]
             },
             {
@@ -1107,7 +1143,7 @@ export const routes = [
                         component: require('./components/compras/solicitud-compra/Create').default,
                         meta: {
                             title: 'Registrar Solicitud',
-                            breadcrumb: { parent: 'compras', name: 'REGISTRAR SOLICITUD'},
+                            breadcrumb: { parent: 'solicitud-compra', name: 'REGISTRAR'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_solicitud_compra'
                         }
@@ -1119,7 +1155,7 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Editar Solicitud',
-                            breadcrumb: { parent: 'compras', name: 'EDITAR SOLICITUD'},
+                            breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
                             middleware: [auth, context, permission],
                             permission: 'editar_solicitud_compra'
                         }

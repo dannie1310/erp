@@ -32,9 +32,9 @@
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.descripcion : '------ Sin Sucursal ------'}}</td>
                                                     <td class="bg-gray-light"><b>ToTC USD:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd : '---------------'}}</td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : '---------------'}}</td>
                                                     <td class="bg-gray-light"><b>ToTC EURO:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur : '---------------'}}</td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : '---------------'}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Direccion:</b></td>
@@ -77,7 +77,7 @@
                                                         <td style="text-align: center">{{(partida.material) ? partida.material.descripcion : '------------'}}</td>
                                                         <td style="text-align: center">{{(partida.material) ? partida.material.unidad : '-----'}}</td>
                                                         <td style="text-align: center">{{partida.cantidad}}</td>
-                                                        <td class="money">{{partida.precio_unitario}}</td>
+                                                        <td class="money">{{partida.precio_unitario_format}}</td>
                                                         <td style="text-align: center">{{partida.descuento}}</td>
                                                         <td class="money">{{partida.precio_total}}</td>
                                                         <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
@@ -90,7 +90,7 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">% Descuento</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.descuento : '-----'}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.descuento_format : '-----'}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXP):</label>
@@ -106,9 +106,9 @@
                                     </div>
                                     <div class="row col-md-12" v-if="cotizacion.complemento">
                                         <div class="col-md-2"><b>Pago en Parcialidades (%):</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.parcialidades}}</div>
+                                        <div class="col-md-2">{{cotizacion.complemento.parcialidades_format}}</div>
                                         <div class="col-md-2"><b>Anticipo:</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.anticipo}}</div>
+                                        <div class="col-md-2">{{cotizacion.complemento.anticipo_format}}</div>
                                     </div>
                                     <div class="row col-md-12" v-if="cotizacion.complemento">
                                         <div class="col-md-2"><b>Crédito (días):</b></div>
