@@ -1143,7 +1143,7 @@ export const routes = [
                         component: require('./components/compras/solicitud-compra/Create').default,
                         meta: {
                             title: 'Registrar Solicitud',
-                            breadcrumb: { parent: 'compras', name: 'REGISTRAR SOLICITUD'},
+                            breadcrumb: { parent: 'solicitud-compra', name: 'REGISTRAR'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_solicitud_compra'
                         }
@@ -1155,7 +1155,7 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Editar Solicitud',
-                            breadcrumb: { parent: 'compras', name: 'EDITAR SOLICITUD'},
+                            breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
                             middleware: [auth, context, permission],
                             permission: 'editar_solicitud_compra'
                         }

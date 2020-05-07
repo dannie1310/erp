@@ -6,7 +6,7 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
 
-            <li class="nav-item" v-if="$root.can('modificar_area_subcontratante_cp')">
+            <li class="nav-item" v-if="$root.can(['modificar_area_subcontratante_cp', 'consultar_contrato_proyectado'])">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>
                         Gestión de Contratos Proyectados
@@ -14,7 +14,7 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('modificar_area_subcontratante_cp')">
+                    <li class="nav-item" v-if="$root.can(['modificar_area_subcontratante_cp', 'consultar_contrato_proyectado'])">
                         <router-link :to="{name: 'proyectado'}" class="nav-link" :class="{active: this.$route.name == 'proyectado'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Contrato Proyectado</p>
