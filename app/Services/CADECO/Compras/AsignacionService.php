@@ -5,9 +5,11 @@ namespace App\Services\CADECO\Compras;
 
 
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\DB;
 use App\PDF\Compras\AsignacionFormato;
 use App\Models\CADECO\Compras\Asignacion;
 use App\Models\CADECO\Compras\AsignacionProveedores;
+use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
 
 class AsignacionService
 {
@@ -34,6 +36,45 @@ class AsignacionService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function store($data)
+    {
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $asignacion = $this->repository->create([
+                'id_transaccion_solicitud' => $data['id_solicitud'],
+                'estado' => 1,
+            ]);
+// dd($asignacion);
+            $registradas = 0;
+
+            foreach($data['cotizaciones'] as $cotizacion){
+                foreach($cotizacion['partidas'] as $partida){
+                    if($partida && $partida['cantidad_asignada'] > 0){
+                        AsignacionProveedoresPartida::create([
+                            'id_asignacion_proveedores' => $asignacion->id,
+                            'id_item_solicitud' => $partida['id_item'],
+                            'id_transaccion_cotizacion' => $partida['id_transaccion'],
+                            'id_material' => $partida['id_material'],
+                            'cantidad_asignada' => $partida['cantidad_asignada'],
+                        ]);
+                        $registradas ++;
+                    }
+                }
+            }
+            
+            if($registradas == 0){
+                abort(403,'La asignación debe tener al menos una partida con cantidad asignada a un proveedor.');
+            }
+            
+            DB::connection('cadeco')->commit();
+            return $asignacion;
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 
     public function asignacion($id)
