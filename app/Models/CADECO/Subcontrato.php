@@ -292,7 +292,7 @@ class Subcontrato extends Transaccion
                     $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
                 }
             }
-            $items [$partida->nivel] = $partida->partidasEstimadas($id_estimacion, $this->id_antecedente);
+            $items [$partida->nivel] = $partida->partidasEstimadas($id_estimacion, $this->id_antecedente, $partida->nivel);
         }
         $respuesta = array(
             'folio' => $this->numero_folio_format,

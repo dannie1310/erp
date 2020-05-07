@@ -3,6 +3,7 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Contrato;
 
 class ItemSubcontrato extends Item
 {
@@ -64,7 +65,7 @@ class ItemSubcontrato extends Item
      * Función para obtener cifras utilizadas en estimaciones (creación, edición, consulta)
      * @return array
      */
-    public function partidasEstimadas($id_estimacion, $id_contrato)
+    public function partidasEstimadas($id_estimacion, $id_contrato, $nivel)
     {
        $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
            ->where('id_antecedente', $this->id_transaccion)
@@ -73,13 +74,19 @@ class ItemSubcontrato extends Item
         $precio_unitario = $estimacion ? $estimacion->precio_unitario : $this->precio_unitario;
         $cantidad_estimada_total = $this->cantidad_total_estimada ? $this->cantidad_total_estimada : 0;
         $cantidad_estimado_anterior = $estimacion ?  $cantidad_estimada_total - $estimacion->cantidad : $cantidad_estimada_total;
-        $contrato = $this->contrato()->where('id_transaccion', '=', $id_contrato)->first();
+        $contrato = Contrato::where('id_transaccion', '=', $id_contrato)->where("id_concepto", "=",$this->id_concepto)->first();
         $destino = $this->destino()->where('id_transaccion', '=', $id_contrato)->first();
+
+        if($contrato == null)
+        {
+            $contrato = Contrato::where('id_transaccion', '=', $id_contrato)->where("nivel", "=", $nivel)->first();
+            $destino = Destino::where('id_transaccion', '=', $id_contrato)->where('id_concepto_contrato', '=', $contrato->id_concepto)->first();
+        }
 
         return array(
             'id' => $this->id_item,
             'id_concepto' => $this->id_concepto,
-            'unidad' => $contrato->unidad ? $contrato->unidad : '',
+            'unidad' => $contrato->unidad,
             'clave' => $contrato->clave,
             'descripcion_concepto' => $contrato->descripcion,
             'cantidad_subcontrato' => $this->cantidad,
@@ -97,8 +104,8 @@ class ItemSubcontrato extends Item
             'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
             'porcentaje_estimado' => (float) number_format(((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100), 3, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
-            'destino_path' => $destino->ruta_destino,
-            'id_destino' => $destino->id_concepto
+            'destino_path' => $destino ? $destino->ruta_destino : '-',
+            'id_destino' => $destino ? $destino->id_concepto : '-'
         );
     }
 
