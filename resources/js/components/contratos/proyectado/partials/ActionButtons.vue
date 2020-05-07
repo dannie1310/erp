@@ -1,6 +1,7 @@
 <template>
     <div class="btn-group">
         <cambiar-area-subcontratante :id="value.id" :value="value"></cambiar-area-subcontratante>
+        <Show v-if="$root.can('consultar_contrato_proyectado')" v-bind:id="value.id"></Show>
         <Editar v-bind:id="value.id" v-if="$root.can('editar_contrato_proyectado')"></Editar>
 
     </div>
@@ -8,10 +9,10 @@
 
 <script>
     import CambiarAreaSubcontratante from "../CambiarAreaSubcontratante";
-    import Editar from '../Edit';
+    import Show from '../Show';
     export default {
         name: "action-buttons",
-        components: {CambiarAreaSubcontratante, Editar},
+        components: {CambiarAreaSubcontratante, Show},
         props: ['value'],
         methods: {
             cambiar_area() {

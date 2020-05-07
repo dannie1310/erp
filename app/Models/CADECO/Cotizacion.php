@@ -4,8 +4,9 @@
 namespace App\Models\CADECO;
 
 
-use App\Models\CADECO\Compras\CotizacionComplementoPartida;
+use App\Models\CADECO\Moneda;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 
 class Cotizacion extends Model
 {
