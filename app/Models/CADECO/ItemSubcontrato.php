@@ -102,28 +102,24 @@ class ItemSubcontrato extends Item
         );
     }
 
-    public function partidasFormatoEstimacion($id_estimacion, $nivel)
+    public function partidasFormatoEstimacion($id_estimacion, $contrato)
     {
         $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
             ->where('id_antecedente', $this->id_transaccion)
             ->where('item_antecedente', $this->id_concepto)->first();
 
         $acumulado_anterior = $this->acumulado_anterior->where('id_transaccion', '<', $id_estimacion);
-        $contrato = $this->contrato()->where('id_transaccion', '=', $this->subcontrato->id_antecedente)->first();
+       // $contrato = $this->contrato()->where('id_transaccion', '=', $this->subcontrato->id_antecedente)->first();
 
-        if($contrato == null)
-        {
-            $contrato = Contrato::where('id_transaccion', '=', $this->subcontrato->id_antecedente)->where("nivel", "=", $nivel)->first();
-        }
         $cantidad_estimacion = $estimacion ? $estimacion->cantidad : 0;
         $importe_estimacion =  $estimacion ? $estimacion->importe : 0;
 
         return array(
             'id' => $this->id_item,
             'id_concepto' => $this->id_concepto,
-            'unidad' => $contrato->unidad,
-            'clave' => $contrato->clave,
-            'descripcion_concepto' => $contrato->descripcion,
+            'unidad' => $contrato ? $contrato->unidad : '',
+            'clave' => $contrato ? $contrato->clave : '',
+            'descripcion_concepto' => $contrato ? $contrato->descripcion : '',
             'cantidad_subcontrato' => $this->cantidad,
             'precio_unitario_subcontrato' => $this->precio_unitario,
             'importe_subcontrato' => ($this->cantidad * $this->precio_unitario),
