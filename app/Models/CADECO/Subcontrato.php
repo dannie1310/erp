@@ -292,7 +292,13 @@ class Subcontrato extends Transaccion
                     $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
                 }
             }
-            $items [$partida->nivel] = $partida->partidasEstimadas($id_estimacion, $this->id_antecedente);
+            $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("id_concepto", "=",$partida->id_concepto)->first();
+            if($contrato == null)
+            {
+                $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
+                $partida = ItemSubcontrato::where('id_transaccion', '=',  $this->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+            }
+            $items [$partida->nivel] = $partida->partidasEstimadas($id_estimacion, $this->id_antecedente, $contrato);
         }
         $respuesta = array(
             'folio' => $this->numero_folio_format,
