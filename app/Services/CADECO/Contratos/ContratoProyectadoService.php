@@ -57,54 +57,56 @@ class ContratoProyectadoService
                 'referencia' => $data['referencia'],
             ]);
             $contrato_proyectado = $this->repository->show($contrato_proyectado->id_transaccion);
-            // $contrato_proyectado->areaSubcontratante()->create([
-            //     'id_transaccion' => $contrato_proyectado->id_transaccion,
-            //     'id_area_subcontratante' => $data['id_area_subcontratante'],
-            // ]);
+            $contrato_proyectado->areaSubcontratante()->create([
+                'id_transaccion' => $contrato_proyectado->id_transaccion,
+                'id_area_subcontratante' => $data['id_area_subcontratante'],
+            ]);
 
             $nivel_anterior = 0;
             $nivel_contrato_anterior = '';
-                // dd($data['contratos']);
             foreach($data['contratos'] as $key => $contrato){
                 $nivel = '';
                 if($nivel_contrato_anterior == ''){
                     $nivel = '000.';
                     $nivel_contrato_anterior = $nivel;
                     $nivel_anterior = $contrato['nivel'];
-                    // dd($nivel);
                 }else{
                     if($nivel_anterior + 1 == $contrato['nivel']){
                         $cant = Contrato::where('nivel', 'LIKE', $nivel_contrato_anterior.'___.')->where('id_transaccion', '=', $contrato_proyectado->id_transaccion)->count();
                         $nivel = $nivel_contrato_anterior . str_pad($cant, 3, 0, 0) . '.';
                         $nivel_contrato_anterior = $nivel;
                         $nivel_anterior = $contrato['nivel'];
-                    }
-                    if($nivel_anterior > $contrato['nivel']){
+                    }else{
                         $cant = Contrato::where('nivel', 'LIKE', substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)) . '___.')->where('id_transaccion', '=', $contrato_proyectado->id_transaccion)->count();
                         $nivel = substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)) . str_pad($cant, 3, 0, 0) . '.';
                         $nivel_contrato_anterior = $nivel;
                         $nivel_anterior = $contrato['nivel'];
                     }
-                    if($nivel_anterior == $contrato['nivel']){
-                        $cant = Contrato::where('nivel', 'LIKE', substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)))->where('id_transaccion', '=', $contrato_proyectado->id_transaccion)->count();
-                        $nivel = substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)) . str_pad($cant, 3, 0, 0) . '.';
-                        $nivel_contrato_anterior = $nivel;
-                        $nivel_anterior = $contrato['nivel'];
-                    }
-                    // Contrato::where('nivel', 'LIKE', )
-                }
-            }
 
-            dd('pando',$contrato_proyectado->areaSubcontratante);
+                }
+                $datos = array();
+                $datos['id_transaccion'] = $contrato_proyectado->id_transaccion; 
+                $datos['nivel'] = $nivel; 
+                $datos['descripcion'] = $contrato['descripcion']; 
+                
+                if($contrato['es_hoja']){
+                    $datos['id_destino'] = $contrato['destino']; 
+                    $datos['unidad'] = $contrato['unidad']; 
+                    $datos['cantidad_original'] = $contrato['cantidad']; 
+                    $datos['cantidad_presupuestada'] = $contrato['cantidad']; 
+                    $datos['clave'] = $contrato['clave']; 
+                }
+
+                $contrato_proyectado->conceptos()->create($datos);
+            }
 
             DB::connection('cadeco')->commit();
             
-            return $factura;
+            return $contrato_proyectado;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             throw $e;
         }
-        dd('panda', $data);
     }
 
     public function paginate($data)

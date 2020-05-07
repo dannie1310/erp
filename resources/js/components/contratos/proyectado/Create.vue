@@ -14,8 +14,12 @@
                         <div class="modal-body">
                             <!-- Seccion de datos iniciales -->
                             <div class="row">
-                                <div class="col-md-12">
-                                    <div class="col-md-2 offset-md-10">
+                                <div class="col-md-4 offset-md-7 mt-3 text-left" >
+                                    <label class="text-secondary">Fechas Límite </label>
+                                    <hr style="color: #0056b2; margin-top:auto;" width="95%" size="10" />
+                                </div>
+                                <!-- <div class="col-md-12"> -->
+                                    <div class="col-md-2 ">
                                         <div class="form-group error-content">
                                             <div class="form-group">
                                                 <label><b>Fecha</b></label>
@@ -34,44 +38,25 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-4 offset-md-8 mt-3 text-left" >
-                                    <label class="text-secondary">Fechas Límite </label>
-                                    <hr style="color: #0056b2; margin-top:auto;" width="95%" size="10" />
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="form-group error-content">
-                                        <label for="numero">Referencia:</label>
-                                        <input type="text" class="form-control"
-                                                name="referencia"
-                                                data-vv-as="Referencia"
-                                                v-model="referencia"
-                                                v-validate="{required: true}"
-                                                :class="{'is-invalid': errors.has('referencia')}"
-                                                id="referencia"
-                                                placeholder="Referencia">
-                                        <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group error-content">
-                                        <div class="form-group">
-                                            <label><b>Cotización</b></label>
-                                            <datepicker v-model = "fecha_cotizacion"
-                                                        name = "fecha_cotizacion"
-                                                        data-vv-as="Fecha Cotización"
-                                                        :language = "es"
-                                                        :format = "formatoFecha"
-                                                        :bootstrap-styling = "true"
-                                                        v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('fecha_cotizacion')}"
-                                                        class = "form-control">
-                                            </datepicker>
-                                            <div class="invalid-feedback" v-show="errors.has('fecha_cotizacion')">{{ errors.first('fecha_cotizacion') }}</div>
+                                    <div class="col-md-2 offset-md-5">
+                                        <div class="form-group error-content">
+                                            <div class="form-group">
+                                                <label><b>Cotización</b></label>
+                                                <datepicker v-model = "fecha_cotizacion"
+                                                            name = "fecha_cotizacion"
+                                                            data-vv-as="Fecha Cotización"
+                                                            :language = "es"
+                                                            :format = "formatoFecha"
+                                                            :bootstrap-styling = "true"
+                                                            v-validate="{required: true}"
+                                                            :class="{'is-invalid': errors.has('fecha_cotizacion')}"
+                                                            class = "form-control">
+                                                </datepicker>
+                                                <div class="invalid-feedback" v-show="errors.has('fecha_cotizacion')">{{ errors.first('fecha_cotizacion') }}</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-2">
+                                     <div class="col-md-2">
                                     <div class="form-group error-content">
                                         <div class="form-group">
                                             <label><b>Contratación</b></label>
@@ -90,13 +75,29 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- </div> -->
+                                <div class="col-md-8">
+                                    <div class="form-group error-content">
+                                        <label for="numero">Referencia:</label>
+                                        <input type="text" class="form-control"
+                                                name="referencia"
+                                                data-vv-as="Referencia"
+                                                v-model="referencia"
+                                                v-validate="{required: true}"
+                                                :class="{'is-invalid': errors.has('referencia')}"
+                                                id="referencia"
+                                                placeholder="Referencia">
+                                        <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
+                                    </div>
+                                </div>
+                               
                                 <div class="col-md-4">
                                      <div class="form-group error-content">
                                         <label for="id_area">Área Subcontratante</label>
                                         <select
                                                 type="text"
                                                 name="id_area"
-                                                data-vv-as="Area"
+                                                data-vv-as="Área Subcontratante"
                                                 v-validate="{required: true}"
                                                 class="form-control"
                                                 id="id_area"
@@ -116,18 +117,19 @@
                             </div>
                             <!-- Seccion de partidas -->
                             <div class="row">
+                                <button type="button" class="btn btn-success" @click="agregarPartida('')"><i class="fa fa-plus"></i>Agregar</button>
                                  <div  class="col-12">
+                                     <br>
                                     <div class="table-responsive">
                                         <table class="table table-striped">
                                             <thead>
                                                 <tr>
                                                     <th style="width:3%"></th>
-                                                    <th style="width:13%">Clave</th>
-                                                    <th style="width:13%">Insumo</th>
-                                                    <th style="width:25%">Descripción</th>
+                                                    <th style="width:10%">Clave</th>
+                                                    <th style="width:35%">Descripción</th>
                                                     <th style="width:13%">Unidad</th>
                                                     <th style="width:10%">Cantidad</th>
-                                                    <th style="width:15%">Destinos</th>
+                                                    <th style="width:18%">Destinos</th>
                                                     <th style="width:8%"></th>
                                                     <th style="width:5%"></th>
                                                 </tr>
@@ -149,16 +151,6 @@
                                                             :class="{'is-invalid': errors.has(`clave[${i}]`)}"
                                                             :id="`clave[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control"
-                                                            :name="`insumo[${i}]`"
-                                                            data-vv-as="Insumo"
-                                                            v-model="partida.insumo"
-                                                            v-validate="{}"
-                                                            :class="{'is-invalid': errors.has(`insumo[${i}]`)}"
-                                                            :id="`insumo[${i}]`">
-                                                        <div class="invalid-feedback" v-show="errors.has(`insumo[${i}]`)">{{ errors.first(`insumo[${i}]`) }}</div>
                                                     </td>
                                                     <td>
                                                          <input type="text" class="form-control"
@@ -201,6 +193,7 @@
                                                     <td>
                                                         <input type="text" class="form-control"
                                                             readonly="readonly"
+                                                            :title="partida.destino_path"
                                                             :name="`destino_path[${i}]`"
                                                             data-vv-as="Destino"
                                                             v-model="partida.destino_path"
@@ -217,7 +210,7 @@
                                                         <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="partida.es_hoja"></i>
                                                     </td>
                                                     <td>
-                                                        <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar" v-if="i>0">
+                                                        <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
                                                             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                             <i class="fa fa-trash" v-else></i>
                                                         </button>
@@ -249,14 +242,12 @@
                     <div class="modal-body" v-if="edit_concepto_index >=0">
                         <div class="col-md-12">
                             <div class="form-group error-content">
-                                <input type="text" class="form-control"
+                                <input type="text" autofocus class="form-control"
                                     name="descripcion"
                                     data-vv-as="Descripción"
                                     v-model="descrip_temporal"
-                                    v-validate="{required: edit_concepto_index !== ''}"
-                                    :class="{'is-invalid': errors.has('descripcion')}"
+                                    v-on:keyup.enter="cambiarDesc()"
                                     id="descripcion">
-                                <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
                                 
                             </div>
                        </div>
@@ -337,33 +328,22 @@
                 edit_destino_index:'',
                 descrip_temporal:'',
                 destino_temp:'',
-                partida_copia:[],
+                partida_copia:{
+                    destino:'',
+                    destino_path:''
+                },
                 partida_index:'',
             }
         },
         mounted(){
             this.getAreaSub();
             this.getUnidades();
-            this.partidas.push({
-                clave:'',
-                insumo:'',
-                descripcion:'',
-                unidad:'',
-                cantidad:'',
-                destino:'',
-                destino_path:'',
-                nivel:1,
-                indice:1,
-                es_hoja:true,
-                es_rama:false,
-                cantidad_hijos:0,
-            });
         },
         computed: {
         },
         methods: {
             agregarPartida(index){
-                if(index === 0){
+                if(index === ''){
                     this.partidas.push({
                         clave:'',
                         insumo:'',
@@ -371,7 +351,7 @@
                         unidad:'',
                         cantidad:'',
                         destino:'',
-                        nivel:this.partidas[index].nivel + 1,
+                        nivel: 1,
                         indice:1,
                         es_hoja:true,
                         es_rama:false,
@@ -395,7 +375,7 @@
                         es_rama:false,
                         cantidad_hijos:0,
                     });
-                }
+                
                 this.partidas[index].es_hoja = false;
                 this.partidas[index].es_rama = true;
                 this.partidas[index].unidad = '';
@@ -403,6 +383,7 @@
                 this.partidas[index].destino = '';
                 this.partidas[index].destino_path = '';
                 this.partidas[index].cantidad_hijos = this.partidas[index].cantidad_hijos + 1;
+                }
                 
             },
             cambiarDesc(){
@@ -423,7 +404,9 @@
                 this.$validator.reset();
             },
             copiar_destino(partida){
-                this.partida_copia = partida;
+                console.log(partida);
+                this.partida_copia.destino = partida.destino;
+                this.partida_copia.destino_path = partida.destino_path;
             },
             descripcionFormat(i){
                 var len = this.partidas[i].descripcion.length + (+this.partidas[i].nivel * 3);
@@ -444,14 +427,18 @@
 
             },
             eliminarPartida(index){
-                let temp_index = index - 1;
-                while(temp_index in this.partidas && this.partidas[temp_index].nivel == +this.partidas[index].nivel){
-                    temp_index= temp_index - 1;
-                }
-                this.partidas[temp_index].cantidad_hijos = this.partidas[temp_index].cantidad_hijos - 1;
-                this.partidas.splice(index, 1);
-                if(this.partidas[temp_index].cantidad_hijos == 0){
-                    this.partidas[temp_index].es_hoja = true;
+                if(this.partidas[index].nivel === 1){
+                    this.partidas.splice(index, 1);
+                }else{
+                    let temp_index = index - 1;
+                    while(temp_index in this.partidas && this.partidas[temp_index].nivel == +this.partidas[index].nivel){
+                        temp_index= temp_index - 1;
+                    }
+                    this.partidas[temp_index].cantidad_hijos = this.partidas[temp_index].cantidad_hijos - 1;
+                    this.partidas.splice(index, 1);
+                    if(this.partidas[temp_index].cantidad_hijos == 0){
+                        this.partidas[temp_index].es_hoja = true;
+                    }
                 }
             },
             formatoFecha(date){
@@ -521,7 +508,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result){
-                        this.store();
+                        if(this.partidas.length === 0){
+                            swal('Atención', 'Debe agregar al menos una partida', 'warning');
+                        }else{
+                            this.store();
+                        }
+                        
                     }
                 });
             }
