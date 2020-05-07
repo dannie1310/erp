@@ -90,7 +90,7 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">% Descuento</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.descuento : '-----'}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.descuento_format : '-----'}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXP):</label>
@@ -106,9 +106,9 @@
                                     </div>
                                     <div class="row col-md-12" v-if="cotizacion.complemento">
                                         <div class="col-md-2"><b>Pago en Parcialidades (%):</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.parcialidades}}</div>
+                                        <div class="col-md-2">{{cotizacion.complemento.parcialidades_format}}</div>
                                         <div class="col-md-2"><b>Anticipo:</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.anticipo}}</div>
+                                        <div class="col-md-2">{{cotizacion.complemento.anticipo_format}}</div>
                                     </div>
                                     <div class="row col-md-12" v-if="cotizacion.complemento">
                                         <div class="col-md-2"><b>Crédito (días):</b></div>
