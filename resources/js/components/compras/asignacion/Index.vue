@@ -1,7 +1,11 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <Layout @change="paginate()"></Layout>
+            <!-- v-if="$root.can('registrar_requisicion_compra')" -->
+            <button @click="create" class="btn btn-app btn-default pull-right" v-if="$root.can('registrar_asignacion_proveedor')" :disabled="cargando">
+                <i class="fa fa-plus"></i> Registrar
+            </button>
+            <!-- <Layout @change="paginate()"></Layout> -->
         </div>
         <div class="col-12">
             <div class="card">
@@ -29,39 +33,40 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio', tdClass: 'td_money',sortable: true},
-                    { title: 'Fecha/Hora', field: 'fecha_format', tdClass: 'td_money',sortable: true},
+                    { title: 'Folio Solicitud', field: 'folio_solicitud',sortable: true},
+                    { title: 'Folio Asignación', field: 'folio_cotizacion',sortable: true},
+                    { title: 'Concepto', field: 'concepto',sortable: true},
+                    { title: 'Fecha/Hora', field: 'fecha_format',sortable: true},
                     { title: 'Estado', field: 'estado', sortable: true},
-                    { title: 'Cotizaciones', field: 'cotizacion', sortable: true},
-                    { title: 'Observaciones', field: 'observaciones'},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'verCotizaciones', sort: 'id_transaccion', order: 'desc'},
+                query: {scope:'', sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false
             }
         },
 
         mounted() {
+            this.cargando = true;
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
+                    this.cargando = false;
                 })
         },
 
         methods: {
+            create(){
+                this.$router.push({name: 'asignacion-proveedores-create'});
+            },
             paginate() {
-                this.cargando = true;
                 return this.$store.dispatch('compras/asignacion/paginate', { params: this.query})
                     .then(data => {
                         this.$store.commit('compras/asignacion/SET_ASIGNACIONES', data.data);
                         this.$store.commit('compras/asignacion/SET_META', data.meta);
-                    })
-                    .finally(() => {
-                        this.cargando = false;
                     })
             }
         },
@@ -84,10 +89,11 @@
                     asignaciones.forEach(function (asignacion, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: asignacion.folio_format,
-                            id_tipo: asignacion.id_tipo,
+                            folio_solicitud: asignacion.folio_solicitud_format,
+                            folio_cotizacion: asignacion.folio_asignacion_format,
+                            concepto: asignacion.observaciones,
+                            estado: asignacion.estado,
                             fecha_format: asignacion.fecha_format,
-                            observaciones: asignacion.observaciones,
                             // buttons: $.extend({}, {
                             //     id:inventario.id,
                             //     marbete: self.$root.can('generar_marbetes'),

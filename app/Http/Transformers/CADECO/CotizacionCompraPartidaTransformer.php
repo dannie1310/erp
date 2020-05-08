@@ -3,10 +3,10 @@
 
 namespace App\Http\Transformers\CADECO;
 
-use App\Models\CADECO\Cotizacion;
+use App\Models\CADECO\CotizacionCompraPartida;
 use League\Fractal\TransformerAbstract;
 
-class CotizacionesTransformer extends TransformerAbstract
+class CotizacionCompraPartidaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -18,26 +18,37 @@ class CotizacionesTransformer extends TransformerAbstract
         'moneda'
     ];
 
+    /**
+     * ist of resources include
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'material',
+        'moneda'
+    ];
 
-    public function transform(Cotizacion $model)
+    public function transform(CotizacionCompraPartida $model)
     {
         return [
             'id' => (int)$model->getKey(),
-            'precio_unitario' => $model->precio_unitario_format,
-            'cantidad' => $model->cantidad_format,
+            'precio_unitario' => $model->precio_unitario,
+            'precio_unitario_format' => $model->precio_unitario_format,
+            'cantidad' => $model->cantidad,
+            'cantidad_format' => $model->cantidad_format,
             'descuento' => ($model->partida) ? $model->partida->descuento_partida : '-------',
             'precio_total' => $model->precio_total,
             'precio_total_moneda' => $model->precio_total_moneda,
             'observacion' => ($model->partida) ? $model->partida->observaciones : null,
-            'no_cotizado' => ($model->no_cotizado == 0) ? true :false
+            'no_cotizado' => ($model->no_cotizado == 0) ? true :false,
+            'id_moneda' => (int) $model->id_moneda
         ];
     }
 
     /**
-     * @param Cotizacion $model
+     * @param CotizacionCompraPartida $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeMaterial(Cotizacion $model)
+    public function includeMaterial(CotizacionCompraPartida $model)
     {
         if($material = $model->material)
         {
@@ -47,27 +58,15 @@ class CotizacionesTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Cotizacion $model
+     * @param CotizacionCompraPartida $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeMoneda(Cotizacion $model)
+    public function includeMoneda(CotizacionCompraPartida $model)
     {
         if($moneda = $model->moneda)
         {
             return $this->item($moneda, new MonedaTransformer);
         }
         return null;
-    }
-
-    /**
-     * @param Cotizacion $model
-     * @return \League\Fractal\Resource\Item|null
-     */
-    public function includePartida(Cotizacion $model)
-    {
-        if($partida = $model->partida)
-        {
-            // return $this->item($partida, new );
-        }
     }
 }
