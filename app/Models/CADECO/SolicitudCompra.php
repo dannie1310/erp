@@ -259,7 +259,6 @@ class SolicitudCompra extends Transaccion
         }
     }
 
-
     /**
      * Editar la solicitud de compra
      * @param $datos

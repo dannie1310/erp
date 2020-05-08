@@ -89,6 +89,11 @@ class CotizacionCompra  extends Transaccion
         return $this->belongsTo(SolicitudCompra::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function transaccionesRelacionadas()
+    {
+        return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function validarAsignacion($motivo)
     {
         if($this->asignacionPartida)
@@ -312,6 +317,7 @@ class CotizacionCompra  extends Transaccion
      */
     public function eliminar($motivo)
     {
+        dd($motivo);
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->validar();
@@ -322,6 +328,36 @@ class CotizacionCompra  extends Transaccion
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    /**
+     * Validar la cotización para poder realizar los cambios.
+     */
+    private function validar()
+    {
+        if($this->estado == 1)
+        {
+            abort(500, "Esta cotización de compra se encuentra aprobada.");
+        }
+        $mensaje = "";
+        if($this->transaccionesRelacionadas()->count('id_transaccion') > 0)
+        {
+            foreach ($this->transaccionesRelacionadas()->get() as $antecedente)
+            {
+                $mensaje .= "-".$antecedente->tipo->Descripcion." #".$antecedente->numero_folio."\n";
+            }
+            abort(500, "Esta cotización de compra tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
+        }
+    }
+
+    /**
+     * Elimina las partidas
+     */
+    public function eliminarPartidas()
+    {
+        foreach ($this->partidas()->get() as $item) {
+            $item->delete();
         }
     }
 }
