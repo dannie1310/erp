@@ -5,14 +5,16 @@
         <button @click="edit" v-if="$root.can('editar_cotizacion_compra')" type="button" class="btn btn-sm btn-outline-info" title="Editar">
                 <i class="fa fa-pencil"></i>
         </button>
+        <Delete v-bind:id="value.id" v-if="value.delete"/>
     </div>
 </template>
 <script>
 import Show from '../Show';
+import Delete from "../Delete";
 import DescargarLayout from '../DescargaLayout';
     export default {
-        name: "solicitud-compra-buttons",
-        components: {Show, DescargarLayout},
+        name: "cotizacion-buttons",
+        components: {Delete, Show, DescargarLayout},
         props: ['value'],
 
         methods: {
