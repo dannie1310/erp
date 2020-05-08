@@ -42,7 +42,8 @@ class CotizacionCompra  extends Transaccion
     public $searchable = [
         'numero_folio',
         'observaciones',
-        'fecha'
+        'fecha',
+        'empresa.razon_social'
     ];
 
     protected static function boot()
@@ -66,7 +67,8 @@ class CotizacionCompra  extends Transaccion
 
     public function descargaLayout($id)
     {
-        return Excel::download(new CotizacionLayout(CotizacionCompra::find($id)), 'LayoutCotizacion.xlsx');
+        $find = CotizacionCompra::find($id);
+        return Excel::download(new CotizacionLayout($find), str_replace('/', '-',$find->observaciones).'.xlsx');
     }
 
     public function asignacionPartida()
@@ -152,7 +154,7 @@ class CotizacionCompra  extends Transaccion
                     $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion);
                     $item->update([
                         'precio_unitario' => ($data['enable'][$i]) ? $data['precio'][$i] : 0,
-                        'descuento' => ($data['enable'][$i]) ? $data['descuento'][$i] : 0,
+                        'descuento' => ($data['enable'][$i] !== false) ? ($data['descuento_cot'] + $data['descuento'][$i] - (($data['descuento_cot'] * $data['descuento'][$i]) / 100)) : 0,
                         'no_cotizado' => (!$data['enable'][$i]) ? 1 : 0,
                         'id_moneda' => ($data['enable'][$i]) ? $data['moneda'][$i] : null
                     ]);

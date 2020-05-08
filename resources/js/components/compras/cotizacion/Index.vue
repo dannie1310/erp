@@ -43,7 +43,7 @@
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: true, tdClass: 'folio', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'folio', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Núm de Folio de la Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtons').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],

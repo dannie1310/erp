@@ -35,6 +35,7 @@ class ContratoTransformer extends TransformerAbstract
             'clave' => $model->clave,
             'nivel' => $model->nivel,
             'descripcion' => $model->descripcion,
+            'descripcion_formato' => $model->descripcion_format,
             'unidad' => $model->unidad,
             'cantidad_original' => $model->cantidad_original,
             'cantidad_presupuestada' => $model->cantidad_presupuestada,

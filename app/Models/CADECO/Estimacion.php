@@ -644,8 +644,8 @@ class Estimacion extends Transaccion
         $monto_pagar -= $this->retencionIVA_2_3;
         if($this->configuracion->penalizacion_antes_iva == 0)
         {
-            $monto_pagar -= $this->penalizaciones->sum('importe');
-            $monto_pagar += $this->penalizacionLiberaciones->sum('importe');
+            $monto_pagar -= $this->suma_penalizaciones;
+            $monto_pagar += $this->suma_penalizaciones_liberadas;
         }
         return $monto_pagar;
     }
@@ -793,6 +793,8 @@ class Estimacion extends Transaccion
             'id_empresa'              => $this->empresa->id_empresa,
             'anticipo_format'         => $this->anticipo_format,
             'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
+            'estado'                  => $this->estado,
+            'estado_format'           => $this->estado_descripcion,
             'subcontrato'             => $this->subcontrato->subcontratoParaEstimar($this->id_transaccion)
         ];
     }
@@ -992,11 +994,6 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->retencionIVA_2_3, 2);
     }
 
-    public function getRestaImportesAmortizacionAttribute()
-    {
-        return $this->suma_importes - $this->monto_anticipo_aplicado;
-    }
-
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
@@ -1095,5 +1092,10 @@ class Estimacion extends Transaccion
     public function getSumaPenalizacionesLiberadasFormatAttribute()
     {
         return '$ ' . number_format($this->suma_penalizaciones_liberadas, 2);
+    }
+
+    public function getRestaImportesAmortizacionAttribute()
+    {
+        return $this->suma_importes - $this->monto_anticipo_aplicado;
     }
 }

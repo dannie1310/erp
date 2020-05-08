@@ -233,11 +233,11 @@
                                         <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">ToTC USD:</label>
+                                        <label class="col-sm-2 col-form-label">TC USD:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[1].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">ToTC EURO:</label>
+                                        <label class="col-sm-2 col-form-label">TC EURO:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
@@ -530,6 +530,7 @@
                     params: {
                         scope: 'conItems',
                         order: 'DESC',
+                        limit: 50,
                         sort: 'numero_folio'
                     }
                 })
