@@ -64,7 +64,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getColumnDimension('L')->setAutoSize(true);
 
                 $i=2;
-                foreach ($this->cotizacion->cotizaciones as $cot){
+                foreach ($this->cotizacion->partidas as $cot){
                     $item = Item::where('id_transaccion', '=', $cot->cotizacion->solicitud->id_transaccion)->where('id_material', '=', $cot->id_material)->first();
                     $id_moneda = ($cot->id_moneda > 1) ? (($cot->id_moneda == 2) ? "DOLAR USD" : "EURO") : "PESO MXP";
                     $datos = $cot->id_material;
