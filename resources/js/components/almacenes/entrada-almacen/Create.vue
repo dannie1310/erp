@@ -31,11 +31,11 @@
                                          <div class="col-md-2">
                                             <div class="form-group  error-content">
                                                 <label for="remision" class=" col-form-label ">Remisión: </label>
-                                                <div  >
+                                                <div>
                                                     <input
                                                             type="text"
                                                             data-vv-as="Remisión"
-                                                            v-validate="{required: true}"
+                                                            v-validate="{required: true, max: 64}"
                                                             class="form-control"
                                                             name="remision"
                                                             id="remision"
