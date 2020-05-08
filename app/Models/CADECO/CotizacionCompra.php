@@ -223,7 +223,6 @@ class CotizacionCompra  extends Transaccion
                 'timestamp_registro' => $fecha->format("Y-m-d")
             ]);
             $x = 0;
-            $conteo = array();
             foreach($data['partidas'] as $partida) {
                 if ($x < count($data['precio'])) {
                     if ($x < count($data['enable'])) {
@@ -252,7 +251,7 @@ class CotizacionCompra  extends Transaccion
                     } else {
                         #------- dbo.cotizaciones
 
-                        $cotizaciones = $cotizacion->cotizaciones()->create([
+                        $cotizaciones = $cotizacion->partidas()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],
                             'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
@@ -276,7 +275,7 @@ class CotizacionCompra  extends Transaccion
                 } else {
                     #------- dbo.cotizaciones
 
-                    $cotizaciones = $cotizacion->cotizaciones()->create([
+                    $cotizaciones = $cotizacion->partidas()->create([
                         'id_transaccion' => $cotizacion->id_transaccion,
                         'id_material' => $partida['material']['id'],
                         'cantidad' => ($solicitud->estado == 1) ? $partida['solicitado_cantidad'] : $partida['cantidad_original'],
