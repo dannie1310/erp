@@ -71,7 +71,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr v-for="(partida, i) in cotizacion.cotizaciones.data">
+                                                        <tr v-for="(partida, i) in cotizacion.partidas.data">
                                                             <td >{{i + 1}}</td>
                                                             <td style="text-align: center"><b>{{(partida.material) ? partida.material.numero_parte : null}}</b></td>
                                                             <td style="text-align: center">{{(partida.material) ? partida.material.descripcion : '------------'}}</td>
@@ -175,7 +175,7 @@
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
                 return this.$store.dispatch('compras/cotizacion/find', {
                     id: this.id,
-                    params:{include: ['empresa', 'sucursal', 'complemento', 'cotizaciones.material', 'cotizaciones.moneda']}
+                    params:{include: ['empresa', 'sucursal', 'complemento', 'partidas']}
                 }).then(data => {
                     this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
                     $(this.$refs.modal).appendTo('body')
@@ -198,7 +198,7 @@
                             }
                         })
                             .then(data => {
-                                this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
+                                this.$store.commit('compras/cotizacion/SET_partidas', data.data);
                                 this.$store.commit('compras/cotizacion/SET_META', data.meta);
                             })
                     })

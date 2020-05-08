@@ -55,8 +55,8 @@ class CotizacionCompra  extends Transaccion
         });
     }
 
-    public function cotizaciones() {
-        return $this->hasMany(Cotizacion::class, 'id_transaccion', 'id_transaccion');
+    public function partidas() {
+        return $this->hasMany(CotizacionCompraPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function complemento()
@@ -149,7 +149,7 @@ class CotizacionCompra  extends Transaccion
                 $i = 0;
                 foreach($data['partidas'] as $partida)
                 {
-                    $item = Cotizacion::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion);
+                    $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion);
                     $item->update([
                         'precio_unitario' => ($data['enable'][$i]) ? $data['precio'][$i] : 0,
                         'descuento' => ($data['enable'][$i]) ? $data['descuento'][$i] : 0,
@@ -227,7 +227,7 @@ class CotizacionCompra  extends Transaccion
                     if ($x < count($data['enable'])) {
                         #------- dbo.cotizaciones
 
-                        $cotizaciones = $cotizacion->cotizaciones()->create([
+                        $cotizaciones = $cotizacion->partidas()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],
                             'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],

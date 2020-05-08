@@ -8,7 +8,7 @@ use App\Models\CADECO\Moneda;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 
-class Cotizacion extends Model
+class CotizacionCompraPartida extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'dbo.cotizaciones';
