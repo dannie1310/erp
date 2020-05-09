@@ -117,7 +117,15 @@
                             </div>
                             <!-- Seccion de partidas -->
                             <div class="row">
-                                <button type="button" class="btn btn-success" @click="agregarPartida('')"><i class="fa fa-plus"></i>Agregar</button>
+                                <!-- <div class="col-md-12"> -->
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-success" @click="agregarPartida('')"><i class="fa fa-plus"></i>Agregar</button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-success" @click="modalCarga()"><i class="fa fa-file-excel-o"></i>Cargar Layout</button>
+                                    </div>
+                                    <div class="col-md-9"></div>
+                                <!-- </div> -->
                                  <div  class="col-12">
                                      <br>
                                     <div class="table-responsive">
@@ -301,6 +309,50 @@
                 </div>
             </div>
         </nav>
+         <nav>
+            <div class="modal fade" ref="modal_carga" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-carga"> <i class="fa fa-file-excel-o"></i> Seleccionar Archivo de Layout</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form role="form">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="row justify-content-between">
+                                            <div class="col-md-12">
+                                                <div class="col-lg-12">
+                                                    <input type="file" class="form-control" id="carga_layout"
+                                                        @change="onFileChange"
+                                                        row="3"
+                                                        v-validate="{ ext: ['csv','xlsx']}"
+                                                        name="carga_layout"
+                                                        data-vv-as="Layout"
+                                                        ref="carga_layout"
+                                                        :class="{'is-invalid': errors.has('carga_layout')}"
+                                                    >
+                                                    <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" v-on:click="cerrarModalCarga" :disabled="cargando">Cerrar</button>
+                                <button type="button" class="btn btn-primary" @click="procesarLayout()">
+                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                    <i class="fa fa-upload" v-else ></i> Cargar</button>    
+                             </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </span>
 </template>
 
@@ -333,6 +385,8 @@
                     destino_path:''
                 },
                 partida_index:'',
+                file_carga : null,
+                file_carga_name : '',
             }
         },
         mounted(){
@@ -403,10 +457,24 @@
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
+            cerrarModalCarga(){
+                $(this.$refs.modal_carga).modal('hide');
+                this.$validator.reset();
+            },
             copiar_destino(partida){
                 console.log(partida);
                 this.partida_copia.destino = partida.destino;
                 this.partida_copia.destino_path = partida.destino_path;
+            },
+            createImage(file) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.file_carga = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
             },
             descripcionFormat(i){
                 var len = this.partidas[i].descripcion.length + (+this.partidas[i].nivel * 3);
@@ -483,10 +551,46 @@
                 this.$validator.reset();
                 $(this.$refs.modal_destino).modal('show');
             },
+            modalCarga() {
+                this.$validator.reset();
+                $(this.$refs.modal_carga).modal('show');
+            },
+            onFileChange(e){
+                this.file_carga = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.file_carga_name = files[0].name;
+                this.createImage(files[0]);
+                
+            },
             pegar_destino(index){
                 this.partidas[index].destino = this.partida_copia.destino;
                 this.partidas[index].destino_path = this.partida_copia.destino_path;
                 this.$forceUpdate();
+            },
+            procesarLayout(){
+                if(this.partidas.length > 0){
+                    swal({
+                    title: "Cargar Layout Contrato Proyectado",
+                    text: "¿El contrato ya tiene partidas agregadas, si continua se perderan?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Continuar',
+                            closeModal: false,
+                        }
+                    }                })
+                    .then((value) => {
+                        if (value) {
+                            
+                        }
+                    });
+                }
             },
             setFechasDeshabilitadas(fecha){
                 this.fechasDeshabilitadas.to = fecha;
