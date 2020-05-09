@@ -14,47 +14,33 @@ class CotizacionCompraPartidaObserver
         CotizacionPartidaEliminada::create(
             [
                 'id_transaccion' => $partida->id_transaccion,
-                'id_material' => $partida->,
-                'numero',
-                'disponibles',
-                'cantidad',
-                'precio_unitario',
-                'descuento',
-                'descuento_adicional',
-                'otros_descuentos',
-                'flete',
-                'anticipo',
-                'dias_credito',
-                'dias_entrega',
-                'no_cotizado',
-                'id_moneda',
-                'capacidad',
-                'descuento_partida',
-                'observaciones',
-                'estatus',
-                'timestamp_registro',
+                'id_material' => $partida->id_material,
+                'numero' => $partida->numero,
+                'disponibles' => $partida->disponibles,
+                'cantidad' => $partida->cantidad,
+                'precio_unitario' => $partida->precio_unitario,
+                'descuento' => $partida->descuento,
+                'descuento_adicional' => $partida->descuento_adicional,
+                'otros_descuentos' => $partida->otros_descuentos,
+                'flete' => $partida->flete,
+                'anticipo' => $partida->anticipo,
+                'dias_credito' => $partida->dias_credito,
+                'dias_entrega' => $partida->dias_entrega,
+                'no_cotizado' => $partida->no_cotizado,
+                'id_moneda' => $partida->id_moneda,
+                'capacidad' => $partida->capacidad,
+                'descuento_partida' => $partida->partida ? $partida->partida->descuento_partida : NULL,
+                'observaciones' => $partida->partida ? $partida->partida->observaciones : NULL,
+                'estatus' => $partida->partida ? $partida->partida->estatus : NULL,
+                'timestamp_registro' => $partida->partida ? $partida->partida->timestamp_registro : NULL,
                 'usuario_elimina' => auth()->id(),
                 'fecha_eliminacion' => date('Y-m-d H:i:s')
-
             ]
         );
 
-        EntregaEliminada::create(
-            [
-                'id_item' => $partida->id_item,
-                'numero_entrega' => $partida->entrega->numero_entrega,
-                'fecha' => $partida->entrega->fecha,
-                'cantidad' => $partida->entrega->cantidad,
-                'surtida' => $partida->entrega->surtida,
-                'pedidas' => $partida->entrega->pedidas,
-                'asignadas' => $partida->entrega->asignadas,
-                'id_concepto' => $partida->entrega->id_concepto,
-                'id_almacen' => $partida->entrega->id_almacen
-            ]
-        );
-        $partida->entrega->delete();
-        if($partida->complemento)
+        if ($partida->partida)
         {
-            $partida->complemento->delete();
+            $partida->partida->delete();
         }
+    }
 }
