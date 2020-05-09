@@ -446,7 +446,7 @@
             },
             getProveedores() {
                 return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {sort: 'razon_social', order: 'asc', scope:'proveedor', include: 'sucursales' }
+                    params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:1,3', include: 'sucursales' }
                 })
                     .then(data => {
                         this.proveedores = data.data;
