@@ -311,7 +311,7 @@
         name: "cotizacion-edit",
 
         components: {Datepicker, ModelListSelect},
-        props: ['id'],
+        props: ['id', 'xls'],
         data() {
             return {
                 cargando: false,
@@ -396,6 +396,7 @@
                  this.$router.push({name: 'cotizacion'}); 
             },
             find() {                
+                console.log('metodo find en edit', this.id, 'carga:', this.carga);
                 
                 this.cargando = true;
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
@@ -533,6 +534,10 @@
             euro()
             {
                 return '$ ' + this.monedas[2].tipo_cambio_igh;
+            },
+            carga()
+            {
+                return (this.xls) ? this.xls : false;
             }
         },
         watch: {

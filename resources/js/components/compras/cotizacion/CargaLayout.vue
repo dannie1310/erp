@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Cargar Layout Cotización">
+        <button @click="load()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Cargar Layout Cotización">
             <i class="fa fa-upload" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
@@ -47,47 +47,74 @@
 
 <script>
     export default {
-        name: "carga-layout-cotizacion",
+        name: "cargar-layout-cotizacion",
         props: ['id'],
-        data(){
-            return{
+        data() {
+            return {
                 cargando: false,
-                no_cotizados: [],
-                items: [],
-                cuenta: [],
-                x: 0,
-                t: 0,
-                data: null,
                 file: null,
+                nombre: ''
             }
         },
-        methods: {
-            find() {
-
-                // console.log(this.$refs.carga_layout.value);
-                this.cargando = true;
+        mounted(){
+        },
+        methods:{
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result){
+                        this.cargarLayout()
+                    }else{
+                        if(this.$refs.carga_layout.value !== ''){
+                            this.$refs.carga_layout.value = '';
+                            this.file = null;
+                        }
+                        this.$validator.errors.clear();
+                        swal('¡Error!', 'Error archivos de entrada invalidos.', 'error')
+                    }
+                });
+            },
+            load() {
                 this.$refs.carga_layout.value = '';
                 this.file = null;
                 this.$validator.errors.clear();
 
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
-                this.cargando = false;                
+            },
+            cerrarModal(event) {
+                this.$refs.carga_layout.value = '';
+                this.file = null;
+                this.$validator.errors.clear();
+                $(this.$refs.modal).modal('hide')
+            },
+            cargarLayout(){
                 
+                var formData = new FormData();
+                formData.append('file',  this.file);
+                formData.append('id',  this.id);
+                formData.append('name', this.nombre);
 
-                // this.cargando = true;
-                // this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
-                // return this.$store.dispatch('compras/cotizacion/find', {
-                //     id: this.id,
-                //     params:{include: ['empresa', 'sucursal', 'complemento', 'cotizaciones.material', 'cotizaciones.moneda']}
-                // }).then(data => {
-                //     this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
-                //     this.items = data.cotizaciones.data;
-                //     $(this.$refs.modal).appendTo('body')
-                //     $(this.$refs.modal).modal('show')
-                //     this.cargando = false;
-                    
-                // })
+                return this.$store.dispatch('compras/cotizacion/cargaLayout',
+                    {
+                        data: formData,
+                        config: {
+                            params: { _method: 'POST'}
+                        }
+                    })
+                    .then(data => {
+                        this.data = data;
+                        
+                    }).finally(() => {
+                        this.$refs.carga_layout.value = '';
+                        this.file = null;
+                        this.file_name = '';
+                        this.$validator.errors.clear();
+                        setTimeout(() => {
+                            $(this.$refs.modal).modal('hide');
+                            this.$emit('back', this.data);
+                        }, 100);
+                        
+                    });
             },
             createImage(file, tipo) {
                 var reader = new FileReader();
@@ -104,50 +131,11 @@
                 var files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
                     return;
+                    this.nombre = files[0].name;                    
                 if(e.target.id == 'carga_layout') {
                     this.createImage(files[0]);
                 }
             },
-            cerrarModal(event) {
-                this.$refs.carga_layout.value = '';
-                this.file = null;
-                this.$validator.errors.clear();
-                $(this.$refs.modal).modal('hide')
-            },
-            validate() {
-                
-                this.$validator.validate().then(result => {
-                    if (result){
-                        this.cargarLayout()
-                    }else{
-                        if(this.$refs.carga_layout.value !== ''){
-                            this.$refs.carga_layout.value = '';
-                            this.file = null;
-                        }
-                        this.$validator.errors.clear();
-                        swal('¡Error!', 'Error archivos de entrada invalidos.', 'error')
-                    }
-                });
-                
-            },
-        },
-        computed: {
-            cotizacion() {
-                return this.$store.getters['compras/cotizacion/currentCotizacion']
-            }
-        },
-        watch: {
-            items()
-            {
-                this.x = 0;
-                this.t = 0;
-                while(this.x < this.items.length)
-                {
-                    this.no_cotizados[this.x] = this.items[this.x].no_cotizado;
-                    this.cuenta[this.x] = (this.no_cotizados[this.x]) ? this.t ++ : 0;
-                    this.x ++;
-                }                
-            }
         }
     }
 </script>

@@ -45,4 +45,16 @@ class CotizacionService
     {
         return $this->repository->show($id)->actualizar($data);
     }
+
+    public function cargaLayout($file, $id, $name)
+    {
+        // $file_xls = 
+        $dir_xls = "uploads/compras/cotizacion/";
+        $path_xls = $dir_xls . $name;
+        dd('Para por ahora', $name, $path_xls);
+
+
+        $cotizacion = $this->repository->show($id);
+        dd('Servicio cotizacion funcion cargaLayout', $cotizacion->cotizaciones->pluck('id_material'), $id);
+    }
 }
