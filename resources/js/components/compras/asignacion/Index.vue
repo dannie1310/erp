@@ -33,10 +33,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio Solicitud', field: 'folio_solicitud',sortable: true},
-                    { title: 'Folio Asignación', field: 'folio_cotizacion',sortable: true},
-                    { title: 'Concepto', field: 'concepto',sortable: true},
-                    { title: 'Fecha/Hora', field: 'fecha_format',sortable: true},
+                    { title: 'Folio Solicitud', field: 'id_transaccion_solicitud',sortable: true},
+                    { title: 'Folio Asignación', field: 'id',sortable: true},
+                    { title: 'Concepto', field: 'observaciones'},
+                    { title: 'Fecha/Hora', field: 'registro',sortable: true},
                     { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
@@ -89,11 +89,11 @@
                     asignaciones.forEach(function (asignacion, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio_solicitud: asignacion.folio_solicitud_format,
-                            folio_cotizacion: asignacion.folio_asignacion_format,
-                            concepto: asignacion.observaciones,
+                            id_transaccion_solicitud: asignacion.folio_solicitud_format,
+                            id: asignacion.folio_asignacion_format,
+                            observaciones: asignacion.observaciones,
                             estado: asignacion.estado,
-                            fecha_format: asignacion.fecha_format,
+                            registro: asignacion.fecha_format,
                             // buttons: $.extend({}, {
                             //     id:inventario.id,
                             //     marbete: self.$root.can('generar_marbetes'),

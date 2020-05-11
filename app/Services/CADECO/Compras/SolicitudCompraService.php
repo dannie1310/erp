@@ -4,7 +4,7 @@
 namespace App\Services\CADECO\Compras;
 
 
-use App\Models\CADECO\Cotizacion;
+use App\Models\CADECO\CotizacionCompraPartida;
 use App\Models\CADECO\SolicitudCompra;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
@@ -151,7 +151,7 @@ class SolicitudCompraService
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'] = array();
                 }
                 array_key_exists($cotizacion->id_transaccion, $cotizaciones)?'': $cotizaciones[$cotizacion->id_transaccion] = array();
-                $cot = Cotizacion::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->first();
+                $cot = CotizacionCompraPartida::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->first();
                 if($cot && $cot->precio_unitario > 0){
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = [
                         'id_material' => $cot->id_material,
