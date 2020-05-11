@@ -30,6 +30,7 @@ class CotizacionCompraObserver extends TransaccionObserver
 
     public function deleting(CotizacionCompra $cotizacionCompra)
     {
+        $cotizacionCompra->validarAsignacion('eliminar');
         $cotizacionCompra->eliminarPartidas();
 
         CotizacionEliminada::create([
