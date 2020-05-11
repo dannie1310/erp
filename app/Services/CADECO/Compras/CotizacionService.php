@@ -20,7 +20,6 @@ class CotizacionService
         $this->repository = new Repository($model);
     }
 
-
     public function descargaLayout($id)
     {
         return $this->repository->descargaLayout($id);
@@ -44,5 +43,10 @@ class CotizacionService
     public function update(array $data, $id)
     {
         return $this->repository->show($id)->actualizar($data);
+    }
+
+    public function delete(array $data, $id)
+    {
+        return $this->repository->show($id)->eliminar($data['data']);
     }
 }
