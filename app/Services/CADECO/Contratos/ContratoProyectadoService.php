@@ -46,6 +46,17 @@ class ContratoProyectadoService
         return $this->repository->show($id);
     }
 
+    public function update(array $data, $id)
+    {
+        $this->repository->show($id)->update([
+            'fecha' => $data['fecha_date'],
+            'cumplimiento' => $data['cumplimiento'],
+            'vencimiento' => $data['vencimiento'],
+            'referencia' => strtoupper($data['referencia'])         
+        ]);
+        exit;
+    }
+
     public function paginate($data)
     {
         $cp_area = new AreaSubcontratante();

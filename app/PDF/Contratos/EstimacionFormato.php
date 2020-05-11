@@ -5,7 +5,9 @@ namespace App\PDF\Contratos;
 
 use App\Facades\Context;
 use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\ItemSubcontrato;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\Contrato;
 use Carbon\Carbon;
 use Ghidev\Fpdf\Rotation;
 use Illuminate\Support\Facades\App;
@@ -186,7 +188,7 @@ class EstimacionFormato extends Rotation
             $this->retencionesTitle();
         }
         if($this->encola == 'liberaciones'){
-            $this->liberacionesTitle();
+            $this->retencionesLiberadasTitle();
         }
         if($this->encola == 'penalizaciones'){
             $this->penalizacionesTitle();
@@ -262,30 +264,31 @@ class EstimacionFormato extends Rotation
         $this->SetAligns(['L', 'C', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
         $this->encola = 'obra_ejecutada';
 
-        foreach ( $this->estimacion->subcontrato->partidas as $i => $p) {
-            $array = $p->partidasFormatoEstimacion($this->estimacion->id_transaccion);
-            $this->suma_contrato += $array['importe_subcontrato'];
-            $this->suma_estimacionAnterior += $array['importe_acumulado_anterior'];
-            $this->suma_estimacion += $array['importe_estimacion'];
-            $this->suma_acumulada += $array['importe_acumulado_a_esta_estimacion'];
-            $this->suma_porEstimar += $array['importe_porEstimar'];
+        foreach ($this->estimacion->subcontrato->partidasPDF($this->estimacion->id_transaccion) as $p) {
+            if(!array_key_exists('para_estimar', $p)) {
+                $this->suma_contrato += $p['importe_subcontrato'];
+                $this->suma_estimacionAnterior += $p['importe_acumulado_anterior'];
+                $this->suma_estimacion += $p['importe_estimacion'];
+                $this->suma_acumulada += $p['importe_acumulado_a_esta_estimacion'];
+                $this->suma_porEstimar += $p['importe_porEstimar'];
 
-            $this->Row([
-                mb_strtoupper($array['descripcion_concepto']),
-                mb_strtoupper($array['clave']),
-                mb_strtoupper($array['unidad']),
-                number_format($array['precio_unitario_subcontrato'], 4, ".", ","),
-                number_format($array['cantidad_subcontrato'], 4, ".", ","),
-                number_format($array['importe_subcontrato'], 4, ".", ","),
-                number_format($array['cantidad_acumulado_anterior'], 4, ".", ","),
-                number_format($array['importe_acumulado_anterior'], 4, ".", ","),
-                number_format($array['cantidad_estimacion'], 4, ".", ","),
-                number_format($array['importe_estimacion'], 4, ".", ","),
-                number_format($array['cantidad_acumulado_a_esta_estimacion'], 4, ".", ","),
-                number_format($array['importe_acumulado_a_esta_estimacion'], 4, ".", ","),
-                number_format($array['cantidad_porEstimar'], 4, ".", ","),
-                number_format($array['importe_porEstimar'], 4, ".", ",")
-            ]);
+                $this->Row([
+                    mb_strtoupper($p['descripcion_concepto']),
+                    mb_strtoupper($p['clave']),
+                    mb_strtoupper($p['unidad']),
+                    number_format($p['precio_unitario_subcontrato'], 4, ".", ","),
+                    number_format($p['cantidad_subcontrato'], 4, ".", ","),
+                    number_format($p['importe_subcontrato'], 4, ".", ","),
+                    number_format($p['cantidad_acumulado_anterior'], 4, ".", ","),
+                    number_format($p['importe_acumulado_anterior'], 4, ".", ","),
+                    number_format($p['cantidad_estimacion'], 4, ".", ","),
+                    number_format($p['importe_estimacion'], 4, ".", ","),
+                    number_format($p['cantidad_acumulado_a_esta_estimacion'], 4, ".", ","),
+                    number_format($p['importe_acumulado_a_esta_estimacion'], 4, ".", ","),
+                    number_format($p['cantidad_porEstimar'], 4, ".", ","),
+                    number_format($p['importe_porEstimar'], 4, ".", ",")
+                ]);
+            }
         }
 
         /*Footer partidas*/
@@ -766,7 +769,7 @@ class EstimacionFormato extends Rotation
         $this->Row(['Sub-total valor de los trabajos', ' ', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($subtotal_contrato, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior, 4, ".", ","), ' ',  number_format($subtotal_estimacion, 4, ".", ","), ' ', number_format($subtotal_acumulado, 4, ".", ","), ' ', number_format($subtotal_a_estimar, 4, ".", ",")]);
         $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
         if($this->estimacion->iva_orden_pago == 0){
-            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->porcentaje_iva, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ",")]);
+            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->impuesto!= 0 ? $this->estimacion->porcentaje_iva : 0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ",")]);
         }else {
             $total_contrato += $subtotal_contrato * 0.16;
             $total_acum_estimado_anterior += $subtotal_acum_estimado_anterior * 0.16;
@@ -774,7 +777,7 @@ class EstimacionFormato extends Rotation
             $total_acumulado += $subtotal_acumulado * 0.16;
             $total_a_estimar += $subtotal_a_estimar * 0.16;
 
-            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->porcentaje_iva, 4, ".", ","), ' ', number_format($subtotal_contrato * 0.16, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior * 0.16, 4, ".", ","), ' ', number_format($subtotal_estimacion * 0.16, 4, ".", ","), ' ', number_format($subtotal_acumulado * 0.16, 4, ".", ","), ' ', number_format($subtotal_a_estimar * 0.16, 4, ".", ",")]);
+            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->impuesto!= 0 ? $this->estimacion->porcentaje_iva : 0, 4, ".", ","), ' ', number_format($subtotal_contrato * 0.16, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior * 0.16, 4, ".", ","), ' ', number_format($subtotal_estimacion * 0.16, 4, ".", ","), ' ', number_format($subtotal_acumulado * 0.16, 4, ".", ","), ' ', number_format($subtotal_a_estimar * 0.16, 4, ".", ",")]);
         }
 
         $total_acum_estimado_anterior -= $this->estimacion->iva_retenido_calculado_anterior;

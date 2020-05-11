@@ -23,13 +23,16 @@ class CotizacionesTransformer extends TransformerAbstract
     {
         return [
             'id' => (int)$model->getKey(),
-            'precio_unitario' => $model->precio_unitario_format,
-            'cantidad' => $model->cantidad_format,
+            'precio_unitario' => $model->precio_unitario,
+            'precio_unitario_format' => $model->precio_unitario_format,
+            'cantidad' => $model->cantidad,
+            'cantidad_format' => $model->cantidad_format,
             'descuento' => ($model->partida) ? $model->partida->descuento_partida : '-------',
             'precio_total' => $model->precio_total,
             'precio_total_moneda' => $model->precio_total_moneda,
             'observacion' => ($model->partida) ? $model->partida->observaciones : null,
-            'no_cotizado' => ($model->no_cotizado == 0) ? true :false
+            'no_cotizado' => ($model->no_cotizado == 0) ? true :false,
+            'id_moneda' => (int) $model->id_moneda
         ];
     }
 

@@ -22,4 +22,9 @@ class CotizacionCompraObserver extends TransaccionObserver
         $cotizacionCompra->id_moneda = 1;
         
     }
+
+    public function updating(CotizacionCompra $cotizacionCompra)
+    {
+        $cotizacionCompra->validarAsignacion('editar');
+    }
 }
