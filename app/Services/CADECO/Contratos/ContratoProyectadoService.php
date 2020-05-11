@@ -130,6 +130,10 @@ class ContratoProyectadoService
         return $this->repository->paginate();
     }
 
+    public function getLayoutData($data){
+        dd('panda', $data);
+    }
+
     /**
      * @param $id
      * @return mixed

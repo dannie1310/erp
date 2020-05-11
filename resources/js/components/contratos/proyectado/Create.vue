@@ -538,6 +538,20 @@
 
                 })
             },
+            getLayoutData(){
+                this.cargando = true;
+                var formData = new FormData();
+                formData.append('pagos',  this.file_carga);
+                formData.append('nombre_archivo',  this.file_carga_name);
+                return this.$store.dispatch('contratos/contrato-proyectado/cargarLayout',{
+                        data: formData, config: { params: { _method: 'POST'}}
+                })
+                .then(data => {
+                    this.partidas = data;
+                }).finally(() => {
+                    this.cargando = false;
+                });
+            },
             getUnidades() {
                 return this.$store.dispatch('cadeco/unidad/index', {
                     params: {sort: 'unidad',  order: 'asc'}
@@ -582,14 +596,19 @@
                         },
                         confirm: {
                             text: 'Si, Continuar',
-                            closeModal: false,
+                            closeModal: true,
                         }
-                    }                })
+                    }})
                     .then((value) => {
                         if (value) {
-                            
+                            this.getLayoutData();
+                        }else{
+                            this.cerrarModalCarga();
                         }
+
                     });
+                }else{
+                    this.getLayoutData();
                 }
             },
             setFechasDeshabilitadas(fecha){
