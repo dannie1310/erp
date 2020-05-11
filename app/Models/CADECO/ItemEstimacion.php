@@ -86,9 +86,9 @@ class ItemEstimacion extends Item
     public function validarCantidadesPartidas()
     {
         $cantidad_estimada_anterior =((float) $this->itemSubcontrato->cantidad_total_estimada) - ($this->original != [] ? $this->original['cantidad'] : 0);
-        if($this->itemSubcontrato->cantidad < ($cantidad_estimada_anterior + $this->cantidad))
+        if( number_format($this->itemSubcontrato->cantidad,2,".","") < number_format($cantidad_estimada_anterior + $this->cantidad,2,".",""))
         {
-            abort(400, 'La partida "'.$this->contrato->descripcion. '" sobrepasa la cantidad del subcontrato.');
+            abort(400, 'La cantidad de la partida "'.$this->contrato->descripcion. '": '.($cantidad_estimada_anterior + $this->cantidad).' sobrepasa la cantidad del subcontrato: '. $this->itemSubcontrato->cantidad);
         }
     }
 }
