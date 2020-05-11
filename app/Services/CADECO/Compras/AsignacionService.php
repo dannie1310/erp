@@ -4,7 +4,7 @@
 namespace App\Services\CADECO\Compras;
 
 
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Compras\Asignacion\Repository;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Compras\AsignacionFormato;
 use App\Models\CADECO\Compras\Asignacion;
