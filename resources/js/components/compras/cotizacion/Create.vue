@@ -530,6 +530,7 @@
                     params: {
                         scope: 'conItems',
                         order: 'DESC',
+                        limit: 50,
                         sort: 'numero_folio'
                     }
                 })
