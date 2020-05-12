@@ -3,13 +3,6 @@
         <div class="row">
             <div class="col-12">
                 <div class="invoice p-3 mb-3">
-                    <div class="row">
-                        <div class="col-12">
-                            <h4>
-                                <i class="fa fa-list"></i> Registro de Contrato Proyectado
-                            </h4>
-                        </div>
-                    </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <!-- Seccion de datos iniciales -->
@@ -83,7 +76,7 @@
                                                 name="referencia"
                                                 data-vv-as="Referencia"
                                                 v-model="referencia"
-                                                v-validate="{required: true}"
+                                                v-validate="{required: true, max:64}"
                                                 :class="{'is-invalid': errors.has('referencia')}"
                                                 id="referencia"
                                                 placeholder="Referencia">
@@ -92,7 +85,7 @@
                                 </div>
                                
                                 <div class="col-md-4">
-                                     <div class="form-group error-content">
+                                     <div class="form-group error-content" v-if="areas_subcontratantes.length > 1">
                                         <label for="id_area">Área Subcontratante</label>
                                         <select
                                                 type="text"
@@ -134,17 +127,17 @@
                                                 <tr>
                                                     <th style="width:3%"></th>
                                                     <th style="width:10%">Clave</th>
-                                                    <th style="width:35%">Descripción</th>
+                                                    <th style="width:40%">Descripción</th>
                                                     <th style="width:13%">Unidad</th>
                                                     <th style="width:10%">Cantidad</th>
                                                     <th style="width:18%">Destinos</th>
-                                                    <th style="width:8%"></th>
-                                                    <th style="width:5%"></th>
+                                                    <th style="width:7%"></th>
+                                                    <th style="width:1%"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr v-for="(partida, i) in partidas">
-                                                    <td>
+                                                    <td class="icono">
                                                         <button @click="agregarPartida(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar">
                                                             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                             <i class="fa fa-plus" v-else></i>
@@ -155,7 +148,7 @@
                                                             :name="`clave[${i}]`"
                                                             data-vv-as="Clave"
                                                             v-model="partida.clave"
-                                                            v-validate="{}"
+                                                            v-validate="{max:140}"
                                                             :class="{'is-invalid': errors.has(`clave[${i}]`)}"
                                                             :id="`clave[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
@@ -210,15 +203,15 @@
                                                             :id="`destino_path[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
                                                     </td>
-                                                    <td>
+                                                    <td class="icono">
                                                         <small class="badge badge-secondary">
                                                             <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="partida.es_hoja"></i>
                                                         </small>
                                                         <i class="far fa-copy button" v-on:click="copiar_destino(partida)" v-if="partida.es_hoja"></i>
                                                         <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="partida.es_hoja"></i>
                                                     </td>
-                                                    <td>
-                                                        <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
+                                                    <td class="icono">
+                                                        <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger pull-left" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
                                                             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                             <i class="fa fa-trash" v-else></i>
                                                         </button>
@@ -231,7 +224,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary">Cerrar</button>
+                            <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
                             <button type="submit" class="btn btn-primary">Guardar</button>
                          </div>    
                     </form>
@@ -315,7 +308,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="modal-carga"> <i class="fa fa-file-excel-o"></i> Seleccionar Archivo de Layout</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="close" v-on:click="cerrarModalCarga" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -329,7 +322,7 @@
                                                     <input type="file" class="form-control" id="carga_layout"
                                                         @change="onFileChange"
                                                         row="3"
-                                                        v-validate="{ ext: ['csv','xlsx']}"
+                                                        v-validate="{ ext: ['xlsx']}"
                                                         name="carga_layout"
                                                         data-vv-as="Layout"
                                                         ref="carga_layout"
@@ -344,7 +337,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" v-on:click="cerrarModalCarga" :disabled="cargando">Cerrar</button>
-                                <button type="button" class="btn btn-primary" @click="procesarLayout()">
+                                <button type="button" class="btn btn-primary" @click="procesarLayout()" :disabled="errors.has('carga_layout') || file_carga === null">
                                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                     <i class="fa fa-upload" v-else ></i> Cargar</button>    
                              </div>
@@ -400,15 +393,13 @@
                 if(index === ''){
                     this.partidas.push({
                         clave:'',
-                        insumo:'',
                         descripcion:'',
                         unidad:'',
                         cantidad:'',
                         destino:'',
+                        destino_path:'',
                         nivel: 1,
-                        indice:1,
                         es_hoja:true,
-                        es_rama:false,
                         cantidad_hijos:0,
                     });
                 }else{
@@ -418,15 +409,13 @@
                     }
                     this.partidas.splice(temp_index, 0, {
                         clave:'',
-                        insumo:'',
                         descripcion:'',
                         unidad:'',
                         cantidad:'',
                         destino:'',
+                        destino_path:'',
                         nivel:this.partidas[index].nivel + 1,
-                        indice:1,
                         es_hoja:true,
-                        es_rama:false,
                         cantidad_hijos:0,
                     });
                 
@@ -458,11 +447,14 @@
                 this.$validator.reset();
             },
             cerrarModalCarga(){
+                if(this.$refs.carga_layout.value !== ''){
+                    this.$refs.carga_layout.value = '';
+                    this.file_carga = null;
+                }
                 $(this.$refs.modal_carga).modal('hide');
                 this.$validator.reset();
             },
             copiar_destino(partida){
-                console.log(partida);
                 this.partida_copia.destino = partida.destino;
                 this.partida_copia.destino_path = partida.destino_path;
             },
@@ -516,6 +508,10 @@
                 this.areas_disponibles = [];
                 return this.$store.dispatch('configuracion/area-subcontratante/index')
                     .then(data => {
+                        if(data.length === 1){
+                            this.id_area = data[0].id
+                        }
+
                         this.areas_subcontratantes = data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
                     });
             },
@@ -550,6 +546,7 @@
                     this.partidas = data;
                 }).finally(() => {
                     this.cargando = false;
+                    this.cerrarModalCarga();
                 });
             },
             getUnidades() {
@@ -587,7 +584,7 @@
                 if(this.partidas.length > 0){
                     swal({
                     title: "Cargar Layout Contrato Proyectado",
-                    text: "¿El contrato ya tiene partidas agregadas, si continua se perderan?",
+                    text: "El contrato ya tiene partidas agregadas, si continua se reemplazarán por las contenidas en el layout.",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -609,6 +606,32 @@
                     });
                 }else{
                     this.getLayoutData();
+                }
+            },
+            salir(){
+                if(this.partidas.length > 0){
+                    swal({
+                    title: "Cerrar Registro Contrato Proyectado",
+                    text: "El contrato tiene partidas agregadas, si continua se perderan los cambios.",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Continuar',
+                            closeModal: true,
+                        }
+                    }})
+                    .then((value) => {
+                        if (value) {
+                            this.$router.push({name: 'proyectado'});
+                        }
+
+                    });
+                }else{
+                    this.$router.push({name: 'proyectado'});
                 }
             },
             setFechasDeshabilitadas(fecha){
@@ -633,13 +656,20 @@
                     if (result){
                         if(this.partidas.length === 0){
                             swal('Atención', 'Debe agregar al menos una partida', 'warning');
+                        }else if(this.validarFechas()){
+                            swal('Atención', 'La fecha de contratación no debe ser anterior a la fecha de cotización', 'warning');
                         }else{
                             this.store();
                         }
                         
                     }
                 });
-            }
+            },
+            validarFechas(){
+                var f_cotizacion = Date.parse(this.fecha_cotizacion);
+                var f_contrato = Date.parse(this.fecha_contrato);
+                return f_contrato < f_cotizacion;
+            },
         },
         watch: {
             destino_temp(value){
