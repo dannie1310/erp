@@ -99,16 +99,15 @@ class ContratoProyectado extends Transaccion
         }
     }
 
-
     /**
      * Validar el contrato para poder realizar cambios.
      */
     private function validar()
     {
-        if($this->estado == 1)
+        /*if($this->estado == 1)
         {
-            abort(500, "Esta solicitud de compra se encuentra aprobada.");
-        }
+            abort(500, "Esta contrato se encuentra aprobado.");
+        }*/
         $mensaje = "";
         if($this->transaccionesRelacionadas()->count('id_transaccion') > 0)
         {
@@ -116,7 +115,7 @@ class ContratoProyectado extends Transaccion
             {
                 $mensaje .= "-".$antecedente->tipo->Descripcion." #".$antecedente->numero_folio."\n";
             }
-            abort(500, "Esta solicitud de compra tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
+            abort(500, "Este contrato proyectado tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
         }
     }
 
@@ -139,5 +138,4 @@ class ContratoProyectado extends Transaccion
             abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo las entregas correctamente.');
         }
     }
-
 }
