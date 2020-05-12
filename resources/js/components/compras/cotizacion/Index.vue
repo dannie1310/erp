@@ -140,7 +140,7 @@
                         buttons: $.extend({}, {
                             show: true,
                             id: cotizacion.id,
-                            delete: (self.$root.can('eliminar_cotizacion_compra') && cotizacion.estado == 0)  ? true : false,
+                            delete: self.$root.can('eliminar_cotizacion_compra')  ? true : false,
                         })
                     }));
                 },
