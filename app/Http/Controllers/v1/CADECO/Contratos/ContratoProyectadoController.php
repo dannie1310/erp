@@ -69,7 +69,7 @@ class ContratoProyectadoController extends Controller
     }
 
     public function getLayoutData(Request $request){
-        $respuesta = $this->service->getLayoutData($request->pagos);
+        $respuesta = $this->service->getLayoutData($request);
         return response()->json($respuesta, 200);
     }
 

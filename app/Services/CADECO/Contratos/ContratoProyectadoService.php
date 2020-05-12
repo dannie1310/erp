@@ -12,6 +12,8 @@ namespace App\Services\CADECO\Contratos;
 use App\Models\CADECO\Contrato;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\SolicitudEdicionImport;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
@@ -131,7 +133,49 @@ class ContratoProyectadoService
     }
 
     public function getLayoutData($data){
-        dd('panda', $data);
+        $file_xls = $this->getFileXLS($data->nombre_archivo, $data->pagos);
+        $partidas = $this->getDatosPartidas($file_xls);
+ 
+        
+    }
+
+    private function getDatosPartidas($file_xls)
+    {
+        $rows = Excel::toArray(new SolicitudEdicionImport, $file_xls);
+        $partidas = [];
+        foreach ($rows[0] as $key => $row) {
+            $partidas[$key] = [
+                'clave' => $row[0],
+                'descripcion' => $row[1],
+                'cantidad' => $row[2],
+                'unidad' => $row[3],
+                'nivel' => $row[4],
+                'destino' => $row[5],
+            ];
+        }
+        return $partidas;
+    }
+
+    private function getFileXLS($nombre_archivo, $archivo_xls)
+    {
+        $paths = $this->generaDirectorios($nombre_archivo);
+        $exp = explode("base64,", $archivo_xls);
+        $data = base64_decode($exp[1]);
+        $file_xls = public_path($paths["path_xls"]);
+        file_put_contents($file_xls, $data);
+        return $file_xls;
+    }
+
+    private function generaDirectorios($nombre_archivo)
+    {
+        $nombre = $nombre_archivo . "_" . date("Ymdhis") . ".xlsx";
+        $dir_xls = "uploads/contratos/contrato_proyectado/";
+        $path_xls = $dir_xls . $nombre;
+
+        if (!file_exists($dir_xls) && !is_dir($dir_xls)) {
+            mkdir($dir_xls, 777, true);
+        }
+        return ["path_xls" => $path_xls, "dir_xls" => $dir_xls];
     }
 
     /**
