@@ -1074,7 +1074,7 @@ export const routes = [
                             title: 'Editar Cotización',
                             breadcrumb: { parent: 'cotizacion', name: 'EDITAR'},
                             middleware: [auth, context, permission],
-                            permission: ['editar_cotizacion_compra']
+                            permission: ['editar_cotizacion_compra', 'cargar_layout_cotizacion_compra']
                         }
                     },
                 ]

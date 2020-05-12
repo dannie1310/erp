@@ -409,9 +409,7 @@
                     ]}
                 }).then(data => {         
                     this.cotizacion = data;                               
-                    this.fecha = data.fecha;
-                    console.log('cottt', this.cotizacion);
-                    
+                    this.fecha = data.fecha;                    
                     this.ordenar();
                     this.cargando = false;
                 })

@@ -44,6 +44,7 @@ class CotizacionController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:registrar_cotizacion_compra')->only(['store']);
+        $this->middleware('permiso:cargar_layout_cotizacion_compra')->only(['cargaLayout']);
         $this->middleware('permiso:descargar_layout_cotizacion_compra')->only(['descargaLayout']);
         $this->middleware('permiso:consultar_cotizacion_compra')->only(['show','paginate','index','find']);
         $this->middleware('permiso:editar_cotizacion_compra')->only(['update']);
