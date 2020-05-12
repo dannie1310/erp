@@ -51,7 +51,7 @@
                                     </div>
                                 <hr />
                                 
-                                <div class="row" v-if="cotizacion.cotizaciones">
+                                <div class="row" v-if="cotizacion.partidas">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
@@ -71,8 +71,8 @@
                                                     <th>Observaciones</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody v-if="cotizacion.cotizaciones">
-                                                    <tr v-for="(partida, i) in cotizacion.cotizaciones.data">
+                                                <tbody v-if="cotizacion.partidas">
+                                                    <tr v-for="(partida, i) in cotizacion.partidas.data">
                                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                         <td style="text-align:center;">{{(partida.material) ? partida.material.numero_parte : '----'}}</td>
                                                         <td>{{(partida.material) ? partida.material.descripcion : '----'}}</td>
@@ -405,11 +405,13 @@
                         'empresa',
                         'sucursal',
                         'complemento',
-                        'cotizaciones.material'
+                        'partidas.material'
                     ]}
                 }).then(data => {         
                     this.cotizacion = data;                               
                     this.fecha = data.fecha;
+                    console.log('cottt', this.cotizacion);
+                    
                     this.ordenar();
                     this.cargando = false;
                 })
@@ -420,24 +422,24 @@
                 this.pesos = 0;
                 this.dolares = 0;
                 this.euros = 0;
-                while(this.x < this.cotizacion.cotizaciones.data.length)
+                while(this.x < this.cotizacion.partidas.data.length)
                 {                    
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
                     {                        
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
-                            this.pesos = (this.pesos + parseFloat(this.cotizacion.cotizaciones.data[this.x].cantidad * this.precio[this.x] - 
-                            ((this.cotizacion.cotizaciones.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
+                            this.pesos = (this.pesos + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] - 
+                            ((this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
-                            this.dolares = (this.dolares + parseFloat(this.cotizacion.cotizaciones.data[this.x].cantidad * this.precio[this.x] - 
-                            ((this.cotizacion.cotizaciones.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
+                            this.dolares = (this.dolares + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] - 
+                            ((this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
                         }
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
-                            this.euros = (this.euros + parseFloat(this.cotizacion.cotizaciones.data[this.x].cantidad * this.precio[this.x] - 
-                            ((this.cotizacion.cotizaciones.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
+                            this.euros = (this.euros + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] - 
+                            ((this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
                         }                       
                     }
                     this.x ++;                    
@@ -446,18 +448,18 @@
             ordenar()
             {                
                 this.x = 0;
-                while(this.x < this.cotizacion.cotizaciones.data.length)
+                while(this.x < this.cotizacion.partidas.data.length)
                 {
                     if(!this.carga)
                     {
-                        this.enable[this.x] = this.cotizacion.cotizaciones.data[this.x].no_cotizado;
-                        this.precio[this.x] = this.cotizacion.cotizaciones.data[this.x].precio_unitario;
-                        this.moneda_input[this.x] = (this.cotizacion.cotizaciones.data[this.x].id_moneda != 0) ? this.cotizacion.cotizaciones.data[this.x].id_moneda : 1;
-                        this.descuento[this.x] = (this.cotizacion.cotizaciones.data[this.x].descuento > 0) ? this.cotizacion.cotizaciones.data[this.x].descuento : 0;
+                        this.enable[this.x] = this.cotizacion.partidas.data[this.x].no_cotizado;
+                        this.precio[this.x] = this.cotizacion.partidas.data[this.x].precio_unitario;
+                        this.moneda_input[this.x] = (this.cotizacion.partidas.data[this.x].id_moneda != 0) ? this.cotizacion.partidas.data[this.x].id_moneda : 1;
+                        this.descuento[this.x] = (this.cotizacion.partidas.data[this.x].descuento > 0) ? this.cotizacion.partidas.data[this.x].descuento : 0;
                         
                     }else{
-                        var busqueda = this.carga.partidas.find(x=>x.id_material == this.cotizacion.cotizaciones.data[this.x].material.id);
-                        this.cotizacion.cotizaciones.data[this.x].observacion = busqueda.observaciones;
+                        var busqueda = this.carga.partidas.find(x=>x.id_material == this.cotizacion.partidas.data[this.x].material.id);
+                        this.cotizacion.partidas.data[this.x].observacion = busqueda.observaciones;
                         this.enable[this.x] = (busqueda.precio_unitario > 0) ? true : false;
                         this.precio[this.x] = busqueda.precio_unitario;
                         this.moneda_input[this.x] = busqueda.id_moneda;
@@ -493,7 +495,7 @@
                 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.post.partidas = this.cotizacion.cotizaciones.data;
+                        this.post.partidas = this.cotizacion.partidas.data;
                         this.post.id_cotizacion = this.id;
                         this.post.fecha = this.cotizacion.fecha;
                         this.post.moneda = this.moneda_input;

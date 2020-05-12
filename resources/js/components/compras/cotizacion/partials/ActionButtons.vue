@@ -13,9 +13,10 @@
 import Show from '../Show';
 import Delete from "../Delete";
 import DescargarLayout from '../DescargaLayout';
+import CargaLayout from '../CargaLayout';
     export default {
         name: "cotizacion-buttons",
-        components: {Delete, Show, DescargarLayout},
+        components: {Delete, Show, DescargarLayout, CargaLayout},
         props: ['value'],
         data()
         {

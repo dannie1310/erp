@@ -51,7 +51,7 @@ class CotizacionService
     {
         return $this->repository->show($id)->eliminar($data);
     }
-}
+
     public function cargaLayout($file, $id, $name)
     {
         $file_xls = $this->getFileXls($file, $name);
@@ -65,14 +65,14 @@ class CotizacionService
         {
             abort(400,'Archivo XLS no compatible');
         }
-        if(count($celdas) != count($cotizacion->cotizaciones) +19)
+        if(count($celdas) != count($cotizacion->partidas) +19)
         {
             abort(400,'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
         }        
-        while($x < count($cotizacion->cotizaciones) + 2)
+        while($x < count($cotizacion->partidas) + 2)
         {
             $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
-            $item = $cotizacion->cotizaciones->where('id_material', $decodificado)->first();
+            $item = $cotizacion->partidas->where('id_material', $decodificado)->first();
             if(!is_numeric($celdas[$x][0]) || !is_numeric($celdas[$x][6]) || !is_numeric($celdas[$x][7]))
             {
                 abort(400,'No es posible obtener datos de la partida # '. ($x - 1));
@@ -139,5 +139,4 @@ class CotizacionService
         unlink($file_xls);
         return $rows[0];
     }
-}
 }

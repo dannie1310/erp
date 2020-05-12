@@ -65,4 +65,3 @@ class CotizacionController extends Controller
         return response()->json($res, 200);
     }
 }
-}
