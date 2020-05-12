@@ -151,6 +151,11 @@ class Empresa extends Model
         return $query->whereIn('tipo_empresa',[1,2,3]);
     }
 
+    public function scopeTipoEmpresa($query, $tipo)
+    {
+        return $query->whereIn('tipo_empresa', explode(",", $tipo));
+    }
+
     public function scopeDestajistas($query)
     {
         return $query->where('tipo_empresa',4);

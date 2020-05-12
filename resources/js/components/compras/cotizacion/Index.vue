@@ -1,10 +1,10 @@
 <template>
     <div class="row">
-        <!-- <div class="col-12">
+        <div class="col-12">
             <button @click="create" v-if="$root.can('registrar_cotizacion_compra')" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
-        </div> -->
+        </div>
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -140,6 +140,7 @@
                         buttons: $.extend({}, {
                             show: true,
                             id: cotizacion.id,
+                            delete: self.$root.can('eliminar_cotizacion_compra') ? true : false,
                         })
                     }));
                 },
