@@ -11,13 +11,17 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
 
     public function transform(AsignacionProveedores $model)
     {
+        // dd($model->estado);
         return [
             'id' => (int) $model->getKey(),
-            'folio_solicitud' => $model->solicitud->numero_folio_format,
-            'folio_cotizacion' => $model->folio_format,
-            'concepto' => $model->solicitud->concepto,
-            'fecha_format' => $model->timestamp_registro,
-            'estado' => $model->estado->descripcion,
+            'fecha' => $model->solicitud->fecha,
+            'fecha_solicitud_format' => $model->solicitud->fecha_format,
+            'fecha_format' => $model->fecha_format,
+            'observaciones' => (string) $model->solicitud->observaciones,
+            'estado' => $model->estadoAsignacion->descripcion,
+            'folio_solicitud_format' => $model->solicitud->numero_folio_format,
+            'opciones' => $model->solicitud->opciones,
+            'folio_asignacion_format' => $model->folio_format,
         ];
     }
 }
