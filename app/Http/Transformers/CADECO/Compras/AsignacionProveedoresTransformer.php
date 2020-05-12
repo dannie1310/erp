@@ -15,7 +15,8 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
         return [
             'id' => (int) $model->getKey(),
             'fecha' => $model->solicitud->fecha,
-            'fecha_format' => $model->solicitud->fecha_format,
+            'fecha_solicitud_format' => $model->solicitud->fecha_format,
+            'fecha_format' => $model->fecha_format,
             'observaciones' => (string) $model->solicitud->observaciones,
             'estado' => $model->estadoAsignacion->descripcion,
             'folio_solicitud_format' => $model->solicitud->numero_folio_format,
