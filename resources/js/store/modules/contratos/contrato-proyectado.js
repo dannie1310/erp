@@ -108,7 +108,6 @@ export default {
                     })
             });
         },
-
         getArea(payload = {}) {
             return new Promise((resolve, reject) => {
                 axios
@@ -158,6 +157,47 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 })
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el Contrato Proyectado",
+                    text: "¿Está seguro de que desea eliminar este contrato?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Contrato eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
                         } else {
                             reject();
                         }

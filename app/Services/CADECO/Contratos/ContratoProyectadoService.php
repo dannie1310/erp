@@ -48,13 +48,12 @@ class ContratoProyectadoService
 
     public function update(array $data, $id)
     {
-        $this->repository->show($id)->update([
+        return $this->repository->show($id)->update([
             'fecha' => $data['fecha_date'],
             'cumplimiento' => $data['cumplimiento'],
             'vencimiento' => $data['vencimiento'],
-            'referencia' => strtoupper($data['referencia'])         
+            'referencia' => strtoupper($data['referencia'])
         ]);
-        exit;
     }
 
     public function paginate($data)
@@ -63,11 +62,11 @@ class ContratoProyectadoService
         $cp = $this->repository;
 
         if(isset($data['id_area_subcontratante'])){
-            $area = TipoAreaSubcontratante::query()->where([['descripcion', 'LIKE', '%'.request('id_area_subcontratante').'%']])->get();
+            $area = TipoAreaSubcontratante::where([['descripcion', 'LIKE', '%'.request('id_area_subcontratante').'%']])->get();
 
             foreach ($area as $e){
                 if(isset($e->id)){
-                    $cp_areas = $cp_area::query()->where([['id_area_subcontratante', '=', $e->id]])->get();
+                    $cp_areas = $cp_area::where([['id_area_subcontratante', '=', $e->id]])->get();
                     foreach ($cp_areas as $et){
                         $cp = $cp->whereOr([['id_transaccion', '=', $et->id_transaccion]]);
                     }
@@ -102,7 +101,7 @@ class ContratoProyectadoService
                     'id_area_subcontratante' => $area,
                     'id_transaccion' => $id,
                 ];
-                $solicitud = AreaSubcontratante::query()->create($datos);
+                $solicitud = AreaSubcontratante::create($datos);
 
                 DB::connection('cadeco')->commit();
                 $transaccion->refresh();
@@ -115,22 +114,8 @@ class ContratoProyectadoService
         }
     }
 
-//    public function niveles($data)
-//    {
-//        $list=array();
-//        $first=4;
-//        $size = strlen($data['nivel']);
-//
-//        while($first<$size){
-//            $nivel=substr($data['nivel'],0,$first);
-//            $result=Contrato::where('id_transaccion','=',$data['id_transaccion'])->where('id_concepto','<',$data['id_concepto'])->where('nivel','LIKE',$nivel)->get();
-//            array_push($list,[$result[0]->descripcion, $result[0]->nivel]);
-//            $first+=4;
-//        }
-//
-//        return $list;
-//
-//    }
-
-
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data']);
+    }
 }

@@ -66,26 +66,26 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row" v-if="!cargando">
+                            <div class="col-md-12">
+                                <div class="form-group row error-content">
+                                    <label for="motivo" class="col-md-2 col-form-label">Motivo:</label>
+                                    <div class="col-md-10">
+                                        <textarea
+                                            name="motivo"
+                                            id="motivo"
+                                            class="form-control"
+                                            v-model="motivo"
+                                            v-validate="{required: true}"
+                                            data-vv-as="Motivo"
+                                            :class="{'is-invalid': errors.has('motivo')}"
+                                        ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                          <div class="row" v-if="!cargando">
-            <div class="col-md-12">
-                <div class="form-group row error-content">
-                    <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
-                    <div class="col-sm-10">
-                        <textarea
-                            name="motivo"
-                            id="motivo"
-                            class="form-control"
-                            v-model="motivo"
-                            v-validate="{required: true}"
-                            data-vv-as="Motivo"
-                            :class="{'is-invalid': errors.has('motivo')}"
-                        ></textarea>
-                        <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="button" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''" v-on:click="validate">Eliminar</button>
