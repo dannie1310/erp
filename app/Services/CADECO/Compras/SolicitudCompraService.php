@@ -4,7 +4,7 @@
 namespace App\Services\CADECO\Compras;
 
 
-use App\Models\CADECO\Cotizacion;
+use App\Models\CADECO\CotizacionCompraPartida;
 use App\Models\CADECO\SolicitudCompra;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
@@ -126,13 +126,18 @@ class SolicitudCompraService
         $solicitud_partidas = $solicitud->partidas;
         $solicitud_cotizaciones = $solicitud->cotizaciones;
         foreach($solicitud_partidas as $i => $partida){
+            $cantidad_asig_previamente = $partida->asignaciones()->sum('cantidad_asignada');
             $items[$i] = [
                 'id_item' => $partida->id_item,
                 'id_material' => $partida->id_material,
                 'descripcion' => $partida->material->descripcion,
-                'cantidad_solicitada' => $partida->cantidad,
-                'cantidad_asignada' => 0,
-                'cantidad_disponible' => $partida->cantidad - 0,
+                'descripcion_corta' => substr($partida->material->descripcion, 0, 35),
+                'unidad' => $partida->material->unidad,
+                'cantidad_solicitada' => number_format($partida->cantidad, 4, '.', ''),
+                'cantidad_asignada' => number_format($cantidad_asig_previamente, 4, '.', ''),
+                'cantidad_disponible' => number_format($partida->cantidad - $cantidad_asig_previamente, 4, '.', ''),
+                'cantidad_base' => number_format($partida->cantidad - $cantidad_asig_previamente, 4, '.', ''),
+                'item_pendiente' => $partida->cantidad - $cantidad_asig_previamente > 0?true:false,
             ];
             foreach($solicitud_cotizaciones as $cotizacion){
                 if(!$cotizacion->id_empresa)continue;
@@ -146,15 +151,20 @@ class SolicitudCompraService
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'] = array();
                 }
                 array_key_exists($cotizacion->id_transaccion, $cotizaciones)?'': $cotizaciones[$cotizacion->id_transaccion] = array();
-                $cot = Cotizacion::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->first();
+                $cot = CotizacionCompraPartida::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->first();
                 if($cot && $cot->precio_unitario > 0){
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = [
+                        'id_material' => $cot->id_material,
+                        'id_item' => $partida->id_item,
+                        'id_transaccion' => $cot->id_transaccion,
                         'cantidad_asignada' => '',
                         'precio_unitario' => $cot->precio_unitario,
+                        'precio_unitario_format' => '$ ' . number_format($cot->precio_unitario, 2, '.', ','),
                         'moneda' => $cot->moneda->abreviatura,
-                        'tipo_cambio' => $cot->moneda->tipo == 1?1: $cot->moneda->cambio->cambio,
+                        'tipo_cambio' => $cot->moneda->tipo == 1?1: number_format($cot->moneda->cambio->cambio, 4, '.', ','),
                         'importe' => 0,
-                        'descuento' => $cot->descuento,
+                        'importe_moneda_conversion' => 0,
+                        'descuento' => $cot->descuento?number_format($cot->descuento, 2, '.', ','):0,
                     ];
                 }else{
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = null;

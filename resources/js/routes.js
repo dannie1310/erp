@@ -1060,7 +1060,7 @@ export const routes = [
                         component: require('./components/compras/cotizacion/Create').default,
                         meta: {
                             title: 'Registrar Cotización',
-                        breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR COTIZACIÓN'},
+                            breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR'},
                             middleware: [auth, context, permission],
                             permission: ['registrar_cotizacion_compra']
                         }
@@ -1072,11 +1072,11 @@ export const routes = [
                         component: require('./components/compras/cotizacion/Edit').default,
                         meta: {
                             title: 'Editar Cotización',
-                            breadcrumb: { parent: 'cotizacion', name: 'EDITAR COTIZACIÓN'},
+                            breadcrumb: { parent: 'cotizacion', name: 'EDITAR'},
                             middleware: [auth, context, permission],
-                            permission: ['editar_cotizacion_compra']
+                            permission: ['editar_cotizacion_compra', 'cargar_layout_cotizacion_compra']
                         }
-                    }
+                    },
                 ]
             },
             {
@@ -1113,8 +1113,8 @@ export const routes = [
                         name: 'requisicion-create',
                         component: require('./components/compras/requisicion/Create').default,
                         meta: {
-                            title: 'Registrar Requisición de Compra',
-                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR REQUISICIÓN'},
+                            title: 'Registrar Requisición',
+                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_requisicion_compra'
                         }

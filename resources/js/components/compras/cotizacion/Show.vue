@@ -71,7 +71,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(partida, i) in cotizacion.cotizaciones.data" v-show="no_cotizados[i]">
+                                                    <tr v-for="(partida, i) in cotizacion.partidas.data" v-show="no_cotizados[i]">
                                                         <td >{{cuenta[i] + 1}}</td>
                                                         <td style="text-align: center"><b>{{(partida.material) ? partida.material.numero_parte : null}}</b></td>
                                                         <td style="text-align: center">{{(partida.material) ? partida.material.descripcion : '------------'}}</td>
@@ -158,14 +158,14 @@
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
                 return this.$store.dispatch('compras/cotizacion/find', {
                     id: this.id,
-                    params:{include: ['empresa', 'sucursal', 'complemento', 'cotizaciones.material', 'cotizaciones.moneda']}
+                    params:{include: ['empresa', 'sucursal', 'complemento', 'partidas']}
                 }).then(data => {
                     this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
-                    this.items = data.cotizaciones.data;
+                    this.items = data.partidas.data;
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
-                    
+
                 })
             }
         },
@@ -184,7 +184,7 @@
                     this.no_cotizados[this.x] = this.items[this.x].no_cotizado;
                     this.cuenta[this.x] = (this.no_cotizados[this.x]) ? this.t ++ : 0;
                     this.x ++;
-                }                
+                }
             }
         }
     }

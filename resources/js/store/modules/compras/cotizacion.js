@@ -19,12 +19,17 @@ export default {
 
         SET_COTIZACION(state, data) {
             state.currentCotizacion = data;
+        },
+        DELETE_COTIZACION(state, id){
+            state.cotizaciones = state.cotizaciones.filter(cotizacion => {
+                return cotizacion.id != id
+            });
         }
     },
 
     actions: {
         paginate (context, payload) {
-            
+
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', { params: payload.params })
@@ -36,6 +41,45 @@ export default {
                         reject(error)
                     })
             })
+        },
+        cargaLayout(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar Layout de Cotización",
+                    text: "¿Está seguro/a de que desea cargar xlsx?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Agregar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'layout', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                        swal("Archivo cargado correctamente:", {
+                                            icon: "success",
+                                            timer: 2000,
+                                            buttons: false
+                                        }).then(() => {
+                                            resolve(data);
+                                        })
+
+                                })
+                                .catch(error => {
+                                    reject('Archivo no procesable');
+                                })
+                        }
+                    });
+            });
         },
         find(context, payload) {
             return new Promise((resolve, reject) => {
@@ -103,7 +147,7 @@ export default {
             });
         },
         store(context,payload){
-            
+
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Cotización de Compra",
@@ -140,6 +184,47 @@ export default {
                     });
             });
 
+        },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Cotización de Compra",
+                    text: "¿Estás seguro/a de que desea eliminar esta Cotización de Compra?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cotización de Compra eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
         }
     },
 
@@ -151,7 +236,7 @@ export default {
         meta(state) {
             return state.meta
         },
-        
+
         currentCotizacion(state) {
             return state.currentCotizacion;
         }
