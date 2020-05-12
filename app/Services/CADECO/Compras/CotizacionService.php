@@ -69,7 +69,7 @@ class CotizacionService
         {
             $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
             $item = $cotizacion->cotizaciones->where('id_material', $decodificado)->first();
-            if(!is_numeric($celdas[$x][0]))
+            if(!is_numeric($celdas[$x][0]) || !is_numeric($celdas[$x][6]) || !is_numeric($celdas[$x][7]))
             {
                 abort(400,'No es posible obtener datos de la partida # '. ($x - 1));
             }
@@ -80,7 +80,7 @@ class CotizacionService
             $partidas[] = array(
                 'precio_unitario' => $celdas[$x][6],
                 'descuento' => $celdas[$x][7],
-                'id_moneda' => ($celdas[$x][9] == 'PESO MXP') ? 1 : ($celdas[$x][9] == 'DOLAR USD') ? 2 : 3,
+                'id_moneda' => ($celdas[$x][9] == 'PESO MXP') ? 1 : (($celdas[$x][9] == 'DOLAR USD') ? 2 : 3),
                 'observaciones' => $celdas[$x][11],
                 'id_material' => $item->material->id_material,
                 'descripcion' => $item->material->descripcion,

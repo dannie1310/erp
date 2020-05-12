@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="load()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Cargar Layout Cotización">
+        <button @click="load()" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Cargar Layout Cotización">
             <i class="fa fa-upload" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>

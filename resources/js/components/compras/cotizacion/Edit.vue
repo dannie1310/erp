@@ -444,9 +444,7 @@
                 }         
             },
             ordenar()
-            {
-                console.log('this.carga', this.carga);
-                
+            {                
                 this.x = 0;
                 while(this.x < this.cotizacion.cotizaciones.data.length)
                 {
@@ -456,24 +454,40 @@
                         this.precio[this.x] = this.cotizacion.cotizaciones.data[this.x].precio_unitario;
                         this.moneda_input[this.x] = (this.cotizacion.cotizaciones.data[this.x].id_moneda != 0) ? this.cotizacion.cotizaciones.data[this.x].id_moneda : 1;
                         this.descuento[this.x] = (this.cotizacion.cotizaciones.data[this.x].descuento > 0) ? this.cotizacion.cotizaciones.data[this.x].descuento : 0;
-                        this.pago = (this.cotizacion.complemento) ? this.cotizacion.complemento.parcialidades : 0;
-                        this.anticipo = (this.cotizacion.complemento) ? this.cotizacion.complemento.anticipo : 0;
-                        this.credito = (this.cotizacion.complemento) ? this.cotizacion.complemento.dias_credito : 0;
-                        this.tiempo = (this.cotizacion.complemento) ? this.cotizacion.complemento.entrega : 0;
-                        this.vigencia = (this.cotizacion.complemento) ? this.cotizacion.complemento.vigencia : 0;
+                        
+                    }else{
+                        var busqueda = this.carga.partidas.find(x=>x.id_material == this.cotizacion.cotizaciones.data[this.x].material.id);
+                        this.cotizacion.cotizaciones.data[this.x].observacion = busqueda.observaciones;
+                        this.enable[this.x] = (busqueda.precio_unitario > 0) ? true : false;
+                        this.precio[this.x] = busqueda.precio_unitario;
+                        this.moneda_input[this.x] = busqueda.id_moneda;
+                        this.descuento[this.x] = busqueda.descuento;
+                    }
+                    this.x ++;                    
+                }
+                if(!this.carga)
+                {
+                    this.pago = (this.cotizacion.complemento) ? this.cotizacion.complemento.parcialidades : 0;
+                    this.anticipo = (this.cotizacion.complemento) ? this.cotizacion.complemento.anticipo : 0;
+                    this.credito = (this.cotizacion.complemento) ? this.cotizacion.complemento.dias_credito : 0;
+                    this.tiempo = (this.cotizacion.complemento) ? this.cotizacion.complemento.entrega : 0;
+                    this.vigencia = (this.cotizacion.complemento) ? this.cotizacion.complemento.vigencia : 0;
+                    this.descuento_cot = (this.cotizacion.complemento) ? this.cotizacion.complemento.descuento : 0;
+                }else{
+                    this.pago = this.carga.pago_parcialidades;
+                    this.anticipo = this.carga.anticipo;
+                    this.credito = this.carga.credito;
+                    this.tiempo = this.carga.tiempo_entrega;
+                    this.vigencia = this.carga.vigencia;
+                    this.descuento_cot = this.carga.descuento_cot;
+                    this.cotizacion.observaciones = this.carga.observaciones_generales;
+                }
                         this.tipo_cambio[1] = 1;
                         this.tipo_cambio[2] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_igh;
                         this.tipo_cambio[3] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_eur : this.monedas[2].tipo_cambio_igh;
-                        this.tipo_cambio[4] = 1;
-                        this.descuento_cot = (this.cotizacion.complemento) ? this.cotizacion.complemento.descuento : 0;
-                    }else{
-                        // console.log('listo para pintar', this.carga);
-                        // var busqueda                         
-                    }
+                        this.tipo_cambio[4] = 1;                        
 
-                    this.x ++;                    
-                }
-                this.calcular();                
+                    this.calcular();                
             },
             validate() {
                 
