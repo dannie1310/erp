@@ -91,7 +91,8 @@
                             fecha: contratoProyectado.fecha,
                             referencia: contratoProyectado.referencia,
                             area:contratoProyectado.areasSubcontratantes.data[0],
-                            contratoProyectado: contratoProyectado
+                            contratoProyectado: contratoProyectado,
+                            delete : (this.$root.can('aprobar_estimacion_subcontrato')) ? true : true,
                         })
                     }));
                 },
