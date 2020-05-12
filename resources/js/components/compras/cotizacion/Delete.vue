@@ -171,6 +171,7 @@
         },
         methods: {
             find() {
+                this.motivo = ''
                 this.cargando = true;
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
                 return this.$store.dispatch('compras/cotizacion/find', {
