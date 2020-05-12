@@ -27,10 +27,10 @@ class ValidacionSistema
         // $llave_privada = openssl_pkey_get_private("file://" . $this->deposito_claves . "privkey.pem", "sao01022013#");
         $llave_privada = openssl_pkey_get_private("file://" . $this->deposito_claves . "SAO_privada1024.key", "sao01022013#");
         openssl_private_decrypt($texto_encriptado, $texto_desencriptado, $llave_privada);
-        if($texto_desencriptado==""){
+        if($texto_desencriptado=="" || $texto_desencriptado == null){
             $llave_privada = openssl_pkey_get_private("file://" . $this->deposito_claves . "SAO_privada2048.key", "sao01022013#");
             openssl_private_decrypt($texto_encriptado, $texto_desencriptado, $llave_privada);
-            if($texto_desencriptado==""){
+            if($texto_desencriptado=="" || $texto_desencriptado == null){
                 $llave_privada = openssl_pkey_get_private("file://" . $this->deposito_claves . "SAO_privada4096.key", "sao01022013#");
                 openssl_private_decrypt($texto_encriptado, $texto_desencriptado, $llave_privada);
             }

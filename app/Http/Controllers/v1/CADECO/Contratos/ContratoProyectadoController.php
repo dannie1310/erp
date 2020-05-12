@@ -51,6 +51,7 @@ class ContratoProyectadoController extends Controller
 
         $this->middleware('context');
         $this->middleware('permiso:modificar_area_subcontratante_cp')->only('actualiza');
+        $this->middleware('permiso:editar_contrato_proyectado')->only('update');
         $this->middleware('permiso:consultar_contrato_proyectado')->only(['index','paginate','find','show']);
         $this->service = $service;
         $this->fractal = $fractal;

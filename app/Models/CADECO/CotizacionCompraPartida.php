@@ -4,10 +4,11 @@
 namespace App\Models\CADECO;
 
 
-use App\Models\CADECO\Compras\CotizacionComplementoPartida;
+use App\Models\CADECO\Moneda;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 
-class Cotizacion extends Model
+class CotizacionCompraPartida extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'dbo.cotizaciones';
@@ -27,11 +28,13 @@ class Cotizacion extends Model
         'no_cotizado'
     ];
 
-
-    public function partida(){
+    public function partida()
+    {
         return $this->belongsTo(CotizacionComplementoPartida::class,'id_transaccion', 'id_transaccion')->where('id_material', '=', $this->id_material);
     }
-    public function material(){
+
+    public function material()
+    {
         return $this->belongsTo(Material::class,'id_material', 'id_material');
     }
 
@@ -53,7 +56,7 @@ class Cotizacion extends Model
     public function getPrecioUnitarioFormatAttribute()
     {
         return '$ '. number_format($this->precio_unitario, 2, '.', ',');
-    }    
+    }
 
     public function getPrecioTotalAttribute()
     {
