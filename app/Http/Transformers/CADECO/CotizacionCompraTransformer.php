@@ -11,11 +11,11 @@ use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Transaccion;
 use League\Fractal\TransformerAbstract;
 
-class CotizacionTransformer extends TransformerAbstract
+class CotizacionCompraTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
-     * 
+     *
      * @var array
      */
     protected $availableIncludes = [
@@ -23,7 +23,7 @@ class CotizacionTransformer extends TransformerAbstract
         'empresa',
         'sucursal',
         'complemento',
-        'cotizaciones'
+        'partidas'
     ];
 
     public function transform(CotizacionCompra $model)
@@ -49,7 +49,7 @@ class CotizacionTransformer extends TransformerAbstract
 
     /**
      * Include Solicitud
-     * 
+     *
      * @param CotizacionCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
@@ -98,11 +98,11 @@ class CotizacionTransformer extends TransformerAbstract
      * @param CotizacionCompra $model
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeCotizaciones(CotizacionCompra $model)
+    public function includePartidas(CotizacionCompra $model)
     {
-        if($cotizaciones = $model->cotizaciones)
+        if($partidas = $model->partidas)
         {
-            return $this->collection($cotizaciones, new CotizacionesTransformer);
+            return $this->collection($partidas, new CotizacionCompraPartidaTransformer);
         }
         return null;
     }
