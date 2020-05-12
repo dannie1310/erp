@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\CotizacionCompraTransformer;
 use App\Services\CADECO\Compras\CotizacionService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class CotizacionController extends Controller
@@ -57,4 +58,11 @@ class CotizacionController extends Controller
     {
         return $this->service->descargaLayout($id);
     }
+
+    public function cargaLayout(Request $request)
+    {
+         $res = $this->service->cargaLayout($request->file, $request->id, $request->name);     
+        return response()->json($res, 200);
+    }
+}
 }
