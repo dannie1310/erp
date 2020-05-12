@@ -395,9 +395,8 @@
             {
                  this.$router.push({name: 'cotizacion'}); 
             },
-            find() {                
-                console.log('metodo find en edit', this.id, 'carga:', this.carga);
-                
+            find() {
+                                
                 this.cargando = true;
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
                 return this.$store.dispatch('compras/cotizacion/find', {
@@ -446,23 +445,31 @@
             },
             ordenar()
             {
+                console.log('this.carga', this.carga);
+                
                 this.x = 0;
                 while(this.x < this.cotizacion.cotizaciones.data.length)
                 {
-                    this.enable[this.x] = this.cotizacion.cotizaciones.data[this.x].no_cotizado;
-                    this.precio[this.x] = this.cotizacion.cotizaciones.data[this.x].precio_unitario;
-                    this.moneda_input[this.x] = (this.cotizacion.cotizaciones.data[this.x].id_moneda != 0) ? this.cotizacion.cotizaciones.data[this.x].id_moneda : 1;
-                    this.descuento[this.x] = (this.cotizacion.cotizaciones.data[this.x].descuento > 0) ? this.cotizacion.cotizaciones.data[this.x].descuento : 0;
-                    this.pago = (this.cotizacion.complemento) ? this.cotizacion.complemento.parcialidades : 0;
-                    this.anticipo = (this.cotizacion.complemento) ? this.cotizacion.complemento.anticipo : 0;
-                    this.credito = (this.cotizacion.complemento) ? this.cotizacion.complemento.dias_credito : 0;
-                    this.tiempo = (this.cotizacion.complemento) ? this.cotizacion.complemento.entrega : 0;
-                    this.vigencia = (this.cotizacion.complemento) ? this.cotizacion.complemento.vigencia : 0;
-                    this.tipo_cambio[1] = 1;
-                    this.tipo_cambio[2] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_igh;
-                    this.tipo_cambio[3] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_eur : this.monedas[2].tipo_cambio_igh;
-                    this.tipo_cambio[4] = 1;
-                    this.descuento_cot = (this.cotizacion.complemento) ? this.cotizacion.complemento.descuento : 0;
+                    if(!this.carga)
+                    {
+                        this.enable[this.x] = this.cotizacion.cotizaciones.data[this.x].no_cotizado;
+                        this.precio[this.x] = this.cotizacion.cotizaciones.data[this.x].precio_unitario;
+                        this.moneda_input[this.x] = (this.cotizacion.cotizaciones.data[this.x].id_moneda != 0) ? this.cotizacion.cotizaciones.data[this.x].id_moneda : 1;
+                        this.descuento[this.x] = (this.cotizacion.cotizaciones.data[this.x].descuento > 0) ? this.cotizacion.cotizaciones.data[this.x].descuento : 0;
+                        this.pago = (this.cotizacion.complemento) ? this.cotizacion.complemento.parcialidades : 0;
+                        this.anticipo = (this.cotizacion.complemento) ? this.cotizacion.complemento.anticipo : 0;
+                        this.credito = (this.cotizacion.complemento) ? this.cotizacion.complemento.dias_credito : 0;
+                        this.tiempo = (this.cotizacion.complemento) ? this.cotizacion.complemento.entrega : 0;
+                        this.vigencia = (this.cotizacion.complemento) ? this.cotizacion.complemento.vigencia : 0;
+                        this.tipo_cambio[1] = 1;
+                        this.tipo_cambio[2] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_igh;
+                        this.tipo_cambio[3] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_eur : this.monedas[2].tipo_cambio_igh;
+                        this.tipo_cambio[4] = 1;
+                        this.descuento_cot = (this.cotizacion.complemento) ? this.cotizacion.complemento.descuento : 0;
+                    }else{
+                        // console.log('listo para pintar', this.carga);
+                        // var busqueda                         
+                    }
 
                     this.x ++;                    
                 }

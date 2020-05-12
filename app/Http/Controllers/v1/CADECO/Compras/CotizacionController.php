@@ -59,32 +59,7 @@ class CotizacionController extends Controller
 
     public function cargaLayout(Request $request)
     {
-        $x = 0;
-
-        while($x <= 8)
-        {
-            $ret[] = array(
-                'i' => 1,
-                'material' => 'qwe'.$x,
-                'numero_parte' => 12345,
-                'no_parte_equi' => '12Koo',
-                'pag' => NULL,
-                'descripcion' => 'JORGE ARMANDO',
-                'unidad' => 'PZA',
-                'ref' => 'REFFFF',
-                'fecha' => '2020-02-02',
-                'cantidad' => 20,
-                'observaciones' => 'GIORGIO',
-                'clave_concepto' => ''
-            );
-            $x++;
-        }
-
-        // dd($request);
-
-        // abort(400,'No se puede procesar la Requisición');
-         $res = $this->service->cargaLayout($request->file, $request->id, $request->name);
-         dd('parar de regreso en servicio');
+         $res = $this->service->cargaLayout($request->file, $request->id, $request->name);     
         return response()->json($res, 200);
     }
 }
