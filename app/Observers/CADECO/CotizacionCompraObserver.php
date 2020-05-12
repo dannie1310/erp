@@ -30,7 +30,6 @@ class CotizacionCompraObserver extends TransaccionObserver
 
     public function deleting(CotizacionCompra $cotizacionCompra)
     {
-        $cotizacionCompra->validarAsignacion('eliminar');
         $cotizacionCompra->eliminarPartidas();
 
         CotizacionEliminada::create([
@@ -58,7 +57,7 @@ class CotizacionCompraObserver extends TransaccionObserver
                 'porcentaje_anticipo_pactado' => $cotizacionCompra->porcentaje_anticipo_pactado,
                 'id_usuario' => $cotizacionCompra->id_usuario,
                 'parcialidades' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->parcialidades : NULL,
-                'dias_credito' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento : NULL,
+                'dias_credito' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->dias_credito : NULL,
                 'vigencia' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->vigencia : NULL,
                 'plazo_entrega' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->plazo_entrega : NULL,
                 'descuento' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->descuento : NULL,

@@ -95,7 +95,7 @@ class CotizacionCompra  extends Transaccion
 
     public function transaccionesRelacionadas()
     {
-        return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
+        return $this->hasMany(Transaccion::class, 'id_referente', 'id_transaccion')->where('id_antecedente', '=', $this->id_antecedente);
     }
 
     public function validarAsignacion($motivo)
@@ -346,6 +346,10 @@ class CotizacionCompra  extends Transaccion
                 $mensaje .= "-".$antecedente->tipo->Descripcion." #".$antecedente->numero_folio."\n";
             }
             abort(500, "Esta cotización de compra tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
+        }
+        if($this->asignacionPartida)
+        {
+            throw New \Exception('No se puede eliminar la cotización '. $this->numero_folio_format .' debido a que ya han sido asignados algunos materiales');
         }
     }
 
