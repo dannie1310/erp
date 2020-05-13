@@ -11,7 +11,6 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
 
     public function transform(AsignacionProveedores $model)
     {
-        // dd($model->estado);
         return [
             'id' => (int) $model->getKey(),
             'fecha' => $model->solicitud->fecha,

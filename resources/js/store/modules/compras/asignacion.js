@@ -97,6 +97,20 @@ export default{
                     });
             });
         },
+        find(context, payload) {
+            console.log('Payload id:', payload.id);            
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
