@@ -151,6 +151,24 @@ export const routes = [
                             permission: ['editar_poliza','consultar_poliza'],
                             general: true
                         }
+                    },
+                ]
+            },
+            {
+                path: 'diferencias',
+                component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"diferencia-poliza",
+                        component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                        meta: {
+                            title: 'Diferencias en Pólizas',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'DIFERENCIAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
                     }
                 ]
             },
@@ -250,24 +268,7 @@ export const routes = [
                     }
                 ],
             },
-            {
-                path: 'incidentes-polizas',
-                component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
-                children:[
-                    {
-                        path:"/",
-                        name:"incidente-poliza",
-                        component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
-                        meta: {
-                            title: 'Diferencias en Pólizas',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'DIFERENCIAS EN PÓLIZAS'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_poliza'],
-                            general: true
-                        }
-                    }
-                ]
-            },
+
             {
                 path: 'cfd-sat',
                 component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
