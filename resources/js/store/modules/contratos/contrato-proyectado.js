@@ -42,6 +42,19 @@ export default {
     },
 
     actions: {
+        cargarLayout(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'layout', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
        paginate (context, payload){
             return new Promise((resolve, reject) => {
                 axios
