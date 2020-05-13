@@ -29,7 +29,8 @@ class IncidenteIndividualConsolidadaTransformer extends TransformerAbstract
             'tipo_incidente' =>$model->tipo_incidente->descripcion,
             'fecha_hora_deteccion_format'=>$model->fecha_hora_deteccion_format,
             'fecha_hora_resolucion_format'=>$model->fecha_hora_resolucion_format,
-            'base_datos'=>$model->base_datos
+            'base_datos'=>$model->base_datos,
+            'base_datos_referencia'=>$model->base_datos_referencia
         ];
     }
 

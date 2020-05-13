@@ -173,6 +173,24 @@ export const routes = [
                 ]
             },
             {
+                path: 'diferencias/detectar',
+                component: require('./components/contabilidad-general/incidente-poliza/DetectarDiferencia.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"detectar-diferencias-polizas",
+                        component: require('./components/contabilidad-general/incidente-poliza/DetectarDiferencia.vue').default,
+                        meta: {
+                            title: 'Detectar Diferencias en Pólizas',
+                            breadcrumb: {parent: 'diferencia-poliza', name: 'DETECTAR'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'solicitud-edicion-poliza',
                 component: require('./components/contabilidad-general/solicitudes-edicion/Index.vue').default,
                 children:[

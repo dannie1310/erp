@@ -56,4 +56,10 @@ class IncidenteController extends Controller
         return $this->respondWithItem($item);
     }
 
+    public function buscarDiferencias(Request $request)
+    {
+        $respuesta =$this->service->buscarDiferencias($request);
+        return response()->json($respuesta, 200);
+    }
+
 }

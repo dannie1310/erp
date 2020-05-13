@@ -30,7 +30,8 @@
                     { title: 'Folio', field: 'id', thClass: 'th_folio', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Tipo Diferencia', field: 'tipo', thClass: 'fecha_hora', sortable: true},
                     { title: 'Fecha / Hora Detección', field: 'fecha_hora_deteccion', thClass: 'fecha_hora', sortable: true},
-                    { title: 'Base Datos', field: 'base_datos', sortable: true},
+                    { title: 'Base de Datos Referencia', field: 'base_datos_referencia', sortable: true},
+                    { title: 'Base de Datos con Diferencia', field: 'base_datos', sortable: true},
                     { title: 'Ejercicio', field: 'ejercicio', sortable: true},
                     { title: 'Periodo', field: 'periodo', sortable: true},
                     { title: 'Tipo Poliza', field: 'tipo_poliza', sortable: true},
@@ -51,7 +52,7 @@
         },
         methods: {
             detectar() {
-                this.$router.push({name: 'incidente-poliza-deteccion-masiva'});
+                this.$router.push({name: 'detectar-diferencias-polizas'});
             },
             paginate() {
                 this.cargando = true;
@@ -87,6 +88,7 @@
                             id:incidente.id,
                             fecha_hora_deteccion:incidente.fecha_hora_deteccion_format,
                             base_datos:incidente.base_datos,
+                            base_datos_referencia:incidente.base_datos_referencia,
                             ejercicio:incidente.poliza.ejercicio,
                             periodo:incidente.poliza.periodo,
                             tipo_poliza:incidente.poliza.tipo,

@@ -44,9 +44,9 @@ class IncidenteIndividualConsolidadaService
         return $incidente;
     }
 
-    public function verificar($nombre_archivo)
+    public function buscarDiferencias($parametros)
     {
-
+        return [];
     }
 
 }
