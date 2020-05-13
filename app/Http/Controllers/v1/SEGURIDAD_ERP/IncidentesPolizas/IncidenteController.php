@@ -1,0 +1,59 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: EMartinez
+ * Date: 12/05/2020
+ * Time: 11:33 PM
+ */
+
+namespace App\Http\Controllers\v1\SEGURIDAD_ERP\IncidentesPolizas;
+
+
+use App\Http\Controllers\Controller;
+use App\Http\Transformers\SEGURIDAD_ERP\IncidentesPolizas\IncidenteIndividualConsolidadaTransformer as Transformer;
+use App\Services\SEGURIDAD_ERP\IncidentesPolizas\IncidenteIndividualConsolidadaService as Service;
+use League\Fractal\Manager;
+use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
+
+class IncidenteController extends Controller
+{
+    use ControllerTrait;
+
+    /**
+     * @var Manager
+     */
+    protected $fractal;
+
+    /**
+     * @var Service
+     */
+    protected $service;
+
+    /**
+     * @var Transformer
+     */
+    protected $transformer;
+
+    /**
+     * IncidenteController constructor.
+     * @param Manager $fractal
+     * @param Service $service
+     * @param Transformer $transformer
+     */
+    public function __construct(Manager $fractal, Service $service, Transformer $transformer)
+    {
+        $this->middleware('auth:api');
+
+        $this->fractal = $fractal;
+        $this->service = $service;
+        $this->transformer = $transformer;
+    }
+
+    public function show(Request $request, $id)
+    {
+        $item = $this->service->show($request->all(), $id);
+        return $this->respondWithItem($item);
+    }
+
+}

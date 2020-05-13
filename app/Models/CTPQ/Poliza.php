@@ -9,6 +9,7 @@
 namespace App\Models\CTPQ;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
+use App\Models\SEGURIDAD_ERP\IncidentesPolizas\IncidenteIndividualConsolidada;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -66,6 +67,13 @@ class Poliza extends Model
                 throw $e;
             }
         }
+    }
+
+    public function incidentes()
+    {
+        $base_datos = config('database.connections.cntpq.database');
+        return $this->hasMany(IncidenteIndividualConsolidada::class,"id_poliza", "IdPoliza")
+            ->where("base_datos","=",$base_datos);
     }
 
 }

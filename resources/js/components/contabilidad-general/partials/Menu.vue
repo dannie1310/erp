@@ -22,6 +22,12 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item"  >
+                <router-link :to="{name: 'incidente-poliza'}" class="nav-link" :class="{active: this.$route.name == 'incidente-poliza'}">
+                    <i class="fa fa-warning nav-icon"></i>
+                    <p>Incidentes Pólizas</p>
+                </router-link>
+            </li>
             <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
                 <router-link :to="{name: 'cfd-sat'}" class="nav-link" :class="{active: this.$route.name == 'cfd-sat'}">
                     <i class="fa fa-file-invoice nav-icon"></i>

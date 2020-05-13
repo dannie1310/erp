@@ -217,6 +217,13 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CTPQ\PolizaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CTPQ\PolizaController@update')->where(['id' => '[0-9]+']);
         });
+        $api->group(['prefix' => 'incidente-poliza'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IncidentesPolizas\IncidenteController@store');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IncidentesPolizas\IncidenteController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IncidentesPolizas\IncidenteController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IncidentesPolizas\IncidenteController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IncidentesPolizas\IncidenteController@update')->where(['id' => '[0-9]+']);
+        });
         $api->group(['prefix' => 'solicitud-edicion-poliza'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@store');
             $api->post('{id}/autorizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@autorizar')->where(['id' => '[0-9]+']);

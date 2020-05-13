@@ -251,6 +251,24 @@ export const routes = [
                 ],
             },
             {
+                path: 'incidentes-polizas',
+                component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"incidente-poliza",
+                        component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                        meta: {
+                            title: 'Incidentes Pólizas',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'INCIDENTES PÓLIZAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'cfd-sat',
                 component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
                 children:[
