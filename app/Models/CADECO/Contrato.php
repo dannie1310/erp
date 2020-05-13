@@ -19,6 +19,7 @@ class Contrato extends Model
     protected $fillable = [
         'id_transaccion',
         'descripcion',
+        'id_destino',
         'unidad',
         'cantidad_original',
         'cantidad_presupuestada',
