@@ -25,7 +25,7 @@
             <li class="nav-item"  >
                 <router-link :to="{name: 'incidente-poliza'}" class="nav-link" :class="{active: this.$route.name == 'incidente-poliza'}">
                     <i class="fa fa-warning nav-icon"></i>
-                    <p>Incidentes Pólizas</p>
+                    <p>Diferencias en Pólizas</p>
                 </router-link>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">

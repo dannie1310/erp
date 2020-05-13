@@ -2,6 +2,14 @@
     <span>
         <div class="row">
             <div class="col-md-12">
+                <button @click="detectar" class="btn btn-warning float-right">
+                        <i class="fa fa-not-equal"></i> Detectar Diferencias
+                 </button>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
                 <div class="table-responsive">
                     <datatable v-bind="$data" />
                 </div>
@@ -20,7 +28,7 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index_corto', sortable: false },
                     { title: 'Folio', field: 'id', thClass: 'th_folio', thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Tipo Incidente', field: 'tipo', thClass: 'fecha_hora', sortable: true},
+                    { title: 'Tipo Diferencia', field: 'tipo', thClass: 'fecha_hora', sortable: true},
                     { title: 'Fecha / Hora Detección', field: 'fecha_hora_deteccion', thClass: 'fecha_hora', sortable: true},
                     { title: 'Base Datos', field: 'base_datos', sortable: true},
                     { title: 'Ejercicio', field: 'ejercicio', sortable: true},
@@ -42,8 +50,8 @@
                 })
         },
         methods: {
-            carga_masiva() {
-                this.$router.push({name: 'incidente-edicion-carga-masiva'});
+            detectar() {
+                this.$router.push({name: 'incidente-poliza-deteccion-masiva'});
             },
             paginate() {
                 this.cargando = true;
