@@ -93,6 +93,7 @@ class ContratoProyectadoService
                 $datos['descripcion'] = $contrato['descripcion']; 
                 
                 if($contrato['es_hoja']){
+                    dd('pando', $contrato['destino'], $contrato);
                     $datos['id_destino'] = $contrato['destino']; 
                     $datos['unidad'] = $contrato['unidad']; 
                     $datos['cantidad_original'] = $contrato['cantidad']; 
@@ -102,7 +103,7 @@ class ContratoProyectadoService
 
                 $contrato_proyectado->conceptos()->create($datos);
             }
-
+dd('stop');
             DB::connection('cadeco')->commit();
             
             return $contrato_proyectado;
