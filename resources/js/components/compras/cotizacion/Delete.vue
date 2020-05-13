@@ -199,7 +199,7 @@
                             }
                         })
                             .then(data => {
-                                this.$store.commit('compras/cotizacion/SET_partidas', data.data);
+                                this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
                                 this.$store.commit('compras/cotizacion/SET_META', data.meta);
                             })
                     })

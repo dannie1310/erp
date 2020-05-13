@@ -603,6 +603,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@show')->where(['id' => '[0-9]+']);
             $api->get('getArea', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@getArea');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@paginate');
+            $api->post('/','App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@store');
             $api->patch('{id}/actualizar', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@actualiza');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@update');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@destroy')->where(['id' => '[0-9]+']);

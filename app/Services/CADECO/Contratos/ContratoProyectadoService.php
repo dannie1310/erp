@@ -9,11 +9,12 @@
 namespace App\Services\CADECO\Contratos;
 
 
+use App\Models\CADECO\Contrato;
+use App\Repositories\Repository;
+use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
-use App\Repositories\Repository;
-use Illuminate\Support\Facades\DB;
 
 class ContratoProyectadoService
 {
@@ -46,6 +47,68 @@ class ContratoProyectadoService
         return $this->repository->show($id);
     }
 
+    public function store($data){
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $contrato_proyectado = $this->repository->create([
+                'fecha' => $data['fecha'],
+                'cumplimineto' => $data['cumplimineto'],
+                'vencimiento' => $data['vencimiento'],
+                'referencia' => $data['referencia'],
+            ]);
+            $contrato_proyectado = $this->repository->show($contrato_proyectado->id_transaccion);
+            $contrato_proyectado->areaSubcontratante()->create([
+                'id_transaccion' => $contrato_proyectado->id_transaccion,
+                'id_area_subcontratante' => $data['id_area_subcontratante'],
+            ]);
+
+            $nivel_anterior = 0;
+            $nivel_contrato_anterior = '';
+            foreach($data['contratos'] as $key => $contrato){
+                $nivel = '';
+                if($nivel_contrato_anterior == ''){
+                    $nivel = '000.';
+                    $nivel_contrato_anterior = $nivel;
+                    $nivel_anterior = $contrato['nivel'];
+                }else{
+                    if($nivel_anterior + 1 == $contrato['nivel']){
+                        $cant = Contrato::where('nivel', 'LIKE', $nivel_contrato_anterior.'___.')->where('id_transaccion', '=', $contrato_proyectado->id_transaccion)->count();
+                        $nivel = $nivel_contrato_anterior . str_pad($cant, 3, 0, 0) . '.';
+                        $nivel_contrato_anterior = $nivel;
+                        $nivel_anterior = $contrato['nivel'];
+                    }else{
+                        $cant = Contrato::where('nivel', 'LIKE', substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)) . '___.')->where('id_transaccion', '=', $contrato_proyectado->id_transaccion)->count();
+                        $nivel = substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)) . str_pad($cant, 3, 0, 0) . '.';
+                        $nivel_contrato_anterior = $nivel;
+                        $nivel_anterior = $contrato['nivel'];
+                    }
+
+                }
+                $datos = array();
+                $datos['id_transaccion'] = $contrato_proyectado->id_transaccion; 
+                $datos['nivel'] = $nivel; 
+                $datos['descripcion'] = $contrato['descripcion']; 
+                
+                if($contrato['es_hoja']){
+                    $datos['id_destino'] = $contrato['destino']; 
+                    $datos['unidad'] = $contrato['unidad']; 
+                    $datos['cantidad_original'] = $contrato['cantidad']; 
+                    $datos['cantidad_presupuestada'] = $contrato['cantidad']; 
+                    $datos['clave'] = $contrato['clave']; 
+                }
+
+                $contrato_proyectado->conceptos()->create($datos);
+            }
+
+            DB::connection('cadeco')->commit();
+            
+            return $contrato_proyectado;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
+    }
+    
     public function update(array $data, $id)
     {
         return $this->repository->show($id)->update([

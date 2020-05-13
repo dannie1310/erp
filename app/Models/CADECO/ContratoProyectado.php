@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\CADECO\Contratos\ContratoEliminado;
 use App\Models\CADECO\Contratos\ContratoProyectadoEliminado;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\DB;
 
 class ContratoProyectado extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = null;
+    public const OPCION_ANTECEDENTE = null;
     protected $fillable = [
         'id_antecedente',
         'fecha',
@@ -72,9 +75,8 @@ class ContratoProyectado extends Transaccion
         return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion')->OrderBy('nivel');
     }
 
-    public function cpAreasSubcontratantes()
-    {
-        return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion');
+    public function areaSubcontratante(){
+        return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function transaccionesRelacionadas()
