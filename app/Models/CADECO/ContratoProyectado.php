@@ -10,12 +10,14 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
-use Illuminate\Database\Eloquent\Model;
 
 class ContratoProyectado extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = null;
+    public const OPCION_ANTECEDENTE = null;
     protected $fillable = [
         'id_antecedente',
         'fecha',
@@ -40,6 +42,10 @@ class ContratoProyectado extends Transaccion
     public function areasSubcontratantes()
     {
         return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante');
+    }
+
+    public function areaSubcontratante(){
+        return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function conceptos()
