@@ -53,10 +53,14 @@ class ContratoProyectadoService
     public function store($data){
         try {
             DB::connection('cadeco')->beginTransaction();
+            $fecha_cp = strtotime($data['fecha']);
+            $fecha_cump = strtotime($data['cumplimineto']);
+            $fecha_vencim = strtotime($data['vencimiento']);
+
             $contrato_proyectado = $this->repository->create([
-                'fecha' => $data['fecha'],
-                'cumplimineto' => $data['cumplimineto'],
-                'vencimiento' => $data['vencimiento'],
+                'fecha' => date('Y-m-d',$fecha_cp),
+                'cumplimiento' => date('Y-m-d',$fecha_cump) ,
+                'vencimiento' => date('Y-m-d',$fecha_vencim) ,
                 'referencia' => $data['referencia'],
             ]);
             $contrato_proyectado = $this->repository->show($contrato_proyectado->id_transaccion);
@@ -93,7 +97,6 @@ class ContratoProyectadoService
                 $datos['descripcion'] = $contrato['descripcion']; 
                 
                 if($contrato['es_hoja']){
-                    dd('pando', $contrato['destino'], $contrato);
                     $datos['id_destino'] = $contrato['destino']; 
                     $datos['unidad'] = $contrato['unidad']; 
                     $datos['cantidad_original'] = $contrato['cantidad']; 
@@ -103,7 +106,7 @@ class ContratoProyectadoService
 
                 $contrato_proyectado->conceptos()->create($datos);
             }
-dd('stop');
+
             DB::connection('cadeco')->commit();
             
             return $contrato_proyectado;
