@@ -29,7 +29,8 @@ class MonedaTransformer extends TransformerAbstract
             'nombre'=>(string)$model->nombre,
             'tipo' => $model->tipo,
             'abreviatura'=>(string)$model->abreviatura,
-            'tipo_cambio' => $model->tipoCambio,
+            'tipo_cambio' => $model->tipo_cambio,
+            'tipo_cambio_igh' => $model->tipo_cambio_igh
         ];
     }
 }

@@ -100,8 +100,8 @@ export default{
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar inventario fisico",
-                    text: "¿Está seguro/a de que quiere registrar un nuevo inventario físico?",
+                    title: "Registrar Asignación de Proveedores",
+                    text: "¿Está seguro/a de que quiere registrar registrar la asignación de proveedores?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -120,7 +120,7 @@ export default{
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Inventario físico registrado correctamente", {
+                                    swal("Asignación de proveedores registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
@@ -146,17 +146,16 @@ export default{
                 })
             }
         },
-
-        descargaLayout(context){
+        descargaLayout(context, payload){
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'descargaLayout', { responseType:'blob', })
+                    .get(URI + 'descargaLayout/'+ payload.id, { params: payload.params, responseType:'blob', })
                     .then(r => r.data)
                     .then(data => {
                         const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
                         const link = document.createElement('a');
                         link.href = url;
-                        link.setAttribute('download', 'Layout-prueba.csv');
+                        link.setAttribute('download', 'Layout-'+payload.id+'.csv');
                         document.body.appendChild(link);
                         link.click();
                     })

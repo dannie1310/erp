@@ -47,6 +47,14 @@ class EstimacionObserver extends TransaccionObserver
         $estimacion->creaSubcontratoEstimacion();
     }
 
+    public function updating(Estimacion $estimacion)
+    {
+        if($estimacion->estado > 0)
+        {
+            abort(400, "Esta estimación no puede ser editada se encuentra con estado ".$estimacion->estado_descripcion.".");
+        }
+    }
+
     public function deleting(Estimacion $estimacion)
     {
         $estimacion->validarParaEliminar();

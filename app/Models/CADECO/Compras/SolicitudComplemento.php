@@ -36,27 +36,6 @@ class SolicitudComplemento extends Model
         'timestamp_registro',
     ];
 
-    public function getFechaFormatAttribute()
-    {
-        $date = date_create($this->fecha_requisicion_origen);
-        return date_format($date,"d/m/Y");
-
-    }
-
-    public function generaFolioCompuesto(){
-
-        $count = $this->query()->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
-        $count++;
-
-        $tipo= CtgTipo::find($this->id_tipo);
-        $area_compradora = CtgAreaCompradora::find($this->id_area_compradora);
-
-        $folio=$area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.$count;
-
-        return $folio;
-
-    }
-
     public function tipo()
     {
         return $this->belongsTo(CtgTipo::class, 'id_tipo', 'id');
@@ -72,7 +51,35 @@ class SolicitudComplemento extends Model
         return $this->belongsTo(CtgAreaSolicitante::class, 'id_area_solicitante', 'id');
     }
 
+    public function activoFijo()
+    {
+        return $this->belongsTo(ActivoFijo::class, 'id_transaccion', 'id_transaccion');
+    }
 
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_requisicion_origen);
+        return date_format($date,"d/m/Y");
 
+    }
 
+    public function generaFolioCompuesto()
+    {
+        $count = $this->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
+        $count++;
+
+        $tipo= CtgTipo::find($this->id_tipo);
+        $area_compradora = CtgAreaCompradora::find($this->id_area_compradora);
+
+        $folio=$area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.$count;
+
+        return $folio;
+    }
+
+    public function generarActivoFijo()
+    {
+        $this->activoFijo()->create([
+            'id_transaccion' => $this->id_transaccion
+        ]);
+    }
 }
