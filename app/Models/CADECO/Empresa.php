@@ -63,6 +63,11 @@ class Empresa extends Model
         return $this->hasMany(Estimacion::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursales()
+    {
+        return $this->hasMany(Sucursal::class, 'id_empresa');
+    }
+
     public function facturas(){
         return $this->belongsTo(Documento::class, 'id_empresa', 'IDDestinatario');
     }
@@ -144,6 +149,11 @@ class Empresa extends Model
     public function scopeProveedorContratista($query)
     {
         return $query->whereIn('tipo_empresa',[1,2,3]);
+    }
+
+    public function scopeTipoEmpresa($query, $tipo)
+    {
+        return $query->whereIn('tipo_empresa', explode(",", $tipo));
     }
 
     public function scopeDestajistas($query)

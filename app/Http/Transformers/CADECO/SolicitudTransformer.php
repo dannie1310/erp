@@ -78,5 +78,4 @@ class SolicitudTransformer extends TransformerAbstract
         }
         return null;
     }
-
 }

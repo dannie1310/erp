@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cambio extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'cambios';
+    protected $table = 'dbo.cambios';
     protected $primaryKey = 'id_moneda';
 
     public function moneda(){
@@ -25,5 +25,4 @@ class Cambio extends Model
     public function getCambioFormatAttribute(){
         return '$ ' . number_format($this->cambio, 4);
     }
-
 }

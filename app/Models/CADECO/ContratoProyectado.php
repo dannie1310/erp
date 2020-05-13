@@ -50,7 +50,7 @@ class ContratoProyectado extends Transaccion
 
     public function conceptos()
     {
-        return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion');
+        return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion')->OrderBy('nivel');
     }
 
     protected static function boot()
@@ -74,8 +74,8 @@ class ContratoProyectado extends Transaccion
         });
     }
 
-    public function conceptos_antecedentes()
+    public function cpAreasSubcontratantes()
     {
-
+        return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion');
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\CotizacionTransformer;
+use App\Http\Transformers\CADECO\CotizacionCompraTransformer;
 use App\Services\CADECO\Compras\CotizacionService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
@@ -27,7 +27,7 @@ class CotizacionController extends Controller
     private $service;
 
     /**
-     * @var CotizacionTransformer
+     * @var CotizacionCompraTransformer
      */
     private $transformer;
 
@@ -35,15 +35,18 @@ class CotizacionController extends Controller
      * SalidaAlmacenController constructor.
      * @param Manager $fractal
      * @param CotizacionService $service
-     * @param CotizacionTransformer $transformer
+     * @param CotizacionCompraTransformer $transformer
      */
 
-    public function __construct(Manager $fractal, CotizacionService $service, CotizacionTransformer $transformer)
+    public function __construct(Manager $fractal, CotizacionService $service, CotizacionCompraTransformer $transformer)
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-//        $this->middleware('permiso:consultar_salida_almacen')->only(['show','paginate','index','find']);
-//        $this->middleware('permiso:eliminar_salida_almacen')->only(['destroy']);
+        $this->middleware('permiso:registrar_cotizacion_compra')->only(['store']);
+        $this->middleware('permiso:descargar_layout_cotizacion_compra')->only(['descargaLayout']);
+        $this->middleware('permiso:consultar_cotizacion_compra')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:editar_cotizacion_compra')->only(['update']);
+        $this->middleware('permiso:eliminar_cotizacion_compra')->only(['destroy']);
 
         $this->fractal = $fractal;
         $this->service = $service;

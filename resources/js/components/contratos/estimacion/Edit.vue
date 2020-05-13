@@ -1,22 +1,22 @@
 <template>
      <span>
        <div class="d-flex flex-row-reverse" v-if="!cargando">
-           <div class="p-2">
+           <div class="p-2" v-if="estimacion.estado == 0">
                 <Penalizacion v-bind:id="id"></Penalizacion>
             </div>
            <div class="p-2">
                 <Resumen v-bind:id="id" v-bind:cargando="cargando"></Resumen>
             </div>
-           <div class="p-2">
+           <div class="p-2" v-if="estimacion.estado == 0">
                 <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
-            </div>            
-            <div class="p-2">
+            </div>
+            <div class="p-2" v-if="estimacion.estado == 0">
                 <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
-            <div class="p-2">
+            <div class="p-2" v-if="estimacion.estado == 0">
                 <RetencionIvaCreate v-bind:id="id"></RetencionIvaCreate>
             </div>
-            <div class="p-2">
+            <div class="p-2" v-if="estimacion.estado == 0">
                 <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
             </div>
         </div>
@@ -206,9 +206,9 @@
                             <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-importe"></td>
-                            <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(2) }}</td>
+                            <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
                             <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
+                            <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changeCantidad(concepto)"
                                        class="text"
@@ -219,7 +219,7 @@
                             </td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changePorcentaje(concepto)"
-                                       v-validate="{max_value: 100 - concepto.porcentaje_avance }"
+                                       v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(2)).toFixed(2) }"
                                        class="text"
                                        :name="`porcentaje[${concepto.id}]`"
                                        v-model="concepto.porcentaje_estimado"
@@ -240,9 +240,12 @@
 				</table>
 			</div>
 
-            <div class="modal-footer">
+            <div class="modal-footer" v-if="estimacion.estado == 0">
                 <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
                 <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0">Guardar </button>
+            </div>
+            <div class="modal-footer" v-else>
+                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
             </div>
         </div>
      </span>
@@ -277,11 +280,11 @@
         methods: {
             changeCantidad(concepto) {
                 concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
+                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
             },
             changePorcentaje(concepto) {
                 concepto.cantidad_estimacion = ((concepto.cantidad_subcontrato * concepto.porcentaje_estimado) / 100).toFixed(2);
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
+                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
             },
             changeImporte(concepto) {
                 concepto.cantidad_estimacion = (concepto.importe_estimacion / concepto.precio_unitario_subcontrato).toFixed(2);
