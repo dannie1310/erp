@@ -140,7 +140,17 @@
                     params: {data: this.$data.motivo}
                 })
                     .then(data => {
-                        this.$router.push({name: 'contrato-proyectado'});
+                        this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO_PROYECTADO', {id: this.id})
+                        $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('contratos/contrato-proyectado/paginate', {
+                            params: {
+                                sort: 'numero_folio', order: 'DESC', include:'areasSubcontratantes'
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', data.data);
+                                this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
+                            })
                     })
             },
         },

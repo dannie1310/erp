@@ -11,6 +11,9 @@ namespace App\Models\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
+use App\Models\CADECO\Contratos\ContratoEliminado;
+use App\Models\CADECO\Contratos\ContratoProyectadoEliminado;
+use App\Models\CADECO\Contratos\DestinoEliminado;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -121,21 +124,31 @@ class ContratoProyectado extends Transaccion
 
     private function revisarRespaldos($motivo)
     {
-        if (($solicitud = SolicitudEliminada::where('id_transaccion', $this->id_transaccion)->first()) == null) {
+        if (($contrato = ContratoProyectadoEliminado::where('id_transaccion', $this->id_transaccion)->first()) == null) {
             DB::connection('cadeco')->rollBack();
-            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo la solicitud correctamente.');
+            abort(400, 'Error en el proceso de eliminación del contrato proyectado, no se respaldo el contrato proyectado correctamente.');
         } else {
-            $solicitud->motivo = $motivo;
-            $solicitud->save();
+            $contrato->motivo = $motivo;
+            $contrato->save();
         }
-        if (($item = SolicitudPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
+        if ((ContratoEliminado::where('id_transaccion', $this->id_transaccion)->get()) == null) {
             DB::connection('cadeco')->rollBack();
-            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo los items correctamente.');
+            abort(400, 'Error en el proceso de eliminación del contrato proyectado, no se respaldo los contratos correctamente.');
         }
 
-        if (EntregaEliminada::whereIn('id_item', $item->pluck('id_item'))->get() == null) {
+        if ((DestinoEliminado::where('id_transaccion', $this->id_transaccion)->get()) == null) {
             DB::connection('cadeco')->rollBack();
-            abort(400, 'Error en el proceso de eliminación de la solicitud de compra, no se respaldo las entregas correctamente.');
+            abort(400, 'Error en el proceso de eliminación del contrato proyectado, no se respaldo los destinos correctamente.');
+        }
+    }
+
+    /**
+     * Elimina las partidas
+     */
+    public function eliminarPartidas()
+    {
+        foreach ($this->conceptos()->get() as $contrato) {
+            $contrato->delete();
         }
     }
 }
