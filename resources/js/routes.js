@@ -1361,7 +1361,7 @@ export const routes = [
                         component: require('./components/contratos/proyectado/Index').default,
                         meta: {
                             title: 'Contratos Proyectados',
-                            breadcrumb: {parent: 'contratos', name: 'PROYECTADOS'},
+                            breadcrumb: {parent: 'contratos', name: 'CONTRATOS PROYECTADOS'},
                             middleware: [auth, context],
 
                         }

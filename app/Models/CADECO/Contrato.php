@@ -48,6 +48,20 @@ class Contrato extends Model
         return '<span>'.str_repeat('<i class="fas fa-angle-right"></i>&nbsp;&nbsp;', substr_count($this->nivel, '.') - 1) . $this->descripcion .'</span>';
     }
 
+    public function registrarDestino(){
+        if($this->cantidad_original > 0){
+            Destino::create([
+                'id_transaccion' => $this->id_transaccion,
+                'id_concepto_contrato' => $this->id_concepto,
+                'id_concepto' => $this->id_destino,
+            ]);
+            $this->where('id_concepto', '=', $this->id_concepto)->update([
+                'id_destino' => null
+            ]);
+        }
+
+    }
+
     public function eliminarDestino()
     {
         $destino = Destino::where('id_transaccion',  '=', $this->id_transaccion)->where('id_concepto_contrato', '=', $this->id_concepto)->first();

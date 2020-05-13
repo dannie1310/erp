@@ -8,6 +8,16 @@ use App\Models\CADECO\Contratos\ContratoEliminado;
 
 class ContratoObserver
 {
+    /**
+     * @param Contrato $contrato
+     * @throws \Exception
+     *
+     */
+    public function created(Contrato $contrato)
+    {
+        $contrato->registrarDestino();
+    }
+
     public function deleting(Contrato $contrato)
     {
         ContratoEliminado::create([

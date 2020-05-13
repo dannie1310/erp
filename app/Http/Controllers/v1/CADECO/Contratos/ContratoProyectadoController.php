@@ -71,4 +71,9 @@ class ContratoProyectadoController extends Controller
         $contrato_proyectado = $this->service->actualiza($request->all(), $id);
         return $this->respondWithItem($contrato_proyectado);
     }
+
+    public function getLayoutData(Request $request){
+        $respuesta = $this->service->getLayoutData($request);
+        return response()->json($respuesta, 200);
+    }
 }
