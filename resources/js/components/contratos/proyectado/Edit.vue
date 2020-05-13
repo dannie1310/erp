@@ -57,7 +57,7 @@
                                         <div class="invalid-feedback" v-show="errors.has('cotizacion')">{{ errors.first('cotizacion') }}</div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="contratacion">Contratación</label>
@@ -106,14 +106,14 @@
                 </div>
             </div>
         </div>
-        
+
     </span>
 </template>
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
 export default {
-    
+
     name: "contrato-proyectado-editar",
     components: {Datepicker, es},
     props: ['id'],
@@ -129,10 +129,10 @@ export default {
 
         }
     },
-    methods: {       
-        
+    methods: {
+
         save() {
-            
+
             if(this.contrato.fecha_date == this.fecha && this.contrato.vencimiento == this.vencimiento && this.contrato.cumplimiento == this.cumplimiento && this.contrato.referencia == this.referencia)
             {
                 swal('¡Error!', 'Favor de ingresar datos actualizados.', 'error')
@@ -145,22 +145,22 @@ export default {
                 .then(() => {
                    return this.$store.dispatch('contratos/contrato-proyectado/paginate', { params: {include: 'areasSubcontratantes', sort: 'numero_folio', order: 'DESC'}})
                     .then(data => {
-                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADO', data.data);
+                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
                         this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
                     })
                    }).finally( ()=>{
                        $(this.$refs.modal).modal('hide');
                    });
             }
-        },   
+        },
         formatoFecha(date)
         {
                 return moment(date).format('DD/MM/YYYY');
-        },    
+        },
         find()
         {
             this.cargando = true;
-                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', null);
+                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
                 return this.$store.dispatch('contratos/contrato-proyectado/find', {
                     id: this.id
                 }).then(data => {
@@ -172,7 +172,7 @@ export default {
                     $(this.$refs.modal).appendTo('body');
                     $(this.$refs.modal).modal('show');
                 }).finally(() => {
-                    this.cargando = false;                    
+                    this.cargando = false;
                 })
         },
         validate() {

@@ -1074,7 +1074,7 @@ export const routes = [
                             title: 'Editar Cotización',
                             breadcrumb: { parent: 'cotizacion', name: 'EDITAR'},
                             middleware: [auth, context, permission],
-                            permission: ['editar_cotizacion_compra']
+                            permission: ['editar_cotizacion_compra', 'cargar_layout_cotizacion_compra']
                         }
                     },
                 ]
@@ -1361,7 +1361,18 @@ export const routes = [
                         component: require('./components/contratos/proyectado/Index').default,
                         meta: {
                             title: 'Contratos Proyectados',
-                            breadcrumb: {parent: 'contratos', name: 'PROYECTADOS'},
+                            breadcrumb: {parent: 'contratos', name: 'CONTRATOS PROYECTADOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'proyectado-create',
+                        component: require('./components/contratos/proyectado/Create').default,
+                        meta: {
+                            title: 'Registrar Contratos Proyectados',
+                            breadcrumb: {parent: 'proyectado', name: 'REGISTRAR'},
                             middleware: [auth, context],
 
                         }
