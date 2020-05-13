@@ -10,13 +10,11 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\CADECO\Contratos\ContratoEliminado;
 use App\Models\CADECO\Contratos\ContratoProyectadoEliminado;
 use App\Models\CADECO\Contratos\DestinoEliminado;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class ContratoProyectado extends Transaccion
