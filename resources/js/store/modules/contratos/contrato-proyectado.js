@@ -3,42 +3,38 @@ const URI = '/api/contratos/contrato-proyectado/';
 export default {
     namespaced: true,
     state: {
-        contratoProyectado: [],
-        currentContratos: null,
+        contratos: [],
+        currentContrato: null,
         meta: {}
     },
 
     mutations: {
-        SET_CONTRATO_PROYECTADO(state, data) {
-            state.contratoProyectado = data
+        SET_CONTRATOS(state, data) {
+            state.contratos = data
         },
-
-        SET_CONTRATO_PROYECTADOS(state, data) {
-            state.currentContratos = data
+        SET_CONTRATO(state, data) {
+            state.currentContrato = data
         },
-
         SET_META(state, data) {
             state.meta = data
         },
-        DELETE_CONTRATO_PROYECTADO(state, id) {
-            state.contratoProyectado = state.contratoProyectado.filter((cp) => {
-                return cp.id !== id;
-            })
-            if (state.currentContratos && state.currentContratos.id === id) {
-                state.currentContratos = null;
-            }
+        DELETE_CONTRATO(state, id) {
+            state.contratos = state.contratos.filter(contrato => {
+                return contrato.id != id
+            });
         },
-
-
-        UPDATE_CONTRATO_PROYECTADOS(state, data) {
-            state.contratoProyectado = state.contratoProyectado.map(contrato => {
+        UPDATE_CONTRATO(state, data) {
+            state.contratos = state.contratos.map(contrato => {
                 if (contrato.id === data.id) {
                     return Object.assign({}, contrato, data)
                 }
                 return contrato
             })
-            state.currentContratos != null ? data : null;
-        }
+            state.currentContrato = data;
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentContrato[data.attribute] = data.value
+        },
     },
 
     actions: {
@@ -258,15 +254,14 @@ export default {
         },
     },
     getters: {
-        contratoProyectado(state) {
-            return state.contratoProyectado
+        contratos(state) {
+            return state.contratos
         },
-
         meta(state) {
             return state.meta
         },
-        currentContratos(state) {
-            return state.currentContratos
+        currentContrato(state) {
+            return state.currentContrato
         }
     }
 }

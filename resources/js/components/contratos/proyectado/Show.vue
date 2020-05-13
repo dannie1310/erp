@@ -88,27 +88,27 @@
         },
         methods: {
             find() {
-                
+
                 this.cargando = true;
-                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', null);
+                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
                 return this.$store.dispatch('contratos/contrato-proyectado/find', {
                     id: this.id,
                     params:{include: [
                         'conceptos.destino'
                     ]}
                 }).then(data => {
-                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', data);
+                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
 
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
-                    
+
                 })
             }
         },
         computed: {
             contrato() {
-                return this.$store.getters['contratos/contrato-proyectado/currentContratos']
+                return this.$store.getters['contratos/contrato-proyectado/currentContrato']
             },
         }
     }

@@ -59,7 +59,7 @@
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADO', data.data);
+                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
                         this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
                     })
                     .finally(() => {
@@ -72,7 +72,7 @@
         },
         computed: {
             contratosProyectados(){
-                return this.$store.getters['contratos/contrato-proyectado/contratoProyectado'];
+                return this.$store.getters['contratos/contrato-proyectado/contratos'];
             },
             meta(){
                 return this.$store.getters['contratos/contrato-proyectado/meta'];
@@ -93,14 +93,16 @@
                         fecha: contratoProyectado.fecha,
                         referencia: contratoProyectado.referencia,
                         buttons: $.extend({}, {
-                            cambiaAreaSubcontratante: (this.$root.can('aprobar_estimacion_subcontrato')) ? true : undefined,
+                            cambiaAreaSubcontratante: (this.$root.can('modificar_area_subcontratante_cp')) ? true : undefined,
                             id: contratoProyectado.id,
                             numero_folio: `# ${contratoProyectado.numeroFolio}`,
                             fecha: contratoProyectado.fecha,
                             referencia: contratoProyectado.referencia,
                             area:contratoProyectado.areasSubcontratantes.data[0],
                             contratoProyectado: contratoProyectado,
-                            delete : (this.$root.can('aprobar_estimacion_subcontrato')) ? true : true,
+                            delete : (this.$root.can('eliminar_contrato_proyectado')) ? true : false,
+                            show : this.$root.can('consultar_contrato_proyectado') ? true : false,
+                            edit : this.$root.can('editar_contrato_proyectado') ? true : false
                         })
                     }));
                 },

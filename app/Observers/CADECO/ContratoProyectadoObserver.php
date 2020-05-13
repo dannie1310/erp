@@ -10,6 +10,7 @@ namespace App\Observers\CADECO;
 
 
 use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\Contratos\AreaSubcontratanteEliminada;
 use App\Models\CADECO\Contratos\ContratoProyectadoEliminado;
 use App\Models\CADECO\Transaccion;
 
@@ -50,5 +51,19 @@ class ContratoProyectadoObserver extends TransaccionObserver
                 'fecha_eliminacion' => date('Y-m-d H:i:s')
             ]
         );
+
+        if($contratoProyectado->areaSubcontratante)
+        {
+            AreaSubcontratanteEliminada::create([
+                'id_transaccion' => $contratoProyectado->areaSubcontratante->id_transaccion,
+                'id_area_subcontratante' => $contratoProyectado->areaSubcontratante->id_area_subcontratante,
+                'id_usuario' => $contratoProyectado->areaSubcontratante->id_usuario,
+                'timestamp_registro' => $contratoProyectado->areaSubcontratante->timestamp_registro,
+                'usuario_elimina' => auth()->id(),
+                'fecha_eliminacion' => date('Y-m-d H:i:s')
+            ]);
+
+            $contratoProyectado->areaSubcontratante->delete();
+        }
     }
 }

@@ -37,7 +37,5 @@ class ContratoObserver
             'usuario_elimina' => auth()->id(),
             'fecha_eliminacion' => date('Y-m-d H:i:s')
         ]);
-
-       $contrato->eliminarDestino();
     }
 }

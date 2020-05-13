@@ -109,14 +109,15 @@
         methods: {
             find() {
                 this.cargando = true;
-                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', null);
+                this.motivo = '';
+                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
                 return this.$store.dispatch('contratos/contrato-proyectado/find', {
                     id: this.id,
                     params:{include: [
                             'conceptos.destino'
                         ]}
                 }).then(data => {
-                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', data);
+                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
@@ -140,7 +141,7 @@
                     params: {data: this.$data.motivo}
                 })
                     .then(data => {
-                        this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO_PROYECTADO', {id: this.id})
+                        this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO', {id: this.id})
                         $(this.$refs.modal).modal('hide');
                         this.$store.dispatch('contratos/contrato-proyectado/paginate', {
                             params: {
@@ -148,15 +149,17 @@
                             }
                         })
                             .then(data => {
-                                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADOS', data.data);
+                                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
                                 this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
                             })
-                    })
+                    }) .finally( ()=>{
+                        this.cargando = false;
+                    });
             },
         },
         computed: {
             contrato() {
-                return this.$store.getters['contratos/contrato-proyectado/currentContratos']
+                return this.$store.getters['contratos/contrato-proyectado/currentContrato']
             },
         }
     }

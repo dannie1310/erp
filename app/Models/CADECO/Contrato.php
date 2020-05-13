@@ -61,13 +61,4 @@ class Contrato extends Model
         }
 
     }
-
-    public function eliminarDestino()
-    {
-        $destino = Destino::where('id_transaccion',  '=', $this->id_transaccion)->where('id_concepto_contrato', '=', $this->id_concepto)->first();
-        if($destino)
-        {
-            dd($destino);
-        }
-    }
 }

@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
+use App\Models\CADECO\Contratos\AreaSubcontratanteEliminada;
 use App\Models\CADECO\Contratos\ContratoEliminado;
 use App\Models\CADECO\Contratos\ContratoProyectadoEliminado;
 use App\Models\CADECO\Contratos\DestinoEliminado;
@@ -73,7 +74,8 @@ class ContratoProyectado extends Transaccion
         return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion')->OrderBy('nivel');
     }
 
-    public function areaSubcontratante(){
+    public function areaSubcontratante()
+    {
         return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion', 'id_transaccion');
     }
 
@@ -140,6 +142,11 @@ class ContratoProyectado extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, 'Error en el proceso de eliminación del contrato proyectado, no se respaldo los destinos correctamente.');
         }
+
+        if ((AreaSubcontratanteEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación del contrato proyectado, no se respaldo el área subcontratante correctamente.');
+        }
     }
 
     /**
@@ -148,6 +155,11 @@ class ContratoProyectado extends Transaccion
     public function eliminarPartidas()
     {
         foreach ($this->conceptos()->get() as $contrato) {
+            $destino = Destino::where('id_transaccion',  '=', $this->id_transaccion)->where('id_concepto_contrato', '=', $contrato->id_concepto)->first();
+            if($destino)
+            {
+                $destino->delete();
+            }
             $contrato->delete();
         }
     }
