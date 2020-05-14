@@ -960,7 +960,7 @@ export const routes = [
                         component: require('./components/compras/asignacion/Show').default,
                         props: true,
                         meta: {
-                            title: 'Ver Asignación de Proveedores',
+                            title: 'Consultar Asignación de Proveedores',
                             breadcrumb: { parent: 'asignacion-proveedores', name: 'VER'},
                             middleware: [auth, context],
                             // permission: 'registrar_proveedor'

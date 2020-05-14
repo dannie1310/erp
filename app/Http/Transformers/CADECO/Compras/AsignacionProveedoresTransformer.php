@@ -5,6 +5,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 use App\Models\CADECO\SolicitudCompra;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Compras\AsignacionProveedores;
 use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
 use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
@@ -20,6 +21,7 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'partidas',
         'solicitud_compra',
+        'usuario',
     ];
 
     /**
@@ -28,7 +30,7 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'usuario'
     ];
 
     public function transform(AsignacionProveedores $model)
@@ -69,4 +71,17 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
         }
         return null;
     }
+
+    /**
+     * @param AsignacionProveedores $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuario(AsignacionProveedores $model)
+    {
+        if ($usuario = $model->usuarioRegistro) {
+            return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+    
 }

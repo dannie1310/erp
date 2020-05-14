@@ -43,7 +43,7 @@ class AsignacionProveedoresPartida extends Model
     }
 
     public function cotizacion(){
-        return $this->belongsTo(CotizacionCompraPartida::class, 'id_transaccion', 'id_transaccion_cotizacion')->where('id_material', '=', $this->id_material);
+        return $this->belongsTo(CotizacionCompraPartida::class, 'id_transaccion_cotizacion', 'id_transaccion')->where('id_material', '=', $this->id_material);
     }
 
     public function cotizacionCompra(){
@@ -57,5 +57,9 @@ class AsignacionProveedoresPartida extends Model
 
     public function material(){
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
+    }
+
+    public function getCantidadFormatAttribute(){
+        return number_format($this->cantidad_asignada, 4, '.', ',');
     }
 }
