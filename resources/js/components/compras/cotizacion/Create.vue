@@ -86,10 +86,10 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 offset-1">
+                                    <div class="col-md-3 offset-1">
                                         <div class="custom-control custom-switch" style="top:40%">
                                             <input type="checkbox" class="custom-control-input button" id="cotizacion" v-model="pendiente" >
-                                            <label class="custom-control-label" for="cotizacion">Pendiente de cotización</label>
+                                            <label class="custom-control-label" for="cotizacion">Dejar pendiente captura de precios</label>
                                         </div>
                                     </div>
                                 </div>

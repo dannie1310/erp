@@ -85,23 +85,18 @@
                     case 0:
                         return {
                             color: '#f39c12',
-                            descripcion: 'Por Autorizar'
+                            descripcion: 'Registrada'
                         }
                     case 1:
                         return {
                             color: '#00a65a',
-                            descripcion: 'Autorizada'
+                            descripcion: 'Parcialmente Fincada'
                         }
                     case 2:
                         return {
                             color: '#7889d6',
-                            descripcion: 'Tercer caso'
-                        }
-                    case 8:
-                        return {
-                            color: '#e3f702',
-                            descripcion: 'Pendiente de cotización'
-                        }    
+                            descripcion: 'Fincada'
+                        }  
                     default:
                         return {
                             color: '#d2d6de',
@@ -136,7 +131,7 @@
                         empresa: (cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----',
                         observaciones: cotizacion.observaciones,
                         importe: cotizacion.importe,
-                        estado: this.getEstado((cotizacion.estado === 0) ? 8 :((cotizacion.solicitud) ? cotizacion.solicitud.estado : null)),
+                        estado: this.getEstado(cotizacion.estado),
                         solicitud: $.extend({}, {
                             show: (cotizacion.solicitud) ? true : false,
                             id: (cotizacion.solicitud) ? cotizacion.solicitud.id : null,
