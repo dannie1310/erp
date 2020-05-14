@@ -187,6 +187,7 @@ class ContratoProyectadoService
             if($nivel_anterior + 1 == $partida['nivel']){
                 $contratos[$key - 1]['es_hoja'] = false;
                 $contratos[$key - 1]['cantidad'] = '';
+                $contratos[$key - 1]['unidad'] = '';
                 $contratos[$key - 1]['destino'] = '';
                 $contratos[$key - 1]['destino_path'] = '';
                 $contratos[$key - 1]['cantidad_hijos'] = $contratos[$key - 1]['cantidad_hijos'] + 1;

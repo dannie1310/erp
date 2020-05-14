@@ -127,9 +127,9 @@
                                                 <tr>
                                                     <th style="width:3%"></th>
                                                     <th style="width:10%">Clave</th>
-                                                    <th style="width:40%">Descripción</th>
-                                                    <th style="width:13%">Unidad</th>
-                                                    <th style="width:10%">Cantidad</th>
+                                                    <th style="width:38%">Descripción</th>
+                                                    <th style="width:12%">Unidad</th>
+                                                    <th style="width:13%">Cantidad</th>
                                                     <th style="width:18%">Destinos</th>
                                                     <th style="width:7%"></th>
                                                     <th style="width:1%"></th>
@@ -182,11 +182,11 @@
                                                         <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" :disabled="!partida.es_hoja"
+                                                        <input type="number" class="form-control" :disabled="!partida.es_hoja"
                                                             :name="`cantidad[${i}]`"
                                                             data-vv-as="Cantidad"
                                                             v-model="partida.cantidad"
-                                                            v-validate="{required: partida.es_hoja}"
+                                                            v-validate="{required: partida.es_hoja, decimal:4}"
                                                             :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                             :id="`cantidad[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
