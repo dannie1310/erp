@@ -64,13 +64,13 @@
                                                         <th class="no_parte">Cantidad Asignada</th>
                                                         <th class="money">Precio Unitario</th>
                                                         <th class="no_parte">% Descuento</th>
-                                                        <th class="money">Precio Total</th>
+                                                        <th style="width:10%;">Precio Total</th>
                                                         <th class="no_parte">Moneda</th>
-                                                        <th class="no_parte">Precio Total Moneda Conversión</th>                                                        
+                                                        <th style="width:12%;">Precio Total Moneda Conversión</th>                                                        
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(partida, i) in partidas" v-if="partidas.length > 0">
+                                                    <tr v-for="(partida, i) in partidas" v-if="partidas.length > 0 && asignacion.partidas.data[0].cotizacion">
                                                         <td>{{i+1}}</td>
                                                         <td >{{(partida.material) ? partida.material.descripcion : '---------'}}</td>
                                                         <td style="text-align: center">{{(partida.material) ? partida.material.unidad : '--------'}}</td>
@@ -79,9 +79,7 @@
                                                         <td style="text-align: center">{{(partida.cotizacion) ? partida.cotizacion.descuento : '--------------'}}</td>
                                                         <td style="text-align: center">{{'$ ' + parseFloat(((partida.cotizacion) ? partida.cotizacion.precio_unitario : 0) * partida.cantidad_asignada).formatMoney(2,'.',',')}}</td>
                                                         <td style="text-align: center">{{(partida.cotizacion) ? partida.cotizacion.moneda.nombre : '-------'}}</td>
-                                                        <td style="text-align: center" v-if="partida.cotizacion && partida.cotizacion.id_moneda === 1">{{'$ ' + parseFloat(((partida.cotizacion) ? partida.cotizacion.precio_unitario : 0) * partida.cantidad_asignada).formatMoney(2,'.',',')}}</td>
-                                                        <td style="text-align: center" v-else-if="partida.cotizacion && partida.cotizacion.id_moneda === 2">{{'$ ' + parseFloat(((partida.cotizacion) ? partida.cotizacion.precio_unitario : 0) * partida.cantidad_asignada * ((partida.cotizacion_compra.complemento) ? partida.cotizacion_compra.complemento.tc_usd : 0)).formatMoney(2,'.',',')}}</td>
-                                                        <td style="text-align: center" v-else>{{'$ ' + parseFloat(((partida.cotizacion) ? partida.cotizacion.precio_unitario : 0) * partida.cantidad_asignada * ((partida.cotizacion_compra.complemento) ? partida.cotizacion_compra.complemento.tc_eur : 0)).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align: center">{{'$ ' + parseFloat(partida.cantidad_asignada * partida.cotizacion.precio_unitario * ((partida.cotizacion_compra.complemento) ? ((partida.cotizacion.id_moneda > 1) ? ((partida.cotizacion.id_moneda == 2) ? partida.cotizacion_compra.complemento.tc_usd : partida.cotizacion_compra.complemento.tc_eur) : 1) : partida.cotizacion.moneda.tipo_cambio_igh)).formatMoney(2, '.', ',')}}</td>                                                        
                                                     </tr>
                                                 </tbody>
                                             </table>
