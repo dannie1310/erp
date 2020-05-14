@@ -5,6 +5,7 @@ namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Compras\EliminarAsignacionRequest;
 use App\Services\CADECO\Compras\AsignacionService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
@@ -61,6 +62,11 @@ class AsignacionController extends Controller
     public function cargaLayout(Request $request){
         $respuesta = $this->service->cargaLayout($request->file);
         return response()->json($respuesta, 200);
+    }
+
+    public function destroy(EliminarAsignacionRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);
     }
 
     public function descargaLayout($id)

@@ -1,11 +1,11 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-danger" title="Aprobar">
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Asignación">
             <i class="fa fa-trash" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-trash"></i> ELIMINAR ASIGNACION DE PROVEEDOR</h5>
@@ -15,28 +15,36 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <!-- <div class="row">
+                            <div class="row">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
-                                        <table class="table">
+                                        <div class="row col-md-12">
+                                        <div class="col-md-6">
+                                            <h5>Folio: &nbsp; <b>{{asignacion.folio_asignacion_format}}</b></h5>
+                                        </div>
+                                    </div>
+                                        <table class="table" v-if="asignacion">
                                             <tbody>
                                                 <tr>
-                                                    <td class="bg-gray-light"><b>Folio:</b></td>
-                                                    <td class="bg-gray-light">{{res.numero_folio_format}}</td>
-                                                    <td class="bg-gray-light"><b>Folio Compuesto:</b></td>
-                                                    <td class="bg-gray-light">{{res.compuesto ? res.compuesto.folio : '----'}}</td>
+                                                    <td class="bg-gray-light" align="center" colspan="4"><h6><b>{{razon_social}}</b></h6></td>                                                    
                                                 </tr>
                                                 <tr>
-                                                    <td class="bg-gray-light"><b>Fecha Requerido:</b></td>
-                                                    <td class="bg-gray-light">{{res.fecha_format}}</td>
-                                                    <td class="bg-gray-light"><b>Usuario Registró:</b></td>
-                                                    <td class="bg-gray-light">{{usuario}}</td>
+                                                    <td class="bg-gray-light"><b>Sucursal:</b></td>
+                                                    <td class="bg-gray-light">{{(sucursal.descripcion) ? sucursal.descripcion : '---------'}}</td>
+                                                    <td class="bg-gray-light"><b>Usuario Registro</b></td>
+                                                    <td class="bg-gray-light">{{(asignacion.usuario) ? asignacion.usuario.nombre : '------'}}</td>
                                                 </tr>
                                                 <tr>
+                                                    <td class="bg-gray-light"><b>Direccion:</b></td>
+                                                    <td class="bg-gray-light">{{(sucursal.direccion) ? sucursal.direccion : '---------'}}</td>
+                                                    <td class="bg-gray-light"><b>Folio Solicitud:</b></td>
+                                                    <td class="bg-gray-light">{{asignacion.folio_solicitud_format}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="bg-gray-light"><b>Concepto</b></td>
+                                                    <td class="bg-gray-light">{{asignacion.observaciones}}</td>
                                                     <td class="bg-gray-light"><b>Fecha / Hora Registro</b></td>
-                                                    <td class="bg-gray-light">{{res.fecha_registro}}</td>
-                                                    <td class="bg-gray-light"><b>Observaciones:</b></td>
-                                                    <td class="bg-gray-light" colspan="3">{{res.observaciones}}</td>
+                                                    <td class="bg-gray-light">{{asignacion.fecha_asignacion}}</td>                                                    
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -50,51 +58,63 @@
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
-                                                        <th>#</th>
-                                                        <th>Material</th>
-                                                        <th>Unidad</th>
-                                                        <th class="no_parte">Solicitado</th>
-                                                        <th class="no_parte">En O/C(s)</th>
-                                                        <th class="no_parte">Surtido</th>
-                                                        <th class="no_parte">Existencia</th>
-                                                        <th class="money">Autorizado</th>
+                                                        <th class="index_corto">#</th>
+                                                        <th>Descripción</th>
+                                                        <th class="unidad">Unidad</th>
+                                                        <th class="no_parte">Cantidad Asignada</th>
+                                                        <th class="money">Precio Unitario</th>
+                                                        <th class="no_parte">% Descuento</th>
+                                                        <th class="money">Precio Total</th>
+                                                        <th class="no_parte">Moneda</th>
+                                                        <th class="no_parte">Precio Total Moneda Conversión</th>                                                        
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(partida, i) in partidas">
+                                                    <tr v-for="(partida, i) in partidas" v-if="partidas.length > 0">
                                                         <td>{{i+1}}</td>
-                                                        <td >{{partida.material.descripcion}}</td>
-                                                        <td style="text-align: center">{{partida.unidad}}</td>
-                                                        <td style="text-align: center">{{partida.solicitado_cantidad}}</td>
-                                                        <td style="text-align: center">{{partida.orden_compra_cantidad}}</td>
-                                                        <td style="text-align: center">{{partida.surtido_cantidad}}</td>
-                                                        <td style="text-align: center">{{partida.existencia_cantidad}}</td>
-                                                        <td style="text-align: right">
-                                                            <input
-                                                                :disabled="cargando"
-                                                                type="number"
-                                                                step=".1"
-                                                                :name="`autorizado[${i}]`"
-                                                                data-vv-as="Autorizado"
-                                                                v-validate="{required: true, min_value:0.01, max_value:partida.cantidad}"
-                                                                class="form-control"
-                                                                v-model="cantidad[i]"
-                                                                id="autorizado"
-                                                                :class="{'is-invalid': errors.has(`autorizado[${i}]`)}">
-                                                    <div class="invalid-feedback" v-show="errors.has(`autorizado[${i}]`)">{{ errors.first(`autorizado[${i}]`) }}</div>
-                                                        </td>
+                                                        <td >{{(partida.material) ? partida.material.descripcion : '---------'}}</td>
+                                                        <td style="text-align: center">{{(partida.material) ? partida.material.unidad : '--------'}}</td>
+                                                        <td style="text-align: center">{{partida.cantidad_asignada_format}}</td>
+                                                        <td style="text-align: center">{{(partida.cotizacion) ? partida.cotizacion.precio_unitario_format : '-------'}}</td>
+                                                        <td style="text-align: center">{{(partida.cotizacion) ? partida.cotizacion.descuento : '--------------'}}</td>
+                                                        <td style="text-align: center">{{'$ ' + parseFloat(((partida.cotizacion) ? partida.cotizacion.precio_unitario : 0) * partida.cantidad_asignada).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align: center">{{(partida.cotizacion) ? partida.cotizacion.moneda.nombre : '-------'}}</td>
+                                                        <td style="text-align: center" v-if="partida.cotizacion && partida.cotizacion.id_moneda === 1">{{'$ ' + parseFloat(((partida.cotizacion) ? partida.cotizacion.precio_unitario : 0) * partida.cantidad_asignada).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align: center" v-else-if="partida.cotizacion && partida.cotizacion.id_moneda === 2">{{'$ ' + parseFloat(((partida.cotizacion) ? partida.cotizacion.precio_unitario : 0) * partida.cantidad_asignada * ((partida.cotizacion_compra.complemento) ? partida.cotizacion_compra.complemento.tc_usd : 0)).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align: center" v-else>{{'$ ' + parseFloat(((partida.cotizacion) ? partida.cotizacion.precio_unitario : 0) * partida.cantidad_asignada * ((partida.cotizacion_compra.complemento) ? partida.cotizacion_compra.complemento.tc_eur : 0)).formatMoney(2,'.',',')}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                   </div>
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="motivo" class="col-form-label">Motivo de eliminación </label>
                                     </div>
                                 </div>
-                            </div> -->
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group row error-content">
+                                            <textarea
+                                                name="motivo"
+                                                id="motivo"
+                                                v-model="motivo"
+                                                class="form-control"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Motivo"
+                                                :class="{'is-invalid': errors.has('motivo')}"
+                                            ></textarea>
+                                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || partidas.length == 0">Eliminar</button>
+                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0">Eliminar</button>
                         </div>
                     </form>
                 </div>
@@ -110,29 +130,53 @@ export default {
     data() {
         return {
             cargando: false,
-            partidas: []
+            asignacion: false,
+            partidas: [],
+            motivo: ''
         }
     },
     methods: {
-        destroy() {
-                
-                console.log('Borrar');
-                
+        destroy() {            
+            return this.$store.dispatch('compras/asignacion/delete', {
+                id: this.id,
+                params: {data: this.motivo}
+            })
+            .then(() => {
+                this.$store.dispatch('compras/asignacion/paginate', {params: {sort: 'id', order: 'desc'}})
+                .then(data => {
+                    this.$store.commit('compras/asignacion/SET_ASIGNACIONES', data.data);
+                    this.$store.commit('compras/asignacion/SET_META', data.meta);
+                })
+            }).finally( ()=>{
+                $(this.$refs.modal).modal('hide');
+            });
         },
         find() {
 
             this.cargando = true;
-            console.log(this.id);
-            
+            this.motivo = '';
 
                 this.$store.commit('compras/asignacion/SET_ASIGNACION', null);
                 return this.$store.dispatch('compras/asignacion/find', {
-                    id: this.id
+                    id: this.id,
+                    params:{include: [
+                        'partidas.cotizacion_compra.complemento',
+                        'partidas.cotizacion_compra.empresa',
+                        'partidas.cotizacion_compra.sucursal',
+                        'partidas.cotizacion.moneda',
+                        'partidas.material',                        
+                        'solicitud',
+                        'usuario'
+                        ]}
                 }).then(data => {
 
                     this.$store.commit('compras/asignacion/SET_ASIGNACION', data);
+                    this.asignacion = data;
+                    this.partidas = this.asignacion.partidas.data;
+                    
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
+                    
                 }).finally(() => {
                     this.cargando = false;
                 })
@@ -141,11 +185,21 @@ export default {
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.save()
+                        this.destroy()
                     }
                 });
             },
     },
+    computed: {
+        razon_social()
+        {
+            return (this.asignacion.partidas) ? this.asignacion.partidas.data[0].cotizacion_compra.empresa.razon_social : '--------';
+        },
+        sucursal()
+        {
+            return (this.asignacion.partidas) ? this.asignacion.partidas.data[0].cotizacion_compra.sucursal : '--------';
+        },
+    }
 }
 </script>
 <style>

@@ -5,7 +5,7 @@
             <i class="fa fa-eye"></i>
         </button>
         <PDF></PDF>
-        <Eliminar v-bind:id="value.id"></Eliminar>
+        <Eliminar v-if="$root.can('eliminar_asignacion_proveedor')" v-bind:id="value.id"></Eliminar>
     </div>
 </template>
 
