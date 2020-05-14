@@ -171,6 +171,7 @@
         },
         methods: {
             find() {
+                this.motivo = ''
                 this.cargando = true;
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
                 return this.$store.dispatch('compras/cotizacion/find', {
@@ -198,7 +199,7 @@
                             }
                         })
                             .then(data => {
-                                this.$store.commit('compras/cotizacion/SET_partidas', data.data);
+                                this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
                                 this.$store.commit('compras/cotizacion/SET_META', data.meta);
                             })
                     })

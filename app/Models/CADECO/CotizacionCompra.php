@@ -8,6 +8,8 @@ use App\CSV\CotizacionLayout;
 use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
 use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\CotizacionComplementoPartida;
+use App\Models\CADECO\Compras\CotizacionEliminada;
+use App\Models\CADECO\Compras\CotizacionPartidaEliminada;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
@@ -93,7 +95,7 @@ class CotizacionCompra  extends Transaccion
 
     public function transaccionesRelacionadas()
     {
-        return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
+        return $this->hasMany(Transaccion::class, 'id_referente', 'id_transaccion')->where('id_antecedente', '=', $this->id_antecedente);
     }
 
     public function validarAsignacion($motivo)
@@ -354,7 +356,6 @@ class CotizacionCompra  extends Transaccion
      */
     public function eliminar($motivo)
     {
-        dd($motivo);
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->validar();
@@ -373,10 +374,6 @@ class CotizacionCompra  extends Transaccion
      */
     private function validar()
     {
-        if($this->estado == 1)
-        {
-            abort(500, "Esta cotización de compra se encuentra aprobada.");
-        }
         $mensaje = "";
         if($this->transaccionesRelacionadas()->count('id_transaccion') > 0)
         {
@@ -385,6 +382,10 @@ class CotizacionCompra  extends Transaccion
                 $mensaje .= "-".$antecedente->tipo->Descripcion." #".$antecedente->numero_folio."\n";
             }
             abort(500, "Esta cotización de compra tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
+        }
+        if($this->asignacionPartida)
+        {
+            throw New \Exception('No se puede eliminar la cotización '. $this->numero_folio_format .' debido a que ya han sido asignados algunos materiales');
         }
     }
 
@@ -395,6 +396,21 @@ class CotizacionCompra  extends Transaccion
     {
         foreach ($this->partidas()->get() as $item) {
             $item->delete();
+        }
+    }
+
+    private function revisarRespaldos($motivo)
+    {
+        if (($cotizacion = CotizacionEliminada::where('id_transaccion', $this->id_transaccion)->first()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la cotización de compra, no se respaldo la cotización correctamente.');
+        } else {
+            $cotizacion->motivo = $motivo;
+            $cotizacion->save();
+        }
+        if (($item = CotizacionPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la cotización de compra, no se respaldo los items correctamente.');
         }
     }
 }
