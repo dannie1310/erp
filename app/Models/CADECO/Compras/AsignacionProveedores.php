@@ -28,7 +28,7 @@ class AsignacionProveedores extends Model
     }
 
     public function partidas(){
-        $this->hasMany(AsignacionProveedoresPartida::class, 'id', 'id_asignacion_proveedores');
+        return $this->hasMany(AsignacionProveedoresPartida::class, 'id_asignacion_proveedores', 'id');
     }
 
     public function solicitud()

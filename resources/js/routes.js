@@ -955,7 +955,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'show',
+                        path: ':id',
                         name: 'asignacion-proveedores-show',
                         component: require('./components/compras/asignacion/Show').default,
                         props: true,
