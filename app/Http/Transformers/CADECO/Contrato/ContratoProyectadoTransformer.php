@@ -29,13 +29,17 @@ class ContratoProyectadoTransformer extends TransformerAbstract
             'fecha' => $model->fecha_format,
             'fecha_date' => $model->fecha,
             'referencia' => (string)$model->referencia,
-            'area_subcontratante' => ($model->cpAreasSubcontratantes) ? $model->cpAreasSubcontratantes->tipoAreaSubcontratante->descripcion : 'Sin Área Subcontratante Asignada',
-            'usuario' => ($model->cpAreasSubcontratantes) ? $model->cpAreasSubcontratantes->nombre_completo : '-------------',
+            'area_subcontratante' => ($model->areaSubcontratante) ? $model->areaSubcontratante->tipoAreaSubcontratante->descripcion : 'Sin Área Subcontratante Asignada',
+            'usuario' => ($model->areaSubcontratante) ? $model->areaSubcontratante->nombre_completo : '-------------',
             'cumplimiento' => $model->cumplimiento,
             'vencimiento' => date_format(new DateTime($model->vencimiento), 'Y-m-d')
         ];
     }
 
+    /**
+     * @param ContratoProyectado $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeAreasSubcontratantes(ContratoProyectado $model)
     {
         if($area_subcontratante = $model->areasSubcontratantes) {
@@ -44,6 +48,10 @@ class ContratoProyectadoTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param ContratoProyectado $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeConceptos(ContratoProyectado $model)
     {
         if($concepto = $model->conceptos)
