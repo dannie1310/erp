@@ -1380,6 +1380,22 @@ export const routes = [
                 ]
             },
             {
+                path: 'presupuesto',
+                component: require('./components/contratos/presupuesto/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'presupuesto',
+                        component: require('./components/contratos/presupuesto/Index').default,
+                        meta: {
+                            title: 'Presupuesto Contratista',
+                            breadcrumb: {parent: 'contratos', name: 'PRESUPUESTO CONTRATISTA'},
+                            middleware: [auth, context]
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'subcontrato',
                 component: require('./components/contratos/subcontrato/partials/Layout').default,
                 children: [
