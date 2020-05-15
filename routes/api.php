@@ -727,6 +727,7 @@ $api->version('v1', function ($api) {
              * FORMATO DE CONTRARECIBO
              */
             $api->get('{id}/formato-cr', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfCR')->where(['id' => '[0-9]+']);
+            $api->get('test', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@test')->where(['id' => '[0-9]+']);
         });
 
         /**

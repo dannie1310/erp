@@ -73,6 +73,10 @@ class FacturaController extends Controller
         return $this->service->pdfCR($id)->create();
     }
 
+    public function test(){
+        return $this->service->test(['6','7','8','9','10','11'])->create();
+    }
+
     public function cargaXML(Request $request)
     {
         $respuesta = $this->service->cargaXML($request->all());
