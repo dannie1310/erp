@@ -164,7 +164,7 @@ class ContratoProyectadoFormato extends Rotation
     function firmas()
     {
         /*Primeras Firmas*/
-        $this->SetY(-7);
+        $this->SetY(-6);
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
@@ -186,7 +186,7 @@ class ContratoProyectadoFormato extends Rotation
         $this->Cell(($this->GetPageWidth()) / 3.5, 0.8, utf8_decode('  Autoriza:'), 'TRLB', 0, 'L');
 
         /*Firmas Generales*/
-        $this->SetY(-3.5);
+        $this->SetY(-3);
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
@@ -219,22 +219,22 @@ class ContratoProyectadoFormato extends Rotation
         $this->firmas();
 
         //PAGINA Y LEYENDA
-        $this->SetY(-0.8);
+        $this->SetY(-0.9);
         $this->SetX(14.7);
         $this->SetFont('Arial', 'B', 8);
 
         $this->Cell(10, .3, (''), 0, 1, 'L');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de contratos. Fecha y hora de registro: '.$this->contrato->fecha_hora_registro_format  . ' ') , 0, 0, 'L');
-        $this->Cell(9.5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->contrato->fecha_hora_registro_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     function create() {
         $this->SetMargins(1, 0.5, 1);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true,6.75);
+        $this->SetAutoPageBreak(true,6.80);
         $this->partidas();
 
         try {
