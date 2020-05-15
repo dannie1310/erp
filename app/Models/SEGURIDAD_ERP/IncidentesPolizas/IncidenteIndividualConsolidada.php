@@ -22,6 +22,7 @@ class IncidenteIndividualConsolidada extends Model
     protected $fillable = [
         "id_poliza",
         "base_datos",
+        "base_datos_referencia",
         "id_tipo_incidente",
         "fecha_hora_deteccion",
         "fecha_hora_resolucion"

@@ -69,12 +69,12 @@
             buscar(){
                 this.procesando = true;
                 return this.$store.dispatch('contabilidadGeneral/incidente-poliza/buscar',
-                    {
-                        data: [],
+                    this.$data
+                        /*data: [this.$data],
                         config: {
                             params: { _method: 'POST'}
-                        }
-                    })
+                        }*/
+                    )
                     .then(data => {
                         this.resultado = data;
                         this.procesado = true;

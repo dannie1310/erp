@@ -32,9 +32,18 @@ class Empresa extends Model
         'AliasBDD'
     ];
     
-    public function consolida()
+    /*public function consolida()
     {
         return $this->hasMany(self::class, 'IdConsolidadora', 'Id');
+    }*/
+    public function empresas_consolidantes()
+    {
+        return $this->hasMany(self::class, 'IdConsolidadora', 'Id');
+    }
+
+    public function empresa_consolidadora()
+    {
+        return $this->hasOne(self::class, 'Id', 'IdConsolidadora');
     }
 
     public function scopeEditable($query)
@@ -45,6 +54,11 @@ class Empresa extends Model
     public function scopeConsolidadora($query)
     {
         return $query->where('Consolidadora', '=', 1);
+    }
+
+    public function scopeConComponentes($query)
+    {
+        return $query->whereHas('empresas_consolidantes');
     }
 
     public function scopeDisponibles($query)

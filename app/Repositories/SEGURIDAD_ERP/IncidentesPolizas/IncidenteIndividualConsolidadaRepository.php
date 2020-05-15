@@ -9,6 +9,8 @@
 namespace App\Repositories\SEGURIDAD_ERP\IncidentesPolizas;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 use App\Models\SEGURIDAD_ERP\IncidentesPolizas\IncidenteIndividualConsolidada as Model;
@@ -21,5 +23,13 @@ class IncidenteIndividualConsolidadaRepository extends Repository implements Rep
         $this->model = $model;
     }
 
+    public function getListaEmpresasConsolidadoras()
+    {
+        return Empresa::consolidadora()->conComponentes()->get();
+    }
 
+    public function guardaRelacionPolizas($datos_relacion)
+    {
+        RelacionPolizas::create($datos_relacion);
+    }
 }

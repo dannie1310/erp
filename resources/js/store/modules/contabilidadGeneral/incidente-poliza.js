@@ -62,7 +62,7 @@ export default {
         buscar(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(URI + 'buscar-diferencias', payload.data, payload.config)
+                    .post(URI + 'buscar-diferencias', payload)
                     .then(r => r.data)
                     .then((data) => {
                         resolve(data);
