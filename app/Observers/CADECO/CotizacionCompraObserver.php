@@ -18,7 +18,7 @@ class CotizacionCompraObserver extends TransaccionObserver
         parent::creating($cotizacionCompra);
 
         $cotizacionCompra->tipo_transaccion = 18;
-        $cotizacionCompra->estado = 1;
+        $cotizacionCompra->estado = ($cotizacionCompra->complemento) ? 1 : 0;
         $cotizacionCompra->opciones = 1;
         $cotizacionCompra->id_moneda = 1;
     }
@@ -26,6 +26,7 @@ class CotizacionCompraObserver extends TransaccionObserver
     public function updating(CotizacionCompra $cotizacionCompra)
     {
         $cotizacionCompra->validarAsignacion('editar');
+        $cotizacionCompra->estado = 1;
     }
 
     public function deleting(CotizacionCompra $cotizacionCompra)
@@ -57,7 +58,7 @@ class CotizacionCompraObserver extends TransaccionObserver
                 'porcentaje_anticipo_pactado' => $cotizacionCompra->porcentaje_anticipo_pactado,
                 'id_usuario' => $cotizacionCompra->id_usuario,
                 'parcialidades' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->parcialidades : NULL,
-                'dias_credito' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento : NULL,
+                'dias_credito' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->dias_credito : NULL,
                 'vigencia' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->vigencia : NULL,
                 'plazo_entrega' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->plazo_entrega : NULL,
                 'descuento' => $cotizacionCompra->complemento ? $cotizacionCompra->complemento->descuento : NULL,

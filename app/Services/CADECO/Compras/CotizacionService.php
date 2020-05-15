@@ -49,7 +49,7 @@ class CotizacionService
 
     public function delete(array $data, $id)
     {
-        return $this->repository->show($id)->eliminar($data);
+        return $this->repository->show($id)->eliminar($data['data']);
     }
 
     public function cargaLayout($file, $id, $name)
