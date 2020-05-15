@@ -8,6 +8,7 @@
 
 namespace App\Services\CTPQ;
 use App\Models\CTPQ\Empresa;
+use App\PDF\CTPQ\PolizaFormato;
 use App\Repositories\CTPQ\PolizaRepository as Repository;
 use Illuminate\Support\Facades\DB;
 
@@ -98,5 +99,11 @@ class PolizaService
         }
 
         return $poliza->paginate($data);
+    }
+
+    public function pdf($id)
+    {
+        $pdf = new PolizaFormato($this->show($id));
+        return $pdf->create();
     }
 }

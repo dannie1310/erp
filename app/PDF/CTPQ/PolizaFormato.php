@@ -5,6 +5,7 @@ namespace App\PDF\CTPQ;
 
 
 use App\Models\CTPQ\Poliza;
+use Ghidev\Fpdf\Rotation;
 
 class PolizaFormato extends Rotation
 {
@@ -19,12 +20,11 @@ class PolizaFormato extends Rotation
     const MAX_WIDTH = 225;
     const MAX_HEIGHT = 180;
 
-    public function __construct(Poliza $poliza)
+    public function __construct($poliza)
     {
-
         parent::__construct('P', 'cm', 'Letter');
-        $this->obra = Obra::find(Context::getIdObra());
-        $this->poliza = $poliza;
+     //   $this->obra = Obra::find(Context::getIdObra());
+       // $this->poliza = $poliza;
 
         $this->SetAutoPageBreak(true, 5);
         $this->WidthTotal = $this->GetPageWidth() - 2;
@@ -38,21 +38,20 @@ class PolizaFormato extends Rotation
 
     function Header()
     {
-        $this->setXY(1, 0.5);
-        $this->SetTextColor('0,0,0');
-        $this->SetFont('Arial', 'B', 12);
+        $this->setXY(1, 1);
+        $this->SetTextColor('0','0', '255');
+        $this->SetFont('Arial', 'I', 12);
 
-        $this->Cell(11.5);
-        $this->Cell(2.5,.7,'Folio ','LT',0,'L');
-        $this->Cell(5.5,.7, $this->contrato->numero_folio_format,'RT',0,'L');
+        $this->Cell(1,0.6,'CONTPAQ i ',0,0,'L');
+     //   $this->Cell(5.5,.7, $this->contrato->numero_folio_format,'RT',0,'L');
         $this->Ln(.7);
 
         $this->SetFont('Arial', 'B', 20);
-        $this->CellFitScale(11.5, 0.5, $this->encabezado_pdf, 0, 0, 'C', 0);
+     //   $this->CellFitScale(11.5, 0.5, $this->encabezado_pdf, 0, 0, 'C', 0);
 
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(2.5,.7, 'Fecha','BL',0,'L');
-        $this->Cell(5.5,.7, $this->contrato->fecha_format.' ','RB',0,'L');
+   //     $this->Cell(2.5,.7, 'Fecha','BL',0,'L');
+      //  $this->Cell(5.5,.7, $this->contrato->fecha_format.' ','RB',0,'L');
         $this->Ln(.7);
 
         //Obtener Posiciones despues de los títulos
@@ -67,7 +66,7 @@ class PolizaFormato extends Rotation
         $this->SetRounds(array('1234'));
         $this->SetRadius(array(0.1));
         $this->SetFills(array('255,255,255'));
-        $this->SetTextColors(array('0,0,0'));
+        $this->SetTextColors(array('0,0,255'));
         $this->SetHeights(array(1));
         $this->SetStyles(array('DF'));
         $this->SetAligns("L");
@@ -76,7 +75,7 @@ class PolizaFormato extends Rotation
         $this->Row(array(""));
         $this->setY($y_inicial+1.5);
         $this->setX(2);
-        $this->MultiCell(16, 1, 'PROYECTO: '.$this->obra->nombre, '', 'C');
+       $this->MultiCell(16, 1, 'PROYECTO: ', '', 'C');
 
         $this->Ln(.6);
         $this->SetFont('Arial', 'B', 10);
@@ -94,7 +93,7 @@ class PolizaFormato extends Rotation
         $this->setY($y_inicial+3.25);
         $this->setX($x_inicial-13.5);
         $this->CellFit(2.5, 1, '', 0, 0, 'C', 0);
-        $this->MultiCell(17, .5,  utf8_decode($this->contrato->referencia), '', 'L');
+      //  $this->MultiCell(17, .5,  utf8_decode($this->contrato->referencia), '', 'L');
 
         $this->partidasTitle();
 
@@ -147,7 +146,7 @@ class PolizaFormato extends Rotation
         $this->SetHeights([0.4]);
         $this->SetAligns(['C', 'L', 'L', 'R', 'R', 'L']);
 
-        foreach ($this->contrato->conceptos as $key => $c) {
+        /*foreach ($this->contrato->conceptos as $key => $c) {
             $this->Row([$key + 1,
                 mb_strtoupper($c->clave),
                 mb_strtoupper(utf8_decode($c->descripcion_guion_nivel_format)),
@@ -155,7 +154,7 @@ class PolizaFormato extends Rotation
                 $c->cantidad_original != '0' ? number_format($c->cantidad_original, 2, ".", ",") : '-',
                 $c->destino ? utf8_decode($c->destino->ruta_destino) : '']);
 
-        }
+        }*/
     }
 
     public function Footer()
@@ -168,19 +167,20 @@ class PolizaFormato extends Rotation
         $this->Cell(10, .3, (''), 0, 1, 'L');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->contrato->fecha_hora_registro_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
+       // $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->contrato->fecha_hora_registro_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
         $this->Cell(10, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     function create() {
-        $this->SetMargins(1, 0.5, 1);
+        $this->SetMargins(1, 0.9, 1);
         $this->AliasNbPages();
         $this->AddPage();
         $this->SetAutoPageBreak(true,6.80);
         $this->partidas();
 
         try {
-            $this->Output('I', "Formato - Contrato_Proyectado_".$this->contrato->numero_folio.".pdf", 1);
+            //$this->Output('I', "Formato - poliza_".$this->contrato->numero_folio.".pdf", 1);
+            $this->Output('I', "Formato - poliza.pdf", 1);
         } catch (\Exception $ex) {
             dd("error",$ex);
         }
