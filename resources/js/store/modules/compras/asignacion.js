@@ -45,6 +45,19 @@ export default{
                     })
             });
         },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         cargaManualLayout(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

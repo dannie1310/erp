@@ -13,6 +13,7 @@
     export default {
         name: "action-buttons",
         components: {PDF},
+        props:['value'],
         data() {
             return {
                 cargando: false,
@@ -20,7 +21,7 @@
         },
         methods:{
             show(){
-                this.$router.push({name: 'asignacion-proveedores-show'});
+                this.$router.push({name: 'asignacion-proveedores-show', params: { id: this.value.id }});
             },
             // descargaLayout() {
             //     console.log('Descarga de Layouts');
