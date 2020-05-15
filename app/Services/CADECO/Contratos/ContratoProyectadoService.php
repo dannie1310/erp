@@ -95,13 +95,13 @@ class ContratoProyectadoService
                 $datos['id_transaccion'] = $contrato_proyectado->id_transaccion;
                 $datos['nivel'] = $nivel;
                 $datos['descripcion'] = $contrato['descripcion'];
+                $datos['clave'] = $contrato['clave'];
 
                 if($contrato['es_hoja']){
                     $datos['id_destino'] = $contrato['destino'];
                     $datos['unidad'] = $contrato['unidad'];
                     $datos['cantidad_original'] = $contrato['cantidad'];
                     $datos['cantidad_presupuestada'] = $contrato['cantidad'];
-                    $datos['clave'] = $contrato['clave'];
                 }
 
                 $contrato_proyectado->conceptos()->create($datos);
@@ -212,7 +212,6 @@ class ContratoProyectadoService
         }
 
         return $contratos;
-
     }
 
     private function getDatosPartidas($file_xls)

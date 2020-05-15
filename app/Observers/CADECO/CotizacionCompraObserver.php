@@ -18,7 +18,7 @@ class CotizacionCompraObserver extends TransaccionObserver
         parent::creating($cotizacionCompra);
 
         $cotizacionCompra->tipo_transaccion = 18;
-        $cotizacionCompra->estado = 1;
+        $cotizacionCompra->estado = ($cotizacionCompra->complemento) ? 1 : 0;
         $cotizacionCompra->opciones = 1;
         $cotizacionCompra->id_moneda = 1;
     }
@@ -26,6 +26,7 @@ class CotizacionCompraObserver extends TransaccionObserver
     public function updating(CotizacionCompra $cotizacionCompra)
     {
         $cotizacionCompra->validarAsignacion('editar');
+        $cotizacionCompra->estado = 1;
     }
 
     public function deleting(CotizacionCompra $cotizacionCompra)
