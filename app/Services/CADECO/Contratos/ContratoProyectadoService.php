@@ -92,30 +92,30 @@ class ContratoProyectadoService
 
                 }
                 $datos = array();
-                $datos['id_transaccion'] = $contrato_proyectado->id_transaccion; 
-                $datos['nivel'] = $nivel; 
-                $datos['descripcion'] = $contrato['descripcion']; 
-                
+                $datos['id_transaccion'] = $contrato_proyectado->id_transaccion;
+                $datos['nivel'] = $nivel;
+                $datos['descripcion'] = $contrato['descripcion'];
+
                 if($contrato['es_hoja']){
-                    $datos['id_destino'] = $contrato['destino']; 
-                    $datos['unidad'] = $contrato['unidad']; 
-                    $datos['cantidad_original'] = $contrato['cantidad']; 
-                    $datos['cantidad_presupuestada'] = $contrato['cantidad']; 
-                    $datos['clave'] = $contrato['clave']; 
+                    $datos['id_destino'] = $contrato['destino'];
+                    $datos['unidad'] = $contrato['unidad'];
+                    $datos['cantidad_original'] = $contrato['cantidad'];
+                    $datos['cantidad_presupuestada'] = $contrato['cantidad'];
+                    $datos['clave'] = $contrato['clave'];
                 }
 
                 $contrato_proyectado->conceptos()->create($datos);
             }
 
             DB::connection('cadeco')->commit();
-            
+
             return $contrato_proyectado;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             throw $e;
         }
     }
-    
+
     public function update(array $data, $id)
     {
         return $this->repository->show($id)->update([
@@ -179,7 +179,7 @@ class ContratoProyectadoService
                     'cantidad_hijos' => 0,
                 ];
             if($key == 0){
-                
+
                 $index_padre = $key;
                 $nivel_anterior = $partida['nivel'];
                 continue;
@@ -191,7 +191,7 @@ class ContratoProyectadoService
                 $contratos[$key - 1]['destino'] = '';
                 $contratos[$key - 1]['destino_path'] = '';
                 $contratos[$key - 1]['cantidad_hijos'] = $contratos[$key - 1]['cantidad_hijos'] + 1;
-                
+
                 $index_padre = $key - 1;
                 $nivel_anterior = $partida['nivel'];
                 continue;
@@ -199,7 +199,7 @@ class ContratoProyectadoService
 
             if($nivel_anterior == $partida['nivel']){
                 $contratos[$index_padre]['cantidad_hijos'] = $contratos[$index_padre]['cantidad_hijos'] + 1;
-                
+
                 continue;
             }
 
@@ -208,11 +208,11 @@ class ContratoProyectadoService
                 while($contratos[$index_base]['nivel'] >= $partida['nivel']){$index_base--;}
                 $contratos[$index_base]['cantidad_hijos'] = $contratos[$index_base]['cantidad_hijos'] + 1;
             }
-            
+
         }
 
-        return $contratos; 
-        
+        return $contratos;
+
     }
 
     private function getDatosPartidas($file_xls)
@@ -294,5 +294,10 @@ class ContratoProyectadoService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar($data['data']);
+    }
+
+    public function pdf($id)
+    {
+        return $this->repository->show($id)->pdf();
     }
 }
