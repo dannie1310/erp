@@ -5,15 +5,17 @@
             <i class="fa fa-eye"></i>
         </button>
         <PDF></PDF>
+        <Eliminar v-if="$root.can('eliminar_asignacion_proveedor')" v-bind:id="value.id"></Eliminar>
     </div>
 </template>
 
 <script>
     import PDF from "../FormatoAsignacion";
+    import Eliminar from '../Delete';
     export default {
         name: "action-buttons",
-        components: {PDF},
-        props:['value'],
+        components: {PDF, Eliminar},
+        props: ['value'],
         data() {
             return {
                 cargando: false,

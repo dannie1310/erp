@@ -58,6 +58,45 @@ export default{
                     })
             });
         },
+        delete(context, payload) {            
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Asignación de Proveedor",
+                    text: "¿Está seguro/a de que desea eliminar la asignación?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Asignación eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         cargaManualLayout(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -108,6 +147,19 @@ export default{
                                 })
                         }
                     });
+            });
+        },
+        find(context, payload) {     
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
             });
         },
         store(context, payload) {

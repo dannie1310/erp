@@ -33,6 +33,11 @@ class AsignacionService
         return $this->repository->all($data);
     }
 
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminarAsignacion($data['data']);
+    }
+
     public function show($id)
     {
         return $this->repository->show($id);

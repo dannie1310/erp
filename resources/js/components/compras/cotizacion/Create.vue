@@ -86,6 +86,12 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col-md-3 offset-1">
+                                        <div class="custom-control custom-switch" style="top:40%">
+                                            <input type="checkbox" class="custom-control-input button" id="cotizacion" v-model="pendiente" >
+                                            <label class="custom-control-label" for="cotizacion">Dejar pendiente captura de precios</label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <!-- <div class="row">   
                                     <div class="col-md-12">
@@ -110,7 +116,7 @@
                                 </div> -->
                                 <hr />
                                 
-                                <div class="row" v-if="id_solicitud != ''">
+                                <div class="row" v-if="id_solicitud != '' && !pendiente">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
@@ -374,6 +380,7 @@
         data() {
             return {
                 cargando: false,
+                pendiente: false,
                 id_solicitud: '',
                 es:es,
                 fechasDeshabilitadas:{},
@@ -407,7 +414,7 @@
                     observacion: '',
                     moneda: [],
                     importe: '',
-
+                    pendiente: '',
                     precio: [],
                     enable: [],
                     descuento: [],
@@ -469,6 +476,7 @@
             find() {
                 this.enable = [];
                 this.precio = [];
+                this.pendiente = false;
                 this.moneda_input = [];
                 this.observaciones_inputs = [];
                 this.descuento = [];
@@ -562,13 +570,14 @@
                         this.post.fecha = this.fecha;
                         this.post.importe = this.total;
                         this.post.impuesto = this.iva;
+                        this.post.pendiente = this.pendiente;
                         this.store()
                     }
                 });
             },
             store() {
                 
-                if(this.total == 0)
+                if(this.total == 0 && this.pendiente === false)
                 {
                     swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
                 }
