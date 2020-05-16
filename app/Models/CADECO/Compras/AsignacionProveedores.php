@@ -51,7 +51,7 @@ class AsignacionProveedores extends Model
 
     public function getFechaFormatAttribute(){
         $date = date_create($this->timestamp_registro);
-        return date_format($date,"d/m/Y H:i:s");
+        return date_format($date,"d/m/Y");
     }
 
     public function getFolioFormatAttribute(){

@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
         <button @click="show" type="button"
-                class="btn btn-sm btn-outline-default" title="Ver">
+                class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </button>
         <PDF></PDF>
@@ -23,7 +23,7 @@
         },
         methods:{
             show(){
-                this.$router.push({name: 'asignacion-proveedores-show'});
+                this.$router.push({name: 'asignacion-proveedores-show', params: { id: this.value.id }});
             },
             // descargaLayout() {
             //     console.log('Descarga de Layouts');

@@ -3,9 +3,14 @@
 
 namespace App\Http\Transformers\CADECO\Compras;
 
+use App\Models\CADECO\SolicitudCompra;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Compras\AsignacionProveedores;
+use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
+use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
+use App\Http\Transformers\CADECO\Compras\AsignacionProveedoresPartidaTransformer;
 
 class AsignacionProveedoresTransformer extends TransformerAbstract
 {
@@ -16,6 +21,17 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'partidas',
+        'solicitud_compra',
+        'solicitud',
+        'usuario',
+    ];
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
         'usuario',
         'solicitud'
     ];
@@ -38,23 +54,29 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
     }
 
     /**
-     * Include Partidas
-     *
-     * @param CotizacionCompra $model
-     * @return \League\Fractal\Resource\Collection|null
+     * @param AsignacionProveedoresPartida $model
+     * @return \League\Fractal\Resource\Item|null
      */
     public function includePartidas(AsignacionProveedores $model)
     {
-        if($partidas = $model->partidas)
-        {
+        if ($partidas = $model->partidas) {
             return $this->collection($partidas, new AsignacionProveedoresPartidaTransformer);
         }
         return null;
     }
 
     /**
-     * Include Usuario
-     *
+     * @param SolicitudCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSolicitudCompra(AsignacionProveedores $model)
+    {
+        if ($solicitud = $model->solicitud) {
+            return $this->item($solicitud, new SolicitudCompraTransformer);
+        }
+    }
+    
+     /*
      * @param CotizacionCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
@@ -68,7 +90,6 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
     }
 
     /**
-     * Include Usuario
      *
      * @param CotizacionCompra $model
      * @return \League\Fractal\Resource\Item|null

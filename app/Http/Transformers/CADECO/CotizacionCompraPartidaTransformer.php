@@ -36,6 +36,7 @@ class CotizacionCompraPartidaTransformer extends TransformerAbstract
             'cantidad' => $model->cantidad,
             'cantidad_format' => $model->cantidad_format,
             'descuento' => ($model->partida) ? $model->partida->descuento_partida : '-------',
+            'porcentaje_descuento' => ($model->partida) ? $model->partida->descuento_partida : 0,
             'precio_total' => $model->precio_total,
             'precio_total_moneda' => $model->precio_total_moneda,
             'observacion' => ($model->partida) ? $model->partida->observaciones : null,

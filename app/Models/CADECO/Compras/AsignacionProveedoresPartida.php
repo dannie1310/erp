@@ -4,10 +4,12 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\CADECO\Material;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompra;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ItemSolicitudCompra;
+use App\Models\CADECO\CotizacionCompraPartida;
 use App\Models\CADECO\Compras\AsignacionProveedores;
 use App\Models\CADECO\CotizacionCompraPartida;
 use App\Models\CADECO\Material;
@@ -53,7 +55,15 @@ class AsignacionProveedoresPartida extends Model
 
     public function itemSolicitud()
     {
-        return $this->belongsTo(ItemSolicitudCompra::class, 'id_item', 'id_item_solicitud');
+        return $this->belongsTo(ItemSolicitudCompra::class, 'id_item_solicitud', 'id_item');
+    }
+
+    public function material(){
+        return $this->belongsTo(Material::class, 'id_material', 'id_material');
+    }
+
+    public function getCantidadFormatAttribute(){
+        return number_format($this->cantidad_asignada, 4, '.', ',');
     }
 
     public function material()
