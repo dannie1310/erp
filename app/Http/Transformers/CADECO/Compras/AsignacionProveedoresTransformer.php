@@ -4,6 +4,7 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 use App\Models\CADECO\SolicitudCompra;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Compras\AsignacionProveedores;
@@ -21,6 +22,7 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'partidas',
         'solicitud_compra',
+        'solicitud',
         'usuario',
     ];
 
@@ -30,7 +32,8 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'usuario'
+        'usuario',
+        'solicitud'
     ];
 
     public function transform(AsignacionProveedores $model)
@@ -39,12 +42,14 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
             'id' => (int) $model->getKey(),
             'fecha' => $model->solicitud->fecha,
             'fecha_solicitud_format' => $model->solicitud->fecha_format,
+            'fecha_asignacion' => date('d/m/Y H:i', strtotime($model->timestamp_registro)),
             'fecha_format' => $model->fecha_format,
             'observaciones' => (string) $model->solicitud->observaciones,
             'estado' => $model->estadoAsignacion->descripcion,
             'folio_solicitud_format' => $model->solicitud->numero_folio_format,
             'opciones' => $model->solicitud->opciones,
             'folio_asignacion_format' => $model->folio_format,
+
         ];
     }
 
@@ -69,19 +74,32 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
         if ($solicitud = $model->solicitud) {
             return $this->item($solicitud, new SolicitudCompraTransformer);
         }
-        return null;
     }
-
-    /**
-     * @param AsignacionProveedores $model
+    
+     /*
+     * @param CotizacionCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
     public function includeUsuario(AsignacionProveedores $model)
     {
-        if ($usuario = $model->usuarioRegistro) {
+        if($usuario = $model->usuarioRegistro)
+        {
             return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }
-    
+
+    /**
+     *
+     * @param CotizacionCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSolicitud(AsignacionProveedores $model)
+    {
+        if($solicitud = $model->solicitud)
+        {
+            return $this->item($solicitud, new SolicitudCompraTransformer);
+        }
+        return null;
+    }
 }

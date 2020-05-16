@@ -16,6 +16,7 @@ use App\Models\CADECO\Contratos\ContratoEliminado;
 use App\Models\CADECO\Contratos\ContratoProyectadoEliminado;
 use App\Models\CADECO\Contratos\DestinoEliminado;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
+use App\PDF\Contratos\ContratoProyectadoFormato;
 use Illuminate\Support\Facades\DB;
 
 class ContratoProyectado extends Transaccion
@@ -162,5 +163,11 @@ class ContratoProyectado extends Transaccion
             }
             $contrato->delete();
         }
+    }
+
+    public function pdf()
+    {
+        $pdf = new ContratoProyectadoFormato($this);
+        return $pdf->create();
     }
 }

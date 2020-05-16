@@ -3,6 +3,10 @@
 
 namespace App\Http\Transformers\CADECO\Compras;
 
+use App\Http\Transformers\CADECO\CotizacionCompraPartidaTransformer;
+use App\Http\Transformers\CADECO\CotizacionCompraTransformer;
+use App\Http\Transformers\CADECO\MaterialTransformer;
+use App\Models\CADECO\Compras\AsignacionProveedores;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
@@ -31,6 +35,9 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
      */
     protected $defaultIncludes = [
 
+        'cotizacion_compra',
+        'cotizacion',
+        'material'
     ];
 
     public function transform(AsignacionProveedoresPartida $model)
@@ -41,6 +48,8 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
             'cantidad_format' => $model->cantidad_format,
             'item' => $model->id_item_solicitud,
             'cotizacion' => $model->id_transaccion_cotizacion,
+            'cantidad_asignada' => $model->cantidad_asignada,
+            'cantidad_asignada_format' => $model->cantidad_asignada_format
         ];
     }
 
@@ -89,6 +98,20 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
     {
         if ($material = $model->material) {
             return $this->item($material, new MaterialTransformer);
+        }
+    }
+
+    /**
+     * Include Cotizacion
+     *
+     * @param CotizacionCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeCotizacion(AsignacionProveedoresPartida $model)
+    {
+        if($cotizaciones = $model->cotizacion)
+        {
+            return $this->item($cotizaciones, new CotizacionCompraPartidaTransformer);
         }
         return null;
     }
