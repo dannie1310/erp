@@ -25,7 +25,8 @@ class IncidenteIndividualConsolidada extends Model
         "base_datos_referencia",
         "id_tipo_incidente",
         "fecha_hora_deteccion",
-        "fecha_hora_resolucion"
+        "fecha_hora_resolucion",
+        "observaciones",
     ];
 
     public function getFechaHoraDeteccionFormatAttribute()
