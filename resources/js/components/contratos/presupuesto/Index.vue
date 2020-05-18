@@ -7,6 +7,15 @@
         </div> -->
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -31,16 +40,14 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Núm de Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true },
-                    { title: 'Proveedor', field: 'empresa', sortable: false },
-                    { title: 'Observaciones', field: 'observaciones', sortable: false },
-                    { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
-                    // { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'folio', tdComp: require('./partials/EstatusLabel').default},
-                    // { title: 'Núm de Folio de la Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtons').default},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: ' Referencia Contrato Proyectado ', field: 'observaciones', sortable: false },
+                    { title: 'Importe', field: 'importe', tdClass: ['th_money', 'text-right'], sortable: false },
+                    { title: 'Usuario Registró', tdClass: 'folio', field: 'usuario', sortable: false },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa']},
+                query: {sort: 'numero_folio', order: 'DESC', include: ['contrato_proyectado', 'usuario']},
                 search: '',
                 cargando: false
             }
@@ -56,83 +63,50 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/cotizacion/paginate', {
+                return this.$store.dispatch('contratos/presupuesto/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
-                        this.$store.commit('compras/cotizacion/SET_META', data.meta);
+                        this.$store.commit('contratos/presupuesto/SET_PRESUPUESTOS', data.data);
+                        this.$store.commit('contratos/presupuesto/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
 
                     })
             },
-
-            getEstado(estado) {
-
-                let val = parseInt(estado);
-                switch (val) {
-                    case 0:
-                        return {
-                            color: '#f39c12',
-                            descripcion: 'Por Autorizar'
-                        }
-                    case 1:
-                        return {
-                            color: '#00a65a',
-                            descripcion: 'Autorizada'
-                        }
-                    case 2:
-                        return {
-                            color: '#7889d6',
-                            descripcion: 'Tercer caso'
-                        }
-                    default:
-                        return {
-                            color: '#d2d6de',
-                            descripcion: 'Sin solicitud'
-                        }
-                }
-            },
+            
             create() {
                 this.$router.push({name: 'cotizacion-create'});
             },
         },
         computed: {
-            cotizaciones(){
-                return this.$store.getters['compras/cotizacion/cotizaciones'];
+            presupuestos(){
+                return this.$store.getters['contratos/presupuesto/presupuestos'];
             },
             meta(){
-                return this.$store.getters['compras/cotizacion/meta'];
+                return this.$store.getters['contratos/presupuesto/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            cotizaciones: {
-                handler(cotizaciones) {
+            presupuestos: {
+                handler(presupuestos) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = cotizaciones.map((cotizacion, i) => ({
+                    self.$data.data = presupuestos.map((presupuesto, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: cotizacion.folio_format,
-                        fecha: cotizacion.fecha_format,
-                        empresa: (cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----',
-                        observaciones: cotizacion.observaciones,
-                        importe: cotizacion.importe,
-                        estado: this.getEstado((cotizacion.solicitud) ? cotizacion.solicitud.estado : null),
-                        solicitud: $.extend({}, {
-                            show: (cotizacion.solicitud) ? true : false,
-                            id: (cotizacion.solicitud) ? cotizacion.solicitud.id : null,
-                            cotizacion: (cotizacion.solicitud) ? cotizacion.solicitud : null
-                        }),
+                        numero_folio: presupuesto.numero_folio,
+                        fecha: presupuesto.fecha_format,
+                        empresa: (presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----',
+                        observaciones: (presupuesto.contrato_proyectado) ? presupuesto.contrato_proyectado.referencia : '----- Sin Contrato Proyectado -----',
+                        importe: presupuesto.monto_format,
+                        usuario: (presupuesto.usuario) ? presupuesto.usuario.nombre : '---------------------------',
                         buttons: $.extend({}, {
-                            show: true,
-                            id: cotizacion.id,
-                            delete: self.$root.can('eliminar_cotizacion_compra')  ? true : false,
-                        })
+                            id: presupuesto.id
+                        })                         
                     }));
                 },
                 deep: true

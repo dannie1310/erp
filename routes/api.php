@@ -639,6 +639,15 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
+        
+        /**
+         * PRESUPUESTO
+         */
+        $api->group(['prefix' => 'presupuesto'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@show')->where(['id' => '[0-9]+']);
+        });
+
 
         /**
          * SUBCONTRATO
