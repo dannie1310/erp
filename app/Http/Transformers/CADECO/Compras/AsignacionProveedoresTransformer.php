@@ -6,7 +6,6 @@ namespace App\Http\Transformers\CADECO\Compras;
 use App\Models\CADECO\SolicitudCompra;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use League\Fractal\TransformerAbstract;
-use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Compras\AsignacionProveedores;
 use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
 use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;

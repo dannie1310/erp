@@ -158,9 +158,9 @@ export default {
                 return this.$store.dispatch('compras/asignacion/find', {
                     id: this.id,
                     params:{include: [
-                        'partidas.cotizacion_compra.complemento',
-                        'partidas.cotizacion_compra.empresa',
-                        'partidas.cotizacion_compra.sucursal',
+                        'partidas.cotizacion.complemento',
+                        'partidas.cotizacion.empresa',
+                        'partidas.cotizacion.sucursal',
                         'partidas.cotizacion.moneda',
                         'partidas.material',                        
                         'solicitud',
