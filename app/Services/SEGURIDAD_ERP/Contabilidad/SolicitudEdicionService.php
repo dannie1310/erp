@@ -182,6 +182,13 @@ class SolicitudEdicionService
         return $partidas;
     }
 
+    public function impresionPolizas($id){
+        $folios  = $this->repository->show($id)->partidas;
+        $f = $folios->pluck('folio')->toArray();
+        sort($f);
+        dd('panda', $folios, $f);
+    }
+
     public function procesaSolicitudXLS($nombre_archivo, $archivo_xls)
     {
         $file_xls = $this->getFileXLS($nombre_archivo, $archivo_xls);
