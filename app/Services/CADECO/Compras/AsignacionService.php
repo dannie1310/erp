@@ -82,6 +82,10 @@ class AsignacionService
         }
     }
 
+    public function generarOrdenCompra($id){
+        // $asignacion = $this->repository->
+    }
+
     public function asignacion($id)
     {
         $pdf = new AsignacionFormato($id);
