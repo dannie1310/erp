@@ -33,72 +33,48 @@ class PolizaFormato extends Rotation
         $this->txtSeccionTam = 9;
         $this->txtContenidoTam = 11;
         $this->txtFooterTam = 6;
-        $this->encabezado_pdf = utf8_decode('C o n t r a t o   P r o y e c t a d o  ');
     }
 
     function Header()
     {
-        $this->setXY(1, 1);
-        $this->SetTextColor('0','0', '255');
-        $this->SetFont('Arial', 'I', 12);
+        $this->setXY(0.9, 1.2);
+        $this->SetTextColor('0', '0', '255');
+        $this->SetFont('Helvetica', 'BI', 12);
+        $this->Cell(0, 0, 'CONTPAQ i', 0, 0, 'L');
+        $this->setXY(5.76, 1.2);
+        $this->SetTextColor('0', '0', '0');
+        $this->SetFont('Arial', 'B', 12);
+        $this->Cell(0, 0, 'LA PENINSULAR (098 RESIDENCIAL EL TEMPLO)', 0, 0, 'L');
+        $this->setXY(18.50, 1.2);
+        $this->Cell(0, 0, 'Hoja:   1', 0, 0, 'L');
 
-        $this->Cell(1,0.6,'CONTPAQ i ',0,0,'L');
-     //   $this->Cell(5.5,.7, $this->contrato->numero_folio_format,'RT',0,'L');
-        $this->Ln(.7);
+        $this->setXY(5.83, 1.6);
+        $this->SetFont('Arial', 'B', 11.5);
+        $this->Cell(0, 0, utf8_decode('Impreso de pólizas del 01/Nov/2019 al 30/Nov/2019'), 0, 0, 'L');
+        $this->setXY(16.6, 1.6);
+        $this->Cell(0, 0, utf8_decode('Fecha: 08/May/2020'), 0, 0, 'L');
 
-        $this->SetFont('Arial', 'B', 20);
-     //   $this->CellFitScale(11.5, 0.5, $this->encabezado_pdf, 0, 0, 'C', 0);
+        $this->setXY(8.3, 2);
+        $this->Cell(0, 0, utf8_decode('Moneda: Peso Mexicano'), 0, 0, 'L');
 
-        $this->SetFont('Arial', 'B', 10);
-   //     $this->Cell(2.5,.7, 'Fecha','BL',0,'L');
-      //  $this->Cell(5.5,.7, $this->contrato->fecha_format.' ','RB',0,'L');
-        $this->Ln(.7);
+        $this->setXY(0.9, 2.3);
+        $this->SetFont('Arial', '', 7);
+        $this->Cell(0, 0, utf8_decode('Dirección:'), 0, 0, 'L');
+        $this->setXY(17, 2.3);
+        $this->Cell(0, 0, utf8_decode('Código postal:'), 0, 0, 'L');
 
-        //Obtener Posiciones despues de los títulos
-        $y_inicial = $this->getY() - 1;
-        $x_inicial = $this->GetPageWidth() / 1.48;
-        $this->setY($y_inicial);
-        $this->setX($x_inicial);
-
-        $this->Ln(.6);
-
-        $this->SetWidths(array(19.5));
-        $this->SetRounds(array('1234'));
-        $this->SetRadius(array(0.1));
-        $this->SetFills(array('255,255,255'));
-        $this->SetTextColors(array('0,0,255'));
-        $this->SetHeights(array(1));
-        $this->SetStyles(array('DF'));
-        $this->SetAligns("L");
-        $this->SetFont('Arial', 'B', 13);
-        $this->setY($y_inicial+1.5);
-        $this->Row(array(""));
-        $this->setY($y_inicial+1.5);
-        $this->setX(2);
-       $this->MultiCell(16, 1, 'PROYECTO: ', '', 'C');
-
-        $this->Ln(.6);
-        $this->SetFont('Arial', 'B', 10);
-        $this->CellFit(2.5, 1, utf8_decode('Referencia: ') , 0, 0, 'C', 0);
-
-        $this->SetWidths(array(17));
-        $this->SetRounds(array('1234'));
-        $this->SetRadius(array(.1));
-        $this->SetFills(array('255,255,255'));
-        $this->SetTextColors(array('0,0,0'));
-        $this->SetHeights(array('0.7'));
-        $this->SetStyles(array('DF'));
-        $this->SetFont('Arial', '', 10);
-        $this->Row(array(""));
-        $this->setY($y_inicial+3.25);
-        $this->setX($x_inicial-13.5);
-        $this->CellFit(2.5, 1, '', 0, 0, 'C', 0);
-      //  $this->MultiCell(17, .5,  utf8_decode($this->contrato->referencia), '', 'L');
+        $this->setXY(0.9, 2.6);
+        $this->SetFont('Arial', '', 7);
+        $this->Cell(0, 0, utf8_decode('Reg. Fed.: PC0811231EI4'), 0, 0, 'L');
+        $this->setXY(5.83, 2.6);
+        $this->Cell(0, 0, utf8_decode('Reg. Cámara:'), 0, 0, 'L');
+        $this->setXY(12.9, 2.6);
+        $this->Cell(0, 0, utf8_decode('Cta.Estatal:'), 0, 0, 'L');
 
         $this->partidasTitle();
 
         $currentPage = $this->PageNo();
-        if($currentPage>1){
+        if ($currentPage > 1) {
             $this->Ln();
         }
     }
@@ -106,19 +82,19 @@ class PolizaFormato extends Rotation
     public function partidasTitle()
     {
         $this->Ln();
-        $this->SetFills(180, 180, 180);
-        $this->SetFont('Arial', '', 6);
-        $this->SetFillColor(180, 180, 180);
+        $this->SetFont('Arial', 'B', 10);
+        $this->SetFillColor(255, 255, 255);
 
-        $this->setXY(1, 5.5);
+        $this->setXY(0.9, 2.82);
 
-        $this->Cell((0.030 * $this->WidthTotal), 0.4, '#', 'LRBT', 0, 'C', 180);
-        $this->Cell((0.1 * $this->WidthTotal), 0.4, 'Clave', 'LRBT', 0, 'C', 180);
-        $this->Cell((0.38 * $this->WidthTotal), 0.4, utf8_decode('Descripción'), 'LRBT', 0, 'C', 180);
-        $this->Cell((0.099 * $this->WidthTotal), 0.4, 'Unidad', 'LRBT', 0, 'C', 180);
-        $this->Cell((0.099 * $this->WidthTotal), 0.4, 'Cantidad', 'LRBT', 0, 'C', 180);
-        $this->Cell((0.29 * $this->WidthTotal), 0.4, 'Destino', 'LRBT', 0, 'C', 180);
+        $this->Cell(3.1,0.6, 'Cuenta', 'BT', 0, 'L', 180);
+        $this->Cell(5.2,0.6, 'Nombre', 'BT', 0, 'L', 180);
+        $this->Cell(4.65,0.6, 'Referencia', 'BT', 0, 'L', 180);
+        $this->Cell(2.5,0.6, 'Parcial', 'BT', 0, 'L', 180);
+        $this->Cell(2.5, 0.6, 'Cargos', 'BT', 0, 'L', 180);
+        $this->Cell(2, 0.6, 'Abonos', 'BT', 0, 'C', 180);
         $w_t = $this->WidthTotal;
+
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
         $this->SetWidths([$w_t * 0.030, $w_t * 0.1, $w_t * 0.38, $w_t * 0.099, $w_t * 0.099, $w_t * 0.29]);
