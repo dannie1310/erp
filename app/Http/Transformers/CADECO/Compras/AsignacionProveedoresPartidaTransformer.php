@@ -8,10 +8,7 @@ use App\Http\Transformers\CADECO\CotizacionCompraTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\Compras\AsignacionProveedores;
 use League\Fractal\TransformerAbstract;
-use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
-use App\Http\Transformers\CADECO\CotizacionCompraTransformer;
-use App\Http\Transformers\CADECO\CotizacionCompraPartidaTransformer;
 use App\Http\Transformers\CADECO\Compras\SolicitudCompraPartidaTransformer;
 
 class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
@@ -34,8 +31,6 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
-        'cotizacion_compra',
         'cotizacion',
         'material'
     ];
@@ -99,20 +94,5 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
         if ($material = $model->material) {
             return $this->item($material, new MaterialTransformer);
         }
-    }
-
-    /**
-     * Include Cotizacion
-     *
-     * @param CotizacionCompra $model
-     * @return \League\Fractal\Resource\Item|null
-     */
-    public function includeCotizacion(AsignacionProveedoresPartida $model)
-    {
-        if($cotizaciones = $model->cotizacion)
-        {
-            return $this->item($cotizaciones, new CotizacionCompraPartidaTransformer);
-        }
-        return null;
     }
 }
