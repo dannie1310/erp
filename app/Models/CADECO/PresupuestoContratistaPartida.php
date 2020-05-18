@@ -22,4 +22,9 @@ class PresupuestoContratistaPartida extends Model
     {
         return '$ '. number_format($this->precio_unitario, 2, '.', ',');
     }
+
+    public function getPrecioTotalAttribute()
+    {
+        return ($this->concepto) ? '$ '. number_format(($this->concepto->cantidad_presupuestada * $this->precio_unitario), 2, '.', ',') : $this->precio_unitario_format; 
+    }
 }

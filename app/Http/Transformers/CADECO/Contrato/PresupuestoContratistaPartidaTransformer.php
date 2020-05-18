@@ -24,7 +24,9 @@ class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
             'id' => (int) $model->getKey(),
             'precio_unitario' => $model->precio_unitario,
             'precio_unitario_format' => $model->precio_unitario_format,
-            'id_moneda' => (int) $model->IdMoneda
+            'id_moneda' => (int) $model->IdMoneda,
+            'descuento' => $model->PorcentajeDescuento,
+            'precio_total' => $model->precio_total
         ];
     }
 

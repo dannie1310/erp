@@ -74,12 +74,13 @@
                                                     <tr v-for="(partida, i) in presupuesto.partidas.data">
                                                         <td >{{i + 1}}</td>
                                                         <td style="text-align: left" v-if="partida.concepto" v-html="partida.concepto.descripcion_formato"></td>
-                                                        <!-- <td style="text-align: center">{{(partida.material) ? partida.material.unidad : '-----'}}</td>
-                                                        <td style="text-align: center">{{partida.cantidad}}</td>
+                                                        <td style="text-align: center">{{(partida.concepto) ? partida.concepto.unidad : '-----'}}</td>
+                                                        <td style="text-align: center">{{(partida.concepto) ? partida.concepto.cantidad_original_format : '-----'}}</td>
+                                                        <td style="text-align: center">{{(partida.concepto) ? partida.concepto.cantidad_presupuestada_format : '-----'}}</td>
                                                         <td class="money">{{partida.precio_unitario_format}}</td>
                                                         <td style="text-align: center">{{partida.descuento}}</td>
                                                         <td class="money">{{partida.precio_total}}</td>
-                                                        <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
+                                                        <!-- <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
                                                         <td class="money">{{partida.precio_total_moneda}}</td>
                                                         <td>{{partida.observacion}}</td> -->
                                                     </tr>

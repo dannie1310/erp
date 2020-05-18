@@ -40,6 +40,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Núm de Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Contratista', field: 'contratista', sortable: false },
                     { title: ' Referencia Contrato Proyectado ', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: ['th_money', 'text-right'], sortable: false },
                     { title: 'Usuario Registró', tdClass: 'folio', field: 'usuario', sortable: false },
@@ -47,7 +48,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC', include: ['contrato_proyectado', 'usuario']},
+                query: {sort: 'numero_folio', order: 'DESC', include: ['contrato_proyectado', 'usuario', 'empresa']},
                 search: '',
                 cargando: false
             }
@@ -100,7 +101,7 @@
                         index: (i + 1) + self.query.offset,
                         numero_folio: presupuesto.numero_folio,
                         fecha: presupuesto.fecha_format,
-                        empresa: (presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----',
+                        contratista: (presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----',
                         observaciones: (presupuesto.contrato_proyectado) ? presupuesto.contrato_proyectado.referencia : '----- Sin Contrato Proyectado -----',
                         importe: presupuesto.monto_format,
                         usuario: (presupuesto.usuario) ? presupuesto.usuario.nombre : '---------------------------',
