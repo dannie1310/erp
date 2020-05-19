@@ -70,16 +70,16 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(partida, i) in partidas" v-if="partidas.length > 0 && asignacion.partidas.data[0].cotizacion">
+                                                    <tr v-for="(partida, i) in partidas" v-if="partidas.length > 0 && asignacion.partidas.data[0].cotizacion_partida">
                                                         <td>{{i+1}}</td>
                                                         <td >{{(partida.material) ? partida.material.descripcion : '---------'}}</td>
                                                         <td style="text-align: center">{{(partida.material) ? partida.material.unidad : '--------'}}</td>
                                                         <td style="text-align: center">{{partida.cantidad_asignada_format}}</td>
-                                                        <td style="text-align: center">{{(partida.cotizacion) ? partida.cotizacion.precio_unitario_format : '-------'}}</td>
-                                                        <td style="text-align: center">{{(partida.cotizacion) ? partida.cotizacion.descuento : '--------------'}}</td>
-                                                        <td style="text-align: center">{{'$ ' + parseFloat(((partida.cotizacion) ? partida.cotizacion.precio_unitario : 0) * partida.cantidad_asignada).formatMoney(2,'.',',')}}</td>
-                                                        <td style="text-align: center">{{(partida.cotizacion) ? partida.cotizacion.moneda.nombre : '-------'}}</td>
-                                                        <td style="text-align: center">{{'$ ' + parseFloat(partida.cantidad_asignada * partida.cotizacion.precio_unitario * ((partida.cotizacion_compra.complemento) ? ((partida.cotizacion.id_moneda > 1) ? ((partida.cotizacion.id_moneda == 2) ? partida.cotizacion_compra.complemento.tc_usd : partida.cotizacion_compra.complemento.tc_eur) : 1) : partida.cotizacion.moneda.tipo_cambio_igh)).formatMoney(2, '.', ',')}}</td>                                                        
+                                                        <td style="text-align: center">{{(partida.cotizacion_partida) ? partida.cotizacion_partida.precio_unitario_format : '-------'}}</td>
+                                                        <td style="text-align: center">{{(partida.cotizacion_partida) ? partida.cotizacion_partida.descuento : '--------------'}}</td>
+                                                        <td style="text-align: center">{{'$ ' + parseFloat(((partida.cotizacion_partida) ? partida.cotizacion_partida.precio_unitario : 0) * partida.cantidad_asignada).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align: center">{{(partida.cotizacion_partida) ? partida.cotizacion_partida.moneda.nombre : '-------'}}</td>
+                                                        <td style="text-align: center">{{'$ ' + parseFloat(partida.cantidad_asignada * partida.cotizacion_partida.precio_unitario * ((partida.cotizacion.complemento) ? ((partida.cotizacion_partida.id_moneda > 1) ? ((partida.cotizacion_partida.id_moneda == 2) ? partida.cotizacion.complemento.tc_usd : partida.cotizacion.complemento.tc_eur) : 1) : partida.cotizacion_partida.moneda.tipo_cambio_igh)).formatMoney(2, '.', ',')}}</td>                                                        
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -158,10 +158,11 @@ export default {
                 return this.$store.dispatch('compras/asignacion/find', {
                     id: this.id,
                     params:{include: [
-                        'partidas.cotizacion.complemento',
+                        'partidas.cotizacion_partida.moneda',
+                        'partidas.cotizacion.complemento',                        
                         'partidas.cotizacion.empresa',
-                        'partidas.cotizacion.sucursal',
-                        'partidas.cotizacion.moneda',
+                        'partidas.cotizacion.sucursal',                        
+                        'partidas.cotizacion_partida',
                         'partidas.material',                        
                         'solicitud',
                         'usuario'
@@ -191,11 +192,11 @@ export default {
     computed: {
         razon_social()
         {
-            return (this.asignacion.partidas) ? this.asignacion.partidas.data[0].cotizacion_compra.empresa.razon_social : '--------';
+            return (this.asignacion.partidas) ? this.asignacion.partidas.data[0].cotizacion.empresa.razon_social : '--------';
         },
         sucursal()
         {
-            return (this.asignacion.partidas) ? this.asignacion.partidas.data[0].cotizacion_compra.sucursal : '--------';
+            return (this.asignacion.partidas) ? this.asignacion.partidas.data[0].cotizacion.sucursal : '--------';
         },
     }
 }
