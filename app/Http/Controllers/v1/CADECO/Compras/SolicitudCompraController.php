@@ -38,12 +38,16 @@ class SolicitudCompraController extends Controller
      */
     public function __construct(Manager $fractal, SolicitudCompraService $service, SolicitudCompraTransformer $transformer)
     {
-        $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('addAccessToken')->only('pdfSolicitudCompra');
+        $this->middleware('auth:api')->except('leerQR');
+        $this->middleware('context')->except('leerQR');
+
         $this->middleware('permiso:registrar_solicitud_compra')->only('store');
         $this->middleware('permiso:consultar_solicitud_compra')->only(['paginate', 'show']);
         $this->middleware('permiso:aprobar_solicitud_compra')->only('aprobar');
         $this->middleware('permiso:eliminar_solicitud_compra')->only('destroy');
+        $this->middleware('permiso:editar_solicitud_compra')->only('update');
+        $this->middleware('permiso:consultar_asignacion_proveedor')->only('getCotizaciones');
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -56,16 +60,24 @@ class SolicitudCompraController extends Controller
             return $this->service->pdfCotizacion($id)->create();
         }
         dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
-
     }
 
     public function pdfSolicitudCompra($id)
     {
-        return $this->service->pdfSolicitudCompra($id)->create();
+        return $this->service->pdfSolicitudCompra($id);
     }
 
     public function aprobar(Request $request, $id)
     {
         return $this->service->aprobar($request->all(), $id);
+    }
+
+    public function getCotizaciones($id){
+        return $this->service->getCotizaciones($id);
+    }
+
+    public function leerQR(Request $request)
+    {
+        return $this->service->leerQR($request->all()['data']);
     }
 }

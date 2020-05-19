@@ -11,6 +11,13 @@ class Destino extends Model
     protected $connection = 'cadeco';
     protected $table = 'destinos';
     protected $primaryKey = 'id_concepto';
+    protected $fillable = [
+        'id_transaccion',
+        'id_concepto_contrato',
+        'id_concepto',
+    ];
+
+    public $timestamps = false;
 
     public function concepto()
     {
