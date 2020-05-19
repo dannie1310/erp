@@ -89,10 +89,10 @@ class PolizaFormato extends Rotation
 
         $this->Cell(3.1,0.6, 'Cuenta', 'BT', 0, 'L', 180);
         $this->Cell(5.2,0.6, 'Nombre', 'BT', 0, 'L', 180);
-        $this->Cell(4.65,0.6, 'Referencia', 'BT', 0, 'L', 180);
-        $this->Cell(2.5,0.6, 'Parcial', 'BT', 0, 'L', 180);
-        $this->Cell(2.5, 0.6, 'Cargos', 'BT', 0, 'L', 180);
-        $this->Cell(1.64, 0.6, 'Abonos', 'BT', 0, 'C', 180);
+        $this->Cell(4,0.6, 'Referencia', 'BT', 0, 'L', 180);
+        $this->Cell(2.5,0.6, 'Parcial', 'BT', 0, 'C', 180);
+        $this->Cell(2.5, 0.6, 'Cargos', 'BT', 0, 'C', 180);
+        $this->Cell(2.29, 0.6, 'Abonos', 'BT', 0, 'C', 180);
 
         $this->Ln();
     }
@@ -113,10 +113,10 @@ class PolizaFormato extends Rotation
 // 1
         $this->Cell(3.1,0.5, '1195-000-000-000', '', 0, 'L', 180);
         $this->Cell(5.2,0.5, 'I.V.A. ACREDITABLE', '', 0, 'L', 180);
-        $this->Cell(4.65,0.5, '', '', 0, 'L', 180);
+        $this->Cell(4,0.5, '', '', 0, 'L', 180);
         $this->Cell(2.5,0.5, '', '', 0, 'L', 180);
         $this->Cell(2.5, 0.5, '4,000.00', '', 0, 'L', 180);
-        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
 
         $this->Ln(0.45);
         $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
@@ -125,10 +125,10 @@ class PolizaFormato extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->Cell(3.1,0.5, '1195-000-005-000', '', 0, 'L', 180);
         $this->Cell(5.2,0.5, ' IVA ACREDITABLE 16% PAG..', '', 0, 'L', 180);
-        $this->Cell(4.65,0.5, 'F-716 MMA', '', 0, 'L', 180);
+        $this->Cell(4,0.5, 'F-716 MMA', '', 0, 'L', 180);
         $this->Cell(2.5,0.5, '4,000.00', '', 0, 'L', 180);
         $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
-        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
 
         $this->Ln(0.4);
         $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
@@ -139,10 +139,10 @@ class PolizaFormato extends Rotation
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(3.1,0.5, '2130-000-000-000', '', 0, 'L', 180);
         $this->Cell(5.2,0.5, 'ACREEDORES DIVERSOS', '', 0, 'L', 180);
-        $this->Cell(4.65,0.5, '', '', 0, 'L', 180);
+        $this->Cell(4,0.5, '', '', 0, 'L', 180);
         $this->Cell(2.5,0.5, '', '', 0, 'L', 180);
         $this->Cell(2.5, 0.5, '29,000.00', '', 0, 'L', 180);
-        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
 
         $this->Ln(0.45);
         $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
@@ -151,10 +151,10 @@ class PolizaFormato extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->Cell(3.1,0.5, '2130-002-098-509', '', 0, 'L', 180);
         $this->Cell(5.2,0.5, ' MULTISERVICIOS MAYAKIN ..', '', 0, 'L', 180);
-        $this->Cell(4.65,0.5, 'F-716 MMA', '', 0, 'L', 180);
+        $this->Cell(4,0.5, 'F-716 MMA', '', 0, 'L', 180);
         $this->Cell(2.5,0.5, '29,000.00', '', 0, 'L', 180);
         $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
-        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
 
         $this->Ln(0.45);
         $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
@@ -167,10 +167,10 @@ class PolizaFormato extends Rotation
 
         $this->Cell(3.1,0.5, '1196-000-000-000', '', 0, 'L', 180);
         $this->Cell(5.2,0.5, 'I.V.A. ACREDITABLE NO PAG..', '', 0, 'L', 180);
-        $this->Cell(4.65,0.5, '', '', 0, 'L', 180);
+        $this->Cell(4,0.5, '', '', 0, 'L', 180);
         $this->Cell(2.5,0.5, '', '', 0, 'L', 180);
         $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
-        $this->Cell(1.64, 0.5, '4,000.00', '', 0, 'L', 180);
+        $this->Cell(2.29, 0.5, '4,000.00', '', 0, 'L', 180);
 
         $this->Ln(0.45);
         $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
@@ -179,10 +179,10 @@ class PolizaFormato extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->Cell(3.1,0.5, '1196-005-000-000', '', 0, 'L', 180);
         $this->Cell(5.2,0.5, ' IVA ACREDITABLE 16% NO ..', '', 0, 'L', 180);
-        $this->Cell(4.65,0.5, 'F-716 MMA', '', 0, 'L', 180);
+        $this->Cell(4,0.5, 'F-716 MMA', '', 0, 'L', 180);
         $this->Cell(2.5,0.5, '4,000.00', '', 0, 'L', 180);
         $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
-        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
 
         $this->Ln(0.4);
         $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
@@ -195,10 +195,10 @@ class PolizaFormato extends Rotation
 
         $this->Cell(3.1,0.5, '1105-000-000-000', '', 0, 'L', 180);
         $this->Cell(5.2,0.5, 'BANCOS', '', 0, 'L', 180);
-        $this->Cell(4.65,0.5, '', '', 0, 'L', 180);
+        $this->Cell(4,0.5, '', '', 0, 'L', 180);
         $this->Cell(2.5,0.5, '', '', 0, 'L', 180);
         $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
-        $this->Cell(1.64, 0.5, '29,000.00', '', 0, 'L', 180);
+        $this->Cell(2.29, 0.5, '29,000.00', '', 0, 'L', 180);
 
         $this->Ln(0.45);
         $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
@@ -207,10 +207,10 @@ class PolizaFormato extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->Cell(3.1,0.5, '1105-002-098-001', '', 0, 'L', 180);
         $this->Cell(5.2,0.5, ' CUENTA SANTANDER 6550-..', '', 0, 'L', 180);
-        $this->Cell(4.65,0.5, 'F-716 MMA', '', 0, 'L', 180);
+        $this->Cell(4,0.5, 'F-716 MMA', '', 0, 'L', 180);
         $this->Cell(2.5,0.5, '29,000.00', '', 0, 'L', 180);
         $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
-        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
 
         $this->Ln(0.4);
         $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
