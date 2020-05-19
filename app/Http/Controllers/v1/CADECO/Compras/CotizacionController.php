@@ -33,7 +33,7 @@ class CotizacionController extends Controller
     private $transformer;
 
     /**
-     * SalidaAlmacenController constructor.
+     * CotizacionController constructor.
      * @param Manager $fractal
      * @param CotizacionService $service
      * @param CotizacionCompraTransformer $transformer

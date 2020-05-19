@@ -91,6 +91,7 @@ import contratoConcepto from './modules/contratos/contrato-concepto';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
 import estimacion from './modules/contratos/estimacion';
 import fondoGarantia from './modules/contratos/fondo-garantia';
+import presupuesto from './modules/contratos/presupuesto';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
 
@@ -203,6 +204,7 @@ export default new Vuex.Store({
         'contratos/contrato-proyectado': contratoProyectado,
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
+        'contratos/presupuesto' : presupuesto,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
 
