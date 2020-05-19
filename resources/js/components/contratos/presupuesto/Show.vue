@@ -104,6 +104,7 @@
                                         <label class="col-sm-2 col-form-label">Total:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">{{presupuesto.monto_format}}</label>
                                     </div>
+                                    <hr>
                                     <div class="row col-md-12">
                                         <div class="col-md-2"><b>Anticipo:</b></div>
                                         <div class="col-md-2">{{presupuesto.anticipo}}</div>

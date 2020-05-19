@@ -8,9 +8,10 @@ class PresupuestoContratista extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 49;
 
-    public $searchable = [
-        'numero_folio',
+    public $searchable = [        
         'fecha',
+        'numero_folio',
+        'empresa.razon_social',
         'contratoProyectado.referencia'
     ];
 
