@@ -56,6 +56,9 @@ class Contrato extends Model
     public function getCantidadPresupuestadaFormatAttribute()
     {
         return number_format(abs($this->cantidad_presupuestada),1);
+    public function getDescripcionGuionNivelFormatAttribute()
+    {
+        return str_repeat('__', substr_count($this->nivel, '.')) . $this->descripcion;
     }
 
     public function registrarDestino(){

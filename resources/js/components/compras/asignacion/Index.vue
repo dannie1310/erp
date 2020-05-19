@@ -93,15 +93,10 @@
                             id: asignacion.folio_asignacion_format,
                             observaciones: asignacion.observaciones,
                             estado: asignacion.estado,
-                            registro: asignacion.fecha_format,
-                            // buttons: $.extend({}, {
-                            //     id:inventario.id,
-                            //     marbete: self.$root.can('generar_marbetes'),
-                            //     layout: self.$root.can('descarga_layout_captura_conteos'),
-                            //     resumen: self.$root.can('descargar_resumen_conteos'),
-                            //     estado: inventario.estado,
-                            //     actualizar: self.$root.can('cerrar_inventario_fisico')
-                            // })
+                            fecha_format: asignacion.fecha_format,
+                            buttons: $.extend({}, {
+                                id:asignacion.id,
+                            })
                         })
                     });
                 },
