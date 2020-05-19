@@ -10,6 +10,7 @@ namespace App\Repositories\SEGURIDAD_ERP\IncidentesPolizas;
 
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
@@ -31,5 +32,10 @@ class IncidenteIndividualConsolidadaRepository extends Repository implements Rep
     public function guardaRelacionPolizas($datos_relacion)
     {
         RelacionPolizas::create($datos_relacion);
+    }
+
+    public function guardaRelacionMovimientos($datos_relacion)
+    {
+        return RelacionMovimientos::create($datos_relacion);
     }
 }

@@ -95,9 +95,15 @@ class IncidenteIndividualConsolidadaService
             } else {
                 foreach($arreglo_poliza["movimientos"] as $arreglo_movimiento)
                 {
-                    /*
-                     * TODO: GUARDAR RELACIÓN DE MOVIMIENTOS
-                     * */
+                    $relacion_arr = [
+                        "id_movimiento_a"=>$arreglo_movimiento["id_a"],
+                        "base_datos_a"=>$arreglo_poliza["base_datos_a"],
+                        "id_movimiento_b"=>$arreglo_movimiento["id_b"],
+                        "base_datos_b"=>$arreglo_poliza["base_datos_b"],
+                        "tipo_relacion"=>$parametros->tipo_busqueda,
+                        "tipo_busqueda"=>$parametros->tipo_busqueda,
+                    ];
+                    $this->repository->guardaRelacionMovimientos($relacion_arr);
                     if($arreglo_movimiento["codigo_cuenta_a"]!=$arreglo_movimiento["codigo_cuenta_b"]){
                         $incidente_arr = [
                             "id_poliza"=>$arreglo_poliza["id_poliza_a"],
