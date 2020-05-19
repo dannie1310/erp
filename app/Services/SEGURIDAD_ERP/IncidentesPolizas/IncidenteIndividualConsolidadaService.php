@@ -49,10 +49,135 @@ class IncidenteIndividualConsolidadaService
 
     public function buscarDiferencias($parametros)
     {
+        ini_set('max_execution_time', '900000');
         $polizas = $this->obtienePolizasAValidar($parametros);
-
-
+        $this->detectarDiferencias($polizas, $parametros);
         return [count($polizas)];
+    }
+
+    private function detectarDiferencias($arreglo_polizas, $parametros)
+    {
+        foreach($arreglo_polizas as $arreglo_poliza){
+            if(trim($arreglo_poliza["concepto_a"])!=trim($arreglo_poliza["concepto_b"])){
+                $incidente_arr = [
+                    "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                    "base_datos"=>$arreglo_poliza["base_datos_a"],
+                    "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                    "id_tipo_incidente"=>2,
+                    "tipo_busqueda"=>$parametros->tipo_busqueda,
+                    "observaciones"=>'a: '. $arreglo_poliza["concepto_a"] .' b: '. $arreglo_poliza["concepto_b"],
+                ];
+                $this->repository->create($incidente_arr);
+            }
+
+            if($arreglo_poliza["suma_cargos_a"]!=$arreglo_poliza["suma_abonos_b"]){
+                $incidente_arr = [
+                    "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                    "base_datos"=>$arreglo_poliza["base_datos_a"],
+                    "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                    "id_tipo_incidente"=>3,
+                    "tipo_busqueda"=>$parametros->tipo_busqueda,
+                    "observaciones"=>'a: '. $arreglo_poliza["suma_cargos_a"] .' b: '. $arreglo_poliza["suma_abonos_b"],
+                ];
+                $this->repository->create($incidente_arr);
+            }
+
+            if($arreglo_poliza["no_movtos_a"]!=$arreglo_poliza["no_movtos_b"]){
+                $incidente_arr = [
+                    "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                    "base_datos"=>$arreglo_poliza["base_datos_a"],
+                    "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                    "id_tipo_incidente"=>4,
+                    "tipo_busqueda"=>$parametros->tipo_busqueda,
+                    "observaciones"=>'a: '. $arreglo_poliza["no_movtos_a"] .' b: '. $arreglo_poliza["no_movtos_b"],
+                ];
+                $this->repository->create($incidente_arr);
+            } else {
+                foreach($arreglo_poliza["movimientos"] as $arreglo_movimiento)
+                {
+                    /*
+                     * TODO: GUARDAR RELACIÓN DE MOVIMIENTOS
+                     * */
+                    if($arreglo_movimiento["codigo_cuenta_a"]!=$arreglo_movimiento["codigo_cuenta_b"]){
+                        $incidente_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo_incidente"=>6,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                            "observaciones"=>'a: '. $arreglo_movimiento["codigo_cuenta_a"] .' b: '. $arreglo_movimiento["codigo_cuenta_b"],
+                        ];
+                        $this->repository->create($incidente_arr);
+                    }
+
+                    if(trim($arreglo_movimiento["nombre_cuenta_a"])!=trim($arreglo_movimiento["nombre_cuenta_b"])){
+                        $incidente_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo_incidente"=>7,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                            "observaciones"=>'a: '. $arreglo_movimiento["nombre_cuenta_a"] .' b: '. $arreglo_movimiento["nombre_cuenta_b"],
+                        ];
+                        $this->repository->create($incidente_arr);
+                    }
+
+                    if(trim($arreglo_movimiento["referencia_a"])!=trim($arreglo_movimiento["referencia_b"])){
+                        $incidente_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo_incidente"=>8,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                            "observaciones"=>'a: '. $arreglo_movimiento["referencia_a"] .' b: '. $arreglo_movimiento["referencia_b"],
+                        ];
+                        $this->repository->create($incidente_arr);
+                    }
+
+                    if(trim($arreglo_movimiento["concepto_a"]) !=trim($arreglo_movimiento["concepto_b"])){
+                        $incidente_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo_incidente"=>9,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                            "observaciones"=>'a: '. $arreglo_movimiento["concepto_a"] .' b: '. $arreglo_movimiento["concepto_b"],
+                        ];
+                        $this->repository->create($incidente_arr);
+                    }
+
+                    if($arreglo_movimiento["tipo_a"]!=$arreglo_movimiento["tipo_b"]){
+                        $incidente_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo_incidente"=>10,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                            "observaciones"=>'a: '. $arreglo_movimiento["tipo_a"] .' b: '. $arreglo_movimiento["tipo_b"],
+                        ];
+                        $this->repository->create($incidente_arr);
+                    }
+
+                    if($arreglo_movimiento["importe_a"]!=$arreglo_movimiento["importe_b"]){
+                        $incidente_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo_incidente"=>11,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                            "observaciones"=>'a: '. $arreglo_movimiento["importe_a"] .' b: '. $arreglo_movimiento["importe_b"],
+                        ];
+                        $this->repository->create($incidente_arr);
+                    }
+                }
+            }
+        }
     }
 
     private function obtienePolizasAValidar($parametros)
