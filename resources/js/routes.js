@@ -1390,7 +1390,8 @@ export const routes = [
                         meta: {
                             title: 'Presupuesto Contratista',
                             breadcrumb: {parent: 'contratos', name: 'PRESUPUESTO CONTRATISTA'},
-                            middleware: [auth, context]
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_presupuesto_contratista'
                         }
                     },
                 ]

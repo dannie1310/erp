@@ -34,10 +34,16 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'impuesto' => $model->impuesto,
             'impuesto_format' => $model->impuesto_format,
             'monto_format' => $model->monto_format,
+            'subtotal' => $model->subtotal_format,
             'tc_usd' => $model->TcUSD,
             'tc_usd_format' => $model->usd_format,
             'tc_euro' => $model->TcEuro,
-            'tc_euro_format' => $model->euro_format
+            'tc_euro_format' => $model->euro_format,
+            'descuento' => $model->PorcentajeDescuento,
+            'anticipo' => $model->anticipo,
+            'dias_credito' => $model->DiasCredito,
+            'dias_vigencia' => $model->DiasVigencia,
+            'observaciones' => $model->observaciones
         ];
     }
 

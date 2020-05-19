@@ -23,9 +23,7 @@ export default {
     },
 
     actions: {
-        paginate (context, payload) {
-            console.log('Paginate presupuesto');
-            
+        paginate (context, payload) {           
 
             return new Promise((resolve, reject) => {
                 axios

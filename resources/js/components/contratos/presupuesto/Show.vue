@@ -81,49 +81,41 @@
                                                         <td style="text-align: center">{{partida.descuento}}</td>
                                                         <td class="money">{{partida.precio_total}}</td>
                                                         <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
-                                                        <!-- <td class="money">{{partida.precio_total_moneda}}</td>
-                                                        <td>{{partida.observacion}}</td> -->
+                                                        <td class="money">{{partida.precio_total_moneda}}</td>
+                                                        <td>{{partida.observaciones}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <!-- <div class=" col-md-12" align="right">
+                                    <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">% Descuento</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.descuento_format : '-----'}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{presupuesto.descuento}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXP):</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{cotizacion.subtotal}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{presupuesto.subtotal}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">IVA:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{cotizacion.impuesto}}</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{presupuesto.impuesto_format}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Total:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{cotizacion.importe}}</label>
-                                    </div>
-                                    <div class="row col-md-12" v-if="cotizacion.complemento">
-                                        <div class="col-md-2"><b>Pago en Parcialidades (%):</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.parcialidades_format}}</div>
-                                        <div class="col-md-2"><b>Anticipo:</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.anticipo_format}}</div>
-                                    </div>
-                                    <div class="row col-md-12" v-if="cotizacion.complemento">
-                                        <div class="col-md-2"><b>Crédito (días):</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.dias_credito}}</div>
-                                        <div class="col-md-2"><b>Tiempo de Entrega (días):</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.entrega}}</div>
-                                    </div>
-                                    <div class="row col-md-12" v-if="cotizacion.complemento">
-                                        <div class="col-md-2"><b>Vigencia( días):</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.vigencia}}</div>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{presupuesto.monto_format}}</label>
                                     </div>
                                     <div class="row col-md-12">
+                                        <div class="col-md-2"><b>Anticipo:</b></div>
+                                        <div class="col-md-2">{{presupuesto.anticipo}}</div>
+                                        <div class="col-md-2"><b>Crédito (días):</b></div>
+                                        <div class="col-md-2">{{presupuesto.dias_credito}}</div>
+                                    </div>
+                                    <div class="row col-md-12">
+                                        <div class="col-md-2"><b>Vigencia( días):</b></div>
+                                        <div class="col-md-2">{{presupuesto.dias_vigencia}}</div>
                                         <div class="col-md-2"><b>Observaciones:</b></div>
-                                        <div class="col-md-10">{{cotizacion.observaciones}}</div>
-                                    </div> -->
+                                        <div class="col-md-6">{{presupuesto.observaciones}}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -144,19 +136,12 @@
         data(){
             return{
                 cargando: false,
-                no_cotizados: [],
-                items: [],
-                cuenta: [],
-                x: 0,
-                t: 0,
             }
         },
         methods: {
             find() {
 
-                this.cargando = true;
-                console.log(this.id, this.cargando);
-                
+                this.cargando = true;                
                 this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', null);
                 return this.$store.dispatch('contratos/presupuesto/find', {
                     id: this.id,
@@ -168,9 +153,6 @@
                         'empresa',]}
                 }).then(data => {
                     this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', data);
-                    console.log(data);
-                    
-                    // this.items = data.partidas.data;
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
@@ -181,20 +163,7 @@
         },
         computed: {
             presupuesto() {
-                return this.$store.getters['contratos/presupuesto/currentPresupuesto']
-            }
-        },
-        watch: {
-            items()
-            {
-                this.x = 0;
-                this.t = 0;
-                while(this.x < this.items.length)
-                {
-                    this.no_cotizados[this.x] = this.items[this.x].no_cotizado;
-                    this.cuenta[this.x] = (this.no_cotizados[this.x]) ? this.t ++ : 0;
-                    this.x ++;
-                }
+                return this.$store.getters['contratos/presupuesto/currentPresupuesto'];
             }
         }
     }
