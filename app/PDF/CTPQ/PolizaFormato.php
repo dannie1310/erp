@@ -46,7 +46,7 @@ class PolizaFormato extends Rotation
         $this->SetFont('Arial', 'B', 12);
         $this->Cell(0, 0, 'LA PENINSULAR (098 RESIDENCIAL EL TEMPLO)', 0, 0, 'L');
         $this->setXY(18.50, 1.2);
-        $this->Cell(0, 0, 'Hoja:   1', 0, 0, 'L');
+        $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
 
         $this->setXY(5.83, 1.6);
         $this->SetFont('Arial', 'B', 11.5);
@@ -85,66 +85,171 @@ class PolizaFormato extends Rotation
         $this->SetFont('Arial', 'B', 10);
         $this->SetFillColor(255, 255, 255);
 
-        $this->setXY(0.9, 2.82);
+        $this->setXY(1, 2.82);
 
         $this->Cell(3.1,0.6, 'Cuenta', 'BT', 0, 'L', 180);
         $this->Cell(5.2,0.6, 'Nombre', 'BT', 0, 'L', 180);
         $this->Cell(4.65,0.6, 'Referencia', 'BT', 0, 'L', 180);
         $this->Cell(2.5,0.6, 'Parcial', 'BT', 0, 'L', 180);
         $this->Cell(2.5, 0.6, 'Cargos', 'BT', 0, 'L', 180);
-        $this->Cell(2, 0.6, 'Abonos', 'BT', 0, 'C', 180);
-        $w_t = $this->WidthTotal;
+        $this->Cell(1.64, 0.6, 'Abonos', 'BT', 0, 'C', 180);
 
-        $this->SetFont('Arial', '', 6);
-        $this->SetFillColor(180, 180, 180);
-        $this->SetWidths([$w_t * 0.030, $w_t * 0.1, $w_t * 0.38, $w_t * 0.099, $w_t * 0.099, $w_t * 0.29]);
-        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
-        $this->SetRounds(['1', '', '', '', '', '2']);
-        $this->SetRadius([0, 0, 0, 0, 0, 0]);
-        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
-        $this->SetHeights([0.4]);
-        $this->SetAligns(['C', 'L', 'L', 'R', 'R', 'L']);
+        $this->Ln();
     }
 
     public function partidas()
     {
-        $w_t = $this->WidthTotal;
-        $this->Ln();
-        $this->SetFont('Arial', '', 6);
-        $this->SetFillColor(180, 180, 180);
-        $this->SetWidths([$w_t * 0.030, $w_t * 0.1, $w_t * 0.38, $w_t * 0.099, $w_t * 0.099, $w_t * 0.29]);
-        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
-        $this->SetRounds(['1', '', '', '', '', '2']);
-        $this->SetRadius([0, 0, 0, 0, 0, 0]);
-        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
-        $this->SetHeights([0.4]);
-        $this->SetAligns(['C', 'L', 'L', 'R', 'R', 'L']);
+        $this->SetFont('Arial', '', 10);
 
-        /*foreach ($this->contrato->conceptos as $key => $c) {
-            $this->Row([$key + 1,
-                mb_strtoupper($c->clave),
-                mb_strtoupper(utf8_decode($c->descripcion_guion_nivel_format)),
-                $c->unidad != null ? $c->unidad : '',
-                $c->cantidad_original != '0' ? number_format($c->cantidad_original, 2, ".", ",") : '-',
-                $c->destino ? utf8_decode($c->destino->ruta_destino) : '']);
+        $this->Cell(19.65,0.5, utf8_decode('Póliza de Egresos número 98007 correspondiente al 07/Nov/2019'), '', 0, 'C', 0);
+        $this->Ln(0.4);
+        $this->Cell(19.65,0.5, utf8_decode('TRANSF 5835471 F-716 MULTISERVICIOS MAYAKIN SA DE CV'), '', 0, 'C', 0);
 
-        }*/
+
+        $this->Ln(0.68);
+        $this->SetX(1);
+        $this->SetFont('Arial', 'B', 10);
+        $this->SetFillColor(255, 255, 255);
+// 1
+        $this->Cell(3.1,0.5, '1195-000-000-000', '', 0, 'L', 180);
+        $this->Cell(5.2,0.5, 'I.V.A. ACREDITABLE', '', 0, 'L', 180);
+        $this->Cell(4.65,0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.5,0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.5, 0.5, '4,000.00', '', 0, 'L', 180);
+        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+
+        $this->Ln(0.45);
+        $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
+        $this->Cell(5.2,0.3, '    TRANSF 5835471 RENTA C..', '', 1, 'L', 180);
+
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(3.1,0.5, '1195-000-005-000', '', 0, 'L', 180);
+        $this->Cell(5.2,0.5, ' IVA ACREDITABLE 16% PAG..', '', 0, 'L', 180);
+        $this->Cell(4.65,0.5, 'F-716 MMA', '', 0, 'L', 180);
+        $this->Cell(2.5,0.5, '4,000.00', '', 0, 'L', 180);
+        $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+
+        $this->Ln(0.4);
+        $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
+        $this->Cell(5.2,0.3, '    TRANSF 5835471 RENTA C..', '', 1, 'L', 180);
+
+        //2
+        $this->Ln(0.32);
+        $this->SetFont('Arial', 'B', 10);
+        $this->Cell(3.1,0.5, '2130-000-000-000', '', 0, 'L', 180);
+        $this->Cell(5.2,0.5, 'ACREEDORES DIVERSOS', '', 0, 'L', 180);
+        $this->Cell(4.65,0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.5,0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.5, 0.5, '29,000.00', '', 0, 'L', 180);
+        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+
+        $this->Ln(0.45);
+        $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
+        $this->Cell(5.2,0.3, '    TRANSF 5835471 RENTA C..', '', 1, 'L', 180);
+
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(3.1,0.5, '2130-002-098-509', '', 0, 'L', 180);
+        $this->Cell(5.2,0.5, ' MULTISERVICIOS MAYAKIN ..', '', 0, 'L', 180);
+        $this->Cell(4.65,0.5, 'F-716 MMA', '', 0, 'L', 180);
+        $this->Cell(2.5,0.5, '29,000.00', '', 0, 'L', 180);
+        $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+
+        $this->Ln(0.45);
+        $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
+        $this->Cell(5.2,0.3, '    TRANSF 5835471 RENTA C..', '', 1, 'L', 180);
+
+        //3
+        $this->Ln(0.32);
+        $this->SetFont('Arial', 'B', 10);
+        $this->SetFillColor(255, 255, 255);
+
+        $this->Cell(3.1,0.5, '1196-000-000-000', '', 0, 'L', 180);
+        $this->Cell(5.2,0.5, 'I.V.A. ACREDITABLE NO PAG..', '', 0, 'L', 180);
+        $this->Cell(4.65,0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.5,0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(1.64, 0.5, '4,000.00', '', 0, 'L', 180);
+
+        $this->Ln(0.45);
+        $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
+        $this->Cell(5.2,0.3, '    TRANSF 5835471 RENTA C..', '', 1, 'L', 180);
+
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(3.1,0.5, '1196-005-000-000', '', 0, 'L', 180);
+        $this->Cell(5.2,0.5, ' IVA ACREDITABLE 16% NO ..', '', 0, 'L', 180);
+        $this->Cell(4.65,0.5, 'F-716 MMA', '', 0, 'L', 180);
+        $this->Cell(2.5,0.5, '4,000.00', '', 0, 'L', 180);
+        $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+
+        $this->Ln(0.4);
+        $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
+        $this->Cell(5.2,0.3, '    TRANSF 5835471 RENTA C..', '', 1, 'L', 180);
+
+        //4
+        $this->Ln(0.32);
+        $this->SetFont('Arial', 'B', 10);
+        $this->SetFillColor(255, 255, 255);
+
+        $this->Cell(3.1,0.5, '1105-000-000-000', '', 0, 'L', 180);
+        $this->Cell(5.2,0.5, 'BANCOS', '', 0, 'L', 180);
+        $this->Cell(4.65,0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.5,0.5, '', '', 0, 'L', 180);
+        $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(1.64, 0.5, '29,000.00', '', 0, 'L', 180);
+
+        $this->Ln(0.45);
+        $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
+        $this->Cell(5.2,0.3, '    TRANSF 5835471 RENTA C..', '', 1, 'L', 180);
+
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(3.1,0.5, '1105-002-098-001', '', 0, 'L', 180);
+        $this->Cell(5.2,0.5, ' CUENTA SANTANDER 6550-..', '', 0, 'L', 180);
+        $this->Cell(4.65,0.5, 'F-716 MMA', '', 0, 'L', 180);
+        $this->Cell(2.5,0.5, '29,000.00', '', 0, 'L', 180);
+        $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
+        $this->Cell(1.64, 0.5, '', '', 0, 'L', 180);
+
+        $this->Ln(0.4);
+        $this->Cell(3.1,0.3, '', '', 0, 'L', 180);
+        $this->Cell(5.2,0.3, '    TRANSF 5835471 RENTA C..', '', 1, 'L', 180);
+
     }
 
     public function Footer()
     {
-        //PAGINA Y LEYENDA
-        $this->SetY(-0.9);
-        $this->SetX(14.7);
-        $this->SetFont('Arial', 'B', 8);
+        $this->Ln();
+        $this->SetFont('Arial', 'B', 10);
+        $this->SetFillColor(255, 255, 255);
 
-        $this->Cell(10, .3, (''), 0, 1, 'L');
+        $this->setXY(1, 24.5);
+        $this->Cell(12.98,0.6, 'TRANSF 5835471 F-716 MULTISERVICIOS MAYAKIN SA DE CV', 'T', 0, 'L', 180);
+        $this->setXY(14.15, 24.5);
+        $this->Cell(3,0.6, '33,000.00', 'T', 0, 'R', 180);
+        $this->setXY(17.3, 24.5);
+        $this->Cell(3,0.6, '33,000.00', 'T', 0, 'R', 180);
 
-        $this->SetFont('Arial', 'BI', 6);
-       // $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->contrato->fecha_hora_registro_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
-        $this->Cell(10, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
+        $this->setXY(1, 25.4);
+        $this->Cell(4.2,0.6, utf8_decode('Elaboró'), 'T', 0, 'C', 180);
+        $this->setXY(5.35, 25.4);
+        $this->Cell(4.3 ,0.6, utf8_decode('Revisó'), 'T', 0, 'C', 180);
+        $this->setXY(9.8, 25.4);
+        $this->Cell(4.2,0.6, utf8_decode('Autorizó'), 'T', 0, 'C', 180);
+        $this->setXY(14.15, 25.4);
+        $this->Cell(3,0.5, 'Origen', 'T', 0, 'L', 180);
+        $this->setXY(17.3, 25.4);
+        $this->Cell(3,0.6, utf8_decode('Póliza'), 'T', 0, 'C', 180);
+
+        $this->SetFont('Arial', '', 10);
+        $this->setXY(14.15, 25.85);
+        $this->Cell(3,0.3, 'CONTPAQ i', '', 0, 'L', 180);
+
+        $this->setXY(17.3, 26.2);
+        $this->Cell(3,0.5, 'Egresos # 98007', '', 0, 'R', 180);
+        $this->setXY(17.3, 26.6);
+        $this->Cell(3,0.5, '07/Nov/2019', '', 0, 'R', 180);
     }
 
     function create() {
