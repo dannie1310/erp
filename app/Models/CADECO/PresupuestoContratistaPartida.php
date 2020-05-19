@@ -18,6 +18,11 @@ class PresupuestoContratistaPartida extends Model
         return $this->belongsTo(Contrato::class, 'id_concepto');
     }
 
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'IdMoneda', 'id_moneda');
+    }
+
     public function getPrecioUnitarioFormatAttribute()
     {
         return '$ '. number_format($this->precio_unitario, 2, '.', ',');

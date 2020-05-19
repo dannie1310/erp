@@ -4,6 +4,7 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\CADECO\ContratoTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Models\CADECO\PresupuestoContratistaPartida;
 use League\Fractal\TransformerAbstract;
 
@@ -15,7 +16,8 @@ class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'concepto'
+        'concepto',
+        'moneda'
     ];
 
     public function transform(PresupuestoContratistaPartida $model)
@@ -39,6 +41,19 @@ class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
         if($concepto = $model->concepto)
         {
             return $this->item($concepto, new ContratoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param PresupuestoContratistaPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMoneda(PresupuestoContratistaPartida $model)
+    {
+        if($moneda = $model->moneda)
+        {
+            return $this->item($moneda, new MonedaTransformer);
         }
         return null;
     }

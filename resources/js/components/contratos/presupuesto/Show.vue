@@ -80,8 +80,8 @@
                                                         <td class="money">{{partida.precio_unitario_format}}</td>
                                                         <td style="text-align: center">{{partida.descuento}}</td>
                                                         <td class="money">{{partida.precio_total}}</td>
-                                                        <!-- <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
-                                                        <td class="money">{{partida.precio_total_moneda}}</td>
+                                                        <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
+                                                        <!-- <td class="money">{{partida.precio_total_moneda}}</td>
                                                         <td>{{partida.observacion}}</td> -->
                                                     </tr>
                                                 </tbody>
@@ -160,7 +160,12 @@
                 this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', null);
                 return this.$store.dispatch('contratos/presupuesto/find', {
                     id: this.id,
-                    params:{include: ['contrato_proyectado', 'empresa', 'sucursal', 'partidas.concepto']}
+                    params:{include: [
+                        'contrato_proyectado',                        
+                        'partidas.concepto',
+                        'partidas.moneda',
+                        'sucursal',
+                        'empresa',]}
                 }).then(data => {
                     this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', data);
                     console.log(data);
