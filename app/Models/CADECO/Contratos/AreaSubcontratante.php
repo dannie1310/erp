@@ -40,6 +40,9 @@ class AreaSubcontratante extends Model
 
     public function getNombreCompletoAttribute()
     {
-        return $this->usuario->nombre . ' ' . $this->usuario->apaterno;
+        if($this->usuario){
+            return $this->usuario->nombre . ' ' . $this->usuario->apaterno;
+        }
+        return null;
     }
 }

@@ -4,10 +4,12 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\CADECO\Material;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompra;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ItemSolicitudCompra;
+use App\Models\CADECO\CotizacionCompraPartida;
 use App\Models\CADECO\Compras\AsignacionProveedores;
 
 class AsignacionProveedoresPartida extends Model
@@ -40,16 +42,30 @@ class AsignacionProveedoresPartida extends Model
         return $this->belongsTo(AsignacionProveedores::class, 'id', 'id_asignacion_proveedor');
     }
 
-    public function cotizacion(){
-        return $this->belongsTo(cotizacion::class, 'id_transaccion', 'id_transaccion_cotizacion')->where('id_material', '=', $this->id_material);
+    public function cotizacion()
+    {
+        return $this->belongsTo(CotizacionCompraPartida::class, 'id_transaccion_cotizacion', 'id_transaccion')->where('id_material', '=', $this->id_material);
     }
 
     public function cotizacionCompra(){
-        return $this->belongsTo(CotizacionCompra::class, 'id_transaccion', 'id_transaccion_cotizacion');
+        return $this->belongsTo(CotizacionCompra::class, 'id_transaccion_cotizacion', 'id_transaccion');
     }
 
     public function itemSolicitud()
     {
-        return $this->belongsTo(ItemSolicitudCompra::class, 'id_item', 'id_item_solicitud');
+        return $this->belongsTo(ItemSolicitudCompra::class, 'id_item_solicitud', 'id_item');
+    }
+
+    public function material(){
+        return $this->belongsTo(Material::class, 'id_material', 'id_material');
+    }
+
+    public function getCantidadFormatAttribute(){
+        return number_format($this->cantidad_asignada, 4, '.', ',');
+    }
+
+    public function getCantidadAsignadaFormatAttribute()
+    {
+        return number_format($this->cantidad_asignada, 1, '.', ',');
     }
 }

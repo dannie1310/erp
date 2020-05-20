@@ -195,7 +195,6 @@ export default {
             })
         },
         recalcular(i){
-            console.log('entro');
             let asignadas = 0.0;
 
             Object.values(this.data.cotizaciones).forEach(partida =>{
@@ -224,7 +223,7 @@ export default {
             }
             // this.data.items[i].cantidad_disponible = this.data.items[i].cantidad_base;
             this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_base - asignadas).toFixed(4);
-            console.log(this.data.items[i].cantidad_disponible);
+
         },
         store() {
             this.cargando = true;

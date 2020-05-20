@@ -1,14 +1,13 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Contrato Proyectado">
-            <i class="fa fa-eye" v-if="!cargando"></i>
-            <i class="fa fa-spinner fa-spin" v-else></i>
+        <button @click="find" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" :disabled="cargando">
+            <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> CONSULTA DE CONTRATO PROYECTADO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> ELIMINACIÓN DE CONTRATO PROYECTADO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -67,9 +66,29 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row" v-if="!cargando">
+                            <div class="col-md-12">
+                                <div class="form-group row error-content">
+                                    <label for="motivo" class="col-md-2 col-form-label">Motivo:</label>
+                                    <div class="col-md-10">
+                                        <textarea
+                                            name="motivo"
+                                            id="motivo"
+                                            class="form-control"
+                                            v-model="motivo"
+                                            v-validate="{required: true}"
+                                            data-vv-as="Motivo"
+                                            :class="{'is-invalid': errors.has('motivo')}"
+                                        ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''" v-on:click="validate">Eliminar</button>
                     </div>
                 </div>
             </div>
@@ -79,32 +98,64 @@
 
 <script>
     export default {
-        name: "contrato-proyectado-show",
+        name: "contrato-proyectado-delete",
         props: ['id'],
         data(){
             return{
-                cargando: false
+                cargando: false,
+                motivo: ''
             }
         },
         methods: {
             find() {
-
                 this.cargando = true;
+                this.motivo = '';
                 this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
                 return this.$store.dispatch('contratos/contrato-proyectado/find', {
                     id: this.id,
                     params:{include: [
-                        'conceptos.destino'
-                    ]}
+                            'conceptos.destino'
+                        ]}
                 }).then(data => {
                     this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
-
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
-
                 })
-            }
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        if(this.motivo == '') {
+                            swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
+                        }
+                        else {
+                            this.eliminar()
+                        }
+                    }
+                });
+            },
+            eliminar() {
+                return this.$store.dispatch('contratos/contrato-proyectado/eliminar', {
+                    id: this.id,
+                    params: {data: this.$data.motivo}
+                })
+                    .then(data => {
+                        this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO', {id: this.id})
+                        $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('contratos/contrato-proyectado/paginate', {
+                            params: {
+                                sort: 'numero_folio', order: 'DESC', include:'areasSubcontratantes'
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
+                                this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
+                            })
+                    }) .finally( ()=>{
+                        this.cargando = false;
+                    });
+            },
         },
         computed: {
             contrato() {

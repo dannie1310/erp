@@ -955,12 +955,12 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'show',
+                        path: ':id',
                         name: 'asignacion-proveedores-show',
                         component: require('./components/compras/asignacion/Show').default,
                         props: true,
                         meta: {
-                            title: 'Ver Asignación de Proveedores',
+                            title: 'Consultar Asignación de Proveedores',
                             breadcrumb: { parent: 'asignacion-proveedores', name: 'VER'},
                             middleware: [auth, context],
                             // permission: 'registrar_proveedor'
@@ -1361,7 +1361,18 @@ export const routes = [
                         component: require('./components/contratos/proyectado/Index').default,
                         meta: {
                             title: 'Contratos Proyectados',
-                            breadcrumb: {parent: 'contratos', name: 'PROYECTADOS'},
+                            breadcrumb: {parent: 'contratos', name: 'CONTRATOS PROYECTADOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'proyectado-create',
+                        component: require('./components/contratos/proyectado/Create').default,
+                        meta: {
+                            title: 'Registrar Contratos Proyectados',
+                            breadcrumb: {parent: 'proyectado', name: 'REGISTRAR'},
                             middleware: [auth, context],
 
                         }
