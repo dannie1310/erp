@@ -83,25 +83,51 @@ class AsignacionService
     }
 
     public function generarOrdenCompra($data){
-        $asignacion = $this->repository->show($data['id']);
-        $partidas = $asignacion->partidas()->orderBy('id_transaccion_cotizacion')->get();
-        $transaccion_cotizacion = '';
-        
-        foreach($partidas as $partida){
-            // dd('pando', $partida->cotizacionCompra->id_antecedente);
-            $orden_c = null;
-            if($transaccion_cotizacion != $partida->id_transaccion_cotizacion){
-                $partida->ordenCompra()->create([
-                    'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
-                    'id_empresa' => $partida->cotizacionCompra->id_empresa,
-                    'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
-                    'id_moneda' => $partida->cotizacionCompra->id_moneda,
-                    'observaciones' => $partida->cotizacionCompra->observaciones,
-                ]);
-            }
-        }
-        dd('paso');
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $asignacion = $this->repository->show($data['id']);
+            $partidas = $asignacion->partidas()->orderBy('id_transaccion_cotizacion')->get();
+            $transaccion_cotizacion = '';
+            
+            foreach($partidas as $partida){
+                // dd('pando', $partida->cotizacionCompra->id_antecedente);
+                $orden_c = null;
+                if($transaccion_cotizacion != $partida->id_transaccion_cotizacion){
+                    $transaccion_cotizacion = $partida->id_transaccion_cotizacion;
+                    $orden_c = $partida->ordenCompra()->create([
+                        'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
+                        'id_referente' => $partida->cotizacionCompra->id_transaccion,
+                        'id_empresa' => $partida->cotizacionCompra->id_empresa,
+                        'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
+                        'id_moneda' => $partida->cotizacionCompra->id_moneda,
+                        'observaciones' => $partida->cotizacionCompra->observaciones,
+                        'tipo_transaccion' => 19,
+                    ]);
+                }else{
+                    $orden_c = OrdenCompra::where('id_referente', '=', $transaccion_cotizacion)->first();
+                }
 
+                $orden_c->partidas()->create([
+                    'id_transaccion' => $orden_c->id_transaccion,
+                    'id_antecedente' => $orden_c->id_antecedente,
+                    'item_antecedente' => $partida->id_item_solicitud,
+                    'id_material' => $partida->id_material,
+                    'unidad' => $partida->material->unidad,
+                    'cantidad' => $partida->cantidad_asignada,
+                    'importe' => $partida->cotizacion->precio_unitario * $partida->cantidad_asignada,
+                    'precio_unitario' => $partida->cotizacion->precio_unitario,
+                    'precio_material' => $partida->cotizacion->precio_unitario,
+                ]);
+
+            }
+            dd('paso');
+            DB::connection('cadeco')->commit();
+            return $asignacion;
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 
     public function asignacion($id)

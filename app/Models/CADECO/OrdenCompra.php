@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrdenCompra extends Transaccion
 {
-    public const TIPO_ANTECEDENTE = 17;
+    public const TIPO_ANTECEDENTE = 18;
     public const OPCION_ANTECEDENTE = 1;
 
     protected static function boot()
@@ -33,6 +33,26 @@ class OrdenCompra extends Transaccion
                 ->where('estado', '!=', -2);
         });
     }
+
+    protected $fillable = [
+        'id_antecedente',
+        'id_referente',
+        'tipo_transaccion',
+        'numero_folio',
+        'id_empresa',
+        'id_sucursal',
+        'id_moneda',
+        'opciones',
+        'monto',
+        'saldo',
+        'impuesto',
+        'fecha',
+        'estado',
+        'id_obra',
+        'comentario',
+        'observaciones',
+        'FechaHoraRegistro'
+    ];
 
     public function empresa()
     {

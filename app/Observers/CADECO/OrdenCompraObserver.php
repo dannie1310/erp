@@ -20,5 +20,6 @@ class OrdenCompraObserver extends TransaccionObserver
     public function creating(Transaccion $ordenCompra)
     {
        parent::creating($ordenCompra);
+       $ordenCompra->fecha = date('Y-m-d');
     }
 }
