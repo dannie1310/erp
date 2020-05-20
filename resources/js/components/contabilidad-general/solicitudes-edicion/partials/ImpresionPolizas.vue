@@ -31,8 +31,8 @@
                 this.pdf()
             },
             pdf(){
-                var url = '/api/contabilidad-general/solicitud-edicion-poliza/' + this.id +'/impresion-polizas?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
-                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Estimación</iframe>');
+                var url = '/api/contabilidad-general/solicitud-edicion-poliza/' + this.id +'/impresion-polizas?'+'&access_token='+this.$session.get('jwt');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Polizas</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             }

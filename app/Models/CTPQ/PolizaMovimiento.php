@@ -65,6 +65,11 @@ class PolizaMovimiento extends Model
         }
     }
 
+    public function  getImporteComaFormatAttribute()
+    {
+        return number_format($this->Importe,2,".",",");
+    }
+
     public function  getImporteFormatAttribute(){
         return "$ " . number_format($this->Importe,2,".",",");
     }
