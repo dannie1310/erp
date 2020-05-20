@@ -8,6 +8,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
+use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
@@ -49,6 +50,13 @@ class DiferenciaService
 
     public function buscarDiferencias($parametros)
     {
+        ProcessBusquedaDiferenciasPolizas::dispatch($this)
+        ->delay(now()->addMinutes(1));
+    }
+
+    public function procesarBusquedaDiferencias()
+    {
+        $parametros = collect((object)["tipo_busqueda"=>1]) ;
         ini_set('max_execution_time', '900000');
         $polizas = $this->obtienePolizasAValidar($parametros);
         $this->detectarDiferencias($polizas, $parametros);
@@ -64,7 +72,7 @@ class DiferenciaService
                     "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                     "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                     "id_tipo" => 2,
-                    "tipo_busqueda" => $parametros->tipo_busqueda,
+                    "tipo_busqueda" => $parametros["tipo_busqueda"],
                     "observaciones" => 'a: ' . $arreglo_poliza["concepto_a"] . ' b: ' . $arreglo_poliza["concepto_b"],
                 ];
                 $this->repository->create($incidente_arr);
@@ -74,7 +82,7 @@ class DiferenciaService
                     "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                     "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                     "id_tipo" => 2,
-                    "tipo_busqueda" => $parametros->tipo_busqueda,
+                    "tipo_busqueda" => $parametros["tipo_busqueda"],
                 ];
                 $this->repository->corrige($correccion_arr);
             }
@@ -85,7 +93,7 @@ class DiferenciaService
                     "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                     "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                     "id_tipo" => 3,
-                    "tipo_busqueda" => $parametros->tipo_busqueda,
+                    "tipo_busqueda" => $parametros["tipo_busqueda"],
                     "observaciones" => 'a: ' . $arreglo_poliza["suma_cargos_a"] . ' b: ' . $arreglo_poliza["suma_abonos_b"],
                 ];
                 $this->repository->create($incidente_arr);
@@ -95,7 +103,7 @@ class DiferenciaService
                     "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                     "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                     "id_tipo" => 3,
-                    "tipo_busqueda" => $parametros->tipo_busqueda,
+                    "tipo_busqueda" => $parametros["tipo_busqueda"],
                 ];
                 $this->repository->corrige($correccion_arr);
             }
@@ -106,7 +114,7 @@ class DiferenciaService
                     "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                     "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                     "id_tipo" => 4,
-                    "tipo_busqueda" => $parametros->tipo_busqueda,
+                    "tipo_busqueda" => $parametros["tipo_busqueda"],
                     "observaciones" => 'a: ' . $arreglo_poliza["no_movtos_a"] . ' b: ' . $arreglo_poliza["no_movtos_b"],
                 ];
                 $this->repository->create($incidente_arr);
@@ -116,7 +124,7 @@ class DiferenciaService
                     "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                     "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                     "id_tipo" => 4,
-                    "tipo_busqueda" => $parametros->tipo_busqueda,
+                    "tipo_busqueda" => $parametros["tipo_busqueda"],
                 ];
                 $this->repository->corrige($correccion_arr);
                 if (key_exists("movimientos", $arreglo_poliza)) {
@@ -127,8 +135,8 @@ class DiferenciaService
                             "base_datos_a" => $arreglo_poliza["base_datos_a"],
                             "id_movimiento_b" => $arreglo_movimiento["id_b"],
                             "base_datos_b" => $arreglo_poliza["base_datos_b"],
-                            "tipo_relacion" => $parametros->tipo_busqueda,
-                            "tipo_busqueda" => $parametros->tipo_busqueda,
+                            "tipo_relacion" => $parametros["tipo_busqueda"],
+                            "tipo_busqueda" => $parametros["tipo_busqueda"],
                         ];
                         $this->repository->guardaRelacionMovimientos($relacion_arr);
                         if ($arreglo_movimiento["codigo_cuenta_a"] != $arreglo_movimiento["codigo_cuenta_b"]) {
@@ -138,7 +146,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 6,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                                 "observaciones" => 'a: ' . $arreglo_movimiento["codigo_cuenta_a"] . ' b: ' . $arreglo_movimiento["codigo_cuenta_b"],
                             ];
                             $this->repository->create($incidente_arr);
@@ -149,7 +157,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 6,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                             ];
                             $this->repository->corrige($correccion_arr);
                         }
@@ -161,7 +169,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 7,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                                 "observaciones" => 'a: ' . $arreglo_movimiento["nombre_cuenta_a"] . ' b: ' . $arreglo_movimiento["nombre_cuenta_b"],
                             ];
                             $this->repository->create($incidente_arr);
@@ -172,7 +180,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 7,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                             ];
                             $this->repository->corrige($correccion_arr);
                         }
@@ -184,7 +192,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 8,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                                 "observaciones" => 'a: ' . $arreglo_movimiento["referencia_a"] . ' b: ' . $arreglo_movimiento["referencia_b"],
                             ];
                             $this->repository->create($incidente_arr);
@@ -195,7 +203,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 8,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                             ];
                             $this->repository->corrige($correccion_arr);
                         }
@@ -207,7 +215,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 9,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                                 "observaciones" => 'a: ' . $arreglo_movimiento["concepto_a"] . ' b: ' . $arreglo_movimiento["concepto_b"],
                             ];
                             $this->repository->create($incidente_arr);
@@ -218,7 +226,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 9,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                             ];
                             $this->repository->corrige($correccion_arr);
                         }
@@ -230,7 +238,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 10,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                                 "observaciones" => 'a: ' . $arreglo_movimiento["tipo_a"] . ' b: ' . $arreglo_movimiento["tipo_b"],
                             ];
                             $this->repository->create($incidente_arr);
@@ -241,7 +249,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 10,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                             ];
                             $this->repository->corrige($correccion_arr);
                         }
@@ -253,7 +261,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 11,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                                 "observaciones" => 'a: ' . $arreglo_movimiento["importe_a"] . ' b: ' . $arreglo_movimiento["importe_b"],
                             ];
                             $this->repository->create($incidente_arr);
@@ -264,7 +272,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $arreglo_poliza["base_datos_a"],
                                 "base_datos_referencia" => $arreglo_poliza["base_datos_b"],
                                 "id_tipo" => 11,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                             ];
                             $this->repository->corrige($correccion_arr);
                         }
@@ -278,7 +286,7 @@ class DiferenciaService
     {
         $arreglo_para_validar = [];
         $empresas_consolidadoras = $this->repository->getListaEmpresasConsolidadoras();
-        if ($parametros->tipo_busqueda == 1) {
+        if ($parametros["tipo_busqueda"] == 1) {
             foreach ($empresas_consolidadoras as $empresa_consolidadora) {
                 foreach ($empresa_consolidadora->empresas_consolidantes as $empresa_consolidante) {
                     $empresas_consolidantes[] = $empresa_consolidante;
@@ -289,7 +297,7 @@ class DiferenciaService
                 DB::purge('cntpq');
                 Config::set('database.connections.cntpq.database', $empresa_consolidante->AliasBDD);
                 try {
-                    $polizas = Poliza::where("Ejercicio", 2019)->where("Periodo", 1)->get();
+                    $polizas = Poliza::where("Ejercicio", 2006)->where("Periodo", 5)->get();
                 } catch (\Exception $e) {
 
                 }
@@ -319,8 +327,8 @@ class DiferenciaService
                             "base_datos_a" => $empresa_consolidante->AliasBDD,
                             "id_poliza_b" => $poliza_referencia->Id,
                             "base_datos_b" => $empresa_consolidante->empresa_consolidadora->AliasBDD,
-                            "tipo_relacion" => $parametros->tipo_busqueda,
-                            "tipo_busqueda" => $parametros->tipo_busqueda,
+                            "tipo_relacion" => $parametros["tipo_busqueda"],
+                            "tipo_busqueda" => $parametros["tipo_busqueda"],
                         ];
                         $this->repository->guardaRelacionPolizas($relacion_arr);
                         $arreglo_para_validar[$contador] = [
@@ -373,7 +381,7 @@ class DiferenciaService
                                 "base_datos_revisada" => $empresa_consolidante->AliasBDD,
                                 "base_datos_referencia" => $empresa_consolidante->empresa_consolidadora->AliasBDD,
                                 "id_tipo" => 4,
-                                "tipo_busqueda" => $parametros->tipo_busqueda,
+                                "tipo_busqueda" => $parametros["tipo_busqueda"],
                                 "observaciones" => $arreglo_para_validar[$contador]["no_movtos_a"] . '-' . $arreglo_para_validar[$contador]["no_movtos_b"] . ' ' . $poliza->Id . ' ' . $poliza_referencia->Id
                             ];
                             $this->repository->create($incidente_arr);
@@ -385,7 +393,7 @@ class DiferenciaService
                             "base_datos_revisada" => $empresa_consolidante->AliasBDD,
                             "base_datos_referencia" => $empresa_consolidante->empresa_consolidadora->AliasBDD,
                             "id_tipo" => 1,
-                            "tipo_busqueda" => $parametros->tipo_busqueda
+                            "tipo_busqueda" => $parametros["tipo_busqueda"]
                         ];
                         $this->repository->create($incidente_arr);
                     }

@@ -28,7 +28,7 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
 
     public function getListaEmpresasConsolidadoras()
     {
-        return Empresa::consolidadora()->conComponentes()->get();
+        return Empresa::consolidadora()->desarrollo()->conComponentes()->get();
     }
 
     public function guardaRelacionPolizas($datos_relacion)
