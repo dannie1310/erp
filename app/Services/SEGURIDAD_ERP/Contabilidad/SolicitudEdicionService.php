@@ -14,13 +14,14 @@ use App\Http\Transformers\CTPQ\PolizaTransformer;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion as Model;
+use App\PDF\CTPQ\PolizaFormato;
 use App\Repositories\CTPQ\PolizaRepository;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionRepository as Repository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
 use DateTime;
 use Maatwebsite\Excel\Facades\Excel;
-use DB;
 
 class SolicitudEdicionService
 {
@@ -180,6 +181,20 @@ class SolicitudEdicionService
             $i_partida++;
         }
         return $partidas;
+    }
+
+    public function impresionPolizas($id){
+        $folios  = $this->repository->show($id)->polizas;
+
+  //      $f = $folios->pluck('folio')->toArray();
+     //   sort($f);
+        foreach ($folios as $folio) {
+            DB::purge('cntpq');
+            \Config::set('database.connections.cntpq.database', $folio->bd_contpaq);
+            $pdf = new PolizaFormato(Poliza::find($folio->id_poliza),$folio->empresa);
+            return $pdf->create();
+        }
+      //  dd('panda', $folios, $f);
     }
 
     public function procesaSolicitudXLS($nombre_archivo, $archivo_xls)
