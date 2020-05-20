@@ -82,8 +82,26 @@ class AsignacionService
         }
     }
 
-    public function generarOrdenCompra($id){
-        // $asignacion = $this->repository->
+    public function generarOrdenCompra($data){
+        $asignacion = $this->repository->show($data['id']);
+        $partidas = $asignacion->partidas()->orderBy('id_transaccion_cotizacion')->get();
+        $transaccion_cotizacion = '';
+        
+        foreach($partidas as $partida){
+            // dd('pando', $partida->cotizacionCompra->id_antecedente);
+            $orden_c = null;
+            if($transaccion_cotizacion != $partida->id_transaccion_cotizacion){
+                $partida->ordenCompra()->create([
+                    'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
+                    'id_empresa' => $partida->cotizacionCompra->id_empresa,
+                    'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
+                    'id_moneda' => $partida->cotizacionCompra->id_moneda,
+                    'observaciones' => $partida->cotizacionCompra->observaciones,
+                ]);
+            }
+        }
+        dd('paso');
+
     }
 
     public function asignacion($id)

@@ -58,10 +58,17 @@
                 </div>
             </div>
             <div class="col-12" v-if="Object.keys(asignacion).length > 0">
+                
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
+                                <button type="button" class="btn btn-primary pull-right" @click="generarOC"><i class="fa fa-print"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <br/>
                                 <div class="col-12 table-responsive">
                                     <table class="table table-striped">
                                         <thead>
@@ -147,6 +154,17 @@ export default {
                     this.cotizacion = data.partidas.data[0].cotizacion;
                 }).finally(()=>{
                     this.cargando = false;
+                })
+        },
+        generarOC(){
+            return this.$store.dispatch('compras/asignacion/generarOC', {
+                    data: {
+                        id: this.id
+                    }
+                }).then(data => {
+                    console.log(data);
+                }) .finally(() => {
+                    this.descargando = false;
                 })
         },
         precioTotal(index){

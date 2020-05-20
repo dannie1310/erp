@@ -97,6 +97,38 @@ export default{
                     });
             });
         },
+        generarOC(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Generar Orden de Compra",
+                    text: "¿Está seguro/a de que desea generar la(s) orden(es) de compra?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Generar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'generarOC', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    resolve(data);
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         cargaManualLayout(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

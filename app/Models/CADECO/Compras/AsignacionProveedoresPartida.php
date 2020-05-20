@@ -5,6 +5,7 @@ namespace App\Models\CADECO\Compras;
 
 
 use App\Models\CADECO\Material;
+use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompra;
 use Illuminate\Database\Eloquent\Model;
@@ -54,6 +55,10 @@ class AsignacionProveedoresPartida extends Model
     public function itemSolicitud()
     {
         return $this->belongsTo(ItemSolicitudCompra::class, 'id_item_solicitud', 'id_item');
+    }
+
+    public function ordenCompra(){
+        return $this->belongsTo(OrdenCompra::class, 'id_transaccion_cotizacion', 'id_referente');
     }
 
     public function material(){
