@@ -82,7 +82,7 @@
                                                         <td class="money">{{partida.precio_total}}</td>
                                                         <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
                                                         <td class="money">{{partida.precio_total_moneda}}</td>
-                                                        <td>{{partida.observaciones}}</td>
+                                                        <td>{{(partida.observaciones) ? partida.observaciones : '-------------------'}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

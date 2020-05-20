@@ -28,6 +28,7 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
     {
         return [
             'id' => (int) $model->getKey(),
+            'fecha' => $model->fecha,
             'fecha_format' => $model->fecha_format,
             'numero_folio' => $model->numero_folio_format,
             'monto' => $model->monto,
