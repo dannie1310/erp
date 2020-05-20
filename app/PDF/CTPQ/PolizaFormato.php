@@ -59,7 +59,7 @@ class PolizaFormato extends Rotation
 
         $this->setXY(5.83, 1.6);
         $this->SetFont('Arial', 'B', 11.5);
-        $this->Cell(0, 0, utf8_decode('Impreso de pólizas del ').'01/'.$this->mes.'/'.$this->anio.'al 30/'.$this->mes.'/'.$this->anio, 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Impreso de pólizas del ').'01/'.$this->mes.'/'.$this->anio.' al 30/'.$this->mes.'/'.$this->anio, 0, 0, 'L');
         $this->setXY(16.6, 1.6);
 
         $fecha = new DateTime($this->poliza->Fecha);
