@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 class CtgTipo extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.PolizaCtpqIncidentes.ctg_tipos';
+    protected $table = 'SEGURIDAD_ERP.PolizasCtpqIncidentes.ctg_tipos';
     public $timestamps = false;
     protected $fillable = [
         "descripcion"

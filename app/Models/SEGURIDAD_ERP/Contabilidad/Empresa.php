@@ -61,6 +61,11 @@ class Empresa extends Model
         return $query->whereHas('empresas_consolidantes');
     }
 
+    public function scopeDesarrollo($query)
+    {
+        return $query->where('Desarrollo', '=', 1);
+    }
+
     public function scopeDisponibles($query)
     {
         return $query->whereRaw('(Consolidadora = 0 or Consolidadora is null)')->whereNull('IdConsolidadora');

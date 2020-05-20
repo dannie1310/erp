@@ -61,31 +61,49 @@ class DiferenciaService
             if(trim($arreglo_poliza["concepto_a"])!=trim($arreglo_poliza["concepto_b"])){
                 $incidente_arr = [
                     "id_poliza"=>$arreglo_poliza["id_poliza_a"],
-                    "base_datos"=>$arreglo_poliza["base_datos_a"],
+                    "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
                     "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
                     "id_tipo"=>2,
                     "tipo_busqueda"=>$parametros->tipo_busqueda,
                     "observaciones"=>'a: '. $arreglo_poliza["concepto_a"] .' b: '. $arreglo_poliza["concepto_b"],
                 ];
                 $this->repository->create($incidente_arr);
+            } else{
+                $correccion_arr = [
+                    "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                    "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
+                    "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                    "id_tipo"=>2,
+                    "tipo_busqueda"=>$parametros->tipo_busqueda,
+                ];
+                $this->repository->corrige($correccion_arr);
             }
 
             if($arreglo_poliza["suma_cargos_a"]!=$arreglo_poliza["suma_abonos_b"]){
                 $incidente_arr = [
                     "id_poliza"=>$arreglo_poliza["id_poliza_a"],
-                    "base_datos"=>$arreglo_poliza["base_datos_a"],
+                    "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
                     "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
                     "id_tipo"=>3,
                     "tipo_busqueda"=>$parametros->tipo_busqueda,
                     "observaciones"=>'a: '. $arreglo_poliza["suma_cargos_a"] .' b: '. $arreglo_poliza["suma_abonos_b"],
                 ];
                 $this->repository->create($incidente_arr);
+            } else{
+                $correccion_arr = [
+                    "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                    "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
+                    "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                    "id_tipo"=>3,
+                    "tipo_busqueda"=>$parametros->tipo_busqueda,
+                ];
+                $this->repository->corrige($correccion_arr);
             }
 
             if($arreglo_poliza["no_movtos_a"]!=$arreglo_poliza["no_movtos_b"]){
                 $incidente_arr = [
                     "id_poliza"=>$arreglo_poliza["id_poliza_a"],
-                    "base_datos"=>$arreglo_poliza["base_datos_a"],
+                    "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
                     "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
                     "id_tipo"=>4,
                     "tipo_busqueda"=>$parametros->tipo_busqueda,
@@ -93,6 +111,14 @@ class DiferenciaService
                 ];
                 $this->repository->create($incidente_arr);
             } else {
+                $correccion_arr = [
+                    "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                    "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
+                    "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                    "id_tipo"=>4,
+                    "tipo_busqueda"=>$parametros->tipo_busqueda,
+                ];
+                $this->repository->corrige($correccion_arr);
                 foreach($arreglo_poliza["movimientos"] as $arreglo_movimiento)
                 {
                     $relacion_arr = [
@@ -108,33 +134,53 @@ class DiferenciaService
                         $incidente_arr = [
                             "id_poliza"=>$arreglo_poliza["id_poliza_a"],
                             "id_movimiento"=>$arreglo_movimiento["id_a"],
-                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
                             "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
                             "id_tipo"=>6,
                             "tipo_busqueda"=>$parametros->tipo_busqueda,
                             "observaciones"=>'a: '. $arreglo_movimiento["codigo_cuenta_a"] .' b: '. $arreglo_movimiento["codigo_cuenta_b"],
                         ];
                         $this->repository->create($incidente_arr);
+                    } else {
+                        $correccion_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo"=>6,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                        ];
+                        $this->repository->corrige($correccion_arr);
                     }
 
                     if(trim($arreglo_movimiento["nombre_cuenta_a"])!=trim($arreglo_movimiento["nombre_cuenta_b"])){
                         $incidente_arr = [
                             "id_poliza"=>$arreglo_poliza["id_poliza_a"],
                             "id_movimiento"=>$arreglo_movimiento["id_a"],
-                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
                             "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
                             "id_tipo"=>7,
                             "tipo_busqueda"=>$parametros->tipo_busqueda,
                             "observaciones"=>'a: '. $arreglo_movimiento["nombre_cuenta_a"] .' b: '. $arreglo_movimiento["nombre_cuenta_b"],
                         ];
                         $this->repository->create($incidente_arr);
+                    } else {
+                        $correccion_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo"=>7,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                        ];
+                        $this->repository->corrige($correccion_arr);
                     }
 
                     if(trim($arreglo_movimiento["referencia_a"])!=trim($arreglo_movimiento["referencia_b"])){
                         $incidente_arr = [
                             "id_poliza"=>$arreglo_poliza["id_poliza_a"],
                             "id_movimiento"=>$arreglo_movimiento["id_a"],
-                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
                             "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
                             "id_tipo"=>8,
                             "tipo_busqueda"=>$parametros->tipo_busqueda,
@@ -142,44 +188,85 @@ class DiferenciaService
                         ];
                         $this->repository->create($incidente_arr);
                     }
+                    else {
+                        $correccion_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo"=>8,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                        ];
+                        $this->repository->corrige($correccion_arr);
+                    }
 
                     if(trim($arreglo_movimiento["concepto_a"]) !=trim($arreglo_movimiento["concepto_b"])){
                         $incidente_arr = [
                             "id_poliza"=>$arreglo_poliza["id_poliza_a"],
                             "id_movimiento"=>$arreglo_movimiento["id_a"],
-                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
                             "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
                             "id_tipo"=>9,
                             "tipo_busqueda"=>$parametros->tipo_busqueda,
                             "observaciones"=>'a: '. $arreglo_movimiento["concepto_a"] .' b: '. $arreglo_movimiento["concepto_b"],
                         ];
                         $this->repository->create($incidente_arr);
+                    } else {
+                        $correccion_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo"=>9,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                        ];
+                        $this->repository->corrige($correccion_arr);
                     }
 
                     if($arreglo_movimiento["tipo_a"]!=$arreglo_movimiento["tipo_b"]){
                         $incidente_arr = [
                             "id_poliza"=>$arreglo_poliza["id_poliza_a"],
                             "id_movimiento"=>$arreglo_movimiento["id_a"],
-                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
                             "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
                             "id_tipo"=>10,
                             "tipo_busqueda"=>$parametros->tipo_busqueda,
                             "observaciones"=>'a: '. $arreglo_movimiento["tipo_a"] .' b: '. $arreglo_movimiento["tipo_b"],
                         ];
                         $this->repository->create($incidente_arr);
+                    } else {
+                        $correccion_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo"=>10,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                        ];
+                        $this->repository->corrige($correccion_arr);
                     }
 
                     if($arreglo_movimiento["importe_a"]!=$arreglo_movimiento["importe_b"]){
                         $incidente_arr = [
                             "id_poliza"=>$arreglo_poliza["id_poliza_a"],
                             "id_movimiento"=>$arreglo_movimiento["id_a"],
-                            "base_datos"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
                             "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
                             "id_tipo"=>11,
                             "tipo_busqueda"=>$parametros->tipo_busqueda,
                             "observaciones"=>'a: '. $arreglo_movimiento["importe_a"] .' b: '. $arreglo_movimiento["importe_b"],
                         ];
                         $this->repository->create($incidente_arr);
+                    } else {
+                        $correccion_arr = [
+                            "id_poliza"=>$arreglo_poliza["id_poliza_a"],
+                            "id_movimiento"=>$arreglo_movimiento["id_a"],
+                            "base_datos_revisada"=>$arreglo_poliza["base_datos_a"],
+                            "base_datos_referencia"=>$arreglo_poliza["base_datos_b"],
+                            "id_tipo"=>11,
+                            "tipo_busqueda"=>$parametros->tipo_busqueda,
+                        ];
+                        $this->repository->corrige($correccion_arr);
                     }
                 }
             }
@@ -203,7 +290,7 @@ class DiferenciaService
                 DB::purge('cntpq');
                 Config::set('database.connections.cntpq.database',$empresa_consolidante->AliasBDD);
                 try{
-                    $polizas = Poliza::where("Ejercicio",2019)->where("Periodo",1)->get();
+                    $polizas = Poliza::where("Ejercicio",2006)->where("Periodo",5)->get();
                 } catch (\Exception $e){
 
                 }
@@ -286,7 +373,7 @@ class DiferenciaService
                         } else {
                             $incidente_arr = [
                                 "id_poliza"=>$poliza->Id,
-                                "base_datos"=>$empresa_consolidante->AliasBDD,
+                                "base_datos_revisada"=>$empresa_consolidante->AliasBDD,
                                 "base_datos_referencia"=>$empresa_consolidante->empresa_consolidadora->AliasBDD,
                                 "id_tipo"=>4,
                                 "tipo_busqueda"=>$parametros->tipo_busqueda,
@@ -298,7 +385,7 @@ class DiferenciaService
                     } else {
                         $incidente_arr = [
                             "id_poliza"=>$poliza->Id,
-                            "base_datos"=>$empresa_consolidante->AliasBDD,
+                            "base_datos_revisada"=>$empresa_consolidante->AliasBDD,
                             "base_datos_referencia"=>$empresa_consolidante->empresa_consolidadora->AliasBDD,
                             "id_tipo"=>1,
                             "tipo_busqueda"=>$parametros->tipo_busqueda

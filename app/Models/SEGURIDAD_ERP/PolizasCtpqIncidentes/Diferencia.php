@@ -21,12 +21,14 @@ class Diferencia extends Model
     public $timestamps = false;
     protected $fillable = [
         "id_poliza",
-        "base_datos",
+        "id_movimiento",
+        "base_datos_revisada",
         "base_datos_referencia",
         "id_tipo",
         "fecha_hora_deteccion",
         "fecha_hora_resolucion",
         "observaciones",
+        "tipo_busqueda",
     ];
 
     public function getFechaHoraDeteccionFormatAttribute()
@@ -51,16 +53,28 @@ class Diferencia extends Model
         return $this->belongsTo(CtgTipo::class, "id_tipo", "id");
     }
 
+    public function correccion(){
+        return $this->hasOne(DiferenciaCorregida::class,"id_diferencia", "id");
+    }
+
     public function scopeActivos($query)
     {
-        return $query->whereNull("fecha_hora_resolucion");
+        return $query->where("activo",1);
     }
 
 
     public function poliza()
     {
         DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', $this->base_datos);
+        Config::set('database.connections.cntpq.database', $this->base_datos_revisada);
         return $this->belongsTo(Poliza::class, "id_poliza", "Id");
+    }
+
+    public function corregir()
+    {
+        $this->activo = 0;
+        $this->fecha_hora_resolucion = date('Y-m-d H:i:s');
+        $this->correccion()->create(["id_busqueda"=>1]);
+        $this->save();
     }
 }
