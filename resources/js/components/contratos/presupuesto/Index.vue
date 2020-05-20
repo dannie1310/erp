@@ -103,7 +103,7 @@
                         fecha: presupuesto.fecha_format,
                         contratista: (presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----',
                         observaciones: (presupuesto.contrato_proyectado) ? presupuesto.contrato_proyectado.referencia : '----- Sin Contrato Proyectado -----',
-                        importe: presupuesto.monto_format,
+                        importe: '$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',','),
                         usuario: (presupuesto.usuario) ? presupuesto.usuario.nombre : '---------------------------',
                         buttons: $.extend({}, {
                             id: presupuesto.id

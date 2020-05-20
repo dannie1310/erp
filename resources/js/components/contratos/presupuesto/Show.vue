@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Cotización">
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Presupuesto">
             <i class="fa fa-eye" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
@@ -74,6 +74,7 @@
                                                     <tr v-for="(partida, i) in presupuesto.partidas.data">
                                                         <td >{{i + 1}}</td>
                                                         <td style="text-align: left" v-if="partida.concepto" v-html="partida.concepto.descripcion_formato"></td>
+                                                        <td v-else></td>
                                                         <td style="text-align: center">{{(partida.concepto) ? partida.concepto.unidad : '-----'}}</td>
                                                         <td style="text-align: center">{{(partida.concepto) ? partida.concepto.cantidad_original_format : '-----'}}</td>
                                                         <td style="text-align: center">{{(partida.concepto) ? partida.concepto.cantidad_presupuestada_format : '-----'}}</td>
@@ -94,7 +95,7 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXP):</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{presupuesto.subtotal}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{presupuesto.subtotal_format}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">IVA:</label>
@@ -102,7 +103,7 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Total:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{presupuesto.monto_format}}</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{total}}</label>
                                     </div>
                                     <hr>
                                     <div class="row col-md-12">
@@ -165,6 +166,10 @@
         computed: {
             presupuesto() {
                 return this.$store.getters['contratos/presupuesto/currentPresupuesto'];
+            },
+            total()
+            {
+                return '$ ' + (parseFloat(this.presupuesto.subtotal) + parseFloat(this.presupuesto.impuesto)).formatMoney(2,'.',',');
             }
         }
     }
