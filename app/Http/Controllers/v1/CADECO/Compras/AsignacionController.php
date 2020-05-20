@@ -73,6 +73,10 @@ class AsignacionController extends Controller
         return $this->service->generarOrdenCompra($request->all());
     }
 
+    public function getAsignacion($id){
+        return $this->service->getAsignacion($id);
+    }
+
     public function descargaLayout($id)
     {
 //        Falta descarga

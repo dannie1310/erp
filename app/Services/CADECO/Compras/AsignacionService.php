@@ -45,6 +45,51 @@ class AsignacionService
         return $this->repository->show($id);
     }
 
+    public function getAsignacion($id){
+        $asignacion = $this->repository->show($id);
+        $partidas = $asignacion->partidas;
+        $data = array();
+        foreach($partidas as $partida){
+            if(!array_key_exists($partida->id_transaccion_cotizacion, $data)){
+                $data[$partida->id_transaccion_cotizacion] = [
+                    'id_transaccion' => $partida->cotizacionCompra->id_transaccion,
+                    'razon_social' => $partida->cotizacionCompra->empresa->razon_social,
+                    'sucursal' => $partida->cotizacionCompra->sucursal->descripcion,
+                    'direccion' => $partida->cotizacionCompra->sucursal->direccion,
+                    'orden_compra' => $partida->ordenCompra?true:false,
+                    
+                ];
+                $data[$partida->id_transaccion_cotizacion]['partidas'] = array();
+            } ///'$ '. number_format($this->precio_unitario, 2, '.', ',');
+            $p_u = $partida->cotizacion->precio_unitario;
+            $desc = $partida->cotizacion->descuento > 0? $p_u * $partida->cotizacion->descuento / 100 : 0;
+            $cantidad_a = $partida->cantidad_asignada;
+            $t_cambio = $partida->cotizacion->moneda->cambio?$partida->cotizacion->moneda->cambio->cambio:1;
+            $precio_total = ($p_u - $desc) * $cantidad_a ;
+// dd($t_cambio, $partida->cotizacion->moneda->cambio);
+            $data[$partida->id_transaccion_cotizacion]['partidas'][] = [
+                'descripcion' => $partida->material->descripcion,
+                'unidad' => $partida->material->unidad,
+                'cantidad_solicitada' => number_format($partida->itemSolicitud->cantidad, 4, '.', ','),
+                'precio_unitario' => '$ '. number_format($p_u, 2, '.', ','),
+                'descuento' => number_format($desc, 2, '.', ''),
+                'precio_total' => '$ '. number_format($precio_total, 2, '.', ','),
+                'moneda' => $partida->cotizacion->moneda->nombre,
+                'precio_moneda_conv' => '$ '. number_format($precio_total * $t_cambio, 2, '.', ','),
+                'cantidad_asignada' => number_format($cantidad_a, 4, '.', ','),
+            ];
+        }
+        return [
+            'folio_asignacion_format' => $asignacion->numero_folio_format_orden,
+            'usuario' => $asignacion->usuarioRegistro,
+            'estado_format' => $asignacion->estado_format,
+            'numero_folio_format' => $asignacion->solicitud->numero_folio_format,
+            'observaciones' => $asignacion->solicitud->observaciones,
+            'fecha_registro' => $asignacion->solicitud->fecha_registro,
+            'data' => $data
+        ];
+    }
+
     public function store($data)
     {
         try{
@@ -102,7 +147,6 @@ class AsignacionService
                         'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
                         'id_moneda' => $partida->cotizacionCompra->id_moneda,
                         'observaciones' => $partida->cotizacionCompra->observaciones,
-                        'tipo_transaccion' => 19,
                     ]);
                 }
 

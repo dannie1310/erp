@@ -6,50 +6,50 @@
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <i class="fa fa-spin fa-spinner fa-2x" v-if="cargando"></i>
-                        <div class="row" v-if="Object.keys(asignacion).length > 0">
+                        <div class="row" v-if="Object.keys(asignaciones).length > 0">
                             <div class="col-md-2" >
                                 <div class="form-group">
                                     <label><b>Folio Asignación: </b></label>
-                                    {{asignacion.folio_asignacion_format}}
+                                    {{asignaciones.folio_asignacion_format}}
                                 </div>
                             </div>
                             <div class="col-md-5" >
                                 <div class="form-group">
                                     <label><b>Usuario Registro Asignación: </b></label>
-                                    {{asignacion.usuario.nombre}}
+                                    {{asignaciones.usuario.nombre}}
                                 </div>
                             </div>
                             
                             <div class="col-md-2" >
                                 <div class="form-group">
                                     <label><b>Estado: </b></label>
-                                    {{asignacion.estado_format}}
+                                    {{asignaciones.estado_format}}
                                 </div>
                             </div>
                             <div class="col-md-3" >
                                 <div class="form-group">
                                     <label><b>Fecha de Registro: </b></label>
-                                    {{asignacion.fecha_format}}
+                                    {{asignaciones.fecha_format}}
                                 </div>
                             </div>
 
                             <div class="col-md-2" >
                                 <div class="form-group">
                                     <label><b>Folio Solicitud de Compra: </b></label>
-                                    {{asignacion.solicitud_compra.numero_folio_format}}
+                                    {{asignaciones.numero_folio_format}}
                                 </div>
                             </div>
                             <div class="col-md-7" >
                                 <div class="form-group">
                                     <label><b>Solicitud de Compra: </b></label>
-                                    {{asignacion.solicitud_compra.observaciones}}
+                                    {{asignaciones.observaciones}}
                                 </div>
                             </div>
                             
                             <div class="col-md-3" >
                                 <div class="form-group">
                                     <label><b>Fecha y Hora de Registro: </b></label>
-                                    {{asignacion.solicitud_compra.fecha_registro}}
+                                    {{asignaciones.fecha_registro}}
                                 </div>
                             </div>
 
@@ -57,13 +57,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12" v-if="Object.keys(asignacion).length > 0">
+            <div class="col-12" v-if="Object.keys(asignaciones).length > 0">
                 
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <button type="button" class="btn btn-primary pull-right" @click="generarOC" v-if="asignacion.estado == 1">Generar Orden Compra</button>
+                                <button type="button" class="btn btn-primary pull-right" @click="generarOC" >Generar Orden Compra</button>
                             </div>
                         </div>
                         <div class="row">
@@ -76,13 +76,23 @@
                                                 <th colspan="4" rowspan="4" class="text-left"><h5></h5></th>
                                             </tr>
                                             <tr class="bg-gray-light">
-                                                <th colspan="6" >{{cotizacion.empresa.razon_social}} </th>
+                                                <th colspan="6" >
+                                                    <select
+                                                        type="text"
+                                                        name="id_transaccion"
+                                                        data-vv-as="Razón Social"
+                                                        class="form-control"
+                                                        id="id_transaccion"
+                                                        v-model="id_transaccion">
+                                                        <option v-for="asignacion in asignaciones.data" :value="asignacion.id_transaccion">{{ asignacion.razon_social }}</option>
+                                                    </select>
+                                                </th>
                                             </tr>
                                             <tr class="bg-gray-light">
-                                                <th colspan="6" >{{cotizacion.sucursal.descripcion}}</th>
+                                                <th colspan="6" >{{asignaciones.data[id_transaccion].sucursal}}</th>
                                             </tr>
                                             <tr class="bg-gray-light">
-                                                <th colspan="6"  >{{cotizacion.sucursal.direccion}}</th>
+                                                <th colspan="6"  >{{asignaciones.data[id_transaccion].direccion}}</th>
                                             </tr>
                                             <tr>
                                                 <th>#</th>
@@ -99,17 +109,17 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(item, i) in asignacion.partidas.data" v-if="asignacion.partidas">
+                                            <tr v-for="(item, i) in asignaciones.data[id_transaccion].partidas" v-if="asignaciones.data[id_transaccion].partidas">
                                                 <td>{{ i+1}}</td>
-                                                <td>{{ item.item_solicitud.material.descripcion}}</td>
-                                                <td>{{ item.item_solicitud.unidad}}</td>
-                                                <td>{{ item.item_solicitud.cantidad}}</td>
-                                                <td class="money">{{ item.cotizacion_partida.precio_unitario_format}}</td>
-                                                <td>{{ item.cotizacion_partida.porcentaje_descuento}}</td>
-                                                <td class="money">{{ '$' + parseFloat(precioTotal(i)).formatMoney(2) }}</td>
-                                                <td>{{ item.cotizacion_partida.moneda.abreviatura}}</td>
-                                                <td class="money">{{ '$' + parseFloat(precioTotalMC(i)).formatMoney(2) }}</td>
-                                                <td>{{ item.cantidad_format}}</td>
+                                                <td>{{ item.descripcion}}</td>
+                                                <td>{{ item.unidad}}</td>
+                                                <td>{{ item.cantidad_solicitada}}</td>
+                                                <td class="money">{{ item.precio_unitario}}</td>
+                                                <td>{{ item.descuento}}</td>
+                                                <td class="money">{{ item.precio_total }}</td>
+                                                <td>{{ item.moneda}}</td>
+                                                <td class="money">{{ item.precio_moneda_conv }}</td>
+                                                <td>{{ item.cantidad_asignada}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -130,8 +140,9 @@ export default {
     data() {
         return {
             cargando: false,
-            asignacion:[],
+            asignaciones:[],
             cotizacion:[],
+            id_transaccion:'',
         }
     },
     mounted() {
@@ -141,7 +152,7 @@ export default {
         
     },
     methods: {
-        getAsignacion(){
+        asignacion(){
             this.cargando = true;
             this.asignacion = [];
             return this.$store.dispatch('compras/asignacion/find', {
@@ -152,6 +163,21 @@ export default {
                 }).then(data => {
                     this.asignacion = data;
                     this.cotizacion = data.partidas.data[0].cotizacion;
+                }).finally(()=>{
+                    this.cargando = false;
+                })
+        },
+        getAsignacion(){
+            this.cargando = true;
+            this.asignacion = [];
+            return this.$store.dispatch('compras/asignacion/getAsignacion', {
+                    id: this.id,
+                    params:{
+                        
+                    }
+                }).then(data => {
+                    this.asignaciones = data;
+                    this.id_transaccion = Object.keys(data.data)[0];
                 }).finally(()=>{
                     this.cargando = false;
                 })

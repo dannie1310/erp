@@ -531,6 +531,7 @@ $api->version('v1', function ($api) {
         // ASIGNACIÓN
         $api->group(['prefix' => 'asignacion'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@index');
+            $api->get('{id}/getAsignacion', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@getAsignacion');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@paginate');
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\AsignacionController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@show')->where(['id' => '[0-9]+']);
