@@ -120,7 +120,13 @@ export default{
                                 .post(URI + 'generarOC', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    resolve(data);
+                                    swal("Orden de Compra generada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
                                 })
                                 .catch(error => {
                                     reject(error);

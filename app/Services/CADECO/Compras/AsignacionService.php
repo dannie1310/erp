@@ -4,11 +4,13 @@
 namespace App\Services\CADECO\Compras;
 
 
-use App\Repositories\CADECO\Compras\Asignacion\Repository;
+use App\Models\CADECO\OrdenCompra;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Compras\AsignacionFormato;
 use App\Models\CADECO\Compras\Asignacion;
+use App\Models\CADECO\OrdenCompraPartida;
 use App\Models\CADECO\Compras\AsignacionProveedores;
+use App\Repositories\CADECO\Compras\Asignacion\Repository;
 use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
 
 class AsignacionService
@@ -88,10 +90,9 @@ class AsignacionService
             $asignacion = $this->repository->show($data['id']);
             $partidas = $asignacion->partidas()->orderBy('id_transaccion_cotizacion')->get();
             $transaccion_cotizacion = '';
-            
+            $orden_c = null;
             foreach($partidas as $partida){
-                // dd('pando', $partida->cotizacionCompra->id_antecedente);
-                $orden_c = null;
+                
                 if($transaccion_cotizacion != $partida->id_transaccion_cotizacion){
                     $transaccion_cotizacion = $partida->id_transaccion_cotizacion;
                     $orden_c = $partida->ordenCompra()->create([
@@ -103,11 +104,9 @@ class AsignacionService
                         'observaciones' => $partida->cotizacionCompra->observaciones,
                         'tipo_transaccion' => 19,
                     ]);
-                }else{
-                    $orden_c = OrdenCompra::where('id_referente', '=', $transaccion_cotizacion)->first();
                 }
 
-                $orden_c->partidas()->create([
+                OrdenCompraPartida::create([
                     'id_transaccion' => $orden_c->id_transaccion,
                     'id_antecedente' => $orden_c->id_antecedente,
                     'item_antecedente' => $partida->id_item_solicitud,
@@ -119,8 +118,19 @@ class AsignacionService
                     'precio_material' => $partida->cotizacion->precio_unitario,
                 ]);
 
+                $subtotal = $partida->cotizacion->precio_unitario * $partida->cantidad_asignada;
+                $impuesto = $subtotal  * 0.16;
+                $monto = $subtotal + $impuesto;
+
+                $orden_c->monto = $orden_c->monto + $monto;
+                $orden_c->saldo = $orden_c->saldo + $monto;
+                $orden_c->impuesto = $orden_c->impuesto + $impuesto;
+                $orden_c->save();
+
+
             }
-            dd('paso');
+            $asignacion->estado = 2;
+            $asignacion->save();
             DB::connection('cadeco')->commit();
             return $asignacion;
         }catch (\Exception $e){

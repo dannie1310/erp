@@ -23,7 +23,7 @@
                             <div class="col-md-2" >
                                 <div class="form-group">
                                     <label><b>Estado: </b></label>
-                                    {{asignacion.estado}}
+                                    {{asignacion.estado_format}}
                                 </div>
                             </div>
                             <div class="col-md-3" >
@@ -63,7 +63,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <button type="button" class="btn btn-primary pull-right" @click="generarOC"><i class="fa fa-print"></i></button>
+                                <button type="button" class="btn btn-primary pull-right" @click="generarOC" v-if="asignacion.estado == 1">Generar Orden Compra</button>
                             </div>
                         </div>
                         <div class="row">
@@ -162,7 +162,7 @@ export default {
                         id: this.id
                     }
                 }).then(data => {
-                    console.log(data);
+                    this.$router.push({name: 'asignacion-proveedores'});
                 }) .finally(() => {
                     this.descargando = false;
                 })
