@@ -58,25 +58,11 @@ class Busqueda extends Model
         $polizas = $this->obtienePolizasRevisar();
 
         foreach ($polizas as $poliza) {
-            $poliza->relaciona($this);
-            /*try {
-                DB::purge('cntpq');
-                Config::set('database.connections.cntpq.database', $this->base_datos_referencia);
-                $poliza_referencia = Poliza::where("Ejercicio", $poliza->Ejercicio)->where("Periodo", $poliza->Periodo)
-                    ->where("TipoPol", $poliza->TipoPol)->where("Folio", $poliza->Folio)->first();
-            } catch (\Exception $e) {
+            $relacion = $poliza->relaciona($this);
+            if($relacion)
+            {
 
             }
-            if ($poliza_referencia) {
-                $relacion_arr = [
-                    "id_poliza_a" => $poliza->Id,
-                    "base_datos_a" => $this->base_datos_busqueda,
-                    "id_poliza_b" => $poliza_referencia->Id,
-                    "base_datos_b" => $this->base_datos_referencia,
-                    "tipo_busqueda" => $this->tipo_busqueda,
-                ];
-                RelacionPolizas::create($relacion_arr);
-            }*/
         }
         #generar relaciones entre movimientos
         #validar información polizas vs polizas referencia

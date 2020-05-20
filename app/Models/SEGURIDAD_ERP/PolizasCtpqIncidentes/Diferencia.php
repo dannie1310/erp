@@ -31,6 +31,20 @@ class Diferencia extends Model
         "tipo_busqueda",
     ];
 
+    public static function registrar($data){
+        $diferencia = Diferencia::activos()->where("id_poliza",$data["id_poliza"])
+            ->where("base_datos_revisada",$data["base_datos_revisada"])
+            ->where("base_datos_referencia",$data["base_datos_referencia"])
+            ->where("id_tipo",$data["id_tipo"])
+            ->where("tipo_busqueda",$data["tipo_busqueda"])
+            ->where("observaciones",$data["observaciones"])
+            ->first();
+        if(!$diferencia)
+        {
+            Diferencia::create($data);
+        }
+    }
+
     public function getFechaHoraDeteccionFormatAttribute()
     {
         $date = date_create($this->fecha_hora_deteccion);
@@ -68,6 +82,30 @@ class Diferencia extends Model
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $this->base_datos_revisada);
         return $this->belongsTo(Poliza::class, "id_poliza", "Id");
+    }
+
+    public static function aplicarCorreccion($datos_correccion)
+    {
+        if(key_exists("id_movimiento", $datos_correccion)){
+            $diferencia=Diferencia::activos()->where("id_poliza",$datos_correccion["id_poliza"])
+                ->where("id_movimiento",$datos_correccion["id_movimiento"])
+                ->where("base_datos_revisada",$datos_correccion["base_datos_revisada"])
+                ->where("base_datos_referencia",$datos_correccion["base_datos_referencia"])
+                ->where("id_tipo",$datos_correccion["id_tipo"])
+                ->where("tipo_busqueda",$datos_correccion["tipo_busqueda"])
+                ->first();
+        } else {
+            $diferencia=Diferencia::activos()->where("id_poliza",$datos_correccion["id_poliza"])
+                ->where("base_datos_revisada",$datos_correccion["base_datos_revisada"])
+                ->where("base_datos_referencia",$datos_correccion["base_datos_referencia"])
+                ->where("id_tipo",$datos_correccion["id_tipo"])
+                ->where("tipo_busqueda",$datos_correccion["tipo_busqueda"])
+                ->first();
+
+        }
+        if($diferencia){
+            $diferencia->corregir();
+        }
     }
 
     public function corregir()

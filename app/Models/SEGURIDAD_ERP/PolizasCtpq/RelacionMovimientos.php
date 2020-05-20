@@ -62,4 +62,17 @@ class RelacionMovimientos extends Model
     {
         return $query->where('tipo_relacion', '=', 3);
     }
+
+    public static function registrar($datos_relacion)
+    {
+        $relacion = RelacionMovimientos::where("id_movimiento_a",$datos_relacion["id_movimiento_a"])
+            ->where("id_movimiento_b",$datos_relacion["id_movimiento_b"])
+            ->where("base_datos_a",$datos_relacion["base_datos_a"])
+            ->where("base_datos_b",$datos_relacion["base_datos_b"])
+            ->where("tipo_relacion",$datos_relacion["tipo_relacion"])
+            ->first();
+        if(!$relacion){
+            RelacionMovimientos::create($datos_relacion);
+        }
+    }
 }

@@ -9,6 +9,8 @@
 namespace App\Models\CTPQ;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
@@ -40,37 +42,40 @@ class Poliza extends Model
 
     public function getCargosFormatAttribute()
     {
-        return '$ ' . number_format(abs($this->Cargos),2);
+        return '$ ' . number_format(abs($this->Cargos), 2);
     }
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->Fecha);
-        return date_format($date,"d/m/Y");
+        return date_format($date, "d/m/Y");
     }
 
     public function actualiza($datos)
     {
-        if($this->Ejercicio!=2015){
+        if ($this->Ejercicio != 2015) {
             try {
                 DB::connection('cntpq')->beginTransaction();
                 $this->Concepto = $datos["concepto"];
                 $this->update();
-                foreach($datos["movimientos"] as $datos_movimiento){
+                foreach ($datos["movimientos"] as $datos_movimiento) {
                     $movimiento = PolizaMovimiento::find($datos_movimiento["id"]);
                     $movimiento->Referencia = $datos_movimiento["referencia"];
                     $movimiento->Concepto = $datos_movimiento["concepto"];
                     $movimiento->update();
                 }
                 DB::connection('cntpq')->commit();
-            }catch (\Exception $e) {
+            } catch (\Exception $e) {
                 DB::connection('cntpq')->rollBack();
                 abort(400, $e->getMessage());
                 throw $e;
             }
         }
     }
-    public function relaciona($busqueda)
+
+    public function getPolizaRelacionada($busqueda)
     {
+        $poliza_referencia = null;
         try {
             DB::purge('cntpq');
             Config::set('database.connections.cntpq.database', $busqueda->base_datos_referencia);
@@ -79,25 +84,67 @@ class Poliza extends Model
         } catch (\Exception $e) {
 
         }
+        return $poliza_referencia;
+    }
 
-        if ($poliza_referencia) {
+    public function relaciona($busqueda)
+    {
+        $poliza_relacionada = $this->getPolizaRelacionada($busqueda);
+        $relacion = null;
+
+        if ($poliza_relacionada) {
             $datos_relacion = [
                 "id_poliza_a" => $this->Id,
                 "base_datos_a" => $busqueda->base_datos_busqueda,
-                "id_poliza_b" => $poliza_referencia->Id,
+                "id_poliza_b" => $poliza_relacionada->Id,
                 "base_datos_b" => $busqueda->base_datos_referencia,
-                "tipo_relacion" => 1,
+                "tipo_relacion" => $busqueda->id_tipo_busqueda,
             ];
-            //dd($datos_relacion);
-            $relacion = RelacionPolizas::where("id_poliza_a",$datos_relacion["id_poliza_a"])
-                ->where("id_poliza_b",$datos_relacion["id_poliza_b"])
-                ->where("base_datos_a",$datos_relacion["base_datos_a"])
-                ->where("base_datos_b",$datos_relacion["base_datos_b"])
-                ->where("tipo_relacion",$datos_relacion["tipo_relacion"])
-                ->first();
-            if(!$relacion){
-                RelacionPolizas::create($datos_relacion);
+            RelacionPolizas::registrar($datos_relacion);
+            $this->relaciona_movimientos($busqueda);
+
+        }
+        return $relacion;
+    }
+
+    private function relaciona_movimientos($busqueda)
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $busqueda->base_datos_busqueda);
+        $movimientos = $this->movimientos()->orderBy("NumMovto")->get();
+        $poliza_relacionada = $this->getPolizaRelacionada($busqueda);
+        $movimientos_referencia = $poliza_relacionada->movimientos()->orderBy("NumMovto")->get();
+        if (count($movimientos) == count($movimientos_referencia)) {
+            $datos_correccion = [
+                "id_poliza" => $this->Id,
+                "base_datos_revisada" => $busqueda->base_datos_busqueda,
+                "base_datos_referencia" => $busqueda->base_datos_referencia,
+                "id_tipo" => 4,
+                "tipo_busqueda" => $busqueda->id_tipo_busqueda,
+            ];
+            Diferencia::aplicarCorreccion($datos_correccion);
+            $i = 0;
+            foreach ($movimientos as $movimiento) {
+                $datos_relacion = [
+                    "id_movimiento_a" => $movimiento->Id,
+                    "base_datos_a" => $busqueda->base_datos_busqueda,
+                    "id_movimiento_b" => $movimientos_referencia[$i]->Id,
+                    "base_datos_b" => $busqueda->base_datos_refetencia,
+                    "tipo_relacion" => $busqueda->id_tipo_busqueda,
+                ];
+                RelacionMovimientos::registrar($datos_relacion);
+                $i++;
             }
+        } else {
+            $datos_diferencia = [
+                "id_poliza" => $this->Id,
+                "base_datos_revisada" => $busqueda->base_datos_busqueda,
+                "base_datos_referencia" => $busqueda->base_datos_referencia,
+                "id_tipo" => 4,
+                "tipo_busqueda" => $busqueda->id_tipo_busqueda,
+                "observaciones" => 'a: ' . count($movimientos) . ' b: ' . count($movimientos_referencia)
+            ];
+            Diferencia::registrar($datos_diferencia);
         }
     }
 }

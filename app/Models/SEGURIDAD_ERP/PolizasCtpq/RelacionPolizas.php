@@ -63,4 +63,18 @@ class RelacionPolizas extends Model
     {
         return $query->where('tipo_relacion', '=', 3);
     }
+
+    public static function registrar($datos_relacion)
+    {
+        $relacion = RelacionPolizas::where("id_poliza_a", $datos_relacion["id_poliza_a"])
+            ->where("id_poliza_b", $datos_relacion["id_poliza_b"])
+            ->where("base_datos_a", $datos_relacion["base_datos_a"])
+            ->where("base_datos_b", $datos_relacion["base_datos_b"])
+            ->where("tipo_relacion", $datos_relacion["tipo_relacion"])
+            ->first();
+        if (!$relacion) {
+            $relacion = RelacionPolizas::create($datos_relacion);
+        }
+        return $relacion;
+    }
 }
