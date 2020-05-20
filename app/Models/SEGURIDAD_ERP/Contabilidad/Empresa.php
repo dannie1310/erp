@@ -8,8 +8,10 @@
 
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
+use App\Models\CTPQ\Poliza;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 class Empresa extends Model
 {
@@ -44,6 +46,28 @@ class Empresa extends Model
     public function empresa_consolidadora()
     {
         return $this->hasOne(self::class, 'Id', 'IdConsolidadora');
+    }
+
+    public function polizas()
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $this->AliasBDD);
+        return Poliza::all();
+    }
+
+    public function getEjerciciosAttribute()
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $this->AliasBDD);
+        $max = Poliza::max("Ejercicio");
+        $min = Poliza::min("Ejercicio");
+        $ejercicios = [];
+        for($i= $min; $i<=$max; $i++){
+            $ejercicios[]=$i;
+        }
+        return [2015];
+        return $ejercicios;
+
     }
 
     public function scopeEditable($query)

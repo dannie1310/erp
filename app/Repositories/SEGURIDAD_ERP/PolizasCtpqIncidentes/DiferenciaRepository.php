@@ -12,6 +12,7 @@ namespace App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
@@ -29,6 +30,21 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
     public function getListaEmpresasConsolidadoras()
     {
         return Empresa::consolidadora()->desarrollo()->conComponentes()->get();
+    }
+
+    public function getListaEmpresasConsolidantes()
+    {
+        $empresas_consolidadoras = $this->getListaEmpresasConsolidadoras();
+        foreach ($empresas_consolidadoras as $empresa_consolidadora) {
+            foreach ($empresa_consolidadora->empresas_consolidantes as $empresa_consolidante) {
+                $empresas_consolidantes[] = $empresa_consolidante;
+            }
+        }
+        return $empresas_consolidantes;
+    }
+
+    public function generaPeticionesBusquedas($data){
+        return Busqueda::create($data);
     }
 
     public function guardaRelacionPolizas($datos_relacion)

@@ -50,13 +50,39 @@ class DiferenciaService
 
     public function buscarDiferencias($parametros)
     {
-        $parametros = collect((object)["tipo_busqueda"=>1]) ;
+        $this->generaPeticionesBusquedas();
+
+        /*$parametros = collect((object)["tipo_busqueda"=>1]) ;
         ini_set('max_execution_time', '900000');
         $polizas = $this->obtienePolizasAValidar($parametros);
         $this->detectarDiferencias($polizas, $parametros);
-        return [count($polizas)];
+        return [count($polizas)];*/
         /*ProcessBusquedaDiferenciasPolizas::dispatch($this)
         ->delay(now()->addMinutes(1));*/
+    }
+
+    private function generaPeticionesBusquedas()
+    {
+        $empresas_consolidantes = $this->repository->getListaEmpresasConsolidantes();
+        foreach($empresas_consolidantes as $empresa_consolidante)
+        {
+            $ejercicios = $empresa_consolidante->ejercicios;
+            foreach($ejercicios as $ejercicio)
+            {
+                for($periodo = 1; $periodo<=1; $periodo++){
+                    $data = [
+                        "id_tipo_busqueda"=>1,
+                        "ejercicio"=>$ejercicio,
+                        "periodo"=> $periodo,
+                        "base_datos_busqueda" => $empresa_consolidante->AliasBDD,
+                        "base_datos_referencia" => $empresa_consolidante->empresa_consolidadora->AliasBDD
+                    ];
+                    $busqueda = $this->repository->generaPeticionesBusquedas($data);
+                    //$busqueda->procesarBusquedaDiferencias();
+                    ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
+                }
+            }
+        }
     }
 
     public function procesarBusquedaDiferencias()
@@ -290,8 +316,9 @@ class DiferenciaService
     private function obtienePolizasAValidar($parametros)
     {
         $arreglo_para_validar = [];
-        $empresas_consolidadoras = $this->repository->getListaEmpresasConsolidadoras();
+
         if ($parametros["tipo_busqueda"] == 1) {
+            $empresas_consolidadoras = $this->repository->getListaEmpresasConsolidadoras();
             foreach ($empresas_consolidadoras as $empresa_consolidadora) {
                 foreach ($empresa_consolidadora->empresas_consolidantes as $empresa_consolidante) {
                     $empresas_consolidantes[] = $empresa_consolidante;

@@ -9,9 +9,10 @@
 namespace App\Models\CTPQ;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
-use App\Models\SEGURIDAD_ERP\IncidentesPolizas\IncidenteIndividualConsolidada;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
+use Illuminate\Support\Facades\Config;
 
 
 class Poliza extends Model
@@ -65,6 +66,37 @@ class Poliza extends Model
                 DB::connection('cntpq')->rollBack();
                 abort(400, $e->getMessage());
                 throw $e;
+            }
+        }
+    }
+    public function relaciona($busqueda)
+    {
+        try {
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $busqueda->base_datos_referencia);
+            $poliza_referencia = Poliza::where("Ejercicio", $this->Ejercicio)->where("Periodo", $this->Periodo)
+                ->where("TipoPol", $this->TipoPol)->where("Folio", $this->Folio)->first();
+        } catch (\Exception $e) {
+
+        }
+
+        if ($poliza_referencia) {
+            $datos_relacion = [
+                "id_poliza_a" => $this->Id,
+                "base_datos_a" => $busqueda->base_datos_busqueda,
+                "id_poliza_b" => $poliza_referencia->Id,
+                "base_datos_b" => $busqueda->base_datos_referencia,
+                "tipo_relacion" => 1,
+            ];
+            //dd($datos_relacion);
+            $relacion = RelacionPolizas::where("id_poliza_a",$datos_relacion["id_poliza_a"])
+                ->where("id_poliza_b",$datos_relacion["id_poliza_b"])
+                ->where("base_datos_a",$datos_relacion["base_datos_a"])
+                ->where("base_datos_b",$datos_relacion["base_datos_b"])
+                ->where("tipo_relacion",$datos_relacion["tipo_relacion"])
+                ->first();
+            if(!$relacion){
+                RelacionPolizas::create($datos_relacion);
             }
         }
     }

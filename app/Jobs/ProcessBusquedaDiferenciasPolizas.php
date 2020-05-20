@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -13,16 +14,16 @@ class ProcessBusquedaDiferenciasPolizas implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $servicio_busqueda;
+    protected $busqueda;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(DiferenciaService $servicio_busqueda)
+    public function __construct(Busqueda $busqueda)
     {
-        $this->servicio_busqueda = $servicio_busqueda;
+        $this->busqueda = $busqueda;
     }
 
     /**
@@ -32,6 +33,6 @@ class ProcessBusquedaDiferenciasPolizas implements ShouldQueue
      */
     public function handle()
     {
-        $this->servicio_busqueda->procesarBusquedaDiferencias();
+        $this->busqueda->procesarBusquedaDiferencias();
     }
 }
