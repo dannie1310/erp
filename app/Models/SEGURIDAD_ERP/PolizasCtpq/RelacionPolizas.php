@@ -9,10 +9,8 @@
 namespace App\Models\SEGURIDAD_ERP\PolizasCtpq;
 
 
-use App\Models\CADECO\FinanzasCBE\Solicitud;
 use App\Models\CTPQ\Poliza;
-use App\Models\CTPQ\PolizaMovimiento;
-use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -31,4 +29,38 @@ class RelacionPolizas extends Model
         "activa",
         "fecha_hora_verificacion"
     ];
+
+    public function poliza_revisada()
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $this->base_datos_a);
+        return $this->belongsTo(Poliza::class, "id_poliza_a", "Id");
+    }
+
+    public function poliza_referencia()
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $this->base_datos_b);
+        return $this->belongsTo(Poliza::class, "id_poliza_b", "Id");
+    }
+
+    public function diferencias()
+    {
+        return $this->hasMany(Diferencia::class,"id_relacion_poliza","id");
+    }
+
+    public function scopeIndividualConsolidada($query)
+    {
+        return $query->where("tipo_relacion",1);
+    }
+
+    public function scopeIndividualHistorica($query)
+    {
+        return $query->where("tipo_relacion",2);
+    }
+
+    public function scopeConsolidadoraHistorica($query)
+    {
+        return $query->where('tipo_relacion', '=', 3);
+    }
 }

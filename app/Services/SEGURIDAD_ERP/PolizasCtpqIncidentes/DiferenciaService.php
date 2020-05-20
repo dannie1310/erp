@@ -50,8 +50,13 @@ class DiferenciaService
 
     public function buscarDiferencias($parametros)
     {
-        ProcessBusquedaDiferenciasPolizas::dispatch($this)
-        ->delay(now()->addMinutes(1));
+        $parametros = collect((object)["tipo_busqueda"=>1]) ;
+        ini_set('max_execution_time', '900000');
+        $polizas = $this->obtienePolizasAValidar($parametros);
+        $this->detectarDiferencias($polizas, $parametros);
+        return [count($polizas)];
+        /*ProcessBusquedaDiferenciasPolizas::dispatch($this)
+        ->delay(now()->addMinutes(1));*/
     }
 
     public function procesarBusquedaDiferencias()
@@ -297,7 +302,7 @@ class DiferenciaService
                 DB::purge('cntpq');
                 Config::set('database.connections.cntpq.database', $empresa_consolidante->AliasBDD);
                 try {
-                    $polizas = Poliza::where("Ejercicio", 2006)->where("Periodo", 5)->get();
+                    $polizas = Poliza::where("Ejercicio", 2008)->where("Periodo", 12)->get();
                 } catch (\Exception $e) {
 
                 }

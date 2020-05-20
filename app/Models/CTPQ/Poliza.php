@@ -68,12 +68,4 @@ class Poliza extends Model
             }
         }
     }
-
-    public function incidentes()
-    {
-        $base_datos = config('database.connections.cntpq.database');
-        return $this->hasMany(IncidenteIndividualConsolidada::class,"id_poliza", "IdPoliza")
-            ->where("base_datos","=",$base_datos);
-    }
-
 }
