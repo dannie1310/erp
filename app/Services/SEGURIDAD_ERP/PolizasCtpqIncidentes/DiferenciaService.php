@@ -11,6 +11,7 @@ namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
@@ -50,7 +51,26 @@ class DiferenciaService
 
     public function buscarDiferencias($parametros)
     {
-        $lote = $this->generaPeticionesBusquedas();
+        $lote =LoteBusqueda::getLoteActivo();
+        if(!$lote){
+            $lote = $this->generaPeticionesBusquedas();
+            $datos_lote = [
+                "folio" =>$lote->id,
+                "usuario_inicio" =>$lote->usuario->nombre_completo,
+                "fecha_hora_inicio"=>$lote->fecha_hora_inicio_format,
+                "mensaje" =>"Proceso de búsqueda generado éxitosamente, se le enviará un correo con los resultados al finalizar"
+            ];
+        } else {
+            $datos_lote = [
+                "folio" =>$lote->id,
+                "usuario_inicio" =>$lote->usuario->nombre_completo,
+                "fecha_hora_inicio"=>$lote->fecha_hora_inicio_format,
+                "mensaje" =>"Existe un proceso de búsqueda activo, favor de esperar"
+            ];
+
+        }
+
+        return $datos_lote;
     }
 
     private function generaPeticionesBusquedas()

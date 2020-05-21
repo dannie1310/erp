@@ -29,7 +29,8 @@ class DiferenciaTransformer extends TransformerAbstract
             'fecha_hora_deteccion_format' => $model->fecha_hora_deteccion_format,
             'fecha_hora_resolucion_format' => $model->fecha_hora_resolucion_format,
             'base_datos' => $model->base_datos_revisada,
-            'base_datos_referencia' => $model->base_datos_referencia
+            'base_datos_referencia' => $model->base_datos_referencia,
+            'observaciones' => $model->observaciones
         ];
     }
 

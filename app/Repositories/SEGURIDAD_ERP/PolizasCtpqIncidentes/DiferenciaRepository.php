@@ -52,50 +52,55 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
         return $empresas_consolidantes;
     }
 
-    public function generaPeticionesBusquedas($data){
+    public function generaPeticionesBusquedas($data)
+    {
         return Busqueda::create($data);
     }
 
-    public function generaLoteBusqueda(){
-        return LoteBusqueda::create(["usuario_inicio"=>auth()->id()]);
+    public function generaLoteBusqueda()
+    {
+        if (!LoteBusqueda::getLoteActivo()) {
+            return LoteBusqueda::create(["usuario_inicio" => auth()->id()]);
+        } else {
+            return null;
+        }
     }
 
     public function guardaRelacionPolizas($datos_relacion)
     {
-        $relacion = RelacionPolizas::where("id_poliza_a",$datos_relacion["id_poliza_a"])
-            ->where("id_poliza_b",$datos_relacion["id_poliza_b"])
-            ->where("base_datos_a",$datos_relacion["base_datos_a"])
-            ->where("base_datos_b",$datos_relacion["base_datos_b"])
-            ->where("tipo_relacion",$datos_relacion["tipo_relacion"])
+        $relacion = RelacionPolizas::where("id_poliza_a", $datos_relacion["id_poliza_a"])
+            ->where("id_poliza_b", $datos_relacion["id_poliza_b"])
+            ->where("base_datos_a", $datos_relacion["base_datos_a"])
+            ->where("base_datos_b", $datos_relacion["base_datos_b"])
+            ->where("tipo_relacion", $datos_relacion["tipo_relacion"])
             ->first();
-        if(!$relacion){
+        if (!$relacion) {
             RelacionPolizas::create($datos_relacion);
         }
     }
 
     public function guardaRelacionMovimientos($datos_relacion)
     {
-        $relacion = RelacionMovimientos::where("id_movimiento_a",$datos_relacion["id_movimiento_a"])
-            ->where("id_movimiento_b",$datos_relacion["id_movimiento_b"])
-            ->where("base_datos_a",$datos_relacion["base_datos_a"])
-            ->where("base_datos_b",$datos_relacion["base_datos_b"])
-            ->where("tipo_relacion",$datos_relacion["tipo_relacion"])
+        $relacion = RelacionMovimientos::where("id_movimiento_a", $datos_relacion["id_movimiento_a"])
+            ->where("id_movimiento_b", $datos_relacion["id_movimiento_b"])
+            ->where("base_datos_a", $datos_relacion["base_datos_a"])
+            ->where("base_datos_b", $datos_relacion["base_datos_b"])
+            ->where("tipo_relacion", $datos_relacion["tipo_relacion"])
             ->first();
-        if(!$relacion){
+        if (!$relacion) {
             return RelacionMovimientos::create($datos_relacion);
         }
     }
 
     public function create(array $data)
     {
-        $diferencia = Diferencia::activos()->where("id_poliza",$data["id_poliza"])
-            ->where("base_datos_revisada",$data["base_datos_revisada"])
-            ->where("base_datos_referencia",$data["base_datos_referencia"])
-            ->where("id_tipo",$data["id_tipo"])
-            ->where("tipo_busqueda",$data["tipo_busqueda"])
+        $diferencia = Diferencia::activos()->where("id_poliza", $data["id_poliza"])
+            ->where("base_datos_revisada", $data["base_datos_revisada"])
+            ->where("base_datos_referencia", $data["base_datos_referencia"])
+            ->where("id_tipo", $data["id_tipo"])
+            ->where("tipo_busqueda", $data["tipo_busqueda"])
             ->first();
-        if($diferencia)
-        {
+        if ($diferencia) {
             return $diferencia;
         } else {
             return $this->model->create($data);
@@ -104,24 +109,24 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
 
     public function corrige($datos_correccion)
     {
-        if(key_exists("id_movimiento", $datos_correccion)){
-            $diferencia=Diferencia::activos()->where("id_poliza",$datos_correccion["id_poliza"])
-                ->where("id_movimiento",$datos_correccion["id_movimiento"])
-                ->where("base_datos_revisada",$datos_correccion["base_datos_revisada"])
-                ->where("base_datos_referencia",$datos_correccion["base_datos_referencia"])
-                ->where("id_tipo",$datos_correccion["id_tipo"])
-                ->where("tipo_busqueda",$datos_correccion["tipo_busqueda"])
+        if (key_exists("id_movimiento", $datos_correccion)) {
+            $diferencia = Diferencia::activos()->where("id_poliza", $datos_correccion["id_poliza"])
+                ->where("id_movimiento", $datos_correccion["id_movimiento"])
+                ->where("base_datos_revisada", $datos_correccion["base_datos_revisada"])
+                ->where("base_datos_referencia", $datos_correccion["base_datos_referencia"])
+                ->where("id_tipo", $datos_correccion["id_tipo"])
+                ->where("tipo_busqueda", $datos_correccion["tipo_busqueda"])
                 ->first();
         } else {
-            $diferencia=Diferencia::activos()->where("id_poliza",$datos_correccion["id_poliza"])
-                ->where("base_datos_revisada",$datos_correccion["base_datos_revisada"])
-                ->where("base_datos_referencia",$datos_correccion["base_datos_referencia"])
-                ->where("id_tipo",$datos_correccion["id_tipo"])
-                ->where("tipo_busqueda",$datos_correccion["tipo_busqueda"])
+            $diferencia = Diferencia::activos()->where("id_poliza", $datos_correccion["id_poliza"])
+                ->where("base_datos_revisada", $datos_correccion["base_datos_revisada"])
+                ->where("base_datos_referencia", $datos_correccion["base_datos_referencia"])
+                ->where("id_tipo", $datos_correccion["id_tipo"])
+                ->where("tipo_busqueda", $datos_correccion["tipo_busqueda"])
                 ->first();
 
         }
-        if($diferencia){
+        if ($diferencia) {
             $diferencia->corregir();
         }
     }

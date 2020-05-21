@@ -26,26 +26,22 @@
                  </button>
              </div>
          </div>
-        <span >
-            <h6><i class="fa fa-arrow-circle-right"></i><b>Resultado de la búsqueda</b></h6>
-            <div class="table-responsive">
+        <span v-if="procesado">
+            <h6><i class="fa fa-arrow-circle-right"></i><b>{{resultado.mensaje}}</b></h6>
+            <div class="table-responsive col-md-6">
                 <table style="width: 100%" class="table table-stripped">
                     <tbody>
                         <tr>
-                            <th style="text-align: left" >Duración de búsqueda (segundos):</th>
-                            <td style="text-align: right">{{resultado.duracion}}</td>
+                            <th style="text-align: left" >Folio:</th>
+                            <td style="text-align: right">{{resultado.folio}}</td>
                         </tr>
                         <tr>
-                            <th style="text-align: left" >Núm. pólizas leidas:</th>
-                            <td style="text-align: right">{{resultado.polizas_leidas}}</td>
+                            <th style="text-align: left" >Usuario Solicito:</th>
+                            <td style="text-align: right">{{resultado.usuario_inicio}}</td>
                         </tr>
                         <tr>
-                            <th style="text-align: left" >Núm. pólizas no encontradas:</th>
-                            <td style="text-align: right">{{resultado.polizas_no_encontradas}}</td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left" >Núm. pólizas con diferencias:</th>
-                            <td style="text-align: right">{{resultado.polizas_con_diferencias}}</td>
+                            <th style="text-align: left" >Fecha y Hora:</th>
+                            <td style="text-align: right">{{resultado.fecha_hora_inicio}}</td>
                         </tr>
                     </tbody>
                 </table>

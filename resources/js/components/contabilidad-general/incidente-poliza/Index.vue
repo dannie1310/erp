@@ -30,12 +30,13 @@
                     { title: 'Folio', field: 'id', thClass: 'th_folio', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Tipo Diferencia', field: 'tipo', thClass: 'fecha_hora', sortable: true},
                     { title: 'Fecha / Hora Detección', field: 'fecha_hora_deteccion', thClass: 'fecha_hora', sortable: true},
+                    { title: 'Base de Datos Revisada', field: 'base_datos', sortable: true},
                     { title: 'Base de Datos Referencia', field: 'base_datos_referencia', sortable: true},
-                    { title: 'Base de Datos con Diferencia', field: 'base_datos', sortable: true},
                     { title: 'Ejercicio', field: 'ejercicio', sortable: true},
                     { title: 'Periodo', field: 'periodo', sortable: true},
                     { title: 'Tipo Poliza', field: 'tipo_poliza', sortable: true},
                     { title: 'Folio Póliza', field: 'folio_poliza', sortable: true},
+                    { title: 'Detalle de Error', field: 'observaciones', sortable: true},
 
                 ],
                 data: [],
@@ -93,7 +94,8 @@
                             periodo:incidente.poliza.periodo,
                             tipo_poliza:incidente.poliza.tipo,
                             folio_poliza:incidente.poliza.folio,
-                            tipo:incidente.tipo_incidente
+                            tipo:incidente.tipo_incidente,
+                            observaciones:incidente.observaciones
                         })
                     });
                 },
