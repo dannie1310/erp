@@ -42,7 +42,7 @@
                                                     <td class="bg-gray-light"><b>Fecha:</b></td>
                                                     <td class="bg-gray-light">{{presupuesto.fecha_format}}</td>
                                                     <td class="bg-gray-light"><b>Importe:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.monto_format}}</td>
+                                                    <td class="bg-gray-light">{{'$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',',')}}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
