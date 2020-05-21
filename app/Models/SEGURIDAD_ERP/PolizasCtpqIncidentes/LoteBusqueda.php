@@ -39,6 +39,6 @@ class LoteBusqueda extends Model
 
     public function diferencias_corregidas()
     {
-        return $this->hasManyThrough(DiferenciaCorregida::class,Busqueda::class,"id_busqueda","id_lote","id","id");
+        return $this->hasManyThrough(DiferenciaCorregida::class,Busqueda::class,"id_lote","id_busqueda","id","id");
     }
 }
