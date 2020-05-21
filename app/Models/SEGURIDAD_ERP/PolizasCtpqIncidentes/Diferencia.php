@@ -154,4 +154,18 @@ class Diferencia extends Model
         $this->correccion()->create(["id_busqueda"=>$id_busqueda]);
         $this->save();
     }
+
+    public static function totalPorTipoPorEmpresa()
+    {
+        $dem = DB::table('PolizasCtpqIncidentes.diferencias')
+            ->select(DB::raw("count(diferencias.id) as cantidad, ctg_tipos.descripcion as descripcion, empresa_revisada.Nombre +' ['+diferencias.base_datos_revisada +']' as base_datos_revisada, empresa_referencia.Nombre + ' ['+diferencias.base_datos_referencia + ']' as base_datos_referencia"))
+            ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id','=','diferencias.id_busqueda')
+            ->join('PolizasCtpqIncidentes.ctg_tipos', 'ctg_tipos.id','=','diferencias.id_tipo')
+            ->join('Contabilidad.ListaEmpresas as empresa_revisada', 'empresa_revisada.AliasBDD','=','diferencias.base_datos_revisada')
+            ->join('Contabilidad.ListaEmpresas as empresa_referencia', 'empresa_referencia.AliasBDD','=','diferencias.base_datos_referencia')
+            ->where("diferencias.activo","1")
+            ->groupBy(DB::raw("descripcion, diferencias.base_datos_revisada, diferencias.base_datos_referencia, empresa_revisada.Nombre, empresa_referencia.Nombre"))
+            ->get();
+        return $dem;
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\FinalizaProcesamientoLoteBusquedas;
 use App\Events\IncidenciaCI;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Notifications\NotificacionFinalizaProcesoBusquedasDiferenciasPolizas;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -36,6 +37,7 @@ class SendFinalizaProcesamientoLoteBusquedaNotification
         //$usuario = Usuario::notificacionCI()->get();
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
         $usuario = Usuario::suscripcion($suscripciones)->get();
-        Notification::send($usuario, new NotificacionFinalizaProcesoBusquedasDiferenciasPolizas($event->lote));
+        $diferencias_totales = Diferencia::totalPorTipoPorEmpresa();
+        Notification::send($usuario, new NotificacionFinalizaProcesoBusquedasDiferenciasPolizas($event->lote, $diferencias_totales));
     }
 }

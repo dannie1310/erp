@@ -13,15 +13,17 @@ class NotificacionFinalizaProcesoBusquedasDiferenciasPolizas extends Notificatio
 {
     use Queueable;
     public $lote;
+    public $diferencias_totales;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(LoteBusqueda $lote)
+    public function __construct(LoteBusqueda $lote, $diferencias_totales)
     {
         $this->lote = $lote;
+        $this->diferencias_totales = $diferencias_totales;
     }
 
     /**
@@ -46,7 +48,7 @@ class NotificacionFinalizaProcesoBusquedasDiferenciasPolizas extends Notificatio
 
         return (new MailMessage)
             ->subject("Finalización de Proceso de Búsqueda de Diferencias en Pólizas")
-            ->view('emails.lote_busqueda_diferencia_polizas',["lote"=>$this->lote]);
+            ->view('emails.lote_busqueda_diferencia_polizas',["lote"=>$this->lote, "diferencias_totales"=>$this->diferencias_totales]);
             /*->attach($this->xml);*/
     }
 

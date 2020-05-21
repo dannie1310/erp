@@ -48,6 +48,15 @@
                 </div>
             </div>
         @endif
+        <hr />
+        @if ($diferencias_totales)
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>Diferencias Totales Existentes:</b></label>
+                    {{$diferencias_totales->sum("cantidad")}}
+                </div>
+            </div>
+        @endif
     </div>
 
     @if(count($lote->cantidad_diferencias_detectadas_por_tipo)>0)
@@ -101,6 +110,48 @@
                 </thead>
                 <tbody>
                 @foreach($lote->cantidad_diferencias_detectadas_por_tipo_por_base as $item)
+                    <tr>
+                        <td>
+                            {{$item->base_datos_revisada}}
+                        </td>
+                        <td>
+                            {{$item->base_datos_referencia}}
+                        </td>
+                        <td>
+                            {{$item->descripcion}}
+                        </td>
+                        <td style="text-align: right">
+                            {{$item->cantidad}}
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
+    @if(count($diferencias_totales)>0)
+        <hr />
+
+        <div class="row">
+            <table>
+                <caption style="text-align: left; font-weight: bold">Cantidad de diferencias totales por empresa y tipo:</caption>
+                <thead>
+                <th>
+                    Empresa Revisada
+                </th>
+                <th>
+                    Empresa Referencia
+                </th>
+                <th>
+                    Tipo Diferencia
+                </th>
+                <th>
+                    Cantidad
+                </th>
+                </thead>
+                <tbody>
+                @foreach($diferencias_totales as $item)
                     <tr>
                         <td>
                             {{$item->base_datos_revisada}}

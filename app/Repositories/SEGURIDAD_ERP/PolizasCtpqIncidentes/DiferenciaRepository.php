@@ -41,9 +41,6 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
         foreach ($empresas_consolidadoras as $empresa_consolidadora) {
             foreach ($empresa_consolidadora->empresas_consolidantes as $empresa_consolidante) {
                 $empresas_consolidantes[] = $empresa_consolidante;
-                if($i==3){
-                    break;
-                }
                 $i++;
             }
         }
