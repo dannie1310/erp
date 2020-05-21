@@ -187,17 +187,6 @@ class SolicitudEdicionService
         $folios  = $this->repository->show($id)->polizas;
         $pdf = new PolizaFormato($folios);
         return $pdf->create();
-        
-
-  //      $f = $folios->pluck('folio')->toArray();
-     //   sort($f);
-        // foreach ($folios as $folio) {
-        //     DB::purge('cntpq');
-        //     \Config::set('database.connections.cntpq.database', $folio->bd_contpaq);
-        //     $pdf = new PolizaFormato(Poliza::find($folio->id_poliza),$folio->empresa);
-        //     return $pdf->create();
-        // }
-      //  dd('panda', $folios, $f);
     }
 
     public function procesaSolicitudXLS($nombre_archivo, $archivo_xls)

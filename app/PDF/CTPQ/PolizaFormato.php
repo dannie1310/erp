@@ -95,7 +95,6 @@ class PolizaFormato extends Rotation
 
     public function partidasTitle()
     {
-        $this->Ln();
         $this->SetFont('Arial', 'B', 10);
         $this->SetFillColor(255, 255, 255);
 
@@ -115,9 +114,9 @@ class PolizaFormato extends Rotation
     {
         $this->SetFont('Arial', '', 10);
         $this->SetFillColor(255, 255, 255);
-        $this->Cell(19.65,0.5, utf8_decode('Póliza de '.$this->poliza->tipo_poliza->Nombre.' número '.$this->poliza->Folio.' correspondiente al 07/Nov/2019'), '', 0, 'C', 0);
+        $this->Cell(19.65, 0.5, utf8_decode('Póliza de ' . $this->poliza->tipo_poliza->Nombre . ' número ' . $this->poliza->Folio . ' correspondiente al 07/Nov/2019'), '', 0, 'C', 0);
         $this->Ln(0.4);
-        $this->Cell(19.65,0.5, utf8_decode($this->poliza->Concepto), '', 0, 'C', 0);
+        $this->Cell(19.65, 0.5, utf8_decode($this->poliza->Concepto), '', 0, 'C', 0);
         $this->Ln(0.68);
         $this->SetX(1);
         $cuenta_padre = '';
@@ -125,23 +124,22 @@ class PolizaFormato extends Rotation
         $y_actual = $this->GetY();
         $suma = 0;
         $tipo_mov_anterior = 0;
-        $count = count($this->poliza->movimientos);
+
         foreach ($this->poliza->movimientos as $k => $movimiento) {
             if ($cuenta_padre == '' || $cuenta_padre != $movimiento->cuenta->cuenta_padre->Codigo) {
-                if($suma != 0)
-                {
-                    $suma = number_format($suma,2,".",",");
+                if ($suma != 0) {
+                    $suma = number_format($suma, 2, ".", ",");
                     $y_actual = $this->GetY();
                     $this->SetFont('Arial', 'B', 10);
                     $this->setXY(15.8, $y_padre);
                     $this->Cell(2.5, 0.5, $tipo_mov_anterior == 0 ? $suma : '', '', 0, 'L', 180);
-                    $this->Cell(2.29, 0.5,$tipo_mov_anterior == 1 ? $suma : '', '', 0, 'R', 180);
+                    $this->Cell(2.29, 0.5, $tipo_mov_anterior == 1 ? $suma : '', '', 0, 'R', 180);
                     $suma = 0;
                     $y_padre = 0;
                 }
                 $tipo_mov = $movimiento->TipoMovto;
                 $cuenta_padre = $movimiento->cuenta->cuenta_padre->Codigo;
-                $this->setXY(1, $y_actual+0.3);
+                $this->setXY(1, $y_actual + 0.3);
                 $this->SetFont('Arial', 'B', 10);
                 $this->SetFillColor(255, 255, 255);
                 $y_padre = $this->GetY();
@@ -151,30 +149,28 @@ class PolizaFormato extends Rotation
                 $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
                 $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . '..' : '  ' . utf8_decode($movimiento->Concepto), '', 1, 'L', 180);
             }
+            $y_actual = $this->GetY();
             $this->SetFont('Arial', '', 10);
             $this->Cell(3.1, 0.5, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
             $this->Cell(5.2, 0.5, strlen($movimiento->cuenta->Nombre) > 25 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 25)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
             $this->Cell(4, 0.5, strlen($movimiento->Referencia) > 11 ? utf8_decode(substr($movimiento->Referencia, 0, 9)) . ' ..' : utf8_decode($movimiento->Referencia), '', 0, 'L', 180);
             $this->Cell(2.5, 0.5, $movimiento->importe_coma_format, '', 0, 'L', 180);
             $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
-            $this->Cell(2.29,0.5, '', '', 0, 'L', 180);
+            $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
             $this->Ln(0.4);
             $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
             $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . ' ..' : utf8_decode($movimiento->Concepto), '', 1, 'L', 180);
-            $y_actual= $this->GetY();
             $suma += $movimiento->Importe;
             $this->suma_abono += $movimiento->abono;
             $this->suma_cargo += $movimiento->cargo;
-
-            if($k+1 == $count)
-            {
-                $suma = number_format($suma,2,".",",");
-                $this->SetFont('Arial', 'B', 10);
-                $this->setXY(15.8, $y_padre);
-                $this->Cell(2.5, 0.5, $movimiento->TipoMovto == 0 ? $suma : '', '', 0, 'L', 180);
-                $this->Cell(2.29, 0.5,$movimiento->TipoMovto == 1 ? $suma : '', '', 0, 'R', 180);
-            }
         }
+
+        $suma = number_format($suma, 2, ".", ",");
+        $this->SetFont('Arial', 'B', 10);
+        $this->setXY(15.8, $y_actual-0.6);
+        $this->Cell(2.5, 0.5, $tipo_mov_anterior == 0 ? $suma : '', '', 0, 'L', 180);
+        $this->Cell(2.29, 0.5, $tipo_mov_anterior == 1 ? $suma : '', '', 0, 'R', 180);
+
     }
 
     public function Footer()
