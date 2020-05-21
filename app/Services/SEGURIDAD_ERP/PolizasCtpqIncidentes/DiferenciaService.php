@@ -72,8 +72,8 @@ class DiferenciaService
                         "base_datos_referencia" => $empresa_consolidante->empresa_consolidadora->AliasBDD
                     ];
                     $busqueda = $this->repository->generaPeticionesBusquedas($data);
-                    //$busqueda->procesarBusquedaDiferencias();
-                    ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
+                    $busqueda->procesarBusquedaDiferencias();
+                    //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                 }
             }
         }

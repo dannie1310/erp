@@ -13,54 +13,112 @@
     <h3></h3>
     <hr />
     <div class="row">
-        <div class="col-md-5" >
-            <label><b>Usuario Solicitó Busqueda:</b></label>
-
-        </div>
-        <div class="col-md-5" >
-            {{$lote->usuario->nombre_completo}}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-5" >
-            <label><b>Fecha /  Hora Incio:</b></label>
-
-        </div>
-        <div class="col-md-5" >
-            {{$lote->fecha_hora_inicio_format}}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-5" >
-            <label><b>Fecha y Hora Fin:</b></label>
-
-        </div>
-        <div class="col-md-5" >
-            {{$lote->fecha_hora_fin_format}}
-        </div>
-    </div>
-
-    @if ($lote->diferencias_detectadas)
-        <div class="row">
-            <div class="col-md-5" >
-                <label><b>Diferencias Detectadas:</b></label>
-
+        <div class="col-md-3" >
+            <div class="form-group" >
+                <label><b>Usuario Solicitó Busqueda:</b></label>
+                {{$lote->usuario->nombre_completo}}
             </div>
-            <div class="col-md-5" >
-                {{count($lote->diferencias_detectadas)}}
+
+        </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>Fecha /  Hora Incio:</b></label>
+                {{$lote->fecha_hora_inicio_format}}
             </div>
         </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>Fecha /  Hora Fin:</b></label>
+                {{$lote->fecha_hora_fin_format}}
+            </div>
+        </div>
+        @if ($lote->diferencias_detectadas)
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>Diferencias Detectadas:</b></label>
+                    {{count($lote->diferencias_detectadas)}}
+                </div>
+            </div>
         @endif
-    @if ($lote->diferencias_corregidas)
+        @if ($lote->diferencias_corregidas)
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>Diferencias Corregidas:</b></label>
+                    {{count($lote->diferencias_corregidas)}}
+                </div>
+            </div>
+        @endif
+    </div>
+
+    @if(count($lote->cantidad_diferencias_detectadas_por_tipo)>0)
+        <hr />
+
         <div class="row">
-            <div class="col-md-5" >
-                <label><b>Diferencias Corregidas:</b></label>
-            </div>
-            <div class="col-md-5" >
-                {{count($lote->diferencias_corregidas)}}
-            </div>
+            <table>
+                <caption style="text-align: left; font-weight: bold">Cantidad de diferencias por tipo:</caption>
+                <thead>
+                <th>
+                    Tipo Diferencia
+                </th>
+                <th>
+                    Cantidad
+                </th>
+                </thead>
+                <tbody>
+                @foreach($lote->cantidad_diferencias_detectadas_por_tipo as $item)
+                <tr>
+                    <td>
+                        {{$item->descripcion}}
+                    </td>
+                    <td style="text-align: right">
+                        {{$item->cantidad}}
+                    </td>
+                </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     @endif
+    @if(count($lote->cantidad_diferencias_detectadas_por_tipo_por_base)>0)
+        <hr />
 
+        <div class="row">
+            <table>
+                <caption style="text-align: left; font-weight: bold">Cantidad de diferencias por empresa y tipo:</caption>
+                <thead>
+                <th>
+                    Empresa Revisada
+                </th>
+                <th>
+                    Empresa Referencia
+                </th>
+                <th>
+                    Tipo Diferencia
+                </th>
+                <th>
+                    Cantidad
+                </th>
+                </thead>
+                <tbody>
+                @foreach($lote->cantidad_diferencias_detectadas_por_tipo_por_base as $item)
+                    <tr>
+                        <td>
+                            {{$item->base_datos_revisada}}
+                        </td>
+                        <td>
+                            {{$item->base_datos_referencia}}
+                        </td>
+                        <td>
+                            {{$item->descripcion}}
+                        </td>
+                        <td style="text-align: right">
+                            {{$item->cantidad}}
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
 </div>
 </html>
