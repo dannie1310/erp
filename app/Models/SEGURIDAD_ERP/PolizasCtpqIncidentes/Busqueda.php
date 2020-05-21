@@ -9,9 +9,8 @@
 namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 
-use App\Facades\BusquedaDiferenciasPolizas;
+use App\Utils\BusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
-use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;

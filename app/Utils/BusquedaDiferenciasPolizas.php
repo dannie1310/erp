@@ -6,7 +6,7 @@
  * Time: 06:42 PM
  */
 
-namespace App\Facades;
+namespace App\Utils;
 
 
 use App\Models\CTPQ\Poliza;
