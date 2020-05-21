@@ -77,4 +77,16 @@ class Poliza extends Model
         }
     }
 
+    public function sumaMismoPadre($codigo_padre)
+    {
+        $suma = 0;
+        foreach ($this->movimientos()->orderBy('IdCuenta')->get() as $movimiento)
+        {
+            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            {
+                $suma = $suma + $movimiento->Importe;
+            }
+        }
+        return $suma;
+    }
 }
