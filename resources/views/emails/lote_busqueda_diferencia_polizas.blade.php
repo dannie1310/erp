@@ -49,7 +49,7 @@
             </div>
         @endif
         <hr />
-        @if ($diferencias_totales)
+        @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != count($lote->diferencias_detectadas)))
             <div class="col-md-2" >
                 <div class="form-group" >
                     <label><b>Diferencias Totales Existentes:</b></label>
@@ -130,7 +130,7 @@
         </div>
     @endif
 
-    @if(count($diferencias_totales)>0)
+    @if(count($diferencias_totales)>0 &&($diferencias_totales->sum("cantidad") != count($lote->diferencias_detectadas)))
         <hr />
 
         <div class="row">
