@@ -4,10 +4,10 @@
 namespace App\PDF\CTPQ;
 
 
-use DateTime;
-use DateInterval;
-use Ghidev\Fpdf\Rotation;
 use App\Models\CTPQ\Poliza;
+use DateInterval;
+use DateTime;
+use Ghidev\Fpdf\Rotation;
 use Illuminate\Support\Facades\DB;
 
 class PolizaFormato extends Rotation
@@ -30,10 +30,12 @@ class PolizaFormato extends Rotation
     private $mes;
     private $anio;
 
-    public function __construct($folio)
+    private $footer_encola = false;
+
+    public function __construct($folios)
     {
         parent::__construct('P', 'cm', 'Letter');
-        $this->folios = $folio;
+        $this->folios = $folios;
         $this->SetAutoPageBreak(true, 5);
         $this->WidthTotal = $this->GetPageWidth() - 2;
         $this->txtTitleTam = 18;
@@ -41,7 +43,6 @@ class PolizaFormato extends Rotation
         $this->txtSeccionTam = 9;
         $this->txtContenidoTam = 11;
         $this->txtFooterTam = 6;
-        
     }
 
     function Header()
@@ -117,7 +118,7 @@ class PolizaFormato extends Rotation
         $this->Cell(19.65, 0.5, utf8_decode('Póliza de ' . $this->poliza->tipo_poliza->Nombre . ' número ' . $this->poliza->Folio . ' correspondiente al 07/Nov/2019'), '', 0, 'C', 0);
         $this->Ln(0.4);
         $this->Cell(19.65, 0.5, utf8_decode($this->poliza->Concepto), '', 0, 'C', 0);
-        $this->Ln(0.68);
+        $this->Ln(0.48);
         $this->SetX(1);
         $cuenta_padre = '';
         $y_padre = 0;
@@ -170,46 +171,48 @@ class PolizaFormato extends Rotation
         $this->setXY(15.8, $y_actual-0.6);
         $this->Cell(2.5, 0.5, $tipo_mov_anterior == 0 ? $suma : '', '', 0, 'L', 180);
         $this->Cell(2.29, 0.5, $tipo_mov_anterior == 1 ? $suma : '', '', 0, 'R', 180);
-
+        $this->footer_encola = true;
     }
 
     public function Footer()
     {
-        $this->Ln();
-        $this->SetFont('Arial', 'B', 10);
-        $this->SetFillColor(255, 255, 255);
+        if($this->footer_encola) {
+            $this->Ln();
+            $this->SetFont('Arial', 'B', 10);
+            $this->SetFillColor(255, 255, 255);
 
-        $this->setXY(1, 24.5);
-        $this->Cell(12.98,0.6,strlen($this->poliza->Concepto) > 63 ? utf8_decode(substr($this->poliza->Concepto, 0, 63)).'..' : utf8_decode($this->poliza->Concepto), 'T', 0, 'L', 180);
-        $this->setXY(14.15, 24.5);
-        $this->Cell(3,0.6, number_format($this->suma_cargo,2,".",","), 'T', 0, 'R', 180);
-        $this->setXY(17.3, 24.5);
-        $this->Cell(3,0.6, number_format($this->suma_abono,2,".",","), 'T', 0, 'R', 180);
+            $this->setXY(1, 24.5);
+            $this->Cell(12.98, 0.6, strlen($this->poliza->Concepto) > 63 ? utf8_decode(substr($this->poliza->Concepto, 0, 63)) . '..' : utf8_decode($this->poliza->Concepto), 'T', 0, 'L', 180);
+            $this->setXY(14.15, 24.5);
+            $this->Cell(3, 0.6, number_format($this->suma_cargo, 2, ".", ","), 'T', 0, 'R', 180);
+            $this->setXY(17.3, 24.5);
+            $this->Cell(3, 0.6, number_format($this->suma_abono, 2, ".", ","), 'T', 0, 'R', 180);
 
-        $this->setXY(1, 25.4);
-        $this->Cell(4.2,0.6, utf8_decode('Elaboró'), 'T', 0, 'C', 180);
-        $this->setXY(5.35, 25.4);
-        $this->Cell(4.3 ,0.6, utf8_decode('Revisó'), 'T', 0, 'C', 180);
-        $this->setXY(9.8, 25.4);
-        $this->Cell(4.2,0.6, utf8_decode('Autorizó'), 'T', 0, 'C', 180);
-        $this->setXY(14.15, 25.4);
-        $this->Cell(3,0.5, 'Origen', 'T', 0, 'L', 180);
-        $this->setXY(17.3, 25.4);
-        $this->Cell(3,0.6, utf8_decode('Póliza'), 'T', 0, 'C', 180);
+            $this->setXY(1, 25.4);
+            $this->Cell(4.2, 0.6, utf8_decode('Elaboró'), 'T', 0, 'C', 180);
+            $this->setXY(5.35, 25.4);
+            $this->Cell(4.3, 0.6, utf8_decode('Revisó'), 'T', 0, 'C', 180);
+            $this->setXY(9.8, 25.4);
+            $this->Cell(4.2, 0.6, utf8_decode('Autorizó'), 'T', 0, 'C', 180);
+            $this->setXY(14.15, 25.4);
+            $this->Cell(3, 0.5, 'Origen', 'T', 0, 'L', 180);
+            $this->setXY(17.3, 25.4);
+            $this->Cell(3, 0.6, utf8_decode('Póliza'), 'T', 0, 'C', 180);
 
-        $this->SetFont('Arial', '', 10);
-        $this->setXY(14.15, 25.85);
-        $this->Cell(3,0.3, 'CONTPAQ i', '', 0, 'L', 180);
+            $this->SetFont('Arial', '', 10);
+            $this->setXY(14.15, 25.85);
+            $this->Cell(3, 0.3, 'CONTPAQ i', '', 0, 'L', 180);
 
-        $this->setXY(17.3, 26.2);
-        $this->Cell(3,0.5, $this->poliza->tipo_poliza->Nombre.' # '.$this->poliza->Folio, '', 0, 'R', 180);
-        $this->setXY(17.3, 26.6);
-        $this->Cell(3,0.5, $this->poliza->fecha_mes_letra_format, '', 0, 'R', 180);
+            $this->setXY(17.3, 26.2);
+            $this->Cell(3, 0.5, $this->poliza->tipo_poliza->Nombre . ' # ' . $this->poliza->Folio, '', 0, 'R', 180);
+            $this->setXY(17.3, 26.6);
+            $this->Cell(3, 0.5, $this->poliza->fecha_mes_letra_format, '', 0, 'R', 180);
+        }
     }
 
     function create() {
         foreach ($this->folios as $folio) {
-            
+
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $folio->bd_contpaq);
             $this->poliza = Poliza::find($folio->id_poliza);
@@ -219,14 +222,13 @@ class PolizaFormato extends Rotation
             $this->SetMargins(1, 0.9, 1);
             $this->AliasNbPages();
             $this->AddPage();
-            $this->SetAutoPageBreak(true,6.80);
+            $this->SetAutoPageBreak(true,5);
             $this->partidas();
-    
+
         }
-        
+
 
         try {
-            //$this->Output('I', "Formato - poliza_".$this->contrato->numero_folio.".pdf", 1);
             $this->Output('I', "Formato - poliza.pdf", 1);
         } catch (\Exception $ex) {
             dd("error",$ex);
