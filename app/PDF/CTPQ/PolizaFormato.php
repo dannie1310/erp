@@ -31,6 +31,7 @@ class PolizaFormato extends Rotation
     private $anio;
 
     private $footer_encola = false;
+    private $num = 1;
 
     public function __construct($folios)
     {
@@ -56,7 +57,8 @@ class PolizaFormato extends Rotation
         $this->SetFont('Arial', 'B', 12);
         $this->Cell(5.76, 0, strlen($this->empresa->Nombre) > 51 ? utf8_decode(substr($this->empresa->Nombre, 0, 50)) : utf8_decode($this->empresa->Nombre), 0, 0, 'L');
         $this->setXY(18.50, 1.2);
-        $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
+        $n = $this->PageNo() === 1 ? 1: $this->PageNo() - $this->num;
+        $this->Cell(0, 0, 'Hoja:   '.$n, 0, 0, 'L');
 
         $this->setXY(5.83, 1.6);
         $this->SetFont('Arial', 'B', 11.5);
@@ -87,11 +89,6 @@ class PolizaFormato extends Rotation
         $this->Cell(0, 0, utf8_decode('Cta.Estatal:'), 0, 0, 'L');
 
         $this->partidasTitle();
-
-        $currentPage = $this->PageNo();
-        if ($currentPage > 1) {
-            $this->Ln();
-        }
     }
 
     public function partidasTitle()
@@ -121,36 +118,25 @@ class PolizaFormato extends Rotation
         $this->Ln(0.48);
         $this->SetX(1);
         $cuenta_padre = '';
-        $y_padre = 0;
-        $y_actual = $this->GetY();
-        $suma = 0;
-        $tipo_mov_anterior = 0;
 
-        foreach ($this->poliza->movimientos as $k => $movimiento) {
-            if ($cuenta_padre == '' || $cuenta_padre != $movimiento->cuenta->cuenta_padre->Codigo) {
-                if ($suma != 0) {
-                    $suma = number_format($suma, 2, ".", ",");
-                    $y_actual = $this->GetY();
-                    $this->SetFont('Arial', 'B', 10);
-                    $this->setXY(15.8, $y_padre);
-                    $this->Cell(2.5, 0.5, $tipo_mov_anterior == 0 ? $suma : '', '', 0, 'L', 180);
-                    $this->Cell(2.29, 0.5, $tipo_mov_anterior == 1 ? $suma : '', '', 0, 'R', 180);
-                    $suma = 0;
-                    $y_padre = 0;
-                }
-                $tipo_mov = $movimiento->TipoMovto;
+        foreach ($this->poliza->movimientos()->orderBy('IdCuenta')->get() as $k => $movimiento)
+        {
+            if ($cuenta_padre == '' || $cuenta_padre != $movimiento->cuenta->cuenta_padre->Codigo)
+            {
+                $suma = number_format($this->poliza->sumaMismoPadre($movimiento->cuenta->cuenta_padre->Codigo), 2, ".", ",");
                 $cuenta_padre = $movimiento->cuenta->cuenta_padre->Codigo;
-                $this->setXY(1, $y_actual + 0.3);
                 $this->SetFont('Arial', 'B', 10);
                 $this->SetFillColor(255, 255, 255);
-                $y_padre = $this->GetY();
                 $this->Cell(3.1, 0.5, $movimiento->cuenta->cuenta_padre->cuenta_format, '', 0, 'L', 180);
                 $this->Cell(5.2, 0.5, strlen($movimiento->cuenta->cuenta_padre->Nombre) > 25 ? utf8_decode(substr($movimiento->cuenta->cuenta_padre->Nombre, 0, 25)) . '..' : utf8_decode($movimiento->cuenta->cuenta_padre->Nombre), '', 0, 'L', 180);
+                $this->Cell(4, 0.5, '', '', 0, 'L', 180);
+                $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
+                $this->Cell(2.5, 0.5, $movimiento->TipoMovto == 0 ? $suma : '', '', 0, 'R', 180);
+                $this->Cell(2.29, 0.5,$movimiento->TipoMovto == 1 ? $suma : '', '', 0, 'R', 180);
                 $this->Ln(0.45);
                 $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
                 $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . '..' : '  ' . utf8_decode($movimiento->Concepto), '', 1, 'L', 180);
             }
-            $y_actual = $this->GetY();
             $this->SetFont('Arial', '', 10);
             $this->Cell(3.1, 0.5, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
             $this->Cell(5.2, 0.5, strlen($movimiento->cuenta->Nombre) > 25 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 25)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
@@ -161,16 +147,9 @@ class PolizaFormato extends Rotation
             $this->Ln(0.4);
             $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
             $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . ' ..' : utf8_decode($movimiento->Concepto), '', 1, 'L', 180);
-            $suma += $movimiento->Importe;
             $this->suma_abono += $movimiento->abono;
             $this->suma_cargo += $movimiento->cargo;
         }
-
-        $suma = number_format($suma, 2, ".", ",");
-        $this->SetFont('Arial', 'B', 10);
-        $this->setXY(15.8, $y_actual-0.6);
-        $this->Cell(2.5, 0.5, $tipo_mov_anterior == 0 ? $suma : '', '', 0, 'L', 180);
-        $this->Cell(2.29, 0.5, $tipo_mov_anterior == 1 ? $suma : '', '', 0, 'R', 180);
         $this->footer_encola = true;
     }
 
@@ -211,8 +190,8 @@ class PolizaFormato extends Rotation
     }
 
     function create() {
-        foreach ($this->folios as $folio) {
-
+        foreach ($this->folios as $folio)
+        {
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $folio->bd_contpaq);
             $this->poliza = Poliza::find($folio->id_poliza);
@@ -224,9 +203,12 @@ class PolizaFormato extends Rotation
             $this->AddPage();
             $this->SetAutoPageBreak(true,5);
             $this->partidas();
-
+            if($this->footer_encola)
+            {
+                $this->footer_encola = false;
+                $this->num = $this->PageNo();
+            }
         }
-
 
         try {
             $this->Output('I', "Formato - poliza.pdf", 1);
