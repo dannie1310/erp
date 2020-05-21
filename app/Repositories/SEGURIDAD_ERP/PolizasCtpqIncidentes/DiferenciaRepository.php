@@ -14,10 +14,12 @@ use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaCorregida;
+use Dingo\Api\Auth\Auth;
 
 class DiferenciaRepository extends Repository implements RepositoryInterface
 {
@@ -35,9 +37,14 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
     public function getListaEmpresasConsolidantes()
     {
         $empresas_consolidadoras = $this->getListaEmpresasConsolidadoras();
+        $i = 0;
         foreach ($empresas_consolidadoras as $empresa_consolidadora) {
             foreach ($empresa_consolidadora->empresas_consolidantes as $empresa_consolidante) {
                 $empresas_consolidantes[] = $empresa_consolidante;
+                if($i==3){
+                    break;
+                }
+                $i++;
             }
         }
         return $empresas_consolidantes;
@@ -45,6 +52,10 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
 
     public function generaPeticionesBusquedas($data){
         return Busqueda::create($data);
+    }
+
+    public function generaLoteBusqueda(){
+        return LoteBusqueda::create(["usuario_inicio"=>auth()->id()]);
     }
 
     public function guardaRelacionPolizas($datos_relacion)

@@ -157,7 +157,7 @@ class Poliza extends Model
                     "id_movimiento_a" => $movimiento->Id,
                     "base_datos_a" => $busqueda->base_datos_busqueda,
                     "id_movimiento_b" => $movimientos_referencia[$i]->Id,
-                    "base_datos_b" => $busqueda->base_datos_refetencia,
+                    "base_datos_b" => $busqueda->base_datos_referencia,
                     "tipo_relacion" => $busqueda->id_tipo_busqueda,
                 ];
                 $relaciones_movimientos[$i] = RelacionMovimientos::registrar($datos_relacion);

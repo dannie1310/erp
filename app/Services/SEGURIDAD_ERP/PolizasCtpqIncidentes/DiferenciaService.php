@@ -50,7 +50,9 @@ class DiferenciaService
 
     public function buscarDiferencias($parametros)
     {
-        $this->generaPeticionesBusquedas();
+        ini_set('max_execution_time', '900000');
+        $lote = $this->generaPeticionesBusquedas();
+        dd($lote->diferencias_detectadas);
 
         /*$parametros = collect((object)["tipo_busqueda"=>1]) ;
         ini_set('max_execution_time', '900000');
@@ -63,6 +65,7 @@ class DiferenciaService
 
     private function generaPeticionesBusquedas()
     {
+        $lote = $this->repository->generaLoteBusqueda();
         $empresas_consolidantes = $this->repository->getListaEmpresasConsolidantes();
         foreach($empresas_consolidantes as $empresa_consolidante)
         {
@@ -72,6 +75,7 @@ class DiferenciaService
                 for($periodo = 1; $periodo<=1; $periodo++){
                     $data = [
                         "id_tipo_busqueda"=>1,
+                        "id_lote"=>$lote->id,
                         "ejercicio"=>$ejercicio,
                         "periodo"=> $periodo,
                         "base_datos_busqueda" => $empresa_consolidante->AliasBDD,
@@ -83,6 +87,7 @@ class DiferenciaService
                 }
             }
         }
+        return $lote;
     }
 
     public function procesarBusquedaDiferencias()

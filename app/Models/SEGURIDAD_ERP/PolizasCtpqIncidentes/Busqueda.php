@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 
+use App\Utils\BusquedaDiferenciasMovimientos;
 use App\Utils\BusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
 use Illuminate\Database\Eloquent\Model;
@@ -27,8 +28,14 @@ class Busqueda extends Model
         "ejercicio",
         "periodo",
         "fecha_hora_inicio",
-        "fecha_hora_fin"
+        "fecha_hora_fin",
+        "id_lote"
     ];
+
+    public function lote()
+    {
+        return $this->belongsTo(LoteBusqueda::class,"id_lote", "id");
+    }
 
     public function diferencias_detectadas()
     {
@@ -54,6 +61,8 @@ class Busqueda extends Model
 
     public function procesarBusquedaDiferencias()
     {
+        $this->fecha_hora_inicio = date('Y-m-d H:i:s');
+        $this->save();
         $polizas = $this->obtienePolizasRevisar();
 
         foreach ($polizas as $poliza) {
@@ -65,6 +74,23 @@ class Busqueda extends Model
                     $busqueda->buscarDiferenciasPolizas();
                 }
             }
+            if(key_exists("relaciones_movimientos",$relaciones)){
+                foreach ($relaciones["relaciones_movimientos"] as $relacion_movimiento)
+                {
+                    if($relacion_movimiento){
+                        $busqueda_movimiento = New BusquedaDiferenciasMovimientos($relacion_movimiento, $this);
+                        $busqueda_movimiento->buscarDiferenciasMovimientos();
+                    }
+                }
+
+            }
+        }
+        $this->fecha_hora_fin = date('Y-m-d H:i:s');
+        $this->save();
+        $ultima_busqueda = $this->lote->busquedas()->orderBy("id","desc")->first();
+        if($ultima_busqueda->id == $this->id){
+            $this->lote->fecha_hora_fin = date('Y-m-d H:i:s');
+            $this->lote->save();
         }
     }
 }
