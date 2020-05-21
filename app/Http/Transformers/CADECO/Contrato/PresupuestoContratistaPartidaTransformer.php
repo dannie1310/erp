@@ -30,7 +30,8 @@ class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
             'descuento' => $model->PorcentajeDescuento,
             'precio_total' => $model->precio_total,
             'precio_total_moneda' => $model->precio_total_moneda,
-            'observaciones' => ($model->observaciones) ? $model->observaciones : null
+            'observaciones' => ($model->Observaciones) ? $model->Observaciones : null,
+            'presupuesto' => ($model->no_cotizado == 0) ? true :false,
         ];
     }
 
