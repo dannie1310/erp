@@ -90,8 +90,7 @@ class Poliza extends Model
     public function relaciona($busqueda)
     {
         $poliza_relacionada = $this->getPolizaRelacionada($busqueda);
-        $relacion = null;
-
+        $relaciones = [];
         if ($poliza_relacionada) {
             $datos_relacion = [
                 "id_poliza_a" => $this->Id,
@@ -100,29 +99,58 @@ class Poliza extends Model
                 "base_datos_b" => $busqueda->base_datos_referencia,
                 "tipo_relacion" => $busqueda->id_tipo_busqueda,
             ];
-            RelacionPolizas::registrar($datos_relacion);
-            $this->relaciona_movimientos($busqueda);
-
+            $relacion_poliza = RelacionPolizas::registrar($datos_relacion);
+            $relaciones_movimientos = $this->relaciona_movimientos($busqueda);
+            if ($relacion_poliza) {
+                $relaciones["relacion_poliza"] = $relacion_poliza;
+                $this->resuelveIncidenteNoEncontrada($busqueda);
+            }
+            if ($relaciones_movimientos) {
+                $relaciones["relaciones_movimientos"] = $relaciones_movimientos;
+            }
+        } else {
+            $this->registraIncidenteNoEncontrada($busqueda);
         }
-        return $relacion;
+        return $relaciones;
+    }
+
+    private function resuelveIncidenteNoEncontrada($busqueda){
+        $datos_diferencia = [
+            "id_poliza" => $this->Id,
+            "base_datos_revisada" => $busqueda->base_datos_busqueda,
+            "base_datos_referencia" => $busqueda->base_datos_referencia,
+            "id_tipo" => 1,
+            "tipo_busqueda" => $busqueda->id_tipo_busqueda,
+            "id_busqueda"=>$busqueda->id,
+        ];
+        $diferencia_prexistente = Diferencia::buscarSO($datos_diferencia);
+        if($diferencia_prexistente){
+            $diferencia_prexistente->corregir($busqueda->id);
+        }
+    }
+
+    private function registraIncidenteNoEncontrada($busqueda){
+        $datos_diferencia = [
+            "id_poliza" => $this->Id,
+            "base_datos_revisada" => $busqueda->base_datos_busqueda,
+            "base_datos_referencia" => $busqueda->base_datos_referencia,
+            "id_tipo" => 1,
+            "tipo_busqueda" => $busqueda->id_tipo_busqueda,
+            "observaciones" => "",
+            "id_busqueda"=>$busqueda->id,
+        ];
+        Diferencia::registrar($datos_diferencia);
     }
 
     private function relaciona_movimientos($busqueda)
     {
+        $relaciones_movimientos = [];
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $busqueda->base_datos_busqueda);
         $movimientos = $this->movimientos()->orderBy("NumMovto")->get();
         $poliza_relacionada = $this->getPolizaRelacionada($busqueda);
         $movimientos_referencia = $poliza_relacionada->movimientos()->orderBy("NumMovto")->get();
         if (count($movimientos) == count($movimientos_referencia)) {
-            $datos_correccion = [
-                "id_poliza" => $this->Id,
-                "base_datos_revisada" => $busqueda->base_datos_busqueda,
-                "base_datos_referencia" => $busqueda->base_datos_referencia,
-                "id_tipo" => 4,
-                "tipo_busqueda" => $busqueda->id_tipo_busqueda,
-            ];
-            Diferencia::aplicarCorreccion($datos_correccion);
             $i = 0;
             foreach ($movimientos as $movimiento) {
                 $datos_relacion = [
@@ -132,19 +160,10 @@ class Poliza extends Model
                     "base_datos_b" => $busqueda->base_datos_refetencia,
                     "tipo_relacion" => $busqueda->id_tipo_busqueda,
                 ];
-                RelacionMovimientos::registrar($datos_relacion);
+                $relaciones_movimientos[$i] = RelacionMovimientos::registrar($datos_relacion);
                 $i++;
             }
-        } else {
-            $datos_diferencia = [
-                "id_poliza" => $this->Id,
-                "base_datos_revisada" => $busqueda->base_datos_busqueda,
-                "base_datos_referencia" => $busqueda->base_datos_referencia,
-                "id_tipo" => 4,
-                "tipo_busqueda" => $busqueda->id_tipo_busqueda,
-                "observaciones" => 'a: ' . count($movimientos) . ' b: ' . count($movimientos_referencia)
-            ];
-            Diferencia::registrar($datos_diferencia);
         }
+        return $relaciones_movimientos;
     }
 }

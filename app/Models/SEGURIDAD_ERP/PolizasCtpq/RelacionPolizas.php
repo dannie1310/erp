@@ -13,6 +13,7 @@ use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Facades\BusquedaDiferenciasPolizas;
 
 class RelacionPolizas extends Model
 {

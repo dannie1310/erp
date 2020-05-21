@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 
+use App\Facades\BusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Database\Eloquent\Model;
@@ -54,18 +55,17 @@ class Busqueda extends Model
 
     public function procesarBusquedaDiferencias()
     {
-        #generar relaciones entre polizas
         $polizas = $this->obtienePolizasRevisar();
 
         foreach ($polizas as $poliza) {
-            $relacion = $poliza->relaciona($this);
-            if($relacion)
+            $relaciones = $poliza->relaciona($this);
+            if(key_exists("relacion_poliza",$relaciones))
             {
-
+                if($relaciones["relacion_poliza"]){
+                    $busqueda = New BusquedaDiferenciasPolizas($relaciones["relacion_poliza"], $this);
+                    $busqueda->buscarDiferenciasPolizas();
+                }
             }
         }
-        #generar relaciones entre movimientos
-        #validar información polizas vs polizas referencia
-        #validar información movimientos vs movimientos referencia
     }
 }

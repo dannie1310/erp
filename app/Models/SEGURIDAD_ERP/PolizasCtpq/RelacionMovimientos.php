@@ -72,7 +72,8 @@ class RelacionMovimientos extends Model
             ->where("tipo_relacion",$datos_relacion["tipo_relacion"])
             ->first();
         if(!$relacion){
-            RelacionMovimientos::create($datos_relacion);
+            $relacion = RelacionMovimientos::create($datos_relacion);
         }
+        return $relacion;
     }
 }

@@ -29,16 +29,55 @@ class Diferencia extends Model
         "fecha_hora_resolucion",
         "observaciones",
         "tipo_busqueda",
+        "id_busqueda"
     ];
 
+    public static function buscarSO($data){
+        $diferencia = null;
+        if(key_exists("id_movimiento", $data)){
+            $diferencia = Diferencia::activos()->where("id_poliza",$data["id_poliza"])
+                ->where("id_movimiento",$data["id_movimiento"])
+                ->where("base_datos_revisada",$data["base_datos_revisada"])
+                ->where("base_datos_referencia",$data["base_datos_referencia"])
+                ->where("id_tipo",$data["id_tipo"])
+                ->where("tipo_busqueda",$data["tipo_busqueda"])
+                ->first();
+        } else {
+            $diferencia = Diferencia::activos()->where("id_poliza",$data["id_poliza"])
+                ->where("base_datos_revisada",$data["base_datos_revisada"])
+                ->where("base_datos_referencia",$data["base_datos_referencia"])
+                ->where("id_tipo",$data["id_tipo"])
+                ->where("tipo_busqueda",$data["tipo_busqueda"])
+                ->first();
+        }
+        return $diferencia;
+    }
+
+    public static function buscar($data)
+    {
+        $diferencia = null;
+        if(key_exists("id_movimiento", $data)){
+            $diferencia = Diferencia::activos()->where("id_poliza",$data["id_poliza"])
+                ->where("id_movimiento",$data["id_movimiento"])
+                ->where("base_datos_revisada",$data["base_datos_revisada"])
+                ->where("base_datos_referencia",$data["base_datos_referencia"])
+                ->where("id_tipo",$data["id_tipo"])
+                ->where("tipo_busqueda",$data["tipo_busqueda"])
+                ->where("observaciones",$data["observaciones"])
+                ->first();
+        } else {
+            $diferencia = Diferencia::activos()->where("id_poliza",$data["id_poliza"])
+                ->where("base_datos_revisada",$data["base_datos_revisada"])
+                ->where("base_datos_referencia",$data["base_datos_referencia"])
+                ->where("id_tipo",$data["id_tipo"])
+                ->where("tipo_busqueda",$data["tipo_busqueda"])
+                ->where("observaciones",$data["observaciones"])
+                ->first();
+        }
+        return $diferencia;
+    }
     public static function registrar($data){
-        $diferencia = Diferencia::activos()->where("id_poliza",$data["id_poliza"])
-            ->where("base_datos_revisada",$data["base_datos_revisada"])
-            ->where("base_datos_referencia",$data["base_datos_referencia"])
-            ->where("id_tipo",$data["id_tipo"])
-            ->where("tipo_busqueda",$data["tipo_busqueda"])
-            ->where("observaciones",$data["observaciones"])
-            ->first();
+        $diferencia = Diferencia::buscar($data);
         if(!$diferencia)
         {
             Diferencia::create($data);
@@ -108,11 +147,11 @@ class Diferencia extends Model
         }
     }
 
-    public function corregir()
+    public function corregir($id_busqueda = 1)
     {
         $this->activo = 0;
         $this->fecha_hora_resolucion = date('Y-m-d H:i:s');
-        $this->correccion()->create(["id_busqueda"=>1]);
+        $this->correccion()->create(["id_busqueda"=>$id_busqueda]);
         $this->save();
     }
 }
