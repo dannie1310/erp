@@ -42,7 +42,7 @@
                                                     <td class="bg-gray-light"><b>Fecha:</b></td>
                                                     <td class="bg-gray-light">{{presupuesto.fecha_format}}</td>
                                                     <td class="bg-gray-light"><b>Importe:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.monto_format}}</td>
+                                                    <td class="bg-gray-light">{{'$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',',')}}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -83,7 +83,7 @@
                                                         <td class="money">{{partida.precio_total}}</td>
                                                         <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
                                                         <td class="money">{{partida.precio_total_moneda}}</td>
-                                                        <td>{{partida.observaciones}}</td>
+                                                        <td>{{(partida.observaciones) ? partida.observaciones : '-------------------'}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

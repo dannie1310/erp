@@ -33,4 +33,9 @@ class PresupuestoContratistaService
      {
          return $this->repository->show($id);
      }
+
+     public function update(array $data, $id)
+     {
+         return $this->repository->show($id)->actualizar($data);
+     }
 }
