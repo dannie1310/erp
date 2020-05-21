@@ -9,12 +9,8 @@
 namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 
-use App\Utils\BusquedaDiferenciasMovimientos;
-use App\Utils\BusquedaDiferenciasPolizas;
-use App\Models\CTPQ\Poliza;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
+use App\Models\IGH\Usuario;
 
 class LoteBusqueda extends Model
 {
@@ -40,5 +36,21 @@ class LoteBusqueda extends Model
     public function diferencias_corregidas()
     {
         return $this->hasManyThrough(DiferenciaCorregida::class,Busqueda::class,"id_lote","id_busqueda","id","id");
+    }
+
+    public function getFechaHoraInicioFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_inicio);
+        return date_format($date, "d/m/Y H:i:s");
+    }
+
+    public function getFechaHoraFinFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_fin);
+        return date_format($date, "d/m/Y H:i:s");
+    }
+
+    public function usuario(){
+        return $this->belongsTo(Usuario::class, 'usuario_inicio', 'idusuario');
     }
 }

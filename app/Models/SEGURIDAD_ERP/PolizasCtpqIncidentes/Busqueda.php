@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 
+use App\Events\FinalizaProcesamientoLoteBusquedas;
 use App\Utils\BusquedaDiferenciasMovimientos;
 use App\Utils\BusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
@@ -91,6 +92,9 @@ class Busqueda extends Model
         if($ultima_busqueda->id == $this->id){
             $this->lote->fecha_hora_fin = date('Y-m-d H:i:s');
             $this->lote->save();
+            event(new FinalizaProcesamientoLoteBusquedas(
+                $this->lote
+            ));
         }
     }
 }
