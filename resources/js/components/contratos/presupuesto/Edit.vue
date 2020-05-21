@@ -494,11 +494,11 @@
             },
             dolar()
             {
-                return '$ ' + parseFloat(this.tipo_cambio[2]).formatMoney(2,'.',',');
+                return '$ ' + parseFloat(this.tipo_cambio[2]).formatMoney(4,'.',',');
             },
             euro()
             {
-                return '$ ' + parseFloat(this.tipo_cambio[3]).formatMoney(2,'.',',');
+                return '$ ' + parseFloat(this.tipo_cambio[3]).formatMoney(4,'.',',');
             },
             importe()
             {
