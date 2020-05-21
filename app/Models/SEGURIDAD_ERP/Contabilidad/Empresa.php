@@ -90,6 +90,11 @@ class Empresa extends Model
         return $query->where('Desarrollo', '=', 1);
     }
 
+    public function scopeProduccion($query)
+    {
+        return $query->where('Desarrollo', '=', 0);
+    }
+
     public function scopeDisponibles($query)
     {
         return $query->whereRaw('(Consolidadora = 0 or Consolidadora is null)')->whereNull('IdConsolidadora');

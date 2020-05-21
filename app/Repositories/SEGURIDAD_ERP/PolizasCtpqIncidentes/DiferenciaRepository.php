@@ -31,7 +31,12 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
 
     public function getListaEmpresasConsolidadoras()
     {
-        return Empresa::consolidadora()->desarrollo()->conComponentes()->get();
+        $env = config('app.env_variables.APP_ENV');
+        if ($env === "production") {
+            return Empresa::consolidadora()->produccion()->conComponentes()->get();
+        } else {
+            return Empresa::consolidadora()->desarrollo()->conComponentes()->get();
+        }
     }
 
     public function getListaEmpresasConsolidantes()
