@@ -183,18 +183,11 @@ class SolicitudEdicionService
         return $partidas;
     }
 
-    public function impresionPolizas($id){
-        $folios  = $this->repository->show($id)->polizas;
-
-  //      $f = $folios->pluck('folio')->toArray();
-     //   sort($f);
-        foreach ($folios as $folio) {
-            DB::purge('cntpq');
-            \Config::set('database.connections.cntpq.database', $folio->bd_contpaq);
-            $pdf = new PolizaFormato(Poliza::find('338943'),$folio->empresa);
-            return $pdf->create();
-        }
-      //  dd('panda', $folios, $f);
+    public function impresionPolizas($id)
+    {
+        $folios = $this->repository->show($id)->polizas;
+        $pdf = new PolizaFormato($folios);
+        return $pdf->create();
     }
 
     public function procesaSolicitudXLS($nombre_archivo, $archivo_xls)

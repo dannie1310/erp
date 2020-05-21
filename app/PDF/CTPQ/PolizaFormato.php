@@ -4,16 +4,18 @@
 namespace App\PDF\CTPQ;
 
 
-use App\Models\CTPQ\Poliza;
-use DateInterval;
 use DateTime;
+use DateInterval;
 use Ghidev\Fpdf\Rotation;
+use App\Models\CTPQ\Poliza;
+use Illuminate\Support\Facades\DB;
 
 class PolizaFormato extends Rotation
 {
     private $poliza;
     private $encabezado_pdf = '';
     private $empresa;
+    private $folios;
 
     const DPI = 96;
     const MM_IN_INCH = 25.4;
@@ -27,14 +29,12 @@ class PolizaFormato extends Rotation
     private $suma_abono = 0;
     private $mes;
     private $anio;
-
     private $footer_encola = false;
 
-    public function __construct(Poliza $poliza, $empresa)
+    public function __construct($folio)
     {
         parent::__construct('P', 'cm', 'Letter');
-        $this->poliza = $poliza;
-        $this->empresa = $empresa;
+        $this->folios = $folio;
         $this->SetAutoPageBreak(true, 5);
         $this->WidthTotal = $this->GetPageWidth() - 2;
         $this->txtTitleTam = 18;
@@ -42,8 +42,6 @@ class PolizaFormato extends Rotation
         $this->txtSeccionTam = 9;
         $this->txtContenidoTam = 11;
         $this->txtFooterTam = 6;
-        $this->mes = substr($this->poliza->fecha_mes_letra_format, 3,3);
-        $this->anio = substr($this->poliza->fecha_mes_letra_format, 7,4);
     }
 
     function Header()
@@ -212,11 +210,22 @@ class PolizaFormato extends Rotation
     }
 
     function create() {
-        $this->SetMargins(1, 0.9, 1);
-        $this->AliasNbPages();
-        $this->AddPage();
-        $this->SetAutoPageBreak(true,5);
-        $this->partidas();
+        foreach ($this->folios as $folio) {
+
+            DB::purge('cntpq');
+            \Config::set('database.connections.cntpq.database', $folio->bd_contpaq);
+            $this->poliza = Poliza::find($folio->id_poliza);
+            $this->empresa = $folio->empresa;
+            $this->mes = substr($this->poliza->fecha_mes_letra_format, 3,3);
+            $this->anio = substr($this->poliza->fecha_mes_letra_format, 7,4);
+            $this->SetMargins(1, 0.9, 1);
+            $this->AliasNbPages();
+            $this->AddPage();
+            $this->SetAutoPageBreak(true,5);
+            $this->partidas();
+
+        }
+
 
         try {
             $this->Output('I', "Formato - poliza.pdf", 1);
