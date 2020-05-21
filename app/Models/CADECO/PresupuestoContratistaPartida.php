@@ -12,6 +12,13 @@ class PresupuestoContratistaPartida extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'precio_unitario',
+        'no_cotizado',
+        'PorcentajeDescuento',
+        'IdMoneda',
+        'Observaciones'
+    ];
 
     public function concepto()
     {
@@ -40,6 +47,22 @@ class PresupuestoContratistaPartida extends Model
             break;
             case(3):
                 return '$ '. number_format(($this->precio_unitario) / $this->presupuesto->TcEuro, 2, '.', ',');
+            break;
+        }
+    }
+
+    public function getPrecioUnitarioConvertAttribute()
+    {        
+        switch($this->IdMoneda)
+        {
+            case(1):
+                return $this->precio_unitario;
+            break;
+            case(2):
+                return ($this->precio_unitario / $this->presupuesto->TcUSD);
+            break;
+            case(3):
+                return ($this->precio_unitario / $this->presupuesto->TcEuro);
             break;
         }
     }

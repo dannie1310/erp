@@ -159,6 +159,7 @@
                                                                 type="number"
                                                                 step=".01"
                                                                 max="100"
+                                                                min="0"
                                                                 name="descuento_cot"
                                                                 v-model="descuento_cot"
                                                                 v-validate="{required: true,}"
@@ -172,20 +173,20 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Precios Dolar (USD):</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(dolares)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(dolares)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Precios EURO:</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(4,'.',',')}}</label>
                                     </div>
-                                    <!-- <div class=" col-md-12" align="right">
+                                    <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">TC USD:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{dolar}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">TC EURO:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</label>
-                                    </div> -->
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{euro}}</label>
+                                    </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
@@ -207,6 +208,7 @@
                                                                 type="number"
                                                                 step=".01"
                                                                 max="100"
+                                                                min="0"
                                                                 name="anticipo"
                                                                 v-model="anticipo"
                                                                 v-validate="{required: true,}"
@@ -222,6 +224,7 @@
                                                                 :disabled="cargando"
                                                                 type="number"
                                                                 step="1"
+                                                                min="0"
                                                                 name="credito"
                                                                 v-model="credito"
                                                                 v-validate="{required: true,}"
@@ -237,6 +240,7 @@
                                                                 :disabled="cargando"
                                                                 type="number"
                                                                 step="1"
+                                                                min="0"
                                                                 name="vigencia"
                                                                 v-model="vigencia"
                                                                 v-validate="{required: true,}"
@@ -296,46 +300,36 @@
                 fecha : '',
                 descuento_cot : '0.00',
                 tipo_cambio: [],
-                proveedores : [],
-                sucursales: [],
-                id_sucursal: '',
-                id_proveedor : '',
                 id_tipo : '',
-                solicitudes : [],
-                concepto : '',
                 monedas: [],
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
                 presupuesto: '',
                 moneda_input:[],
-                sucursal: true,
                 observaciones_inputs:[],
                 observaciones : '',
                 precio: [],
                 x: 0,
-                pago: 0,
                 post: {
-                    id_cotizacion: '',
+                    id_presupuesto: '',
                     fecha: '',
                     moneda: [],
+                    partidas: [],
                     precio: [],
                     enable: [],
                     descuento: [],
                     descuento_cot: '',
-                    pago: '',
                     anticipo: '',
                     credito: '',
-                    tiempo: '',
                     vigencia: '',
-                    importe: '',
+                    subtotal: '',
                     impuesto: '',
                     observaciones: '',
                     tipo_cambio: []
                 },
                 anticipo: 0,
                 credito: 0,
-                tiempo: 0,
                 vigencia: 0,
                 descuento: [],
                 enable: []
@@ -370,8 +364,7 @@
             },
             salir()
             {
-                //  this.$router.push({name: 'presupuesto'}); 
-                console.log(this.$data);
+                 this.$router.push({name: 'presupuesto'});
                 
             },
             find() {
@@ -401,9 +394,7 @@
                 while(this.x < this.presupuesto.partidas.data.length)
                 {                    
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
-                    {     
-                        console.log('empieza a calcular');
-                                           
+                    {                                           
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
                             this.pesos = (this.pesos + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] - 
@@ -421,9 +412,7 @@
                         }                       
                     }
                     this.x ++;                    
-                }    
-                console.log('Pesoss', this.pesos, 'Dolares', this.dolares, 'Euros', this.euros);
-                     
+                }                     
             },
             ordenar()
             {                
@@ -431,7 +420,7 @@
                 while(this.x < this.presupuesto.partidas.data.length)
                 {
                         this.enable[this.x] = this.presupuesto.partidas.data[this.x].presupuesto;
-                        this.precio[this.x] = this.presupuesto.partidas.data[this.x].precio_unitario;
+                        this.precio[this.x] = this.presupuesto.partidas.data[this.x].precio_unitario_convert;
                         this.moneda_input[this.x] = (this.presupuesto.partidas.data[this.x].id_moneda != 0) ? this.presupuesto.partidas.data[this.x].id_moneda : 1;
                         this.descuento[this.x] = (this.presupuesto.partidas.data[this.x].descuento > 0) ? this.presupuesto.partidas.data[this.x].descuento : 0;
                     this.x ++;                    
@@ -452,22 +441,20 @@
                 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.post.partidas = this.cotizacion.partidas.data;
-                        this.post.id_cotizacion = this.id;
-                        this.post.fecha = this.cotizacion.fecha;
+                        this.post.partidas = this.presupuesto.partidas.data;
+                        this.post.id_presupuesto = this.id;
+                        this.post.fecha = this.presupuesto.fecha;
                         this.post.moneda = this.moneda_input;
                         this.post.precio = this.precio;
                         this.post.enable = this.enable;
                         this.post.descuento = this.descuento;
                         this.post.descuento_cot = this.descuento_cot;
-                        this.post.pago = this.pago;
                         this.post.anticipo = this.anticipo;
                         this.post.credito = this.credito;
-                        this.post.tiempo = this.tiempo;
                         this.post.vigencia = this.vigencia;
-                        this.post.importe = this.total;
+                        this.post.subtotal = this.subtotal;
                         this.post.impuesto = this.iva;
-                        this.post.observaciones = this.cotizacion.observaciones;
+                        this.post.observaciones = this.presupuesto.observaciones;
                         this.post.tipo_cambio = this.tipo_cambio;
                         this.save()
                     }                    
@@ -480,20 +467,18 @@
                     swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
                 }
                 else
-                {   return this.$store.dispatch('compras/cotizacion/update', {
-                    id: this.id,
-                    post: this.post
-                })
+                {                    
+                    return this.$store.dispatch('contratos/presupuesto/update', {
+                        id: this.id,
+                        post: this.post
+                        })
                     .then((data) => {
-                        this.$router.push({name: 'cotizacion'});
+                        this.$router.push({name: 'presupuesto'});
                     });                
                 }
             },
         },
         computed: {
-            solicitud(){
-                return this.$store.getters['compras/solicitud-compra/currentSolicitud'];
-            },
             subtotal()
             {
                 return ((this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3])) - 
@@ -509,11 +494,11 @@
             },
             dolar()
             {
-                return '$ ' + this.monedas[1].tipo_cambio_igh;
+                return '$ ' + parseFloat(this.tipo_cambio[2]).formatMoney(2,'.',',');
             },
             euro()
             {
-                return '$ ' + this.monedas[2].tipo_cambio_igh;
+                return '$ ' + parseFloat(this.tipo_cambio[3]).formatMoney(2,'.',',');
             },
             importe()
             {
