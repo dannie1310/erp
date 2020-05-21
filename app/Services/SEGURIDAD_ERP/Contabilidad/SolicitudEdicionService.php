@@ -191,7 +191,7 @@ class SolicitudEdicionService
         foreach ($folios as $folio) {
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $folio->bd_contpaq);
-            $pdf = new PolizaFormato(Poliza::find($folio->id_poliza),$folio->empresa);
+            $pdf = new PolizaFormato(Poliza::find('338943'),$folio->empresa);
             return $pdf->create();
         }
       //  dd('panda', $folios, $f);
