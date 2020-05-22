@@ -38,4 +38,9 @@ class PresupuestoContratistaService
      {
          return $this->repository->show($id)->actualizar($data);
      }
+
+     public function delete($data, $id)
+    {
+        return $this->show($id)->eliminarPresupuesto($data['data']);
+    }
 }
