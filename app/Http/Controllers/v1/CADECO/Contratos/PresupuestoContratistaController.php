@@ -42,6 +42,7 @@ class PresupuestoContratistaController extends Controller
          $this->middleware('auth:api');         
          $this->middleware('context');
          $this->middleware('permiso:consultar_presupuesto_contratista')->only(['show','paginate','index','find']);
+         $this->middleware('permiso:editar_presupuesto_contratista')->only('update');
 
          $this->fractal = $fractal;
          $this->service = $service;

@@ -1394,6 +1394,18 @@ export const routes = [
                             permission: 'consultar_presupuesto_contratista'
                         }
                     },
+                    {
+                        path: ':id/editar',
+                        name: 'presupuesto-edit',
+                        props: true,
+                        component: require('./components/contratos/presupuesto/Edit').default,
+                        meta: {
+                            title: 'Editar Presupuesto Contratista',
+                            breadcrumb: { parent: 'presupuesto', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_presupuesto_contratista'
+                        }
+                    },
                 ]
             },
             {
