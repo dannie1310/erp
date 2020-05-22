@@ -23,10 +23,12 @@ class BusquedaDiferenciasMovimientos
     protected $movimiento_b;
     protected $relacion;
     protected $id_busqueda;
+    protected $busqueda;
 
     public function __construct(RelacionMovimientos $relacion, Busqueda $busqueda) {
         $this->relacion = $relacion;
         $this->id_busqueda = $busqueda->id;
+        $this->busqueda;
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $relacion->base_datos_a);
         $this->movimiento_a = PolizaMovimiento::find($relacion->id_movimiento_a);
@@ -66,6 +68,9 @@ class BusquedaDiferenciasMovimientos
 
     private function buscaDiferenciaCodigoCuentaMovimiento()
     {
+        $codigo_a = trim($this->movimiento_a->cuenta->Codigo);
+        $codigo_b = trim($this->movimiento_b->cuenta->Codigo);
+
         if((trim($this->movimiento_a->cuenta->Codigo) != trim($this->movimiento_b->cuenta->Codigo)))
         {
             $datos_diferencia = $this->getInformacionDiferencia();
@@ -178,52 +183,12 @@ class BusquedaDiferenciasMovimientos
         }
     }
 
-    private function buscaDiferenciaSumaImportesPoliza()
+    private function getCodigoCuentaValidacion($codigo)
     {
-        if($this->poliza_a->Cargos != $this->poliza_b->Abonos)
+        if(in_array($this->busqueda,[2,3]))
         {
-            $datos_diferencia = $this->getInformacionDiferencia();
-            $datos_diferencia["id_tipo"] = 3;
-            $datos_diferencia["observaciones"] = 'a: ' . $this->poliza_a->Cargos . ' b: ' . $this->poliza_b->Abonos;
-            Diferencia::registrar($datos_diferencia);
 
-        } else {
-            $datos_diferencia = $this->getInformacionDiferencia();
-            $datos_diferencia["id_tipo"] = 3;
-            $diferencia_prexistente = Diferencia::buscarSO($datos_diferencia);
-            if($diferencia_prexistente){
-                $diferencia_prexistente->corregir($this->id_busqueda);
-            }
         }
+        return $codigo;
     }
-
-    private function buscaDiferenciaNumMovimientosPoliza()
-    {
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', $this->relacion->base_datos_a);
-        $movimientos_a = $this->poliza_a->movimientos()->orderBy("NumMovto")->get();
-
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', $this->relacion->base_datos_b);
-        $movimientos_b = $this->poliza_b->movimientos()->orderBy("NumMovto")->get();
-
-        if(count($movimientos_a) != count($movimientos_b))
-        {
-            $datos_diferencia = $this->getInformacionDiferencia();
-            $datos_diferencia["id_tipo"] = 4;
-            $datos_diferencia["observaciones"] = 'a: ' . count($movimientos_a) . ' b: ' . count($movimientos_b);
-            Diferencia::registrar($datos_diferencia);
-
-        } else {
-            $datos_diferencia = $this->getInformacionDiferencia();
-            $datos_diferencia["id_tipo"] = 4;
-            $diferencia_prexistente = Diferencia::buscarSO($datos_diferencia);
-            if($diferencia_prexistente){
-                $diferencia_prexistente->corregir($this->id_busqueda);
-            }
-        }
-    }
-
-
-
 }

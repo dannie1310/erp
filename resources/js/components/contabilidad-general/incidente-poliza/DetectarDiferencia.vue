@@ -16,6 +16,7 @@
                              <option value="1">Individual vs Consolidada</option>
                              <option value="2">Individual vs Individual Histórica</option>
                              <option value="3">Consolidada vs Consolidada Histórica</option>
+                             <option value="4">Individual Histórica vs Consolidada Histórica</option>
                          </select>
                      </div>
                  </div>
@@ -34,6 +35,10 @@
                         <tr>
                             <th style="text-align: left" >Folio:</th>
                             <td style="text-align: right">{{resultado.folio}}</td>
+                        </tr>
+                        <tr>
+                            <th style="text-align: left" >Tipo:</th>
+                            <td style="text-align: right">{{resultado.tipo_busqueda}}</td>
                         </tr>
                         <tr>
                             <th style="text-align: left" >Usuario Solicito:</th>

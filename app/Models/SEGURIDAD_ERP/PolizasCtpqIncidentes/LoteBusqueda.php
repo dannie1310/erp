@@ -12,6 +12,7 @@ namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
 use Illuminate\Support\Facades\DB;
+use App\Events\FinalizaProcesamientoLoteBusquedas;
 
 class LoteBusqueda extends Model
 {
@@ -21,7 +22,8 @@ class LoteBusqueda extends Model
     protected $fillable = [
         "usuario_inicio",
         "fecha_hora_inicio",
-        "fecha_hora_fin"
+        "fecha_hora_fin",
+        "id_tipo_busqueda"
     ];
 
     public function busquedas()
@@ -85,5 +87,35 @@ class LoteBusqueda extends Model
     public static function getLoteActivo()
     {
         return LoteBusqueda::whereNull("fecha_hora_fin")->first();
+    }
+
+    public function getTipoStrAttribute()
+    {
+        $tipo = "";
+        switch ($this->id_tipo_busqueda)
+        {
+            case 1:
+                $tipo = "Individual vs Consolidada";
+                break;
+            case 2:
+                $tipo = "Individual vs Individual Histórica";
+                break;
+            case 3:
+                $tipo = "Consolidada vs Consolidada Histórica";
+                break;
+            case 4:
+                $tipo = "Individual Histórica vs Consolidada Histórica";
+                break;
+        }
+        return $tipo;
+    }
+
+    public function finaliza()
+    {
+        $this->fecha_hora_fin = date('Y-m-d H:i:s');
+        $this->save();
+        event(new FinalizaProcesamientoLoteBusquedas(
+            $this
+        ));
     }
 }

@@ -43,6 +43,11 @@ class Empresa extends Model
         return $this->hasMany(self::class, 'IdConsolidadora', 'Id');
     }
 
+    public function empresa_historica()
+    {
+        return $this->hasOne(self::class, 'Id', 'IdHistorica');
+    }
+
     public function empresa_consolidadora()
     {
         return $this->hasOne(self::class, 'Id', 'IdConsolidadora');
@@ -80,9 +85,24 @@ class Empresa extends Model
         return $query->where('Consolidadora', '=', 1);
     }
 
+    public function scopeHistorica($query)
+    {
+        return $query->where('Historica', '=', 1);
+    }
+
+    public function scopeIndividual($query)
+    {
+        return $query->where('Consolidadora', '=', 0);
+    }
+
     public function scopeConComponentes($query)
     {
         return $query->whereHas('empresas_consolidantes');
+    }
+
+    public function scopeConHistorica($query)
+    {
+        return $query->whereHas('empresa_historica');
     }
 
     public function scopeDesarrollo($query)

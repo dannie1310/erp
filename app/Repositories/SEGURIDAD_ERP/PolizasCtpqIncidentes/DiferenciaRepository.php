@@ -39,8 +39,53 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
         }
     }
 
+    public function getListaEmpresasConsolidadorasHistoricas()
+    {
+        $env = config('app.env');
+        if ($env === "production") {
+            return Empresa::consolidadora()->historica()->produccion()->conComponentes()->get();
+        } else {
+            return Empresa::consolidadora()->historica()->desarrollo()->conComponentes()->get();
+        }
+    }
+
+    public function getListaEmpresasConsolidadorasConHistorica()
+    {
+        $env = config('app.env_variables.APP_ENV');
+        if ($env === "production") {
+            return Empresa::consolidadora()->produccion()->conHistorica()->get();
+        } else {
+            return Empresa::consolidadora()->desarrollo()->conHistorica()->get();
+        }
+    }
+
+    public function getListaEmpresasIndividuales(){
+        $env = config('app.env_variables.APP_ENV');
+        if ($env === "production") {
+            return Empresa::individual()->produccion()->conHistorica()->get();
+        } else {
+            return Empresa::individual()->desarrollo()->conHistorica()->get();
+        }
+
+    }
+
+    public function getListaEmpresasConsolidantesHistoricas()
+    {
+        $empresas_consolidantes = [];
+        $empresas_consolidadoras = $this->getListaEmpresasConsolidadorasHistoricas();
+        $i = 0;
+        foreach ($empresas_consolidadoras as $empresa_consolidadora) {
+            foreach ($empresa_consolidadora->empresas_consolidantes as $empresa_consolidante) {
+                $empresas_consolidantes[] = $empresa_consolidante;
+                $i++;
+            }
+        }
+        return $empresas_consolidantes;
+    }
+
     public function getListaEmpresasConsolidantes()
     {
+        $empresas_consolidantes = [];
         $empresas_consolidadoras = $this->getListaEmpresasConsolidadoras();
         $i = 0;
         foreach ($empresas_consolidadoras as $empresa_consolidadora) {
@@ -57,10 +102,10 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
         return Busqueda::create($data);
     }
 
-    public function generaLoteBusqueda()
+    public function generaLoteBusqueda($tipo_busqueda)
     {
         if (!LoteBusqueda::getLoteActivo()) {
-            return LoteBusqueda::create(["usuario_inicio" => auth()->id()]);
+            return LoteBusqueda::create(["usuario_inicio" => auth()->id(), "id_tipo_busqueda" => $tipo_busqueda]);
         } else {
             return null;
         }

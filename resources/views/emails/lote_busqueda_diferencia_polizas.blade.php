@@ -13,6 +13,14 @@
     <h3></h3>
     <hr />
     <div class="row">
+        <div class="col-md-4" >
+            <div class="form-group" >
+                <label><b>Tipo de Búsqueda:</b></label>
+                {{$lote->tipo_str}}
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-3" >
             <div class="form-group" >
                 <label><b>Usuario Solicitó Busqueda:</b></label>

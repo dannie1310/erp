@@ -90,11 +90,7 @@ class Busqueda extends Model
         $this->save();
         $ultima_busqueda = $this->lote->busquedas()->orderBy("id","desc")->first();
         if($ultima_busqueda->id == $this->id){
-            $this->lote->fecha_hora_fin = date('Y-m-d H:i:s');
-            $this->lote->save();
-            event(new FinalizaProcesamientoLoteBusquedas(
-                $this->lote
-            ));
+            $this->lote->finaliza();
         }
     }
 }
