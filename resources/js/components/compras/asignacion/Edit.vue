@@ -63,6 +63,11 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
+                                <button type="button" class="btn btn-primary " @click="generarOC" >Generar Ordenes de Compra</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <br/>
                                 <div class="col-12 table-responsive">
                                     <table class="table table-striped">
@@ -71,7 +76,7 @@
                                                 <th colspan="4" rowspan="4" class="text-left"><h5></h5></th>
                                             </tr>
                                             <tr class="bg-gray-light">
-                                                <th colspan="6" >
+                                                <th colspan="4" >
                                                     <select
                                                         type="text"
                                                         name="id_transaccion"
@@ -81,6 +86,9 @@
                                                         v-model="id_transaccion">
                                                         <option v-for="asignacion in asignaciones.data" :value="asignacion.id_transaccion">{{ asignacion.razon_social }}</option>
                                                     </select>
+                                                </th>
+                                                <th colspan="2" >
+                                                    <button type="button" class="btn btn-primary pull-right" @click="generarOC" >Generar Orden Compra</button> 
                                                 </th>
                                             </tr>
                                             <tr class="bg-gray-light">
@@ -130,7 +138,7 @@
 
 <script>
 export default {
-    name: "asignacion-proveedores-show",
+    name: "asignacion-proveedores-edit",
     props: ['id'],
     data() {
         return {
