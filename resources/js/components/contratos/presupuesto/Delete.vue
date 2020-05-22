@@ -1,28 +1,28 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Presupuesto">
-            <i class="fa fa-eye" v-if="!cargando"></i>
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Presupuesto">
+            <i class="fa fa-trash" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> DETALLES DEL PRESUPUESTO CONTRATISTA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-trash"></i> ELIMINAR PRESUPUESTO CONTRATISTA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" v-if="presupuesto">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="invoice p-3 mb-3">
-                                    <div class="row col-md-12">
+                    <form role="form" @submit.prevent="validate">
+                        <div class="modal-body" v-if="presupuesto">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="invoice p-3 mb-3">
+                                        <div class="row col-md-12">
                                         <div class="col-md-6">
                                             <h5>Folio: &nbsp; <b>{{presupuesto.numero_folio}}</b></h5>
                                         </div>
                                     </div>
-                                    <div class="table-responsive col-md-12">
                                         <table class="table">
                                             <tbody>
                                                 <tr>
@@ -46,13 +46,12 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <h6><b>Detalle de las partidas</b></h6>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h6><b>Detalle de las partidas</b></h6>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
+                                <div class="row">
                                         <div class="table-responsive col-md-12">
                                             <table class="table table-striped">
                                                 <thead>
@@ -118,13 +117,37 @@
                                         <div class="col-md-2"><b>Observaciones:</b></div>
                                         <div class="col-md-6">{{presupuesto.observaciones}}</div>
                                     </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="motivo" class="col-form-label">Motivo de eliminación </label>
+                                            </div>
+                                        </div>  
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group row error-content">
+                                            <textarea
+                                                name="motivo"
+                                                id="motivo"
+                                                v-model="motivo"
+                                                class="form-control"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Motivo"
+                                                :class="{'is-invalid': errors.has('motivo')}"
+                                            ></textarea>
+                                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0">Eliminar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -132,18 +155,37 @@
 </template>
 
 <script>
-    export default {
-        name: "presupuesto-show",
-        props: ['id'],
-        data(){
-            return{
-                cargando: false,
-            }
+export default {
+    name: "presupuesto-eliminar",
+    props: ['id'],
+    data() {
+        return {
+            cargando: false,
+            asignacion: false,
+            partidas: [],
+            motivo: ''
+        }
+    },
+    methods: {
+        destroy() {            
+            return this.$store.dispatch('contratos/presupuesto/delete', {
+                id: this.id,
+                params: {data: this.motivo}
+            })
+            .then(() => {
+                this.$store.dispatch('contratos/presupuesto/paginate', {params: {sort: 'numero_folio', order: 'desc', include: ['contrato_proyectado', 'usuario', 'empresa']}})
+                .then(data => {
+                    this.$store.commit('contratos/presupuesto/SET_PRESUPUESTOS', data.data);
+                    this.$store.commit('contratos/presupuesto/SET_META', data.meta);
+                })
+            }).finally( ()=>{
+                $(this.$refs.modal).modal('hide');
+            });
         },
-        methods: {
-            find() {
+        find() {
 
-                this.cargando = true;                
+                this.cargando = true;
+                this.motivo = '';
                 this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', null);
                 return this.$store.dispatch('contratos/presupuesto/find', {
                     id: this.id,
@@ -160,21 +202,31 @@
                     this.cargando = false;
 
                 })
-            }
+            },
 
-        },
-        computed: {
-            presupuesto() {
+        validate() {
+
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.destroy()
+                    }
+                });
+            },
+    },
+    computed: {
+        presupuesto() {
                 return this.$store.getters['contratos/presupuesto/currentPresupuesto'];
             },
             total()
             {
                 return '$ ' + (parseFloat(this.presupuesto.subtotal) + parseFloat(this.presupuesto.impuesto)).formatMoney(2,'.',',');
             }
-        }
     }
+}
 </script>
-
-<style scoped>
-
+<style>
+    .icons
+    {
+        text-align: center;
+    }
 </style>
