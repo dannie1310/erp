@@ -62,13 +62,20 @@ class Empresa extends Model
 
     public function getEjerciciosAttribute()
     {
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', $this->AliasBDD);
-        $max = Poliza::max("Ejercicio");
-        $min = Poliza::min("Ejercicio");
         $ejercicios = [];
-        for($i= $min; $i<=$max; $i++){
-            $ejercicios[]=$i;
+        try{
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $this->AliasBDD);
+            $max = Poliza::max("Ejercicio");
+            $min = Poliza::min("Ejercicio");
+
+            for($i= $min; $i<=$max; $i++){
+                $ejercicios[]=$i;
+            }
+
+
+        } catch (\Exception $e){
+
         }
         return [2019];
         return $ejercicios;

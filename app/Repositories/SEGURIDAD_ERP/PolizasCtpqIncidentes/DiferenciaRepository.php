@@ -31,7 +31,7 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
 
     public function getListaEmpresasConsolidadoras()
     {
-        $env = config('app.env_variables.APP_ENV');
+        $env = config('app.env');
         if ($env === "production") {
             return Empresa::consolidadora()->produccion()->conComponentes()->get();
         } else {
@@ -51,7 +51,7 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
 
     public function getListaEmpresasConsolidadorasConHistorica()
     {
-        $env = config('app.env_variables.APP_ENV');
+        $env = config('app.env');
         if ($env === "production") {
             return Empresa::consolidadora()->produccion()->conHistorica()->get();
         } else {
@@ -60,7 +60,7 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
     }
 
     public function getListaEmpresasIndividuales(){
-        $env = config('app.env_variables.APP_ENV');
+        $env = config('app.env');
         if ($env === "production") {
             return Empresa::individual()->produccion()->conHistorica()->get();
         } else {

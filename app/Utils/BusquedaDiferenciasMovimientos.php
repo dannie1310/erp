@@ -68,10 +68,26 @@ class BusquedaDiferenciasMovimientos
 
     private function buscaDiferenciaCodigoCuentaMovimiento()
     {
-        $codigo_a = trim($this->movimiento_a->cuenta->Codigo);
-        $codigo_b = trim($this->movimiento_b->cuenta->Codigo);
+        $lcodigo_a = strlen(trim($this->movimiento_a->cuenta->Codigo));
+        $lcodigo_b = strlen(trim($this->movimiento_b->cuenta->Codigo));
+        if($lcodigo_a == $lcodigo_b){
+            $codigo_a = trim($this->movimiento_a->cuenta->Codigo);
+            $codigo_b = trim($this->movimiento_b->cuenta->Codigo);
+        } else if($lcodigo_b == 11 && $lcodigo_a == 13){
+            $codigo_a = trim($this->movimiento_a->cuenta->Codigo);
+            $codigo_b = trim($this->movimiento_b->cuenta->Codigo);
+            $g1 = substr($codigo_b,0,4);
+            $g2 = substr($codigo_b,4,2);
+            $g3 = substr($codigo_b,6,2);
+            $g4 = substr($codigo_b,8,3);
 
-        if((trim($this->movimiento_a->cuenta->Codigo) != trim($this->movimiento_b->cuenta->Codigo)))
+            $codigo_b = $g1.'0'.$g2.'0'.$g3 . $g4;
+        } else {
+            $codigo_a = trim($this->movimiento_a->cuenta->Codigo);
+            $codigo_b = trim($this->movimiento_b->cuenta->Codigo);
+        }
+
+        if($codigo_a != $codigo_b)
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 6;
