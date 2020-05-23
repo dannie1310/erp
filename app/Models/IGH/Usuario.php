@@ -131,8 +131,8 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->hasMany(Suscripcion::class, "id_usuario", "idusuario");
     }
 
-    public function scopeSuscripcion($query, $suscripciones){
-        $arreglo_usuarios = [];
+    public function scopeSuscripcion($query, $suscripciones, $id_usuario){
+        $arreglo_usuarios = [[$id_usuario]];
         foreach($suscripciones as $suscripcion)
         {
             $arreglo_usuarios[] = $suscripcion->id_usuario;
