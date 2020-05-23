@@ -1406,6 +1406,16 @@ export const routes = [
                             permission: 'editar_presupuesto_contratista'
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'presupuesto-create',
+                        component: require('./components/contratos/presupuesto/Create').default,
+                        meta: {
+                            title: 'Registrar Presupuesto Contratista',
+                            breadcrumb: { parent: 'presupuesto', name: 'REGISTRAR'},
+                            middleware: [auth, context]
+                        }
+                    }
                 ]
             },
             {

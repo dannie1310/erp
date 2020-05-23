@@ -80,6 +80,16 @@ class ContratoProyectado extends Transaccion
         return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function scopeConItems($query)
+    {
+        return $query->has('areasSubcontratantes');
+    }
+
+    public function scopeHijos($query)
+    {
+        dd('para');
+    }
+
     public function transaccionesRelacionadas()
     {
         return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
