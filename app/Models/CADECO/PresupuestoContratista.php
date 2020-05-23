@@ -3,6 +3,7 @@
 namespace App\Models\CADECO;
 
 use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
+use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
 use App\Models\IGH\Usuario;
 use DateTime;
 use DateTimeZone;
@@ -68,11 +69,45 @@ class PresupuestoContratista extends Transaccion
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function datosPartidas()
+    {
+        $items = array();
+        foreach($this->partidas as $partida)
+        {
+            $items[] = array(
+                'id_concepto' => $partida->id_concepto,
+                'precio_unitario' => $partida->precio_unitario_convert,
+                'no_cotizado' => $partida->no_cotizado,
+                'PorcentajeDescuento' => $partida->PorcentajeDescuento,
+                'IdMoneda' => $partida->IdMoneda,
+                'Observaciones' => $partida->Observaciones
+            );
+            
+        }
+        return $items;
+    }
+
     public function validarAsignacion($motivo)
     {
         if($this->asignacion)
         {
             throw New \Exception('No se puede '. $motivo.' el presupuesto '. $this->numero_folio_format .' debido a que ya han sido asignados algunos materiales');
+        }
+    }
+
+    public function eliminarPresupuesto($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();            
+            $this->delete();
+            $eliminar = PresupuestoContratistaEliminado::find($this->id_transaccion);
+            $eliminar->motivo_elimino = $motivo;
+            $eliminar->save();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
         }
     }
 

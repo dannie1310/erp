@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EliminarPresupuestoContratistaRequest;
 use App\Http\Transformers\CADECO\Contrato\PresupuestoContratistaTransformer;
 use App\Services\CADECO\Contratos\PresupuestoContratistaService;
 use App\Traits\ControllerTrait;
@@ -43,9 +44,15 @@ class PresupuestoContratistaController extends Controller
          $this->middleware('context');
          $this->middleware('permiso:consultar_presupuesto_contratista')->only(['show','paginate','index','find']);
          $this->middleware('permiso:editar_presupuesto_contratista')->only('update');
+         $this->middleware('permiso:eliminar_presupuesto_contratista')->only('destroy');
 
          $this->fractal = $fractal;
          $this->service = $service;
          $this->transformer = $transformer;
+     }
+
+     public function destroy(EliminarPresupuestoContratistaRequest $request, $id)
+     {
+         return $this->traitDestroy($request, $id);
      }
 }
