@@ -33,9 +33,9 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
     {
         $env = config('app.env');
         if ($env === "production") {
-            return Empresa::consolidadora()->produccion()->conComponentes()->get();
+            return Empresa::consolidadora()->noHistorica()->produccion()->conComponentes()->get();
         } else {
-            return Empresa::consolidadora()->desarrollo()->conComponentes()->get();
+            return Empresa::consolidadora()->noHistorica()->desarrollo()->conComponentes()->get();
         }
     }
 

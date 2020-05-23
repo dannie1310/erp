@@ -51,9 +51,10 @@ class Busqueda extends Model
     private function obtienePolizasRevisar()
     {
         DB::purge('cntpq');
+        $polizas = [];
         Config::set('database.connections.cntpq.database', $this->base_datos_busqueda);
         try {
-            $polizas = Poliza::where("Ejercicio", $this->ejercicio)->where("Periodo", $this->periodo)->get();
+            $polizas = Poliza::where("Ejercicio", $this->ejercicio)->where("Periodo", $this->periodo)->take(10)->get();
         } catch (\Exception $e) {
 
         }
@@ -86,6 +87,7 @@ class Busqueda extends Model
 
             }
         }
+        $this->cantidad_polizas_revisadas = count($polizas);
         $this->fecha_hora_fin = date('Y-m-d H:i:s');
         $this->save();
         $ultima_busqueda = $this->lote->busquedas()->orderBy("id","desc")->first();

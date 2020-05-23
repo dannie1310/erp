@@ -97,6 +97,11 @@ class Empresa extends Model
         return $query->where('Historica', '=', 1);
     }
 
+    public function scopeNoHistorica($query)
+    {
+        return $query->where('Historica', '=', 0);
+    }
+
     public function scopeIndividual($query)
     {
         return $query->where('Consolidadora', '=', 0);

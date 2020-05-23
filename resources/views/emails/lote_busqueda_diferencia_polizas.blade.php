@@ -43,6 +43,22 @@
         @if ($lote->diferencias_detectadas)
             <div class="col-md-2" >
                 <div class="form-group" >
+                    <label><b>No. Pólizas Revisadas:</b></label>
+                    {{$lote->busquedas()->sum("cantidad_polizas_revisadas")}}
+                </div>
+            </div>
+        @endif
+        @if ($lote->diferencias_detectadas)
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>No. de Pólizas Con Errores:</b></label>
+                    {{$lote->cantidad_polizas_con_errores}}
+                </div>
+            </div>
+        @endif
+        @if ($lote->diferencias_detectadas)
+            <div class="col-md-2" >
+                <div class="form-group" >
                     <label><b>Diferencias Detectadas:</b></label>
                     {{count($lote->diferencias_detectadas)}}
                 </div>
@@ -65,6 +81,14 @@
                 </div>
             </div>
         @endif
+        @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != count($lote->diferencias_detectadas)))
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>No. Total de Pólizas Con Errores:</b></label>
+                    {{$diferencias_totales->sum("cantidad_polizas")}}
+                </div>
+            </div>
+        @endif
     </div>
 
     @if(count($lote->cantidad_diferencias_detectadas_por_tipo)>0)
@@ -78,7 +102,10 @@
                     Tipo Diferencia
                 </th>
                 <th>
-                    Cantidad
+                    Cantidad Diferencias
+                </th>
+                <th>
+                    Cantidad Pólizas Afectadas
                 </th>
                 </thead>
                 <tbody>
@@ -89,6 +116,9 @@
                     </td>
                     <td style="text-align: right">
                         {{$item->cantidad}}
+                    </td>
+                    <td style="text-align: right">
+                        {{$item->cantidad_polizas}}
                     </td>
                 </tr>
                     @endforeach
@@ -113,7 +143,10 @@
                     Tipo Diferencia
                 </th>
                 <th>
-                    Cantidad
+                    Cantidad Diferencias
+                </th>
+                <th>
+                    Cantidad Pólizas Afectadas
                 </th>
                 </thead>
                 <tbody>
@@ -130,6 +163,9 @@
                         </td>
                         <td style="text-align: right">
                             {{$item->cantidad}}
+                        </td>
+                        <td style="text-align: right">
+                            {{$item->cantidad_polizas}}
                         </td>
                     </tr>
                 @endforeach
@@ -155,7 +191,10 @@
                     Tipo Diferencia
                 </th>
                 <th>
-                    Cantidad
+                    Cantidad Diferencias
+                </th>
+                <th>
+                    Cantidad Pólizas
                 </th>
                 </thead>
                 <tbody>
@@ -172,6 +211,9 @@
                         </td>
                         <td style="text-align: right">
                             {{$item->cantidad}}
+                        </td>
+                        <td style="text-align: right">
+                            {{$item->cantidad_polizas}}
                         </td>
                     </tr>
                 @endforeach

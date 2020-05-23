@@ -53,10 +53,22 @@ class LoteBusqueda extends Model
         return date_format($date, "d/m/Y H:i:s");
     }
 
+    public function getCantidadPolizasConErroresAttribute()
+    {
+        $dem = DB::table('PolizasCtpqIncidentes.diferencias')
+            ->select(DB::raw("count(diferencias.id) as cantidad, count(distinct diferencias.id_poliza) as cantidad_polizas,  ctg_tipos.descripcion as descripcion"))
+            ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+            ->join('PolizasCtpqIncidentes.ctg_tipos', 'ctg_tipos.id', '=', 'diferencias.id_tipo')
+            ->where("busquedas_diferencias.id_lote", $this->id)
+            ->groupBy("descripcion")
+            ->get();
+        return $dem->sum("cantidad_polizas");
+    }
+
     public function getCantidadDiferenciasDetectadasPorTipoAttribute()
     {
         $dem = DB::table('PolizasCtpqIncidentes.diferencias')
-            ->select(DB::raw("count(diferencias.id) as cantidad, ctg_tipos.descripcion as descripcion"))
+            ->select(DB::raw("count(diferencias.id) as cantidad, count(distinct diferencias.id_poliza) as cantidad_polizas,  ctg_tipos.descripcion as descripcion"))
             ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
             ->join('PolizasCtpqIncidentes.ctg_tipos', 'ctg_tipos.id', '=', 'diferencias.id_tipo')
             ->where("busquedas_diferencias.id_lote", $this->id)
@@ -68,7 +80,7 @@ class LoteBusqueda extends Model
     public function getCantidadDiferenciasDetectadasPorTipoPorBaseAttribute()
     {
         $dem = DB::table('PolizasCtpqIncidentes.diferencias')
-            ->select(DB::raw("count(diferencias.id) as cantidad, ctg_tipos.descripcion as descripcion, empresa_revisada.Nombre +' ['+diferencias.base_datos_revisada +']' as base_datos_revisada, empresa_referencia.Nombre + ' ['+diferencias.base_datos_referencia + ']' as base_datos_referencia"))
+            ->select(DB::raw("count(diferencias.id) as cantidad, count(distinct diferencias.id_poliza) as cantidad_polizas,  ctg_tipos.descripcion as descripcion, empresa_revisada.Nombre +' ['+diferencias.base_datos_revisada +']' as base_datos_revisada, empresa_referencia.Nombre + ' ['+diferencias.base_datos_referencia + ']' as base_datos_referencia"))
             ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
             ->join('PolizasCtpqIncidentes.ctg_tipos', 'ctg_tipos.id', '=', 'diferencias.id_tipo')
             ->join('Contabilidad.ListaEmpresas as empresa_revisada', 'empresa_revisada.AliasBDD', '=', 'diferencias.base_datos_revisada')
