@@ -4,9 +4,10 @@
         <CargaLayout v-if="$root.can('cargar_layout_cotizacion_compra')" v-on:back="layout" v-bind:id="value.id"></CargaLayout>
         <DescargarLayout v-if="$root.can('descargar_layout_cotizacion_compra')" v-bind:id="value.id"></DescargarLayout>
         <button @click="edit" v-if="$root.can('editar_cotizacion_compra')" type="button" class="btn btn-sm btn-outline-info" title="Editar">
-                <i class="fa fa-pencil"></i>
+            <i class="fa fa-pencil"></i>
         </button>
         <Delete v-bind:id="value.id" v-if="value.delete"/>
+        <PDF v-bind:id="value.id" />
     </div>
 </template>
 <script>
@@ -14,9 +15,10 @@ import Show from '../Show';
 import Delete from "../Delete";
 import DescargarLayout from '../DescargaLayout';
 import CargaLayout from '../CargaLayout';
+import PDF from '../FormatoTablaComparativa';
     export default {
         name: "cotizacion-buttons",
-        components: {Delete, Show, DescargarLayout, CargaLayout},
+        components: {Delete, Show, DescargarLayout, CargaLayout, PDF},
         props: ['value'],
         data()
         {
@@ -36,7 +38,7 @@ import CargaLayout from '../CargaLayout';
                 if(this.xls)
                 {
                     this.edit();
-                }                
+                }
             }
         }
     }
