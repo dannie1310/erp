@@ -8,7 +8,6 @@ use App\Utils\ValidacionSistema;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
-use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Solicitud\Repository;
 
 
@@ -111,12 +110,6 @@ class SolicitudCompraService
     public function pdfSolicitudCompra($id)
     {
         return $this->repository->show($id)->pdfSolicitudCompra();
-    }
-
-    public function pdfCotizacion($id)
-    {
-        $pdf = new CotizacionTablaComparativaFormato($id);
-        return $pdf;
     }
 
     public function getCotizaciones($id){
