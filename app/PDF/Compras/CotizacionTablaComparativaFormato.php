@@ -21,8 +21,8 @@ class CotizacionTablaComparativaFormato extends Rotation
 
     const DPI = 96;
     const MM_IN_INCH = 25.4;
-    const A4_HEIGHT = 297;
-    const A4_WIDTH = 210;
+    const A4_HEIGHT = 279;
+    const A4_WIDTH = 216;
 
     const MAX_WIDTH = 225;
     const MAX_HEIGHT = 180;
@@ -94,23 +94,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                         $precios[$cot_partida->id_material] = ($cot_partida->precio_unitario - ($cot_partida->precio_unitario * $cot_partida->descuento / 100)) * $tipo_cambio : '';
                 }
             }
-
         }
-
-        $monedas = [
-            1 => [
-                'nombre' => 'PESO (MX)',
-                'nombre_corto' => 'MXP'
-            ],
-            2 => [
-                'nombre' => 'DOLAR (USD)',
-                'nombre_corto' => 'USD'
-            ],
-            3 => [
-                'nombre' => 'EURO (EUR)',
-                'nombre_corto' => 'EUR'
-            ]
-        ];
 
         $subtotal_moneda_conversion = [];
 
@@ -118,7 +102,7 @@ class CotizacionTablaComparativaFormato extends Rotation
         $font = 5;
         $font2 = 4;
         $heigth = 0.306;
-        $cotizacinesXFila = 5;
+        $cotizacinesXFila = 4;
         $anchos["des"] = 4.7;
         $anchos["u"] = $anchos["c"] = 0.77;
         $anchos["aesp"] = $anchos["u"] + $anchos["c"];
@@ -135,7 +119,6 @@ class CotizacionTablaComparativaFormato extends Rotation
         $anchos["fe"] = $anchos["vig"] = $anchos["og"] / 4;
         $anchos["ant"] = $anchos["cre"] = $anchos["ent"] = $anchos["ivg"] = $anchos["og"] / 4;
         $anchos["ar"] = $anchos["m"] + $anchos["ic"];
-
         $no_arreglos = ceil($no_cotizaciones / $cotizacinesXFila);
         $i_e = 0;
 
@@ -159,7 +142,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 }
 
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["p"], $heigth, $cotizaciones[$i]->empresa->razon_social, 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["p"], $heigth, $cotizaciones[$i]->empresa ? utf8_decode($cotizaciones[$i]->empresa->razon_social) : '', 1, 0, 'C', 1);
             }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
@@ -306,7 +289,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                     $this->Cell($anchos["pu"], $heigth, number_format($precio_unitario_compuesto, 3, '.', ','), "T B L", 0, "R", 1);
                     $this->CellFitScale($anchos["d"], $heigth, $ki == 0 ? '-' : number_format($ki, '4', '.', ','), "T B L", 0, "R", 1);
                     $this->Cell($anchos["it"], $heigth, is_numeric($cot_llave) ? number_format(($p_total * $cotizaciones[$i]->partidas[$cot_llave]->cantidad), 2, '.', ',') : '-', "T B L", 0, "R", 1);
-                    $this->CellFitScale($anchos["m"], $heigth, is_numeric($cot_llave) && $cotizaciones[$i]->partidas[$cot_llave]->precio_unitario > 0 ? $monedas[$cotizaciones[$i]->partidas[$cot_llave]->id_moneda]['nombre_corto'] : '-', "T B L", 0, "R", 1);
+                    $this->CellFitScale($anchos["m"], $heigth, is_numeric($cot_llave) && $cotizaciones[$i]->partidas[$cot_llave]->precio_unitario > 0 ? $cotizaciones[$i]->moneda->abreviatura : '-', "T B L", 0, "R", 1);
                     $this->Cell($anchos["ic"], $heigth, is_numeric($cot_llave) ? number_format(($imp_t_conver * $cotizaciones[$i]->partidas[$cot_llave]->cantidad), 2, '.', ',') : '-', "B L R T", 0, "R", 1);
                 }
 
@@ -431,7 +414,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth, $monedas[$cotizaciones[$i]->id_moneda]['nombre'], 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth, $cotizaciones[$i]->moneda ? $cotizaciones[$i]->moneda->nombre : '', 1, 0, 'R', 1);
             }
 
             $this->Ln();
@@ -494,6 +477,9 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->setY($y_ini);
                 $this->setX($x_ini);
                 $this->MultiCell($anchos["og"], $heigth, utf8_decode($cotizaciones[$i]["observaciones"]), 1, 'J', false);
+                $this->Ln();
+                $this->Ln();
+                $this->Ln();
                 $this->y_fin_og_arr[] = $this->getY();
                 $x_ini += $anchos["og"];
             }
@@ -577,7 +563,7 @@ class CotizacionTablaComparativaFormato extends Rotation
     public function createQR()
     {
         $verifica = new ValidacionSistema();
-        $datos_qr2['titulo'] = "Formato Cotización Tabla Comparativa Compra_".date("d-m-Y")."_".($this->cotizacion->solicitud->complemento ? $this->cotizacion->solicitud->complemento->folio_compuesto : '')."_".$this->cotizacion->solicitud->numero_folio_format;
+        $datos_qr2['titulo'] = "Formato Cotización Tabla Comparativa Compra_".date("d-m-Y")."_solicitud:".($this->cotizacion->solicitud->complemento ? $this->cotizacion->solicitud->complemento->folio_compuesto : '')."_".$this->cotizacion->solicitud->numero_folio_format."_cotizacion:".$this->cotizacion->numero_folio_format;
         $datos_qr2["base"] = Context::getDatabase();
         $datos_qr2["obra"] = $this->obra->nombre;
         $datos_qr2["tabla"] = "transacciones";
@@ -599,7 +585,7 @@ class CotizacionTablaComparativaFormato extends Rotation
         $this->SetMargins(0.7, 1, 0.7);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 4.5);
+        $this->SetAutoPageBreak(true, 5.5);
         $this->partidas();
 
         try {
