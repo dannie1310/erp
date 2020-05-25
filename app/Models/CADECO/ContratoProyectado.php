@@ -72,7 +72,7 @@ class ContratoProyectado extends Transaccion
 
     public function conceptos()
     {
-        return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion')->OrderBy('nivel');
+        return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion')->OrderBy('nivel')->whereNotNull('unidad');
     }
 
     public function areaSubcontratante()
@@ -80,14 +80,19 @@ class ContratoProyectado extends Transaccion
         return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function hijos()
+    {
+        return $this->conceptos()->OrderBy('nivel')->whereNotNull('unidad');
+    }
+
     public function scopeConItems($query)
     {
         return $query->has('areasSubcontratantes');
     }
 
-    public function scopeHijos($query)
+    public function scopePartida($query)
     {
-        dd('para');
+        return $query->has('hijos');
     }
 
     public function transaccionesRelacionadas()

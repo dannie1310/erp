@@ -4,7 +4,7 @@
 namespace App\Services\CADECO\Contratos;
 
 use App\Models\CADECO\PresupuestoContratista;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\PresupuestoContratista\Repository;
 
 class PresupuestoContratistaService
 {
@@ -42,5 +42,10 @@ class PresupuestoContratistaService
      public function delete($data, $id)
     {
         return $this->show($id)->eliminarPresupuesto($data['data']);
+    }
+
+    public function store($data)
+    {
+        return $this->repository->create($data);
     }
 }

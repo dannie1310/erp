@@ -1413,7 +1413,8 @@ export const routes = [
                         meta: {
                             title: 'Registrar Presupuesto Contratista',
                             breadcrumb: { parent: 'presupuesto', name: 'REGISTRAR'},
-                            middleware: [auth, context]
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_presupuesto_contratista']
                         }
                     }
                 ]
