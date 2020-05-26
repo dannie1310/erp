@@ -2,12 +2,14 @@
 
 namespace App\Models\CADECO;
 
+use App\CSV\PresupuestoLayout;
 use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
 use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
 use App\Models\IGH\Usuario;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PresupuestoContratista extends Transaccion
 {
@@ -70,6 +72,12 @@ class PresupuestoContratista extends Transaccion
     public function asignacion()
     {
         return $this->hasOne(AsignacionSubcontratoPartidas::class, 'id_transaccion');
+    }
+
+    public function descargaLayout($id)
+    {
+        $find = $this::find($id);
+        return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
     }
 
     public function empresa()

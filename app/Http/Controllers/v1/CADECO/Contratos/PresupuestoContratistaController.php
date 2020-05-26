@@ -56,4 +56,9 @@ class PresupuestoContratistaController extends Controller
      {
          return $this->traitDestroy($request, $id);
      }
+
+     public function descargaLayout($id)
+     {
+         return $this->service->descargaLayout($id);
+     }
 }

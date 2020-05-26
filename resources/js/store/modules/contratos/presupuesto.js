@@ -115,6 +115,18 @@ export default {
             });
 
         },
+        descargaLayout(context, payload){
+            var urr = URI + 'descargaLayout/'+ payload.id +'?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Layout descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
         update(context, payload)
         {
             return new Promise((resolve, reject) => {
