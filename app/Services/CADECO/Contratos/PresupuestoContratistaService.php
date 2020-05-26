@@ -83,10 +83,26 @@ class PresupuestoContratistaService
             {
                 abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
             }
-
+            $partidas[] = array(
+                'precio_unitario' => $celdas[$x][6],
+                'descuento' => $celdas[$x][8],
+                'id_moneda' => ($celdas[$x][11] == 'PESO MXP') ? 1 : (($celdas[$x][11] == 'DOLAR USD') ? 2 : 3),
+                'observaciones' => $celdas[$x][14],
+                'id_concepto' => (int) $item->id_concepto
+            );
             $x++;
         }
-        dd('fin');
+
+        $respuesta = [
+            'descuento_cot' => $celdas[$x][6],
+            'anticipo' => $celdas[$x + 11][6],
+            'credito' => $celdas[$x + 12][6],
+            'vigencia' => $celdas[$x + 13][6],
+            'observaciones_generales' => $celdas[$x + 14][6],
+            'partidas' => $partidas
+        ];
+
+        dd($respuesta);
      }
 
      public function delete($data, $id)
