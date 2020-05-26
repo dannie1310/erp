@@ -13,6 +13,8 @@ class PresupuestoContratistaPartida extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id_transaccion',
+        'id_concepto',
         'precio_unitario',
         'no_cotizado',
         'PorcentajeDescuento',

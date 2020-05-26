@@ -2,19 +2,26 @@
 
 namespace App\Models\CADECO;
 
+use App\CSV\PresupuestoLayout;
 use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
 use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
 use App\Models\IGH\Usuario;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PresupuestoContratista extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 49;
+    public const OPCION_ANTECEDENTE = 1026;
+
 
     protected $fillable = [
         'id_transaccion',
+        'id_antecedente',
+        'id_empresa',
+        'id_sucursal',
         'fecha',
         'monto',
         'impuesto',
@@ -24,7 +31,10 @@ class PresupuestoContratista extends Transaccion
         'TcUSD',
         'TcEuro',
         'DiasCredito',
-        'DiasVigencia'
+        'DiasVigencia',
+        'tipo_transaccion',
+        'estado',
+        'id_moneda'
     ];
 
     public $searchable = [        
@@ -64,6 +74,12 @@ class PresupuestoContratista extends Transaccion
         return $this->hasOne(AsignacionSubcontratoPartidas::class, 'id_transaccion');
     }
 
+    public function descargaLayout($id)
+    {
+        $find = $this::find($id);
+        return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
+    }
+
     public function empresa()
     {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
@@ -87,6 +103,22 @@ class PresupuestoContratista extends Transaccion
         return $items;
     }
 
+    public function precioConvercion($precio, $id_moneda, $monedas)
+    {
+        switch($id_moneda)
+        {
+            case(1):
+                return ($precio * 1);
+            break;
+            case(2):
+                return ($precio * $monedas[0]->cambioIgh->tipo_cambio);
+            break;
+            case(3):
+                return ($precio * $monedas[1]->cambioIgh->tipo_cambio);
+            break;
+        }
+    }
+
     public function validarAsignacion($motivo)
     {
         if($this->asignacion)
@@ -108,6 +140,90 @@ class PresupuestoContratista extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
+        }
+    }
+
+    public function crear($data)
+    {
+        try
+        {
+            DB::connection('cadeco')->beginTransaction();
+            $moneda = Moneda::get();
+            $contrato = ContratoProyectado::find($data['id_contrato']);
+            $fecha = new DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+            if(!$data['pendiente'])
+            {
+                $presupuesto = $this->create([
+                    'id_antecedente' => $data['id_contrato'],
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'id_empresa' => $data['id_proveedor'],
+                    'id_sucursal' => $data['id_sucursal'],
+                    'monto' => $data['subtotal'],
+                    'impuesto' => $data['impuesto'],
+                    'anticipo' => $data['anticipo'],
+                    'observaciones' => $data['observacion'],
+                    'PorcentajeDescuento' => $data['descuento_cot'],
+                    'TcUSD' => $moneda[0]->cambioIgh->tipo_cambio,
+                    'TcEuro' => $moneda[1]->cambioIgh->tipo_cambio,
+                    'DiasCredito' => $data['credito'],
+                    'DiasVigencia' => $data['vigencia']
+                ]);
+
+                $t = 0;
+                foreach($data['partidas'] as $partida)
+                {
+                    $precio_unitario = $this->precioConvercion($data['precio'][$t], $data['moneda'][$t], $moneda);
+                    $presupuesto->partidas()->create([
+                        'id_transaccion' => $presupuesto->id_transaccion,
+                        'id_concepto' => $partida['id_concepto'],
+                        'precio_unitario' => ($data['enable'][$t]) ? $precio_unitario : null,
+                        'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
+                        'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
+                        'IdMoneda' => $data['moneda'][$t],
+                        'Observaciones' => ($data['observaciones'][$t]) ? $data['observaciones'][$t] : ''
+                    ]);           
+                    $t ++;
+                }
+            }else
+            {
+                $presupuesto = $this->create([
+                    'id_antecedente' => $data['id_contrato'],
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'id_empresa' => $data['id_proveedor'],
+                    'id_sucursal' => $data['id_sucursal'],
+                    'monto' => 0,
+                    'impuesto' => 0,
+                    'anticipo' => 0,
+                    'observaciones' => $data['observacion'],
+                    'PorcentajeDescuento' => null,
+                    'TcUSD' => null,
+                    'TcEuro' => null,
+                    'DiasCredito' => null,
+                    'DiasVigencia' => null
+                ]);
+
+                $t = 0;
+                foreach($data['partidas'] as $partida)
+                {
+                    $presupuesto->partidas()->create([
+                        'id_transaccion' => $presupuesto->id_transaccion,
+                        'id_concepto' => $partida['id_concepto'],
+                        'precio_unitario' => 0,
+                        'no_cotizado' => 1,
+                        'PorcentajeDescuento' => null,
+                        'IdMoneda' => null,
+                        'Observaciones' => null
+                    ]);           
+                    $t ++;
+                }
+            }
+            DB::connection('cadeco')->commit();
+                return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
         }
     }
 

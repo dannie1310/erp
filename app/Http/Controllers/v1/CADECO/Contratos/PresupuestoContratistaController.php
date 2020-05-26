@@ -45,6 +45,8 @@ class PresupuestoContratistaController extends Controller
          $this->middleware('permiso:consultar_presupuesto_contratista')->only(['show','paginate','index','find']);
          $this->middleware('permiso:editar_presupuesto_contratista')->only('update');
          $this->middleware('permiso:eliminar_presupuesto_contratista')->only('destroy');
+         $this->middleware('permiso:registrar_presupuesto_contratista')->only(['store']);
+         $this->middleware('permiso:descargar_layout_presupuesto_contratista')->only(['descargaLayout']);
 
          $this->fractal = $fractal;
          $this->service = $service;
@@ -54,5 +56,10 @@ class PresupuestoContratistaController extends Controller
      public function destroy(EliminarPresupuestoContratistaRequest $request, $id)
      {
          return $this->traitDestroy($request, $id);
+     }
+
+     public function descargaLayout($id)
+     {
+         return $this->service->descargaLayout($id);
      }
 }

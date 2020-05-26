@@ -50,12 +50,12 @@ class Contrato extends Model
 
     public function getCantidadOriginalFormatAttribute()
     {
-        return number_format(abs($this->cantidad_original),1);
+        return number_format(abs($this->cantidad_original), 2);
     }
 
     public function getCantidadPresupuestadaFormatAttribute()
     {
-        return number_format(abs($this->cantidad_presupuestada),1);
+        return number_format(abs($this->cantidad_presupuestada), 2);
     }
     
     public function getDescripcionGuionNivelFormatAttribute()

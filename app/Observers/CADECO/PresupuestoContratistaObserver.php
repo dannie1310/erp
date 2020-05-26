@@ -4,12 +4,22 @@ namespace App\Observers\CADECO;
 
 use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
 use App\Models\CADECO\PresupuestoContratista;
+use App\Models\CADECO\Transaccion;
 
-class PresupuestoContratistaObserver
+class PresupuestoContratistaObserver extends TransaccionObserver
 {
     /**
      * @param PresupuestoContratista $presupuestoContratista
      */
+
+     public function creating(Transaccion $presupuestoContratista)
+     {
+         parent::creating($presupuestoContratista);
+
+         $presupuestoContratista->tipo_transaccion = 50;
+         $presupuestoContratista->estado = 1;
+         $presupuestoContratista->id_moneda = 1;
+     }
 
      public function updating(PresupuestoContratista $presupuestoContratista)
      {
