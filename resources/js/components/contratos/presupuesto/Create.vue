@@ -437,7 +437,6 @@
                 return this.$store.dispatch('cadeco/moneda/index', {
                 }).then(data => {
                     this.monedas = data.data;
-                    this.monedas.pop();
                 }).finally(()=>{
 
                 })
