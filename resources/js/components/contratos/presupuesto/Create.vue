@@ -437,7 +437,6 @@
                 return this.$store.dispatch('cadeco/moneda/index', {
                 }).then(data => {
                     this.monedas = data.data;
-                    this.monedas.pop();
                 }).finally(()=>{
 
                 })
@@ -512,7 +511,6 @@
                     params: {
                         scope: 'conItems',
                         order: 'DESC',
-                        limit: 100,
                         sort: 'numero_folio'
                     }
                 })
