@@ -156,7 +156,7 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("F".($i+8), 'Subtotal Moneda Conv.');
                 $event->sheet->setCellValue("F".($i+9), 'IVA');
                 $event->sheet->setCellValue("F".($i+10), 'TOTAL');
-                $event->sheet->setCellValue("F".($i+11), 'Fecha de Cotizacion');
+                $event->sheet->setCellValue("F".($i+11), 'Fecha de Presupuesto');
                 $event->sheet->setCellValue("G".($i+11), date("d/m/Y"));
                 $event->sheet->setCellValue("F".($i+12), '% Anticipo');
                 $event->sheet->setCellValue("G".($i+12), ($this->presupuesto->anticipo) ? $this->presupuesto->anticipo : 0);
