@@ -8,6 +8,7 @@ use App\Http\Requests\EliminarPresupuestoContratistaRequest;
 use App\Http\Transformers\CADECO\Contrato\PresupuestoContratistaTransformer;
 use App\Services\CADECO\Contratos\PresupuestoContratistaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class PresupuestoContratistaController extends Controller
@@ -61,5 +62,11 @@ class PresupuestoContratistaController extends Controller
      public function descargaLayout($id)
      {
          return $this->service->descargaLayout($id);
+     }
+
+     public function cargaLayout(Request $request)
+     {
+         $res = $this->service->cargaLayout($request->file, $request->id, $request->name);
+         return response()->json($res, 200);
      }
 }
