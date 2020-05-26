@@ -152,36 +152,72 @@ class PresupuestoContratista extends Transaccion
             $contrato = ContratoProyectado::find($data['id_contrato']);
             $fecha = new DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $presupuesto = $this->create([
-                'id_antecedente' => $data['id_contrato'],
-                'fecha' => $fecha->format("Y-m-d"),
-                'id_empresa' => $data['id_proveedor'],
-                'id_sucursal' => $data['id_sucursal'],
-                'monto' => $data['subtotal'],
-                'impuesto' => $data['impuesto'],
-                'anticipo' => $data['anticipo'],
-                'observaciones' => $data['observacion'],
-                'PorcentajeDescuento' => $data['descuento_cot'],
-                'TcUSD' => $moneda[0]->cambioIgh->tipo_cambio,
-                'TcEuro' => $moneda[1]->cambioIgh->tipo_cambio,
-                'DiasCredito' => $data['credito'],
-                'DiasVigencia' => $data['vigencia']
-            ]);
 
-            $t = 0;
-            foreach($data['partidas'] as $partida)
+            if(!$data['pendiente'])
             {
-                $precio_unitario = $this->precioConvercion($data['precio'][$t], $data['moneda'][$t], $moneda);
-                $presupuesto->partidas()->create([
-                    'id_transaccion' => $presupuesto->id_transaccion,
-                    'id_concepto' => $partida['id_concepto'],
-                    'precio_unitario' => ($data['enable'][$t]) ? $precio_unitario : null,
-                    'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
-                    'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
-                    'IdMoneda' => $data['moneda'][$t],
-                    'Observaciones' => ($data['observaciones'][$t]) ? $data['observaciones'][$t] : ''
-                ]);           
-                $t ++;
+                $presupuesto = $this->create([
+                    'id_antecedente' => $data['id_contrato'],
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'id_empresa' => $data['id_proveedor'],
+                    'id_sucursal' => $data['id_sucursal'],
+                    'monto' => $data['subtotal'],
+                    'impuesto' => $data['impuesto'],
+                    'anticipo' => $data['anticipo'],
+                    'observaciones' => $data['observacion'],
+                    'PorcentajeDescuento' => $data['descuento_cot'],
+                    'TcUSD' => $moneda[0]->cambioIgh->tipo_cambio,
+                    'TcEuro' => $moneda[1]->cambioIgh->tipo_cambio,
+                    'DiasCredito' => $data['credito'],
+                    'DiasVigencia' => $data['vigencia']
+                ]);
+
+                $t = 0;
+                foreach($data['partidas'] as $partida)
+                {
+                    $precio_unitario = $this->precioConvercion($data['precio'][$t], $data['moneda'][$t], $moneda);
+                    $presupuesto->partidas()->create([
+                        'id_transaccion' => $presupuesto->id_transaccion,
+                        'id_concepto' => $partida['id_concepto'],
+                        'precio_unitario' => ($data['enable'][$t]) ? $precio_unitario : null,
+                        'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
+                        'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
+                        'IdMoneda' => $data['moneda'][$t],
+                        'Observaciones' => ($data['observaciones'][$t]) ? $data['observaciones'][$t] : ''
+                    ]);           
+                    $t ++;
+                }
+            }else
+            {
+                $presupuesto = $this->create([
+                    'id_antecedente' => $data['id_contrato'],
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'id_empresa' => $data['id_proveedor'],
+                    'id_sucursal' => $data['id_sucursal'],
+                    'monto' => 0,
+                    'impuesto' => 0,
+                    'anticipo' => 0,
+                    'observaciones' => $data['observacion'],
+                    'PorcentajeDescuento' => null,
+                    'TcUSD' => null,
+                    'TcEuro' => null,
+                    'DiasCredito' => null,
+                    'DiasVigencia' => null
+                ]);
+
+                $t = 0;
+                foreach($data['partidas'] as $partida)
+                {
+                    $presupuesto->partidas()->create([
+                        'id_transaccion' => $presupuesto->id_transaccion,
+                        'id_concepto' => $partida['id_concepto'],
+                        'precio_unitario' => 0,
+                        'no_cotizado' => 1,
+                        'PorcentajeDescuento' => null,
+                        'IdMoneda' => null,
+                        'Observaciones' => null
+                    ]);           
+                    $t ++;
+                }
             }
             DB::connection('cadeco')->commit();
                 return $this;
