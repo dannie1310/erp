@@ -81,7 +81,7 @@ class DiferenciaService
             foreach ($empresas_consolidantes as $empresa_consolidante) {
                 $ejercicios = $empresa_consolidante->ejercicios;
                 foreach ($ejercicios as $ejercicio) {
-                    for ($periodo = 1; $periodo <= 12; $periodo++) {
+                    for ($periodo = 1; $periodo <= 2; $periodo++) {
                         $data = [
                             "id_tipo_busqueda" => 1,
                             "id_lote" => $lote->id,
@@ -93,7 +93,7 @@ class DiferenciaService
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
                         //$busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio . $periodo);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio.$periodo);
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
                 }
@@ -106,7 +106,7 @@ class DiferenciaService
             foreach ($empresas_individuales as $empresas_individual) {
                 $ejercicios = $empresas_individual->ejercicios;
                 foreach ($ejercicios as $ejercicio) {
-                    for ($periodo = 1; $periodo <= 1; $periodo++) {
+                    for ($periodo = 1; $periodo <= 12; $periodo++) {
                         $data = [
                             "id_tipo_busqueda" => 2,
                             "id_lote" => $lote->id,
@@ -118,7 +118,7 @@ class DiferenciaService
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
                         $busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio . $periodo);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio);
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
                 }
@@ -131,7 +131,7 @@ class DiferenciaService
             foreach ($empresas_consolidadoras as $empresa_consolidadora) {
                 $ejercicios = $empresa_consolidadora->ejercicios;
                 foreach ($ejercicios as $ejercicio) {
-                    for ($periodo = 1; $periodo <= 1; $periodo++) {
+                    for ($periodo = 1; $periodo <= 12; $periodo++) {
                         $data = [
                             "id_tipo_busqueda" => 3,
                             "id_lote" => $lote->id,
@@ -143,7 +143,7 @@ class DiferenciaService
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
                         //$busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio . $periodo);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio);
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
                 }
@@ -156,7 +156,7 @@ class DiferenciaService
             foreach ($empresas_consolidantes as $empresa_consolidante) {
                 $ejercicios = $empresa_consolidante->ejercicios;
                 foreach ($ejercicios as $ejercicio) {
-                    for ($periodo = 1; $periodo <= 1; $periodo++) {
+                    for ($periodo = 1; $periodo <= 12; $periodo++) {
                         $data = [
                             "id_tipo_busqueda" => 4,
                             "id_lote" => $lote->id,
@@ -168,7 +168,7 @@ class DiferenciaService
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
                         //$busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio . $periodo);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio);
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
                 }

@@ -77,7 +77,7 @@ class Empresa extends Model
         } catch (\Exception $e){
 
         }
-        return [2015];
+        return [2019];
         return $ejercicios;
 
     }
@@ -158,19 +158,24 @@ class Empresa extends Model
 
     public function getCantidadPolizas($ejercicio = 0, $periodo=0)
     {
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', $this->AliasBDD);
+        try{
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $this->AliasBDD);
 
-        if($ejercicio == 0 && $periodo == 0){
-            return Poliza::count();
-        } else if($ejercicio > 0 && $periodo == 0){
-            return Poliza::where("Ejercicio", $ejercicio)->count();
+            if($ejercicio == 0 && $periodo == 0){
+                return Poliza::count();
+            } else if($ejercicio > 0 && $periodo == 0){
+                return Poliza::where("Ejercicio", $ejercicio)->count();
+            }
+            else if($ejercicio == 0 && $periodo > 0){
+                return Poliza::where("Periodo", $periodo)->count();
+            } else {
+                return Poliza::where("Periodo", $periodo)->where("Ejercicio", $ejercicio)->count();
+            }
+        } catch (\Exception $e) {
+
         }
-        else if($ejercicio == 0 && $periodo > 0){
-            return Poliza::where("Periodo", $periodo)->count();
-        } else {
-            return Poliza::where("Periodo", $periodo)->where("Ejercicio", $ejercicio)->count();
-        }
+
 
     }
 }

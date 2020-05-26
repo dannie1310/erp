@@ -63,6 +63,12 @@ class Busqueda extends Model
         try {
             $polizas = Poliza::where("Ejercicio", $this->ejercicio)->where("Periodo", $this->periodo)->get();
         } catch (\Exception $e) {
+            BaseDatosInaccesible::registrar(["base_datos"=>$this->base_datos_busqueda, "id_lote_busqueda"=>$this->lote->id]);
+            $this->finaliza();
+            $ultima_busqueda = $this->lote->busquedas()->orderBy("id","desc")->first();
+            if($ultima_busqueda->id == $this->id){
+                $this->lote->finaliza();
+            }
 
         }
         return $polizas;
@@ -98,12 +104,17 @@ class Busqueda extends Model
 
             }
         }
-        $this->cantidad_polizas_revisadas = count($polizas);
-        $this->fecha_hora_fin = date('Y-m-d H:i:s');
-        $this->save();
+        $this->finaliza(count($polizas));
         $ultima_busqueda = $this->lote->busquedas()->orderBy("id","desc")->first();
         if($ultima_busqueda->id == $this->id){
             $this->lote->finaliza();
         }
     }
+
+    public function finaliza($numero_polizas = 0){
+        $this->cantidad_polizas_revisadas = $numero_polizas;
+        $this->fecha_hora_fin = date('Y-m-d H:i:s');
+        $this->save();
+    }
+
 }

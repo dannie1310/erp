@@ -163,7 +163,10 @@ class Diferencia extends Model
             ->where("activo",1)
             ->where("diferencias.tipo_busqueda",$tipo_busqueda)
             ->first();
+        if($dem->cantidad_polizas)
         return $dem->cantidad_polizas;
+        else
+            return 0;
     }
 
     public static function totalPorTipoPorEmpresa($tipo_busqueda)

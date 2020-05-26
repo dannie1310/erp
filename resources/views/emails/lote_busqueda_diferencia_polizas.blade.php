@@ -102,6 +102,12 @@
                 {{$lote->cantidad_polizas_existentes}}
             </div>
         </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>No. Empresas sin Acceso:</b></label>
+                {{$lote->bases_datos_inaccesibles()->distinct('base_datos')->count('base_datos')}}
+            </div>
+        </div>
     </div>
 
     @if(count($lote->cantidad_diferencias_detectadas_por_tipo)>0)
@@ -227,6 +233,29 @@
                         </td>
                         <td style="text-align: right">
                             {{$item->cantidad_polizas}}
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+    @if(count($lote->bases_datos_inaccesibles)>0)
+        <hr />
+
+        <div class="row">
+            <table>
+                <caption style="text-align: left; font-weight: bold">Empresas Inaccesibles:</caption>
+                <thead>
+                <th>
+                    Empresa
+                </th>
+                </thead>
+                <tbody>
+                @foreach($lote->bases_datos_inaccesibles as $item)
+                    <tr>
+                        <td>
+                            {{$item->empresa->Nombre}} {{$item->base_datos}}
                         </td>
                     </tr>
                 @endforeach

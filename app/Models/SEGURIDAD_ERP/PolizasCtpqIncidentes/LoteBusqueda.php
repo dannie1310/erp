@@ -32,6 +32,11 @@ class LoteBusqueda extends Model
         return $this->hasMany(Busqueda::class, "id_lote", "id");
     }
 
+    public function bases_datos_inaccesibles()
+    {
+        return $this->hasMany(BaseDatosInaccesible::class, "id_lote_busqueda", "id");
+    }
+
     public function diferencias_detectadas()
     {
         return $this->hasManyThrough(Diferencia::class, Busqueda::class, "id_lote", "id_busqueda", "id", "id");
