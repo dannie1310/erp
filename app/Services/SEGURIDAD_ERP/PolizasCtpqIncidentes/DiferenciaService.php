@@ -81,7 +81,7 @@ class DiferenciaService
             foreach ($empresas_consolidantes as $empresa_consolidante) {
                 $ejercicios = $empresa_consolidante->ejercicios;
                 foreach ($ejercicios as $ejercicio) {
-                    for ($periodo = 1; $periodo <= 1; $periodo++) {
+                    for ($periodo = 1; $periodo <= 12; $periodo++) {
                         $data = [
                             "id_tipo_busqueda" => 1,
                             "id_lote" => $lote->id,
@@ -91,13 +91,12 @@ class DiferenciaService
                             "base_datos_referencia" => $empresa_consolidante->empresa_consolidadora->AliasBDD
                         ];
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
-                        $busqueda->procesarBusquedaDiferencias();
+                        //$busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio . $periodo);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio . $periodo);
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
                 }
-                break;
             }
             if(!count($lote->busquedas)>0){
                 $lote->finaliza();

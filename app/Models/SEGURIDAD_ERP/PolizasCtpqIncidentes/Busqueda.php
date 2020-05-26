@@ -10,6 +10,7 @@ namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 
 use App\Events\FinalizaProcesamientoLoteBusquedas;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Utils\BusquedaDiferenciasMovimientos;
 use App\Utils\BusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
@@ -30,7 +31,8 @@ class Busqueda extends Model
         "periodo",
         "fecha_hora_inicio",
         "fecha_hora_fin",
-        "id_lote"
+        "id_lote","cantidad_polizas_revisadas",
+        "cantidad_polizas_existentes"
     ];
 
     public function lote()
@@ -48,13 +50,18 @@ class Busqueda extends Model
         return $this->hasMany(DiferenciaCorregida::class,"id_busqueda","id");
     }
 
+    public function empresa_busqueda()
+    {
+        return $this->belongsTo(Empresa::class, "base_datos_busqueda", "AliasBDD");
+    }
+
     private function obtienePolizasRevisar()
     {
         DB::purge('cntpq');
         $polizas = [];
         Config::set('database.connections.cntpq.database', $this->base_datos_busqueda);
         try {
-            $polizas = Poliza::where("Ejercicio", $this->ejercicio)->where("Periodo", $this->periodo)->take(10)->get();
+            $polizas = Poliza::where("Ejercicio", $this->ejercicio)->where("Periodo", $this->periodo)->get();
         } catch (\Exception $e) {
 
         }
@@ -66,6 +73,10 @@ class Busqueda extends Model
         $this->fecha_hora_inicio = date('Y-m-d H:i:s');
         $this->save();
         $polizas = $this->obtienePolizasRevisar();
+        $this->cantidad_polizas_revisadas = count($polizas);
+        $this->lote->setCantidadPolizasRevisadas(count($polizas));
+        $this->cantidad_polizas_existentes = $this->empresa_busqueda->getCantidadPolizas($this->ejercicio, $this->periodo);
+        $this->save();
 
         foreach ($polizas as $poliza) {
             $relaciones = $poliza->relaciona($this);

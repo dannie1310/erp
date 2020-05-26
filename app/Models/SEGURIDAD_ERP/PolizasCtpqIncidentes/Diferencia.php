@@ -155,6 +155,17 @@ class Diferencia extends Model
         $this->save();
     }
 
+    public static function cantidadTotalPolizasConErrores($tipo_busqueda)
+    {
+        $dem = DB::table('PolizasCtpqIncidentes.diferencias')
+            ->select(DB::raw(" count(distinct diferencias.id_poliza) as cantidad_polizas"))
+            ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+            ->where("activo",1)
+            ->where("diferencias.tipo_busqueda",$tipo_busqueda)
+            ->first();
+        return $dem->cantidad_polizas;
+    }
+
     public static function totalPorTipoPorEmpresa($tipo_busqueda)
     {
         $dem = DB::table('PolizasCtpqIncidentes.diferencias')

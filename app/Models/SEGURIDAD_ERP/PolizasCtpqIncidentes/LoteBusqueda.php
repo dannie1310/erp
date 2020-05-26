@@ -23,7 +23,8 @@ class LoteBusqueda extends Model
         "usuario_inicio",
         "fecha_hora_inicio",
         "fecha_hora_fin",
-        "id_tipo_busqueda"
+        "id_tipo_busqueda","cantidad_polizas_revisadas",
+        "cantidad_polizas_existentes"
     ];
 
     public function busquedas()
@@ -53,7 +54,7 @@ class LoteBusqueda extends Model
         return date_format($date, "d/m/Y H:i:s");
     }
 
-    public function getCantidadPolizasConErroresAttribute()
+    public function getCantidadPolizasConErroresAttribute2()
     {
         $dem = DB::table('PolizasCtpqIncidentes.diferencias')
             ->select(DB::raw("count(diferencias.id) as cantidad, count(distinct diferencias.id_poliza) as cantidad_polizas,  ctg_tipos.descripcion as descripcion"))
@@ -63,6 +64,17 @@ class LoteBusqueda extends Model
             ->groupBy("descripcion")
             ->get();
         return $dem->sum("cantidad_polizas");
+    }
+
+    public function getCantidadPolizasConErroresAttribute()
+    {
+        $dem = DB::table('PolizasCtpqIncidentes.diferencias')
+            ->select(DB::raw(" count(distinct diferencias.id_poliza) as cantidad_polizas"))
+            ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+            ->where("busquedas_diferencias.id_lote", $this->id)
+            ->where("activo",1)
+            ->first();
+        return $dem->cantidad_polizas;
     }
 
     public function getCantidadDiferenciasDetectadasPorTipoAttribute()
@@ -122,10 +134,24 @@ class LoteBusqueda extends Model
         return $tipo;
     }
 
+    public function setCantidadPolizasExistentes($cantidad = 0){
+        $this->cantidad_polizas_existentes = $cantidad;
+        $this->save();
+    }
+
+    public function setCantidadPolizasRevisadas($cantidad = 0){
+        $this->cantidad_polizas_revisadas += $cantidad;
+        $this->save();
+    }
+
     public function finaliza()
     {
         $this->fecha_hora_fin = date('Y-m-d H:i:s');
         $this->save();
+
+        $catidad_polizas_existentes = $this->busquedas->sum("cantidad_polizas_existentes");
+        $this->setCantidadPolizasExistentes($catidad_polizas_existentes);
+
         event(new FinalizaProcesamientoLoteBusquedas(
             $this
         ));

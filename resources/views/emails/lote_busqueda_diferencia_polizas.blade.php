@@ -12,6 +12,12 @@
 <div id="app">
     <h3></h3>
     <hr />
+    <div class="col-md-2" >
+        <div class="form-group" >
+            <label><b>Folio:</b></label>
+            {{$lote->id}}
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-4" >
             <div class="form-group" >
@@ -20,6 +26,7 @@
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-3" >
             <div class="form-group" >
@@ -44,14 +51,14 @@
             <div class="col-md-2" >
                 <div class="form-group" >
                     <label><b>No. Pólizas Revisadas:</b></label>
-                    {{$lote->busquedas()->sum("cantidad_polizas_revisadas")}}
+                    {{$lote->busquedas->sum("cantidad_polizas_revisadas")}}
                 </div>
             </div>
         @endif
         @if ($lote->diferencias_detectadas)
             <div class="col-md-2" >
                 <div class="form-group" >
-                    <label><b>No. de Pólizas Con Errores:</b></label>
+                    <label><b>No. de Pólizas Con Diferencias:</b></label>
                     {{$lote->cantidad_polizas_con_errores}}
                 </div>
             </div>
@@ -84,11 +91,17 @@
         @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != count($lote->diferencias_detectadas)))
             <div class="col-md-2" >
                 <div class="form-group" >
-                    <label><b>No. Total de Pólizas Con Errores:</b></label>
-                    {{$diferencias_totales->sum("cantidad_polizas")}}
+                    <label><b>No. Total de Pólizas Con Diferencias:</b></label>
+                    {{$cantidad_diferencias_totales}}
                 </div>
             </div>
         @endif
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>No. Pólizas Existentes:</b></label>
+                {{$lote->cantidad_polizas_existentes}}
+            </div>
+        </div>
     </div>
 
     @if(count($lote->cantidad_diferencias_detectadas_por_tipo)>0)

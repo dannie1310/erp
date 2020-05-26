@@ -38,6 +38,7 @@ class SendFinalizaProcesamientoLoteBusquedaNotification
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
         $usuario = Usuario::suscripcion($suscripciones, $event->lote->usuario_inicio)->get();
         $diferencias_totales = Diferencia::totalPorTipoPorEmpresa($event->lote->id_tipo_busqueda);
-        Notification::send($usuario, new NotificacionFinalizaProcesoBusquedasDiferenciasPolizas($event->lote, $diferencias_totales));
+        $cantidad_diferencias_totales = Diferencia::cantidadTotalPolizasConErrores($event->lote->id_tipo_busqueda);
+        Notification::send($usuario, new NotificacionFinalizaProcesoBusquedasDiferenciasPolizas($event->lote, $diferencias_totales, $cantidad_diferencias_totales));
     }
 }
