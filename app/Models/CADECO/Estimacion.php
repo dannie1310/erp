@@ -280,7 +280,7 @@ class Estimacion extends Transaccion
                 $this->anticipo = 0;
                 $this->save();
             } else {
-                if ($this->subcontrato->first()->anticipo != 0) {
+                if ($this->subcontrato->anticipo != 0) {
                     $this->anticipo = ($data / $this->sumaImportes) * 100;
                     $this->save();
                 } else {
