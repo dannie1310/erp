@@ -73,7 +73,7 @@
                                                             <input
                                                                 :disabled="cargando"
                                                                 type="number"
-                                                                step=".1"
+                                                                step=".01"
                                                                 :name="`autorizado[${i}]`"
                                                                 data-vv-as="Autorizado"
                                                                 v-validate="{required: true, min_value:0.01, max_value:partida.cantidad}"
