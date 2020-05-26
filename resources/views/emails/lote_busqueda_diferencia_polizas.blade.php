@@ -47,6 +47,12 @@
                 {{$lote->fecha_hora_fin_format}}
             </div>
         </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>No. Empresas sin Acceso:</b></label>
+                {{$lote->bases_datos_inaccesibles()->distinct('base_datos')->count('base_datos')}}
+            </div>
+        </div>
         @if ($lote->diferencias_detectadas)
             <div class="col-md-2" >
                 <div class="form-group" >
@@ -59,7 +65,7 @@
             <div class="col-md-2" >
                 <div class="form-group" >
                     <label><b>No. de Pólizas Con Diferencias:</b></label>
-                    {{$lote->cantidad_polizas_con_errores}}
+                    {{$lote->cantidad_polizas_con_errores}} ({{$lote->porcentaje_diferencias}})
                 </div>
             </div>
         @endif
@@ -89,12 +95,21 @@
             </div>
         @endif
         @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != count($lote->diferencias_detectadas)))
-            <div class="col-md-2" >
-                <div class="form-group" >
-                    <label><b>No. Total de Pólizas Con Diferencias:</b></label>
-                    {{$cantidad_diferencias_totales}}
+            @if($lote->cantidad_polizas_existentes>0)
+                <div class="col-md-2" >
+                    <div class="form-group" >
+                        <label><b>No. Total de Pólizas Con Diferencias:</b></label>
+                        {{$cantidad_diferencias_totales}} ({{number_format($cantidad_diferencias_totales / $lote->cantidad_polizas_existentes*100,2,".", ",")}} %)
+                    </div>
                 </div>
-            </div>
+                @else
+                <div class="col-md-2" >
+                    <div class="form-group" >
+                        <label><b>No. Total de Pólizas Con Diferencias:</b></label>
+                        {{$cantidad_diferencias_totales}}
+                    </div>
+                </div>
+            @endif
         @endif
         <div class="col-md-2" >
             <div class="form-group" >
@@ -102,12 +117,7 @@
                 {{$lote->cantidad_polizas_existentes}}
             </div>
         </div>
-        <div class="col-md-2" >
-            <div class="form-group" >
-                <label><b>No. Empresas sin Acceso:</b></label>
-                {{$lote->bases_datos_inaccesibles()->distinct('base_datos')->count('base_datos')}}
-            </div>
-        </div>
+
     </div>
 
     @if(count($lote->cantidad_diferencias_detectadas_por_tipo)>0)
@@ -244,8 +254,11 @@
         <hr />
 
         <div class="row">
+            <div class="col-md-12">
+
+            </div>
             <table>
-                <caption style="text-align: left; font-weight: bold">Empresas Inaccesibles:</caption>
+                <caption style="text-align: left; font-weight: bold">Empresas Sin Acceso:</caption>
                 <thead>
                 <th>
                     Empresa

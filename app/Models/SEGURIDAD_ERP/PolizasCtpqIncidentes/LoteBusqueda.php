@@ -94,6 +94,14 @@ class LoteBusqueda extends Model
         return $dem;
     }
 
+    public function getPorcentajeDiferenciasAttribute(){
+        $porcentaje = 0;
+        if($this->busquedas->sum("cantidad_polizas_revisadas")>0){
+            $porcentaje = number_format($this->cantidad_polizas_con_errores / $this->busquedas->sum("cantidad_polizas_revisadas") *100,2);
+        }
+        return $porcentaje . " %";
+    }
+
     public function getCantidadDiferenciasDetectadasPorTipoPorBaseAttribute()
     {
         $dem = DB::table('PolizasCtpqIncidentes.diferencias')
