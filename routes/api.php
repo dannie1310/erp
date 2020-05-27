@@ -653,6 +653,7 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@destroy')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@store');
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@descargaLayout')->where(['id' => '[0-9]+']);
+            $api->post('layout', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@cargaLayout');
         });
 
 
