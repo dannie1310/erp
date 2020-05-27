@@ -90,7 +90,6 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
      */
     public function includeMovimientos(SolicitudMovimientoFondoGarantia $model) {
         if ($movimientos = $model->movimientos) {
-            $movimientos = $model->movimientos;
             return $this->collection($movimientos, new MovimientoSolicitudMovimientoFondoGarantiaTransformer);
         }
         return null;
