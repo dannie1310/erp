@@ -34,9 +34,9 @@
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
                                                     <td class="bg-gray-light">{{(presupuesto.sucursal) ? presupuesto.sucursal.descripcion : '----------'}}</td>
                                                     <td class="bg-gray-light"><b>TC USD:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.tc_usd_format}}</td>
+                                                    <td class="bg-gray-light">{{dolar}}</td>
                                                     <td class="bg-gray-light"><b>TC EURO:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.tc_euro_format}}</td>
+                                                    <td class="bg-gray-light">{{euro}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Direccion:</b></td>
@@ -291,7 +291,7 @@
         name: "presupuesto-edit",
 
         components: {Datepicker, ModelListSelect},
-        props: ['id'],
+        props: ['id', 'xls'],
         data() {
             return {
                 cargando: false,

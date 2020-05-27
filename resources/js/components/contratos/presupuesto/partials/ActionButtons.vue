@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
         <Show v-bind:id="value.id"></Show>
-        <CargaLayout v-bind:id="value.id"></CargaLayout>
+        <CargaLayout v-on:back="layout" v-bind:id="value.id"></CargaLayout>
         <DescargaLayout v-if="$root.can('descargar_layout_presupuesto_contratista')" v-bind:id="value.id"></DescargaLayout>
         <Eliminar v-if="$root.can('eliminar_presupuesto_contratista')" v-bind:id="value.id"></Eliminar>
         <button v-if="$root.can('editar_presupuesto_contratista')" @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
@@ -22,7 +22,17 @@ import CargaLayout from '../CargaLayout';
         methods: {
             edit()
             {
-                this.$router.push({ name: 'presupuesto-edit', params: {id: this.value.id}});                
+                this.$router.push({ name: 'presupuesto-edit', params: {id: this.value.id, xls: this.xls}});                
+            },
+            layout(dat)
+            {
+                console.log('layout', dat);
+                
+                this.xls = (dat) ? dat : null;
+                if(this.xls)
+                {
+                    this.edit();
+                }                
             }
         }
     }

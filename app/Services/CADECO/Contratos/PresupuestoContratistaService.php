@@ -102,7 +102,7 @@ class PresupuestoContratistaService
             'partidas' => $partidas
         ];
 
-        dd($respuesta);
+        return $respuesta;
      }
 
      public function delete($data, $id)
