@@ -26,28 +26,29 @@
                                             <table class="table">
                                                 <tbody>
                                                     <tr>
-                                                        <td class="bg-dark" align="left"><b>Referencia:</b></td>
-                                                        <td align="left">{{subcontratos.referencia}}</td>
-                                                        <td colspan="3"></td>
+                                                        <td class="bg-gray-light" align="center" colspan="6"><b>{{subcontratos.empresa}}</b></td>
                                                     </tr>
                                                     <tr>
-                                                        <td colspan="3"></td>
-                                                        <td class="bg-dark" align="left"><b>Folio:</b></td>
-                                                        <td class="bg-dark" align="right">{{subcontratos.numero_folio_format}}</td>
+                                                        <td class="bg-gray-light"><b>Referencia:</b></td>
+                                                        <td class="bg-gray-light">{{subcontratos.referencia}}</td>
+                                                        <td class="bg-gray-light"><b>Contrato:</b></td>
+                                                        <td class="bg-gray-light">{{subcontratos.contrato_folio_format}}</td>
+                                                        <td class="bg-gray-light"><b>Fecha:</b></td>
+                                                        <td class="bg-gray-light">{{subcontratos.fecha_format}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td colspan="3"></td>
-                                                        <td class="bg-dark" align="left"><b>Fecha:</b></td>
-                                                        <td class="bg-dark" align="right">{{subcontratos.fecha_format}}</td>
+                                                        <td class="bg-gray-light"><b>Tipo de Gasto:</b></td>
+                                                        <td class="bg-gray-light">{{subcontratos.costo}}</td>
+                                                        <td class="bg-gray-light"><b>Tipo de Contrato:</b></td>
+                                                        <td class="bg-gray-light">{{subcontratos.tipo_subcontrato}}</td>
+                                                        <td class="bg-gray-light"><b>Personalidad Contratista:</b></td>
+                                                        <td class="bg-gray-light">{{subcontratos.personalidad_contratista}}</td>
                                                     </tr>
-                                                    <tr>
-                                                        <td colspan="3"></td>
-                                                        <td class="bg-dark" align="left" style="width:10%;"><b>Contrato:</b></td>
-                                                        <td class="bg-dark" align="right" style="width:10%;">{{subcontratos.contrato_folio_format}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="bg-dark" align="center" colspan="5"><h4><b>{{subcontratos.empresa}}</b></h4></td>
-                                                    </tr>
+                                                    <!-- <tr>
+                                                        <td class="bg-gray-light"><b>Contrato:</b></td>
+                                                        <td class="bg-gray-light">{{subcontratos.contrato_folio_format}}</td>
+                                                    </tr> -->
+                                                    
                                                 </tbody>
                                             </table>
                                         </div>
@@ -62,13 +63,13 @@
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
-                                                        <th class="bg-dark">#</th>
-                                                        <th class="bg-dark">Clave</th>
-                                                        <th class="bg-dark">Descripción</th>
-                                                        <th class="bg-dark">Unidad</th>
-                                                        <th class="bg-dark">Cantidad</th>
-                                                        <th class="bg-dark">Precio</th>
-                                                        <th class="bg-dark">Importe</th>
+                                                        <th>#</th>
+                                                        <th>Clave</th>
+                                                        <th>Descripción</th>
+                                                        <th>Unidad</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Precio</th>
+                                                        <th>Importe</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -123,7 +124,22 @@
                                             <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.retencion}}</i></label>
                                          </div>
                                     </div>
-                                    <div class="row">
+                                    
+                                    <hr>
+                                    <div class="row col-md-12">
+                                        <div class="col-md-2"><b>Plazo de Ejecución:</b></div>
+                                        <div class="col-md-4" v-if="subcontratos.subcontratos"><b>Del</b>&nbsp; {{subcontratos.subcontratos.fecha_ini}} &nbsp;<b>Al</b>&nbsp; {{subcontratos.subcontratos.fecha_fin}}</div>
+                                        <div class="col-md-4" v-else><b>Del</b>&nbsp; -------- &nbsp;<b>Al</b>&nbsp; --------</div>
+
+                                        <div class="col-md-2" v-if="subcontratos.subcontratos"><b>Descripción:</b></div>
+                                        <div class="col-md-4" v-if="subcontratos.subcontratos">{{subcontratos.subcontratos.descripcion}}</div>
+                                    </div>
+                                    <br>
+                                    <div class="row col-md-12">
+                                        <div class="col-md-2"><b>Observaciones:</b></div>
+                                        <div class="col-md-10">{{subcontratos.observaciones}}</div>
+                                    </div>
+                                    <!-- <div class="row">
                                         <div class="table-responsive col-md-12">
                                             <table class="table">
                                                 <tbody>
@@ -136,23 +152,11 @@
                                                         <td class="bg-dark" align="left"><b>Descripción:</b></td>
                                                         <td align="left" v-if="subcontratos.subcontratos">{{subcontratos.subcontratos.descripcion}}</td>
                                                         <td align="left" v-else></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="bg-dark" align="left"><b>Tipo de Gasto:</b></td>
-                                                        <td align="left">{{subcontratos.costo}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="bg-dark" align="left"><b>Tipo de Contrato:</b></td>
-                                                        <td align="left">{{subcontratos.tipo_subcontrato}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="bg-dark" align="left"><b>Personalidad Contratista:</b></td>
-                                                        <td align="left">{{subcontratos.personalidad_contratista}}</td>
-                                                    </tr>                                                  
+                                                    </tr>                                           
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
