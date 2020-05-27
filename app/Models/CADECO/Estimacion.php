@@ -284,7 +284,7 @@ class Estimacion extends Transaccion
                     $this->anticipo = ($data / $this->sumaImportes) * 100;
                     $this->save();
                 } else {
-                    throw new \Exception('No se puede actualizar la amortización de anticipo.');
+                    throw new \Exception('No se puede actualizar la amortización de anticipo de está estimación porque el Subcontrato no tiene porcentaje de anticipo definido.');
                 }
 
             }
