@@ -92,9 +92,11 @@ class PresupuestoContratistaService
             );
             $x++;
         }
-
+        
         $respuesta = [
             'descuento_cot' => $celdas[$x][6],
+            'tc_usd' => $celdas[$x + 4][6],
+            'tc_euro' => $celdas[$x + 5][6],
             'anticipo' => $celdas[$x + 11][6],
             'credito' => $celdas[$x + 12][6],
             'vigencia' => $celdas[$x + 13][6],
