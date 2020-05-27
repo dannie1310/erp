@@ -47,8 +47,6 @@ class DescuentoController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:registrar_descuento_estimacion_subcontrato')->only(['storeItem']);
         $this->middleware('permiso:editar_descuento_estimacion_subcontrato')->only(['updateList']);
-        // $this->middleware('permiso:consultar_banco')->only(['paginate','index','show']);
-        // $this->middleware('permiso:editar_banco')->only(['update']);
 
         $this->fractal = $fractal;
         $this->service = $service;
