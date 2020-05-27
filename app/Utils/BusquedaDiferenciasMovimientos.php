@@ -91,6 +91,8 @@ class BusquedaDiferenciasMovimientos
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 6;
+            $datos_diferencia["valor_a"] = trim($this->movimiento_a->cuenta->Codigo);
+            $datos_diferencia["valor_b"] = trim($this->movimiento_b->cuenta->Codigo);
             $datos_diferencia["observaciones"] = 'a: ' . trim($this->movimiento_a->cuenta->Codigo) . ' b: ' . trim($this->movimiento_b->cuenta->Codigo);
             Diferencia::registrar($datos_diferencia);
 
@@ -110,6 +112,8 @@ class BusquedaDiferenciasMovimientos
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 7;
+            $datos_diferencia["valor_a"] = trim($this->movimiento_a->cuenta->Nombre);
+            $datos_diferencia["valor_b"] = trim($this->movimiento_b->cuenta->Nombre);
             $datos_diferencia["observaciones"] = 'a: ' . trim($this->movimiento_a->cuenta->Nombre) . ' b: ' . trim($this->movimiento_b->cuenta->Nombre);
             Diferencia::registrar($datos_diferencia);
 
@@ -129,6 +133,8 @@ class BusquedaDiferenciasMovimientos
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 9;
+            $datos_diferencia["valor_a"] = $this->movimiento_a->Concepto;
+            $datos_diferencia["valor_b"] = $this->movimiento_b->Concepto;
             $datos_diferencia["observaciones"] = 'a: ' . $this->movimiento_a->Concepto . ' b: ' . $this->movimiento_b->Concepto;
             Diferencia::registrar($datos_diferencia);
 
@@ -148,6 +154,8 @@ class BusquedaDiferenciasMovimientos
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 8;
+            $datos_diferencia["valor_a"] = $this->movimiento_a->Referencia;
+            $datos_diferencia["valor_b"] = $this->movimiento_b->Referencia;
             $datos_diferencia["observaciones"] = 'a: ' . $this->movimiento_a->Referencia . ' b: ' . $this->movimiento_b->Referencia;
             Diferencia::registrar($datos_diferencia);
 
@@ -167,6 +175,8 @@ class BusquedaDiferenciasMovimientos
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 11;
+            $datos_diferencia["valor_a"] = $this->movimiento_a->Importe;
+            $datos_diferencia["valor_b"] = $this->movimiento_b->Importe;
             $datos_diferencia["observaciones"] = 'a: ' . $this->movimiento_a->Importe . ' b: ' . $this->movimiento_b->Importe;
             Diferencia::registrar($datos_diferencia);
 
@@ -186,6 +196,8 @@ class BusquedaDiferenciasMovimientos
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 10;
+            $datos_diferencia["valor_a"] = $this->movimiento_a->TipoMovto;
+            $datos_diferencia["valor_b"] = $this->movimiento_b->TipoMovto;
             $datos_diferencia["observaciones"] = 'a: ' . $this->movimiento_a->TipoMovto . ' b: ' . $this->movimiento_b->TipoMovto;
             Diferencia::registrar($datos_diferencia);
 

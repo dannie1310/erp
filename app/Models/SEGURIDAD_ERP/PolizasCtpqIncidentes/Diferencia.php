@@ -29,7 +29,9 @@ class Diferencia extends Model
         "fecha_hora_resolucion",
         "observaciones",
         "tipo_busqueda",
-        "id_busqueda"
+        "id_busqueda",
+        "valor_a",
+        "valor_b"
     ];
 
     public static function buscarSO($data){

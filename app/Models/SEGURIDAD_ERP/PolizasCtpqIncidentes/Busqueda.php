@@ -62,6 +62,7 @@ class Busqueda extends Model
         Config::set('database.connections.cntpq.database', $this->base_datos_busqueda);
         try {
             $polizas = Poliza::where("Ejercicio", $this->ejercicio)->where("Periodo", $this->periodo)->get();
+            BaseDatosRevisada::registrar(["base_datos"=>$this->base_datos_busqueda, "id_lote_busqueda"=>$this->lote->id, "cantidad_polizas"=>Poliza::count(),"cantidad_polizas_revisadas"=>count($polizas)]);
         } catch (\Exception $e) {
             BaseDatosInaccesible::registrar(["base_datos"=>$this->base_datos_busqueda, "id_lote_busqueda"=>$this->lote->id]);
             $this->finaliza();

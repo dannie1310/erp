@@ -148,6 +148,9 @@
                     </td>
                     <td style="text-align: right">
                         {{$item->cantidad_polizas}}
+                        @if($item->cantidad_polizas_revisadas>0)
+                            ({{number_format(100*$item->cantidad_polizas/$item->cantidad_polizas_revisadas,"2",".",",")}} %)
+                        @endif
                     </td>
                 </tr>
                     @endforeach
@@ -157,7 +160,6 @@
     @endif
     @if(count($lote->cantidad_diferencias_detectadas_por_tipo_por_base)>0)
         <hr />
-
         <div class="row">
             <table>
                 <caption style="text-align: left; font-weight: bold">Cantidad de diferencias por empresa y tipo:</caption>
@@ -195,6 +197,9 @@
                         </td>
                         <td style="text-align: right">
                             {{$item->cantidad_polizas}}
+                            @if($item->cantidad_polizas_revisadas>0)
+                                ({{number_format(100*$item->cantidad_polizas/$item->cantidad_polizas_revisadas,"2",".",",")}} %)
+                            @endif
                         </td>
                     </tr>
                 @endforeach
@@ -243,6 +248,9 @@
                         </td>
                         <td style="text-align: right">
                             {{$item->cantidad_polizas}}
+                            @if($item->cantidad_polizas_revisadas>0)
+                                ({{number_format(100*$item->cantidad_polizas/$item->cantidad_polizas_revisadas,"2",".",",")}} %)
+                            @endif
                         </td>
                     </tr>
                 @endforeach

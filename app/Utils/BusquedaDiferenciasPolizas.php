@@ -61,6 +61,8 @@ class BusquedaDiferenciasPolizas
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 2;
+            $datos_diferencia["valor_a"] = $this->poliza_a->Concepto;
+            $datos_diferencia["valor_b"] = $this->poliza_b->Concepto;
             $datos_diferencia["observaciones"] = 'a: ' . $this->poliza_a->Concepto . ' b: ' . $this->poliza_b->Concepto;
             Diferencia::registrar($datos_diferencia);
 
@@ -80,6 +82,8 @@ class BusquedaDiferenciasPolizas
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 3;
+            $datos_diferencia["valor_a"] = $this->poliza_a->Cargos;
+            $datos_diferencia["valor_b"] = $this->poliza_b->Abonos;
             $datos_diferencia["observaciones"] = 'a: ' . $this->poliza_a->Cargos . ' b: ' . $this->poliza_b->Abonos;
             Diferencia::registrar($datos_diferencia);
 
@@ -107,6 +111,8 @@ class BusquedaDiferenciasPolizas
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 4;
+            $datos_diferencia["valor_a"] = count($movimientos_a);
+            $datos_diferencia["valor_b"] = count($movimientos_b);
             $datos_diferencia["observaciones"] = 'a: ' . count($movimientos_a) . ' b: ' . count($movimientos_b);
             Diferencia::registrar($datos_diferencia);
 

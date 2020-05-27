@@ -85,11 +85,13 @@ class LoteBusqueda extends Model
     public function getCantidadDiferenciasDetectadasPorTipoAttribute()
     {
         $dem = DB::table('PolizasCtpqIncidentes.diferencias')
-            ->select(DB::raw("count(diferencias.id) as cantidad, count(distinct diferencias.id_poliza) as cantidad_polizas,  ctg_tipos.descripcion as descripcion"))
+            ->select(DB::raw("count(diferencias.id) as cantidad, count(distinct diferencias.id_poliza) as cantidad_polizas, 
+             lotes_busquedas_diferencias.cantidad_polizas_revisadas as cantidad_polizas_revisadas, ctg_tipos.descripcion as descripcion"))
             ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+            ->join('PolizasCtpqIncidentes.lotes_busquedas_diferencias', 'busquedas_diferencias.id_lote', '=', 'lotes_busquedas_diferencias.id')
             ->join('PolizasCtpqIncidentes.ctg_tipos', 'ctg_tipos.id', '=', 'diferencias.id_tipo')
             ->where("busquedas_diferencias.id_lote", $this->id)
-            ->groupBy("descripcion")
+            ->groupBy(DB::raw("descripcion, lotes_busquedas_diferencias.cantidad_polizas_revisadas"))
             ->get();
         return $dem;
     }
@@ -105,13 +107,19 @@ class LoteBusqueda extends Model
     public function getCantidadDiferenciasDetectadasPorTipoPorBaseAttribute()
     {
         $dem = DB::table('PolizasCtpqIncidentes.diferencias')
-            ->select(DB::raw("count(diferencias.id) as cantidad, count(distinct diferencias.id_poliza) as cantidad_polizas,  ctg_tipos.descripcion as descripcion, empresa_revisada.Nombre +' ['+diferencias.base_datos_revisada +']' as base_datos_revisada, empresa_referencia.Nombre + ' ['+diferencias.base_datos_referencia + ']' as base_datos_referencia"))
+            ->select(DB::raw("count(diferencias.id) as cantidad, count(distinct diferencias.id_poliza) as cantidad_polizas, 
+            bases_datos_revisadas_x_lotes.cantidad_polizas_revisadas,
+             ctg_tipos.descripcion as descripcion, empresa_revisada.Nombre +' ['+diferencias.base_datos_revisada +']' as base_datos_revisada, empresa_referencia.Nombre + ' ['+diferencias.base_datos_referencia + ']' as base_datos_referencia"))
             ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
             ->join('PolizasCtpqIncidentes.ctg_tipos', 'ctg_tipos.id', '=', 'diferencias.id_tipo')
             ->join('Contabilidad.ListaEmpresas as empresa_revisada', 'empresa_revisada.AliasBDD', '=', 'diferencias.base_datos_revisada')
             ->join('Contabilidad.ListaEmpresas as empresa_referencia', 'empresa_referencia.AliasBDD', '=', 'diferencias.base_datos_referencia')
+            ->join("PolizasCtpqIncidentes.bases_datos_revisadas_x_lotes", function ($join){
+                $join->on("PolizasCtpqIncidentes.bases_datos_revisadas_x_lotes.id_lote_busqueda","=", "PolizasCtpqIncidentes.busquedas_diferencias.id_lote");
+                    $join->on("PolizasCtpqIncidentes.bases_datos_revisadas_x_lotes.base_datos","=","PolizasCtpqIncidentes.busquedas_diferencias.base_datos_busqueda");
+            })
             ->where("busquedas_diferencias.id_lote", $this->id)
-            ->groupBy(DB::raw("descripcion, diferencias.base_datos_revisada, diferencias.base_datos_referencia, empresa_revisada.Nombre, empresa_referencia.Nombre"))
+            ->groupBy(DB::raw("descripcion, diferencias.base_datos_revisada, diferencias.base_datos_referencia, empresa_revisada.Nombre, empresa_referencia.Nombre, bases_datos_revisadas_x_lotes.cantidad_polizas_revisadas"))
             ->get();
         return $dem;
     }

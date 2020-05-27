@@ -94,12 +94,12 @@ class DiferenciaService
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
                         $busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio.$periodo);
+                        //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio.$periodo);
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
 
                 }
-                if($i ==3){
+                if($i ==5){
                     break;
                 }
                 $i++;
