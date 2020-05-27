@@ -29,6 +29,11 @@ class PresupuestoContratistaService
          return $this->repository->paginate($data);
      }
 
+     public function descargaLayout($id)
+     {
+         return $this->repository->descargaLayout($id);
+     }
+
      public function show($id)
      {
          return $this->repository->show($id);
