@@ -380,6 +380,7 @@ class Estimacion extends Transaccion
                 'desc_pres_mat_antes_iva' => 1,
                 'desc_otros_prest_antes_iva' => 0,
                 'ret_fon_gar_con_iva' => 0,
+                'amort_anticipo_antes_iva' => 1
             ]);
 
         }
