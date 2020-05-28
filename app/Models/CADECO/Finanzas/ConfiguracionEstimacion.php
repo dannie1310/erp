@@ -30,7 +30,7 @@ class ConfiguracionEstimacion extends Model
     {
         if(ConfiguracionEstimacion::query()->where('id_obra',Context::getIdObra())->first() != null)
         {
-            abort(400,'La Configuracion Finanzas ya fue registrada anteriormente');
+            abort(400,'La Configuración Finanzas ya fue registrada anteriormente');
         }
     }
 

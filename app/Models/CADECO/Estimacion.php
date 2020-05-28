@@ -179,7 +179,7 @@ class Estimacion extends Transaccion
                 ->where('id_concepto', '=', $concepto['item_antecedente'])
                 ->first()->precio_unitario;
 
-            $this->Items()->create([
+            $this->items()->create([
                 'id_transaccion' => $this->id_transaccion,
                 'id_antecedente' => $this->id_antecedente,
                 'item_antecedente' => $concepto['item_antecedente'],
@@ -370,6 +370,7 @@ class Estimacion extends Transaccion
 
     public function getConfiguracionAttribute()
     {
+        $this->refresh();
         $configuracion = $this->obra->configuracionEstimaciones;
         if (!$configuracion) {
             $configuracion = ConfiguracionEstimacion::create([
