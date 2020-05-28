@@ -34,9 +34,9 @@
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
                                                     <td class="bg-gray-light">{{(presupuesto.sucursal) ? presupuesto.sucursal.descripcion : '----------'}}</td>
                                                     <td class="bg-gray-light"><b>TC USD:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.tc_usd_format}}</td>
+                                                    <td class="bg-gray-light">{{'$ ' + parseFloat(tipo_cambio[2]).formatMoney(4, '.', ',')}}</td>
                                                     <td class="bg-gray-light"><b>TC EURO:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.tc_euro_format}}</td>
+                                                    <td class="bg-gray-light">{{'$ ' + parseFloat(tipo_cambio[3]).formatMoney(4, '.', ',')}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Direccion:</b></td>
@@ -133,8 +133,8 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{'$ ' + parseFloat((precio[i] * ((moneda_input[i] > 1) ? ((moneda_input[i] == 2) ? presupuesto.tc_usd : presupuesto.tc_euro) : 1)) - ((descuento[i] > 0) ? (((precio[i] * ((moneda_input[i] > 1) ? ((moneda_input[i] == 2) ? presupuesto.tc_usd : presupuesto.tc_euro) : 1)) * descuento[i]) / 100) : 0)).formatMoney(2, '.', ',')}}</td>
-                                                        <td style="text-align:right;">{{'$ ' + parseFloat(((precio[i] * ((moneda_input[i] > 1) ? ((moneda_input[i] == 2) ? presupuesto.tc_usd : presupuesto.tc_euro) : 1)) * ((partida.concepto) ? partida.concepto.cantidad_presupuestada : 0)) - ((descuento[i] > 0) ? ((((precio[i] * ((moneda_input[i] > 1) ? ((moneda_input[i] == 2) ? presupuesto.tc_usd : presupuesto.tc_euro) : 1)) * ((partida.concepto) ? partida.concepto.cantidad_presupuestada : 0)) * descuento[i]) / 100) : 0)).formatMoney(2, '.', ',')}}</td>
+                                                        <td style="text-align:right;">{{'$ ' + parseFloat((precio[i] * tipo_cambio[moneda_input[i]]) - ((descuento[i] * precio[i] * tipo_cambio[moneda_input[i]]) / 100)).formatMoney(2, '.', ',')}}</td>
+                                                        <td style="text-align:right;">{{'$ ' + parseFloat((partida.concepto.cantidad_presupuestada * precio[i] * tipo_cambio[moneda_input[i]]) - ((partida.concepto.cantidad_presupuestada * precio[i] * tipo_cambio[moneda_input[i]] * descuento[i]) / 100)).formatMoney(2, '.', ',')}}</td>
                                                        <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -291,7 +291,7 @@
         name: "presupuesto-edit",
 
         components: {Datepicker, ModelListSelect},
-        props: ['id'],
+        props: ['id', 'xls'],
         data() {
             return {
                 cargando: false,
@@ -357,7 +357,6 @@
                 return this.$store.dispatch('cadeco/moneda/index', {
                 }).then(data => {
                     this.monedas = data.data;
-                    this.monedas.pop();
                 }).finally(()=>{
 
                 })
@@ -365,7 +364,6 @@
             salir()
             {
                  this.$router.push({name: 'presupuesto'});
-                
             },
             find() {
                 
@@ -419,23 +417,47 @@
                 this.x = 0;
                 while(this.x < this.presupuesto.partidas.data.length)
                 {
+                    if(!this.carga)
+                    {
                         this.enable[this.x] = this.presupuesto.partidas.data[this.x].presupuesto;
                         this.precio[this.x] = this.presupuesto.partidas.data[this.x].precio_unitario_convert;
                         this.moneda_input[this.x] = (this.presupuesto.partidas.data[this.x].id_moneda != 0) ? this.presupuesto.partidas.data[this.x].id_moneda : 1;
                         this.descuento[this.x] = (this.presupuesto.partidas.data[this.x].descuento > 0) ? this.presupuesto.partidas.data[this.x].descuento : 0;
-                    this.x ++;                    
-                }
+                    }else
+                    {
+                        var busqueda = this.carga.partidas.find(x=>x.id_concepto == this.presupuesto.partidas.data[this.x].concepto.id_concepto)                        
+                        this.enable[this.x] = true;
+                        this.precio[this.x] = busqueda.precio_unitario;
+                        this.moneda_input[this.x] = busqueda.id_moneda;
+                        this.descuento[this.x] = busqueda.descuento;
+                        this.presupuesto.partidas.data[this.x].observaciones = busqueda.observaciones;
+                    }                        
+                    this.x ++;
+                }                
+
+                if(!this.carga)
+                {
                     this.anticipo = (this.presupuesto.anticipo > 0) ? this.presupuesto.anticipo : 0;
                     this.credito = (this.presupuesto.dias_credito > 0) ? this.presupuesto.dias_credito : 0;
                     this.vigencia = (this.presupuesto.dias_vigencia > 0) ? this.presupuesto.dias_vigencia : 0;
                     this.descuento_cot = (this.presupuesto.descuento > 0) ? this.presupuesto.descuento : 0;
                 
+                    
+                }else
+                {
+                    this.anticipo = this.carga.anticipo;
+                    this.credito = this.carga.credito;
+                    this.vigencia = this.carga.vigencia;
+                    this.descuento_cot = this.carga.descuento_cot;
+                    this.presupuesto.observaciones = this.carga.observaciones_generales;
+                }
+
                     this.tipo_cambio[0] = null;
                     this.tipo_cambio[1] = 1;
                     this.tipo_cambio[2] = (this.presupuesto.tc_usd) ? this.presupuesto.tc_usd : this.monedas[1].tipo_cambio_igh;
                     this.tipo_cambio[3] = (this.presupuesto.tc_euro) ? this.presupuesto.tc_euro : this.monedas[2].tipo_cambio_igh;
-
-                    this.calcular();                
+                    
+                this.calcular();                
             },
             validate() {
                 
@@ -503,6 +525,10 @@
             importe()
             {
                 return '$ ' + (parseFloat(this.presupuesto.subtotal) + parseFloat(this.presupuesto.impuesto)).formatMoney(2,'.',',');
+            },
+            carga()
+            {
+                return (this.xls) ? this.xls : false;
             }
         },
         watch: {
