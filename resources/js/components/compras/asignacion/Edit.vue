@@ -1,8 +1,7 @@
 <template>
     <span>
         <div class="row">
-            <div class="col-12">
-                
+            <div class="col-12">    
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <i class="fa fa-spin fa-spinner fa-2x" v-if="cargando"></i>
@@ -63,7 +62,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <button type="button" class="btn btn-primary " @click="generarOC" >Generar Ordenes de Compra</button>
+                                <button type="button" class="btn btn-primary pull-right" @click="generarOC"  v-if="asignaciones.asignaciones_pendientes_o_compra > 1">Generar Ordenes de Compra</button>
                             </div>
                         </div>
                         <div class="row">
@@ -76,8 +75,9 @@
                                                 <th colspan="4" rowspan="4" class="text-left"><h5></h5></th>
                                             </tr>
                                             <tr class="bg-gray-light">
-                                                <th colspan="4" >
+                                                <th :colspan="!asignaciones.data[id_transaccion].orden_compra?4:6" >
                                                     <select
+                                                        :disabled="Object.keys(asignaciones.data).length === 1"
                                                         type="text"
                                                         name="id_transaccion"
                                                         data-vv-as="Razón Social"
@@ -87,8 +87,8 @@
                                                         <option v-for="asignacion in asignaciones.data" :value="asignacion.id_transaccion">{{ asignacion.razon_social }}</option>
                                                     </select>
                                                 </th>
-                                                <th colspan="2" >
-                                                    <button type="button" class="btn btn-primary pull-right" @click="generarOC" >Generar Orden Compra</button> 
+                                                <th colspan="2"  v-if="!asignaciones.data[id_transaccion].orden_compra">
+                                                    <button type="button" class="btn btn-primary pull-right" @click="generarOC">Generar Orden Compra</button> 
                                                 </th>
                                             </tr>
                                             <tr class="bg-gray-light">
@@ -129,10 +129,54 @@
                                 </div>
                             </div>
                         </div>
+                       
                     </div>
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12" v-if="Object.keys(asignaciones).length > 0 && asignaciones.asignaciones_con_o_compra > 0">    
+                <div class="invoice p-3 mb-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>
+                                <i class="fa fa-list"></i> Ordenes de Compra Generadas
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Folio O. Compra</th>
+                                            <th>Razón Social</th>
+                                            <th>Concepto</th>
+                                            <th>Fecha</th>
+                                            <th>Monto</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, i) in asignaciones.data" v-if="Object(item.orden_compra)">
+                                            <td>{{ item.orden_compra.numero_folio_format}}</td>
+                                            <td>{{ item.razon_social}}</td>
+                                            <td :title="item.orden_compra.observaciones">{{ item.orden_compra.observaciones_format}}</td>
+                                            <td>{{ item.orden_compra.fecha_format}}</td>
+                                            <td class="money">{{ item.orden_compra.monto_format}}</td>
+                                            <td>Boton</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </span>
 </template>
 

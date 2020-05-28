@@ -216,4 +216,8 @@ class OrdenCompra extends Transaccion
                 break;
         }
     }
+
+    public function getTieneEntradaAlmacenAttribute(){
+        return $this->entradasAlmacen()->count() > 0;
+    }
 }

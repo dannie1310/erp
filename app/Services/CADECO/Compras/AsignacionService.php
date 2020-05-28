@@ -12,6 +12,7 @@ use App\Models\CADECO\OrdenCompraPartida;
 use App\Models\CADECO\Compras\AsignacionProveedores;
 use App\Repositories\CADECO\Compras\Asignacion\Repository;
 use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
+use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
 
 class AsignacionService
 {
@@ -48,15 +49,24 @@ class AsignacionService
     public function getAsignacion($id){
         $asignacion = $this->repository->show($id);
         $partidas = $asignacion->partidas;
+        $o_cmpra_pendientes = 0;
         $data = array();
         foreach($partidas as $partida){
             if(!array_key_exists($partida->id_transaccion_cotizacion, $data)){
+                $transf_orden_compra = new OrdenCompraTransformer();
+                $orden_compra_transf = null;
+                if($partida->ordenCompra){
+                    $orden_compra_transf = $transf_orden_compra->transform($partida->ordenCompra);
+                }else{
+                    $o_cmpra_pendientes++;
+                }
                 $data[$partida->id_transaccion_cotizacion] = [
                     'id_transaccion' => $partida->cotizacionCompra->id_transaccion,
                     'razon_social' => $partida->cotizacionCompra->empresa->razon_social,
                     'sucursal' => $partida->cotizacionCompra->sucursal->descripcion,
                     'direccion' => $partida->cotizacionCompra->sucursal->direccion,
-                    'orden_compra' => $partida->ordenCompra?true:false,
+                    'orden_compra' => $partida->ordenCompra?$orden_compra_transf:false,
+                    'entrada_almacen' => $partida->ordenCompra?$partida->ordenCompra->tiene_entrada_almacen:false,
                     
                 ];
                 $data[$partida->id_transaccion_cotizacion]['partidas'] = array();
@@ -86,6 +96,8 @@ class AsignacionService
             'numero_folio_format' => $asignacion->solicitud->numero_folio_format,
             'observaciones' => $asignacion->solicitud->observaciones,
             'fecha_registro' => $asignacion->solicitud->fecha_registro,
+            'asignaciones_pendientes_o_compra' => $o_cmpra_pendientes,
+            'asignaciones_con_o_compra' => count($data) -  $o_cmpra_pendientes,
             'data' => $data
         ];
     }
