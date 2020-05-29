@@ -64,15 +64,7 @@
         @if ($lote->diferencias_detectadas)
             <div class="col-md-2" >
                 <div class="form-group" >
-                    <label><b>No. de Pólizas Con Diferencias:</b></label>
-                    {{$lote->cantidad_polizas_con_errores}} ({{$lote->porcentaje_diferencias}})
-                </div>
-            </div>
-        @endif
-        @if ($lote->diferencias_detectadas)
-            <div class="col-md-2" >
-                <div class="form-group" >
-                    <label><b>Diferencias Detectadas:</b></label>
+                    <label><b>Nuevas Diferencias Detectadas:</b></label>
                     {{count($lote->diferencias_detectadas)}}
                 </div>
             </div>
@@ -82,6 +74,14 @@
                 <div class="form-group" >
                     <label><b>Diferencias Corregidas:</b></label>
                     {{count($lote->diferencias_corregidas)}}
+                </div>
+            </div>
+        @endif
+        @if ($lote->diferencias_detectadas)
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>No. de Pólizas Con Nuevas Diferencias:</b></label>
+                    {{$lote->cantidad_polizas_con_errores}} ({{$lote->porcentaje_diferencias}})
                 </div>
             </div>
         @endif
@@ -99,7 +99,7 @@
                 <div class="col-md-2" >
                     <div class="form-group" >
                         <label><b>No. Total de Pólizas Con Diferencias:</b></label>
-                        {{$cantidad_diferencias_totales}} ({{number_format($cantidad_diferencias_totales / $lote->cantidad_polizas_existentes*100,2,".", ",")}} %)
+                        {{$cantidad_diferencias_totales}} ({{number_format($cantidad_diferencias_totales / $lote->cantidad_polizas_revisadas*100,2,".", ",")}} %)
                     </div>
                 </div>
                 @else
@@ -117,7 +117,6 @@
                 {{$lote->cantidad_polizas_existentes}}
             </div>
         </div>
-
     </div>
 
     @if(count($lote->cantidad_diferencias_detectadas_por_tipo)>0)
@@ -248,8 +247,8 @@
                         </td>
                         <td style="text-align: right">
                             {{$item->cantidad_polizas}}
-                            @if($item->cantidad_polizas_revisadas>0)
-                                ({{number_format(100*$item->cantidad_polizas/$item->cantidad_polizas_revisadas,"2",".",",")}} %)
+                            @if($lote->cantidad_polizas_revisadas>0)
+                                ({{number_format(100*$item->cantidad_polizas/$lote->cantidad_polizas_revisadas,"2",".",",")}} %)
                             @endif
                         </td>
                     </tr>

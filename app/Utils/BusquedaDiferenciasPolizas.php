@@ -67,12 +67,15 @@ class BusquedaDiferenciasPolizas
             Diferencia::registrar($datos_diferencia);
 
         } else {
-            $datos_diferencia = $this->getInformacionDiferencia();
+            /*$datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 2;
             $diferencia_prexistente = Diferencia::buscarSO($datos_diferencia);
             if($diferencia_prexistente){
                 $diferencia_prexistente->corregir($this->id_busqueda);
-            }
+            }*/
+            $datos_diferencia = $this->getInformacionDiferencia();
+            $datos_diferencia["id_tipo"] = 2;
+            Diferencia::corregir($datos_diferencia, $this->id_busqueda);
         }
     }
 
@@ -88,12 +91,15 @@ class BusquedaDiferenciasPolizas
             Diferencia::registrar($datos_diferencia);
 
         } else {
-            $datos_diferencia = $this->getInformacionDiferencia();
+            /*$datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 3;
             $diferencia_prexistente = Diferencia::buscarSO($datos_diferencia);
             if($diferencia_prexistente){
                 $diferencia_prexistente->corregir($this->id_busqueda);
-            }
+            }*/
+            $datos_diferencia = $this->getInformacionDiferencia();
+            $datos_diferencia["id_tipo"] = 3;
+            Diferencia::corregir($datos_diferencia, $this->id_busqueda);
         }
     }
 
@@ -119,10 +125,13 @@ class BusquedaDiferenciasPolizas
         } else {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 4;
+            Diferencia::corregir($datos_diferencia, $this->id_busqueda);
+            /*$datos_diferencia = $this->getInformacionDiferencia();
+            $datos_diferencia["id_tipo"] = 4;
             $diferencia_prexistente = Diferencia::buscarSO($datos_diferencia);
             if($diferencia_prexistente){
                 $diferencia_prexistente->corregir($this->id_busqueda);
-            }
+            }*/
         }
     }
 

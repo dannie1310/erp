@@ -26,7 +26,23 @@ class RelacionMovimientos extends Model
         "tipo_relacion",
         "sin_incidentes",
         "activa",
-        "fecha_hora_verificacion"
+        "fecha_hora_verificacion",
+        "num_movto_a",
+        "num_movto_b",
+        "tipo_movto_a",
+        "tipo_movto_b",
+        "codigo_cuenta_a",
+        "codigo_cuenta_b",
+        "nombre_cuenta_a",
+        "nombre_cuenta_b",
+        "importe_a",
+        "importe_b",
+        "referencia_a",
+        "referencia_b",
+        "concepto_a",
+        "concepto_b",
+        "id_poliza_a",
+        "id_poliza_b"
     ];
 
     public function movimiento_revisado()
@@ -73,6 +89,8 @@ class RelacionMovimientos extends Model
             ->first();
         if(!$relacion){
             $relacion = RelacionMovimientos::create($datos_relacion);
+        }else{
+            $relacion->update($datos_relacion);
         }
         return $relacion;
     }

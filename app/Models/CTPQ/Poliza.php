@@ -98,6 +98,10 @@ class Poliza extends Model
                 "id_poliza_b" => $poliza_relacionada->Id,
                 "base_datos_b" => $busqueda->base_datos_referencia,
                 "tipo_relacion" => $busqueda->id_tipo_busqueda,
+                "folio" => $this->Folio,
+                "ejercicio" => $this->Ejercicio,
+                "periodo" => $this->Periodo,
+                "tipo" => $this->TipoPol
             ];
             $relacion_poliza = RelacionPolizas::registrar($datos_relacion);
             $relaciones_movimientos = $this->relaciona_movimientos($busqueda);
@@ -153,13 +157,43 @@ class Poliza extends Model
         if (count($movimientos) == count($movimientos_referencia)) {
             $i = 0;
             foreach ($movimientos as $movimiento) {
+                DB::purge('cntpq');
+                Config::set('database.connections.cntpq.database', $busqueda->base_datos_busqueda);
+                $movimiento->load("cuenta");
+                //$movimiento->load("poliza");
+
+                DB::purge('cntpq');
+                Config::set('database.connections.cntpq.database', $busqueda->base_datos_referencia);
+                $movimientos_referencia[$i]->load("cuenta");
+                //$movimientos_referencia[$i]->load("poliza");
+                try{
+
                 $datos_relacion = [
                     "id_movimiento_a" => $movimiento->Id,
                     "base_datos_a" => $busqueda->base_datos_busqueda,
                     "id_movimiento_b" => $movimientos_referencia[$i]->Id,
                     "base_datos_b" => $busqueda->base_datos_referencia,
                     "tipo_relacion" => $busqueda->id_tipo_busqueda,
-                ];
+                    "num_movto_a" => $movimiento->NumMovto,
+                    "num_movto_b" => $movimientos_referencia[$i]->NumMovto,
+                    "tipo_movto_a" => $movimiento->TipoMovto,
+                    "tipo_movto_b" => $movimientos_referencia[$i]->TipoMovto,
+                    "codigo_cuenta_a" => $movimiento->cuenta->Codigo,
+                    "codigo_cuenta_b" => $movimientos_referencia[$i]->cuenta->Codigo,
+                    "nombre_cuenta_a" => $movimiento->cuenta->Nombre,
+                    "nombre_cuenta_b" => $movimientos_referencia[$i]->cuenta->Nombre,
+                    "importe_a" => $movimiento->Importe,
+                    "importe_b" => $movimientos_referencia[$i]->Importe,
+                    "referencia_a" => $movimiento->Referencia,
+                    "referencia_b" => $movimientos_referencia[$i]->Referencia,
+                    "concepto_a" => $movimiento->Concepto,
+                    "concepto_b" => $movimientos_referencia[$i]->Concepto,
+                    "id_poliza_a" => $movimiento->IdPoliza,
+                    "id_poliza_b" => $movimientos_referencia[$i]->IdPoliza,
+                ];}
+                catch (\Exception $e){
+                    dd($busqueda->base_datos_busqueda,$movimiento);
+                }
                 $relaciones_movimientos[$i] = RelacionMovimientos::registrar($datos_relacion);
                 $i++;
             }

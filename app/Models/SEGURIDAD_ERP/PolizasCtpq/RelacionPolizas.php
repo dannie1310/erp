@@ -27,7 +27,11 @@ class RelacionPolizas extends Model
         "tipo_relacion",
         "sin_incidentes",
         "activa",
-        "fecha_hora_verificacion"
+        "fecha_hora_verificacion",
+        "folio",
+        "ejercicio",
+        "periodo",
+        "tipo"
     ];
 
     public function poliza_revisada()

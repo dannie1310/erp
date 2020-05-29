@@ -79,11 +79,18 @@ class Diferencia extends Model
         return $diferencia;
     }
     public static function registrar($data){
-        $diferencia = Diferencia::buscar($data);
+        //se omite la validación
+        try{
+            Diferencia::create($data);
+        } catch (\Exception $e){
+
+        }
+
+        /*$diferencia = Diferencia::buscar($data);
         if(!$diferencia)
         {
             Diferencia::create($data);
-        }
+        }*/
     }
 
     public function getFechaHoraDeteccionFormatAttribute()
@@ -149,12 +156,17 @@ class Diferencia extends Model
         }
     }
 
-    public function corregir($id_busqueda = 1)
+    public static function corregir($datos_diferencia,$id_busqueda = 1)
     {
-        $this->activo = 0;
-        $this->fecha_hora_resolucion = date('Y-m-d H:i:s');
-        $this->correccion()->create(["id_busqueda"=>$id_busqueda]);
-        $this->save();
+        $datos["activo"] =0;
+        $datos["fecha_hora_resolucion"] = date('Y-m-d H:i:s');
+        $diferencia = Diferencia::buscarSO($datos_diferencia);
+        if($diferencia){
+            $diferencia->activo = 0;
+            $diferencia->fecha_hora_resolucion = date('Y-m-d H:i:s');
+            $diferencia->correccion()->create(["id_busqueda"=>$id_busqueda]);
+            $diferencia->save();
+        }
     }
 
     public static function cantidadTotalPolizasConErrores($tipo_busqueda)

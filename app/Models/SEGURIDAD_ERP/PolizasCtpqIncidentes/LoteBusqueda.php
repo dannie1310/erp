@@ -37,6 +37,11 @@ class LoteBusqueda extends Model
         return $this->hasMany(BaseDatosInaccesible::class, "id_lote_busqueda", "id");
     }
 
+    public function bases_datos_revisadas()
+    {
+        return $this->hasMany(BaseDatosRevisada::class, "id_lote_busqueda", "id");
+    }
+
     public function diferencias_detectadas()
     {
         return $this->hasManyThrough(Diferencia::class, Busqueda::class, "id_lote", "id_busqueda", "id", "id");
@@ -170,7 +175,7 @@ class LoteBusqueda extends Model
         $this->fecha_hora_fin = date('Y-m-d H:i:s');
         $this->save();
 
-        $catidad_polizas_existentes = $this->busquedas->sum("cantidad_polizas_existentes");
+        $catidad_polizas_existentes = $this->bases_datos_revisadas->sum("cantidad_polizas_existentes");
         $this->setCantidadPolizasExistentes($catidad_polizas_existentes);
 
         event(new FinalizaProcesamientoLoteBusquedas(

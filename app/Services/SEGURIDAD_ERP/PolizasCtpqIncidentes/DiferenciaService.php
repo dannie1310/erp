@@ -10,6 +10,7 @@ namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
@@ -51,6 +52,7 @@ class DiferenciaService
 
     public function buscarDiferencias($parametros)
     {
+        $datos_lote = [];
         $lote =LoteBusqueda::getLoteActivo();
         if(!$lote){
             $lote = $this->generaPeticionesBusquedas($parametros);
@@ -78,11 +80,10 @@ class DiferenciaService
         $lote = $this->repository->generaLoteBusqueda($parametros->tipo_busqueda);
         if($parametros->tipo_busqueda == 1) {
             $empresas_consolidantes = $this->repository->getListaEmpresasConsolidantes();
-            $i=0;
             foreach ($empresas_consolidantes as $empresa_consolidante) {
                 $ejercicios = $empresa_consolidante->ejercicios;
                 foreach ($ejercicios as $ejercicio) {
-                    for ($periodo = 1; $periodo <= 2; $periodo++) {
+                    for ($periodo = 1; $periodo <= 12; $periodo++) {
                         $data = [
                             "id_tipo_busqueda" => 1,
                             "id_lote" => $lote->id,
@@ -92,17 +93,13 @@ class DiferenciaService
                             "base_datos_referencia" => $empresa_consolidante->empresa_consolidadora->AliasBDD
                         ];
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
-                        $busqueda->procesarBusquedaDiferencias();
+                        //$busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio.$periodo);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue($this->getNombreCola($ejercicio, $periodo));
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
 
                 }
-                if($i ==5){
-                    break;
-                }
-                $i++;
             }
             if(!count($lote->busquedas)>0){
                 $lote->finaliza();
@@ -124,7 +121,7 @@ class DiferenciaService
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
                         $busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue($this->getNombreCola($ejercicio, $periodo));
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
                 }
@@ -149,7 +146,7 @@ class DiferenciaService
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
                         //$busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue($this->getNombreCola($ejercicio, $periodo));
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
                 }
@@ -174,7 +171,7 @@ class DiferenciaService
                         $busqueda = $this->repository->generaPeticionesBusquedas($data);
                         //$busqueda->procesarBusquedaDiferencias();
                         //if($periodo)
-                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue('Que' . $ejercicio);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue($this->getNombreCola($ejercicio, $periodo));
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
                     }
                 }
@@ -184,5 +181,25 @@ class DiferenciaService
             }
         }
         return $lote;
+    }
+
+    private function getNombreCola($ejercicio, $periodo)
+    {
+        if($ejercicio<2010)
+        {
+            return "q0709";
+        } else if($ejercicio>=2010 && $ejercicio <=2012)
+        {
+            return "q1012";
+        } else if($ejercicio>=2013 && $ejercicio <=2015)
+        {
+            return "q1315";
+        } else if($ejercicio>=2016 && $ejercicio <=2018)
+        {
+            return "q1618";
+        } else if($ejercicio>=2019)
+        {
+            return "q1920";
+        }
     }
 }

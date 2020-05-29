@@ -77,7 +77,27 @@ class Empresa extends Model
         } catch (\Exception $e){
 
         }
-        return [2019];
+        return $ejercicios;
+
+    }
+
+    public function getPeriodosAttribute($ejercicio)
+    {
+        $ejercicios = [];
+        try{
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $this->AliasBDD);
+            $max = Poliza::max("Periodo");
+            $min = Poliza::min("Periodo");
+
+            for($i= $min; $i<=$max; $i++){
+                $ejercicios[]=$i;
+            }
+
+
+        } catch (\Exception $e){
+
+        }
         return $ejercicios;
 
     }

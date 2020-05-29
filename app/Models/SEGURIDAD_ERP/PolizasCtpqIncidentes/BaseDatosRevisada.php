@@ -19,7 +19,7 @@ class BaseDatosRevisada extends Model
     protected $fillable = [
         "id_lote_busqueda",
         "base_datos",
-        "cantidad_polizas",
+        "cantidad_polizas_existentes",
         "cantidad_polizas_revisadas"
     ];
 
