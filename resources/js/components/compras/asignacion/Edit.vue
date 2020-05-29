@@ -165,12 +165,21 @@
                                             <td :title="item.orden_compra.observaciones">{{ item.orden_compra.observaciones_format}}</td>
                                             <td>{{ item.orden_compra.fecha_format}}</td>
                                             <td class="money">{{ item.orden_compra.monto_format}}</td>
-                                            <td>Boton</td>
+                                            <td>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" v-if="!item.entrada_almacen" :id="`enable[${i}]`" v-model="item.orden_compra.eliminar" >&nbsp;
+                                                    <label class="custom-control-label" :for="`enable[${i}]`" :title="item.entrada_almacen?'Con Entrada Almacen':'Eliminar'">
+                                                        <i class="fa fa-trash" v-if="!item.entrada_almacen"></i>
+                                                    </label>
+                                                </div>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-primary pull-right" @click="eliminarOC" :disabled="!eliminarOrdenes">Eliminar Orden(es) de Compra</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -196,7 +205,17 @@ export default {
         this.getAsignacion();
     },
     computed: {
-        
+        eliminarOrdenes(){
+            let cantidad = 0;
+            if(this.asignaciones.data){
+                Object.values(this.asignaciones.data).forEach(item => {
+                    if(item.orden_compra && item.orden_compra.eliminar){
+                        cantidad = cantidad +1;
+                    }
+                });
+            }
+            return cantidad > 0;
+        }
     },
     methods: {
         asignacion(){
@@ -213,6 +232,27 @@ export default {
                 }).finally(()=>{
                     this.cargando = false;
                 })
+        },
+        eliminarOC(){
+            this.cargando = true;
+            let ordenes_c = [];
+            Object.values(this.asignaciones.data).forEach(item => {
+                if(item.orden_compra && item.orden_compra.eliminar){
+                    ordenes_c.push(item.orden_compra.id);
+                }
+            });
+            if(ordenes_c.length > 0){
+                return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:ordenes_c}
+                  ).then(data => {
+                    this.asignacion();
+                }).finally(()=>{
+                    this.cargando = false;
+                })
+            }else{
+                swal('Atención', 'Seleccione al menos una orden de compra a eliminar', 'warning');
+            }
+
+            console.log(ordenes_c);
         },
         getAsignacion(){
             this.cargando = true;

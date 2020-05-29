@@ -7,11 +7,12 @@
  */
 
 namespace App\Services\CADECO\Compras;
-use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\OrdenCompra;
-use App\PDF\Compras\OrdenCompraFormato;
 use App\Repositories\Repository;
+use App\Models\CADECO\OrdenCompra;
+use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\SolicitudCompra;
+use App\PDF\Compras\OrdenCompraFormato;
 
 
 class OrdenCompraService
@@ -67,5 +68,21 @@ class OrdenCompraService
     {
         $pdf = new OrdenCompraFormato($id);
         return $pdf;
+    }
+
+    public function eliminarOrdenes($data){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            foreach($data as $orden){
+                $this->repository->delete([], $orden);
+            }
+             
+            DB::connection('cadeco')->commit();
+            return response()->json("{}", 200);
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 }

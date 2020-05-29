@@ -9,11 +9,12 @@
 namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
-use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
-use App\Services\CADECO\Compras\OrdenCompraService;
-use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
+use App\Traits\ControllerTrait;
+use App\Http\Controllers\Controller;
+use App\Services\CADECO\Compras\OrdenCompraService;
+use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
 
 class OrdenCompraController extends Controller
 {
@@ -53,5 +54,9 @@ class OrdenCompraController extends Controller
     public function pdfOrdenCompra($id)
     {
         return $this->service->pdfOrdenCompra($id)->create();
+    }
+
+    public function eliminarOrdenes(Request $request){
+        return $this->service->eliminarOrdenes($request->all());
     }
 }
