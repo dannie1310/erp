@@ -370,7 +370,6 @@ class Estimacion extends Transaccion
 
     public function getConfiguracionAttribute()
     {
-        $this->refresh();
         $configuracion = $this->obra->configuracionEstimaciones;
         if (!$configuracion) {
             $configuracion = ConfiguracionEstimacion::create([
@@ -382,7 +381,7 @@ class Estimacion extends Transaccion
                 'ret_fon_gar_con_iva' => 0,
                 'amort_anticipo_antes_iva' => 1
             ]);
-
+            $this->refresh();
         }
         return $configuracion;
     }
