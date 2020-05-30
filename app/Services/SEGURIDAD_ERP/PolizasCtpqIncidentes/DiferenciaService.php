@@ -14,6 +14,7 @@ use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 
@@ -185,7 +186,8 @@ class DiferenciaService
 
     private function getNombreCola($ejercicio, $periodo)
     {
-        if($ejercicio<2010)
+        return "q".$ejercicio;
+        /*if($ejercicio<2010)
         {
             return "q0709";
         } else if($ejercicio>=2010 && $ejercicio <=2012)
@@ -200,6 +202,6 @@ class DiferenciaService
         } else if($ejercicio>=2019)
         {
             return "q1920";
-        }
+        }*/
     }
 }
