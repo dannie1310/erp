@@ -88,7 +88,7 @@
                                                     </select>
                                                 </th>
                                                 <th colspan="2"  v-if="!asignaciones.data[id_transaccion].orden_compra">
-                                                    <button type="button" class="btn btn-primary pull-right" @click="generarOC">Generar Orden Compra</button> 
+                                                    <button type="button" class="btn btn-primary pull-right" @click="generarOrdenCompraIndividual">Generar Orden Compra</button> 
                                                 </th>
                                             </tr>
                                             <tr class="bg-gray-light">
@@ -159,7 +159,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(item, i) in asignaciones.data" v-if="Object(item.orden_compra)">
+                                        <tr v-for="(item, i) in asignaciones.data" v-if="Object.keys(item.orden_compra).length > 0">
                                             <td>{{ item.orden_compra.numero_folio_format}}</td>
                                             <td>{{ item.razon_social}}</td>
                                             <td :title="item.orden_compra.observaciones">{{ item.orden_compra.observaciones_format}}</td>
@@ -244,24 +244,20 @@ export default {
             if(ordenes_c.length > 0){
                 return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:ordenes_c}
                   ).then(data => {
-                    this.asignacion();
+                    this.getAsignacion();
                 }).finally(()=>{
                     this.cargando = false;
                 })
             }else{
                 swal('Atención', 'Seleccione al menos una orden de compra a eliminar', 'warning');
             }
-
-            console.log(ordenes_c);
         },
         getAsignacion(){
             this.cargando = true;
             this.asignacion = [];
             return this.$store.dispatch('compras/asignacion/getAsignacion', {
                     id: this.id,
-                    params:{
-                        
-                    }
+                    params:{}
                 }).then(data => {
                     this.asignaciones = data;
                     this.id_transaccion = Object.keys(data.data)[0];
@@ -276,6 +272,18 @@ export default {
                     }
                 }).then(data => {
                     this.$router.push({name: 'asignacion-proveedores'});
+                }) .finally(() => {
+                    this.descargando = false;
+                })
+        },
+        generarOrdenCompraIndividual(){
+            return this.$store.dispatch('compras/asignacion/generarOrdenIndividual', {
+                    data: {
+                        id_transaccion: this.id_transaccion,
+                        id: this.id,
+                    }
+                }).then(data => {
+                    this.getAsignacion();
                 }) .finally(() => {
                     this.descargando = false;
                 })

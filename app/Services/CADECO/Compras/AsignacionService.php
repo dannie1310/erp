@@ -70,13 +70,13 @@ class AsignacionService
                     
                 ];
                 $data[$partida->id_transaccion_cotizacion]['partidas'] = array();
-            } ///'$ '. number_format($this->precio_unitario, 2, '.', ',');
+            } 
             $p_u = $partida->cotizacion->precio_unitario;
             $desc = $partida->cotizacion->descuento > 0? $p_u * $partida->cotizacion->descuento / 100 : 0;
             $cantidad_a = $partida->cantidad_asignada;
             $t_cambio = $partida->cotizacion->moneda->cambio?$partida->cotizacion->moneda->cambio->cambio:1;
             $precio_total = ($p_u - $desc) * $cantidad_a ;
-// dd($t_cambio, $partida->cotizacion->moneda->cambio);
+
             $data[$partida->id_transaccion_cotizacion]['partidas'][] = [
                 'descripcion' => $partida->material->descripcion,
                 'unidad' => $partida->material->unidad,
@@ -110,7 +110,6 @@ class AsignacionService
                 'id_transaccion_solicitud' => $data['id_solicitud'],
                 'estado' => 1,
             ]);
-// dd($asignacion);
             $registradas = 0;
 
             foreach($data['cotizaciones'] as $cotizacion){
@@ -189,6 +188,62 @@ class AsignacionService
             $asignacion->save();
             DB::connection('cadeco')->commit();
             return $asignacion;
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function generarOrdenIndividual($data){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $partidas = AsignacionProveedoresPartida::where('id_transaccion_cotizacion', '=', $data['id_transaccion'])->where('id_asignacion_proveedores', '=', $data['id'])->get();
+
+            $transaccion_cotizacion = '';
+            $orden_c = null;
+            foreach($partidas as $partida){
+                if($transaccion_cotizacion != $partida->id_transaccion_cotizacion){
+                    $transaccion_cotizacion = $partida->id_transaccion_cotizacion;
+                    $orden_c = $partida->ordenCompra()->create([
+                        'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
+                        'id_referente' => $partida->cotizacionCompra->id_transaccion,
+                        'id_empresa' => $partida->cotizacionCompra->id_empresa,
+                        'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
+                        'id_moneda' => $partida->cotizacionCompra->id_moneda,
+                        'observaciones' => $partida->cotizacionCompra->observaciones,
+                    ]);
+                }
+    
+                OrdenCompraPartida::create([
+                    'id_transaccion' => $orden_c->id_transaccion,
+                    'id_antecedente' => $orden_c->id_antecedente,
+                    'item_antecedente' => $partida->id_item_solicitud,
+                    'id_material' => $partida->id_material,
+                    'unidad' => $partida->material->unidad,
+                    'cantidad' => $partida->cantidad_asignada,
+                    'importe' => $partida->cotizacion->precio_unitario * $partida->cantidad_asignada,
+                    'precio_unitario' => $partida->cotizacion->precio_unitario,
+                    'precio_material' => $partida->cotizacion->precio_unitario,
+                ]);
+
+                $subtotal = $partida->cotizacion->precio_unitario * $partida->cantidad_asignada;
+                $impuesto = $subtotal  * 0.16;
+                $monto = $subtotal + $impuesto;
+
+                $orden_c->monto = $orden_c->monto + $monto;
+                $orden_c->saldo = $orden_c->saldo + $monto;
+                $orden_c->impuesto = $orden_c->impuesto + $impuesto;
+                $orden_c->save();
+                
+
+            }
+
+            $partida->asignacion->estado = 2;
+            $partida->asignacion->save();
+
+            DB::connection('cadeco')->commit();
+            return $partida->asignacion;
         }catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());

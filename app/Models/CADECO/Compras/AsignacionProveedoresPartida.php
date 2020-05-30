@@ -40,7 +40,7 @@ class AsignacionProveedoresPartida extends Model
     }
 
     public function asignacion(){
-        return $this->belongsTo(AsignacionProveedores::class, 'id', 'id_asignacion_proveedor');
+        return $this->belongsTo(AsignacionProveedores::class, 'id_asignacion_proveedores', 'id');
     }
 
     public function cotizacion()
