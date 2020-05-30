@@ -53,40 +53,38 @@
                 {{$lote->bases_datos_inaccesibles()->distinct('base_datos')->count('base_datos')}}
             </div>
         </div>
-        @if ($lote->diferencias_detectadas)
-            <div class="col-md-2" >
-                <div class="form-group" >
-                    <label><b>No. Pólizas Revisadas:</b></label>
-                    {{$lote->busquedas->sum("cantidad_polizas_revisadas")}}
-                </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>No. Pólizas Revisadas:</b></label>
+                {{$lote->cantidad_polizas_revisadas_format}}
             </div>
-        @endif
-        @if ($lote->diferencias_detectadas)
+        </div>
+
             <div class="col-md-2" >
                 <div class="form-group" >
                     <label><b>Nuevas Diferencias Detectadas:</b></label>
-                    {{count($lote->diferencias_detectadas)}}
+                    {{$lote->cantidad_diferencias_detectadas_format}}
                 </div>
             </div>
-        @endif
-        @if ($lote->diferencias_corregidas)
+
+        @if ($lote->cantidad_diferencias_corregidas>0)
             <div class="col-md-2" >
                 <div class="form-group" >
                     <label><b>Diferencias Corregidas:</b></label>
-                    {{count($lote->diferencias_corregidas)}}
+                    {{($lote->cantidad_diferencias_corregidas_format)}}
                 </div>
             </div>
         @endif
-        @if ($lote->diferencias_detectadas)
+        @if (($lote->cantidad_diferencias_detectadas)>0)
             <div class="col-md-2" >
                 <div class="form-group" >
                     <label><b>No. de Pólizas Con Nuevas Diferencias:</b></label>
-                    {{$lote->cantidad_polizas_con_errores}} ({{$lote->porcentaje_diferencias}})
+                    {{$lote->cantidad_polizas_con_errores_format}} ({{$lote->porcentaje_diferencias}})
                 </div>
             </div>
         @endif
         <hr />
-        @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != count($lote->diferencias_detectadas)))
+        @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != ($lote->cantidad_diferencias_detectadas)))
             <div class="col-md-2" >
                 <div class="form-group" >
                     <label><b>Diferencias Totales Existentes:</b></label>
@@ -94,7 +92,7 @@
                 </div>
             </div>
         @endif
-        @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != count($lote->diferencias_detectadas)))
+        @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != ($lote->cantidad_diferencias_detectadas)))
             @if($lote->cantidad_polizas_existentes>0)
                 <div class="col-md-2" >
                     <div class="form-group" >
@@ -114,7 +112,7 @@
         <div class="col-md-2" >
             <div class="form-group" >
                 <label><b>No. Pólizas Existentes:</b></label>
-                {{$lote->cantidad_polizas_existentes}}
+                {{$lote->cantidad_polizas_existentes_format}}
             </div>
         </div>
     </div>
@@ -207,7 +205,7 @@
         </div>
     @endif
 
-    @if(count($diferencias_totales)>0 &&($diferencias_totales->sum("cantidad") != count($lote->diferencias_detectadas)))
+    @if(count($diferencias_totales)>0 &&($diferencias_totales->sum("cantidad") != ($lote->cantidad_diferencias_detectadas)))
         <hr />
 
         <div class="row">

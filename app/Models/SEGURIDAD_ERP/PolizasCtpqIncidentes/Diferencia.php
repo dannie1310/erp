@@ -197,4 +197,25 @@ class Diferencia extends Model
             ->get();
         return $dem;
     }
+
+    public static function cantidadDiferenciasDetectadas($id_lote)
+    {
+        $dem = DB::table('PolizasCtpqIncidentes.diferencias')
+            ->select(DB::raw("count(diferencias.id) as cantidad"))
+            ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id','=','diferencias.id_busqueda')
+            ->where("diferencias.activo","1")
+            ->where("busquedas_diferencias.id_lote", $id_lote)
+            ->first();
+        return $dem->cantidad;
+    }
+
+    public static function cantidadDiferenciasCorregidas($id_lote)
+    {
+        $dem = DB::table('PolizasCtpqIncidentes.diferencias_corregidas')
+            ->select(DB::raw("count(diferencias_corregidas.id) as cantidad"))
+            ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id','=','diferencias_corregidas.id_busqueda')
+            ->where("busquedas_diferencias.id_lote", $id_lote)
+            ->first();
+        return $dem->cantidad;
+    }
 }

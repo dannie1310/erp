@@ -23,8 +23,10 @@ class LoteBusqueda extends Model
         "usuario_inicio",
         "fecha_hora_inicio",
         "fecha_hora_fin",
-        "id_tipo_busqueda","cantidad_polizas_revisadas",
-        "cantidad_polizas_existentes"
+        "id_tipo_busqueda", "cantidad_polizas_revisadas",
+        "cantidad_polizas_existentes",
+        "cantidad_diferencias_detectadas",
+        "cantidad_diferencias_corregidas"
     ];
 
     public function busquedas()
@@ -82,9 +84,14 @@ class LoteBusqueda extends Model
             ->select(DB::raw(" count(distinct diferencias.id_poliza) as cantidad_polizas"))
             ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
             ->where("busquedas_diferencias.id_lote", $this->id)
-            ->where("activo",1)
+            ->where("activo", 1)
             ->first();
         return $dem->cantidad_polizas;
+    }
+
+    public function getCantidadPolizasConErroresFormatAttribute()
+    {
+        return number_format($this->cantidad_polizas_con_errores, 0, ".", ",");
     }
 
     public function getCantidadDiferenciasDetectadasPorTipoAttribute()
@@ -101,10 +108,11 @@ class LoteBusqueda extends Model
         return $dem;
     }
 
-    public function getPorcentajeDiferenciasAttribute(){
+    public function getPorcentajeDiferenciasAttribute()
+    {
         $porcentaje = 0;
-        if($this->busquedas->sum("cantidad_polizas_revisadas")>0){
-            $porcentaje = number_format($this->cantidad_polizas_con_errores / $this->busquedas->sum("cantidad_polizas_revisadas") *100,2);
+        if ($this->busquedas->sum("cantidad_polizas_revisadas") > 0) {
+            $porcentaje = number_format($this->cantidad_polizas_con_errores / $this->busquedas->sum("cantidad_polizas_revisadas") * 100, 2);
         }
         return $porcentaje . " %";
     }
@@ -119,9 +127,9 @@ class LoteBusqueda extends Model
             ->join('PolizasCtpqIncidentes.ctg_tipos', 'ctg_tipos.id', '=', 'diferencias.id_tipo')
             ->join('Contabilidad.ListaEmpresas as empresa_revisada', 'empresa_revisada.AliasBDD', '=', 'diferencias.base_datos_revisada')
             ->join('Contabilidad.ListaEmpresas as empresa_referencia', 'empresa_referencia.AliasBDD', '=', 'diferencias.base_datos_referencia')
-            ->join("PolizasCtpqIncidentes.bases_datos_revisadas_x_lotes", function ($join){
-                $join->on("PolizasCtpqIncidentes.bases_datos_revisadas_x_lotes.id_lote_busqueda","=", "PolizasCtpqIncidentes.busquedas_diferencias.id_lote");
-                    $join->on("PolizasCtpqIncidentes.bases_datos_revisadas_x_lotes.base_datos","=","PolizasCtpqIncidentes.busquedas_diferencias.base_datos_busqueda");
+            ->join("PolizasCtpqIncidentes.bases_datos_revisadas_x_lotes", function ($join) {
+                $join->on("PolizasCtpqIncidentes.bases_datos_revisadas_x_lotes.id_lote_busqueda", "=", "PolizasCtpqIncidentes.busquedas_diferencias.id_lote");
+                $join->on("PolizasCtpqIncidentes.bases_datos_revisadas_x_lotes.base_datos", "=", "PolizasCtpqIncidentes.busquedas_diferencias.base_datos_busqueda");
             })
             ->where("busquedas_diferencias.id_lote", $this->id)
             ->groupBy(DB::raw("descripcion, diferencias.base_datos_revisada, diferencias.base_datos_referencia, empresa_revisada.Nombre, empresa_referencia.Nombre, bases_datos_revisadas_x_lotes.cantidad_polizas_revisadas"))
@@ -142,8 +150,7 @@ class LoteBusqueda extends Model
     public function getTipoStrAttribute()
     {
         $tipo = "";
-        switch ($this->id_tipo_busqueda)
-        {
+        switch ($this->id_tipo_busqueda) {
             case 1:
                 $tipo = "Individual vs Consolidada";
                 break;
@@ -160,12 +167,8 @@ class LoteBusqueda extends Model
         return $tipo;
     }
 
-    public function setCantidadPolizasExistentes($cantidad = 0){
-        $this->cantidad_polizas_existentes = $cantidad;
-        $this->save();
-    }
-
-    public function setCantidadPolizasRevisadas($cantidad = 0){
+    public function setCantidadPolizasRevisadas($cantidad = 0)
+    {
         $this->cantidad_polizas_revisadas += $cantidad;
         $this->save();
     }
@@ -173,13 +176,34 @@ class LoteBusqueda extends Model
     public function finaliza()
     {
         $this->fecha_hora_fin = date('Y-m-d H:i:s');
+        $this->cantidad_polizas_existentes = $this->bases_datos_revisadas->sum("cantidad_polizas_existentes");
+        $this->cantidad_diferencias_detectadas = Diferencia::cantidadDiferenciasDetectadas($this->id);
+        $this->cantidad_diferencias_corregidas = Diferencia::cantidadDiferenciasCorregidas($this->id);
         $this->save();
-
-        $catidad_polizas_existentes = $this->bases_datos_revisadas->sum("cantidad_polizas_existentes");
-        $this->setCantidadPolizasExistentes($catidad_polizas_existentes);
 
         event(new FinalizaProcesamientoLoteBusquedas(
             $this
         ));
     }
+
+    public function getCantidadPolizasRevisadasFormatAttribute()
+    {
+        return number_format($this->busquedas->sum("cantidad_polizas_revisadas"), 0, ".", ",");
+    }
+
+    public function getCantidadDiferenciasDetectadasFormatAttribute()
+    {
+        return number_format($this->cantidad_diferencias_detectadas, 0, ".", ",");
+    }
+
+    public function getCantidadPolizasExistentesFormatAttribute()
+    {
+        return number_format($this->cantidad_polizas_existentes, 0, ".", ",");
+    }
+
+    public function getCantidadDiferenciasCorregidasFormatAttribute()
+    {
+        return number_format($this->cantidad_diferencias_corregidas, 0, ".", ",");
+    }
+
 }
