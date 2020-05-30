@@ -83,17 +83,16 @@ class BusquedaDiferenciasMovimientos
         $lcodigo_b = strlen(($this->relacion->codigo_cuenta_b));
         $codigo_a = ($this->relacion->codigo_cuenta_a);
         $codigo_b = ($this->relacion->codigo_cuenta_b);
-        if ($this->busqueda->id_tipo_busqueda == 2 || $this->busqueda->id_tipo_busqueda == 3) {
-            if ($lcodigo_b == 11 && $lcodigo_a == 13) {
-                $codigo_a = ($this->relacion->codigo_cuenta_a);
-                $codigo_b = ($this->relacion->codigo_cuenta_b);
-                $g1 = substr($codigo_b, 0, 4);
-                $g2 = substr($codigo_b, 4, 2);
-                $g3 = substr($codigo_b, 6, 2);
-                $g4 = substr($codigo_b, 8, 3);
 
-                $codigo_b = $g1 . '0' . $g2 . '0' . $g3 . $g4;
-            }
+        if ($lcodigo_b == 11 && $lcodigo_a == 13) {
+            $codigo_a = ($this->relacion->codigo_cuenta_a);
+            $codigo_b = ($this->relacion->codigo_cuenta_b);
+            $g1 = substr($codigo_b, 0, 4);
+            $g2 = substr($codigo_b, 4, 2);
+            $g3 = substr($codigo_b, 6, 2);
+            $g4 = substr($codigo_b, 8, 3);
+
+            $codigo_b = $g1 . '0' . $g2 . '0' . $g3 . $g4;
         }
 
         if ($codigo_a != $codigo_b) {
