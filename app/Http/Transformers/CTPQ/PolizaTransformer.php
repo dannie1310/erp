@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CTPQ;
 
 
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\IncidenteIndividualConsolidadaTransformer;
 use App\Models\CTPQ\Poliza;
 use League\Fractal\TransformerAbstract;
 
@@ -21,6 +22,7 @@ class PolizaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'movimientos_poliza',
+        'incidentes_activos'
     ];
 
     public function transform(Poliza $model) {
@@ -48,6 +50,13 @@ class PolizaTransformer extends TransformerAbstract
     public function includeMovimientosPoliza(Poliza $model){
         if ($movimientos = $model->movimientos()->orderBy("Id")->get()) {
             return $this->collection($movimientos, new PolizaMovimientoTransformer());
+        }
+        return null;
+    }
+
+    public function includeIncidentesActivos(Poliza $model){
+        if ($incidentes = $model->incidentes->activos()->get()) {
+            return $this->collection($incidentes, new IncidenteIndividualConsolidadaTransformer());
         }
         return null;
     }

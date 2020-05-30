@@ -179,7 +179,7 @@ class Estimacion extends Transaccion
                 ->where('id_concepto', '=', $concepto['item_antecedente'])
                 ->first()->precio_unitario;
 
-            $this->Items()->create([
+            $this->items()->create([
                 'id_transaccion' => $this->id_transaccion,
                 'id_antecedente' => $this->id_antecedente,
                 'item_antecedente' => $concepto['item_antecedente'],
@@ -280,11 +280,11 @@ class Estimacion extends Transaccion
                 $this->anticipo = 0;
                 $this->save();
             } else {
-                if ($this->subcontrato->first()->anticipo != 0) {
+                if ($this->subcontrato->anticipo != 0) {
                     $this->anticipo = ($data / $this->sumaImportes) * 100;
                     $this->save();
                 } else {
-                    throw new \Exception('No se puede actualizar la amortización de anticipo.');
+                    throw new \Exception('No se puede actualizar la amortización de anticipo de está estimación porque el Subcontrato no tiene porcentaje de anticipo definido.');
                 }
 
             }
@@ -379,8 +379,9 @@ class Estimacion extends Transaccion
                 'desc_pres_mat_antes_iva' => 1,
                 'desc_otros_prest_antes_iva' => 0,
                 'ret_fon_gar_con_iva' => 0,
+                'amort_anticipo_antes_iva' => 1
             ]);
-
+            $this->refresh();
         }
         return $configuracion;
     }

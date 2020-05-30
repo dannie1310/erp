@@ -18,6 +18,11 @@ class PolizaMovimiento extends Model
     protected $primaryKey = 'Id';
     public $timestamps = false;
 
+    public function poliza()
+    {
+        return $this->belongsTo(Poliza::class, 'IdPoliza', 'Id');
+    }
+
     public function cuenta()
     {
         return $this->belongsTo(Cuenta::class, 'IdCuenta', 'Id');

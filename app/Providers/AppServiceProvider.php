@@ -133,6 +133,7 @@ use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjusteNegativoPartidaObserver;
@@ -262,6 +263,7 @@ use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
 use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
+use App\Observers\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSolicitanteObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
@@ -292,6 +294,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Diferencia::observe(DiferenciaObserver::class);
         /*
          * CTPQ
          * */
