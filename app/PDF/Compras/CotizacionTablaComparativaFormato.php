@@ -82,10 +82,14 @@ class CotizacionTablaComparativaFormato extends Rotation
         foreach ($cotizaciones as $key => $cotizacion) {
             foreach ($cotizacion->partidas as $llave => $cot_partida) {
                 $tipo_cambio = 1;
-                if($cotizacion->complemento) {
+                if ($cotizacion->complemento) {
                     $cot_partida->id_moneda == 2 ? $tipo_cambio = $cotizacion->complemento->tc_usd : '';
                     $cot_partida->id_moneda == 3 ? $tipo_cambio = $cotizacion->complemento->tc_eur : '';
                 }
+                /*else{
+                    $cot_partida->id_moneda == 2 ? $tipo_cambio = $cotizacion->complemento->tc_usd : '';
+                    $cot_partida->id_moneda == 3 ? $tipo_cambio = $cotizacion->complemento->tc_eur : '';
+                }*/
                 if (key_exists($cot_partida->id_material, $precios)) {
                     (($cot_partida->precio_unitario - ($cot_partida->precio_unitario * $cot_partida->descuento / 100)) * $tipo_cambio) > 0 && $precios[$cot_partida->id_material] > (($cot_partida->precio_unitario - ($cot_partida->precio_unitario * $cot_partida->descuento / 100)) * $tipo_cambio) ?
                         $precios[$cot_partida->id_material] = ($cot_partida->precio_unitario - ($cot_partida->precio_unitario * $cot_partida->descuento / 100)) * $tipo_cambio : '';
@@ -98,7 +102,7 @@ class CotizacionTablaComparativaFormato extends Rotation
 
         $subtotal_moneda_conversion = [];
 
-        $no_cotizaciones = count($cotizaciones);
+        $no_cotizaciones = count($this->cotizacion->solicitud->cotizaciones);
         $font = 5;
         $font2 = 4;
         $heigth = 0.306;
@@ -132,7 +136,22 @@ class CotizacionTablaComparativaFormato extends Rotation
             }
 
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                $ivg_partida = $this->calcular_ivg($precios, $cotizaciones[$i]->partidas->toArray(), $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0);
+                $ivg_partida = $this->calcular_ivg($precios, $cotizaciones[$i]->complemento, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0);
+                if ($ivg_partida == 0) {
+                    $this->SetFillColor(0, 0, 0);
+                    $this->SetTextColor(255, 255, 255);
+                } else {
+                    $this->SetFillColor(150, 150, 150);
+                    $this->SetTextColor(255, 255, 255);
+                }
+                $this->SetFont('Arial', 'B', $font);
+                $this->CellFitScale($anchos["p"], $heigth, $cotizaciones[$i]->empresa->razon_social, 1, 0, 'C', 1);
+            }
+            $this->Ln();
+
+            $this->Cell($anchos["aesp"] + $anchos["des"]);
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
+                $ivg_partida = $this->calcular_ivg($precios, $cotizaciones[$i]->complemento, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0);
                 if ($ivg_partida == 0) {
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
@@ -142,29 +161,15 @@ class CotizacionTablaComparativaFormato extends Rotation
                 }
 
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["p"], $heigth, $cotizaciones[$i]->empresa ? utf8_decode($cotizaciones[$i]->empresa->razon_social) : '', 1, 0, 'C', 1);
-            }
-            $this->Ln();
-            $this->Cell($anchos["aesp"] + $anchos["des"]);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                $ivg_partida = $this->calcular_ivg($precios, $cotizaciones[$i]->partidas->toArray(), $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0);
-                if ($ivg_partida == 0) {
-                    $this->SetFillColor(0, 0, 0);
-                    $this->SetTextColor(255, 255, 255);
-                } else {
-                    $this->SetFillColor(150, 150, 150);
-                    $this->SetTextColor(255, 255, 255);
-                }
-                $this->SetFont('Arial', 'B', $font);
                 $this->CellFitScale($anchos["fe"], $heigth, "Fecha:", 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["fe"], $heigth, $cotizaciones[$i]->fecha_format, 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["vig"], $heigth, "Vigencia:", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["vig"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->vigencia : '', 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["vig"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->vigencia : '-', 1, 0, 'C', 1);
             }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                $ivg_partida = $this->calcular_ivg($precios, $cotizaciones[$i]->partidas->toArray(), $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0);
+                $ivg_partida = $this->calcular_ivg($precios, $cotizaciones[$i]->complemento, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0);
                 if ($ivg_partida == 0) {
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
@@ -181,7 +186,7 @@ class CotizacionTablaComparativaFormato extends Rotation
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                $ivg_partida = $this->calcular_ivg($precios, $cotizaciones[$i]->partidas->toArray(), $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0);
+                $ivg_partida = $this->calcular_ivg($precios, $cotizaciones[$i]->complemento, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0);
                 if ($ivg_partida == 0) {
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
@@ -190,9 +195,9 @@ class CotizacionTablaComparativaFormato extends Rotation
                     $this->SetTextColor(255, 255, 255);
                 }
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["ant"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->anticipo : '', 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["cre"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->dias_credito : '', 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["ent"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->plazo_entrega : '', 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["ant"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->anticipo : '-', 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["cre"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->dias_credito : '-', 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["ent"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->plazo_entrega : '-', 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["ivg"], $heigth, number_format($ivg_partida * 100, '2', '.', ',') . '%', 1, 0, 'C', 1);
             }
             $this->Ln();
@@ -216,8 +221,7 @@ class CotizacionTablaComparativaFormato extends Rotation
             $this->Ln();
             $this->y_para_descripcion = $this->GetY();
             $this->y_para_descripcion_arr[] = $this->GetY();
-            foreach ($partidas as $key => $partida) {
-
+            foreach ($this->cotizacion->solicitud->partidas as $key => $partida) {
                 $ki = -1;
                 asort($this->y_para_descripcion_arr);
                 $this->y_para_descripcion = array_pop($this->y_para_descripcion_arr);
@@ -233,33 +237,31 @@ class CotizacionTablaComparativaFormato extends Rotation
                     $imp_t_conver = 0;
                     $precio_unitario_compuesto = 0;
                     $p_total = 0;
-                    !key_exists($cotizaciones[$i]->id_transaccion, $subtotal_moneda_conversion) ? $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion] = [] : '';
                     if (is_numeric($cot_llave)) {
-
                         $precio_unitario_compuesto = $cotizaciones[$i]->partidas[$cot_llave]->precio_unitario - ($cotizaciones[$i]->partidas[$cot_llave]->precio_unitario * $cotizaciones[$i]->partidas[$cot_llave]->descuento / 100);
-                        $p_total = $precio_unitario_compuesto;
+                        $p_total = $precio_unitario_compuesto * $cotizaciones[$i]->partidas[$cot_llave]->cantidad;
+
                         switch ((int)$cotizaciones[$i]->partidas[$cot_llave]->id_moneda) {
                             case 1:
                                 $imp_t_conver = $p_total;
-                                if (key_exists($cotizaciones[$i]->partidas[$cot_llave]->id_moneda, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion])) {
+                                if (array_key_exists($cotizaciones[$i]->id_transaccion, $subtotal_moneda_conversion) && key_exists($cotizaciones[$i]->partidas[$cot_llave]->id_moneda, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion])) {
                                     $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->partidas[$cot_llave]->id_moneda] = $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->partidas[$cot_llave]->id_moneda] + ($p_total * $cotizaciones[$i]->partidas[$cot_llave]->cantidad);
                                 } else {
                                     $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->partidas[$cot_llave]->id_moneda] = ($p_total * $cotizaciones[$i]->partidas[$cot_llave]->cantidad);
                                 }
                                 break;
                             case 2:
-                                $imp_t_conver = $p_total * 1000;//$cotizaciones[$i]->complemento->tc_usd;
-
-                                if (key_exists($cotizaciones[$i]->partidas[$cot_llave]->id_moneda, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion])) {
+                                $imp_t_conver = $p_total * ($cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0);
+                                if (array_key_exists($cotizaciones[$i]->id_transaccion, $subtotal_moneda_conversion) && key_exists($cotizaciones[$i]->partidas[$cot_llave]->id_moneda, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion])) {
                                     $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->partidas[$cot_llave]->id_moneda] = $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->partidas[$cot_llave]->id_moneda] + ($p_total * $cotizaciones[$i]->partidas[$cot_llave]->cantidad);
                                 } else {
                                     $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->partidas[$cot_llave]->id_moneda] = ($p_total * $cotizaciones[$i]->partidas[$cot_llave]->cantidad);
                                 }
                                 break;
                             case 3:
-                                $imp_t_conver = $p_total * 1000;//$cotizaciones[$i]->complemento->tc_eur;
-                                if (key_exists($cotizaciones[$i]->partidas[$cot_llave]->id_moneda, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion])) {
+                                $imp_t_conver = $p_total * ($cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0);
 
+                                if (array_key_exists($cotizaciones[$i]->id_transaccion, $subtotal_moneda_conversion) && key_exists($cotizaciones[$i]->partidas[$cot_llave]->id_moneda, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion])) {
                                     $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->partidas[$cot_llave]->id_moneda] = $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->partidas[$cot_llave]->id_moneda] + ($p_total * $cotizaciones[$i]->partidas[$cot_llave]->cantidad);
                                 } else {
                                     $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->partidas[$cot_llave]->id_moneda] = ($p_total * $cotizaciones[$i]->partidas[$cot_llave]->cantidad);
@@ -267,10 +269,11 @@ class CotizacionTablaComparativaFormato extends Rotation
                                 break;
                         }
                     }
+
                     $ki = 0;
-                    if (is_numeric($cot_llave) && $cotizaciones[$i]->partidas[$cot_llave]->precio_unitario > 0) {
+                    if ($cotizaciones[$i]->partidas[$cot_llave]->precio_unitario > 0 && is_numeric($cot_llave)) {   /////  ($partidas_cotizacion[$cotizaciones[$i]["idrqctoc_cotizaciones"]][$partidas_solicitud[$p]["idrqctoc_solicitudes_partidas"]]["precio_unitario"] > 0)
                         $ki = $this->calcular_ki($imp_t_conver, $precios[$cotizaciones[$i]->partidas[$cot_llave]->id_material]);
-                        if ($ki == 0) {
+                        if ($ki == 0) {  ///// ($partidas_cotizacion[$cotizaciones[$i]["idrqctoc_cotizaciones"]][$partidas_solicitud[$p]["idrqctoc_solicitudes_partidas"]]["ki"] == 0)
                             $this->SetFillColor(150, 150, 150);
                             $this->SetTextColor(0, 0, 0);
                             //$pdf->SetDrawColor(0,255,0);
@@ -288,8 +291,8 @@ class CotizacionTablaComparativaFormato extends Rotation
                     $this->SetFont('Arial', '', $font2);
                     $this->Cell($anchos["pu"], $heigth, number_format($precio_unitario_compuesto, 3, '.', ','), "T B L", 0, "R", 1);
                     $this->CellFitScale($anchos["d"], $heigth, $ki == 0 ? '-' : number_format($ki, '4', '.', ','), "T B L", 0, "R", 1);
-                    $this->Cell($anchos["it"], $heigth, is_numeric($cot_llave) ? number_format(($p_total * $cotizaciones[$i]->partidas[$cot_llave]->cantidad), 2, '.', ',') : '-', "T B L", 0, "R", 1);
-                    $this->CellFitScale($anchos["m"], $heigth, is_numeric($cot_llave) && $cotizaciones[$i]->partidas[$cot_llave]->precio_unitario > 0 ? $cotizaciones[$i]->moneda->abreviatura : '-', "T B L", 0, "R", 1);
+                    $this->Cell($anchos["it"], $heigth, number_format($p_total, 2, '.', ','), "T B L", 0, "R", 1);
+                    $this->CellFitScale($anchos["m"], $heigth, is_numeric($cot_llave) && $cotizaciones[$i]->partidas[$cot_llave]->precio_unitario > 0 ? $cotizaciones[$i]->partidas[$cot_llave]->moneda ? $cotizaciones[$i]->partidas[$cot_llave]->moneda->nombre : '' : '-', "T B L", 0, "R", 1);
                     $this->Cell($anchos["ic"], $heigth, is_numeric($cot_llave) ? number_format(($imp_t_conver * $cotizaciones[$i]->partidas[$cot_llave]->cantidad), 2, '.', ',') : '-', "B L R T", 0, "R", 1);
                 }
 
@@ -445,8 +448,7 @@ class CotizacionTablaComparativaFormato extends Rotation
 
                 $this->Cell($anchos["ar"], $heigth, key_exists(2, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion]) ? number_format($subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][2], 2, '.', ',') : '-', 1, 0, 'R', 1);
                 $this->Cell($anchos["tc"], $heigth, number_format($cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_usd : 0, 4, '.', ','), 1, 0, 'R', 1);
-
-                $this->Cell($anchos["dg"], $heigth, key_exists(2, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion]) ? number_format(($subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][2] * 0/*$cotizaciones[$i]->complemento->tc_usd*/), 2, '.', ',') : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth, key_exists(2, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion]) && $cotizaciones[$i]->complemento ? number_format(($subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][2] * $cotizaciones[$i]->complemento->tc_usd), 2, '.', ',') : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -460,7 +462,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["ar"], $heigth, key_exists(3, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion]) ? number_format($subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][3], 2, '.', ',') : '-', 1, 0, 'R', 1);
                 $this->Cell($anchos["tc"], $heigth, number_format($cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->tc_eur : 0, 4, '.', ','), 1, 0, 'R', 1);
-                $this->Cell($anchos["dg"], $heigth, key_exists(3, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion]) ? number_format(($subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][3] * 0/*$cotizaciones[$i]->complemento->tc_eur*/), 2, '.', ',') : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth, key_exists(3, $subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion]) && $cotizaciones[$i]->complemento ? number_format(($subtotal_moneda_conversion[$cotizaciones[$i]->id_transaccion][3] * $cotizaciones[$i]->complemento->tc_eur), 2, '.', ',') : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -491,15 +493,19 @@ class CotizacionTablaComparativaFormato extends Rotation
         }
     }
 
-    public function calcular_ivg(array $precios_menores, array $partidas_cotizacion, $tc_euro, $tc_dlls){
+    public function calcular_ivg(array $precios_menores, $partidas_cotizacion, $tc_euro, $tc_dlls)
+    {
         $ivg = 0;
-        foreach ($partidas_cotizacion as $partida){
-            $tc = 1;
-            $partida['id_moneda'] == 2?$tc = $tc_dlls:'';
-            $partida['id_moneda'] == 3?$tc = $tc_euro:'';
-            $ivg += $partida['precio_unitario'] > 0? $this->calcular_ki(  ($partida['precio_unitario'] - ($partida['precio_unitario'] * $partida['descuento'] / 100)) * $tc, $precios_menores[$partida['id_material']]):0;
+        if ($partidas_cotizacion) {
+            foreach ($partidas_cotizacion as $partida) {
+                $tc = 1;
+                $partida['id_moneda'] == 2 ? $tc = $tc_dlls : '';
+                $partida['id_moneda'] == 3 ? $tc = $tc_euro : '';
+                $ivg += $partida['precio_unitario'] > 0 ? $this->calcular_ki(($partida['precio_unitario'] - ($partida['precio_unitario'] * $partida['descuento'] / 100)) * $tc, $precios_menores[$partida['id_material']]) : 0;
+            }
+            return count($partidas_cotizacion->toArray()) > 0 ? $ivg : -1;
         }
-        return count($partidas_cotizacion) > 0 ? $ivg : -1;
+        return -1;
     }
 
     public function calcular_ki($precio, $precio_menor)
