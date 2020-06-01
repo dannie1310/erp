@@ -1,6 +1,5 @@
 <template>
     <span v-if="solicitud">
-
         <div class="row">
             <div class="col-md-11">
                  <ImpresionPolizas v-bind:id="id"></ImpresionPolizas>

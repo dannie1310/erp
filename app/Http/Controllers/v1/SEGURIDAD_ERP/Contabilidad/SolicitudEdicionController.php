@@ -49,10 +49,6 @@ class SolicitudEdicionController extends Controller
         return response()->json($respuesta, 200);
     }
 
-    public function impresionPolizas($id){
-        return $this->service->impresionPolizas($id)->create();
-    }
-
     public function autorizar(Request $request, $id)
     {
         return $this->service->autorizar($id,$request->partidas);
