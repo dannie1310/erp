@@ -201,7 +201,7 @@ export const routes = [
                         meta: {
                             title: 'Solicitudes de Edición',
                             breadcrumb: {parent: 'contabilidad-general', name: 'SOLICITUDES DE EDICIÓN'},
-                            middleware: [auth, permission],
+                            middleware: [auth],
                             permission: ['consultar_solicitud_edicion_poliza_ctpq'],
                             general: true
                         }
@@ -239,7 +239,7 @@ export const routes = [
                         meta: {
                             title: 'Consultar Solicitud de Edición',
                             breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'CONSULTAR'},
-                            middleware: [auth, permission],
+                            middleware: [auth],
                             permission: 'consultar_solicitud_edicion_poliza_ctpq',
                             general: true
                         }

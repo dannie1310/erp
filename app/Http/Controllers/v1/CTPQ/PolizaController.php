@@ -57,4 +57,8 @@ class PolizaController extends Controller
         return $this->respondWithItem($item);
     }
 
+    public function pdf($id)
+    {
+        return $this->service->pdf($id);
+    }
 }

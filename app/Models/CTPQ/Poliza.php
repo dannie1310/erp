@@ -9,6 +9,7 @@
 namespace App\Models\CTPQ;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
+use DateTime;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
@@ -51,6 +52,13 @@ class Poliza extends Model
         return date_format($date, "d/m/Y");
     }
 
+    public function getFechaMesLetraFormatAttribute()
+    {
+        setlocale(LC_ALL,"es_ES");
+        $fecha =New DateTime($this->Fecha);
+        return strftime("%d/",$fecha->getTimestamp()).substr(ucfirst(strftime("%b",$fecha->getTimestamp())), 0, 3).strftime("/%Y",$fecha->getTimestamp());
+    }
+
     public function actualiza($datos)
     {
         if ($this->Ejercicio != 2015) {
@@ -71,6 +79,19 @@ class Poliza extends Model
                 throw $e;
             }
         }
+    }
+
+    public function sumaMismoPadre($codigo_padre)
+    {
+        $suma = 0;
+        foreach ($this->movimientos()->orderBy('IdCuenta')->get() as $movimiento)
+        {
+            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            {
+                $suma = $suma + $movimiento->Importe;
+            }
+        }
+        return $suma;
     }
 
     public function getPolizaRelacionada($busqueda)
