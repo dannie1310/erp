@@ -8,14 +8,14 @@ use App\Events\IncidenciaCI;
 use App\Models\CADECO\ContraRecibo;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
+use Illuminate\Support\Facades\DB;
+use App\PDF\Finanzas\ContrareciboPDF;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Notification;
 use App\Notifications\NotificacionIncidenciasCI;
 use App\Repositories\CADECO\Finanzas\Facturas\Repository;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use DateTime;
 use DateTimeZone;
-use App\PDF\Finanzas\ContrareciboPDF;
 use App\Models\IGH\Usuario;
 
 class FacturaService
