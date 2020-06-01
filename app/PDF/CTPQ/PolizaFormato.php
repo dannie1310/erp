@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\DB;
 class PolizaFormato extends Rotation
 {
     private $poliza;
-    private $encabezado_pdf = '';
     private $empresa;
     private $folios;
 
@@ -186,6 +185,7 @@ class PolizaFormato extends Rotation
             $this->Cell(3, 0.5, $this->poliza->tipo_poliza->Nombre . ' # ' . $this->poliza->Folio, '', 0, 'R', 180);
             $this->setXY(17.3, 26.6);
             $this->Cell(3, 0.5, $this->poliza->fecha_mes_letra_format, '', 0, 'R', 180);
+            $this->footer_encola = false;
         }
     }
 
@@ -205,7 +205,6 @@ class PolizaFormato extends Rotation
             $this->partidas();
             if($this->footer_encola)
             {
-                $this->footer_encola = false;
                 $this->num = $this->PageNo();
             }
         }
