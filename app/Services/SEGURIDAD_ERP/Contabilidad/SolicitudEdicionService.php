@@ -183,7 +183,8 @@ class SolicitudEdicionService
         return $partidas;
     }
 
-    public function impresionPolizas($id){
+    public function impresionPolizas($id)
+    {
         $folios  = $this->repository->show($id)->polizas;
         $pdf = new PolizaFormato($folios);
         return $pdf->create();

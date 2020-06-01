@@ -20,7 +20,7 @@
             <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0)"  v-bind:id="value.id">
                 <i class="fa fa-trash"></i>
             </button>
-            <PDF v-bind:id="value.id" @click="value.id" ></PDF>
+            <PDF v-bind:id="value.id"></PDF>
         </div>
 
 
