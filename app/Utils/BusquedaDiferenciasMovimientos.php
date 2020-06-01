@@ -93,6 +93,15 @@ class BusquedaDiferenciasMovimientos
             $g4 = substr($codigo_b, 8, 3);
 
             $codigo_b = $g1 . '0' . $g2 . '0' . $g3 . $g4;
+        } else if ($lcodigo_a == 11 && $lcodigo_b == 13) {
+            $codigo_a = ($this->relacion->codigo_cuenta_a);
+            $codigo_b = ($this->relacion->codigo_cuenta_b);
+            $g1 = substr($codigo_a, 0, 4);
+            $g2 = substr($codigo_a, 4, 2);
+            $g3 = substr($codigo_a, 6, 2);
+            $g4 = substr($codigo_a, 8, 3);
+
+            $codigo_a = $g1 . '0' . $g2 . '0' . $g3 . $g4;
         }
 
         if ($codigo_a != $codigo_b) {
