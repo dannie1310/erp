@@ -9,9 +9,9 @@
 namespace App\Models\CTPQ;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
-use DateTime;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
@@ -79,19 +79,6 @@ class Poliza extends Model
                 throw $e;
             }
         }
-    }
-
-    public function sumaMismoPadre($codigo_padre)
-    {
-        $suma = 0;
-        foreach ($this->movimientos()->orderBy('IdCuenta')->get() as $movimiento)
-        {
-            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
-            {
-                $suma = $suma + $movimiento->Importe;
-            }
-        }
-        return $suma;
     }
 
     public function getPolizaRelacionada($busqueda)
@@ -220,5 +207,18 @@ class Poliza extends Model
             }
         }
         return $relaciones_movimientos;
+    }
+
+    public function sumaMismoPadre($codigo_padre)
+    {
+        $suma = 0;
+        foreach ($this->movimientos()->orderBy('IdCuenta')->get() as $movimiento)
+        {
+            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            {
+                $suma = $suma + $movimiento->Importe;
+            }
+        }
+        return $suma;
     }
 }

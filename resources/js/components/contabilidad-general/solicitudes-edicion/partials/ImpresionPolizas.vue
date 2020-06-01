@@ -1,12 +1,12 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-primary pull-right" title="Impresión Pólizas">
-            <i class="fa fa-print"></i>
+        <button @click="init" type="button" class="btn btn-primary pull-right" title="Ver Pólizas">
+            <i class="fa fa-file-pdf-o"></i>Ver Pólizas
         </button>
 
-         <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
-             <div class="modal-dialog modal-lg" id="mdialTamanio">
-                 <div class="modal-content">
+        <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
+            <div class="modal-dialog modal-lg" id="mdialTamanio">
+                <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Impresión de Pólizas</h4>
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
@@ -17,10 +17,10 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
                     </div>
-                 </div>
-             </div>
-         </div>
-        </span>
+                </div>
+            </div>
+        </div>
+    </span>
 </template>
 
 <script>

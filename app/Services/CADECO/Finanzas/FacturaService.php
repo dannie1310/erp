@@ -6,16 +6,12 @@ namespace App\Services\CADECO\Finanzas;
 
 use DateTime;
 use DateTimeZone;
-use App\Models\IGH\Usuario;
 use App\Events\IncidenciaCI;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ContraRecibo;
 use App\PDF\Finanzas\ContrareciboPDF;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\NotificacionIncidenciasCI;
 use App\Repositories\CADECO\Finanzas\Facturas\Repository;
 
 class FacturaService

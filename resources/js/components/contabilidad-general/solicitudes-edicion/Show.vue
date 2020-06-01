@@ -1,10 +1,8 @@
 <template>
     <span v-if="solicitud">
-
         <div class="row">
             <div class="col-md-11">
-                <ImpresionPolizas v-bind:id="id"></ImpresionPolizas>
-                <!-- <button type="button" class="btn btn-primary pull-right"  @click="descargar"><i class="fa fa-print"></i></button> -->
+                 <ImpresionPolizas v-bind:id="id"></ImpresionPolizas>
             </div>
             <div class="col-md-1">
                 <button type="button" class="btn btn-primary pull-right"  @click="descargar"><i class="fa fa-download"></i>Descargar</button>
@@ -144,11 +142,11 @@
 </template>
 
 <script>
-    import ImpresionPolizas from './partials/ImpresionPolizas';
+    import ImpresionPolizas from "./partials/ImpresionPolizas";
     export default {
         name: "Show",
         props: ['id'],
-        components:{ImpresionPolizas},
+        components: {ImpresionPolizas},
         data() {
             return {
                 cargando: false,
