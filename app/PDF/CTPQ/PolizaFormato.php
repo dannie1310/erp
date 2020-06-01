@@ -31,6 +31,7 @@ class PolizaFormato extends Rotation
 
     private $footer_encola = false;
     private $num = 1;
+    private $key_folio = 0;
 
     public function __construct($folios)
     {
@@ -56,8 +57,12 @@ class PolizaFormato extends Rotation
         $this->SetFont('Arial', 'B', 12);
         $this->Cell(5.76, 0, strlen($this->empresa->Nombre) > 51 ? utf8_decode(substr($this->empresa->Nombre, 0, 50)) : utf8_decode($this->empresa->Nombre), 0, 0, 'L');
         $this->setXY(18.50, 1.2);
-        $n = $this->PageNo() === 1 ? 1: $this->PageNo() - $this->num;
-        $this->Cell(0, 0, 'Hoja:   '.$n, 0, 0, 'L');
+        if($this->key_folio == 0)
+        {
+            $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
+        }else{
+            $this->Cell(0, 0, 'Hoja:   '.($this->PageNo() - $this->num), 0, 0, 'L');
+        }
 
         $this->setXY(5.83, 1.6);
         $this->SetFont('Arial', 'B', 11.5);
@@ -186,15 +191,17 @@ class PolizaFormato extends Rotation
             $this->setXY(17.3, 26.6);
             $this->Cell(3, 0.5, $this->poliza->fecha_mes_letra_format, '', 0, 'R', 180);
             $this->footer_encola = false;
+            $this->num = $this->PageNo();
         }
     }
 
     function create() {
-        foreach ($this->folios as $folio)
+        foreach ($this->folios as $k => $folio)
         {
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $folio->bd_contpaq);
             $this->poliza = Poliza::find($folio->id_poliza);
+            $this->key_folio = $k;
             $this->empresa = $folio->empresa;
             $this->mes = substr($this->poliza->fecha_mes_letra_format, 3,3);
             $this->anio = substr($this->poliza->fecha_mes_letra_format, 7,4);
@@ -203,10 +210,6 @@ class PolizaFormato extends Rotation
             $this->AddPage();
             $this->SetAutoPageBreak(true,5);
             $this->partidas();
-            if($this->footer_encola)
-            {
-                $this->num = $this->PageNo();
-            }
         }
 
         try {
