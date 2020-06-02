@@ -63,7 +63,6 @@ export default {
             });
         },
         eliminarOrdenes(context, payload) {
-            console.log(payload);
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar Orden(es) de Compra",

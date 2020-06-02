@@ -46,6 +46,7 @@ class OrdenCompraController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:consultar_orden_compra')->only('paginate');
+        $this->middleware('permiso:eliminar_orden_compra')->only('eliminarOrdenes');
 
         $this->service = $service;
         $this->fractal = $fractal;
