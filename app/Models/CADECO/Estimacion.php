@@ -747,7 +747,7 @@ class Estimacion extends Transaccion
         }
 
         if($retenciones['retencion4'] != null && $retenciones['retencion4'] > 0){
-            $porcentaje = $retenciones['retencion4'] * 100 / $this->subtotal_orden_pago;
+            $porcentaje = $retenciones['retencion4'] * 100 / $this->suma_importes;
             if ($porcentaje <= 3.9999 || $porcentaje >= 4.0001) {
                 abort(403, 'La retención de IVA no es del 4%');
             }
