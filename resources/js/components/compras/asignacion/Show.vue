@@ -16,7 +16,7 @@
                             <div class="col-md-5" >
                                 <div class="form-group">
                                     <label><b>Usuario Registro Asignación: </b></label>
-                                    {{asignaciones.usuario.nombre}}
+                                    {{asignaciones.usuario.nombre}} {{ asignaciones.usuario.apaterno}} {{asignaciones.usuario.amaterno}}
                                 </div>
                             </div>
                             
@@ -29,7 +29,7 @@
                             <div class="col-md-3" >
                                 <div class="form-group">
                                     <label><b>Fecha de Registro: </b></label>
-                                    {{asignaciones.fecha_format}}
+                                    {{asignaciones.fecha_asignacion}}
                                 </div>
                             </div>
 

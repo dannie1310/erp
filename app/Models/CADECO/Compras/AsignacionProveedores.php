@@ -98,4 +98,16 @@ class AsignacionProveedores extends Model
             throw $e;
         }
     }
+
+    public function getEstadoAsignacionFormatAttribute(){
+        $this->estado = 1;
+        foreach($this->partidas as $partida){
+            if($partida->ordenCompra){
+                $this->estado = 2;
+            break;
+            }
+        }
+        $this->save();
+        return $this->estadoAsignacion->descripcion;
+    }
 }

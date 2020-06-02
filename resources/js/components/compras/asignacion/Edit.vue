@@ -28,7 +28,7 @@
                             <div class="col-md-3" >
                                 <div class="form-group">
                                     <label><b>Fecha de Registro: </b></label>
-                                    {{asignaciones.fecha_format}}
+                                    {{asignaciones.fecha_asignacion}}
                                 </div>
                             </div>
 

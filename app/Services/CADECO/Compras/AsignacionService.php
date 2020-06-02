@@ -89,13 +89,15 @@ class AsignacionService
                 'cantidad_asignada' => number_format($cantidad_a, 4, '.', ','),
             ];
         }
+        
         return [
-            'folio_asignacion_format' => $asignacion->numero_folio_format_orden,
+            'folio_asignacion_format' => $asignacion->folio_format,
             'usuario' => $asignacion->usuarioRegistro,
-            'estado_format' => $asignacion->estado_format,
+            'estado_format' => $asignacion->estado_asignacion_format,
             'numero_folio_format' => $asignacion->solicitud->numero_folio_format,
             'observaciones' => $asignacion->solicitud->observaciones,
-            'fecha_registro' => $asignacion->solicitud->fecha_registro,
+            'fecha_registro' => $asignacion->solicitud->fecha_format,
+            'fecha_asignacion' => $asignacion->fecha_format,
             'asignaciones_pendientes_o_compra' => $o_cmpra_pendientes,
             'asignaciones_con_o_compra' => count($data) -  $o_cmpra_pendientes,
             'data' => $data
