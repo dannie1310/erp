@@ -668,8 +668,8 @@ class Estimacion extends Transaccion
 
     public function getIvaRetenidoPorcentajeAttribute()
     {
-        if ($this->subtotal_orden_pago > 0) {
-            return number_format($this->IVARetenido * 100 / $this->subtotal_orden_pago, 2) . " %";
+        if ($this->suma_importes > 0) {
+            return number_format($this->IVARetenido * 100 / $this->suma_importes, 2) . " %";
         } else {
             return "0 %";
         }
