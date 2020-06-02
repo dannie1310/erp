@@ -58,7 +58,8 @@ class CotizacionCompra  extends Transaccion
         });
     }
 
-    public function partidas() {
+    public function partidas()
+    {
         return $this->hasMany(CotizacionCompraPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
@@ -412,5 +413,38 @@ class CotizacionCompra  extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, 'Error en el proceso de eliminación de la cotización de compra, no se respaldo los items correctamente.');
         }
+    }
+
+    public function getSumaSubtotalPartidasAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            $suma += $partida->total_precio_moneda;
+        }
+        return $suma;
+    }
+
+    public function getIVAPartidasAttribute()
+    {
+        return $this->suma_subtotal_partidas * 0.16;
+    }
+
+    public function getTotalPartidasAttribute()
+    {
+        return $this->suma_subtotal_partidas + $this->iva_Partidas;
+    }
+
+    public function sumaSubtotalPartidas($tipo_moneda)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            if($tipo_moneda == $partida->id_moneda)
+            {
+                $suma += $partida->total_precio_moneda;
+            }
+        }
+        return $suma;
     }
 }

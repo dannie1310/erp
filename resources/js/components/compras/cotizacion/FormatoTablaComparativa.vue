@@ -1,11 +1,11 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
+        <button @click="pdf" type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
         <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
              <div class="modal-dialog modal-lg" id="mdialTamanio">
                  <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Formato de Solicitud de Compra</h4>
+                        <h4 class="modal-title">Tabla comparativa de cotizaciones</h4>
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                     </div>
                     <div class="modal-body modal-lg" style="height: 800px" ref="body">
@@ -22,15 +22,12 @@
 
 <script>
     export default {
-        name: "FormatoSolicitudCompra",
+        name: "FormatoTablaComparativa",
         props: ['id'],
         methods: {
-            init() {
-                this.pdf()
-            },
             pdf(){
-                var url = '/api/compras/solicitud-compra/pdf/' + this.id +'?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
-                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Orden de Compra</iframe>');
+                var url = '/api/compras/cotizacion/'+this.id +'/pdf?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Tabla comparativa de cotizaciones</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             }

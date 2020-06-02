@@ -54,14 +54,6 @@ class SolicitudCompraController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function pdfCotizacion($id)
-    {
-        if(auth()->user()->can('consultar_salida_almacen')) {
-            return $this->service->pdfCotizacion($id)->create();
-        }
-        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
-    }
-
     public function pdfSolicitudCompra($id)
     {
         return $this->service->pdfSolicitudCompra($id);
@@ -72,7 +64,8 @@ class SolicitudCompraController extends Controller
         return $this->service->aprobar($request->all(), $id);
     }
 
-    public function getCotizaciones($id){
+    public function getCotizaciones($id)
+    {
         return $this->service->getCotizaciones($id);
     }
 
