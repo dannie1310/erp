@@ -96,6 +96,7 @@
                             fecha_format: asignacion.fecha_format,
                             buttons: $.extend({}, {
                                 id:asignacion.id,
+                                estado:asignacion.estado,
                             })
                         })
                     });
