@@ -28,4 +28,9 @@ class UnificacionProveedoreService
     {
         $this->repository = new Repository($model);
     }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
 }

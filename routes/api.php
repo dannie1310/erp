@@ -398,6 +398,16 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * CATALOGOS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'catalogos'], function ($api) {
+        //UNIFICACION PROVEEDORES
+        $api->group(['prefix' => 'unificacion-proveedores'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@paginate');
+        });
+    });
+
+    /**
      * CONTABILIDAD
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
