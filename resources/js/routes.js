@@ -958,6 +958,23 @@ export const routes = [
                     },
                 ]
             },
+            
+            {
+                path: 'unificacion-proveedores',
+                component: require('./components/catalogos/unificacion-proveedores/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'unificacion-proveedores',
+                        component: require('./components/catalogos/unificacion-proveedores/Index').default,
+                        meta: {
+                            title: 'Unificacion de Proveedores',
+                            breadcrumb: {parent: 'catalogos', name: 'UNIFICACIÓN PROVEEDORES'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
+            },
         ]
     },
     {

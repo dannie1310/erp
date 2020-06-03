@@ -139,6 +139,12 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <router-link :to="{name: 'unificacion-proveedores'}" class="nav-link">
+                            <i class="fas fa-crosshairs nav-icon"></i>
+                            <p>Unificación de Empresas</p>
+                        </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
