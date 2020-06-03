@@ -92,6 +92,7 @@
                                 show: true,
                                 pdf: self.$root.can('consultar_orden_compra') ? true : false,
                                 id: orden.id,
+                                tiene_entradas: orden.entradas_almacen,
                             })
                         })
                     });

@@ -23,6 +23,8 @@ class Item extends Model
         'id_antecedente',
         'item_antecedente',
         'id_concepto',
+        'id_material',
+        'unidad',
         'cantidad',
         'cantidad_material',
         'cantidad_mano_obra',

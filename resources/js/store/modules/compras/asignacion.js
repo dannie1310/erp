@@ -58,6 +58,19 @@ export default{
                     })
             });
         },
+        getAsignacion(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/getAsignacion', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         delete(context, payload) {            
             return new Promise((resolve, reject) => {
                 swal({
@@ -83,6 +96,82 @@ export default{
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Asignación eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        generarOC(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Generar Orden de Compra",
+                    text: "¿Está seguro/a de que desea generar la(s) orden(es) de compra?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Generar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'generarOC', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Orden de Compra generada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        generarOrdenIndividual(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Generar Orden de Compra",
+                    text: "¿Está seguro/a de que desea generar la orden de compra?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Generar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'generarOrdenIndividual', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Orden de Compra generada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

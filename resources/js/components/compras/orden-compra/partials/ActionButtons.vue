@@ -1,14 +1,7 @@
 <template>
     <div class="btn-group">
-
-        <div class="modal-footer btn-group" v-if="value.id">
-            <PDF v-bind:id="value.id" @click="value.id"></PDF>
-        </div>
-
-        <div class="modal-footer btn-group" v-else>
-            <button @click="validate" v-if="value.pdf" type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
-        </div>
-
+        <PDF v-bind:id="value.id" @click="value.id"></PDF>
+        <button @click="eliminar" type="button" :disabled="value.tiene_entradas" class="btn btn-sm btn-outline-danger" :title="value.tiene_entradas?'Orden con Entrada de Almacen':'Eliminar'"><i class="fa fa-trash"></i></button>
     </div>
 </template>
 
@@ -19,6 +12,11 @@
         name: "action-buttons",
         components: {PDF},
         props: ['value'],
+        data(){
+            return{
+                query: {include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'},
+            }
+        },
         methods: {
             validate() {
                 this.$validator.validate().then(result => {
@@ -26,7 +24,18 @@
 
                     }
                 });
-            }
+            },
+            eliminar(){
+                return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:[this.value.id]}
+                  ).then(data => {
+                    this.$store.commit('compras/orden-compra/SET_ORDENES', []);  
+                    return this.$store.dispatch('compras/orden-compra/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('compras/orden-compra/SET_ORDENES', data.data);
+                        this.$store.commit('compras/orden-compra/SET_META', data.meta);
+                    })
+                })
+            },
         }
     }
 </script>

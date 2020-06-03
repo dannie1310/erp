@@ -541,11 +541,13 @@ $api->version('v1', function ($api) {
         // ASIGNACIÓN
         $api->group(['prefix' => 'asignacion'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@index');
+            $api->get('{id}/getAsignacion', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@getAsignacion');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@paginate');
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\AsignacionController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@destroy')->where(['id' => '[0-9]+']);
-            // $api->post('layout', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@cargaLayout');
+            $api->post('generarOC', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@generarOrdenCompra');
+            $api->post('generarOrdenIndividual', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@generarOrdenIndividual');
             // $api->get('descargaLayout', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@descargaLayout');
             // $api->get('{id}/asignacion', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@asignacion')->where(['id' => '[0-9]+']);
         });
@@ -574,6 +576,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-orden-compra', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@pdfOrdenCompra')->where(['id' => '[0-9]+']);
+            $api->post('eliminarOrdenes', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@eliminarOrdenes')->where(['id' => '[0-9]+']);
         });
 
         //REQUISICIÓN

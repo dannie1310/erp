@@ -69,6 +69,18 @@ class AsignacionController extends Controller
         return $this->traitDestroy($request, $id);
     }
 
+    public function generarOrdenCompra(Request $request){
+        return $this->service->generarOrdenCompra($request->all());
+    }
+
+    public function generarOrdenIndividual(Request $request){
+        return $this->service->generarOrdenIndividual($request->all());
+    }
+
+    public function getAsignacion($id){
+        return $this->service->getAsignacion($id);
+    }
+
     public function descargaLayout($id)
     {
 //        Falta descarga

@@ -1004,6 +1004,18 @@ export const routes = [
                         }
                     },
                     {
+                        path: ':id/edit',
+                        name: 'asignacion-proveedores-edit',
+                        component: require('./components/compras/asignacion/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Editar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedores', name: 'EDITAR'},
+                            middleware: [auth, context],
+                            // permission: 'registrar_proveedor'
+                        }
+                    },
+                    {
                         path: 'create',
                         name: 'asignacion-proveedores-create',
                         component: require('./components/compras/asignacion/Create').default,
