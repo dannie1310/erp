@@ -133,6 +133,7 @@ use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjusteNegativoPartidaObserver;
@@ -262,12 +263,14 @@ use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
 use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
+use App\Observers\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSolicitanteObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
+use App\Models\CADECO\PresupuestoContratista;
 use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
 use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\Unidad;
@@ -276,6 +279,7 @@ use App\Observers\CADECO\Compras\CotizacionComplementoObserver;
 use App\Observers\CADECO\CotizacionCompraObserver;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
+use App\Observers\CADECO\PresupuestoContratistaObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionLiberacionObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionObserver;
 use App\Observers\CADECO\UnidadComplementoObserver;
@@ -292,6 +296,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Diferencia::observe(DiferenciaObserver::class);
         /*
          * CTPQ
          * */
@@ -468,6 +473,7 @@ class AppServiceProvider extends ServiceProvider
             Pago::observe(PagoObserver::class);
             PagoReposicionFF::observe(PagoReposicionFFObserver::class);
             PagoVario::observe(PagoVarioObserver::class);
+            PresupuestoContratista::observe(PresupuestoContratistaObserver::class);
             ProveedorContratista::observe(ProveedorContratistaObserver::class);
             Requisicion::observe(RequisicionObserver::class);
             RequisicionPartida::observe(RequisicionPartidaObserver::class);

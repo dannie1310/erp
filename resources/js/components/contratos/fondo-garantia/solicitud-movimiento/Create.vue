@@ -182,8 +182,8 @@
                 importe: '',
                 observaciones: '',
                 tipos_solicitud: {
-                    1: "Descuento",
-                    2: "Liberación"
+                    1: "Liberación",
+                    2: "Descuento"
                 },
                 cargando: false
             }

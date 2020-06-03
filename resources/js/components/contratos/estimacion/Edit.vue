@@ -8,7 +8,7 @@
                 <Resumen v-bind:id="id" v-bind:cargando="cargando"></Resumen>
             </div>
            <div class="p-2" v-if="estimacion.estado == 0">
-                <Amortizacion v-bind:id="id" v-bind:estimacion_anticipo="estimacion"></Amortizacion>
+                <Amortizacion v-bind:id="id"></Amortizacion>
             </div>
             <div class="p-2" v-if="estimacion.estado == 0">
                 <RetencionIndex v-bind:id="id"></RetencionIndex>

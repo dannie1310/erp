@@ -33,7 +33,7 @@ class CotizacionController extends Controller
     private $transformer;
 
     /**
-     * SalidaAlmacenController constructor.
+     * CotizacionController constructor.
      * @param Manager $fractal
      * @param CotizacionService $service
      * @param CotizacionCompraTransformer $transformer
@@ -62,7 +62,15 @@ class CotizacionController extends Controller
 
     public function cargaLayout(Request $request)
     {
-         $res = $this->service->cargaLayout($request->file, $request->id, $request->name);     
+         $res = $this->service->cargaLayout($request->file, $request->id, $request->name);
         return response()->json($res, 200);
+    }
+
+    public function pdf($id)
+    {
+        if(auth()->user()->can('consultar_cotizacion_compra')) {
+            return $this->service->pdf($id)->create();
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
     }
 }

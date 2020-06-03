@@ -21,7 +21,6 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'item_solicitud',
         'cotizacion_partida',
-        'cotizacion',
         'material',
     ];
 
@@ -67,7 +66,8 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
      */
     public function includeCotizacion(AsignacionProveedoresPartida $model)
     {
-        if ($cotizacion = $model->cotizacionCompra) {
+        if ($cotizacion = $model->cotizacionCompra)
+        {
             return $this->item($cotizacion, new CotizacionCompraTransformer);
         }
         return null;

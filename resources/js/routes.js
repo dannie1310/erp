@@ -151,6 +151,42 @@ export const routes = [
                             permission: ['editar_poliza','consultar_poliza'],
                             general: true
                         }
+                    },
+                ]
+            },
+            {
+                path: 'diferencias',
+                component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"diferencia-poliza",
+                        component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                        meta: {
+                            title: 'Diferencias en Pólizas',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'DIFERENCIAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'diferencias/detectar',
+                component: require('./components/contabilidad-general/incidente-poliza/DetectarDiferencia.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"detectar-diferencias-polizas",
+                        component: require('./components/contabilidad-general/incidente-poliza/DetectarDiferencia.vue').default,
+                        meta: {
+                            title: 'Detectar Diferencias en Pólizas',
+                            breadcrumb: {parent: 'diferencia-poliza', name: 'DETECTAR'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
                     }
                 ]
             },
@@ -165,7 +201,7 @@ export const routes = [
                         meta: {
                             title: 'Solicitudes de Edición',
                             breadcrumb: {parent: 'contabilidad-general', name: 'SOLICITUDES DE EDICIÓN'},
-                            middleware: [auth, permission],
+                            middleware: [auth],
                             permission: ['consultar_solicitud_edicion_poliza_ctpq'],
                             general: true
                         }
@@ -203,7 +239,7 @@ export const routes = [
                         meta: {
                             title: 'Consultar Solicitud de Edición',
                             breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'CONSULTAR'},
-                            middleware: [auth, permission],
+                            middleware: [auth],
                             permission: 'consultar_solicitud_edicion_poliza_ctpq',
                             general: true
                         }
@@ -250,6 +286,7 @@ export const routes = [
                     }
                 ],
             },
+
             {
                 path: 'cfd-sat',
                 component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
@@ -1389,6 +1426,46 @@ export const routes = [
 
                         }
                     },
+                ]
+            },
+            {
+                path: 'presupuesto',
+                component: require('./components/contratos/presupuesto/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'presupuesto',
+                        component: require('./components/contratos/presupuesto/Index').default,
+                        meta: {
+                            title: 'Presupuesto Contratista',
+                            breadcrumb: {parent: 'contratos', name: 'PRESUPUESTO CONTRATISTA'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_presupuesto_contratista'
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'presupuesto-edit',
+                        props: true,
+                        component: require('./components/contratos/presupuesto/Edit').default,
+                        meta: {
+                            title: 'Editar Presupuesto Contratista',
+                            breadcrumb: { parent: 'presupuesto', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_presupuesto_contratista'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'presupuesto-create',
+                        component: require('./components/contratos/presupuesto/Create').default,
+                        meta: {
+                            title: 'Registrar Presupuesto Contratista',
+                            breadcrumb: { parent: 'presupuesto', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_presupuesto_contratista']
+                        }
+                    }
                 ]
             },
             {
