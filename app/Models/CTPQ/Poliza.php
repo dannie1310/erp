@@ -198,9 +198,11 @@ class Poliza extends Model
                     "concepto_b" => $movimientos_referencia[$i]->Concepto,
                     "id_poliza_a" => $movimiento->IdPoliza,
                     "id_poliza_b" => $movimientos_referencia[$i]->IdPoliza,
+                    "id_cuenta_a" => $movimiento->IdCuenta,
+                    "id_cuenta_b" => $movimientos_referencia[$i]->IdCuenta,
                 ];}
                 catch (\Exception $e){
-                    dd($busqueda->base_datos_busqueda,$movimiento);
+                   // dd($busqueda->base_datos_busqueda,$movimiento);
                 }
                 $relaciones_movimientos[$i] = RelacionMovimientos::registrar($datos_relacion);
                 $i++;
