@@ -31,7 +31,9 @@ class Diferencia extends Model
         "tipo_busqueda",
         "id_busqueda",
         "valor_a",
-        "valor_b"
+        "valor_b",
+        "id_cuenta",
+        "id_relacion_movimiento"
     ];
 
     public static function buscarSO($data){
