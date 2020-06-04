@@ -104,4 +104,16 @@ class OrdenCompraTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param OrdenCompra $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeUsuario(OrdenCompra $model)
+    {
+        if ($usuario = $model->usuario) {
+            return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
 }
