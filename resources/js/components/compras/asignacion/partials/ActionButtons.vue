@@ -9,7 +9,7 @@
                 class="btn btn-sm btn-outline-success" title="Editar">
             <i class="fa fa-pencil"></i>
         </button>
-        <Eliminar v-if="$root.can('eliminar_asignacion_proveedor')" v-bind:id="value.id"></Eliminar>
+        <Eliminar v-if="$root.can('eliminar_asignacion_proveedor') && value.estado == 1" v-bind:id="value.id"></Eliminar>
     </div>
 </template>
 

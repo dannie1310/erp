@@ -1131,17 +1131,30 @@ export const routes = [
             {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue').default,
-                children: [{
-                    path: '/',
-                    name: 'orden-compra',
-                    component: require('./components/compras/orden-compra/Index').default,
-                    meta: {
-                        title: 'Ordenes de Compra',
-                        breadcrumb: { parent: 'compras', name: 'ORDENES DE COMPRA' },
-                        middleware: [auth, context, permission],
-                        permission: ['consultar_orden_compra']
-                    }
-                }]
+                children: [
+                    {
+                        path: '/',
+                        name: 'orden-compra',
+                        component: require('./components/compras/orden-compra/Index').default,
+                        meta: {
+                            title: 'Ordenes de Compra',
+                            breadcrumb: { parent: 'compras', name: 'ORDENES DE COMPRA' },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_orden_compra']
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'orden-compra-edit',
+                        props: true,
+                        component: require('./components/compras/orden-compra/Edit').default,
+                        meta: {
+                            title: 'Editar Orden Compra',
+                            breadcrumb: { parent: 'orden-compra', name: 'EDITAR'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
             },
             {
                 path: 'requisicion',
