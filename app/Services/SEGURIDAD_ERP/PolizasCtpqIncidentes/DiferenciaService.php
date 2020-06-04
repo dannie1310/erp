@@ -12,6 +12,7 @@ use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
 use Illuminate\Support\Facades\Bus;

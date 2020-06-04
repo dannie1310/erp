@@ -42,7 +42,9 @@ class RelacionMovimientos extends Model
         "concepto_a",
         "concepto_b",
         "id_poliza_a",
-        "id_poliza_b"
+        "id_poliza_b",
+        "id_cuenta_a",
+        "id_cuenta_b"
     ];
 
     public function movimiento_revisado()
