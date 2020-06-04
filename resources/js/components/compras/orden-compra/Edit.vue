@@ -10,34 +10,55 @@
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Folio Solicitud de Compra: </b></label>
-                                    panda
+                                    {{orden_compra.solicitud.numero_folio_format}}
                                 </div>
                             </div>
                             <div class="col-md-8" >
                                 <div class="form-group">
                                     <label><b>Solicitud de Compra: </b></label>
-                                    panda
+                                    {{orden_compra.solicitud.observaciones}}
                                 </div>
                             </div>
                             
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Folio Orden de Compra: </b></label>
-                                    panda
+                                    {{orden_compra.numero_folio_format}}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4" >
+                                <div class="form-group">
+                                    <label><b>Usuario Registro: </b></label>
+                                    {{orden_compra.usuario.nombre}}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4" >
+                                <div class="form-group">
+                                    <label><b>Fecha Registro: </b></label>
+                                    {{orden_compra.fecha_format}}
                                 </div>
                             </div>
                             
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Razón Social: </b></label>
-                                    panda
+                                    {{orden_compra.empresa.razon_social}}
                                 </div>
                             </div>
                             
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Sucursal: </b></label>
-                                    panda
+                                    {{orden_compra.sucursal.descripcion}}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4" >
+                                <div class="form-group">
+                                    <label><b>Dirección: </b></label>
+                                    {{orden_compra.sucursal.direccion}}
                                 </div>
                             </div>
 
@@ -45,6 +66,61 @@
                     </div>
                 </div>
             </div>
+             <div class="col-12" v-if="Object.keys(orden_compra).length > 0">
+                
+                <div class="invoice p-3 mb-3">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <br/>
+                                <div class="col-12 table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Numero de Parte</th>
+                                                <th>Descripción</th>
+                                                <th>Unidad</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio</th>
+                                                <th>Descuento</th>
+                                                <th>Importe</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(partida, i) in orden_compra.partidas.data">
+                                                <td>{{i+1}}</td>
+                                                <td>{{partida.material.numero_parte}}</td>
+                                                <td>{{partida.material.descripcion}}</td>
+                                                <td>{{partida.material.unidad}}</td>
+                                                <td>{{partida.cantidad}}</td>
+                                                <td>{{partida.precio_unitario}}</td>
+                                                <td>Descuento</td>
+                                                <td>{{partida.importe}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td  colspan="6"></td>
+                                                <td>Subtotal</td>
+                                                <td>1000</td>
+                                            </tr>
+                                            <tr>
+                                                <td  colspan="6"></td>
+                                                <td>Impuesto</td>
+                                                <td>1000</td>
+                                            </tr>
+                                            <tr>
+                                                <td  colspan="6"></td>
+                                                <td>Total</td>
+                                                <td>1000</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
         </div>
     </span>
 </template>
@@ -69,7 +145,7 @@ export default {
             return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id,
                     params:{
-                        include: ['empresa', 'partidas', 'solicitud']
+                        include: ['empresa', 'sucursal', 'usuario', 'partidas.material', 'solicitud']
                     }
                 }).then(data => {
                     this.orden_compra = data;

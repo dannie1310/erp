@@ -9,10 +9,12 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
-use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\Compras\OrdenCompraPartidaTransformer;
 use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\IGH\UsuarioTransformer;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\SucursalTransformer;
+use App\Http\Transformers\CADECO\Compras\OrdenCompraPartidaTransformer;
 
 class OrdenCompraTransformer extends TransformerAbstract
 {
@@ -24,7 +26,9 @@ class OrdenCompraTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'empresa',
         'solicitud',
-        'partidas'
+        'partidas',
+        'sucursal',
+        'usuario',
     ];
 
     /**
@@ -76,6 +80,21 @@ class OrdenCompraTransformer extends TransformerAbstract
     {
         if ($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Sucursal
+     *
+     * @param OrdenCompra $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeSucursal(OrdenCompra $model)
+    {
+        if($sucursal = $model->sucursal)
+        {
+            return $this->item($sucursal, new SucursalTransformer);
         }
         return null;
     }
