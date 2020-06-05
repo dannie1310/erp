@@ -135,4 +135,10 @@ class OrdenCompraTransformer extends TransformerAbstract
         return null;
     }
 
+    // public function includeComplemento(OrdenCompra $model){
+    //     if($complemento = $model->complemento){
+    //         return $this->item($complemento, new );
+    //     }
+    //     return null;
+    // }
 }

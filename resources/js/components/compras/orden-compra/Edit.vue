@@ -133,14 +133,18 @@ export default {
         return {
             cargando: false,
             orden_compra:[],
+            tipo_gasto:[],
+            formas_pago_credito:[],
         }
     },
     mounted() {
+        this.cargando = true;
+        this.getTipoGasto();
         this.getOrdenCompra();
+        this.getFormaPagoCredito();
     },
     methods: {
         getOrdenCompra(){
-            this.cargando = true;
             this.orden_compra = [];
             return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id,
@@ -151,6 +155,28 @@ export default {
                     this.orden_compra = data;
                 }).finally(()=>{
                     this.cargando = false;
+                })
+        },
+        getTipoGasto(){
+            this.tipo_gasto = [];
+            return this.$store.dispatch('cadeco/costo/index', {
+                    id: this.id,
+                    params:{
+                        scope: ['datosContablesConfiguracion'], sort: 'descripcion', order: 'ASC'
+                    }
+                }).then(data => {
+                    this.tipo_gasto = data;
+                })
+        },
+        getFormaPagoCredito(){
+            this.tipo_gasto = [];
+            return this.$store.dispatch('compras/forma-pago-credito/index', {
+                    id: this.id,
+                    params:{
+                        scope: [], sort: 'id', order: 'ASC'
+                    }
+                }).then(data => {
+                    this.formas_pago_credito = data;
                 })
         },
     }

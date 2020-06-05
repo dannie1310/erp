@@ -43,6 +43,7 @@ import itemContratista from './modules/compras/item-contratista';
 import ordenCompra from './modules/compras/orden-compra';
 import requisicion from './modules/compras/requisicion';
 import solicitudCompra from './modules/compras/solicitud-compra';
+import formaPagoCredito from './modules/compras/forma-pago-credito';
 
 //CONFIGURACION
 import areaCompradora from './modules/configuracion/area-compradora';
@@ -192,6 +193,8 @@ export default new Vuex.Store({
         'compras/orden-compra' : ordenCompra,
         'compras/requisicion' : requisicion,
         'compras/solicitud-compra' : solicitudCompra,
+        'compras/forma-pago-credito' : formaPagoCredito,
+        
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,
