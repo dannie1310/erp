@@ -97,26 +97,28 @@ class Busqueda extends Model
         $this->save();
 
         foreach ($polizas as $poliza) {
+            $impedir_busqueda=false;
             $relaciones = $poliza->relaciona($this);
             if(key_exists("relacion_poliza",$relaciones))
             {
                 if($relaciones["relacion_poliza"]){
-                    $busqueda = New BusquedaDiferenciasPolizas($relaciones["relacion_poliza"], $this);
-                    $busqueda->buscarDiferenciasPolizas();
+                    $busqueda = New BusquedaDiferenciasPolizas($relaciones, $this);
+                    $impedir_busqueda = $busqueda->buscarDiferenciasPolizas();
                 }
             }
-            if(key_exists("relaciones_movimientos",$relaciones)){
-                foreach ($relaciones["relaciones_movimientos"] as $relacion_movimiento)
-                {
-                    if($relacion_movimiento){
-                        $busqueda_movimiento = New BusquedaDiferenciasMovimientos($relacion_movimiento, $this);
-                        $busqueda_movimiento->buscarDiferenciasMovimientos();
+            if(!$impedir_busqueda){
+                if(key_exists("relaciones_movimientos",$relaciones)){
+                    foreach ($relaciones["relaciones_movimientos"] as $relacion_movimiento)
+                    {
+                        if($relacion_movimiento){
+                            $busqueda_movimiento = New BusquedaDiferenciasMovimientos($relacion_movimiento, $this);
+                            $busqueda_movimiento->buscarDiferenciasMovimientos();
+                        }
                     }
                 }
             }
         }
         $this->finaliza(count($polizas));
-
     }
 
     public function finaliza($numero_polizas = 0){
