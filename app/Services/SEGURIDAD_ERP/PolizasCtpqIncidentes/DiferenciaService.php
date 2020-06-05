@@ -54,6 +54,8 @@ class DiferenciaService
 
     public function buscarDiferencias($parametros)
     {
+        /*$busqueda = Busqueda::find(3845);
+        $busqueda->procesarBusquedaDiferencias();*/
         $datos_lote = [];
         $lote =LoteBusqueda::getLoteActivo();
         if(!$lote){

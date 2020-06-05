@@ -27,7 +27,12 @@ class BusquedaDiferenciasPolizas
     public function __construct($relaciones, Busqueda $busqueda) {
 
         $this->relacion = $relaciones["relacion_poliza"];
-        $this->relaciones_movimientos = $relaciones["relaciones_movimientos"];
+        if(key_exists("relaciones_movimientos",$relaciones)) {
+            $this->relaciones_movimientos = $relaciones["relaciones_movimientos"];
+        } else {
+            $this->relaciones_movimientos =[];
+        }
+
         $this->id_busqueda = $busqueda->id;
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $this->relacion->base_datos_a);
