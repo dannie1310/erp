@@ -27,7 +27,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index_corto', sortable: false },
-                    { title: 'Folio', field: 'id', thClass: 'th_folio', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Folio', field: 'id', thClass: 'th_folio', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Tipo Diferencia', field: 'tipo', thClass: 'fecha_hora', sortable: true},
                     { title: 'Fecha / Hora Detección', field: 'fecha_hora_deteccion', thClass: 'fecha_hora', sortable: true},
                     { title: 'Base de Datos Revisada', field: 'base_datos', sortable: true},

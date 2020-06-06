@@ -156,12 +156,12 @@ export const routes = [
             },
             {
                 path: 'diferencias',
-                component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/Index.vue').default,
                 children:[
                     {
                         path:"/",
                         name:"diferencia-poliza",
-                        component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                        component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/Index.vue').default,
                         meta: {
                             title: 'Diferencias en Pólizas',
                             breadcrumb: {parent: 'poliza-contpaq', name: 'DIFERENCIAS'},
@@ -174,12 +174,12 @@ export const routes = [
             },
             {
                 path: 'diferencias/detectar',
-                component: require('./components/contabilidad-general/incidente-poliza/DetectarDiferencia.vue').default,
+                component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/DetectarDiferencia.vue').default,
                 children:[
                     {
                         path:"/",
                         name:"detectar-diferencias-polizas",
-                        component: require('./components/contabilidad-general/incidente-poliza/DetectarDiferencia.vue').default,
+                        component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/DetectarDiferencia.vue').default,
                         meta: {
                             title: 'Detectar Diferencias en Pólizas',
                             breadcrumb: {parent: 'diferencia-poliza', name: 'DETECTAR'},
