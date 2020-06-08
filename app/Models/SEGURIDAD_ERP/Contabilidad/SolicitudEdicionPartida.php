@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
 
 class SolicitudEdicionPartida extends Model
@@ -22,6 +23,7 @@ class SolicitudEdicionPartida extends Model
         , "fecha"
         , "folio"
         , "tipo"
+        , "id_diferencia"
     ];
 
     public function scopeActivas($query)
@@ -32,6 +34,11 @@ class SolicitudEdicionPartida extends Model
     public function solicitud()
     {
         return $this->belongsTo(SolicitudEdicion::class, "id_solicitud_edicion", "id");
+    }
+
+    public function diferencia()
+    {
+        return $this->belongsTo(Diferencia::class, "id_diferencia", "id");
     }
 
     public function polizas()
