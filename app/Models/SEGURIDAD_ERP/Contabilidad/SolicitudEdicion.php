@@ -13,6 +13,7 @@ use App\Models\CADECO\FinanzasCBE\Solicitud;
 use App\Models\CTPQ\Poliza;
 use App\Models\CTPQ\PolizaMovimiento;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -22,7 +23,10 @@ class SolicitudEdicion extends Model
     protected $table = 'SEGURIDAD_ERP.Contabilidad.solicitudes_edicion';
     public $timestamps = false;
     protected $fillable =[
-        "numero_folio"
+        "numero_folio",
+        "id_lote_busqueda",
+        "id_tipo",
+        "base_datos"
     ];
 
     public function partidas()
@@ -54,6 +58,10 @@ class SolicitudEdicion extends Model
 
     public function usuario_rechazo(){
         return $this->belongsTo(Usuario::class, 'id_usuario_rechazo', 'idusuario');
+    }
+
+    public function lote_busqueda(){
+        return $this->belongsTo(LoteBusqueda::class, 'id_lote_busqueda', 'id');
     }
 
     public function usuario_aplico(){
