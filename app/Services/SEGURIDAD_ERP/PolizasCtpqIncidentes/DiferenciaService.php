@@ -57,6 +57,8 @@ class DiferenciaService
         /*$busqueda = Busqueda::find(3845);
         $busqueda->procesarBusquedaDiferencias();*/
         $datos_lote = [];
+        /*$lote = LoteBusqueda::find(1);
+        $lote->generaSolicitudesCambio();*/
         $lote =LoteBusqueda::getLoteActivo();
         if(!$lote){
             $lote = $this->generaPeticionesBusquedas($parametros);
