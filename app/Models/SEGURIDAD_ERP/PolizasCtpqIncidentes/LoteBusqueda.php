@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +53,11 @@ class LoteBusqueda extends Model
     public function diferencias_corregidas()
     {
         return $this->hasManyThrough(DiferenciaCorregida::class, Busqueda::class, "id_lote", "id_busqueda", "id", "id");
+    }
+
+    public function solicitudes_edicion()
+    {
+        return $this->hasMany(SolicitudEdicion::class, "id_lote_busqueda", "id");
     }
 
     public function getFechaHoraInicioFormatAttribute()
@@ -180,7 +186,7 @@ class LoteBusqueda extends Model
         $this->cantidad_diferencias_detectadas = Diferencia::cantidadDiferenciasDetectadas($this->id);
         $this->cantidad_diferencias_corregidas = Diferencia::cantidadDiferenciasCorregidas($this->id);
         $this->save();
-
+        $this->generaSolicitudesCambio();
         event(new FinalizaProcesamientoLoteBusquedas(
             $this
         ));
@@ -206,4 +212,118 @@ class LoteBusqueda extends Model
         return number_format($this->cantidad_diferencias_corregidas, 0, ".", ",");
     }
 
+    public function generaSolicitudesCambio()
+    {
+        ini_set('max_execution_time', '7200') ;
+        $this->generaSolicitudesCambioConceptoReferencia();
+        $this->generaSolicitudesReordenamiento();
+        $this->generaSolicitudesCambioNombreCuenta();
+    }
+
+    private function generaSolicitudesCambioConceptoReferencia()
+    {
+        /*2,8,9*/
+        $bases_datos_revisadas = DB::table('PolizasCtpqIncidentes.diferencias')
+            ->select(DB::raw("diferencias.base_datos_revisada"))
+            ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+            ->whereIn("diferencias.id_tipo", [2,8,9])
+            ->where("activo","=",1)
+            ->where("busquedas_diferencias.id_lote", $this->id)
+            ->groupBy(DB::raw("base_datos_revisada"))
+            ->orderByRaw("base_datos_revisada")
+            ->get();
+
+        if($bases_datos_revisadas){
+
+            foreach ($bases_datos_revisadas as $base_datos_revisada)
+            {
+                $solicitud_edicion = $this->solicitudes_edicion()->create(["id_tipo"=>2, "base_datos" => $base_datos_revisada->base_datos_revisada]);
+                $diferencias =(array) DB::table('PolizasCtpqIncidentes.diferencias')
+                    ->select(DB::raw("diferencias.id as id_diferencia"))
+                    ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+                    ->whereIn("diferencias.id_tipo", [2,8,9])
+                    ->where("activo","=",1)
+                    ->where("busquedas_diferencias.id_lote", $this->id)
+                    ->where("diferencias.base_datos_revisada", $base_datos_revisada->base_datos_revisada)
+                    ->orderByRaw("id_diferencia")
+                    ->pluck("id_diferencia")->toArray();
+
+                foreach ($diferencias as $diferencia)
+                {
+                    $solicitud_edicion->partidas()->create(["id_diferencia"=>$diferencia]);
+                }
+            }
+        }
+    }
+
+    private function generaSolicitudesReordenamiento()
+    {
+        /*12*/
+        $bases_datos_revisadas = DB::table('PolizasCtpqIncidentes.diferencias')
+            ->select(DB::raw("diferencias.base_datos_revisada"))
+            ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+            ->whereIn("diferencias.id_tipo", [12])
+            ->where("activo","=",1)
+            ->where("busquedas_diferencias.id_lote", $this->id)
+            ->groupBy(DB::raw("base_datos_revisada"))
+            ->orderByRaw("base_datos_revisada")
+            ->get();
+
+        if($bases_datos_revisadas){
+            foreach ($bases_datos_revisadas as $base_datos_revisada)
+            {
+                $solicitud_edicion = $this->solicitudes_edicion()->create(["id_tipo"=>3, "base_datos" => $base_datos_revisada->base_datos_revisada]);
+                $diferencias =(array) DB::table('PolizasCtpqIncidentes.diferencias')
+                    ->select(DB::raw("diferencias.id as id_diferencia"))
+                    ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+                    ->whereIn("diferencias.id_tipo", [12])
+                    ->where("activo","=",1)
+                    ->where("busquedas_diferencias.id_lote", $this->id)
+                    ->where("diferencias.base_datos_revisada", $base_datos_revisada->base_datos_revisada)
+                    ->orderByRaw("id_diferencia")
+                    ->pluck("id_diferencia")->toArray();
+
+                foreach ($diferencias as $diferencia)
+                {
+                    $solicitud_edicion->partidas()->create(["id_diferencia"=>$diferencia]);
+                }
+            }
+        }
+    }
+
+    private function generaSolicitudesCambioNombreCuenta()
+    {
+        /*7*/
+        $bases_datos_revisadas = DB::table('PolizasCtpqIncidentes.diferencias')
+            ->select(DB::raw("diferencias.base_datos_revisada"))
+            ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+            ->whereIn("diferencias.id_tipo", [7])
+            ->where("activo","=",1)
+            ->where("busquedas_diferencias.id_lote", $this->id)
+            ->groupBy(DB::raw("base_datos_revisada"))
+            ->orderByRaw("base_datos_revisada")
+            ->get();
+
+        if($bases_datos_revisadas){
+            foreach ($bases_datos_revisadas as $base_datos_revisada)
+            {
+                $solicitud_edicion = $this->solicitudes_edicion()->create(["id_tipo"=>4, "base_datos" => $base_datos_revisada->base_datos_revisada]);
+                $diferencias =(array) DB::table('PolizasCtpqIncidentes.diferencias')
+                    ->select(DB::raw("min(diferencias.id) as id_diferencia, valor_a, valor_b"))
+                    ->join('PolizasCtpqIncidentes.busquedas_diferencias', 'busquedas_diferencias.id', '=', 'diferencias.id_busqueda')
+                    ->whereIn("diferencias.id_tipo", [7])
+                    ->where("activo","=",1)
+                    ->where("busquedas_diferencias.id_lote", $this->id)
+                    ->where("diferencias.base_datos_revisada", $base_datos_revisada->base_datos_revisada)
+                    ->groupBy(DB::raw("valor_a, valor_b"))
+                    ->orderByRaw("id_diferencia")
+                    ->pluck("id_diferencia")->toArray();
+
+                foreach ($diferencias as $diferencia)
+                {
+                    $solicitud_edicion->partidas()->create(["id_diferencia"=>$diferencia]);
+                }
+            }
+        }
+    }
 }
