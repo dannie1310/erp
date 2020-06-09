@@ -37,6 +37,7 @@ class DiferenciaTransformer extends TransformerAbstract
             "identificador_poliza"=>$model->identificador_poliza,
             "numero_movimiento"=>$model->numero_movimiento,
             "campo"=>$model->campo,
+            "movimientos"=>$model->movimientos_ordenar
         ];
     }
 

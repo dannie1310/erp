@@ -97,15 +97,25 @@ class SolicitudEdicion extends Model
                 }
             }
             return $no_movimientos;
-        } else if($this->id_tipo == 2 || $this->id_tipo == 3)
+        } else if($this->id_tipo == 2)
         {
             $ids_movimientos = [];
             $diferencias = $this->diferencias;
             foreach($diferencias as $diferencia){
-                $ids_movimientos[] = $diferencia->id_movimiento;
+                if($diferencia->id_movimiento>0){
+                    $ids_movimientos[] = $diferencia->id_movimiento;
+                }
             }
             $ids_movimientos_unicos = array_unique($ids_movimientos);
             return count($ids_movimientos_unicos);
+        } else if($this->id_tipo == 3)
+        {
+            $no_movimientos = 0;
+            $diferencias = $this->diferencias;
+            foreach($diferencias as $diferencia){
+                $no_movimientos += $diferencia->poliza->movimientos()->count();
+            }
+            return $no_movimientos;
         } else {
             return '-';
         }
@@ -254,7 +264,6 @@ class SolicitudEdicion extends Model
                     foreach ($poliza["movimientos"] as $movimiento){
                         $poliza_obj->movimientos()->create($movimiento);
                     }
-
                 }
             }
             DB::connection('seguridad')->commit();
@@ -264,7 +273,6 @@ class SolicitudEdicion extends Model
             abort(400, $e->getMessage());
             throw $e;
         }
-
     }
 
     public function autorizar($polizas)
@@ -408,10 +416,8 @@ class SolicitudEdicion extends Model
             } else {
                 return $this->base_datos;
             }
-
         } else {
             return "";
         }
     }
-
 }

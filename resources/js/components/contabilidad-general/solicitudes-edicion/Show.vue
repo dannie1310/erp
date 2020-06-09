@@ -178,6 +178,69 @@
                 </div>
             </div>
         </span>
+        <span v-else-if="solicitud.id_tipo==3">
+            <div class="row"  >
+                <div class="col-md-12">
+                    <h6>-Base de Datos: {{solicitud.base_datos}} -Cantidad de Partidas: {{solicitud.numero_partidas}} -Cantidad de Pólizas: {{solicitud.numero_polizas}} -Cantidad de Movimientos: {{solicitud.numero_movimientos}} </h6>
+                </div>
+            </div>
+            <div class="row"  >
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr style="background-color:rgba(0, 0, 0, 0.1)">
+                                    <th class="index_corto">#</th>
+                                    <th colspan="10" >Póliza</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(partida, i) in solicitud.partidas.data">
+                                    <tr style="background-color: #555555; color: #ffffff">
+                                        <td>{{i+1}}</td>
+                                        <td colspan="10">{{partida.diferencia.identificador_poliza}}</td>
+                                    </tr>
+                                    <tr >
+                                        <td></td>
+                                        <td colspan="5" style="text-align: center">Orden Original</td>
+                                        <td colspan="5" style="text-align: center">Orden Propuesto</td>
+                                    </tr>
+                                    <tr >
+                                        <td></td>
+                                        <td>No. Movto.</td>
+                                        <td>Código</td>
+                                        <td>Cuenta</td>
+                                        <td>Cargo</td>
+                                        <td>Abono</td>
+
+                                        <td>No. Movto.</td>
+                                        <td>Código</td>
+                                        <td>Cuenta</td>
+                                        <td>Cargo</td>
+                                        <td>Abono</td>
+                                    </tr>
+                                    <tr v-for="(movimiento, j) in partida.diferencia.movimientos">
+                                        <td></td>
+                                        <td>{{ movimiento.no_movto_a }}</td>
+                                        <td>{{ movimiento.codigo_a }}</td>
+                                        <td>{{ movimiento.cuenta_a }}</td>
+                                        <td style="text-align: right">{{ movimiento.cargo_a }}</td>
+                                        <td style="text-align: right">{{ movimiento.abono_a }}</td>
+
+                                        <td>{{ movimiento.no_movto_b }}</td>
+                                        <td>{{ movimiento.codigo_b }}</td>
+                                        <td>{{ movimiento.cuenta_b }}</td>
+                                        <td style="text-align: right">{{ movimiento.cargo_b }}</td>
+                                        <td style="text-align: right">{{ movimiento.abono_b }}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                    </div>
+                </div>
+            </div>
+        </span>
         <span v-else-if="solicitud.id_tipo==4">
             <div class="row"  >
                 <div class="col-md-12">
