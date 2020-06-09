@@ -36,6 +36,11 @@ class SolicitudEdicion extends Model
         return $this->belongsTo(CtgTipoSolicitudEdicion::class, "id_tipo", "id");
     }
 
+    public function empresa_ctpq()
+    {
+        return $this->belongsTo(Empresa::class, "base_datos", "AliasBDD");
+    }
+
     public function partidas()
     {
         return $this->hasMany(SolicitudEdicionPartida::class,"id_solicitud_edicion","id");
@@ -391,6 +396,22 @@ class SolicitudEdicion extends Model
             }
         }
         return $salida;
+    }
+
+    public function getBaseDatosEmpresaAttribute()
+    {
+        if($this->base_datos != "")
+        {
+            if($this->empresa_ctpq)
+            {
+                return $this->base_datos. " [".$this->empresa_ctpq->Nombre."]";
+            } else {
+                return $this->base_datos;
+            }
+
+        } else {
+            return "";
+        }
     }
 
 }

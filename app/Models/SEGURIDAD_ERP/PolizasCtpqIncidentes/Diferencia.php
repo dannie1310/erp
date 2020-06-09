@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 
+use App\Models\CTPQ\Cuenta;
 use App\Models\CTPQ\Poliza;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -134,6 +135,13 @@ class Diferencia extends Model
         return $this->belongsTo(Poliza::class, "id_poliza", "Id");
     }
 
+    public function cuenta()
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $this->base_datos_revisada);
+        return $this->belongsTo(Cuenta::class, "id_cuenta", "Id");
+    }
+
     public static function aplicarCorreccion($datos_correccion)
     {
         if(key_exists("id_movimiento", $datos_correccion)){
@@ -219,5 +227,15 @@ class Diferencia extends Model
             ->where("busquedas_diferencias.id_lote", $id_lote)
             ->first();
         return $dem->cantidad;
+    }
+
+    public function getCodigoCuentaAttribute()
+    {
+        if($this->id_cuenta>0)
+        {
+            return $this->cuenta->Codigo;
+        } else {
+            return "";
+        }
     }
 }

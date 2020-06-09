@@ -23,6 +23,7 @@ class SolicitudEdicionTransformer extends TransformerAbstract
     {
         return [
             'id' => (int)$model->id,
+            "id_tipo" => $model->id_tipo,
             'numero_folio_format' => $model->numero_folio_format,
             'fecha_hora_registro_format' => $model->fecha_hora_registro_format,
             'usuario_registro' => $model->usuario_registro->nombre_completo,
@@ -40,6 +41,7 @@ class SolicitudEdicionTransformer extends TransformerAbstract
             'usuario_rechazo' => ($model->usuario_rechazo) ? $model->usuario_rechazo->nombre_completo : "",
             'fecha_hora_aplicacion_format' => $model->fecha_hora_aplicacion_format,
             'usuario_aplico' => ($model->usuario_aplico) ? $model->usuario_aplico->nombre_completo : "",
+            "base_datos" => $model->base_datos_empresa
         ];
     }
 
