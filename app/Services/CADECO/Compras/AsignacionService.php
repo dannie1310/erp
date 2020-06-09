@@ -182,6 +182,9 @@ class AsignacionService
                 $orden_c->monto = $orden_c->monto + $monto;
                 $orden_c->saldo = $orden_c->saldo + $monto;
                 $orden_c->impuesto = $orden_c->impuesto + $impuesto;
+
+                $orden_c->anticipo_monto = $orden_c->anticipo_monto + ($partida->cotizacion->anticipo / 100 * $monto);
+                $orden_c->anticipo_saldo = $orden_c->anticipo_saldo + ($partida->cotizacion->anticipo / 100 * $monto);
                 $orden_c->save();
 
 
