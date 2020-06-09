@@ -34,7 +34,8 @@ class TransaccionTransformer extends TransformerAbstract
         'tipo'
     ];
 
-    public function transform(Transaccion $model) {
+    public function transform(Transaccion $model)
+    {
         return $model->toArray();
     }
 
@@ -44,15 +45,23 @@ class TransaccionTransformer extends TransformerAbstract
      * @param Transaccion $model
      * @return \League\Fractal\Resource\Item
      */
-    public function includeTipo(Transaccion $model) {
-        if ($tipo = $model->tipo) {
+    public function includeTipo(Transaccion $model)
+    {
+        if ($tipo = $model->tipo)
+        {
             return $this->item($tipo, new TipoTransaccionTransformer);
         }
         return null;
     }
 
-    public function includeEmpresa(Transaccion $model){
-        if($empresa = $model->empresa){
+    /**
+     * @param Transaccion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEmpresa(Transaccion $model)
+    {
+        if($empresa = $model->empresa)
+        {
             return $this->item($empresa, new EmpresaTransformer);
         }
         return null;

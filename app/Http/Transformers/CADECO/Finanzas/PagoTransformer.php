@@ -12,6 +12,8 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 use App\Http\Transformers\CADECO\CuentaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\TransaccionTransformer;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Pago;
 use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
@@ -27,6 +29,7 @@ class PagoTransformer extends TransformerAbstract
             'moneda',
             'cuenta',
             'empresa',
+            'usuario'
     ];
 
 
@@ -44,7 +47,6 @@ class PagoTransformer extends TransformerAbstract
       return [
           'id'=>$model->getKey(),
           'numero_folio_format' =>$model->numero_folio_format,
-          /*'fecha_format'=>Carbon::parse($model->fecha)->format('d-m-Y'),*/
           'fecha_format'=>$model->fecha_format,
           'monto'=>abs($model->monto),
           'monto_format'=>($model->monto_format),
@@ -53,7 +55,6 @@ class PagoTransformer extends TransformerAbstract
           'observaciones'=>$model->observaciones,
           'id_moneda'=>$model->id_moneda,
           'estado_string'=>$model->estado_string,
-
       ];
     }
 
@@ -97,4 +98,16 @@ class PagoTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Pago $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuario(Pago $model)
+    {
+        if($registro = $model->usuario)
+        {
+            return $this->item($registro, new UsuarioTransformer);
+        }
+        return null;
+    }
 }

@@ -39,11 +39,14 @@ class Pago extends Transaccion
                 ->where('estado', '!=', -2);
         });
     }
-    public function moneda(){
+
+    public function moneda()
+    {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
-    public function cuenta(){
+    public function cuenta()
+    {
         return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
     }
 
@@ -60,5 +63,36 @@ class Pago extends Transaccion
             $estado='Conciliado';
         }
         return $estado;
+    }
+
+    public function eliminar($motivo)
+    {
+        switch($this->opciones)
+        {
+            case 0: //Pago Factura
+                echo "i es igual a 0";
+                break;
+
+            case 1: //Pago varios o Reposicion FF
+                echo "1";
+                break;
+
+            case 65537:
+                echo "2";
+                break;
+
+            case 131073: //Pago anticipo destajo
+                echo "131073";
+                break;
+
+            case 262145;
+                echo "262145";
+                break;
+
+            case 327681; // Pago a cuenta o a cuenta por aplicar
+                echo "327681";
+                break;
+        }
+        dd($motivo);
     }
 }
