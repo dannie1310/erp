@@ -29,6 +29,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index_corto', sortable: false },
+                    { title: 'Tipo', field: 'tipo', thClass: 'fecha_hora', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Folio', field: 'numero_folio', thClass: 'th_folio', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Fecha / Hora', field: 'fecha', thClass: 'fecha_hora', sortable: true},
                     { title: 'Usuario Registro', field: 'usuario_registro', sortable: true},
@@ -36,6 +37,7 @@
                     { title: '# BD', field: 'numero_bd', thClass: 'th_folio', sortable: true},
                     { title: '# Pol.', field: 'numero_polizas', thClass: 'th_folio', sortable: true},
                     { title: '# Mov.', field: 'numero_movimientos', thClass: 'th_folio', sortable: true},
+                    { title: '# Cta.', field: 'numero_cuentas', thClass: 'th_folio', sortable: true},
                     { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
 
@@ -90,10 +92,12 @@
                             numero_folio:solicitud.numero_folio_format,
                             fecha: solicitud.fecha_hora_registro_format,
                             usuario_registro: solicitud.usuario_registro,
+                            tipo: solicitud.tipo_solicitud,
                             numero_bd: solicitud.numero_bd,
                             numero_polizas: solicitud.numero_polizas,
                             numero_partidas: solicitud.numero_partidas,
                             numero_movimientos: solicitud.numero_movimientos,
+                            numero_cuentas: solicitud.numero_cuentas,
                             estado: solicitud.estado_format,
                             buttons: $.extend({}, {
                                 id: solicitud.id,

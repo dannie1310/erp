@@ -95,4 +95,61 @@ class SolicitudEdicionPartida extends Model
         return $no_bd;
     }
 
+    public function getNumeroPolizasAttribute()
+    {
+        if($this->solicitud->id_tipo == 1)
+        {
+            return $this->polizas()->count();
+        } else if($this->solicitud->id_tipo == 2 || $this->solicitud->id_tipo == 3)
+        {
+            return 1;
+        } else {
+            return '-';
+        }
+    }
+
+    public function getNumeroPolizasFormatAttribute()
+    {
+        if(is_numeric($this->numero_polizas)){
+            return number_format($this->numero_polizas,0,"",",");
+        }
+        else {
+            return $this->numero_polizas;
+        }
+    }
+
+    public function getNumeroMovimientosAttribute()
+    {
+        if($this->solicitud->id_tipo == 1)
+        {
+            $no_movimientos = 0;
+            $polizas = $this->polizas;
+            if($polizas){
+                foreach($polizas as $poliza){
+                    $no_movimientos+= $poliza->movimientos()->count();
+                }
+            }
+            return $no_movimientos;
+        } else if($this->solicitud->id_tipo == 2 || $this->solicitud->id_tipo == 3)
+        {
+            if($this->diferencia->id_movimiento>0){
+                return 1;
+            } else {
+                return "-";
+            }
+        } else {
+            return '-';
+        }
+    }
+
+    public function getNumeroMovimientosFormatAttribute()
+    {
+        if(is_numeric($this->numero_movimientos)){
+            return number_format($this->numero_movimientos,0,"",",");
+        }
+        else {
+            return $this->numero_movimientos;
+        }
+    }
+
 }

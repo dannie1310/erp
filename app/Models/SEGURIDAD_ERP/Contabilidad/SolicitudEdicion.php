@@ -9,10 +9,12 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
 use App\Models\CADECO\FinanzasCBE\Solicitud;
 use App\Models\CTPQ\Poliza;
 use App\Models\CTPQ\PolizaMovimiento;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +31,16 @@ class SolicitudEdicion extends Model
         "base_datos"
     ];
 
+    public function tipo()
+    {
+        return $this->belongsTo(CtgTipoSolicitudEdicion::class, "id_tipo", "id");
+    }
+
+    public function empresa_ctpq()
+    {
+        return $this->belongsTo(Empresa::class, "base_datos", "AliasBDD");
+    }
+
     public function partidas()
     {
         return $this->hasMany(SolicitudEdicionPartida::class,"id_solicitud_edicion","id");
@@ -41,6 +53,11 @@ class SolicitudEdicion extends Model
     public function polizas()
     {
         return $this->hasManyThrough(SolicitudEdicionPartidaPoliza::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id_solicitud_partida","id","id");
+    }
+
+    public function diferencias()
+    {
+        return $this->hasManyThrough(Diferencia::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id","id","id_diferencia");
     }
 
     public function polizasAutorizadas()
@@ -70,26 +87,114 @@ class SolicitudEdicion extends Model
 
     public function getNumeroMovimientosAttribute()
     {
-        $no_movimientos = 0;
-        $polizas = $this->polizas;
-        if($polizas){
-            foreach($polizas as $poliza){
-                $no_movimientos+= $poliza->movimientos()->count();
+        if($this->id_tipo == 1)
+        {
+            $no_movimientos = 0;
+            $polizas = $this->polizas;
+            if($polizas){
+                foreach($polizas as $poliza){
+                    $no_movimientos+= $poliza->movimientos()->count();
+                }
             }
+            return $no_movimientos;
+        } else if($this->id_tipo == 2)
+        {
+            $ids_movimientos = [];
+            $diferencias = $this->diferencias;
+            foreach($diferencias as $diferencia){
+                if($diferencia->id_movimiento>0){
+                    $ids_movimientos[] = $diferencia->id_movimiento;
+                }
+            }
+            $ids_movimientos_unicos = array_unique($ids_movimientos);
+            return count($ids_movimientos_unicos);
+        } else if($this->id_tipo == 3)
+        {
+            $no_movimientos = 0;
+            $diferencias = $this->diferencias;
+            foreach($diferencias as $diferencia){
+                $no_movimientos += $diferencia->poliza->movimientos()->count();
+            }
+            return $no_movimientos;
+        } else {
+            return '-';
         }
-        return $no_movimientos;
+    }
+
+    public function getNumeroMovimientosFormatAttribute()
+    {
+        if(is_numeric($this->numero_movimientos)){
+            return number_format($this->numero_movimientos,0,"",",");
+        }
+        else {
+            return $this->numero_movimientos;
+        }
+    }
+
+    public function getNumeroPolizasAttribute()
+    {
+        if($this->id_tipo == 1)
+        {
+            return $this->polizas()->count();
+        } else if($this->id_tipo == 2 || $this->id_tipo == 3)
+        {
+            $ids_polizas = [];
+            $diferencias = $this->diferencias;
+            foreach($diferencias as $diferencia){
+                $ids_polizas[] = $diferencia->id_poliza;
+            }
+            $ids_polizas_unicos = array_unique($ids_polizas);
+            return count($ids_polizas_unicos);
+        } else {
+            return '-';
+        }
+    }
+
+    public function getNumeroPolizasFormatAttribute()
+    {
+        if(is_numeric($this->numero_polizas)){
+            return number_format($this->numero_polizas,0,"",",");
+        }
+        else {
+            return $this->numero_polizas;
+        }
+    }
+
+    public function getNumeroCuentasAttribute()
+    {
+        if($this->id_tipo == 4)
+        {
+            return $this->diferencias()->count();
+        } else {
+            return '-';
+        }
+    }
+
+    public function getNumeroCuentasFormatAttribute()
+    {
+        if(is_numeric($this->numero_cuentas)){
+            return number_format($this->numero_cuentas,0,"",",");
+        }
+        else {
+            return $this->numero_cuentas;
+        }
     }
 
     public function getNumeroBDAttribute()
     {
-        $bd = [];
-        $polizas = $this->polizas;
-        if($polizas){
-            foreach($polizas as $poliza){
-                $bd[]= $poliza->bd_contpaq;
+        if($this->id_tipo == 1){
+            $bd = [];
+            $polizas = $this->polizas;
+            if($polizas){
+                foreach($polizas as $poliza){
+                    $bd[]= $poliza->bd_contpaq;
+                }
             }
+            $no_bd = count(array_unique($bd));
+        } else {
+            $no_bd = 1;
         }
-        $no_bd = count(array_unique($bd));
+
         return $no_bd;
     }
 
@@ -159,7 +264,6 @@ class SolicitudEdicion extends Model
                     foreach ($poliza["movimientos"] as $movimiento){
                         $poliza_obj->movimientos()->create($movimiento);
                     }
-
                 }
             }
             DB::connection('seguridad')->commit();
@@ -169,7 +273,6 @@ class SolicitudEdicion extends Model
             abort(400, $e->getMessage());
             throw $e;
         }
-
     }
 
     public function autorizar($polizas)
@@ -303,4 +406,18 @@ class SolicitudEdicion extends Model
         return $salida;
     }
 
+    public function getBaseDatosEmpresaAttribute()
+    {
+        if($this->base_datos != "")
+        {
+            if($this->empresa_ctpq)
+            {
+                return $this->base_datos. " [".$this->empresa_ctpq->Nombre."]";
+            } else {
+                return $this->base_datos;
+            }
+        } else {
+            return "";
+        }
+    }
 }

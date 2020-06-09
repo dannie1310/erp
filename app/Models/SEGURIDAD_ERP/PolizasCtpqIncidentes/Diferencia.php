@@ -9,7 +9,10 @@
 namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 
+use App\Models\CTPQ\Cuenta;
 use App\Models\CTPQ\Poliza;
+use App\Models\CTPQ\PolizaMovimiento;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
@@ -134,6 +137,20 @@ class Diferencia extends Model
         return $this->belongsTo(Poliza::class, "id_poliza", "Id");
     }
 
+    public function movimiento()
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $this->base_datos_revisada);
+        return $this->belongsTo(PolizaMovimiento::class, "id_movimiento", "Id");
+    }
+
+    public function cuenta()
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $this->base_datos_revisada);
+        return $this->belongsTo(Cuenta::class, "id_cuenta", "Id");
+    }
+
     public static function aplicarCorreccion($datos_correccion)
     {
         if(key_exists("id_movimiento", $datos_correccion)){
@@ -219,5 +236,93 @@ class Diferencia extends Model
             ->where("busquedas_diferencias.id_lote", $id_lote)
             ->first();
         return $dem->cantidad;
+    }
+
+    public function getCodigoCuentaAttribute()
+    {
+        if($this->id_cuenta>0)
+        {
+            return $this->cuenta->Codigo;
+        } else {
+            return "";
+        }
+    }
+
+    public function getIdentificadorPolizaAttribute()
+    {
+        if($this->poliza)
+        {
+            return $this->poliza->Ejercicio .'-'. $this->poliza->Periodo .'-'. $this->poliza->tipo_poliza->Nombre .'-'. $this->poliza->Folio;
+        } else {
+            return "";
+        }
+    }
+
+    public function getNumeroMovimientoAttribute()
+    {
+        if($this->movimiento)
+        {
+            return $this->movimiento->NumMovto;
+        } else {
+            return "-";
+        }
+    }
+    public function getCampoAttribute()
+    {
+        switch ($this->id_tipo){
+            case 2: return  "Concepto Póliza";
+                break;
+            case 8: return  "Referencia Movimiento";
+                break;
+            case 9: return  "Concepto Movimiento";
+                break;
+        }
+    }
+
+    public function getMovimientosOrdenarAttribute()
+    {
+        $arreglo = [];
+        if($this->id_tipo ==12){
+            $arreglo = [];
+            if($this->poliza)
+            {
+                $relacion = RelacionPolizas::where("id_poliza_a","=", $this->id_poliza)
+                    ->where("base_datos_a","=",$this->base_datos_revisada)
+                    ->where("tipo_relacion","=",$this->tipo_busqueda)->first();
+                $movimientos = $this->poliza->movimientos()->orderBy("NumMovto")->get();
+
+                DB::purge('cntpq');
+                Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
+                $poliza_relacionada = Poliza::find($relacion->id_poliza_b);
+                $movimientos_relacionados = $poliza_relacionada->movimientos()->orderBy("NumMovto")->get();
+                $i=0;
+                foreach($movimientos as $movimiento){
+                    DB::purge('cntpq');
+                    Config::set('database.connections.cntpq.database', $relacion->base_datos_a);
+                    $movimiento->load("cuenta");
+
+                    DB::purge('cntpq');
+                    Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
+                    $movimientos_relacionados[$i]->load("cuenta");
+
+                    $arreglo[] = [
+                        "no_movto_a"=>$movimiento->NumMovto,
+                        "no_movto_b"=>$movimientos_relacionados[$i]->NumMovto,
+                        "codigo_a"=>$movimiento->cuenta->Codigo,
+                        "codigo_b"=>$movimientos_relacionados[$i]->cuenta->Codigo,
+                        "cuenta_a"=>$movimiento->cuenta->Nombre,
+                        "cuenta_b"=>$movimientos_relacionados[$i]->cuenta->Nombre,
+                        "cargo_a"=>$movimiento->cargo_format,
+                        "cargo_b"=>$movimientos_relacionados[$i]->cargo_format,
+                        "abono_a"=>$movimiento->abono_format,
+                        "abono_b"=>$movimientos_relacionados[$i]->abono_format,
+                    ];
+                    $i++;
+                }
+            }
+            return $arreglo;
+        } else {
+            return "";
+        }
     }
 }
