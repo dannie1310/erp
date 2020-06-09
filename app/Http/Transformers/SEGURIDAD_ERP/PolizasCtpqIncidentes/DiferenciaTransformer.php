@@ -33,7 +33,10 @@ class DiferenciaTransformer extends TransformerAbstract
             'observaciones' => $model->observaciones,
             'valor_a' => $model->valor_a,
             'valor_b' => $model->valor_b,
-            "codigo_cuenta" => $model->codigo_cuenta
+            "codigo_cuenta" => $model->codigo_cuenta,
+            "identificador_poliza"=>$model->identificador_poliza,
+            "numero_movimiento"=>$model->numero_movimiento,
+            "campo"=>$model->campo,
         ];
     }
 

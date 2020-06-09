@@ -132,13 +132,11 @@ class SolicitudEdicionPartida extends Model
             return $no_movimientos;
         } else if($this->solicitud->id_tipo == 2 || $this->solicitud->id_tipo == 3)
         {
-            $ids_movimientos = [];
-            $diferencias = $this->diferencias;
-            foreach($diferencias as $diferencia){
-                $ids_movimientos[] = $diferencia->id_movimiento;
+            if($this->diferencia->id_movimiento>0){
+                return 1;
+            } else {
+                return "-";
             }
-            $ids_movimientos_unicos = array_unique($ids_movimientos);
-            return count($ids_movimientos_unicos);
         } else {
             return '-';
         }

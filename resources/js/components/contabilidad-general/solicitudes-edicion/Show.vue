@@ -139,14 +139,52 @@
                     </div>
                 </div>
             </div>
-    </span>
+        </span>
+        <span v-else-if="solicitud.id_tipo==2">
+            <div class="row"  >
+                <div class="col-md-12">
+                    <h6>-Base de Datos: {{solicitud.base_datos}} -Cantidad de Partidas: {{solicitud.numero_partidas}} -Cantidad de Pólizas: {{solicitud.numero_polizas}} -Cantidad de Movimientos: {{solicitud.numero_movimientos}} </h6>
+                </div>
+            </div>
+            <div class="row"  >
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr style="background-color:rgba(0, 0, 0, 0.1)">
+                                    <th class="index_corto">#</th>
+                                    <th class="fecha_hora">Póliza</th>
+                                    <th >Núm. Movto.</th>
+                                    <th >Campo</th>
+                                    <th >Valor Original</th>
+                                    <th >Valor Propuesto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(partida, i) in solicitud.partidas.data">
+                                    <tr >
+                                        <td>{{i+1}}</td>
+                                        <td>{{partida.diferencia.identificador_poliza}}</td>
+                                        <td>{{partida.diferencia.numero_movimiento}}</td>
+                                        <td>{{partida.diferencia.campo}}</td>
+                                        <td>{{partida.diferencia.valor_a}}</td>
+                                        <td>{{partida.diferencia.valor_b}}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-secondary pull-right"  @click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                    </div>
+                </div>
+            </div>
+        </span>
         <span v-else-if="solicitud.id_tipo==4">
             <div class="row"  >
                 <div class="col-md-12">
                     <h6>-Base de Datos: {{solicitud.base_datos}} -Cantidad de Cuentas: {{solicitud.numero_cuentas}}  </h6>
                 </div>
             </div>
-        <div class="row"  >
+            <div class="row"  >
                 <div class="col-md-12">
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -174,7 +212,7 @@
                 </div>
             </div>
         </span>
-        </span>
+    </span>
 </template>
 
 <script>

@@ -11,6 +11,7 @@ namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 use App\Models\CTPQ\Cuenta;
 use App\Models\CTPQ\Poliza;
+use App\Models\CTPQ\PolizaMovimiento;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
@@ -135,6 +136,13 @@ class Diferencia extends Model
         return $this->belongsTo(Poliza::class, "id_poliza", "Id");
     }
 
+    public function movimiento()
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $this->base_datos_revisada);
+        return $this->belongsTo(PolizaMovimiento::class, "id_movimiento", "Id");
+    }
+
     public function cuenta()
     {
         DB::purge('cntpq');
@@ -236,6 +244,37 @@ class Diferencia extends Model
             return $this->cuenta->Codigo;
         } else {
             return "";
+        }
+    }
+
+    public function getIdentificadorPolizaAttribute()
+    {
+        if($this->poliza)
+        {
+            return $this->poliza->Ejercicio .'-'. $this->poliza->Periodo .'-'. $this->poliza->tipo_poliza->Nombre .'-'. $this->poliza->Folio;
+        } else {
+            return "";
+        }
+    }
+
+    public function getNumeroMovimientoAttribute()
+    {
+        if($this->movimiento)
+        {
+            return $this->movimiento->NumMovto;
+        } else {
+            return "-";
+        }
+    }
+    public function getCampoAttribute()
+    {
+        switch ($this->id_tipo){
+            case 2: return  "Concepto Póliza";
+                break;
+            case 8: return  "Referencia Movimiento";
+                break;
+            case 9: return  "Concepto Movimiento";
+                break;
         }
     }
 }
