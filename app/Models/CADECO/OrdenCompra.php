@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrdenCompra extends Transaccion
 {
-    public const TIPO_ANTECEDENTE = 18;
+    public const TIPO_ANTECEDENTE = 17;
     public const OPCION_ANTECEDENTE = 1;
 
     protected static function boot()

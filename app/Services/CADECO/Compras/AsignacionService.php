@@ -153,7 +153,7 @@ class AsignacionService
                 
                 if($transaccion_cotizacion != $partida->id_transaccion_cotizacion){
                     $transaccion_cotizacion = $partida->id_transaccion_cotizacion;
-                    $orden_c = $partida->ordenCompra()->create([
+                    $orden_c = $partida->ordenCompra()->firstOrCreate([
                         'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
                         'id_referente' => $partida->cotizacionCompra->id_transaccion,
                         'id_empresa' => $partida->cotizacionCompra->id_empresa,
@@ -162,6 +162,9 @@ class AsignacionService
                         'observaciones' => $partida->cotizacionCompra->observaciones,
                     ]);
                 }
+                $descuento_material = $partida->cotizacion->descuento / 100 * $partida->cotizacion->precio_unitario;
+                $importe = ($partida->cotizacion->precio_unitario - $descuento_material) * $partida->cantidad_asignada;
+                $anticipo_material = $partida->cotizacion->precio_unitario - ($partida->cotizacion->anticipo / 100 * $partida->cotizacion->precio_unitario);
 
                 OrdenCompraPartida::create([
                     'id_transaccion' => $orden_c->id_transaccion,
@@ -170,12 +173,15 @@ class AsignacionService
                     'id_material' => $partida->id_material,
                     'unidad' => $partida->material->unidad,
                     'cantidad' => $partida->cantidad_asignada,
-                    'importe' => $partida->cotizacion->precio_unitario * $partida->cantidad_asignada,
-                    'precio_unitario' => $partida->cotizacion->precio_unitario,
+                    'importe' => $importe,
+                    'saldo' => $importe * $partida->cotizacion->anticipo / 100,
+                    'precio_unitario' => $partida->cotizacion->precio_unitario - $descuento_material,
+                    'anticipo' => $partida->cotizacion->anticipo,
+                    'descuento' => $partida->cotizacion->descuento,
                     'precio_material' => $partida->cotizacion->precio_unitario,
                 ]);
 
-                $subtotal = $partida->cotizacion->precio_unitario * $partida->cantidad_asignada;
+                $subtotal = $importe;
                 $impuesto = $subtotal  * 0.16;
                 $monto = $subtotal + $impuesto;
 
@@ -210,7 +216,7 @@ class AsignacionService
             foreach($partidas as $partida){
                 if($transaccion_cotizacion != $partida->id_transaccion_cotizacion){
                     $transaccion_cotizacion = $partida->id_transaccion_cotizacion;
-                    $orden_c = $partida->ordenCompra()->create([
+                    $orden_c = $partida->ordenCompra()->firstOrCreate([
                         'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
                         'id_referente' => $partida->cotizacionCompra->id_transaccion,
                         'id_empresa' => $partida->cotizacionCompra->id_empresa,
@@ -220,6 +226,11 @@ class AsignacionService
                     ]);
                 }
     
+                $descuento_material = $partida->cotizacion->descuento / 100 * $partida->cotizacion->precio_unitario;
+                $importe = ($partida->cotizacion->precio_unitario - $descuento_material) * $partida->cantidad_asignada;
+                $anticipo_material = $partida->cotizacion->precio_unitario - ($partida->cotizacion->anticipo / 100 * $partida->cotizacion->precio_unitario);
+
+                // dd($descuento_material, $importe,$partida->cotizacion->precio_unitario, $partida->cantidad_asignada);
                 OrdenCompraPartida::create([
                     'id_transaccion' => $orden_c->id_transaccion,
                     'id_antecedente' => $orden_c->id_antecedente,
@@ -227,8 +238,11 @@ class AsignacionService
                     'id_material' => $partida->id_material,
                     'unidad' => $partida->material->unidad,
                     'cantidad' => $partida->cantidad_asignada,
-                    'importe' => $partida->cotizacion->precio_unitario * $partida->cantidad_asignada,
-                    'precio_unitario' => $partida->cotizacion->precio_unitario,
+                    'importe' => $importe,
+                    'saldo' => $importe * $partida->cotizacion->anticipo / 100,
+                    'precio_unitario' => $partida->cotizacion->precio_unitario - $descuento_material,
+                    'anticipo' => $partida->cotizacion->anticipo,
+                    'descuento' => $partida->cotizacion->descuento,
                     'precio_material' => $partida->cotizacion->precio_unitario,
                 ]);
 
@@ -239,6 +253,9 @@ class AsignacionService
                 $orden_c->monto = $orden_c->monto + $monto;
                 $orden_c->saldo = $orden_c->saldo + $monto;
                 $orden_c->impuesto = $orden_c->impuesto + $impuesto;
+
+                $orden_c->anticipo_monto = $orden_c->anticipo_monto + ($partida->cotizacion->anticipo / 100 * $monto);
+                $orden_c->anticipo_saldo = $orden_c->anticipo_saldo + ($partida->cotizacion->anticipo / 100 * $monto);
                 $orden_c->save();
                 
 
