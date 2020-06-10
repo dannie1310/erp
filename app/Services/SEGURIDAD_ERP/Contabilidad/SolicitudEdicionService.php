@@ -204,28 +204,48 @@ class SolicitudEdicionService
 
     public function autorizar($id, $datos)
     {
-        $polizas = [];
-        $contador_aprobadas = 0;
-        foreach ($datos as $partida){
-            foreach($partida["polizas"]["data"] as $poliza )
+        if($datos->id_tipo == 1)
+        {
+            $polizas = [];
+            $contador_aprobadas = 0;
+            foreach ($datos->partidas as $partida){
+                foreach($partida["polizas"]["data"] as $poliza )
+                {
+                    $polizas[] = ["id"=>$poliza["id"], "estado"=>$poliza["estado"]] ;
+                    if($poliza["estado"])
+                    {
+                        $contador_aprobadas++;
+                    }
+                }
+            }
+            if(!$contador_aprobadas > 0)
             {
-                $polizas[] = ["id"=>$poliza["id"], "estado"=>$poliza["estado"]] ;
-                if($poliza["estado"])
+                abort(500,"No puede autorizar una solicitud sin aprobar el cambio de al menos una póliza");
+            }
+            return $this->repository->autorizarPorPolizas($polizas, $id);
+        } else {
+            $partidas = [];
+            $contador_aprobadas = 0;
+            foreach ($datos->partidas as $partida){
+                $partidas[] = ["id"=>$partida["id"], "estado"=>$partida["estado"]] ;
+                if($partida["estado"])
                 {
                     $contador_aprobadas++;
                 }
             }
+            if(!$contador_aprobadas > 0)
+            {
+                abort(500,"No puede autorizar una solicitud sin aprobar el cambio de al menos una partida");
+            }
+            return $this->repository->autorizarPorPartidas($partidas, $id);
         }
-        if(!$contador_aprobadas > 0)
-        {
-            abort(500,"No puede autorizar una solicitud sin aprobar el cambio de al menos una póliza");
-        }
-        return $this->repository->autorizar($polizas, $id);
+
     }
 
     public function rechazar($id)
     {
-        return $this->repository->rechazar($id);
+        $this->repository->rechazar($id);
+
     }
 
     public function aplicar($id)

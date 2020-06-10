@@ -342,6 +342,7 @@
                 let self = this;
                 return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/autorizar', {
                     id: this.id,
+                    id_tipo: this.solicitud_edit.id_tipo,
                     partidas:self.solicitud_edit.partidas.data
                 }).then(data => {
                     this.find();
@@ -350,7 +351,7 @@
             rechazar() {
                 let self = this;
                 return this.$store.dispatch('contabilidadGeneral/solicitud-edicion-poliza/rechazar', {
-                    id: this.id,
+                    id: this.id
                 }).then(data => {
                     this.find();
                 })

@@ -275,9 +275,9 @@ class SolicitudEdicion extends Model
         }
     }
 
-    public function autorizar($polizas)
+    public function autorizarPorPolizas($polizas)
     {
-        if($this->estado == 0){
+        if($this->estado == 0 && $this->id_tipo == 1){
             try {
 
                 DB::connection('seguridad')->beginTransaction();
@@ -301,7 +301,43 @@ class SolicitudEdicion extends Model
         }
     }
 
+    public function autorizarPorPartidas($partidas)
+    {
+        if($this->estado == 0 && $this->id_tipo != 1){
+            try {
+
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = 1;
+                $this->save();
+                foreach ($partidas as $partida){
+                    $partida_obj = SolicitudEdicionPartida::find($partida["id"]);
+                    $partida_obj->estado = $partida["estado"];
+                    $partida_obj->save();
+                }
+                DB::connection('seguridad')->commit();
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede autorizar.");
+            return $this;
+        }
+
+    }
+
     public function rechazar()
+    {
+        if($this->id_tipo == 1){
+            $this->rechazarPorPolizas();
+        } else {
+            $this->rechazarPorPartidas();
+        }
+    }
+
+    private function rechazarPorPolizas()
     {
         if($this->estado == 0){
             try {
@@ -326,9 +362,77 @@ class SolicitudEdicion extends Model
         }
     }
 
-    public function aplicar()
+    private function rechazarPorPartidas()
     {
-        if($this->estado == 1){
+        if($this->estado == 0){
+            try {
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = -1;
+                $this->save();
+                $partidas = $this->partidas;
+                foreach ($partidas as $partida_obj){
+                    $partida_obj->estado = 0;
+                    $partida_obj->save();
+                }
+                DB::connection('seguridad')->commit();
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede autorizar.");
+            return $this;
+        }
+    }
+
+    private function aplicarPorPolizas()
+    {
+        if($this->estado == 1 && $this->id_tipo == 1){
+            try {
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = 2;
+                $this->save();
+                $polizas = $this->polizasAutorizadas;
+                foreach ($polizas as $poliza_obj){
+                    DB::purge('cntpq');
+                    \Config::set('database.connections.cntpq.database', $poliza_obj->bd_contpaq);
+                    $poliza_contpaq = Poliza::find($poliza_obj->id_poliza);
+                    if($poliza_obj->partida_solicitud->concepto != "" && $poliza_contpaq->Concepto == $poliza_obj->concepto_original){
+                        $poliza_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
+                        $poliza_contpaq->save();
+                    }
+                    foreach($poliza_obj->movimientos as $movimiento_obj){
+                        $movimiento_contpaq = PolizaMovimiento::find($movimiento_obj->id_movimiento);
+
+                        if($poliza_obj->partida_solicitud->concepto != "" && $movimiento_contpaq->Concepto == $movimiento_obj->concepto_original){
+                            $movimiento_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
+                        }
+
+                        if($poliza_obj->partida_solicitud->referencia != "" && $movimiento_contpaq->Referencia == $movimiento_obj->referencia_original){
+                            $movimiento_contpaq->Referencia = $poliza_obj->partida_solicitud->referencia;
+                        }
+                        $movimiento_contpaq->save();
+                    }
+                }
+                DB::connection('seguridad')->commit();
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede aplicar.");
+            return $this;
+        }
+
+    }
+
+    private function aplicarPorPartidas()
+    {
+        if($this->estado == 1 && $this->id_tipo != 1){
             try {
                 DB::connection('seguridad')->beginTransaction();
                 $this->estado = 2;
