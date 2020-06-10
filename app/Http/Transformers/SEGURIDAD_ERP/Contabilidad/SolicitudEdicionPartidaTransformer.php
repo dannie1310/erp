@@ -36,6 +36,7 @@ class SolicitudEdicionPartidaTransformer extends TransformerAbstract
             'numero_cuentas' => $model->numero_cuentas_format,
             'numero_movimientos' => $model->numero_movimientos_format,
             'estado' => ($model->estado == 0)?false:$model->estado,
+            'class_estado' => ($model->estado == 0)?"far fa-square":"fa fa-check-square",
         ];
     }
 
