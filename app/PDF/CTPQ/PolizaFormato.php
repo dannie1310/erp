@@ -123,7 +123,7 @@ class PolizaFormato extends Rotation
         $this->SetX(1);
         $cuenta_padre = '';
 
-        foreach ($this->poliza->movimientos()->orderBy('IdCuenta')->get() as $k => $movimiento)
+        foreach ($this->poliza->movimientos()->orderBy('NumMovto', 'asc')->get() as $k => $movimiento)
         {
             if ($cuenta_padre == '' || $cuenta_padre != $movimiento->cuenta->cuenta_padre->Codigo)
             {
