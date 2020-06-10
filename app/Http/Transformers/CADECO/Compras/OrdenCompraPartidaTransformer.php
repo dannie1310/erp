@@ -23,7 +23,8 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'material',
-        'entrega'
+        'entrega',
+        'complemento'
     ];
 
     /**
@@ -75,6 +76,20 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
         if($entrega = $model->entrega)
         {
             return $this->item($entrega, new EntregaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param OrdenCompraPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeComplemento(OrdenCompraPartida $model)
+    {
+        dd($model->orden_partida_complemento);
+        if($complemento = $model->orden_partida_complemento)
+        {
+            return $this->item($complemento, new OrdenCompraPartidaComplementoTransformer);
         }
         return null;
     }

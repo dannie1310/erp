@@ -113,6 +113,11 @@
                                                 <td>Total</td>
                                                 <td>1000</td>
                                             </tr>
+                                            <tr>
+                                                <td  colspan="6"></td>
+                                                <td>Moneda</td>
+                                                <td>1000</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -290,7 +295,7 @@ export default {
             return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id,
                     params:{
-                        include: ['empresa', 'sucursal', 'usuario', 'partidas.material', 'solicitud']
+                        include: ['empresa', 'sucursal', 'usuario', 'partidas.material', 'partidas.complemento', 'solicitud']
                     }
                 }).then(data => {
                     this.orden_compra = data;

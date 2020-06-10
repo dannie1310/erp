@@ -158,18 +158,18 @@
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr v-for="(item, i) in asignaciones.data" v-if="Object.keys(item.orden_compra).length > 0">
-                                            <td>{{ item.orden_compra.numero_folio_format}}</td>
-                                            <td>{{ item.razon_social}}</td>
-                                            <td :title="item.orden_compra.observaciones">{{ item.orden_compra.observaciones_format}}</td>
-                                            <td>{{ item.orden_compra.fecha_format}}</td>
-                                            <td class="money">{{ item.orden_compra.monto_format}}</td>
+                                    <tbody v-for="(ordenes, i) in asignaciones.data" v-if="ordenes.orden_compra.length > 0">
+                                        <tr v-for="(item, j) in ordenes.orden_compra">
+                                            <td>{{ item.numero_folio_format}}</td>
+                                            <td>{{ ordenes.razon_social}}</td>
+                                            <td :title="item.observaciones">{{ item.observaciones_format}}</td>
+                                            <td>{{ item.fecha_format}}</td>
+                                            <td class="money">{{ item.monto_format}}</td>
                                             <td>
                                                 <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" v-if="!item.entrada_almacen" :id="`enable[${i}]`" v-model="item.orden_compra.eliminar" >&nbsp;
-                                                    <label class="custom-control-label" :for="`enable[${i}]`" :title="item.entrada_almacen?'Con Entrada Almacen':'Eliminar'">
-                                                        <i class="fa fa-trash" v-if="!item.entrada_almacen"></i>
+                                                    <input type="checkbox" class="custom-control-input" v-if="!item.entradas_almacen" :id="`enable[${i}-${j}]`" v-model="item.eliminar" >&nbsp;
+                                                    <label class="custom-control-label" :for="`enable[${i}-${j}]`" :title="item.entradas_almacen?'Con Entrada Almacen':'Eliminar'">
+                                                        <i class="fa fa-trash" v-if="!item.entradas_almacen"></i>
                                                     </label>
                                                 </div>
                                             </td>
@@ -209,9 +209,11 @@ export default {
             let cantidad = 0;
             if(this.asignaciones.data){
                 Object.values(this.asignaciones.data).forEach(item => {
-                    if(item.orden_compra && item.orden_compra.eliminar){
+                    item.orden_compra.forEach(orden => {
+                        if(orden.eliminar){
                         cantidad = cantidad +1;
                     }
+                    });
                 });
             }
             return cantidad > 0;
@@ -237,9 +239,12 @@ export default {
             this.cargando = true;
             let ordenes_c = [];
             Object.values(this.asignaciones.data).forEach(item => {
-                if(item.orden_compra && item.orden_compra.eliminar){
-                    ordenes_c.push(item.orden_compra.id);
-                }
+                item.orden_compra.forEach(orden => {
+                    if(orden.eliminar){
+                        ordenes_c.push(orden.id);
+                    }
+                });
+                
             });
             if(ordenes_c.length > 0){
                 return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:ordenes_c}
@@ -271,7 +276,7 @@ export default {
                         id: this.id
                     }
                 }).then(data => {
-                    this.$router.push({name: 'asignacion-proveedores'});
+                    // this.$router.push({name: 'asignacion-proveedores'});
                 }) .finally(() => {
                     this.descargando = false;
                 })
