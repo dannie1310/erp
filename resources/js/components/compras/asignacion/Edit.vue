@@ -276,7 +276,7 @@ export default {
                         id: this.id
                     }
                 }).then(data => {
-                    // this.$router.push({name: 'asignacion-proveedores'});
+                    this.$router.push({name: 'asignacion-proveedores'});
                 }) .finally(() => {
                     this.descargando = false;
                 })

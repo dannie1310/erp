@@ -21,7 +21,7 @@ class OrdenCompraPartidaComplementoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'moneda'
+        
     ];
 
     /**
@@ -39,14 +39,6 @@ class OrdenCompraPartidaComplementoTransformer extends TransformerAbstract
             'descuento'=> $model->descuento,
             'id_moneda' => $model->id_moneda,
         ];
-    }
-
-    public function includeMoneda(Cambio $model)
-    {
-        if ($moneda = $model->moneda) {
-            return $this->item($moneda, new MonedaTransformer);
-        }
-        return null;
     }
 
 

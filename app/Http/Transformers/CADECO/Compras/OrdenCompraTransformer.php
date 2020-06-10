@@ -12,6 +12,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\IGH\UsuarioTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\CADECO\Compras\OrdenCompraPartidaTransformer;
@@ -29,6 +30,7 @@ class OrdenCompraTransformer extends TransformerAbstract
         'partidas',
         'sucursal',
         'usuario',
+        'moneda',
     ];
 
     /**
@@ -131,6 +133,19 @@ class OrdenCompraTransformer extends TransformerAbstract
     {
         if ($usuario = $model->usuario) {
             return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param OrdenCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMoneda(OrdenCompra $model)
+    {
+        if($moneda = $model->moneda)
+        {
+            return $this->item($moneda, new MonedaTransformer);
         }
         return null;
     }

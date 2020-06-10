@@ -93,30 +93,41 @@
                                                 <td>{{partida.material.numero_parte}}</td>
                                                 <td>{{partida.material.descripcion}}</td>
                                                 <td>{{partida.material.unidad}}</td>
-                                                <td>{{partida.cantidad}}</td>
-                                                <td>{{partida.precio_unitario}}</td>
-                                                <td>Descuento</td>
-                                                <td>{{partida.importe}}</td>
+                                                <td>{{partida.cantidad_format}}</td>
+                                                <td>{{partida.precio_material_format}}</td>
+                                                <td>{{partida.complemento.descuento}}</td>
+                                                <td>{{partida.importe_format}}</td>
                                             </tr>
                                             <tr>
                                                 <td  colspan="6"></td>
                                                 <td>Subtotal</td>
-                                                <td>1000</td>
+                                                <td>{{orden_compra.subtotal_format}}</td>
                                             </tr>
                                             <tr>
                                                 <td  colspan="6"></td>
                                                 <td>Impuesto</td>
-                                                <td>1000</td>
+                                                <td>
+                                                    <input 
+                                                        type="number"
+                                                        class="form-control"
+                                                        name="impuesto"
+                                                        data-vv-as="Impuesto"
+                                                        v-model="orden_compra.impuesto"
+                                                        v-validate="{min_value:0}"
+                                                        :class="{'is-invalid': errors.has(`impuesto`)}"
+                                                        id="impuesto">
+                                                    <div class="invalid-feedback" v-show="errors.has(`impuesto`)">{{ errors.first(`impuesto`) }}</div>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td  colspan="6"></td>
                                                 <td>Total</td>
-                                                <td>1000</td>
+                                                <td>{{recalcular}}</td>
                                             </tr>
                                             <tr>
                                                 <td  colspan="6"></td>
                                                 <td>Moneda</td>
-                                                <td>1000</td>
+                                                <td>{{orden_compra.moneda.nombre}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -280,6 +291,13 @@ export default {
             formas_pago_credito:[],
         }
     },
+    computed: {
+         recalcular(){
+            console.log('panda');
+            return '$ ' + (this.orden_compra.subtotal + this.orden_compra.impuesto).formatMoney(2,'.',',');
+            
+        },
+    },
     mounted() {
         this.cargando = true;
         this.getTipoGasto();
@@ -295,7 +313,7 @@ export default {
             return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id,
                     params:{
-                        include: ['empresa', 'sucursal', 'usuario', 'partidas.material', 'partidas.complemento', 'solicitud']
+                        include: ['empresa', 'moneda', 'sucursal', 'usuario', 'partidas.material', 'partidas.complemento', 'solicitud']
                     }
                 }).then(data => {
                     this.orden_compra = data;
@@ -325,6 +343,7 @@ export default {
                     this.formas_pago_credito = data.data;
                 })
         },
+       
     }
 
 }

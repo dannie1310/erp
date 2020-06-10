@@ -43,11 +43,18 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
             'id_antecedente' => $model->id_antecedente,
             'item_antecedente' => $model->item_antecedente,
             'cantidad' => $model->cantidad,
+            'cantidad_format' => $model->cantidad_format,
             'cantidad_material' => $model->cantidad_material,
             'precio_unitario' => $model->precio_unitario,
+            'precio_unitario_format' => $model->precio_unitario_format,
+            'precio_material' => $model->precio_material,
+            'precio_material_format' => $model->precio_material_format,
+            'descuento_format' => $model->descuento_format,
+            'descuento' => $model->descuento,
             'estado'=> $model->estado,
             'unidad' => $model->unidad,
             'importe' => $model->importe,
+            'importe_format' => $model->importe_format,
             'precio_unitario' => $model->precio_unitario,
             'precio_material' => $model->precio_material,
             'numero' => $model->numero
@@ -86,7 +93,6 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
      */
     public function includeComplemento(OrdenCompraPartida $model)
     {
-        dd($model->orden_partida_complemento);
         if($complemento = $model->orden_partida_complemento)
         {
             return $this->item($complemento, new OrdenCompraPartidaComplementoTransformer);

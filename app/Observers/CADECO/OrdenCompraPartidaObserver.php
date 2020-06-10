@@ -9,6 +9,7 @@
 namespace App\Observers\CADECO;
 
 use App\Models\CADECO\OrdenCompraPartida;
+use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 
 class OrdenCompraPartidaObserver
 {
