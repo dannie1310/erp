@@ -28,7 +28,7 @@ class SolicitudEdicionPartida extends Model
 
     public function scopeActivas($query)
     {
-        return $query->whereHas('polizasAutorizadas');
+        return $query->whereHas('polizasAutorizadas')->orWhere("estado","1");
     }
 
     public function solicitud()
