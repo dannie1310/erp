@@ -7,6 +7,9 @@
  */
 
 namespace App\Services\CADECO\Compras;
+
+use DateTime;
+use DateTimeZone;
 use App\Models\CADECO\Empresa;
 use App\Repositories\Repository;
 use App\Models\CADECO\OrdenCompra;
@@ -88,6 +91,23 @@ class OrdenCompraService
 
     public function update(array $data, $id)
     {
-        dd('pardito');
+        $fecha_e = New DateTime($data['complemento']['fecha_entrega']);
+        $fecha_e->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $orden_compra = $this->repository->show($id);
+        $orden_compra->id_costo = $data['id_costo'];
+        $orden_compra->porcentaje_anticipo_pactado = $data['porcentaje_anticipo_pactado'];
+        $orden_compra->impuesto = $data['impuesto'];
+        $orden_compra->monto = $data['subtotal'] + $data['impuesto'];
+
+        $orden_compra->complemento->plazos_entrega_ejecucion = $data['complemento']['plazos_entrega_ejecucion'];
+        $orden_compra->complemento->id_forma_pago = $data['complemento']['id_forma_pago'];
+        $orden_compra->complemento->domicilio_entrega = $data['complemento']['domicilio_entrega'];
+        $orden_compra->complemento->otras_condiciones = $data['complemento']['otras_condiciones'];
+        $orden_compra->complemento->fecha_entrega = $fecha_e;
+
+        $orden_compra->save();
+        $orden_compra->complemento->save();
+
+        return $orden_compra;
     }
 }
