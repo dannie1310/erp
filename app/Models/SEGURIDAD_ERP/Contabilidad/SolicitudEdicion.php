@@ -11,13 +11,17 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
 use App\Models\CADECO\FinanzasCBE\Solicitud;
+use App\Models\CTPQ\Cuenta;
 use App\Models\CTPQ\Poliza;
 use App\Models\CTPQ\PolizaMovimiento;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Utils\BusquedaDiferenciasMovimientos;
 
 class SolicitudEdicion extends Model
 {
@@ -275,9 +279,9 @@ class SolicitudEdicion extends Model
         }
     }
 
-    public function autorizar($polizas)
+    public function autorizarPorPolizas($polizas)
     {
-        if($this->estado == 0){
+        if($this->estado == 0 && $this->id_tipo == 1){
             try {
 
                 DB::connection('seguridad')->beginTransaction();
@@ -301,7 +305,43 @@ class SolicitudEdicion extends Model
         }
     }
 
+    public function autorizarPorPartidas($partidas)
+    {
+        if($this->estado == 0 && $this->id_tipo != 1){
+            try {
+
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = 1;
+                $this->save();
+                foreach ($partidas as $partida){
+                    $partida_obj = SolicitudEdicionPartida::find($partida["id"]);
+                    $partida_obj->estado = $partida["estado"];
+                    $partida_obj->save();
+                }
+                DB::connection('seguridad')->commit();
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede autorizar.");
+            return $this;
+        }
+
+    }
+
     public function rechazar()
+    {
+        if($this->id_tipo == 1){
+            $this->rechazarPorPolizas();
+        } else {
+            $this->rechazarPorPartidas();
+        }
+    }
+
+    private function rechazarPorPolizas()
     {
         if($this->estado == 0){
             try {
@@ -326,9 +366,52 @@ class SolicitudEdicion extends Model
         }
     }
 
+    private function rechazarPorPartidas()
+    {
+        if($this->estado == 0){
+            try {
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = -1;
+                $this->save();
+                $partidas = $this->partidas;
+                foreach ($partidas as $partida_obj){
+                    $partida_obj->estado = 0;
+                    $partida_obj->save();
+                }
+                DB::connection('seguridad')->commit();
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede autorizar.");
+            return $this;
+        }
+    }
+
     public function aplicar()
     {
-        if($this->estado == 1){
+        switch ($this->id_tipo){
+            case 1 :
+                $this->aplicaEdicionMasivaConceptosReferencias();
+                break;
+            case 2 :
+                $this->aplicaEdicionConceptosReferencias();
+                break;
+            case 3 :
+                $this->aplicaReordenamientoMovimientos();
+                break;
+            case 4 :
+                $this->aplicaEdicionNombresCuentas();
+                break;
+        }
+    }
+
+    private function aplicaEdicionMasivaConceptosReferencias()
+    {
+        if($this->estado == 1 && $this->id_tipo == 1){
             try {
                 DB::connection('seguridad')->beginTransaction();
                 $this->estado = 2;
@@ -367,6 +450,246 @@ class SolicitudEdicion extends Model
             return $this;
         }
 
+    }
+
+    private function aplicaEdicionConceptosReferencias()
+    {
+        if($this->estado == 1 && $this->id_tipo == 2){
+            try {
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = 2;
+                $this->save();
+                $partidas = $this->partidasActivas;
+                $cantidad_afectaciones_esperadas = count($partidas);
+                $cantidad_afectaciones_afectadas = 0;
+                foreach ($partidas as $partida){
+                    DB::purge('cntpq');
+                    \Config::set('database.connections.cntpq.database', $partida->diferencia->base_datos_revisada);
+                    if ($partida->diferencia->id_tipo == 2) {
+                        $poliza_contpaq = Poliza::find($partida->diferencia->id_poliza);
+                        $poliza_contpaq->Concepto = $partida->diferencia->valor_b;
+                        $poliza_contpaq->save();
+                    } else if ($partida->diferencia->id_tipo == 8) {
+                        $movimiento_contpaq = PolizaMovimiento::find($partida->diferencia->id_movimiento);
+                        $movimiento_contpaq->Referencia = $partida->diferencia->valor_b;
+                        $movimiento_contpaq->save();
+                    } else if ($partida->diferencia->id_tipo == 9) {
+                        $movimiento_contpaq = PolizaMovimiento::find($partida->diferencia->id_movimiento);
+                        $movimiento_contpaq->Concepto = $partida->diferencia->valor_b;
+                        $movimiento_contpaq->save();
+                    }
+                    $partida->estado = 2;
+                    $partida->save();
+                    $partida->diferencia->activo = 0;
+                    $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
+                    $partida->diferencia->save();
+                    $cantidad_afectaciones_afectadas++;
+                }
+                if($cantidad_afectaciones_afectadas == $cantidad_afectaciones_esperadas){
+                    DB::connection('seguridad')->commit();
+                } else {
+                    DB::connection('seguridad')->rollBack();
+                }
+
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede aplicar.");
+            return $this;
+        }
+
+    }
+
+    private function aplicaReordenamientoMovimientos()
+    {
+        if($this->estado == 1 && $this->id_tipo == 3){
+            try {
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = 2;
+                $this->save();
+                $partidas = $this->partidasActivas;
+                $cantidad_afectaciones_esperadas = count($partidas);
+                $cantidad_afectaciones_afectadas = 0;
+                foreach ($partidas as $partida){
+
+                    $relacion_movimientos = RelacionMovimientos::where("id_poliza_a","=",$partida->diferencia->id_poliza)
+                    ->where("base_datos_a","=", $partida->diferencia->base_datos_revisada)->get();
+
+                    $arreglo_a = [];
+                    $arreglo_b = [];
+
+                    $i = 0;
+
+                    foreach($relacion_movimientos as $relacion_movimiento){
+                        $codigos = $this->igualaLongitudCodigos($relacion_movimiento->codigo_cuenta_a, $relacion_movimiento->codigo_cuenta_b);
+                        $hash_a = md5($codigos["codigo_a"] . $relacion_movimiento->tipo_movto_a . $relacion_movimiento->importe_a);
+                        $hash_b = md5($codigos["codigo_b"] . $relacion_movimiento->tipo_movto_b . $relacion_movimiento->importe_b);
+                        $hashs_a[$i] = $hash_a;
+                        $hashs_b[$i] = $hash_b;
+
+                        $arreglo_a[$hash_a]["id_movimiento"] = $relacion_movimiento->id_movimiento_a;
+                        $arreglo_a[$hash_a]["num_movto"] = $relacion_movimiento->num_movto_a;
+                        $arreglo_a[$hash_a]["tipo_movto"] = $relacion_movimiento->tipo_movto_a;
+                        $arreglo_a[$hash_a]["codigo_cuenta"] = $relacion_movimiento->codigo_cuenta_a;
+                        $arreglo_a[$hash_a]["nombre_cuenta"] = $relacion_movimiento->nombre_cuenta_a;
+                        $arreglo_a[$hash_a]["importe"] = $relacion_movimiento->importe_a;
+                        $arreglo_a[$hash_a]["referencia"] = $relacion_movimiento->referencia_a;
+                        $arreglo_a[$hash_a]["concepto"] = $relacion_movimiento->concepto_a;
+                        $arreglo_a[$hash_a]["id_cuenta"] = $relacion_movimiento->id_cuenta_a;
+                        $arreglo_a[$hash_a]["base_datos"] = $relacion_movimiento->base_datos_a;
+                        $id_poliza_a = $relacion_movimiento->id_poliza_a;
+
+                        $arreglo_b[$hash_b]["id_movimiento"] = $relacion_movimiento->id_movimiento_b;
+                        $arreglo_b[$hash_b]["num_movto"] = $relacion_movimiento->num_movto_b;
+                        $arreglo_b[$hash_b]["tipo_movto"] = $relacion_movimiento->tipo_movto_b;
+                        $arreglo_b[$hash_b]["codigo_cuenta"] = $relacion_movimiento->codigo_cuenta_b;
+                        $arreglo_b[$hash_b]["nombre_cuenta"] = $relacion_movimiento->nombre_cuenta_b;
+                        $arreglo_b[$hash_b]["importe"] = $relacion_movimiento->importe_b;
+                        $arreglo_b[$hash_b]["referencia"] = $relacion_movimiento->referencia_b;
+                        $arreglo_b[$hash_b]["concepto"] = $relacion_movimiento->concepto_b;
+                        $arreglo_b[$hash_b]["id_cuenta"] = $relacion_movimiento->id_cuenta_b;
+                        $arreglo_b[$hash_a]["base_datos"] = $relacion_movimiento->base_datos_b;
+                        $id_poliza_b = $relacion_movimiento->id_poliza_b;
+                        $i++;
+                    }
+
+                    DB::purge('cntpq');
+                    \Config::set('database.connections.cntpq.database', $arreglo_a[$hashs_a[0]]["base_datos"]);
+                    $no_movtos_a = Poliza::find($id_poliza_a)->movimientos->max("NumMovto");
+
+                    DB::purge('cntpq');
+                    \Config::set('database.connections.cntpq.database', $arreglo_b[$hashs_b[0]]["base_datos"]);
+                    $no_movtos_b = Poliza::find($id_poliza_b)->movimientos->max("NumMovto");
+                    //dd($no_movtos_a,$no_movtos_b);
+                    $error_edicion_movimientos = 0;
+                    if($no_movtos_a == $no_movtos_b){
+                        DB::purge('cntpq');
+                        \Config::set('database.connections.cntpq.database', $arreglo_a[$hashs_a[0]]["base_datos"]);
+
+                        DB::connection('cntpq')->beginTransaction();
+                        foreach($arreglo_a as $hash=>$arreglo){
+                            $movimiento_contpaq = PolizaMovimiento::find($arreglo["id_movimiento"]);
+                            $movimiento_contpaq->NumMovto=$movimiento_contpaq->NumMovto+$no_movtos_a;
+                            $movimiento_contpaq->save();
+                        }
+                        $r = 0;
+                        foreach($hashs_b as $k=>$hash_b){
+                            DB::purge('cntpq');
+                            \Config::set('database.connections.cntpq.database', $arreglo_a[$hashs_a[$k]]["base_datos"]);
+
+
+                            try{
+                                $movimiento_contpaq = PolizaMovimiento::find($arreglo_a[$hash_b]["id_movimiento"]);
+                                $movimiento_contpaq->NumMovto=$arreglo_b[$hash_b]["num_movto"];
+                                $movimiento_contpaq->save();
+                                $relacion_movimientos[$r]->id_movimiento_a = $arreglo_a[$hash_b]["id_movimiento"];
+                                $relacion_movimientos[$r]->fecha_hora_asociacion = date('Y-m-d H:i:s');
+                                $relacion_movimientos[$r]->tipo_movto_a = $arreglo_a[$hash_b]["tipo_movto"];
+                                $relacion_movimientos[$r]->codigo_cuenta_a = $arreglo_a[$hash_b]["codigo_cuenta"];
+                                $relacion_movimientos[$r]->nombre_cuenta_a = $arreglo_a[$hash_b]["nombre_cuenta"];
+                                $relacion_movimientos[$r]->importe_a = $arreglo_a[$hash_b]["importe"];
+                                $relacion_movimientos[$r]->referencia_a = $arreglo_a[$hash_b]["referencia"];
+                                $relacion_movimientos[$r]->concepto_a = $arreglo_a[$hash_b]["concepto"];
+                                $relacion_movimientos[$r]->id_cuenta_a = $arreglo_a[$hash_b]["id_cuenta"];
+                                $relacion_movimientos[$r]->save();
+                            }catch(\Exception $e)
+                            {
+                                $error_edicion_movimientos++;
+                            }
+                            $r ++;
+                        }
+                        if($error_edicion_movimientos==0)
+                        {
+                            DB::connection('cntpq')->commit();
+                        } else {
+                            DB::connection('cntpq')->rollBack();
+                            foreach ($relacion_movimientos as $relacion_movimiento){
+                                $busqueda_movimiento = New BusquedaDiferenciasMovimientos($relacion_movimiento, $partida->diferencia->busqueda);
+                                $busqueda_movimiento->buscarDiferenciasMovimientos();
+                            }
+                        }
+
+                    } else {
+                        DB::connection('seguridad')->rollBack();
+                        abort(500, "El número de movimientos no coincide");
+                        return $this;
+                    }
+
+
+                    $partida->estado = 2;
+                    $partida->save();
+
+                    $partida->diferencia->activo = 0;
+                    $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
+                    $partida->diferencia->save();
+
+                    $cantidad_afectaciones_afectadas++;
+                }
+                if($cantidad_afectaciones_afectadas == $cantidad_afectaciones_esperadas){
+                    DB::connection('seguridad')->commit();
+                } else {
+                    DB::connection('seguridad')->rollBack();
+                }
+
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede aplicar.");
+            return $this;
+        }
+
+    }
+
+    private function aplicaEdicionNombresCuentas()
+    {
+        if($this->estado == 1 && $this->id_tipo == 4){
+            try {
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = 2;
+                $this->save();
+                $partidas = $this->partidasActivas;
+                $cantidad_afectaciones_esperadas = count($partidas);
+                $cantidad_afectaciones_afectadas = 0;
+                foreach ($partidas as $partida){
+                    DB::purge('cntpq');
+                    \Config::set('database.connections.cntpq.database', $partida->diferencia->base_datos_revisada);
+                    $cuenta_contpaq = Cuenta::find($partida->diferencia->id_cuenta);
+                    $cuenta_contpaq->Nombre = $partida->diferencia->valor_b;
+                    $cuenta_contpaq->save();
+
+                    $partida->estado = 2;
+                    $partida->save();
+
+                    $partida->diferencia->activo = 0;
+                    $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
+                    $partida->diferencia->save();
+
+                    $cantidad_afectaciones_afectadas++;
+                }
+                if($cantidad_afectaciones_afectadas == $cantidad_afectaciones_esperadas){
+                    DB::connection('seguridad')->commit();
+                } else {
+                    DB::connection('seguridad')->rollBack();
+                }
+
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede aplicar.");
+            return $this;
+        }
     }
 
     public function getPolizasSolicitud(){
@@ -419,5 +742,29 @@ class SolicitudEdicion extends Model
         } else {
             return "";
         }
+    }
+
+    private function igualaLongitudCodigos($codigo_a, $codigo_b){
+        $lcodigo_a = strlen($codigo_a);
+        $lcodigo_b = strlen($codigo_b);
+
+        if ($lcodigo_b == 11 && $lcodigo_a == 13) {
+
+            $g1 = substr($codigo_b, 0, 4);
+            $g2 = substr($codigo_b, 4, 2);
+            $g3 = substr($codigo_b, 6, 2);
+            $g4 = substr($codigo_b, 8, 3);
+
+            $codigo_b = $g1 . '0' . $g2 . '0' . $g3 . $g4;
+        } else if ($lcodigo_a == 11 && $lcodigo_b == 13) {
+
+            $g1 = substr($codigo_a, 0, 4);
+            $g2 = substr($codigo_a, 4, 2);
+            $g3 = substr($codigo_a, 6, 2);
+            $g4 = substr($codigo_a, 8, 3);
+
+            $codigo_a = $g1 . '0' . $g2 . '0' . $g3 . $g4;
+        }
+        return ["codigo_a"=>$codigo_a, "codigo_b"=>$codigo_b];
     }
 }
