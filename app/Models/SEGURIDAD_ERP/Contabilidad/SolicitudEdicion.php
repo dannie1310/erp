@@ -387,7 +387,25 @@ class SolicitudEdicion extends Model
         }
     }
 
-    private function aplicarPorPolizas()
+    public function aplicar()
+    {
+        switch ($this->id_tipo){
+            case 1 :
+                $this->aplicaEdicionMasivaConceptosReferencias();
+                break;
+            case 2 :
+                $this->aplicaEdicionConceptosReferencias();
+                break;
+            case 3 :
+                return 'Rechazada';
+                break;
+            case 4 :
+                return 'Registrada';
+                break;
+        }
+    }
+
+    private function aplicaEdicionMasivaConceptosReferencias()
     {
         if($this->estado == 1 && $this->id_tipo == 1){
             try {
@@ -430,36 +448,45 @@ class SolicitudEdicion extends Model
 
     }
 
-    private function aplicarPorPartidas()
+    private function aplicaEdicionConceptosReferencias()
     {
-        if($this->estado == 1 && $this->id_tipo != 1){
+        if($this->estado == 1 && $this->id_tipo == 2){
             try {
                 DB::connection('seguridad')->beginTransaction();
                 $this->estado = 2;
                 $this->save();
-                $polizas = $this->polizasAutorizadas;
-                foreach ($polizas as $poliza_obj){
+                $partidas = $this->partidasActivas;
+                $cantidad_afectaciones_esperadas = count($partidas);
+                $cantidad_afectaciones_afectadas = 0;
+                foreach ($partidas as $partida){
                     DB::purge('cntpq');
-                    \Config::set('database.connections.cntpq.database', $poliza_obj->bd_contpaq);
-                    $poliza_contpaq = Poliza::find($poliza_obj->id_poliza);
-                    if($poliza_obj->partida_solicitud->concepto != "" && $poliza_contpaq->Concepto == $poliza_obj->concepto_original){
-                        $poliza_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
+                    \Config::set('database.connections.cntpq.database', $partida->diferencia->base_datos_revisada);
+                    if ($partida->diferencia->id_tipo == 2) {
+                        $poliza_contpaq = Poliza::find($partida->diferencia->id_poliza);
+                        $poliza_contpaq->Concepto = $partida->diferencia->valor_b;
                         $poliza_contpaq->save();
-                    }
-                    foreach($poliza_obj->movimientos as $movimiento_obj){
-                        $movimiento_contpaq = PolizaMovimiento::find($movimiento_obj->id_movimiento);
-
-                        if($poliza_obj->partida_solicitud->concepto != "" && $movimiento_contpaq->Concepto == $movimiento_obj->concepto_original){
-                            $movimiento_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
-                        }
-
-                        if($poliza_obj->partida_solicitud->referencia != "" && $movimiento_contpaq->Referencia == $movimiento_obj->referencia_original){
-                            $movimiento_contpaq->Referencia = $poliza_obj->partida_solicitud->referencia;
-                        }
+                    } else if ($partida->diferencia->id_tipo == 8) {
+                        $movimiento_contpaq = PolizaMovimiento::find($partida->diferencia->id_movimiento);
+                        $movimiento_contpaq->Referencia = $partida->diferencia->valor_b;
+                        $movimiento_contpaq->save();
+                    } else if ($partida->diferencia->id_tipo == 9) {
+                        $movimiento_contpaq = PolizaMovimiento::find($partida->diferencia->id_movimiento);
+                        $movimiento_contpaq->Concepto = $partida->diferencia->valor_b;
                         $movimiento_contpaq->save();
                     }
+                    $partida->estado = 2;
+                    $partida->save();
+                    $partida->diferencia->activo = 0;
+                    $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
+                    $partida->diferencia->save();
+                    $cantidad_afectaciones_afectadas++;
                 }
-                DB::connection('seguridad')->commit();
+                if($cantidad_afectaciones_afectadas == $cantidad_afectaciones_esperadas){
+                    DB::connection('seguridad')->commit();
+                } else {
+                    DB::connection('seguridad')->rollBack();
+                }
+
                 return $this;
             } catch (\Exception $e) {
                 DB::connection('seguridad')->rollBack();
