@@ -16,6 +16,8 @@ use App\Models\CADECO\OrdenCompra;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SolicitudCompra;
 use App\PDF\Compras\OrdenCompraFormato;
+use App\Models\CADECO\Compras\OrdenCompraEliminada;
+use App\Models\CADECO\Compras\OrdenCompraPartidaEliminada;
 
 
 class OrdenCompraService
@@ -77,6 +79,67 @@ class OrdenCompraService
         try{
             DB::connection('cadeco')->beginTransaction();
             foreach($data as $orden){
+                $orden_compra = $this->repository->show($orden);
+                
+                $orden_compra_eliminada = OrdenCompraEliminada::create([
+                    'id_transaccion' => $orden_compra->id_transaccion,
+                    'id_antecedente' => $orden_compra->id_antecedente,
+                    'id_referente' => $orden_compra->id_referente,
+                    'tipo_transaccion' => $orden_compra->tipo_transaccion,
+                    'id_obra' => $orden_compra->id_obra,
+                    'id_empresa' => $orden_compra->id_empresa,
+                    'id_sucursal' => $orden_compra->id_sucursal,
+                    'id_moneda' => $orden_compra->id_moneda,
+                    'opciones' => $orden_compra->opciones,
+                    'observaciones' => $orden_compra->observaciones,
+                    'fecha' => $orden_compra->fecha,
+                    'comentario' => $orden_compra->comentario,
+                    'FechaHoraRegistro' => $orden_compra->FechaHoraRegistro,
+                    'numero_folio' => $orden_compra->numero_folio,
+                    'monto' => $orden_compra->monto,
+                    'saldo' => $orden_compra->saldo,
+                    'impuesto' => $orden_compra->impuesto,
+                    'anticipo_monto' => $orden_compra->anticipo_monto,
+                    'anticipo_saldo' => $orden_compra->anticipo_saldo,
+                    'porcentaje_anticipo_pactado' => $orden_compra->porcentaje_anticipo_pactado,
+                    'id_costo' => $orden_compra->id_costo,
+                    'plazos_entrega_ejecucion' => $orden_compra->complemento->plazos_entrega_ejecucion,
+                    'timestamp_registro' => $orden_compra->complemento->timestamp_registro,
+                    'registro' => $orden_compra->complemento->registro,
+                    'estatus' => $orden_compra->complemento->estatus,
+                    'id_forma_pago' => $orden_compra->complemento->id_forma_pago,
+                    'id_forma_pago_credito' => $orden_compra->complemento->id_forma_pago_credito,
+                    'id_tipo_credito' => $orden_compra->complemento->id_tipo_credito,
+                    'domicilio_entrega' => $orden_compra->complemento->domicilio_entrega,
+                    'otras_condiciones' => $orden_compra->complemento->otras_condiciones,
+                    'fecha_entrega' => $orden_compra->complemento->fecha_entrega,
+                    'con_fianza' => $orden_compra->complemento->con_fianza,
+                    'id_tipo_fianza' => $orden_compra->complemento->id_tipo_fianza,
+                    'elimino' => auth()->id(),
+                    'motivo' => $data['motivo'],
+                ]);
+
+                foreach($orden_compra->partidas as $partida){
+                    OrdenCompraPartidaEliminada::create([
+                        'id_orden_compra_eliminada' => $orden_compra_eliminada->id,
+                        'id_item' => $partida->id_item,
+                        'id_transaccion' => $partida->id_transaccion,
+                        'id_antecedente' => $partida->id_antecedente,
+                        'id_material' => $partida->id_material,
+                        'unidad' => $partida->unidad,
+                        'cantidad' => $partida->cantidad,
+                        'anticipo' => $partida->anticipo,
+                        'descuento' => $partida->descuento,
+                        'precio_material' => $partida->precio_material,
+                        'item_antecedente' => $partida->item_antecedente,
+                        'precio_unitario' => $partida->precio_unitario,
+                        'importe' => $partida->importe,
+                        'saldo' => $partida->saldo,
+                        'elimino' => auth()->id(),
+                        'id_moneda' => $orden_compra->id_moneda,
+                    ]);
+                }
+                
                 $this->repository->delete([], $orden);
             }
              
