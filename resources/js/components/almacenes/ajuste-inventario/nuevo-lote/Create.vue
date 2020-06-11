@@ -161,6 +161,43 @@
                     <div class="modal-body" >
                         <div class="col-md-12">
                             <div class="form-group error-content">
+                                <label for="id_material">Material</label>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <input 
+                                            type="text"
+                                            name="busqueda"
+                                            class="form-control"
+                                            data-vv-as="Busqueda"
+                                            v-model="busqueda">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary" @click="buscarMateriales()" :disabled="busqueda === ''">Buscar</button>
+
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="form-group error-content" v-if="resultados.length > 0">
+                                <label for="id_material">Seleccionar</label>
+                                <div class="row">
+                                     <div class="col-md-12">
+                                        <select
+                                                :disabled="resultados.length == 0"
+                                                type="text"
+                                                name="seleccion"
+                                                data-vv-as="Seleccionar Material"
+                                                class="form-control"
+                                                id="seleccion"
+                                                v-model="id_seleccion"
+                                            >
+                                                    <option value>-- SELECCIONAR --</option>
+                                                    <option v-for="(material, i) in resultados" :value="i">{{ material.descripcion }}</option>
+                                            </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="form-group error-content">
                                  <label for="id_material">Material</label>
                                 <MaterialSelect
                                     :scope="scope"
@@ -169,7 +206,7 @@
                                     data-vv-as="Material"
                                     v-validate="{required: true}"
                                     ref="MaterialSelect"
-                                    :disableBranchNodes="false"/>
+                                    :disableBranchNodes="false"/> -->
 
                                 <!-- <input type="text" autofocus class="form-control"
                                     name="descripcion"
@@ -182,7 +219,7 @@
                        </div>
                        <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" @click="agregarMaterial()" :disabled="material.length === 0">Agregar</button>
+                            <button type="button" class="btn btn-primary" @click="agregarMaterial()" :disabled="id_seleccion === ''">Agregar</button>
                        </div>
                     </div>
                 </div>
@@ -201,6 +238,9 @@
         components: {MaterialSelect, ModelListSelect, Layout},
         data() {
             return {
+                busqueda:'',
+                resultados:[],
+                id_seleccion:'',
                 material:[],
                 scope: ['insumos', 'tipo:1,4'],
                 id_material:'',
@@ -222,6 +262,20 @@
         },
 
         methods: {
+            buscarMateriales(){
+                this.cargando = true;
+                this.resultados = [];
+                this.id_seleccion = '';
+                return this.$store.dispatch('cadeco/material/buscarMateriales', {
+                    params: {
+                        busqueda:this.busqueda 
+                    }
+                })
+                .then(data => {
+                    this.resultados = data;
+                    this.cargando = false;
+                })
+            },
             init() {
                 this.cargando = true;
             },
@@ -229,14 +283,15 @@
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
             },
             agregarMaterial(){
-                this.items[this.index].id_material = this.material.id;
-                this.items[this.index].material = this.material;
+                this.items[this.index].id_material = this.resultados[this.id_seleccion].id_material;
+                this.items[this.index].material = this.resultados[this.id_seleccion];
                 this.items[this.index].i = 2;
                 $(this.$refs.modal).modal('hide')
             },
             modalMaterial(index){
-                this.material = [];
-                this.material = [];
+                this.resultados = [];
+                this.busqueda = '';
+                this.id_seleccion = '';
                 this.index =index;
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show')

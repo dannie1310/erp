@@ -126,6 +126,7 @@ $api->version('v1', function ($api) {
             $api->get('/descargar_lista_material', 'App\Http\Controllers\v1\CADECO\MaterialController@descargar_lista_material');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@destroy')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@update')->where(['id' => '[0-9]+']);
+            $api->get('buscarMateriales', 'App\Http\Controllers\v1\CADECO\MaterialController@buscarMateriales');
         });
 
         // MONEDA

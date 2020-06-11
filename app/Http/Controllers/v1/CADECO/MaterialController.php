@@ -69,5 +69,9 @@ class MaterialController extends Controller
     {
         return $this->traitDestroy($request, $id);      
     }
+
+    public function buscarMateriales(Request $request){
+        return $this->service->buscarMateriales($request->all());
+    }
 }
 
