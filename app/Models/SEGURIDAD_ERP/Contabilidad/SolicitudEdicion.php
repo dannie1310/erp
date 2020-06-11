@@ -21,6 +21,7 @@ use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Utils\BusquedaDiferenciasMovimientos;
 
 class SolicitudEdicion extends Model
 {
@@ -515,28 +516,11 @@ class SolicitudEdicion extends Model
                 $cantidad_afectaciones_afectadas = 0;
                 foreach ($partidas as $partida){
 
-                    //$poliza_contpaq = Poliza::find($partida->diferencia->id_poliza);
                     $relacion_movimientos = RelacionMovimientos::where("id_poliza_a","=",$partida->diferencia->id_poliza)
                     ->where("base_datos_a","=", $partida->diferencia->base_datos_revisada)->get();
 
-                    $arreglo_codigos_a = [];
-                    $arreglo_tipos_a = [];
-                    $arreglo_importes_a = [];
-
-                    $arreglo_codigos_b = [];
-                    $arreglo_tipos_b = [];
-                    $arreglo_importes_b = [];
-
-                    $cadena_a = "";
-                    $cadena_a_ordenada = "";
-                    $cadena_b = "";
-                    $cadena_b_ordenada = "";
-
                     $arreglo_a = [];
                     $arreglo_b = [];
-
-                    $hashs = [];
-
 
                     $i = 0;
 
@@ -557,6 +541,7 @@ class SolicitudEdicion extends Model
                         $arreglo_a[$hash_a]["concepto"] = $relacion_movimiento->concepto_a;
                         $arreglo_a[$hash_a]["id_cuenta"] = $relacion_movimiento->id_cuenta_a;
                         $arreglo_a[$hash_a]["base_datos"] = $relacion_movimiento->base_datos_a;
+                        $id_poliza_a = $relacion_movimiento->id_poliza_a;
 
                         $arreglo_b[$hash_b]["id_movimiento"] = $relacion_movimiento->id_movimiento_b;
                         $arreglo_b[$hash_b]["num_movto"] = $relacion_movimiento->num_movto_b;
@@ -568,23 +553,71 @@ class SolicitudEdicion extends Model
                         $arreglo_b[$hash_b]["concepto"] = $relacion_movimiento->concepto_b;
                         $arreglo_b[$hash_b]["id_cuenta"] = $relacion_movimiento->id_cuenta_b;
                         $arreglo_b[$hash_a]["base_datos"] = $relacion_movimiento->base_datos_b;
-
-
+                        $id_poliza_b = $relacion_movimiento->id_poliza_b;
                         $i++;
                     }
 
-                    foreach($hashs_b as $k=>$hash_b){
-                         if($hash_b != $hashs_a[$k]){
-                             //dd($hash_b, $hashs_a[$k]);
-                             DB::purge('cntpq');
-                             \Config::set('database.connections.cntpq.database', $arreglo_a[$hashs_a[$k]]["base_datos"]);
-                             $movimiento_contpaq = PolizaMovimiento::find($arreglo_a[$hash_b]["id_movimiento"]);
-                             $movimiento_contpaq->NumMovto=$arreglo_b[$hash_b]["num_movto"];
-                             $movimiento_contpaq->save();
+                    DB::purge('cntpq');
+                    \Config::set('database.connections.cntpq.database', $arreglo_a[$hashs_a[0]]["base_datos"]);
+                    $no_movtos_a = Poliza::find($id_poliza_a)->movimientos->max("NumMovto");
 
-                         }
-                     }
+                    DB::purge('cntpq');
+                    \Config::set('database.connections.cntpq.database', $arreglo_b[$hashs_b[0]]["base_datos"]);
+                    $no_movtos_b = Poliza::find($id_poliza_b)->movimientos->max("NumMovto");
+                    //dd($no_movtos_a,$no_movtos_b);
+                    $error_edicion_movimientos = 0;
+                    if($no_movtos_a == $no_movtos_b){
+                        DB::purge('cntpq');
+                        \Config::set('database.connections.cntpq.database', $arreglo_a[$hashs_a[0]]["base_datos"]);
 
+                        DB::connection('cntpq')->beginTransaction();
+                        foreach($arreglo_a as $hash=>$arreglo){
+                            $movimiento_contpaq = PolizaMovimiento::find($arreglo["id_movimiento"]);
+                            $movimiento_contpaq->NumMovto=$movimiento_contpaq->NumMovto+$no_movtos_a;
+                            $movimiento_contpaq->save();
+                        }
+                        $r = 0;
+                        foreach($hashs_b as $k=>$hash_b){
+                            DB::purge('cntpq');
+                            \Config::set('database.connections.cntpq.database', $arreglo_a[$hashs_a[$k]]["base_datos"]);
+
+
+                            try{
+                                $movimiento_contpaq = PolizaMovimiento::find($arreglo_a[$hash_b]["id_movimiento"]);
+                                $movimiento_contpaq->NumMovto=$arreglo_b[$hash_b]["num_movto"];
+                                $movimiento_contpaq->save();
+                                $relacion_movimientos[$r]->id_movimiento_a = $arreglo_a[$hash_b]["id_movimiento"];
+                                $relacion_movimientos[$r]->fecha_hora_asociacion = date('Y-m-d H:i:s');
+                                $relacion_movimientos[$r]->tipo_movto_a = $arreglo_a[$hash_b]["tipo_movto"];
+                                $relacion_movimientos[$r]->codigo_cuenta_a = $arreglo_a[$hash_b]["codigo_cuenta"];
+                                $relacion_movimientos[$r]->nombre_cuenta_a = $arreglo_a[$hash_b]["nombre_cuenta"];
+                                $relacion_movimientos[$r]->importe_a = $arreglo_a[$hash_b]["importe"];
+                                $relacion_movimientos[$r]->referencia_a = $arreglo_a[$hash_b]["referencia"];
+                                $relacion_movimientos[$r]->concepto_a = $arreglo_a[$hash_b]["concepto"];
+                                $relacion_movimientos[$r]->id_cuenta_a = $arreglo_a[$hash_b]["id_cuenta"];
+                                $relacion_movimientos[$r]->save();
+                            }catch(\Exception $e)
+                            {
+                                $error_edicion_movimientos++;
+                            }
+                            $r ++;
+                        }
+                        if($error_edicion_movimientos==0)
+                        {
+                            DB::connection('cntpq')->commit();
+                        } else {
+                            DB::connection('cntpq')->rollBack();
+                            foreach ($relacion_movimientos as $relacion_movimiento){
+                                $busqueda_movimiento = New BusquedaDiferenciasMovimientos($relacion_movimiento, $partida->diferencia->busqueda);
+                                $busqueda_movimiento->buscarDiferenciasMovimientos();
+                            }
+                        }
+
+                    } else {
+                        DB::connection('seguridad')->rollBack();
+                        abort(500, "El número de movimientos no coincide");
+                        return $this;
+                    }
 
 
                     $partida->estado = 2;
