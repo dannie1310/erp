@@ -11,6 +11,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
 use App\Models\CADECO\FinanzasCBE\Solicitud;
+use App\Models\CTPQ\Cuenta;
 use App\Models\CTPQ\Poliza;
 use App\Models\CTPQ\PolizaMovimiento;
 use App\Models\IGH\Usuario;
@@ -400,7 +401,7 @@ class SolicitudEdicion extends Model
                 return 'Rechazada';
                 break;
             case 4 :
-                return 'Registrada';
+                $this->aplicaEdicionNombresCuentas();
                 break;
         }
     }
@@ -479,6 +480,51 @@ class SolicitudEdicion extends Model
                     $partida->diferencia->activo = 0;
                     $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
                     $partida->diferencia->save();
+                    $cantidad_afectaciones_afectadas++;
+                }
+                if($cantidad_afectaciones_afectadas == $cantidad_afectaciones_esperadas){
+                    DB::connection('seguridad')->commit();
+                } else {
+                    DB::connection('seguridad')->rollBack();
+                }
+
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
+        } else {
+            abort(500, "Estado de la solicitud es incorrecto, no se puede aplicar.");
+            return $this;
+        }
+
+    }
+
+    private function aplicaEdicionNombresCuentas()
+    {
+        if($this->estado == 1 && $this->id_tipo == 4){
+            try {
+                DB::connection('seguridad')->beginTransaction();
+                $this->estado = 2;
+                $this->save();
+                $partidas = $this->partidasActivas;
+                $cantidad_afectaciones_esperadas = count($partidas);
+                $cantidad_afectaciones_afectadas = 0;
+                foreach ($partidas as $partida){
+                    DB::purge('cntpq');
+                    \Config::set('database.connections.cntpq.database', $partida->diferencia->base_datos_revisada);
+                    $cuenta_contpaq = Cuenta::find($partida->diferencia->id_cuenta);
+                    $cuenta_contpaq->Nombre = $partida->diferencia->valor_b;
+                    $cuenta_contpaq->save();
+
+                    $partida->estado = 2;
+                    $partida->save();
+
+                    $partida->diferencia->activo = 0;
+                    $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
+                    $partida->diferencia->save();
+
                     $cantidad_afectaciones_afectadas++;
                 }
                 if($cantidad_afectaciones_afectadas == $cantidad_afectaciones_esperadas){
