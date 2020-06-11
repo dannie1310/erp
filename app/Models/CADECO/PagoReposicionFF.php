@@ -48,7 +48,14 @@ class PagoReposicionFF extends Pago
         return $this->belongsTo(Fondo::class, 'id_referente', 'id_fondo');
     }
 
-    public function solicitud(){
+    public function solicitud()
+    {
         return $this->belongsTo(SolicitudReposicionFF::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function eliminar($motivo)
+    {
+        $this->fondo->update(['saldo' => $this->fondo->saldo + $this->monto]);
+
     }
 }

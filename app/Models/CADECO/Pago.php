@@ -50,6 +50,11 @@ class Pago extends Transaccion
         return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
     }
 
+    public function pagoReposicionFF()
+    {
+        return $this->hasOne(PagoReposicionFF::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function getEstadoStringAttribute()
     {
         $estado = "";
@@ -67,14 +72,22 @@ class Pago extends Transaccion
 
     public function eliminar($motivo)
     {
+        //$this->validarEliminacion();
         switch($this->opciones)
         {
             case 0: //Pago Factura
+                dd("pago", $this->poliza);
                 echo "i es igual a 0";
                 break;
 
             case 1: //Pago varios o Reposicion FF
-                echo "1";
+                if (!is_null($this->id_antecedente))
+                {
+                    $this->pagoReposicionFF->eliminar($motivo);
+                }
+                else{
+dd("pago va");
+                }
                 break;
 
             case 65537:
@@ -94,5 +107,13 @@ class Pago extends Transaccion
                 break;
         }
         dd($motivo);
+    }
+
+    private function validarEliminacion()
+    {
+        if($this->poliza->estatus != -3)
+        {
+            abort(400, "No se puede eliminar este pago porque tiene la poliza ".(strlen($this->poliza->concepto)>25 ? substr($this->poliza->concepto, 0, 25) : $this->poliza->concepto)." con estado: ".$this->poliza->estatusPrepoliza->descripcion);
+        }
     }
 }

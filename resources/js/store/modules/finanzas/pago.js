@@ -82,8 +82,8 @@ export default {
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar la Estimación",
-                    text: "¿Está seguro de que desea eliminar esta estimación?",
+                    title: "Eliminar el pago",
+                    text: "¿Está seguro de que desea eliminar este pago?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -103,7 +103,7 @@ export default {
                                 .delete(URI + payload.id, {params: payload.params})
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Estimación eliminada correctamente", {
+                                    swal("Pago eliminado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
