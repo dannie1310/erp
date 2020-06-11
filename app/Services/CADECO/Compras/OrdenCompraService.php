@@ -85,4 +85,9 @@ class OrdenCompraService
             throw $e;
         }
     }
+
+    public function update(array $data, $id)
+    {
+        dd('pardito');
+    }
 }

@@ -577,6 +577,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-orden-compra', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@pdfOrdenCompra')->where(['id' => '[0-9]+']);
             $api->post('eliminarOrdenes', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@eliminarOrdenes')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@update')->where(['id' => '[0-9]+']);
         });
 
         //REQUISICIÓN

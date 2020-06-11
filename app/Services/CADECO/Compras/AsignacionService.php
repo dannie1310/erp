@@ -167,6 +167,7 @@ class AsignacionService
                                         ->where('id_moneda', '=', $partida->cotizacion->id_moneda)->first()
                                         ){
                                             
+                                        
                     $orden_c = $partida->ordenCompra()->firstOrCreate([
                             'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
                             'id_referente' => $partida->cotizacionCompra->id_transaccion,
@@ -174,6 +175,7 @@ class AsignacionService
                             'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
                             'id_moneda' => $partida->cotizacion->id_moneda,
                             'observaciones' => $partida->cotizacionCompra->observaciones,
+                            'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
                         ]);
                         
                         $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion]);

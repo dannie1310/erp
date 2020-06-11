@@ -16,6 +16,7 @@ use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\CADECO\Compras\OrdenCompraPartidaTransformer;
+use App\Http\Transformers\CADECO\Compras\OrdenCompraComplementoTransformer;
 
 class OrdenCompraTransformer extends TransformerAbstract
 {
@@ -31,6 +32,7 @@ class OrdenCompraTransformer extends TransformerAbstract
         'sucursal',
         'usuario',
         'moneda',
+        'complemento',
     ];
 
     /**
@@ -57,10 +59,11 @@ class OrdenCompraTransformer extends TransformerAbstract
             'monto_format' => (string)$model->monto_format,
             'referencia' => (string)$model->referencia,
             'retencion' => (float)$model->retencion,
-            'anticipo' => (float)$model->anticipo,
+            'anticipo' => (float)$model->anticipo_orden,
             'observaciones' => (string)$model->observaciones,
             'observaciones_format' => (string)$model->observaciones_format,
             'id_moneda' => (int)$model->id_moneda,
+            'id_costo' => (int)$model->id_costo,
             'destino '=> (string)$model->destino,
             'saldo' => (float)$model->saldo,
             'tipo_nombre' => (string)$model->getNombre(),
@@ -69,6 +72,7 @@ class OrdenCompraTransformer extends TransformerAbstract
             'monto_facturado_ea' => (float) $model->montoFacturadoEntradaAlmacen,
             'monto_solicitado' => (float) $model->montoPagoAnticipado,
             'entradas_almacen' =>  $model->tiene_entrada_almacen,
+            'porcentaje_anticipo_pactado' => $model->porcentaje_anticipo_pactado,
         ];
     }
 
@@ -146,6 +150,18 @@ class OrdenCompraTransformer extends TransformerAbstract
         if($moneda = $model->moneda)
         {
             return $this->item($moneda, new MonedaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param OrdenCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeComplemento(OrdenCompra $model){
+        if($complemento = $model->complemento){
+            // dd($complemento);
+            return $this->item($complemento, new OrdenCompraComplementoTransformer);
         }
         return null;
     }

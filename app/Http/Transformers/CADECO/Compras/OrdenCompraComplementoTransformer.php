@@ -8,13 +8,8 @@
 
 namespace App\Http\Transformers\CADECO\Compras;
 
-
-use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
-use App\Http\Transformers\IGH\UsuarioTransformer;
-use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\SucursalTransformer;
-use App\Http\Transformers\CADECO\Compras\OrdenCompraPartidaTransformer;
+use App\Models\CADECO\Compras\OrdenCompraComplemento;
 
 class OrdenCompraComplementoTransformer extends TransformerAbstract
 {
@@ -35,7 +30,7 @@ class OrdenCompraComplementoTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(OrdenCompra $model)
+    public function transform(OrdenCompraComplemento $model)
     {
         return [
             'id' => (int)$model->getKey(),

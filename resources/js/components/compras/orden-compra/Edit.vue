@@ -94,26 +94,26 @@
                                                 <td>{{partida.material.descripcion}}</td>
                                                 <td>{{partida.material.unidad}}</td>
                                                 <td>{{partida.cantidad_format}}</td>
-                                                <td>{{partida.precio_material_format}}</td>
+                                                <td class="money">{{partida.precio_material_format}}</td>
                                                 <td>{{partida.complemento.descuento}}</td>
-                                                <td>{{partida.importe_format}}</td>
+                                                <td class="money">{{partida.importe_format}}</td>
                                             </tr>
                                             <tr>
                                                 <td  colspan="6"></td>
                                                 <td>Subtotal</td>
-                                                <td>{{orden_compra.subtotal_format}}</td>
+                                                <td class="money">{{orden_compra.subtotal_format}}</td>
                                             </tr>
                                             <tr>
                                                 <td  colspan="6"></td>
                                                 <td>Impuesto</td>
-                                                <td>
+                                                <td class="money">
                                                     <input 
                                                         type="number"
                                                         class="form-control"
                                                         name="impuesto"
                                                         data-vv-as="Impuesto"
                                                         v-model="orden_compra.impuesto"
-                                                        v-validate="{min_value:0}"
+                                                        v-validate="{required:true, min_value:0}"
                                                         :class="{'is-invalid': errors.has(`impuesto`)}"
                                                         id="impuesto">
                                                     <div class="invalid-feedback" v-show="errors.has(`impuesto`)">{{ errors.first(`impuesto`) }}</div>
@@ -122,7 +122,7 @@
                                             <tr>
                                                 <td  colspan="6"></td>
                                                 <td>Total</td>
-                                                <td>{{recalcular}}</td>
+                                                <td class="money">{{recalcular}}</td>
                                             </tr>
                                             <tr>
                                                 <td  colspan="6"></td>
@@ -144,26 +144,41 @@
                         <div class="row" v-if="Object.keys(orden_compra).length > 0">
                             
                             <div class="col-md-4" >
-                                <div class="form-group">
-                                    <label><b>Pago en Parcialidades (%): </b></label>
-                                    input
+                                <div class="form-group row error-content">
+                                    <label for="porcentaje_anticipo_pactado" class="col-sm-6 col-form-label">Pago en Parcialidades (%): </label>
+                                    <div class="col-sm-6">
+                                        <input 
+                                            type="number"
+                                            class="form-control"
+                                            name="porcentaje_anticipo_pactado"
+                                            data-vv-as="Pago en Parcialidades"
+                                            v-model="orden_compra.porcentaje_anticipo_pactado"
+                                            v-validate="{required:true, min_value:0}"
+                                            :class="{'is-invalid': errors.has(`porcentaje_anticipo_pactado`)}"
+                                            id="porcentaje_anticipo_pactado">
+                                        <div class="invalid-feedback" v-show="errors.has(`porcentaje_anticipo_pactado`)">{{ errors.first(`porcentaje_anticipo_pactado`) }}</div>
+                                    </div>
+                                    
                                 </div>
                             </div>
 
                             
                             <div class="col-md-8" >
                                 <div class="form-group row error-content">
-                                    <label for="tipo_gasto" class="col-sm-2 col-form-label">Tipo de Gasto: </label>
+                                    <label for="tipo_gasto_select" class="col-sm-2 col-form-label">Tipo de Gasto: </label>
                                     <div class="col-sm-10">
                                         <model-list-select
-                                            name="tipo_gasto"
+                                            name="tipo_gasto_select"
+                                            data-vv-as="Tipo de Gasto"
                                             option-value="id"
                                             option-text="descripcion"
+                                            v-model="orden_compra.id_costo"
                                             :list="tipo_gasto"
                                             :placeholder="!cargando?'Seleccionar':'Cargando...'"
-                                            :isError="errors.has(`tipo_gasto`)">
+                                            :isError="errors.has(`tipo_gasto_select`)"
+                                            id="tipo_gasto_select">
                                         </model-list-select>
-                                        <div class="invalid-feedback" v-show="errors.has('tipo_gasto')">{{ errors.first('tipo_gasto') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('tipo_gasto_select')">{{ errors.first('tipo_gasto_select') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -183,7 +198,7 @@
                                             type="text"
                                             name="forma_pago"
                                             data-vv-as="Forma de Pago"
-                                            v-validate="{required: true}"
+                                            v-model="orden_compra.complemento.id_forma_pago"
                                             class="form-control"
                                             id="forma_pago"
                                             :class="{'is-invalid': errors.has('forma_pago')}"
@@ -198,18 +213,18 @@
 
                             <div class="col-md-12" >
                                 <div class="form-group row error-content">
-                                    <label for="fecha" class="col-sm-2 col-form-label">Fecha: </label>
+                                    <label for="fecha_entrega" class="col-sm-2 col-form-label">Fecha de Entrega: </label>
                                     <div class="col-sm-10">
                                         <datepicker
-                                            name = "fecha"
+                                            name = "fecha_entrega"
                                             :format = "formatoFecha"
                                             :language = "es"
                                             :bootstrap-styling = "true"
+                                            v-model="orden_compra.complemento.fecha_entrega"
                                             class = "form-control"
-                                            v-validate="{required: true}"
-                                            :class="{'is-invalid': errors.has('fecha')}"
+                                            :class="{'is-invalid': errors.has('fecha_entrega')}"
                                         ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha_entrega')">{{ errors.first('fecha_entrega') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -223,7 +238,7 @@
                                             name="plazo_entrega"
                                             id="plazo_entrega"
                                             class="form-control"
-                                            v-validate="{required: true}"
+                                            v-model="orden_compra.complemento.plazos_entrega_ejecucion"
                                             data-vv-as="Plazo de Entrega/Ejecución"
                                             :class="{'is-invalid': errors.has('plazo_entrega')}">
                                         </textarea>
@@ -240,7 +255,7 @@
                                             name="domicilio_entrega"
                                             id="domicilio_entrega"
                                             class="form-control"
-                                            v-validate="{required: true}"
+                                            v-model="orden_compra.complemento.domicilio_entrega"
                                             data-vv-as="Domicilio de Entrega"
                                             :class="{'is-invalid': errors.has('domicilio_entrega')}">
                                         </textarea>
@@ -257,7 +272,7 @@
                                                 name="otras_condiciones"
                                                 id="otras_condiciones"
                                                 class="form-control"
-                                                v-validate="{required: true}"
+                                                v-model="orden_compra.complemento.otras_condiciones"
                                                 data-vv-as="Otras Condiciones"
                                                 :class="{'is-invalid': errors.has('otras_condiciones')}">
                                             </textarea>
@@ -267,6 +282,10 @@
                                 </div>
 
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary">Cerrar</button>
+                        <button type="button" class="btn btn-primary" @click="validate()">Guardar</button>
                     </div>
                 </div>
             </div>
@@ -293,9 +312,7 @@ export default {
     },
     computed: {
          recalcular(){
-            console.log('panda');
-            return '$ ' + (this.orden_compra.subtotal + this.orden_compra.impuesto).formatMoney(2,'.',',');
-            
+            return '$' + parseFloat(+this.orden_compra.subtotal + +this.orden_compra.impuesto).formatMoney(2,'.',',');     
         },
     },
     mounted() {
@@ -313,7 +330,7 @@ export default {
             return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id,
                     params:{
-                        include: ['empresa', 'moneda', 'sucursal', 'usuario', 'partidas.material', 'partidas.complemento', 'solicitud']
+                        include: ['empresa', 'moneda', 'sucursal', 'complemento', 'usuario', 'partidas.material', 'partidas.complemento', 'solicitud']
                     }
                 }).then(data => {
                     this.orden_compra = data;
@@ -343,6 +360,22 @@ export default {
                     this.formas_pago_credito = data.data;
                 })
         },
+        update() {
+                return this.$store.dispatch('compras/orden-compra/update', {
+                    id: this.orden_compra.id,
+                    data: this.orden_compra
+                })
+                    .then(data => {
+                        console.log(data);
+                    })
+            },
+        validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.update();
+                    }
+                });
+            },
        
     }
 
