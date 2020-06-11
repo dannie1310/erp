@@ -152,6 +152,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr style="background-color:rgba(0, 0, 0, 0.1)">
+                                    <th class="index_corto"></th>
                                     <th class="index_corto">#</th>
                                     <th class="fecha_hora">Póliza</th>
                                     <th >Núm. Movto.</th>
@@ -163,6 +164,7 @@
                             <tbody>
                                 <template v-for="(partida, i) in solicitud.partidas.data">
                                     <tr >
+                                        <td><i :class="partida.class_estado"></i></td>
                                         <td>{{i+1}}</td>
                                         <td>{{partida.diferencia.identificador_poliza}}</td>
                                         <td>{{partida.diferencia.numero_movimiento}}</td>
@@ -190,6 +192,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr style="background-color:rgba(0, 0, 0, 0.1)">
+                                    <th class="index_corto"></th>
                                     <th class="index_corto">#</th>
                                     <th colspan="10" >Póliza</th>
                                 </tr>
@@ -197,15 +200,18 @@
                             <tbody>
                                 <template v-for="(partida, i) in solicitud.partidas.data">
                                     <tr style="background-color: #555555; color: #ffffff">
+                                        <td><i :class="partida.class_estado"></i></td>
                                         <td>{{i+1}}</td>
                                         <td colspan="10">{{partida.diferencia.identificador_poliza}}</td>
                                     </tr>
                                     <tr >
                                         <td></td>
+                                        <td></td>
                                         <td colspan="5" style="text-align: center">Orden Original</td>
                                         <td colspan="5" style="text-align: center">Orden Propuesto</td>
                                     </tr>
                                     <tr >
+                                        <td></td>
                                         <td></td>
                                         <td>No. Movto.</td>
                                         <td>Código</td>
@@ -220,6 +226,7 @@
                                         <td>Abono</td>
                                     </tr>
                                     <tr v-for="(movimiento, j) in partida.diferencia.movimientos">
+                                        <td></td>
                                         <td></td>
                                         <td>{{ movimiento.no_movto_a }}</td>
                                         <td>{{ movimiento.codigo_a }}</td>
@@ -253,6 +260,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr style="background-color:rgba(0, 0, 0, 0.1)">
+                                    <th class="index_corto"></th>
                                     <th class="index_corto">#</th>
                                     <th class="fecha_hora">Código Cuenta</th>
                                     <th >Descripción Original</th>
@@ -262,6 +270,7 @@
                             <tbody>
                                 <template v-for="(partida, i) in solicitud.partidas.data">
                                     <tr >
+                                        <td><i :class="partida.class_estado"></i></td>
                                         <td>{{i+1}}</td>
                                         <td>{{partida.diferencia.codigo_cuenta}}</td>
                                         <td>{{partida.diferencia.valor_a}}</td>

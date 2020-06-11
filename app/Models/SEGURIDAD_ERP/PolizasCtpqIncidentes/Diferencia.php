@@ -39,6 +39,11 @@ class Diferencia extends Model
         "id_relacion_movimiento"
     ];
 
+    public function busqueda()
+    {
+        return $this->belongsTo(Busqueda::class,"id_busqueda", "id");
+    }
+
     public static function buscarSO($data){
         $diferencia = null;
         if(key_exists("id_movimiento", $data)){

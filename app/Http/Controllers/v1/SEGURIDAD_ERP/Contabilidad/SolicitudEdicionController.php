@@ -51,7 +51,7 @@ class SolicitudEdicionController extends Controller
 
     public function autorizar(Request $request, $id)
     {
-        return $this->service->autorizar($id,$request->partidas);
+        return $this->service->autorizar($id,$request);
     }
 
     public function rechazar($id)
