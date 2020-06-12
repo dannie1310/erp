@@ -13,6 +13,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\UsuarioNotificacion;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
 use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
@@ -129,6 +130,20 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function suscripciones(){
         return $this->hasMany(Suscripcion::class, "id_usuario", "idusuario");
+    }
+
+    public function solicitudesEdicion(){
+        return $this->hasMany(SolicitudEdicion::class, "id_usuario_registro", "idusuario");
+    }
+
+    public function scopeSolicitudEdicion($query, $solicitudes_edicion){
+        $arreglo_usuarios = [];
+        foreach($solicitudes_edicion as $solicitud)
+        {
+            $arreglo_usuarios[] = $solicitud->id_usuario_registro;
+        }
+        $arreglo_usuarios = array_unique($arreglo_usuarios);
+        return $query->whereIn("idusuario",$arreglo_usuarios);
     }
 
     public function scopeSuscripcion($query, $suscripciones, $id_usuario){

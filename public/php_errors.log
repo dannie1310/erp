@@ -1,0 +1,2 @@
+[12-Jun-2020 14:01:34 America/Mexico_City] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 20480 bytes) in C:\Users\EMartinez\PhpstormProjects\erp-hi\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Concerns\GuardsAttributes.php on line 188
+[12-Jun-2020 14:01:34 America/Mexico_City] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 32768 bytes) in C:\Users\EMartinez\PhpstormProjects\erp-hi\vendor\symfony\debug\Exception\FatalErrorException.php on line 1
