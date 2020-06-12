@@ -50,32 +50,26 @@ class AsignacionService
     public function getAsignacion($id){
         $asignacion = $this->repository->show($id);
         $partidas = $asignacion->partidas;
-        $o_cmpra_pendientes = 0;
+        $o_cmpra_pendientes = $asignacion->orden_compra_pendiente;
         $data = array();
         foreach($partidas as $partida){
             if(!array_key_exists($partida->id_transaccion_cotizacion, $data)){
                 $transf_orden_compra = new OrdenCompraTransformer();
                 $orden_compra_transf = [];
+
                 
                 if(count($partida->ordenCompra) > 0){
-                    
                     foreach($partida->ordenCompra as $key => $orden){
-                        // dd(3);
                         $orden_compra_transf[$key] = $transf_orden_compra->transform($orden);
-                        // $orden_compra_transf[$key]['entrada_almacen'] = $orden->tiene_entrada_almacen;
                     }
-                    // $orden_compra_transf = $transf_orden_compra->transform($partida->ordenCompra);
-                }else{
-                    $o_cmpra_pendientes++;
                 }
-                // dd(2);
+
                 $data[$partida->id_transaccion_cotizacion] = [
                     'id_transaccion' => $partida->cotizacionCompra->id_transaccion,
                     'razon_social' => $partida->cotizacionCompra->empresa->razon_social,
                     'sucursal' => $partida->cotizacionCompra->sucursal->descripcion,
                     'direccion' => $partida->cotizacionCompra->sucursal->direccion,
                     'orden_compra' => $orden_compra_transf,
-                    // 'entrada_almacen' => $partida->ordenCompra?$partida->ordenCompra->tiene_entrada_almacen:false,
                     
                 ];
                 $data[$partida->id_transaccion_cotizacion]['partidas'] = array();
@@ -159,6 +153,10 @@ class AsignacionService
             $transaccion_cotizacion = '';
             $orden_c = null;
             foreach($partidas as $partida){
+                if($partida->con_orden_compra){
+                    continue;
+                }
+                
 
                 if(!$orden_c = OrdenCompra::where('id_antecedente', '=', $partida->cotizacionCompra->id_antecedente)
                                         ->where('id_referente', '=', $partida->cotizacionCompra->id_transaccion)
@@ -294,6 +292,19 @@ class AsignacionService
             abort(400, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function pendientesOrden(){
+        $pendientes = $this->repository->all();
+        $resp = array();
+        foreach($pendientes as $pendiente){
+            $pendiente->estado_asignacion_format;
+            if($pendiente->orden_compra_pendiente){
+                $resp[] = $pendiente;
+            }
+        }
+
+        return $resp;
     }
 
     public function asignacion($id)

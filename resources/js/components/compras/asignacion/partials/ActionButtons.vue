@@ -5,7 +5,7 @@
             <i class="fa fa-eye"></i>
         </button>
         <PDF></PDF>
-        <button @click="edit" type="button" v-if="$root.can('eliminar_orden_compra')"
+        <button @click="edit" type="button" v-if="$root.can('registrar_orden_compra')"
                 class="btn btn-sm btn-outline-success" title="Editar">
             <i class="fa fa-pencil"></i>
         </button>
