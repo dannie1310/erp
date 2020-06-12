@@ -11,9 +11,12 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 use App\Exports\SolicitudEdicionExport;
 use App\Http\Transformers\CTPQ\PolizaMovimientoTransformer;
 use App\Http\Transformers\CTPQ\PolizaTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CTPQ\Poliza;
+use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion as Model;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\PDF\CTPQ\PolizaFormato;
 use App\Repositories\CTPQ\PolizaRepository;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionRepository as Repository;
@@ -58,6 +61,74 @@ class SolicitudEdicionService
 
     public function paginate($data)
     {
+        if($data['sort'] == 'tipo'){
+            $tipos = CtgTipoSolicitudEdicion::query()->orderBy('descripcion',$data['order'])->get();
+            foreach ($tipos as $tipo){
+                $this->repository->whereOr([['id_tipo', '=', $tipo->id]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }
+
+        if($data['sort'] == 'usuario_registro'){
+            $usuarios = Usuario::query()->solicitudEdicion(SolicitudEdicion::all())->orderBy('nombre',$data['order'])->get();
+
+            foreach ($usuarios as $usuario){
+                $this->repository->whereOr([['id_usuario_registro', '=', $usuario->idusuario]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }
+
+        if (isset($data['numero_folio'])) {
+            $this->repository->where([['numero_folio', 'LIKE', '%' . $data['numero_folio'] . '%']]);
+        }
+
+        if (isset($data['fecha_hora_registro'])) {
+            $this->repository->whereBetween( ['fecha_hora_registro', [ request( 'fecha_hora_registro' )." 00:00:00",request( 'fecha_hora_registro' )." 23:59:59"]] );
+        }
+
+        if (isset($data['tipo'])) {
+            $tipos = CtgTipoSolicitudEdicion::query()->where([['descripcion', 'LIKE', '%'.$data['tipo'].'%']])->get();
+            foreach ($tipos as $tipo){
+                $this->repository->whereOr([['id_tipo', '=', $tipo->id]]);
+            }
+        }
+
+        if (isset($data['id_tipo_solicitud'])) {
+            $this->repository->where([['id_tipo', '=', $data['id_tipo_solicitud']]]);
+        }
+
+        if (isset($data['id_estado'])) {
+            $this->repository->where([['estado', '=', $data['id_estado']]]);
+        }
+
+        if (isset($data['estado'])) {
+            if (strpos('REGISTRADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 0]]);
+            }
+
+            if (strpos('AUTORIZADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 1]]);
+            }
+
+            if (strpos('APLICADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 2]]);
+            }
+
+            if (strpos('RECHAZADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', -1]]);
+            }
+        }
+
+        if (isset($data['startDate'])) {
+            $this->repository->where([['fecha_hora_registro', '>=', $data['startDate'] ." 00:00:00"]]);
+        }
+
+        if (isset($data['endDate'])) {
+            $this->repository->where([['fecha_hora_registro', '<=', $data['endDate'] ." 23:59:59"]]);
+        }
+
         return $this->repository->paginate($data);
     }
 
