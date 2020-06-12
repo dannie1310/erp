@@ -29,6 +29,9 @@ class Item extends Model
         'cantidad_material',
         'cantidad_mano_obra',
         'importe',
+        'saldo',
+        'anticipo',
+        'descuento',
         'precio_unitario',
         'precio_material',
         'precio_mano_obra',
@@ -54,6 +57,27 @@ class Item extends Model
         return round($this->cantidad,3);
 
     }
+
+    public function getImporteFormatAttribute(){
+        return '$ ' .  number_format($this->importe,2,'.', ',');
+    }
+
+    public function getSaldoFormatAttribute(){
+        return '$ ' . number_format($this->saldo,2,'.', ',');
+    }
+
+    public function getPrecioUnitarioFormatAttribute(){
+        return '$ ' . number_format($this->precio_unitario,2,'.', ',');
+    }
+
+    public function getPrecioMaterialFormatAttribute(){
+        return '$ ' . number_format($this->precio_material,2,'.', ',');
+    }
+
+    public function getDescuentoFormatAttribute(){
+        return number_format($this->descuento,2,'.', '');
+    }
+
     /**
      * Este método implementa la lógica del stored procedure: sp_entradas_salidas y se invoca al crear un nuevo
      * inventario ya sea por entrada de almacén  o por transferencia

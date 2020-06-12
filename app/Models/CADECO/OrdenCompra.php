@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrdenCompra extends Transaccion
 {
-    public const TIPO_ANTECEDENTE = 18;
+    public const TIPO_ANTECEDENTE = 17;
     public const OPCION_ANTECEDENTE = 1;
 
     protected static function boot()
@@ -51,7 +51,8 @@ class OrdenCompra extends Transaccion
         'id_obra',
         'comentario',
         'observaciones',
-        'FechaHoraRegistro'
+        'FechaHoraRegistro',
+        'porcentaje_anticipo_pactado',
     ];
 
     public function empresa()
@@ -219,5 +220,12 @@ class OrdenCompra extends Transaccion
 
     public function getTieneEntradaAlmacenAttribute(){
         return $this->entradasAlmacen()->count() > 0;
+    }
+
+    public function getAnticipoOrdenAttribute(){
+        if($partida = $this->partidas()->first()){
+            return $partida->anticipo;
+        }
+        return 0;
     }
 }

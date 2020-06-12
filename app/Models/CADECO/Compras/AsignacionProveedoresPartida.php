@@ -58,7 +58,7 @@ class AsignacionProveedoresPartida extends Model
     }
 
     public function ordenCompra(){
-        return $this->belongsTo(OrdenCompra::class, 'id_transaccion_cotizacion', 'id_referente');
+        return $this->hasMany(OrdenCompra::class, 'id_referente', 'id_transaccion_cotizacion');
     }
 
     public function material(){

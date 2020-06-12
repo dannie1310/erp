@@ -281,6 +281,8 @@ class CotizacionCompra  extends Transaccion
                                 'precio_unitario' => $data['precio'][$x],
                                 'descuento' => ($data['descuento_cot'] + $data['descuento'][$x] - (($data['descuento_cot'] * $data['descuento'][$x]) / 100)),
                                 'anticipo' => $data['anticipo'],
+                                'dias_credito' => $data['credito'],
+                                'dias_entrega' => $data['tiempo'],
                                 'no_cotizado' => 0,
                                 'disponibles' => 1,
                                 'id_moneda' => $data['moneda'][$x]

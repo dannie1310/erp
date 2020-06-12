@@ -577,6 +577,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-orden-compra', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@pdfOrdenCompra')->where(['id' => '[0-9]+']);
             $api->post('eliminarOrdenes', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@eliminarOrdenes')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@update')->where(['id' => '[0-9]+']);
         });
 
         //REQUISICIÓN
@@ -603,6 +604,12 @@ $api->version('v1', function ($api) {
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
             $api->get('{id}/getCotizaciones', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@getCotizaciones')->where(['id' => '[0-9]+']);
         });
+
+        // CATALOGOS 
+        $api->group(['prefix' => 'forma-pago-credito'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\FormaPagoCreditoController@index');
+        });
+
     });
 
     /**
