@@ -7,6 +7,9 @@
                    <ImpresionPolizas v-bind:id="id"></ImpresionPolizas>
                 <button type="button" class="btn btn-primary pull-right"  @click="descargar"><i class="fa fa-download"></i>Descargar</button>
             </div>
+            <div class="col-md-12" v-if="solicitud.id_tipo==2 ||solicitud.id_tipo==3">
+                   <ImpresionPolizas v-bind:id="id"></ImpresionPolizas>
+            </div>
         </div>
         <br />
         <div  class="row">

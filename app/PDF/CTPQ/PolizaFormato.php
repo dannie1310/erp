@@ -199,7 +199,7 @@ class PolizaFormato extends Rotation
         foreach ($this->folios as $k => $folio)
         {
             DB::purge('cntpq');
-            \Config::set('database.connections.cntpq.database', $folio->bd_contpaq);
+            \Config::set('database.connections.cntpq.database', ($folio->bd_contpaq!="")?($folio->bd_contpaq):($folio->base_datos_revisada));
             $this->poliza = Poliza::find($folio->id_poliza);
             $this->key_folio = $k;
             $this->empresa = $folio->empresa;

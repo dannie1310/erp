@@ -56,7 +56,11 @@ class SolicitudEdicion extends Model
 
     public function polizas()
     {
-        return $this->hasManyThrough(SolicitudEdicionPartidaPoliza::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id_solicitud_partida","id","id");
+        if($this->id_tipo == 1){
+            return $this->hasManyThrough(SolicitudEdicionPartidaPoliza::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id_solicitud_partida","id","id");
+        } else {
+            return $this->hasManyThrough(Diferencia::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id","id","id_diferencia");
+        }
     }
 
     public function diferencias()

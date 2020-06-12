@@ -12,6 +12,7 @@ namespace App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 use App\Models\CTPQ\Cuenta;
 use App\Models\CTPQ\Poliza;
 use App\Models\CTPQ\PolizaMovimiento;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -101,6 +102,11 @@ class Diferencia extends Model
         {
             Diferencia::create($data);
         }*/
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'base_datos_revisada','AliasBDD');
     }
 
     public function getFechaHoraDeteccionFormatAttribute()
