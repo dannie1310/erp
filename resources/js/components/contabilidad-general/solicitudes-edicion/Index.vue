@@ -10,6 +10,31 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="form-row">
+                            <div class="col">
+                                <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="$data.daterange"/>
+                            </div>
+                            <div class="col">
+                                <select class="form-control" v-model="id_estado">
+                                    <option value>-- Estado --</option>
+                                    <option v-for="item in estados" v-bind:value="item.id">{{ item.descripcion }}</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-control" v-model="id_tipo_solicitud">
+                                    <option value>-- Tipo de Solicitud --</option>
+                                    <option v-for="item in tiposSolicitud" v-bind:value="item.id">{{ item.descripcion }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-12">
                 <div class="table-responsive">
                     <datatable v-bind="$data" />
@@ -20,11 +45,24 @@
 </template>
 
 <script>
+    import DateRangePicker from "../../globals/DateRangePicker";
     export default {
         name: "index-solicitud-edicion-poliza",
-        components: { },
+        components: {DateRangePicker},
         data() {
             return {
+                estados: [
+                    {"id" : 0, "descripcion":"Registrada"},
+                    {"id" : 1, "descripcion":"Autorizada"},
+                    {"id" : 2, "descripcion":"Aplicada"},
+                    {"id" : -2, "descripcion":"Rechazada"}
+                ],
+                tiposSolicitud: [
+                    {"id" : 1, "descripcion":"Edición Masiva de Conceptos y Referencias"},
+                    {"id" : 2, "descripcion":"Edición de Conceptos y Referencias"},
+                    {"id" : 3, "descripcion":"Ordenamiento de Movimientos"},
+                    {"id" : 4, "descripcion":"Edición de Nombres de Cuentas"}
+                    ],
                 cargando: false,
                 HeaderSettings: false,
                 columns: [
@@ -45,6 +83,9 @@
                 data: [],
                 total: 0,
                 query: {sort: 'id', order: 'desc'},
+                daterange: null,
+                id_tipo_solicitud: '',
+                id_estado: '',
             }
         },
         mounted() {
@@ -124,6 +165,32 @@
                     this.paginate(query)
                 },
                 deep: true
+            },
+            'daterange.startDate': {
+                handler(sd) {
+                    this.query.startDate = sd.format('YYYY-MM-DD')
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+                deep: true
+            },
+            'daterange.endDate': {
+                handler(ed) {
+                    this.query.endDate = ed.format('YYYY-MM-DD')
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+                deep: true
+            },
+            id_tipo_solicitud(id_tipo) {
+                this.$data.query.id_tipo_solicitud = id_tipo;
+                this.query.offset = 0;
+                this.paginate()
+            },
+            id_estado(estado) {
+                this.$data.query.id_estado = estado;
+                this.query.offset = 0;
+                this.paginate()
             },
             search(val) {
                 if (this.timer) {

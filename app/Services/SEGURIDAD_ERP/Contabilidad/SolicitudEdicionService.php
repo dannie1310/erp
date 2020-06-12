@@ -95,8 +95,12 @@ class SolicitudEdicionService
             }
         }
 
-        if (isset($data['referencia'])) {
-            $this->repository->where([['referencia', 'LIKE', '%' . $data['referencia'] . '%']]);
+        if (isset($data['id_tipo_solicitud'])) {
+            $this->repository->where([['id_tipo', '=', $data['id_tipo_solicitud']]]);
+        }
+
+        if (isset($data['id_estado'])) {
+            $this->repository->where([['estado', '=', $data['id_estado']]]);
         }
 
         if (isset($data['estado'])) {
@@ -115,6 +119,14 @@ class SolicitudEdicionService
             if (strpos('RECHAZADA', strtoupper($data['estado'])) !== FALSE) {
                 $this->repository->where([['estado', '=', -1]]);
             }
+        }
+
+        if (isset($data['startDate'])) {
+            $this->repository->where([['fecha_hora_registro', '>=', $data['startDate'] ." 00:00:00"]]);
+        }
+
+        if (isset($data['endDate'])) {
+            $this->repository->where([['fecha_hora_registro', '<=', $data['endDate'] ." 23:59:59"]]);
         }
 
         return $this->repository->paginate($data);
