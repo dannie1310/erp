@@ -12,6 +12,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 
 class SolicitudEdicionRepository extends Repository implements RepositoryInterface

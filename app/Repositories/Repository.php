@@ -99,6 +99,12 @@ class Repository implements RepositoryInterface
         return $this;
     }
 
+    public function whereBetween($where)
+    {
+        $this->model = $this->model->whereBetween($where[0], $where[1]);
+        return $this;
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);
