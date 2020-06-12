@@ -58,6 +58,7 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLog;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
+use App\Models\CADECO\Finanzas\PagoEliminadoLog;
 use App\Models\CADECO\Finanzas\Servicio;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
@@ -187,6 +188,7 @@ use App\Models\CADECO\Finanzas\FacturaEliminada;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaPartidaObserver;
 use App\Observers\CADECO\Finanzas\LayoutPagoObserver;
 use App\Observers\CADECO\Finanzas\LayoutPagoPartidaObserver;
+use App\Observers\CADECO\Finanzas\PagoEliminadoLogObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudAltaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudBajaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
@@ -356,6 +358,7 @@ class AppServiceProvider extends ServiceProvider
             FacturaEliminada::observe(FacturaEliminadaObserver::class);
             LayoutPago::observe(LayoutPagoObserver::class);
             LayoutPagoPartida::observe(LayoutPagoPartidaObserver::class);
+            PagoEliminadoLog::observe(PagoEliminadoLogObserver::class);
 
             /**
              * FinanzasCBE

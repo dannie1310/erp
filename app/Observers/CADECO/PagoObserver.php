@@ -29,4 +29,13 @@ class PagoObserver extends TransaccionObserver
     public function created(Pago $pago){
         $pago->cuenta->disminuyeSaldo($pago);
     }
+
+    public function deleting(Pago $pago)
+    {
+        if(is_null($pago->pagoEliminadoRespaldo))
+        {
+            abort(400, "Error al respaldar el pago a eliminar");
+        }
+        $pago->desvincularPolizas();
+    }
 }
