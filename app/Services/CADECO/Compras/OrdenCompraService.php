@@ -78,7 +78,7 @@ class OrdenCompraService
     public function eliminarOrdenes($data){
         try{
             DB::connection('cadeco')->beginTransaction();
-            foreach($data as $orden){
+            foreach($data['data'] as $orden){
                 $orden_compra = $this->repository->show($orden);
                 
                 $orden_compra_eliminada = OrdenCompraEliminada::create([
@@ -103,6 +103,8 @@ class OrdenCompraService
                     'anticipo_saldo' => $orden_compra->anticipo_saldo,
                     'porcentaje_anticipo_pactado' => $orden_compra->porcentaje_anticipo_pactado,
                     'id_costo' => $orden_compra->id_costo,
+                    'idserie' => $orden_compra->complemento->idserie?$orden_compra->complemento->idserie:0,
+                    'idrqctoc_tabla_comparativa' => $orden_compra->complemento->idrqctoc_tabla_comparativa?$orden_compra->complemento->idrqctoc_tabla_comparativa:0,
                     'plazos_entrega_ejecucion' => $orden_compra->complemento->plazos_entrega_ejecucion,
                     'timestamp_registro' => $orden_compra->complemento->timestamp_registro,
                     'registro' => $orden_compra->complemento->registro,
@@ -113,7 +115,7 @@ class OrdenCompraService
                     'domicilio_entrega' => $orden_compra->complemento->domicilio_entrega,
                     'otras_condiciones' => $orden_compra->complemento->otras_condiciones,
                     'fecha_entrega' => $orden_compra->complemento->fecha_entrega,
-                    'con_fianza' => $orden_compra->complemento->con_fianza,
+                    'con_fianza' => $orden_compra->complemento->con_fianza?$orden_compra->complemento->con_fianza:0,
                     'id_tipo_fianza' => $orden_compra->complemento->id_tipo_fianza,
                     'elimino' => auth()->id(),
                     'motivo' => $data['motivo'],

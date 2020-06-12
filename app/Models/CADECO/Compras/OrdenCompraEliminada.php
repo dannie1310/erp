@@ -34,6 +34,8 @@ class OrdenCompraEliminada extends Model
         'anticipo_saldo',
         'porcentaje_anticipo_pactado',
         'id_costo',
+        'idserie',
+        'idrqctoc_tabla_comparativa',
         'plazos_entrega_ejecucion',
         'timestamp_registro',
         'registro',

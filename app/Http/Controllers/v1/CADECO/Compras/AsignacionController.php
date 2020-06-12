@@ -81,6 +81,10 @@ class AsignacionController extends Controller
         return $this->service->getAsignacion($id);
     }
 
+    public function pendientesOrden(){
+        return $this->respondWithCollection($this->service->pendientesOrden());
+    }
+
     public function descargaLayout($id)
     {
 //        Falta descarga

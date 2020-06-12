@@ -73,4 +73,8 @@ class AsignacionProveedoresPartida extends Model
     {
         return number_format($this->cantidad_asignada, 1, '.', ',');
     }
+
+    public function getConOrdenCompraAttribute(){
+        return $this->cotizacion?$this->ordenCompra()->where('id_moneda', '=', $this->cotizacion->id_moneda)->count() > 0:0;
+    }
 }

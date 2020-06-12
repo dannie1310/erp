@@ -62,7 +62,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <button type="button" class="btn btn-primary pull-right" @click="generarOC"  v-if="asignaciones.asignaciones_pendientes_o_compra > 1">Generar Ordenes de Compra</button>
+                                <button type="button" class="btn btn-primary pull-right" @click="generarOC"  v-if="asignaciones.asignaciones_pendientes_o_compra">Generar Ordenes de Compra</button>
                             </div>
                         </div>
                         <div class="row">
@@ -75,7 +75,7 @@
                                                 <th colspan="4" rowspan="4" class="text-left"><h5></h5></th>
                                             </tr>
                                             <tr class="bg-gray-light">
-                                                <th :colspan="!asignaciones.data[id_transaccion].orden_compra?4:6" >
+                                                <th colspan="6" >
                                                     <select
                                                         :disabled="Object.keys(asignaciones.data).length === 1"
                                                         type="text"
@@ -87,9 +87,9 @@
                                                         <option v-for="asignacion in asignaciones.data" :value="asignacion.id_transaccion">{{ asignacion.razon_social }}</option>
                                                     </select>
                                                 </th>
-                                                <th colspan="2"  v-if="!asignaciones.data[id_transaccion].orden_compra">
+                                                <!-- <th colspan="2"  v-if="!asignaciones.data[id_transaccion].orden_compra">
                                                     <button type="button" class="btn btn-primary pull-right" @click="generarOrdenCompraIndividual">Generar Orden Compra</button> 
-                                                </th>
+                                                </th> -->
                                             </tr>
                                             <tr class="bg-gray-light">
                                                 <th colspan="6" >{{asignaciones.data[id_transaccion].sucursal}}</th>
@@ -166,7 +166,7 @@
                                             <td>{{ item.fecha_format}}</td>
                                             <td class="money">{{ item.monto_format}}</td>
                                             <td>
-                                                <div class="custom-control custom-switch">
+                                                <div class="custom-control custom-switch" v-if="$root.can('eliminar_orden_compra')">
                                                     <input type="checkbox" class="custom-control-input" v-if="!item.entradas_almacen" :id="`enable[${i}-${j}]`" v-model="item.eliminar" >&nbsp;
                                                     <label class="custom-control-label" :for="`enable[${i}-${j}]`" :title="item.entradas_almacen?'Con Entrada Almacen':'Eliminar'">
                                                         <i class="fa fa-trash" v-if="!item.entradas_almacen"></i>
@@ -178,13 +178,53 @@
                                 </table>
                             </div>
                             <div class="col-md-12">
-                                <button type="button" class="btn btn-primary pull-right" @click="eliminarOC" :disabled="!eliminarOrdenes">Eliminar Orden(es) de Compra</button>
+                                <button type="button" class="btn btn-primary pull-right" @click="modalEliminacion" v-if="$root.can('eliminar_orden_compra')" :disabled="!eliminarOrdenes">Eliminar Orden(es) de Compra</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <nav>
+            <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-sn" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> ELIMINAR ORDEN(ES) DE COMPRA</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                            <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
+                                        <div class="col-sm-10">
+                                            <textarea
+                                                name="motivo"
+                                                id="motivo"
+                                                class="form-control"
+                                                v-model="motivo"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Motivo"
+                                                :class="{'is-invalid': errors.has('motivo')}"
+                                            ></textarea>
+                                                <div class="error-label" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-danger" @click="eliminarOC"  :disabled="motivo == ''">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
     </span>
 </template>
@@ -199,6 +239,7 @@ export default {
             asignaciones:[],
             cotizacion:[],
             id_transaccion:'',
+            motivo:'',
         }
     },
     mounted() {
@@ -247,15 +288,20 @@ export default {
                 
             });
             if(ordenes_c.length > 0){
-                return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:ordenes_c}
+                return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:{data:ordenes_c, motivo:this.motivo}}
                   ).then(data => {
                     this.getAsignacion();
                 }).finally(()=>{
                     this.cargando = false;
+                    $(this.$refs.modal).modal('hide');
                 })
             }else{
                 swal('Atención', 'Seleccione al menos una orden de compra a eliminar', 'warning');
             }
+        },
+        modalEliminacion(){
+            $(this.$refs.modal).appendTo('body')
+            $(this.$refs.modal).modal('show');
         },
         getAsignacion(){
             this.cargando = true;

@@ -49,6 +49,10 @@ class AsignacionProveedores extends Model
         return $this->belongsTo(OrdenCompraComplemento::class, 'id', 'id_asignacion_proveedor');
     }
 
+    public function scopePendientes($query){
+        return $query->where('estado', '=', 1);
+    }
+
     public function getFechaFormatAttribute(){
         $date = date_create($this->timestamp_registro);
         return date_format($date,"d/m/Y");
@@ -100,14 +104,26 @@ class AsignacionProveedores extends Model
     }
 
     public function getEstadoAsignacionFormatAttribute(){
-        $this->estado = 1;
+        $total = count($this->partidas);
+        $con_Orden = 0;
         foreach($this->partidas as $partida){
-            if($partida->ordenCompra){
-                $this->estado = 2;
-            break;
+            if($partida->con_orden_compra){
+                $con_Orden++;
             }
         }
+        $res = $total > $con_Orden?1:2;
+        $this->estado = $res;
         $this->save();
         return $this->estadoAsignacion->descripcion;
+    }
+
+    public function getOrdenCompraPendienteAttribute(){
+        $partidas = $this->partidas;
+        foreach($partidas as $partida){
+            if(!$partida->con_orden_compra){
+                return true;
+            }
+        }
+        return false;
     }
 }
