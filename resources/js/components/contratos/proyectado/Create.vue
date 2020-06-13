@@ -185,6 +185,7 @@
                                                         <input type="number" class="form-control" :disabled="!partida.es_hoja"
                                                             :name="`cantidad[${i}]`"
                                                             data-vv-as="Cantidad"
+                                                            step="any"
                                                             v-model="partida.cantidad"
                                                             v-validate="{required: partida.es_hoja, decimal:4}"
                                                             :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
