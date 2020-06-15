@@ -8,6 +8,7 @@
 
 namespace App\Models\CTPQ;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartida;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 
@@ -88,6 +89,14 @@ class PolizaMovimiento extends Model
             case 1 :
                 return 'Abono';
                 break;
+        }
+    }
+
+    public function getReferenciaPropuesta(SolicitudEdicionPartida $solicitud_partida){
+        if($solicitud_partida->referencia == ""){
+            return $this->Referencia;
+        } else {
+            return $solicitud_partida->referencia;
         }
     }
 }

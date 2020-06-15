@@ -9,6 +9,9 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Exports\SolicitudEdicionExport;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT1;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT2;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT3;
 use App\Http\Transformers\CTPQ\PolizaMovimientoTransformer;
 use App\Http\Transformers\CTPQ\PolizaTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
@@ -257,6 +260,43 @@ class SolicitudEdicionService
     public function impresionPolizas($id){
         $folios  = $this->repository->show($id)->polizas;
         $pdf = new PolizaFormato($folios);
+        return $pdf->create();
+    }
+
+    public function impresionPolizasPropuesta($id){
+        $tipo =  $this->repository->show($id)->id_tipo;
+        switch ($tipo) {
+            case 1:
+                return $this->impresionPolizasPropuestaTipo1($id);
+                break;
+            case 2:
+                return $this->impresionPolizasPropuestaTipo2($id);
+                break;
+            case 3:
+                return $this->impresionPolizasPropuestaTipo3($id);
+                break;
+        }
+
+    }
+
+    private function impresionPolizasPropuestaTipo1($id)
+    {
+        $folios  = $this->repository->show($id)->polizas;
+        $pdf = new PolizaFormatoPropuestaT1($folios);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasPropuestaTipo2($id)
+    {
+        $folios  = $this->repository->show($id)->polizas;
+        $pdf = new PolizaFormatoPropuestaT2($folios);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasPropuestaTipo3($id)
+    {
+        $folios  = $this->repository->show($id)->polizas;
+        $pdf = new PolizaFormatoPropuestaT3($folios);
         return $pdf->create();
     }
 
