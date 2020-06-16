@@ -32,6 +32,11 @@ class Poliza extends Model
         return $this->hasMany(PolizaMovimiento::class, 'IdPoliza', 'Id');
     }
 
+    public function cuentas()
+    {
+        return $this->hasManyThrough(Cuenta::class, PolizaMovimiento::class, "IdPoliza", "Id","Id", "IdCuenta");
+    }
+
     public function tipo_poliza()
     {
         return $this->belongsTo(TipoPoliza::class, 'TipoPol', 'Id');
@@ -212,10 +217,23 @@ class Poliza extends Model
         return $relaciones_movimientos;
     }
 
-    public function sumaMismoPadre($codigo_padre)
+    public function sumaMismoPadreCargos($codigo_padre)
     {
         $suma = 0;
-        foreach ($this->movimientos()->orderBy('IdCuenta')->get() as $movimiento)
+        foreach ($this->movimientos()->where("TipoMovto","=",0)->orderBy('IdCuenta')->get() as $movimiento)
+        {
+            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            {
+                $suma = $suma + $movimiento->Importe;
+            }
+        }
+        return $suma;
+    }
+
+    public function sumaMismoPadreAbonos($codigo_padre)
+    {
+        $suma = 0;
+        foreach ($this->movimientos()->where("TipoMovto","=",1)->orderBy('IdCuenta')->get() as $movimiento)
         {
             if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
             {
@@ -233,5 +251,47 @@ class Poliza extends Model
         } else {
             return $this->Concepto;
         }
+    }
+
+    public function getCuentasPadresAttribute()
+    {
+        $cuentas_padres = [];
+        foreach($this->cuentas()->orderBy("NumMovto")->get() as $cuenta)
+        {
+            $cuentas_padres [] = $cuenta->cuenta_padre;
+        }
+        return array_unique($cuentas_padres);
+    }
+
+    public function getPrimerMovimiento(Cuenta $cuenta_padre)
+    {
+        $codigo_padre = $cuenta_padre->Codigo;
+        //dd();
+        $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
+        $primer_movimiento = "";
+        foreach($movimientos as $movimiento)
+        {
+            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            {
+                $primer_movimiento = $movimiento;
+                break;
+            }
+        }
+        return $primer_movimiento;
+    }
+
+    public function getMovimientos(Cuenta $cuenta_padre)
+    {
+        $codigo_padre = $cuenta_padre->Codigo;
+        $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
+        $movimientos_cuenta_padre = [];
+        foreach($movimientos as $movimiento)
+        {
+            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            {
+                $movimientos_cuenta_padre[] = $movimiento;
+            }
+        }
+        return $movimientos_cuenta_padre;
     }
 }

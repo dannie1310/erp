@@ -21,7 +21,7 @@ use App\PDF\CTPQ\PolizaFormatoT2;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
-use App\PDF\CTPQ\PolizaFormato;
+use App\PDF\CTPQ\PolizaFormatoT1;
 use App\Repositories\CTPQ\PolizaRepository;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionRepository as Repository;
 use Illuminate\Support\Facades\DB;
@@ -275,7 +275,7 @@ class SolicitudEdicionService
 
     private function impresionPolizasTipo1($id){
         $folios  = $this->repository->show($id)->polizas;
-        $pdf = new PolizaFormato($folios);
+        $pdf = new PolizaFormatoT1($folios);
         return $pdf->create();
     }
 

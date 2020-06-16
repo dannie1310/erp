@@ -18,6 +18,11 @@ class Cuenta extends Model
 
     public $timestamps = false;
 
+    public function cuenta_mayor()
+    {
+        return $this->belongsTo(Cuenta::class,"CtaMayor", "Id");
+    }
+
     public function getCuentaPadreAttribute()
     {
         return self::where('Codigo', '=', str_pad(substr($this->Codigo, 0, 4), strlen($this->Codigo), "0", STR_PAD_RIGHT))->first();

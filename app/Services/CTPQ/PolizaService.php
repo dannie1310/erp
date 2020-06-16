@@ -8,7 +8,7 @@
 
 namespace App\Services\CTPQ;
 use App\Models\CTPQ\Empresa;
-use App\PDF\CTPQ\PolizaFormato;
+use App\PDF\CTPQ\PolizaFormatoT1;
 use App\Repositories\CTPQ\PolizaRepository as Repository;
 use Illuminate\Support\Facades\DB;
 
@@ -103,7 +103,7 @@ class PolizaService
 
     public function pdf($id)
     {
-        $pdf = new PolizaFormato($this->show($id));
+        $pdf = new PolizaFormatoT1($this->show($id));
         return $pdf->create();
     }
 }
