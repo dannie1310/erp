@@ -122,6 +122,9 @@ class PolizaFormato extends Rotation
         $this->Ln(0.48);
         $this->SetX(1);
         $cuenta_padre = '';
+        $this->poliza_encola = $this->poliza;
+        $this->suma_abono = 0;
+        $this->suma_cargo = 0;
 
         foreach ($this->poliza->movimientos()->orderBy('NumMovto', 'asc')->get() as $k => $movimiento)
         {
@@ -165,7 +168,7 @@ class PolizaFormato extends Rotation
             $this->SetFillColor(255, 255, 255);
 
             $this->setXY(1, 24.5);
-            $this->Cell(12.98, 0.6, strlen($this->poliza->Concepto) > 63 ? utf8_decode(substr($this->poliza->Concepto, 0, 63)) . '..' : utf8_decode($this->poliza->Concepto), 'T', 0, 'L', 180);
+            $this->Cell(12.98, 0.6, strlen($this->poliza_encola->Concepto) > 63 ? utf8_decode(substr($this->poliza_encola->Concepto, 0, 63)) . '..' : utf8_decode($this->poliza_encola->Concepto), 'T', 0, 'L', 180);
             $this->setXY(14.15, 24.5);
             $this->Cell(3, 0.6, number_format($this->suma_cargo, 2, ".", ","), 'T', 0, 'R', 180);
             $this->setXY(17.3, 24.5);
@@ -187,9 +190,9 @@ class PolizaFormato extends Rotation
             $this->Cell(3, 0.3, 'CONTPAQ i', '', 0, 'L', 180);
 
             $this->setXY(17.3, 26.2);
-            $this->Cell(3, 0.5, $this->poliza->tipo_poliza->Nombre . ' # ' . $this->poliza->Folio, '', 0, 'R', 180);
+            $this->Cell(3, 0.5, $this->poliza_encola->tipo_poliza->Nombre . ' # ' . $this->poliza_encola->Folio, '', 0, 'R', 180);
             $this->setXY(17.3, 26.6);
-            $this->Cell(3, 0.5, $this->poliza->fecha_mes_letra_format, '', 0, 'R', 180);
+            $this->Cell(3, 0.5, $this->poliza_encola->fecha_mes_letra_format, '', 0, 'R', 180);
             $this->footer_encola = false;
             $this->num = $this->PageNo();
         }
