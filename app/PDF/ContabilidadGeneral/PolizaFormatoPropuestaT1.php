@@ -141,20 +141,20 @@ class PolizaFormatoPropuestaT1 extends Rotation
             $this->Cell(2.29, 0.5,$suma_abonos > 0 ? $suma_abonos : '', '', 0, 'R', 180);
             $this->Ln(0.45);
             $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
-            $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . '..' : '  ' . utf8_decode($movimiento->Concepto), '', 1, 'L', 180);
+            $this->Cell(5.2, 0.3, strlen($this->poliza->partida_solicitud->concepto) > 23 ? '  ' . utf8_decode(substr($this->poliza->partida_solicitud->concepto, 0, 22)) . '..' : '  ' . utf8_decode($this->poliza->partida_solicitud->concepto), '', 1, 'L', 180);
 
             foreach ($this->poliza->poliza->getMovimientos($cuenta_padre) as $k => $movimiento)
             {
                 $this->SetFont('Arial', '', 10);
                 $this->Cell(3.1, 0.5, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
                 $this->Cell(5.2, 0.5, strlen($movimiento->cuenta->Nombre) > 25 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 25)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
-                $this->Cell(4, 0.5, strlen($movimiento->Referencia) > 11 ? utf8_decode(substr($movimiento->Referencia, 0, 9)) . ' ..' : utf8_decode($movimiento->Referencia), '', 0, 'L', 180);
+                $this->Cell(4, 0.5, strlen($movimiento->getReferenciaPropuesta($this->poliza->partida_solicitud)) > 11 ? utf8_decode(substr($movimiento->getReferenciaPropuesta($this->poliza->partida_solicitud), 0, 9)) . ' ..' : utf8_decode($movimiento->getReferenciaPropuesta($this->poliza->partida_solicitud)), '', 0, 'L', 180);
                 $this->Cell(2.5, 0.5, $movimiento->importe_coma_format, '', 0, 'L', 180);
                 $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
                 $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
                 $this->Ln(0.4);
                 $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
-                $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . ' ..' : utf8_decode($movimiento->Concepto), '', 1, 'L', 180);
+                $this->Cell(5.2, 0.3, strlen($this->poliza->partida_solicitud->concepto) > 23 ? '  ' . utf8_decode(substr($this->poliza->partida_solicitud->concepto, 0, 22)) . ' ..' : utf8_decode($this->poliza->partida_solicitud->concepto), '', 1, 'L', 180);
                 $this->suma_abono += $movimiento->abono;
                 $this->suma_cargo += $movimiento->cargo;
             }
