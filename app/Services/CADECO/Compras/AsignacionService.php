@@ -187,7 +187,7 @@ class AsignacionService
                 $importe = ($partida->cotizacion->precio_unitario - $descuento_material) * $partida->cantidad_asignada;
                 $anticipo_material = $partida->cotizacion->precio_unitario - ($partida->cotizacion->anticipo / 100 * $partida->cotizacion->precio_unitario);
 
-                OrdenCompraPartida::create([
+                $partida_oc = OrdenCompraPartida::create([
                     'id_transaccion' => $orden_c->id_transaccion,
                     'id_antecedente' => $orden_c->id_antecedente,
                     'item_antecedente' => $partida->id_item_solicitud,
@@ -200,6 +200,10 @@ class AsignacionService
                     'anticipo' => $partida->cotizacion->anticipo,
                     'descuento' => $partida->cotizacion->descuento,
                     'precio_material' => $partida->cotizacion->precio_unitario,
+                ]);
+
+                $partida_oc->entrega()->create([
+                    'cantidad' => $partida->cantidad_asignada,
                 ]);
 
                 $subtotal = $importe;

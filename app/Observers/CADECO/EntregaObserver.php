@@ -21,6 +21,7 @@ class EntregaObserver
     public function creating(Entrega $entrega)
     {
         $entrega->numero_entrega = 1;
+        $entrega->fecha = date('Y-m-d');
     }
 
     public function updating(Entrega $entrega)
