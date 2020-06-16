@@ -244,7 +244,7 @@ class Poliza extends Model
     }
 
     public function getConceptoPropuesta(SolicitudEdicion $solicitud_edicion){
-        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","2")->toArray());
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","2")->where("id_poliza","=",$this->Id)->toArray());
         if(count($diferencias) > 0){
             return $diferencias[0]["valor_b"];
 
