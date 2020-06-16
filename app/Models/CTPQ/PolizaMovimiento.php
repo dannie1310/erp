@@ -11,6 +11,7 @@ namespace App\Models\CTPQ;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartida;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 
 class PolizaMovimiento extends Model
 {
@@ -97,6 +98,24 @@ class PolizaMovimiento extends Model
             return $this->Referencia;
         } else {
             return $solicitud_partida->referencia;
+        }
+    }
+
+    public function getConceptoPropuesta(SolicitudEdicion $solicitud_edicion){
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","9")->where("id_movimiento","=",$this->Id)->toArray());
+        if(count($diferencias) > 0){
+            return $diferencias[0]["valor_b"];
+        } else {
+            return $this->Concepto;
+        }
+    }
+
+    public function getReferenciaPropuestaT2(SolicitudEdicion $solicitud_edicion){
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","8")->where("id_movimiento","=",$this->Id)->toArray());
+        if(count($diferencias) > 0){
+            return $diferencias[0]["valor_b"];
+        } else {
+            return $this->Referencia;
         }
     }
 }

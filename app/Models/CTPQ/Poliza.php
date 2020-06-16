@@ -9,6 +9,7 @@
 namespace App\Models\CTPQ;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use DateTime;
@@ -222,5 +223,15 @@ class Poliza extends Model
             }
         }
         return $suma;
+    }
+
+    public function getConceptoPropuesta(SolicitudEdicion $solicitud_edicion){
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","2")->toArray());
+        if(count($diferencias) > 0){
+            return $diferencias[0]["valor_b"];
+
+        } else {
+            return $this->Concepto;
+        }
     }
 }

@@ -17,6 +17,7 @@ use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartida;
 
 class Diferencia extends Model
 {
@@ -39,6 +40,11 @@ class Diferencia extends Model
         "id_cuenta",
         "id_relacion_movimiento"
     ];
+
+    public function partida_solicitud()
+    {
+        return $this->hasOne(SolicitudEdicionPartida::class,"id_diferencia","id");
+    }
 
     public function busqueda()
     {
