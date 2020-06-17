@@ -344,8 +344,14 @@ class SolicitudEdicionService
 
     private function impresionPolizasPropuestaTipo3($id)
     {
-        $folios  = $this->repository->show($id)->polizas;
-        $pdf = new PolizaFormatoPropuestaT3($folios);
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoPropuestaT3($polizas, $solicitud, $diferencias[0]->empresa);
         return $pdf->create();
     }
 

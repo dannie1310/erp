@@ -8,6 +8,7 @@
 
 namespace App\Models\CTPQ;
 
+use App\Models\CADECO\Movimiento;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
@@ -85,6 +86,26 @@ class Poliza extends Model
                 throw $e;
             }
         }
+    }
+
+    public function getPolizaReferencia(RelacionPolizas $relacion)
+    {
+        $poliza_relacionada = null;
+        try {
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
+            $poliza_relacionada = Poliza::find($relacion->id_poliza_b);
+            $poliza_relacionada->load("movimientos");
+            foreach ($poliza_relacionada->movimientos as $movimiento)
+            {
+                $movimiento->load("cuenta");
+            }
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $relacion->base_datos_a);
+        } catch (\Exception $e) {
+
+        }
+        return $poliza_relacionada;
     }
 
     public function getPolizaRelacionada($busqueda)
@@ -261,6 +282,50 @@ class Poliza extends Model
             $cuentas_padres [] = $cuenta->cuenta_mayor;
         }
         return array_unique($cuentas_padres);
+    }
+
+    public function getCuentasPadresReordenadas(SolicitudEdicion $solicitud_edicion)
+    {
+        $parametro = Parametro::find(1);
+        $cuentas_padres = [];
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->toArray());
+
+        if(count($diferencias) > 0){
+            $relacion = RelacionPolizas::where("id_poliza_a","=", $this->Id)
+                ->where("tipo_relacion","=",$diferencias[0]["tipo_busqueda"])
+                ->where("base_datos_a",Config::get('database.connections.cntpq.database'))->first();
+            $poliza_relacion = $this->getPolizaReferencia($relacion);
+            foreach($poliza_relacion->movimientos as $movimiento_relacionado)
+            {
+                $cuenta = Cuenta::where("Codigo", $movimiento_relacionado->cuenta->getCodigoLongitud($parametro->longitud_cuenta))->first();
+                try{
+                    $movimiento = $this->movimientos()->where("Importe",$movimiento_relacionado->Importe)
+                        ->where("TipoMovto", $movimiento_relacionado->TipoMovto)
+                        ->where("IdCuenta", $cuenta->Id)
+                        ->first();
+                } catch (\Exception $e){
+                }
+
+                $cuentas_padres [] = $movimiento->cuenta->cuenta_mayor;
+            }
+            return array_unique($cuentas_padres);
+        } else {
+            return $this->cuentas_padres;
+        }
+    }
+
+    public function getMovimientosReordenados(Cuenta $cuenta_padre)
+    {
+        $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
+        $movimientos_cuenta_padre = [];
+        foreach($movimientos as $movimiento)
+        {
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
+            {
+                $movimientos_cuenta_padre[] = $movimiento;
+            }
+        }
+        return $movimientos_cuenta_padre;
     }
 
     public function getPrimerMovimiento(Cuenta $cuenta_padre)

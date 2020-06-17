@@ -55,6 +55,33 @@ class Cuenta extends Model
         }
     }
 
+    public function getCodigoLongitud($lcodigo_b){
+        $lcodigo_a = strlen($this->Codigo);
+
+        if($lcodigo_b == $lcodigo_a)
+        {
+            return $this->Codigo;
+        }
+        else if ($lcodigo_b == 11 && $lcodigo_a == 13) {
+
+            $g1 = substr($this->Codigo, 0, 4);
+            $g2 = substr($this->Codigo, 5, 2);
+            $g3 = substr($this->Codigo, 8, 2);
+            $g4 = substr($this->Codigo, 10, 3);
+
+            $codigo = $g1 .  $g2 . $g3 . $g4;
+        } else if ($lcodigo_a == 11 && $lcodigo_b == 13) {
+
+            $g1 = substr($this->Codigo, 0, 4);
+            $g2 = substr($this->Codigo, 4, 2);
+            $g3 = substr($this->Codigo, 6, 2);
+            $g4 = substr($this->Codigo, 8, 3);
+
+            $codigo = $g1 . '0' . $g2 . '0' . $g3 . $g4;
+        }
+        return $codigo;
+    }
+
     public function getTipoAttribute()
     {
         switch ($this->CtaMayor){
