@@ -217,12 +217,12 @@ class Poliza extends Model
         return $relaciones_movimientos;
     }
 
-    public function sumaMismoPadreCargos($codigo_padre)
+    public function sumaMismoPadreCargos($cuenta)
     {
         $suma = 0;
         foreach ($this->movimientos()->where("TipoMovto","=",0)->orderBy('IdCuenta')->get() as $movimiento)
         {
-            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta->Codigo)
             {
                 $suma = $suma + $movimiento->Importe;
             }
@@ -230,12 +230,12 @@ class Poliza extends Model
         return $suma;
     }
 
-    public function sumaMismoPadreAbonos($codigo_padre)
+    public function sumaMismoPadreAbonos($cuenta)
     {
         $suma = 0;
         foreach ($this->movimientos()->where("TipoMovto","=",1)->orderBy('IdCuenta')->get() as $movimiento)
         {
-            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta->Codigo)
             {
                 $suma = $suma + $movimiento->Importe;
             }
@@ -258,7 +258,7 @@ class Poliza extends Model
         $cuentas_padres = [];
         foreach($this->cuentas()->orderBy("NumMovto")->get() as $cuenta)
         {
-            $cuentas_padres [] = $cuenta->cuenta_padre;
+            $cuentas_padres [] = $cuenta->cuenta_mayor;
         }
         return array_unique($cuentas_padres);
     }
@@ -267,11 +267,12 @@ class Poliza extends Model
     {
         $codigo_padre = $cuenta_padre->Codigo;
         //dd();
+
         $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
         $primer_movimiento = "";
         foreach($movimientos as $movimiento)
         {
-            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
             {
                 $primer_movimiento = $movimiento;
                 break;
@@ -282,12 +283,11 @@ class Poliza extends Model
 
     public function getMovimientos(Cuenta $cuenta_padre)
     {
-        $codigo_padre = $cuenta_padre->Codigo;
         $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
         $movimientos_cuenta_padre = [];
         foreach($movimientos as $movimiento)
         {
-            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
             {
                 $movimientos_cuenta_padre[] = $movimiento;
             }

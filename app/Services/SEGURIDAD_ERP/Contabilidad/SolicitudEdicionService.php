@@ -18,6 +18,7 @@ use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CTPQ\Poliza;
 use App\PDF\CTPQ\PolizaFormatoT2;
+use App\PDF\CTPQ\PolizaFormatoT3;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
@@ -289,6 +290,19 @@ class SolicitudEdicionService
         }
         $polizas  = array_values(array_unique($polizas));
         $pdf = new PolizaFormatoT2($polizas, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasTipo3($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoT3($polizas, $diferencias[0]->empresa);
         return $pdf->create();
     }
 

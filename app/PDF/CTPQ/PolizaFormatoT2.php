@@ -128,8 +128,8 @@ class PolizaFormatoT2 extends Rotation
         $this->suma_cargo = 0;
 
         foreach($this->poliza->cuentas_padres as $cuenta_padre){
-            $suma_cargos = number_format($this->poliza->sumaMismoPadreCargos($cuenta_padre->Codigo), 2, ".", ",");
-            $suma_abonos = number_format($this->poliza->sumaMismoPadreAbonos($cuenta_padre->Codigo), 2, ".", ",");
+            $suma_cargos = number_format($this->poliza->sumaMismoPadreCargos($cuenta_padre), 2, ".", ",");
+            $suma_abonos = number_format($this->poliza->sumaMismoPadreAbonos($cuenta_padre), 2, ".", ",");
             $movimiento = $this->poliza->getPrimerMovimiento($cuenta_padre);
 
             $this->SetFont('Arial', 'B', 10);

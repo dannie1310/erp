@@ -18,14 +18,29 @@ class Cuenta extends Model
 
     public $timestamps = false;
 
-    public function cuenta_mayor()
+    public function getCuentaMayorAttribute()
     {
-        return $this->belongsTo(Cuenta::class,"CtaMayor", "Id");
+        if($this->asociacion->cuenta_superior->CtaMayor == 1)
+        {
+            return $this->asociacion->cuenta_superior;
+        } else {
+           return  $this->asociacion->cuenta_superior->getCuentaMayorAttribute();
+        }
+    }
+
+    public function getCuentaSuperiorAttribute()
+    {
+        return $this->asociacion->cuenta_superior;
+
+    }
+
+    public function asociacion() {
+        return $this->hasOne(Asociacion::class, "IdSubCtade", "Id");
     }
 
     public function getCuentaPadreAttribute()
     {
-        return self::where('Codigo', '=', str_pad(substr($this->Codigo, 0, 4), strlen($this->Codigo), "0", STR_PAD_RIGHT))->first();
+        return $this->cuenta_mayor;
     }
 
     public function getCuentaFormatAttribute()
@@ -37,6 +52,28 @@ class Cuenta extends Model
         if(strlen($this->Codigo) == 11)
         {
             return substr($this->Codigo, 0, 4).'-'.substr($this->Codigo, 4, 2).'-'.substr($this->Codigo, 6, 2).'-'.substr($this->Codigo, 8, 3);
+        }
+    }
+
+    public function getTipoAttribute()
+    {
+        switch ($this->CtaMayor){
+            case 1 :
+                return 'De Mayor';
+                break;
+            case 2 :
+                if($this->Afectable == 0){
+                    return 'No Mayor';
+                }else {
+                    return 'Afectable';
+                }
+                break;
+            case 3 :
+                return 'De Titulo';
+                break;
+            case 4 :
+                return 'De Subtitulo';
+                break;
         }
     }
 }
