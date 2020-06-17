@@ -153,6 +153,11 @@ class Estimacion extends Transaccion
         return $this->belongsTo(EstimacionEliminada::class, 'id_transaccion');
     }
 
+    public function partidasRelacionadas()
+    {
+        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_antecedente');
+    }
+
     /**
      * Acciones
      */

@@ -41,19 +41,23 @@ class PagoAnticipoDestajo extends Pago
         });
     }
 
-    public function solicitud(){
+    public function solicitud()
+    {
         return $this->belongsTo(SolicitudAnticipoDestajo::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function transaccion(){
+    public function transaccion()
+    {
         return $this->belongsTo(Transaccion::class, 'id_referente', 'id_transaccion');
     }
 
-    public function anticipo(){
+    public function anticipo()
+    {
         return $this->hasOne(Anticipo::class, "id_antecedente", "id_transaccion");
     }
 
-    public function generaAnticipo(){
+    public function generaAnticipo()
+    {
         $anticipo = $this->anticipo;
         if($anticipo){
             return $anticipo;
@@ -76,7 +80,8 @@ class PagoAnticipoDestajo extends Pago
         }
     }
 
-    private function validaAnticipo(Anticipo $anticipo){
+    private function validaAnticipo(Anticipo $anticipo)
+    {
         if(!$anticipo){
             DB::connection('cadeco')->rollBack();
             abort(400, 'Hubo un error durante el registro del anticipo');
