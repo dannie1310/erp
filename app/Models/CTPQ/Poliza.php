@@ -274,6 +274,16 @@ class Poliza extends Model
         }
     }
 
+    public function getConceptoOriginalT2(SolicitudEdicion $solicitud_edicion){
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","2")->where("id_poliza","=",$this->Id)->toArray());
+        if(count($diferencias) > 0){
+            return $diferencias[0]["valor_a"];
+
+        } else {
+            return $this->Concepto;
+        }
+    }
+
     public function getCuentasPadresAttribute()
     {
         $cuentas_padres = [];

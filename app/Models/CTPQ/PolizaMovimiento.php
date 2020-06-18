@@ -111,10 +111,28 @@ class PolizaMovimiento extends Model
         }
     }
 
+    public function getConceptoOriginalT2(SolicitudEdicion $solicitud_edicion){
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","9")->where("id_movimiento","=",$this->Id)->toArray());
+        if(count($diferencias) > 0){
+            return $diferencias[0]["valor_a"];
+        } else {
+            return $this->Concepto;
+        }
+    }
+
     public function getReferenciaPropuestaT2(SolicitudEdicion $solicitud_edicion){
         $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","8")->where("id_movimiento","=",$this->Id)->toArray());
         if(count($diferencias) > 0){
             return $diferencias[0]["valor_b"];
+        } else {
+            return $this->Referencia;
+        }
+    }
+
+    public function getReferenciaOriginalT2(SolicitudEdicion $solicitud_edicion){
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","8")->where("id_movimiento","=",$this->Id)->toArray());
+        if(count($diferencias) > 0){
+            return $diferencias[0]["valor_a"];
         } else {
             return $this->Referencia;
         }
