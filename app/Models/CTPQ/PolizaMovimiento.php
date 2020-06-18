@@ -9,6 +9,7 @@
 namespace App\Models\CTPQ;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartida;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartidaPoliza;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
@@ -118,4 +119,15 @@ class PolizaMovimiento extends Model
             return $this->Referencia;
         }
     }
+
+    public function getConceptoOriginalT1(SolicitudEdicionPartidaPoliza $poliza){
+        $movimiento = $poliza->movimientos->where("id_movimiento", $this->Id)->first();
+        return $movimiento->concepto_original;
+    }
+
+    public function getReferenciaOriginalT1(SolicitudEdicionPartidaPoliza $poliza){
+        $movimiento = $poliza->movimientos->where("id_movimiento", $this->Id)->first();
+        return $movimiento->referencia_original;
+    }
+
 }

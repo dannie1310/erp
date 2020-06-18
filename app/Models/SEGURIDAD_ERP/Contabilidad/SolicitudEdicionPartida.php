@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;

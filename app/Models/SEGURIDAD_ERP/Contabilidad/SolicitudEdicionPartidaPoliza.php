@@ -55,7 +55,7 @@ class SolicitudEdicionPartidaPoliza extends Model
 
     public function scopeAutorizadas($query)
     {
-        return $query->where('estado', 1);
+        return $query->where('solicitud_edicion_partida_polizas.estado', 1);
     }
 
 }
