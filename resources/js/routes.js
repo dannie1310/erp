@@ -973,6 +973,17 @@ export const routes = [
                             middleware: [auth, context],
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'unificacion-proveedores-create',
+                        component: require('./components/catalogos/unificacion-proveedores/Create').default,
+                        meta: {
+                            title: 'Registrar Unificación de Proveedores',
+                            breadcrumb: { parent: 'unificacion-proveedores', name: 'REGISTRAR UNIFICACIÓN PROVEEDORES'},
+                            middleware: [auth, context],
+                            permission: 'registrar_unificacion_proveedor'
+                        }
+                    },
                 ]
             },
         ]

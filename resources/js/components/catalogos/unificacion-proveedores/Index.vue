@@ -1,13 +1,17 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <button @click="create" class="btn btn-app btn-info pull-right">
+                <i class="fa fa-plus"></i> Registrar
+            </button>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
                     </div>
-
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -20,7 +24,7 @@
 
 <script>
     export default {
-    name: "orden-compra-index",
+    name: "unificacion-proveedores-index",
     data() {
         return {
             HeaderSettings: false,
@@ -48,6 +52,9 @@
             })
     },
     methods: {
+        create(){
+            this.$router.push({name: 'unificacion-proveedores-create'});
+        },
         paginate() {
             this.cargando = true;
             return this.$store.dispatch('catalogos/unificacion-proveedores/paginate', { params: this.query})
