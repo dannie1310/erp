@@ -150,7 +150,7 @@ class PolizaFormatoT3 extends Rotation
                 $this->Cell(3.1, 0.5, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
                 $this->Cell(5.2, 0.5, strlen($movimiento->cuenta->Nombre) > 25 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 25)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
                 $this->Cell(4, 0.5, strlen($movimiento->Referencia) > 11 ? utf8_decode(substr($movimiento->Referencia, 0, 9)) . ' ..' : utf8_decode($movimiento->Referencia), '', 0, 'L', 180);
-                $this->Cell(2.5, 0.5, $movimiento->importe_coma_format, '', 0, 'L', 180);
+                $this->Cell(2.5, 0.5, $movimiento->importe_coma_format, '', 0, 'R', 180);
                 $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
                 $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
                 $this->Ln(0.4);
