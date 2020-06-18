@@ -303,10 +303,13 @@ class Poliza extends Model
                         ->where("TipoMovto", $movimiento_relacionado->TipoMovto)
                         ->where("IdCuenta", $cuenta->Id)
                         ->first();
+                    if($movimiento){
+                        $cuentas_padres [] = $movimiento->cuenta->cuenta_mayor;
+                    } else {
+                        $solicitud_edicion->partidas->where("id_diferencia","=", $diferencias[0]["id"])->first()->cancelaPartidaSolicitudReordenamientoImprocedente();
+                    }
                 } catch (\Exception $e){
                 }
-
-                $cuentas_padres [] = $movimiento->cuenta->cuenta_mayor;
             }
             return array_unique($cuentas_padres);
         } else {
@@ -314,15 +317,33 @@ class Poliza extends Model
         }
     }
 
-    public function getMovimientosReordenados(Cuenta $cuenta_padre)
+    public function getMovimientosReordenados(Cuenta $cuenta_padre, SolicitudEdicion $solicitud_edicion)
     {
-        $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
+        $parametro = Parametro::find(1);
+        $cuentas_padres = [];
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->toArray());
+        $relacion = RelacionPolizas::where("id_poliza_a","=", $this->Id)
+            ->where("tipo_relacion","=",$diferencias[0]["tipo_busqueda"])
+            ->where("base_datos_a",Config::get('database.connections.cntpq.database'))->first();
+        $poliza_relacion = $this->getPolizaReferencia($relacion);
         $movimientos_cuenta_padre = [];
-        foreach($movimientos as $movimiento)
+        foreach($poliza_relacion->movimientos as $movimiento_relacionado)
         {
-            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
-            {
-                $movimientos_cuenta_padre[] = $movimiento;
+            $cuenta = Cuenta::where("Codigo", $movimiento_relacionado->cuenta->getCodigoLongitud($parametro->longitud_cuenta))->first();
+            try{
+                $movimiento = $this->movimientos()->where("Importe",$movimiento_relacionado->Importe)
+                    ->where("TipoMovto", $movimiento_relacionado->TipoMovto)
+                    ->where("IdCuenta", $cuenta->Id)
+                    ->first();
+                if($movimiento){
+                    if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
+                    {
+                        $movimientos_cuenta_padre[] = $movimiento;
+                    }
+                } else {
+                    $solicitud_edicion->partidas->where("id_diferencia","=", $diferencias[0]["id"])->first()->cancelaPartidaSolicitudReordenamientoImprocedente();
+                }
+            } catch (\Exception $e){
             }
         }
         return $movimientos_cuenta_padre;
@@ -330,10 +351,22 @@ class Poliza extends Model
 
     public function getPrimerMovimiento(Cuenta $cuenta_padre)
     {
-        $codigo_padre = $cuenta_padre->Codigo;
-        //dd();
-
         $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
+        $primer_movimiento = "";
+        foreach($movimientos as $movimiento)
+        {
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
+            {
+                $primer_movimiento = $movimiento;
+                break;
+            }
+        }
+        return $primer_movimiento;
+    }
+
+    public function getPrimerMovimientoReordenado(Cuenta $cuenta_padre, SolicitudEdicion $solicitud_edicion)
+    {
+        $movimientos = $this->getMovimientosReordenados($cuenta_padre, $solicitud_edicion);
         $primer_movimiento = "";
         foreach($movimientos as $movimiento)
         {

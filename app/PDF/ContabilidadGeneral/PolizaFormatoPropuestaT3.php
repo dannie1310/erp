@@ -131,7 +131,7 @@ class PolizaFormatoPropuestaT3 extends Rotation
         foreach($this->poliza->getCuentasPadresReordenadas($this->solicitud) as $cuenta_padre){
             $suma_cargos = number_format($this->poliza->sumaMismoPadreCargos($cuenta_padre), 2, ".", ",");
             $suma_abonos = number_format($this->poliza->sumaMismoPadreAbonos($cuenta_padre), 2, ".", ",");
-            $movimiento = $this->poliza->getPrimerMovimiento($cuenta_padre);
+            $movimiento = $this->poliza->getPrimerMovimientoReordenado($cuenta_padre, $this->solicitud);
 
             $this->SetFont('Arial', 'B', 10);
             $this->SetFillColor(255, 255, 255);
@@ -145,13 +145,13 @@ class PolizaFormatoPropuestaT3 extends Rotation
             $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
             $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . '..' : '  ' . utf8_decode($movimiento->Concepto), '', 1, 'L', 180);
 
-            foreach ($this->poliza->getMovimientosReordenados($cuenta_padre) as $k => $movimiento)
+            foreach ($this->poliza->getMovimientosReordenados($cuenta_padre, $this->solicitud) as $k => $movimiento)
             {
                 $this->SetFont('Arial', '', 10);
                 $this->Cell(3.1, 0.5, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
                 $this->Cell(5.2, 0.5, strlen($movimiento->cuenta->Nombre) > 25 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 25)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
                 $this->Cell(4, 0.5, strlen($movimiento->Referencia) > 11 ? utf8_decode(substr($movimiento->Referencia, 0, 9)) . ' ..' : utf8_decode($movimiento->Referencia), '', 0, 'L', 180);
-                $this->Cell(2.5, 0.5, $movimiento->importe_coma_format, '', 0, 'L', 180);
+                $this->Cell(2.5, 0.5, $movimiento->importe_coma_format, '', 0, 'R', 180);
                 $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
                 $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
                 $this->Ln(0.4);
