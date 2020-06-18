@@ -4,6 +4,7 @@
 namespace App\PDF\CTPQ;
 
 
+use App\Models\CTPQ\Parametro;
 use App\Models\CTPQ\Poliza;
 use DateInterval;
 use DateTime;
@@ -81,17 +82,17 @@ class PolizaFormatoT3 extends Rotation
 
         $this->setXY(0.9, 2.3);
         $this->SetFont('Arial', '', 7);
-        $this->Cell(0, 0, utf8_decode('Dirección:'), 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Dirección: ') . Parametro::getDireccion(), 0, 0, 'L');
         $this->setXY(17, 2.3);
-        $this->Cell(0, 0, utf8_decode('Código postal:'), 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Código postal: ') . Parametro::getCodPostal(), 0, 0, 'L');
 
         $this->setXY(0.9, 2.6);
         $this->SetFont('Arial', '', 7);
-        $this->Cell(0, 0, utf8_decode('Reg. Fed.:'), 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Reg. Fed.: '). Parametro::getRFC(), 0, 0, 'L');
         $this->setXY(5.83, 2.6);
-        $this->Cell(0, 0, utf8_decode('Reg. Cámara:'), 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Reg. Cámara: ') . Parametro::getRegCamara(), 0, 0, 'L');
         $this->setXY(12.9, 2.6);
-        $this->Cell(0, 0, utf8_decode('Cta.Estatal:'), 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Cta.Estatal: ') . Parametro::getRegEstatal(), 0, 0, 'L');
 
         $this->partidasTitle();
     }

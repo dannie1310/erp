@@ -29,4 +29,35 @@ class Parametro extends Model
         return $longitud;
     }
 
+    public static function getRFC(){
+        $parametros = Parametro::find(1);
+        return $parametros->RFC;
+    }
+
+    public static function getRegCamara(){
+        $parametros = Parametro::find(1);
+        return $parametros->RegCamara;
+    }
+
+    public static function getRegEstatal(){
+        $parametros = Parametro::find(1);
+        return $parametros->RegEstatal;
+    }
+
+    public static function getDireccion(){
+        $parametros = Parametro::find(1);
+        return $parametros->Direccion;
+    }
+
+    public static function getRazonSocial(){
+        $parametros = Parametro::find(1);
+        return $parametros->RazonSocial;
+    }
+
+    public static function getCodPostal(){
+        $parametros = Parametro::find(1);
+        return $parametros->CodPostal;
+    }
+
+
 }
