@@ -2,9 +2,9 @@
     <span v-if="solicitud">
         <div class="row">
             <div class="col-md-12" >
-                <ImpresionPolizasPropuesta v-bind:id="id" v-if="solicitud.estado == 0 || solicitud.estado == 1"></ImpresionPolizasPropuesta>
-                <ImpresionPolizasOriginal v-bind:id="id" v-if="solicitud.estado == 2"></ImpresionPolizasOriginal>
-                <ImpresionPolizas v-bind:id="id"></ImpresionPolizas>
+                <ImpresionPolizasPropuesta v-bind:id="id" v-if="(solicitud.estado == 0 || solicitud.estado == 1) && solicitud.id_tipo != 4"></ImpresionPolizasPropuesta>
+                <ImpresionPolizasOriginal v-bind:id="id" v-if="solicitud.estado == 2 && solicitud.id_tipo != 4"></ImpresionPolizasOriginal>
+                <ImpresionPolizas v-bind:id="id" v-if="solicitud.id_tipo != 4"></ImpresionPolizas>
                 <button type="button" class="btn btn-primary pull-right"  @click="descargar" v-if="solicitud.id_tipo==1"><i class="fa fa-download"></i>Descargar</button>
             </div>
         </div>
