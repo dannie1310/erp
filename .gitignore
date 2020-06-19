@@ -21,3 +21,4 @@ yarn-error.log
 /public/mix-manifest.json
 /storage
 /public/img/logo_temp.png
+/public/php_errors.log

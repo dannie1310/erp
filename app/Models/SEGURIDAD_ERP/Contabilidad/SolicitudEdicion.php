@@ -56,7 +56,11 @@ class SolicitudEdicion extends Model
 
     public function polizas()
     {
-        return $this->hasManyThrough(SolicitudEdicionPartidaPoliza::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id_solicitud_partida","id","id");
+        if($this->id_tipo == 1){
+            return $this->hasManyThrough(SolicitudEdicionPartidaPoliza::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id_solicitud_partida","id","id");
+        } else {
+            return $this->hasManyThrough(Diferencia::class,SolicitudEdicionPartida::class,"id_solicitud_edicion","id","id","id_diferencia");
+        }
     }
 
     public function diferencias()
@@ -201,7 +205,6 @@ class SolicitudEdicion extends Model
 
         return $no_bd;
     }
-
 
     public static function getFolio()
     {
@@ -436,6 +439,9 @@ class SolicitudEdicion extends Model
                             $movimiento_contpaq->Referencia = $poliza_obj->partida_solicitud->referencia;
                         }
                         $movimiento_contpaq->save();
+                        $log = $movimiento_contpaq->logs()->orderBy("id","desc")->first();
+                        $log->id_solicitud_partida = $poliza_obj->id;
+                        $log->save();
                     }
                 }
                 DB::connection('seguridad')->commit();
@@ -461,7 +467,7 @@ class SolicitudEdicion extends Model
                 $this->save();
                 $partidas = $this->partidasActivas;
                 $cantidad_afectaciones_esperadas = count($partidas);
-                $cantidad_afectaciones_afectadas = 0;
+                $cantidad_afectaciones_aplicadas = 0;
                 foreach ($partidas as $partida){
                     DB::purge('cntpq');
                     \Config::set('database.connections.cntpq.database', $partida->diferencia->base_datos_revisada);
@@ -478,14 +484,17 @@ class SolicitudEdicion extends Model
                         $movimiento_contpaq->Concepto = $partida->diferencia->valor_b;
                         $movimiento_contpaq->save();
                     }
+                    $log = $movimiento_contpaq->logs()->orderBy("id","desc")->first();
+                    $log->id_solicitud_partida = $partida->id;
+                    $log->save();
                     $partida->estado = 2;
                     $partida->save();
                     $partida->diferencia->activo = 0;
                     $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
                     $partida->diferencia->save();
-                    $cantidad_afectaciones_afectadas++;
+                    $cantidad_afectaciones_aplicadas++;
                 }
-                if($cantidad_afectaciones_afectadas == $cantidad_afectaciones_esperadas){
+                if($cantidad_afectaciones_aplicadas == $cantidad_afectaciones_esperadas){
                     DB::connection('seguridad')->commit();
                 } else {
                     DB::connection('seguridad')->rollBack();
@@ -513,8 +522,9 @@ class SolicitudEdicion extends Model
                 $this->save();
                 $partidas = $this->partidasActivas;
                 $cantidad_afectaciones_esperadas = count($partidas);
-                $cantidad_afectaciones_afectadas = 0;
+                $cantidad_afectaciones_aplicadas = 0;
                 foreach ($partidas as $partida){
+                    $partida_improcedente  = false;
 
                     $relacion_movimientos = RelacionMovimientos::where("id_poliza_a","=",$partida->diferencia->id_poliza)
                     ->where("base_datos_a","=", $partida->diferencia->base_datos_revisada)->get();
@@ -573,19 +583,25 @@ class SolicitudEdicion extends Model
                         DB::connection('cntpq')->beginTransaction();
                         foreach($arreglo_a as $hash=>$arreglo){
                             $movimiento_contpaq = PolizaMovimiento::find($arreglo["id_movimiento"]);
-                            $movimiento_contpaq->NumMovto=$movimiento_contpaq->NumMovto+$no_movtos_a;
+                            $movimiento_contpaq->NumMovto=$movimiento_contpaq->NumMovto*(-1);
                             $movimiento_contpaq->save();
                         }
                         $r = 0;
                         foreach($hashs_b as $k=>$hash_b){
-                            DB::purge('cntpq');
-                            \Config::set('database.connections.cntpq.database', $arreglo_a[$hashs_a[$k]]["base_datos"]);
-
-
                             try{
                                 $movimiento_contpaq = PolizaMovimiento::find($arreglo_a[$hash_b]["id_movimiento"]);
                                 $movimiento_contpaq->NumMovto=$arreglo_b[$hash_b]["num_movto"];
                                 $movimiento_contpaq->save();
+
+
+                            }catch(\Exception $e)
+                            {
+                                $error_edicion_movimientos++;
+                            }
+                            $log = $movimiento_contpaq->logs()->orderBy("id","desc")->first();
+                            $log->id_solicitud_partida = $partida->id;
+                            $log->save();
+                            try{
                                 $relacion_movimientos[$r]->id_movimiento_a = $arreglo_a[$hash_b]["id_movimiento"];
                                 $relacion_movimientos[$r]->fecha_hora_asociacion = date('Y-m-d H:i:s');
                                 $relacion_movimientos[$r]->tipo_movto_a = $arreglo_a[$hash_b]["tipo_movto"];
@@ -598,7 +614,7 @@ class SolicitudEdicion extends Model
                                 $relacion_movimientos[$r]->save();
                             }catch(\Exception $e)
                             {
-                                $error_edicion_movimientos++;
+                                abort(500, $e->getMessage());
                             }
                             $r ++;
                         }
@@ -607,10 +623,7 @@ class SolicitudEdicion extends Model
                             DB::connection('cntpq')->commit();
                         } else {
                             DB::connection('cntpq')->rollBack();
-                            foreach ($relacion_movimientos as $relacion_movimiento){
-                                $busqueda_movimiento = New BusquedaDiferenciasMovimientos($relacion_movimiento, $partida->diferencia->busqueda);
-                                $busqueda_movimiento->buscarDiferenciasMovimientos();
-                            }
+                            $partida_improcedente  = true;
                         }
 
                     } else {
@@ -619,17 +632,21 @@ class SolicitudEdicion extends Model
                         return $this;
                     }
 
+                    if($partida_improcedente)
+                    {
+                        $partida->cancelaPartidaSolicitudReordenamientoImprocedente();
+                    } else {
+                        $partida->estado = 2;
+                        $partida->save();
 
-                    $partida->estado = 2;
-                    $partida->save();
+                        $partida->diferencia->activo = 0;
+                        $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
+                        $partida->diferencia->save();
+                    }
 
-                    $partida->diferencia->activo = 0;
-                    $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
-                    $partida->diferencia->save();
-
-                    $cantidad_afectaciones_afectadas++;
+                    $cantidad_afectaciones_aplicadas++;
                 }
-                if($cantidad_afectaciones_afectadas == $cantidad_afectaciones_esperadas){
+                if($cantidad_afectaciones_aplicadas == $cantidad_afectaciones_esperadas){
                     DB::connection('seguridad')->commit();
                 } else {
                     DB::connection('seguridad')->rollBack();
@@ -657,13 +674,19 @@ class SolicitudEdicion extends Model
                 $this->save();
                 $partidas = $this->partidasActivas;
                 $cantidad_afectaciones_esperadas = count($partidas);
-                $cantidad_afectaciones_afectadas = 0;
+                $cantidad_afectaciones_aplicadas = 0;
                 foreach ($partidas as $partida){
                     DB::purge('cntpq');
                     \Config::set('database.connections.cntpq.database', $partida->diferencia->base_datos_revisada);
+                    DB::connection('cntpq')->beginTransaction();
+
                     $cuenta_contpaq = Cuenta::find($partida->diferencia->id_cuenta);
                     $cuenta_contpaq->Nombre = $partida->diferencia->valor_b;
                     $cuenta_contpaq->save();
+
+                    $log = $cuenta_contpaq->logs()->orderBy("id","desc")->first();
+                    $log->id_solicitud_partida = $partida->id;
+                    $log->save();
 
                     $partida->estado = 2;
                     $partida->save();
@@ -671,10 +694,11 @@ class SolicitudEdicion extends Model
                     $partida->diferencia->activo = 0;
                     $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
                     $partida->diferencia->save();
+                    DB::connection('cntpq')->commit();
 
-                    $cantidad_afectaciones_afectadas++;
+                    $cantidad_afectaciones_aplicadas++;
                 }
-                if($cantidad_afectaciones_afectadas == $cantidad_afectaciones_esperadas){
+                if($cantidad_afectaciones_aplicadas == $cantidad_afectaciones_esperadas){
                     DB::connection('seguridad')->commit();
                 } else {
                     DB::connection('seguridad')->rollBack();
