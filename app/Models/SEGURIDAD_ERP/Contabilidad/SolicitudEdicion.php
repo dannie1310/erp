@@ -439,6 +439,9 @@ class SolicitudEdicion extends Model
                             $movimiento_contpaq->Referencia = $poliza_obj->partida_solicitud->referencia;
                         }
                         $movimiento_contpaq->save();
+                        $log = $movimiento_contpaq->logs()->orderBy("id","desc")->first();
+                        $log->id_solicitud_partida = $poliza_obj->id;
+                        $log->save();
                     }
                 }
                 DB::connection('seguridad')->commit();
@@ -481,6 +484,9 @@ class SolicitudEdicion extends Model
                         $movimiento_contpaq->Concepto = $partida->diferencia->valor_b;
                         $movimiento_contpaq->save();
                     }
+                    $log = $movimiento_contpaq->logs()->orderBy("id","desc")->first();
+                    $log->id_solicitud_partida = $partida->id;
+                    $log->save();
                     $partida->estado = 2;
                     $partida->save();
                     $partida->diferencia->activo = 0;
@@ -672,9 +678,15 @@ class SolicitudEdicion extends Model
                 foreach ($partidas as $partida){
                     DB::purge('cntpq');
                     \Config::set('database.connections.cntpq.database', $partida->diferencia->base_datos_revisada);
+                    DB::connection('cntpq')->beginTransaction();
+
                     $cuenta_contpaq = Cuenta::find($partida->diferencia->id_cuenta);
                     $cuenta_contpaq->Nombre = $partida->diferencia->valor_b;
                     $cuenta_contpaq->save();
+
+                    $log = $cuenta_contpaq->logs()->orderBy("id","desc")->first();
+                    $log->id_solicitud_partida = $partida->id;
+                    $log->save();
 
                     $partida->estado = 2;
                     $partida->save();
@@ -682,6 +694,7 @@ class SolicitudEdicion extends Model
                     $partida->diferencia->activo = 0;
                     $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
                     $partida->diferencia->save();
+                    DB::connection('cntpq')->commit();
 
                     $cantidad_afectaciones_aplicadas++;
                 }

@@ -14,6 +14,9 @@ use App\Models\CTPQ\Empresa;
 
 class CuentaObserver
 {
+    /**
+     * @param Cuenta $cuenta
+     */
     public function updated(Cuenta $cuenta)
     {
         $base_datos = config('database.connections.cntpq.database');

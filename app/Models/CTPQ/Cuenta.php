@@ -8,6 +8,7 @@
 
 namespace App\Models\CTPQ;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use Illuminate\Database\Eloquent\Model;
 
 class Cuenta extends Model
@@ -32,6 +33,11 @@ class Cuenta extends Model
     {
         return $this->asociacion->cuenta_superior;
 
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(LogEdicion::class, 'id_cuenta', 'Id');
     }
 
     public function asociacion() {
