@@ -9,8 +9,12 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use App\Utils\BusquedaDiferenciasMovimientos;
 
 class SolicitudEdicionPartida extends Model
 {
@@ -28,7 +32,7 @@ class SolicitudEdicionPartida extends Model
 
     public function scopeActivas($query)
     {
-        return $query->whereHas('polizasAutorizadas')->orWhere("estado","1")->orWhere("estado","2");
+        return $query->whereHas('polizasAutorizadas')->orWhere("solicitud_edicion_partidas.estado","1")->orWhere("solicitud_edicion_partidas.estado","2");
     }
 
     public function solicitud()
@@ -150,6 +154,29 @@ class SolicitudEdicionPartida extends Model
         else {
             return $this->numero_movimientos;
         }
+    }
+
+    public function cancelaPartidaSolicitudReordenamientoImprocedente()
+    {
+        DB::connection('seguridad')->beginTransaction();
+        try{
+            $this->estado = -1;
+            $this->save();
+            $relacion_movimientos = RelacionMovimientos::where("id_poliza_a", "=", $this->diferencia->id_poliza)
+                ->where("base_datos_a", "=", $this->diferencia->base_datos_revisada)
+                ->get();
+            foreach ($relacion_movimientos as $relacion_movimiento) {
+                $busqueda_movimiento = New BusquedaDiferenciasMovimientos($relacion_movimiento, $this->diferencia->busqueda);
+                $busqueda_movimiento->buscarDiferenciasMovimientos();
+            }
+            $this->diferencia->activo = 0;
+            $this->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
+            $this->diferencia->save();
+        }catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+        DB::connection('seguridad')->commit();
     }
 
 }

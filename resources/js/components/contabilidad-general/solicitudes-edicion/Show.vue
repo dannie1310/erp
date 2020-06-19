@@ -1,10 +1,11 @@
 <template>
     <span v-if="solicitud">
         <div class="row">
-
-            <div class="col-md-12" v-if="solicitud.id_tipo==1">
-                   <ImpresionPolizas v-bind:id="id"></ImpresionPolizas>
-                <button type="button" class="btn btn-primary pull-right"  @click="descargar"><i class="fa fa-download"></i>Descargar</button>
+            <div class="col-md-12" >
+                <ImpresionPolizasPropuesta v-bind:id="id" v-if="solicitud.estado == 0 || solicitud.estado == 1"></ImpresionPolizasPropuesta>
+                <ImpresionPolizasOriginal v-bind:id="id" v-if="solicitud.estado == 2"></ImpresionPolizasOriginal>
+                <ImpresionPolizas v-bind:id="id"></ImpresionPolizas>
+                <button type="button" class="btn btn-primary pull-right"  @click="descargar" v-if="solicitud.id_tipo==1"><i class="fa fa-download"></i>Descargar</button>
             </div>
         </div>
         <br />
@@ -288,10 +289,12 @@
 
 <script>
     import ImpresionPolizas from "./partials/ImpresionPolizas";
+    import ImpresionPolizasPropuesta from "./partials/ImpresionPolizasPropuesta";
+    import ImpresionPolizasOriginal from "./partials/ImpresionPolizasOriginal";
     export default {
         name: "Show",
         props: ['id'],
-        components: {ImpresionPolizas},
+        components: {ImpresionPolizas, ImpresionPolizasPropuesta, ImpresionPolizasOriginal},
         data() {
             return {
                 cargando: false,

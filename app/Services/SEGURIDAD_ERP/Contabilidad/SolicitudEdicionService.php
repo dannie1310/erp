@@ -9,15 +9,23 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Exports\SolicitudEdicionExport;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT1;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT2;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT3;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT1;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT2;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT3;
 use App\Http\Transformers\CTPQ\PolizaMovimientoTransformer;
 use App\Http\Transformers\CTPQ\PolizaTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CTPQ\Poliza;
+use App\PDF\CTPQ\PolizaFormatoT2;
+use App\PDF\CTPQ\PolizaFormatoT3;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
-use App\PDF\CTPQ\PolizaFormato;
+use App\PDF\CTPQ\PolizaFormatoT1;
 use App\Repositories\CTPQ\PolizaRepository;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionRepository as Repository;
 use Illuminate\Support\Facades\DB;
@@ -254,10 +262,146 @@ class SolicitudEdicionService
         return $partidas;
     }
 
-    public function impresionPolizas($id)
+    public function impresionPolizas($id){
+        $tipo =  $this->repository->show($id)->id_tipo;
+        switch ($tipo) {
+            case 1:
+                return $this->impresionPolizasTipo1($id);
+                break;
+            case 2:
+                return $this->impresionPolizasTipo2($id);
+                break;
+            case 3:
+                return $this->impresionPolizasTipo3($id);
+                break;
+        }
+    }
+
+    private function impresionPolizasTipo1($id){
+        $folios  = $this->repository->show($id)->polizas;
+        $pdf = new PolizaFormatoT1($folios);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasTipo2($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoT2($polizas, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasTipo3($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoT3($polizas, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    public function impresionPolizasPropuesta($id){
+        $tipo =  $this->repository->show($id)->id_tipo;
+        switch ($tipo) {
+            case 1:
+                return $this->impresionPolizasPropuestaTipo1($id);
+                break;
+            case 2:
+                return $this->impresionPolizasPropuestaTipo2($id);
+                break;
+            case 3:
+                return $this->impresionPolizasPropuestaTipo3($id);
+                break;
+        }
+    }
+
+    private function impresionPolizasPropuestaTipo1($id)
     {
         $folios  = $this->repository->show($id)->polizas;
-        $pdf = new PolizaFormato($folios);
+        $pdf = new PolizaFormatoPropuestaT1($folios);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasPropuestaTipo2($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoPropuestaT2($polizas, $solicitud, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasPropuestaTipo3($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoPropuestaT3($polizas, $solicitud, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    public function impresionPolizasOriginal($id){
+        $tipo =  $this->repository->show($id)->id_tipo;
+        switch ($tipo) {
+            case 1:
+                return $this->impresionPolizasOriginalTipo1($id);
+                break;
+            case 2:
+                return $this->impresionPolizasOriginalTipo2($id);
+                break;
+            case 3:
+                return $this->impresionPolizasOriginalTipo3($id);
+                break;
+        }
+    }
+
+    private function impresionPolizasOriginalTipo1($id)
+    {
+        $folios  = $this->repository->show($id)->polizas;
+        $pdf = new PolizaFormatoOriginalT1($folios);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasOriginalTipo2($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoOriginalT2($polizas, $solicitud, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasOriginalTipo3($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoOriginalT3($polizas, $solicitud, $diferencias[0]->empresa);
         return $pdf->create();
     }
 
