@@ -11,6 +11,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 use App\Exports\SolicitudEdicionExport;
 use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT1;
 use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT2;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT3;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT1;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT2;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT3;
@@ -400,7 +401,7 @@ class SolicitudEdicionService
             $polizas[] = $diferencia->poliza;
         }
         $polizas  = array_values(array_unique($polizas));
-        $pdf = new PolizaFormatoOriginalT1($polizas, $solicitud, $diferencias[0]->empresa);
+        $pdf = new PolizaFormatoOriginalT3($polizas, $solicitud, $diferencias[0]->empresa);
         return $pdf->create();
     }
 

@@ -206,7 +206,6 @@ class SolicitudEdicion extends Model
         return $no_bd;
     }
 
-
     public static function getFolio()
     {
         $solicitud = SolicitudEdicion::orderBy('numero_folio', 'DESC')->first();
@@ -578,19 +577,25 @@ class SolicitudEdicion extends Model
                         DB::connection('cntpq')->beginTransaction();
                         foreach($arreglo_a as $hash=>$arreglo){
                             $movimiento_contpaq = PolizaMovimiento::find($arreglo["id_movimiento"]);
-                            $movimiento_contpaq->NumMovto=$movimiento_contpaq->NumMovto+$no_movtos_a;
+                            $movimiento_contpaq->NumMovto=$movimiento_contpaq->NumMovto*(-1);
                             $movimiento_contpaq->save();
                         }
                         $r = 0;
                         foreach($hashs_b as $k=>$hash_b){
-                            DB::purge('cntpq');
-                            \Config::set('database.connections.cntpq.database', $arreglo_a[$hashs_a[$k]]["base_datos"]);
-
-
                             try{
                                 $movimiento_contpaq = PolizaMovimiento::find($arreglo_a[$hash_b]["id_movimiento"]);
                                 $movimiento_contpaq->NumMovto=$arreglo_b[$hash_b]["num_movto"];
                                 $movimiento_contpaq->save();
+
+
+                            }catch(\Exception $e)
+                            {
+                                $error_edicion_movimientos++;
+                            }
+                            $log = $movimiento_contpaq->logs()->orderBy("id","desc")->first();
+                            $log->id_solicitud_partida = $partida->id;
+                            $log->save();
+                            try{
                                 $relacion_movimientos[$r]->id_movimiento_a = $arreglo_a[$hash_b]["id_movimiento"];
                                 $relacion_movimientos[$r]->fecha_hora_asociacion = date('Y-m-d H:i:s');
                                 $relacion_movimientos[$r]->tipo_movto_a = $arreglo_a[$hash_b]["tipo_movto"];
@@ -603,7 +608,7 @@ class SolicitudEdicion extends Model
                                 $relacion_movimientos[$r]->save();
                             }catch(\Exception $e)
                             {
-                                $error_edicion_movimientos++;
+                                abort(500, $e->getMessage());
                             }
                             $r ++;
                         }

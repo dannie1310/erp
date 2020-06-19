@@ -402,4 +402,73 @@ class Poliza extends Model
         }
         return $movimientos_cuenta_padre;
     }
+
+    public function getCuentasPadresOrdenOriginal(SolicitudEdicion $solicitud_edicion)
+    {
+        $parametro = Parametro::find(1);
+        $cuentas_padres = [];
+        $diferencia = $solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->first();
+        $partida_solicitud = $diferencia->partida_solicitud;
+        $movimientos_ordenados = [];
+
+        if($diferencia){
+
+            foreach($this->movimientos as $movimiento)
+            {
+                $log = LogEdicion::where("id_solicitud_partida","=", $partida_solicitud->id)
+                    ->where("id_movimiento",$movimiento->Id)
+                    ->first();
+                if($log){
+                    $movimientos_ordenados[$log->valor_original]=$movimiento;
+                } else {
+                    return $this->cuentas_padres;
+                }
+
+            }
+            ksort($movimientos_ordenados);
+            foreach($movimientos_ordenados as $movimiento)
+            {
+                $cuentas_padres [] = $movimiento->cuenta->cuenta_mayor;
+            }
+            return array_unique($cuentas_padres);
+        } else {
+            return $this->cuentas_padres;
+        }
+    }
+
+    public function getMovimientosOrdenOriginal(Cuenta $cuenta_padre, SolicitudEdicion $solicitud_edicion)
+    {
+        $parametro = Parametro::find(1);
+        $cuentas_padres = [];
+        $diferencia = $solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->first();
+        $partida_solicitud = $diferencia->partida_solicitud;
+        $movimientos_ordenados = [];
+
+        if($diferencia){
+
+            foreach($this->movimientos as $movimiento)
+            {
+                $log = LogEdicion::where("id_solicitud_partida","=", $partida_solicitud->id)
+                    ->where("id_movimiento",$movimiento->Id)
+                    ->first();
+                if($log){
+                    $movimientos_ordenados[$log->valor_original]=$movimiento;
+                } else {
+                    return $this->getMovimientos($cuenta_padre);
+                }
+
+            }
+            ksort($movimientos_ordenados);
+            foreach($movimientos_ordenados as $movimiento)
+            {
+                if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
+                {
+                    $movimientos_cuenta_padre[] = $movimiento;
+                }
+            }
+            return $movimientos_cuenta_padre;
+        } else {
+            return $this->getMovimientos($cuenta_padre);
+        }
+    }
 }
