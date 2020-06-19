@@ -1,10 +1,10 @@
 <template>
     <div class="row">
-        <!-- <div class="col-12">
+        <div class="col-12">
             <button @click="create" v-if="$root.can('registrar_cotizacion_compra')" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
-        </div> -->
+        </div>
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -85,18 +85,18 @@
                     case 0:
                         return {
                             color: '#f39c12',
-                            descripcion: 'Por Autorizar'
+                            descripcion: 'Registrada'
                         }
                     case 1:
                         return {
                             color: '#00a65a',
-                            descripcion: 'Autorizada'
+                            descripcion: 'Parcialmente Fincada'
                         }
                     case 2:
                         return {
                             color: '#7889d6',
-                            descripcion: 'Tercer caso'
-                        }
+                            descripcion: 'Fincada'
+                        }  
                     default:
                         return {
                             color: '#d2d6de',
@@ -131,7 +131,7 @@
                         empresa: (cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----',
                         observaciones: cotizacion.observaciones,
                         importe: cotizacion.importe,
-                        estado: this.getEstado((cotizacion.solicitud) ? cotizacion.solicitud.estado : null),
+                        estado: this.getEstado(cotizacion.estado),
                         solicitud: $.extend({}, {
                             show: (cotizacion.solicitud) ? true : false,
                             id: (cotizacion.solicitud) ? cotizacion.solicitud.id : null,
@@ -140,6 +140,7 @@
                         buttons: $.extend({}, {
                             show: true,
                             id: cotizacion.id,
+                            delete: self.$root.can('eliminar_cotizacion_compra')  ? true : false,
                         })
                     }));
                 },

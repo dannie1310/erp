@@ -1,6 +1,5 @@
 <template>
     <span v-if="solicitud">
-
         <div class="row">
             <div class="col-md-12" >
                 <ImpresionPolizasPropuesta v-bind:id="id" v-if="solicitud.estado == 0 || solicitud.estado == 1"></ImpresionPolizasPropuesta>
