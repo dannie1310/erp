@@ -9,6 +9,9 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Exports\SolicitudEdicionExport;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartidaPoliza;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT1;
 use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT2;
 use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT3;
@@ -100,6 +103,27 @@ class SolicitudEdicionService
             $tipos = CtgTipoSolicitudEdicion::query()->where([['descripcion', 'LIKE', '%'.$data['tipo'].'%']])->get();
             foreach ($tipos as $tipo){
                 $this->repository->whereOr([['id_tipo', '=', $tipo->id]]);
+            }
+        }
+
+        if (isset($data['id_empresa'])) {
+            $empresa = Empresa::find($data['id_empresa']);
+            $ids_solicitud = [];
+            $diferencias = Diferencia::where("base_datos_revisada",$empresa->AliasBDD)->get();
+            $partidas = SolicitudEdicionPartidaPoliza::where("bd_contpaq",$empresa->AliasBDD)->get();
+            foreach($diferencias as $diferencia){
+                if( $diferencia->partida_solicitud){
+                    $ids_solicitud[] = $diferencia->partida_solicitud->solicitud->id;
+                }
+            }
+            foreach($partidas as $partida){
+                $ids_solicitud[] = $partida->partida_solicitud->solicitud->id;
+            }
+
+            $ids_solicitud = array_values(array_unique($ids_solicitud));
+
+            foreach ($ids_solicitud as $id_solicitud){
+                $this->repository->whereOr([['id', '=', $id_solicitud]]);
             }
         }
 
