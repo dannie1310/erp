@@ -64,13 +64,13 @@
                     {"id" : 2, "descripcion":"Aplicada"},
                     {"id" : -2, "descripcion":"Rechazada"}
                 ],
-                tiposSolicitud: [
+
+                cargando: false,tiposSolicitud: [
                     {"id" : 1, "descripcion":"Edición Masiva de Conceptos y Referencias"},
                     {"id" : 2, "descripcion":"Edición de Conceptos y Referencias"},
                     {"id" : 3, "descripcion":"Ordenamiento de Movimientos"},
                     {"id" : 4, "descripcion":"Edición de Nombres de Cuentas"}
-                    ],
-                cargando: false,
+                ],
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index_corto', sortable: false },
