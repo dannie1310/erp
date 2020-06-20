@@ -15,6 +15,12 @@
                     <div class="card-header">
                         <div class="form-row">
                             <div class="col">
+                                <select class="form-control" v-model="id_empresa">
+                                    <option value>-- Empresa --</option>
+                                    <option v-for="item in empresas" v-bind:value="item.id">{{ item.nombre }}</option>
+                                </select>
+                            </div>
+                            <div class="col">
                                 <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="$data.daterange"/>
                             </div>
                             <div class="col">
@@ -51,6 +57,7 @@
         components: {DateRangePicker},
         data() {
             return {
+                empresas : [],
                 estados: [
                     {"id" : 0, "descripcion":"Registrada"},
                     {"id" : 1, "descripcion":"Autorizada"},
@@ -86,9 +93,11 @@
                 daterange: null,
                 id_tipo_solicitud: '',
                 id_estado: '',
+                id_empresa:'',
             }
         },
         mounted() {
+            this.getEmpresas();
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -107,6 +116,21 @@
                         this.$store.commit('contabilidadGeneral/solicitud-edicion-poliza/SET_META', data.meta);
                     })
                     .finally(() => {
+                        this.cargando = false;
+                    })
+            },
+            getEmpresas() {
+                this.empresas = [];
+                this.cargando = true;
+                return this.$store.dispatch('contabilidadGeneral/empresa/index', {
+                    params: {
+                        sort: 'Nombre',
+                        order: 'asc',
+                        scope:'solicitudes',
+                    }
+                })
+                    .then(data => {
+                        this.empresas = data.data;
                         this.cargando = false;
                     })
             },
@@ -189,6 +213,11 @@
             },
             id_estado(estado) {
                 this.$data.query.id_estado = estado;
+                this.query.offset = 0;
+                this.paginate()
+            },
+            id_empresa(id_empresa) {
+                this.$data.query.id_empresa = id_empresa;
                 this.query.offset = 0;
                 this.paginate()
             },
