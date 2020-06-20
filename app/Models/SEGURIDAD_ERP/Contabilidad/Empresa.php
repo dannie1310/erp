@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
@@ -150,6 +151,20 @@ class Empresa extends Model
     public function scopeDisponibles($query)
     {
         return $query->whereRaw('(Consolidadora = 0 or Consolidadora is null)')->whereNull('IdConsolidadora');
+    }
+
+    public function scopeSolicitudes($query){
+        return $query->whereHas('partidas_por_poliza')->orWhereHas('partidas_por_diferencias');
+    }
+
+    public function partidas_por_diferencias()
+    {
+        return $this->hasManyThrough(SolicitudEdicionPartida::class,Diferencia::class,"base_datos_revisada","id_diferencia","AliasBDD","id");
+    }
+
+    public function partidas_por_poliza()
+    {
+        return $this->hasManyThrough(SolicitudEdicionPartida::class,SolicitudEdicionPartidaPoliza::class,"bd_contpaq","id","AliasBDD","id_solicitud_partida");
     }
 
     public function actualizaEmpresas($data)
