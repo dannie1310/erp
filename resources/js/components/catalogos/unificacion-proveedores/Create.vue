@@ -51,9 +51,25 @@
                                     </div>
                             </div>
                             <div class="col-md-6">
-                                 <div class="form-group">
-                                        <label><b>Tipo Empresa Actualizado: </b></label>
-                                     {{ detalle_unificacion.tipo_empresa_format }}
+                                 <div class="form-group row error-content" v-if="actualizarTipoEmpresa(detalle_unificacion.tipo_empresa)">
+                                        <label for="tipo_empresa_actualizado" class="col-md-4 col-form-label">Tipo Empresa Actualizado: </label>
+                                        <div class="con-md-8">
+                                         <select
+                                                
+                                                type="text"
+                                                name="tipo_empresa_actualizado"
+                                                data-vv-as="Tipo"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="tipo_empresa_actualizado"
+                                                v-model="detalle_unificacion.tipo_empresa_actualizado"
+                                                :class="{'is-invalid': errors.has('tipo_empresa_actualizado')}"
+                                            >
+                                                <option value>--SELECCIONE--</option>
+                                                <option v-for="(tipo, i) in tipos_empresa" :value="i">{{ tipo }}</option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('tipo_empresa_actualizado')">{{ errors.first('tipo_empresa_actualizado') }}</div>
+                                        </div>
                                     </div>
                             </div>
                             
@@ -89,7 +105,13 @@ export default {
     mounted() {
         this.getEmpresas();
     },
+    computed: {
+        
+    },
     methods: {
+        actualizarTipoEmpresa(tipo){
+            return tipo == 1 || tipo == 2 || tipo == 3;
+        },
         getDetalleUnificacion(){
             this.cargando = true;
             this.detalle_unificacion = null;
