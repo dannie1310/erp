@@ -52,6 +52,16 @@ class Item extends Model
         return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
     }
 
+    public function transaccion()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function transaccion_antecedente()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function getCantidadFormatAttribute()
     {
         return number_format($this->cantidad,3,'.', ',');

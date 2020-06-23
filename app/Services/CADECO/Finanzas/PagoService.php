@@ -83,5 +83,4 @@ class PagoService
     {
         return $this->show($id)->eliminar($data['data'][0]);
     }
-
 }

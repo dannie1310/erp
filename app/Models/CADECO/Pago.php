@@ -168,184 +168,7 @@ class Pago extends Transaccion
 
                 case 327681: // Pago a cuenta o a cuenta por aplicar
                     //Desaplicar --- linea 80 sp_desaplicar_cheque
-                    $ordenes_pago = Transaccion::withoutGlobalScopes()
-                        ->where('numero_folio', '=', $this->numero_folio)
-                        ->where('tipo_transaccion', '=', 68)
-                        ->where('opciones', '=', 2)
-                        ->where('id_obra', '=', Context::getIdObra())
-                        ->orderBy('id_transaccion', 'desc')//eliminar
-                        ->get();
-
-                    if($ordenes_pago) // sp_desaplicar_pago
-                    {
-                        foreach ($ordenes_pago as $orden_pago) {
-                            $pago_a_desaplicar = Transaccion::withoutGlobalScopes()->where('id_transaccion', '=', $orden_pago->id_referente)->where('id_obra', '=', Context::getIdObra())->first();
-                            if ($pago_a_desaplicar && $pago_a_desaplicar->tipo_transaccion == 52) //validacion especial cuando su referente es una estimación
-                            {
-                                if ($pago_a_desaplicar->estado != 2) {
-                                    //El estado de la estimacion es erroneo...
-                                    dd("error en la estimacion estado...");
-                                }
-
-                                /**
-                                 * Editar el estado de la estimación
-                                 */
-                                $consulta = "'Pago 327681: editar estimación: id_referente = " . $orden_pago->id_referente . " estado = " . $pago_a_desaplicar->estado . " cambio a 1'";
-                                $pago_a_desaplicar->update([
-                                    'estado' => 1
-                                ]);
-                                $this->crearLogRespaldo($consulta);
-                                /*
-                                * ejecuta sp_revertir_transaccion
-                                */
-                                if(Item::where('id_antecedente', '=', $pago_a_desaplicar->id_transaccion)->count('id_item') != 0)
-                                {
-                                    //El estado de la estimacion es erroneo...
-                                    dd("error: La transaccion %d está asociada a otras transacciones'..");
-                                }
-                                foreach ($pago_a_desaplicar->items as $item)
-                                {
-                                    $consulta = "'Pago 327681: eliminar movimiento: ".$item->movimiento->id_movimiento." ,".$item->movimiento->id_item."'";
-                                    $this->crearLogRespaldo($consulta);
-                                    $item->movimiento->delete();
-                                }
-                                $consulta = "'Pago 327681: editar estimación: id_transaccion = " . $pago_a_desaplicar->id_transaccion . " estado = " . $pago_a_desaplicar->estado . " cambio a 0, impreso 0, saldo = monto".$pago_a_desaplicar->monto."'";
-                                $pago_a_desaplicar->update([
-                                    'estado' => 0,
-                                    'impreso' => 0,
-                                    'saldo' => $pago_a_desaplicar->monto
-                                ]);
-                                $this->crearLogRespaldo($consulta);
-                            }
-
-                            //inicia validaciones con orden pago
-                            if ($orden_pago->items->count('id_item') == 0)
-                            {
-                                //El estado de la orden pago es erroneo...
-                                dd("Imposible determinar los items de la factura, no puede ser anulado...");
-                            }
-
-                            foreach ($orden_pago->items as $partida)
-                            {
-                              /*  if($partida->partida_antecedente && !($partida->partida_antecedente->numero > 0 && $partida->partida_antecedente->numero < 7 ))
-                                {
-                                    //El estado de la orden pago es erroneo...
-                                    dd("Tipo de item no soportado, no puede ser anulado...");
-                                }*/
-                                switch ($partida->partida_antecedente->numero)
-                                {
-                                    case 1:
-                                        // actualizamos el monto pagado del lote original
-                                        // atencion, falta el tipo_cambio del registro 68
-                                        $inventario = Inventario::where('id_item','=', $partida->partida_antecedente->id_item)->first();
-                                        if($inventario)
-                                        {
-                                            $monto_a_modificar = $inventario->monto_pagado - ($partida->importe * $pago_a_desaplicar->tipo_cambio);
-
-                                            $consulta = "'Pago 327681: tipo 0 - editar inventario: id_lote = " . $inventario->id_lote . " monto_pagado = " . $inventario->monto_pagado . " cambio a ".$monto_a_modificar."'";
-
-                                            $inventario->update([
-                                                'monto_pagado' => $monto_a_modificar
-                                            ]);
-                                            $this->crearLogRespaldo($consulta);
-
-                                            //ejecuta sp_distribuir_pagado_inventarios
-                                            if(is_null($inventario->almacen->tipo_almacen))
-                                            {
-                                                dd( "no existe el lote ");
-                                            }
-                                            $tipo_distribucion = null;
-                                            if($inventario->material || $inventario->almacen)
-                                            {
-                                                if (($inventario->material->tipo_material == 1 || $inventario->material->tipo_material == 2) || ($inventario->almacen->tipo_almacen == 0 && $inventario->almacen->tipo_almacen == 3 && $inventario->almacen->tipo_almacen == 4))
-                                                {
-                                                    $tipo_distribucion = 1;
-                                                }
-                                                elseif ($inventario->material->tipo_material == 4 || $inventario->material->tipo_material == 8)
-                                                {
-                                                    $tipo_distribucion = 2;
-                                                }
-                                            }
-
-                                            if(!$tipo_distribucion)
-                                            {
-                                                dd("RAISERROR('SYSERROR: no se puede determinar el tipo de distribucion del lote %d', 16, 1, @id_lote)");
-                                            }
-                                            elseif ($tipo_distribucion == 1)
-                                            {
-                                                if($inventario->cantidad <= 0)
-                                                {
-                                                    dd("SYSERROR: cantidad erronea para el lote %d");
-                                                }
-                                                $monto_aplicado = 0;
-                                                dd($inventario->movimientos->where('cantidad', '>', 0));
-                                                foreach ($inventario->movimientos->where('cantidad', '>', 0) as $movimiento)
-                                                {
-                                                    $monto_a_modificar = ROUND(($inventario->monto_pagado * $movimiento->cantidad / $inventario->cantidad), 2);
-                                                    $consulta = "'Pago 327681: editar movimiento ( tipodistribucion:1 ) : id_movimiento = " . $movimiento->id_movimiento . " monto_pagado = " . $movimiento->monto_pagado . " cambio a " . $monto_a_modificar . "'";
-                                                    $movimiento->update([
-                                                        'monto_pagado' => $monto_a_modificar
-                                                    ]);
-                                                    $this->crearLogRespaldo($consulta);
-                                                    $monto_aplicado += $monto_a_modificar;
-                                                }
-
-                                                foreach ($inventario->inventarios_hijos as $in)
-                                                {
-                                                    if($in->cantidad > 0)
-                                                    {
-                                                        $monto_a_modificar = ROUND(($inventario->monto_pagado * $in->cantidad / $inventario->cantidad), 2);
-                                                        $consulta = "'Pago 327681: editar inventario_hijo ( tipodistribucion:1 ) : id_lote = " . $inventario->id_lote . " monto_pagado = " . $inventario->monto_pagado . " cambio a " . $monto_a_modificar . "'";
-                                                        $in->update([
-                                                            'monto_pagado' => $monto_a_modificar
-                                                        ]);
-                                                        $this->crearLogRespaldo($consulta);
-
-                                                        //-- redistribuimos en forma recursiva
-			                                            //EXEC @retcode = sp_distribuir_pagado_inventarios @id_lote_hijo
-
-                                                        $monto_aplicado += $monto_a_modificar;
-                                                    }
-                                                    else{
-                                                        $monto_a_modificar = ROUND(($inventario->monto_pagado * (-1) * $in->cantidad / $inventario->cantidad), 2);
-                                                        $in->update([
-                                                           'monto_pagado' => $monto_a_modificar
-                                                        ]);
-
-                                                    }
-                                                }
-                                            }
-
-
-                                        }
-                                        break;
-
-                                    case 1:
-                                        break;
-                                    case 2:
-                                        break;
-                                    case 3:
-                                        break;
-                                    case 4:
-                                        break;
-                                    case 5:
-                                        break;
-                                    case 6:
-                                        break;
-                                    case 7:
-                                        break;
-
-                                    default:
-                                        dd("Tipo de item no soportado, no puede ser anulado...");
-                                        break;
-                                }
-                            }
-                            dd("orden_p",$orden_pago->items);
-
-                            dd("PASO");
-                        }
-                    }
-
+                    $this->desaplicarCheque();
                     break;
             }
 
@@ -417,5 +240,264 @@ class Pago extends Transaccion
             'id_transaccion' => $this->id_transaccion,
             'consulta' => $consulta
         ]);
+    }
+
+    /**
+     * Este método implementa la lógica del procedimiento almacenado
+     * sp_desaplicar_cheque
+     */
+    private function desaplicarCheque()
+    {
+        $ordenes_pago = Transaccion::withoutGlobalScopes()
+            ->where('numero_folio', '=', $this->numero_folio)
+            ->where('tipo_transaccion', '=', 68)
+            ->where('opciones', '=', 2)
+            ->where('id_obra', '=', Context::getIdObra())
+            ->get();
+
+        if ($ordenes_pago)
+        {
+            foreach ($ordenes_pago as $orden_pago)
+            {
+                /**
+                 * sp_desaplicar_pago
+                 */
+                $this->desaplicarPago($orden_pago);
+                $orden_pago->delete();
+            }
+        }
+
+        if($this->opciones != 0)
+        {
+            $aplicaciones_manual = AplicacionManual::where('id_antecedente', '=', $this->id_transaccion)->get();
+            if($aplicaciones_manual)
+            {
+                foreach ($aplicaciones_manual as $aplicacion)
+                {
+                    $aplicacion->delete();
+                }
+            }
+        }
+
+        $this->update([
+           'saldo' => $this->monto,
+            'opciones' => 327681
+        ])->where('estado', '=', 1);
+
+
+
+    }
+
+    private function desaplicarPago($orden_pago)
+    {
+        $pago_a_desaplicar = Transaccion::withoutGlobalScopes()
+            ->where('id_transaccion', '=', $orden_pago->id_referente)
+            ->where('id_obra', '=', Context::getIdObra())->first();
+        if ($pago_a_desaplicar && $pago_a_desaplicar->tipo_transaccion == 52) //validacion especial cuando su referente es una estimación
+        {
+            $this->validacionEstimacionPago();
+        }
+
+        //inicia validaciones con orden pago
+        if ($orden_pago->items->count('id_item') == 0)
+        {
+            abort(400, "Imposible determinar los items de la factura, no puede ser anulado.");
+        }
+
+        foreach ($orden_pago->items as $partida) {
+            $aplicado = $partida->importe;
+            $item_antecedente = $partida->partida_antecedente->item_antecedente;
+            switch ($partida->partida_antecedente->numero) {
+                case 0:
+                    // actualizamos el monto pagado del lote original
+                    // atencion, falta el tipo_cambio del registro 68
+                    $inventario = Inventario::where('id_item', '=', $partida->partida_antecedente->id_item)->first();
+                    if ($inventario) {
+                        $monto_a_modificar = $inventario->monto_pagado - ($aplicado * $pago_a_desaplicar->tipo_cambio);
+
+                        $consulta = "'Pago 327681: tipo 0 - editar inventario: id_lote = " . $inventario->id_lote . " monto_pagado = " . $inventario->monto_pagado . " cambio a " . $monto_a_modificar . "'";
+
+                        $inventario->update([
+                            'monto_pagado' => $monto_a_modificar
+                        ]);
+                        $this->crearLogRespaldo($consulta);
+
+                        if (is_null($inventario->almacen->tipo_almacen))
+                        {
+                            abort(400, "no existe el lote ");
+                        }
+
+                        //ejecuta sp_distribuir_pagado_inventarios
+                        $inventario->distribuirPagoInventarios();
+                    } else {
+                        $movimiento = Movimiento::where('id_item', '=', $partida->partida_antecedente->id_item)->first();
+                        $monto_a_modificar = $movimiento->monto_pagado - $partida->partida_antecedente->importe;
+                        $movimiento->update([
+                            'monto_pagado' => $monto_a_modificar
+                        ]);
+                    }
+
+                    $monto_a_modificar = $partida->partida_antecedente->saldo + ROUND($aplicado * $pago_a_desaplicar->tipo_cambio, 2);
+                    $consulta =  "'Pago 327681: tipo 0 - editar item antecedente: id_item = " .  $partida->partida_antecedente->id_item. " saldo = " .  $partida->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . "'";
+                    $partida->partida_antecedente->update([
+                        'saldo' => $monto_a_modificar
+                    ]);
+                    $this->crearLogRespaldo($consulta);
+                    break;
+                case 1:
+                    $transaccion_antecedente = $partida->partida_antecedente->transaccion_antecedente;
+                    if($transaccion_antecedente->tipo_transaccion == 51)
+                    {
+                        $factor = $aplicado / $transaccion_antecedente->anticipo_monto;
+                        $movimientos = Movimiento::join('items', 'items.id_item', 'movimientos.id_item')
+                            ->join('EstimacionesSubcontratos', 'EstimacionesSubcontratos.id_transaccion', 'items.id_transaccion')
+                            ->where('EstimacionesSubcontratos.id_antecedente', '=', $transaccion_antecedente->id_transaccion)->get();
+
+                        foreach ($movimientos as $movimiento)
+                        {
+                            $monto_a_modificar = $movimiento->monto_pagado - ROUND($movimiento->monto_total * $factor * ((100 - $movimiento . retencion) / 100 - ($movimiento . monto - $movimiento . impuesto) / $movimiento . suma_importes), 2);
+                            $consulta = "'Pago 327681: tipo 1 - editar movimiento(subcontrato - " . $transaccion_antecedente->id_transaccion . " ) : id_movimiento = " . $movimiento->id_movimiento . " monto_pagado = " . $movimiento->monto_pagado . " cambio a " . $monto_a_modificar . "'";
+                            $movimiento->update([
+                                'monto_pagado' => $monto_a_modificar
+                            ]);
+                            $this->crearLogRespaldo($consulta);
+                        }
+                    }
+                    if($transaccion_antecedente->tipo_transaccion == 52)
+                    {
+                        $monto_total = $this->monto_total($transaccion_antecedente);
+                        if($monto_total > 0)
+                        {
+                            foreach ($transaccion_antecedente->items as $partida_estimacion)
+                            {
+                                $monto_a_modificar = ROUND(($partida_estimacion->movimiento->monto_pagado - $partida_estimacion->movimiento->monto_total * $aplicado * $pago_a_desaplicar->tipo_cambio / $monto_total), 2);
+                                $consulta = "'Pago 327681: tipo 1 - editar movimiento(estimación - " . $partida_estimacion->id_transaccion . "): id_movimiento = " . $partida_estimacion->movimiento->id_movimiento . " monto_pagado = " . $partida_estimacion->movimiento->monto_pagado . " cambio a " . $monto_a_modificar . "'";
+                                $partida_estimacion->movimiento->update([
+                                    'monto_pagado' => $monto_a_modificar
+                                ]);
+                                $this->crearLogRespaldo($consulta);
+                            }
+                        }
+                    }
+                    break;
+                case 2:
+                    $transaccion_antecedente = $partida->partida_antecedente->transaccion_antecedente;
+                    if($transaccion_antecedente->tipo_transaccion == 19 && ($transaccion_antecedente->opciones == 1 || $transaccion_antecedente->opciones == 65537 || $transaccion_antecedente->opciones == 327681))
+                    {
+                        if($transaccion_antecedente->opciones == 65535)
+                        {
+                            dd($partida->partida_antecedente->item_antecedente);
+                        }else{
+                            $anticipo_aplicado = $this->anticipoAplicado($aplicado,$transaccion_antecedente);
+                            $remisiones = Item::join('transacciones', 'items.id_transaccion', 'transacciones.id_transaccion')
+                                ->where('transacciones.tipo_transaccion', '=', 33)
+                                ->where('items.item_antecedente', '=', $item_antecedente)
+                                ->where('transacciones.id_obra', '=', Context::getIdObra())
+                                ->where('items.anticipo', '>', 0)
+                                ->orderBy('numero_folio', 'desc')
+                                ->get();
+
+                            foreach ($remisiones as $remision)
+                            {
+
+                                if($anticipo_aplicado > 0)
+                                {
+                                    $pagado_anticipo = $this->pagadoAnticipo($remision->id_item);
+                                    dd($pagado_anticipo);
+                                }
+                            }
+                            dd($remisiones);
+
+                        }
+                    }
+
+                    if($transaccion_antecedente->tipo_transaccion == 19)
+                    {
+
+                    }
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+
+                default:
+                    abort(400, "Tipo de item no soportado, no puede ser anulado... ");
+                    break;
+            }
+        }
+        dd("orden_p", $orden_pago->items);
+
+        dd("PASO");
+    }
+
+    private function validacionEstimacionPago($estimacion)
+    {
+        if ($estimacion->estado != 2) {
+            //El estado de la estimacion es erroneo...
+            dd("error en la estimacion estado...");
+        }
+
+        /**
+         * Editar el estado de la estimación
+         */
+        $consulta = "'Pago 327681: editar estimación: id_referente = " . $estimacion->id_transaccion . " estado = " . $estimacion->estado . " cambio a 1'";
+        $estimacion->update([
+            'estado' => 1
+        ]);
+        $this->crearLogRespaldo($consulta);
+        /*
+        * ejecuta sp_revertir_transaccion
+        */
+        if (Item::where('id_antecedente', '=', $estimacion->id_transaccion)->count('id_item') != 0) {
+            //El estado de la estimacion es erroneo...
+            dd("error: La transaccion %d está asociada a otras transacciones'..");
+        }
+        foreach ($estimacion->items as $item) {
+            $consulta = "'Pago 327681: eliminar movimiento: " . $item->movimiento->id_movimiento . " ," . $item->movimiento->id_item . "'";
+            $this->crearLogRespaldo($consulta);
+            $item->movimiento->delete();
+        }
+        $consulta = "'Pago 327681: editar estimación: id_transaccion = " . $estimacion->id_transaccion . " estado = " . $estimacion->estado . " cambio a 0, impreso 0, saldo = monto" . $estimacion->monto . "'";
+        $estimacion->update([
+            'estado' => 0,
+            'impreso' => 0,
+            'saldo' => $estimacion->monto
+        ]);
+        $this->crearLogRespaldo($consulta);
+    }
+
+    private function monto_total($transaccion_antecedente)
+    {
+        $suma = 0;
+        foreach ($transaccion_antecedente->items as $partida_estimacion)
+        {
+           $suma +=$partida_estimacion->movimiento->monto_total;
+        }
+        return $suma;
+    }
+
+    private function anticipoAplicado($aplicado,$transaccion_antecedente)
+    {
+        $suma = 0;
+        foreach ($transaccion_antecedente->items as $partida)
+        {
+            $suma += $aplicado - ROUND(($partida->cantidad * $partida->precio_unitario * $partida->anticipo) / 100 *
+                    (($transaccion_antecedente->anticipo_monto - $transaccion_antecedente->anticipo_saldo) /$transaccion_antecedente->anticipo_monto - 1) + $partida->saldo, 2);
+        }
+        return $suma;
+    }
+
+    private function pagadoAnticipo($item_remision)
+    {
+        $suma = Item::join('ItemsFacturados', 'ItemsFacturados.id_item', 'items.id_item')
+                    ->where('ItemsFacturados.id_item', '=', $item_remision)->get();
+dd($suma);
     }
 }
