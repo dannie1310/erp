@@ -24,14 +24,40 @@
             </div>
             <div class="col-md-12">
                 <div class="invoice p-3 mb-3">
-                    <div class="modal-body">
+                    <div class="modal-header">
                         <div class="row">
-                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CONSULTA DE CUENTA BANCARIA</h5>
-                            <label class="col-md-12">Empresa Unificadora :</label>
-                            <label class="col-md-2">R.F.C. :</label>
-                            <label class="col-md-12">Empresa Unificadora :</label>
-                            <label class="col-md-12">Empresa Unificadora :</label>
-                            <label class="col-md-12">Empresa Unificadora :</label>
+                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> DETALLE DE LA UNIFICACIÓN</h5>
+                        </div>               
+                    </div>
+                    <div class="modal-body" v-if="detalle_unificacion">
+                        <div class="row">
+                            
+                            <div class="col-md-6">
+                                 <div class="form-group">
+                                        <label><b>Empresa Unificadora: </b></label>
+                                     {{ detalle_unificacion.razon_social }}
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                 <div class="form-group">
+                                        <label><b>R.F.C.: </b></label>
+                                     {{ detalle_unificacion.rfc }}
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                 <div class="form-group">
+                                        <label><b>Tipo Empresa: </b></label>
+                                     {{ detalle_unificacion.tipo_empresa_format }}
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                 <div class="form-group">
+                                        <label><b>Tipo Empresa Actualizado: </b></label>
+                                     {{ detalle_unificacion.tipo_empresa_format }}
+                                    </div>
+                            </div>
+                            
+                        
 
 
                         </div>
@@ -52,7 +78,12 @@ export default {
             cargando:false,
             empresas:[],
             id_empresa:'',
-            detalle_unificacion:[],
+            detalle_unificacion:null,
+            tipos_empresa:{
+                1:'Proveedor',
+                2:'Contratista',
+                3:'Proveedor/Contratista',
+            }
         }
     },
     mounted() {
@@ -61,7 +92,7 @@ export default {
     methods: {
         getDetalleUnificacion(){
             this.cargando = true;
-            this.detalle_unificacion = [];
+            this.detalle_unificacion = null;
             return this.$store.dispatch('cadeco/empresa/detalleUnificacion', {
                 id:this.id_empresa,
                 params: {
@@ -70,7 +101,7 @@ export default {
                     order: 'desc'
                 }  
             }).then(data => {
-                this.detalle_unificacion = data.data;
+                this.detalle_unificacion = data;
             }).finally(()=>{
                 this.cargando = false;
             })

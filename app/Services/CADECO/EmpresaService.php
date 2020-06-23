@@ -82,7 +82,7 @@ class EmpresaService
         $datos = [];
         $datos['id_empresa'] = $empresas_unificar[0]->id_empresa;
         $datos['tipo_empresa'] = $empresas_unificar[0]->tipo_empresa;
-        $datos['tipo_empresa_actualizado'] = $empresas_unificar[0]->tipo_empresa > 3?0:$empresas_unificar[0]->tipo_empresa;
+        $datos['tipo_empresa_actualizado'] = $empresas_unificar[0]->tipo_empresa > 3?'':$empresas_unificar[0]->tipo_empresa;
         $datos['tipo_empresa_format'] = $empresas_unificar[0]->tipo;
         $datos['rfc'] = $empresas_unificar[0]->rfc;
         $datos['razon_social'] = $empresas_unificar[0]->razon_social;
