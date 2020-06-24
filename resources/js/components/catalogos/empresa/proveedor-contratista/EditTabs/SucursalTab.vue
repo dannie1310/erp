@@ -5,7 +5,7 @@
                 <div class="invoice p-3 mb-3">
                     <div class="row">
                         <div class="col-md-12">
-                            <create-sucursal @created="updateSucursal" v-bind:id="id_empresa"></create-sucursal>
+                            <create-sucursal @created="updateSucursal" v-bind:id="id_empresa" v-if="$root.can('registrar_sucursal_proveedor')"></create-sucursal>
                         </div>
 
                         <div class="table-responsive col-12">
@@ -63,19 +63,19 @@ export default {
             if(this.sucursales.length === 1){
                 swal('¡Aviso!', 'El Proveedor / Contratista debe tener al menos una sucursal registrada.', 'warning')
             }else{
-                return this.$store.dispatch('cadeco/sucursal/delete', id)
+                return this.$store.dispatch('cadeco/proveedor-contratista-sucursal/delete', id)
                     .then(() => {
-                        this.$store.commit('cadeco/sucursal/DELETE_SUCURSAL', id)
+                        this.$store.commit('cadeco/proveedor-contratista-sucursal/DELETE_SUCURSAL', id)
                     })
             }
         },
         updateSucursal(data){
-            this.$store.commit('cadeco/sucursal/INSERT_SUCURSAL', data);
+            this.$store.commit('cadeco/proveedor-contratista-sucursal/INSERT_SUCURSAL', data);
         },
     },
     computed: {
         sucursales(){
-            return this.$store.getters['cadeco/sucursal/sucursales'];
+            return this.$store.getters['cadeco/proveedor-contratista-sucursal/proveedorSucursales'];
         }
     },
 
