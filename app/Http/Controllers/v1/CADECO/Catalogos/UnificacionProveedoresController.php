@@ -45,6 +45,8 @@ class UnificacionProveedoresController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_unificacion_proveedores')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:registrar_unificacion_proveedores')->only('store');
 
         $this->fractal = $fractal;
         $this->service = $service;

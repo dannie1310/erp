@@ -970,7 +970,8 @@ export const routes = [
                         meta: {
                             title: 'Unificacion de Proveedores',
                             breadcrumb: {parent: 'catalogos', name: 'UNIFICACIÓN PROVEEDORES'},
-                            middleware: [auth, context],
+                            middleware: [auth, context,permission],
+                            permission: ['consultar_unificacion_proveedores']
                         }
                     },
                     {
@@ -980,8 +981,8 @@ export const routes = [
                         meta: {
                             title: 'Registrar Unificación de Proveedores',
                             breadcrumb: { parent: 'unificacion-proveedores', name: 'REGISTRAR UNIFICACIÓN PROVEEDORES'},
-                            middleware: [auth, context],
-                            permission: 'registrar_unificacion_proveedor'
+                            middleware: [auth, context,permission],
+                            permission: 'registrar_unificacion_proveedores'
                         }
                     },
                 ]

@@ -5,6 +5,7 @@ export default {
     state: {
         unificacionProveedores: [],
         currentUnificacion: '',
+        meta:{}
     },
 
     mutations: {

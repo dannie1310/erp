@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO\Catalogos;
 
+use App\Models\IGH\Usuario;
 use App\Models\CADECO\Empresa;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Catalogos\UnificacionProveedoresCambios;
@@ -30,6 +31,17 @@ class UnificacionProveedores extends Model
 
     public function cambios(){
         return $this->hasMany(UnificacionProveedoresCambios::class, 'id_unificacion', 'id');
+    }
+    
+    public function usuario ()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_registro);
+        return date_format($date,"d/m/Y");
     }
 
 

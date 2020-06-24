@@ -46,6 +46,7 @@ class EmpresaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_unificacion_proveedores')->only(['detalleUnificacion','detalleEmpresaUnificacion']);
 
         $this->fractal = $fractal;
         $this->service = $service;
