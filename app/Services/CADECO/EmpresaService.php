@@ -104,7 +104,7 @@ class EmpresaService
 
         return [
             'id_empresa' => $empresa->id_empresa,
-            'tipo_empresa' => $empresa->id_empresa,
+            'tipo_empresa' => $empresa->tipo_empresa,
             'tipo_empresa_format' => $empresa->tipo,
             'rfc' => $empresa->rfc,
             'razon_social' => $empresa->razon_social,

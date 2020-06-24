@@ -57,4 +57,8 @@ class EmpresaController extends Controller
 
     }
 
+    public function detalleEmpresaUnificacion(Request $request, $id){
+        return $this->service->detalleEmpresaUnificada($id);
+    }
+
 }

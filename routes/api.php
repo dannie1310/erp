@@ -93,6 +93,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EmpresaController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\EmpresaController@store');
             $api->get('{id}/detalleUnificacion', 'App\Http\Controllers\v1\CADECO\EmpresaController@detalleUnificacion')->where(['id' => '[0-9]+']);
+            $api->get('{id}/detalleEmpresaUnificacion', 'App\Http\Controllers\v1\CADECO\EmpresaController@detalleEmpresaUnificacion')->where(['id' => '[0-9]+']);
 
         });
 
