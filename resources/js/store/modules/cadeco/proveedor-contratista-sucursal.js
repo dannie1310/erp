@@ -1,44 +1,44 @@
-const URI = '/api/sucursal/';
+const URI = '/api/proveedor-contratista-sucursal/';
 
 export default {
     namespaced: true,
     state: {
-        sucursales: [],
-        currentSucursal: null,
+        proveedor_sucursales: [],
+        currentProveedorSucursal: null,
         meta: {}
     },
 
     mutations: {
         SET_SUCURSALES(state, data) {
-            state.sucursales = data;
+            state.proveedor_sucursales = data;
         },
 
         SET_SUCURSAL(state, data) {
-            state.currentSucursal = data;
+            state.currentProveedorSucursal = data;
         },
         SET_META(state, data) {
             state.meta = data;
         },
         UPDATE_ATTRIBUTE(state, data) {
-            _.set(state.currentSucursal, data.attribute, data.value);
+            _.set(state.currentProveedorSucursal, data.attribute, data.value);
         },
 
         UPDATE_SUCURSAL(state, data) {
-            state.sucursales = state.sucursales.map(sucursal=> {
+            state.proveedor_sucursales = state.proveedor_sucursales.map(sucursal=> {
                 if(sucursal.id === data.id){
                     return Object.assign({}, sucursal, data)
                 }
                 return sucursal
             })
-            state.currentSucursal = data ;
+            state.currentProveedorSucursal = data ;
         },
 
         INSERT_SUCURSAL(state, data){
-            state.sucursales = state.sucursales.concat(data);
+            state.proveedor_sucursales = state.proveedor_sucursales.concat(data);
         },
 
         DELETE_SUCURSAL(state, id) {
-            state.sucursales = state.sucursales.filter(sucursal => {
+            state.proveedor_sucursales = state.proveedor_sucursales.filter(sucursal => {
                 return sucursal.id != id
             });
         }
@@ -165,6 +165,45 @@ export default {
             });
 
         },
+        storeSucursalProveedor(context,payload){
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Sucursal",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'proveedor', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Sucursal registrado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+
+        },
 
         update(context, payload) {
             return new Promise((resolve, reject) => {
@@ -206,12 +245,52 @@ export default {
                     });
             });
         },
+        updateSucursalProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar Sucursal",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/proveedor', payload.data)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Sucursal actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        }
 
     },
 
     getters: {
-        sucursales(state) {
-            return state.sucursales
+        proveedorSucursales(state) {
+            return state.proveedor_sucursales
         },
 
         meta(state) {
@@ -219,7 +298,7 @@ export default {
         },
 
         currentSucursal(state) {
-            return state.currentSucursal
+            return state.currentProveedorSucursal
         }
     }
 }
