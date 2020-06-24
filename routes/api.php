@@ -406,6 +406,7 @@ $api->version('v1', function ($api) {
         //UNIFICACION PROVEEDORES
         $api->group(['prefix' => 'unificacion-proveedores'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@store');
         });
     });
 

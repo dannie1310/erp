@@ -6,7 +6,7 @@
  * Time: 06:14 PM
  */
 
-namespace App\Models\CADECO;
+namespace App\Models\CADECO\Catalogos;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,5 +19,11 @@ class UnificacionProveedoresCambios extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id_unificacion',
+        'id_empresa_unificada',
+        'tipo_empresa_unificada',
+        'id_transaccion',
+        'id_solicitud_movimiento',
+        'id_cuenta_bancaria_empresa',
     ];
 }

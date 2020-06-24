@@ -8,7 +8,9 @@
 
 namespace App\Models\CADECO\Catalogos;
 
+use App\Models\CADECO\Empresa;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Catalogos\UnificacionProveedoresCambios;
 
 class UnificacionProveedores extends Model
 {
@@ -19,7 +21,16 @@ class UnificacionProveedores extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id_empresa_unificadora'
     ];
+
+    public function empresa(){
+        return $this->belongsTo(Empresa::class, 'id_empresa_unificadora', 'id_empresa');
+    }
+
+    public function cambios(){
+        return $this->hasMany(UnificacionProveedoresCambios::class, 'id_unificacion', 'id');
+    }
 
 
 }

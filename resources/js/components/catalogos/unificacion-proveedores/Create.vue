@@ -51,7 +51,7 @@
                                     </div>
                             </div>
                             <div class="col-md-6">
-                                 <div class="form-group row error-content" v-if="actualizarTipoEmpresa(detalle_unificacion.tipo_empresa)">
+                                 <div class="form-group row error-content" v-if="!actualizarTipoEmpresa(detalle_unificacion.tipo_empresa)">
                                         <label for="tipo_empresa_actualizado" class="col-md-4 col-form-label">Tipo Empresa Actualizado: </label>
                                         <div class="con-md-8">
                                          <select
@@ -72,10 +72,6 @@
                                         </div>
                                     </div>
                             </div>
-                            
-                        
-
-
                         </div>
                         <div class="row">
                             <div class="col-md-12  mt-3 " >
@@ -125,7 +121,7 @@
                     </div>
                      <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="close()">Cerrar</button>
-                        <button type="button" class="btn btn-primary" @click="unificar" :disabled="detalle_unificacion.empresas_unificadas.length == 0">Unificar</button>
+                        <button type="button" class="btn btn-primary" @click="validate" :disabled="detalle_unificacion.empresas_unificadas.length == 0">Unificar</button>
                     </div>
                 </div>
             </div>
@@ -287,7 +283,17 @@ export default {
             return `[${item.rfc}] - ${item.razon_social}`
         },
         unificar(){
-            console.log('panda');
+            return this.$store.dispatch('catalogos/unificacion-proveedores/store', this.detalle_unificacion)
+                .then((data) => {
+                    this.$router.push({name: 'unificacion-proveedores'});
+                });
+        },
+         validate() {
+            this.$validator.validate().then(result => {
+                if (result) {
+                    this.unificar();
+                }
+            });
         },
     },
     watch:{
