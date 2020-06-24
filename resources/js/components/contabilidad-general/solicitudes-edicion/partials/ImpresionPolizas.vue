@@ -1,14 +1,14 @@
 <template>
     <span>
         <button @click="init" type="button" class="btn btn-primary pull-right" title="Ver Pólizas">
-            <i class="fa fa-file-pdf-o"></i>Ver Pólizas
+            <i class="fa fa-file-pdf-o"></i>Ver Pólizas (Actual)
         </button>
 
         <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
             <div class="modal-dialog modal-lg" id="mdialTamanio">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Impresión de Pólizas</h4>
+                        <h4 class="modal-title">Impresión de Pólizas (Actual)</h4>
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                     </div>
                     <div class="modal-body modal-lg" style="height: 800px" ref="body">

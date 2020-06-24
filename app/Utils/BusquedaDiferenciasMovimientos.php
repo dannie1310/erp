@@ -55,10 +55,11 @@ class BusquedaDiferenciasMovimientos
         $this->buscaDiferenciaTipoMovimiento();
         /*print_r('7.4-'.date('Y-m-d H:i:s')."
                 ");*/
-        $this->buscaDiferenciaCodigoCuentaMovimiento();
+        if(!$this->buscaDiferenciaCodigoCuentaMovimiento()){
+            $this->buscaDiferenciaNombreCuentaMovimiento();
+        }
         /*print_r('7.5-'.date('Y-m-d H:i:s')."
                 ");*/
-        $this->buscaDiferenciaNombreCuentaMovimiento();
         /*print_r('7.6-'.date('Y-m-d H:i:s')."
                 ");*/
 
@@ -69,6 +70,8 @@ class BusquedaDiferenciasMovimientos
         $datos_diferencia = [
             "id_busqueda" => $this->id_busqueda,
             "id_movimiento" => $this->relacion->id_movimiento_a,
+            "id_relacion_movimiento" => $this->relacion->id,
+            "id_cuenta" => $this->relacion->id_cuenta_a,
             "id_poliza" => $this->relacion->id_poliza_a,
             "base_datos_revisada" => $this->relacion->base_datos_a,
             "base_datos_referencia" => $this->relacion->base_datos_b,
@@ -111,10 +114,12 @@ class BusquedaDiferenciasMovimientos
             $datos_diferencia["valor_b"] = trim($this->relacion->codigo_cuenta_b);
             $datos_diferencia["observaciones"] = 'a: ' . trim($this->relacion->codigo_cuenta_a) . ' b: ' . trim($this->relacion->codigo_cuenta_b);
             Diferencia::registrar($datos_diferencia);
+            return true;
         } else {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 6;
             Diferencia::corregir($datos_diferencia, $this->id_busqueda);
+            return false;
         }
     }
 

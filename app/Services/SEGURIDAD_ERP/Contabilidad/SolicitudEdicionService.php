@@ -9,12 +9,26 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Exports\SolicitudEdicionExport;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartidaPoliza;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT1;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT2;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT3;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT1;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT2;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT3;
 use App\Http\Transformers\CTPQ\PolizaMovimientoTransformer;
 use App\Http\Transformers\CTPQ\PolizaTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CTPQ\Poliza;
+use App\PDF\CTPQ\PolizaFormatoT2;
+use App\PDF\CTPQ\PolizaFormatoT3;
+use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion as Model;
-use App\PDF\CTPQ\PolizaFormato;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
+use App\PDF\CTPQ\PolizaFormatoT1;
 use App\Repositories\CTPQ\PolizaRepository;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionRepository as Repository;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +72,95 @@ class SolicitudEdicionService
 
     public function paginate($data)
     {
+        if($data['sort'] == 'tipo'){
+            $tipos = CtgTipoSolicitudEdicion::query()->orderBy('descripcion',$data['order'])->get();
+            foreach ($tipos as $tipo){
+                $this->repository->whereOr([['id_tipo', '=', $tipo->id]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }
+
+        if($data['sort'] == 'usuario_registro'){
+            $usuarios = Usuario::query()->solicitudEdicion(SolicitudEdicion::all())->orderBy('nombre',$data['order'])->get();
+
+            foreach ($usuarios as $usuario){
+                $this->repository->whereOr([['id_usuario_registro', '=', $usuario->idusuario]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }
+
+        if (isset($data['numero_folio'])) {
+            $this->repository->where([['numero_folio', 'LIKE', '%' . $data['numero_folio'] . '%']]);
+        }
+
+        if (isset($data['fecha_hora_registro'])) {
+            $this->repository->whereBetween( ['fecha_hora_registro', [ request( 'fecha_hora_registro' )." 00:00:00",request( 'fecha_hora_registro' )." 23:59:59"]] );
+        }
+
+        if (isset($data['tipo'])) {
+            $tipos = CtgTipoSolicitudEdicion::query()->where([['descripcion', 'LIKE', '%'.$data['tipo'].'%']])->get();
+            foreach ($tipos as $tipo){
+                $this->repository->whereOr([['id_tipo', '=', $tipo->id]]);
+            }
+        }
+
+        if (isset($data['id_empresa'])) {
+            $empresa = Empresa::find($data['id_empresa']);
+            $ids_solicitud = [];
+            $diferencias = Diferencia::where("base_datos_revisada",$empresa->AliasBDD)->get();
+            $partidas = SolicitudEdicionPartidaPoliza::where("bd_contpaq",$empresa->AliasBDD)->get();
+            foreach($diferencias as $diferencia){
+                if( $diferencia->partida_solicitud){
+                    $ids_solicitud[] = $diferencia->partida_solicitud->solicitud->id;
+                }
+            }
+            foreach($partidas as $partida){
+                $ids_solicitud[] = $partida->partida_solicitud->solicitud->id;
+            }
+
+            $ids_solicitud = array_values(array_unique($ids_solicitud));
+
+            foreach ($ids_solicitud as $id_solicitud){
+                $this->repository->whereOr([['id', '=', $id_solicitud]]);
+            }
+        }
+
+        if (isset($data['id_tipo_solicitud'])) {
+            $this->repository->where([['id_tipo', '=', $data['id_tipo_solicitud']]]);
+        }
+
+        if (isset($data['id_estado'])) {
+            $this->repository->where([['estado', '=', $data['id_estado']]]);
+        }
+
+        if (isset($data['estado'])) {
+            if (strpos('REGISTRADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 0]]);
+            }
+
+            if (strpos('AUTORIZADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 1]]);
+            }
+
+            if (strpos('APLICADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 2]]);
+            }
+
+            if (strpos('RECHAZADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', -1]]);
+            }
+        }
+
+        if (isset($data['startDate'])) {
+            $this->repository->where([['fecha_hora_registro', '>=', $data['startDate'] ." 00:00:00"]]);
+        }
+
+        if (isset($data['endDate'])) {
+            $this->repository->where([['fecha_hora_registro', '<=', $data['endDate'] ." 23:59:59"]]);
+        }
+
         return $this->repository->paginate($data);
     }
 
@@ -184,8 +287,145 @@ class SolicitudEdicionService
     }
 
     public function impresionPolizas($id){
+        $tipo =  $this->repository->show($id)->id_tipo;
+        switch ($tipo) {
+            case 1:
+                return $this->impresionPolizasTipo1($id);
+                break;
+            case 2:
+                return $this->impresionPolizasTipo2($id);
+                break;
+            case 3:
+                return $this->impresionPolizasTipo3($id);
+                break;
+        }
+    }
+
+    private function impresionPolizasTipo1($id){
         $folios  = $this->repository->show($id)->polizas;
-        $pdf = new PolizaFormato($folios);
+        $pdf = new PolizaFormatoT1($folios);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasTipo2($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoT2($polizas, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasTipo3($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoT3($polizas, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    public function impresionPolizasPropuesta($id){
+        $tipo =  $this->repository->show($id)->id_tipo;
+        switch ($tipo) {
+            case 1:
+                return $this->impresionPolizasPropuestaTipo1($id);
+                break;
+            case 2:
+                return $this->impresionPolizasPropuestaTipo2($id);
+                break;
+            case 3:
+                return $this->impresionPolizasPropuestaTipo3($id);
+                break;
+        }
+    }
+
+    private function impresionPolizasPropuestaTipo1($id)
+    {
+        $folios  = $this->repository->show($id)->polizas;
+        $pdf = new PolizaFormatoPropuestaT1($folios);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasPropuestaTipo2($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoPropuestaT2($polizas, $solicitud, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasPropuestaTipo3($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoPropuestaT3($polizas, $solicitud, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    public function impresionPolizasOriginal($id){
+        $tipo =  $this->repository->show($id)->id_tipo;
+        switch ($tipo) {
+            case 1:
+                return $this->impresionPolizasOriginalTipo1($id);
+                break;
+            case 2:
+                return $this->impresionPolizasOriginalTipo2($id);
+                break;
+            case 3:
+                return $this->impresionPolizasOriginalTipo3($id);
+                break;
+        }
+    }
+
+    private function impresionPolizasOriginalTipo1($id)
+    {
+        $folios  = $this->repository->show($id)->polizas;
+        $pdf = new PolizaFormatoOriginalT1($folios);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasOriginalTipo2($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoOriginalT2($polizas, $solicitud, $diferencias[0]->empresa);
+        return $pdf->create();
+    }
+
+    private function impresionPolizasOriginalTipo3($id)
+    {
+        $solicitud = $this->repository->show($id);
+        $diferencias  = $solicitud->diferencias;
+        $polizas = [];
+        foreach($diferencias as $diferencia){
+            $polizas[] = $diferencia->poliza;
+        }
+        $polizas  = array_values(array_unique($polizas));
+        $pdf = new PolizaFormatoOriginalT3($polizas, $solicitud, $diferencias[0]->empresa);
         return $pdf->create();
     }
 
@@ -204,28 +444,48 @@ class SolicitudEdicionService
 
     public function autorizar($id, $datos)
     {
-        $polizas = [];
-        $contador_aprobadas = 0;
-        foreach ($datos as $partida){
-            foreach($partida["polizas"]["data"] as $poliza )
+        if($datos->id_tipo == 1)
+        {
+            $polizas = [];
+            $contador_aprobadas = 0;
+            foreach ($datos->partidas as $partida){
+                foreach($partida["polizas"]["data"] as $poliza )
+                {
+                    $polizas[] = ["id"=>$poliza["id"], "estado"=>$poliza["estado"]] ;
+                    if($poliza["estado"])
+                    {
+                        $contador_aprobadas++;
+                    }
+                }
+            }
+            if(!$contador_aprobadas > 0)
             {
-                $polizas[] = ["id"=>$poliza["id"], "estado"=>$poliza["estado"]] ;
-                if($poliza["estado"])
+                abort(500,"No puede autorizar una solicitud sin aprobar el cambio de al menos una póliza");
+            }
+            return $this->repository->autorizarPorPolizas($polizas, $id);
+        } else {
+            $partidas = [];
+            $contador_aprobadas = 0;
+            foreach ($datos->partidas as $partida){
+                $partidas[] = ["id"=>$partida["id"], "estado"=>$partida["estado"]] ;
+                if($partida["estado"])
                 {
                     $contador_aprobadas++;
                 }
             }
+            if(!$contador_aprobadas > 0)
+            {
+                abort(500,"No puede autorizar una solicitud sin aprobar el cambio de al menos una partida");
+            }
+            return $this->repository->autorizarPorPartidas($partidas, $id);
         }
-        if(!$contador_aprobadas > 0)
-        {
-            abort(500,"No puede autorizar una solicitud sin aprobar el cambio de al menos una póliza");
-        }
-        return $this->repository->autorizar($polizas, $id);
+
     }
 
     public function rechazar($id)
     {
-        return $this->repository->rechazar($id);
+        $this->repository->rechazar($id);
+
     }
 
     public function aplicar($id)

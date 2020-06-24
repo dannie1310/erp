@@ -90,4 +90,8 @@ class MaterialService
     {
         return $this->show($id)->actualizarInsumo($data);
     }
+
+    public function buscarMateriales($data){
+        return $this->repository->buscarMateriales($data['busqueda']);
+    }
 }
