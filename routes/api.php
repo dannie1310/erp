@@ -938,6 +938,11 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'incidencia'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ControlInterno\IncidenciaController@paginate');
         });
+
+        $api->group(['prefix' => 'empresa-facturera'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\EmpresaFactureraController@index');
+            $api->post('/buscar-coincidencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\EmpresaFactureraController@buscarCoincidencias');
+        });
     });
 
     /** SUBCONTRATOS ESTIMACIONES */
