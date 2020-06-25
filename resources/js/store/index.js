@@ -132,6 +132,9 @@ import transaccionEfo from './modules/seguridad/finanzas/transaccion-efo';
 import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
+//CONTROL INTERNO
+ import empresaFacturera from './modules/seguridad/fiscal/empresa-facturera';
+
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
 import penalizacion from './modules/subcontratosEstimaciones/penalizacion';
@@ -278,6 +281,8 @@ export default new Vuex.Store({
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
         'seguridad/lista-empresas': listaEmpresas,
+
+        'controlInterno/empresa-facturera': empresaFacturera,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,
