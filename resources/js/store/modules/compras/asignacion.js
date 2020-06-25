@@ -268,7 +268,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Asignación de Proveedores",
-                    text: "¿Está seguro/a de que quiere registrar registrar la asignación de proveedores?",
+                    text: "¿Está seguro/a de que desea registrar la asignación de proveedores?",
                     icon: "info",
                     buttons: {
                         cancel: {
