@@ -284,7 +284,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
                         <button type="button" class="btn btn-primary" @click="validate()">Guardar</button>
                     </div>
                 </div>
@@ -361,21 +361,24 @@ export default {
                 })
         },
         update() {
-                return this.$store.dispatch('compras/orden-compra/update', {
-                    id: this.orden_compra.id,
-                    data: this.orden_compra
+            return this.$store.dispatch('compras/orden-compra/update', {
+                id: this.orden_compra.id,
+                data: this.orden_compra
+            })
+                .then(data => {
+                    console.log(data);
                 })
-                    .then(data => {
-                        console.log(data);
-                    })
-            },
+        },
         validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        this.update();
-                    }
-                });
-            },
+            this.$validator.validate().then(result => {
+                if (result) {
+                    this.update();
+                }
+            });
+        },
+        salir(){
+            this.$router.push({name: 'orden-compra'});
+        },
        
     }
 

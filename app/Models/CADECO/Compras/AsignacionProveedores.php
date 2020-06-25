@@ -25,6 +25,15 @@ class AsignacionProveedores extends Model
         'registro',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->whereHas('solicitud');
+        });
+    }
+
     public function estadoAsignacion(){
         return $this->belongsTo(CtgEstadoAsignacionProveedor::class, 'estado', 'id');
     }

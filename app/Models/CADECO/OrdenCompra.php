@@ -30,7 +30,8 @@ class OrdenCompra extends Transaccion
         self::addGlobalScope('tipo',function ($query) {
             return $query->where('tipo_transaccion', '=', 19)
                 ->where('opciones', '=', 1)
-                ->where('estado', '!=', -2);
+                ->where('estado', '!=', -2)
+                ->whereHas('solicitud');
         });
     }
 
