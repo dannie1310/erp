@@ -263,8 +263,8 @@ class Transaccion extends Model
         }
     }
 
-    public function transacciones_antecedente()
+    public function transaccionesRelacionadas()
     {
-        return $this->hasMany(Transaccion::class,'id_antecedente','id_transaccion');
+        return $this->hasMany(self::class,'id_transaccion', 'id_antecedente');
     }
 }

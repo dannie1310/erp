@@ -38,4 +38,12 @@ class PagoObserver extends TransaccionObserver
         }
         $pago->desvincularPolizas();
     }
+
+    public function deleted(Pago $pago)
+    {
+        if($pago->opciones == 131073)
+        {
+            $pago->pagoAnticipoDestajo->ajustarOC();
+        }
+    }
 }

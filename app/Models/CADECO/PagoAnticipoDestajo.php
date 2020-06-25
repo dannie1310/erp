@@ -87,4 +87,42 @@ class PagoAnticipoDestajo extends Pago
             abort(400, 'Hubo un error durante el registro del anticipo');
         }
     }
+
+    /**
+     * Implementa lógica de SP borra_transacción para eliminar pagos
+     */
+    public function recalculaAnticipo()
+    {
+        if ($this->transaccion->opciones < 65536)
+        {
+            if($this->anticipo)
+            {
+                $saldo = $this->transaccion->anticipo_saldo - $this->anticipo->saldo;
+                $consulta = "'Pago 131073: Pago anticipado destajo edita transaccion id_referente".$this->id_referente." anticipo_saldo = ".$this->transaccion->anticipo_saldo." cambio a ".$saldo."'";
+                $this->transaccion->update([
+                    'anticipo_saldo' => $saldo
+                ]);
+                $this->crearLogRespaldo($consulta);
+                dd("aq anticipo??");
+                $consulta = "'Pago 131073: Pago anticipado destajo elimina anticipo id_transaccion".$this->anticipo->id_transaccion."'";
+                $this->anticipo->delete();
+                $this->crearLogRespaldo($consulta);
+            }
+        }
+        else{
+            $saldo = $this->transaccion->anticipo_saldo - $this->monto;
+            $consulta = "'Pago 131073: Pago anticipado destajo edita transaccion id_referente".$this->id_referente." anticipo_saldo = ".$this->transaccion->anticipo_saldo." cambio a ".$saldo."'";
+            $this->transaccion->update([
+                'anticipo_saldo' => $saldo
+            ]);
+        }
+    }
+
+    public function ajustarOC()
+    {//aqyui
+        if($this->transaccion->where('tipo_transaccion', '=', 19)->where('estado', '=', 1)->first())
+        {
+
+        }
+    }
 }
