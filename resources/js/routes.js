@@ -958,6 +958,35 @@ export const routes = [
                     },
                 ]
             },
+            
+            {
+                path: 'unificacion-proveedores',
+                component: require('./components/catalogos/unificacion-proveedores/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'unificacion-proveedores',
+                        component: require('./components/catalogos/unificacion-proveedores/Index').default,
+                        meta: {
+                            title: 'Unificacion de Proveedores',
+                            breadcrumb: {parent: 'catalogos', name: 'UNIFICACIÓN PROVEEDORES'},
+                            middleware: [auth, context,permission],
+                            permission: ['consultar_unificacion_proveedores']
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'unificacion-proveedores-create',
+                        component: require('./components/catalogos/unificacion-proveedores/Create').default,
+                        meta: {
+                            title: 'Registrar Unificación de Proveedores',
+                            breadcrumb: { parent: 'unificacion-proveedores', name: 'REGISTRAR UNIFICACIÓN PROVEEDORES'},
+                            middleware: [auth, context,permission],
+                            permission: 'registrar_unificacion_proveedores'
+                        }
+                    },
+                ]
+            },
         ]
     },
     {

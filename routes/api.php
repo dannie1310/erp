@@ -92,6 +92,8 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\EmpresaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EmpresaController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\EmpresaController@store');
+            $api->get('{id}/detalleUnificacion', 'App\Http\Controllers\v1\CADECO\EmpresaController@detalleUnificacion')->where(['id' => '[0-9]+']);
+            $api->get('{id}/detalleEmpresaUnificacion', 'App\Http\Controllers\v1\CADECO\EmpresaController@detalleEmpresaUnificacion')->where(['id' => '[0-9]+']);
 
         });
 
@@ -161,9 +163,16 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\SucursalController@store');
-            $api->post('proveedor', 'App\Http\Controllers\v1\CADECO\SucursalController@storeProveedorSucursal');
-            $api->patch('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\SucursalController@updateProveedorSucursal');
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+         // PROVEEDOR/CONTRATISTA/SUCURSAL
+        $api->group(['prefix' => 'proveedor-contratista-sucursal'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@show')->where(['id' => '[0-9]+']);
+            $api->post('proveedor', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@storeProveedorSucursal');
+            $api->patch('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@updateProveedorSucursal');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@destroy')->where(['id' => '[0-9]+']);
         });
 
         // SUMINISTRADO
@@ -397,6 +406,17 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@store');
             $api->patch('{id}/actualizarEntrega', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@actualizarEntregaContratista')->where(['id' => '[0-9]+']);
 
+        });
+    });
+
+    /**
+     * CATALOGOS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'catalogos'], function ($api) {
+        //UNIFICACION PROVEEDORES
+        $api->group(['prefix' => 'unificacion-proveedores'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@store');
         });
     });
 
