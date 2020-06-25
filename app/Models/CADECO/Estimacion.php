@@ -158,6 +158,11 @@ class Estimacion extends Transaccion
         return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_antecedente');
     }
 
+    public function itemsReferenciados()
+    {
+        return $this->hasMany(Item::class, 'id_antecedente','id_transaccion');
+    }
+
     /**
      * Acciones
      */
@@ -1103,5 +1108,30 @@ class Estimacion extends Transaccion
     public function getSumaPenalizacionesLiberadasFormatAttribute()
     {
         return '$ ' . number_format($this->suma_penalizaciones_liberadas, 2);
+    }
+
+    /**
+     * Ejecuta lógica: sp_revertir_transaccion
+     * Validaciones para revertir la estimación
+     * @param $estimacion
+     */
+    private function revertir_estimacion()
+    {
+        if (is_null($this->itemsReferenciados()))
+        {
+            abort(400, "Esta estimación ".$this->numero_folio_format." se encuentra asociada a otras transacciones.");
+        }
+
+        foreach ($this->items as $item)
+        {
+            $item->movimiento->delete();
+        }
+        $this->update([
+            'estado' => 0,
+            'impreso' => 0,
+            'saldo' => $this->monto
+        ]);
+
+        dd("fin estimacion? really", $this);
     }
 }

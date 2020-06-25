@@ -233,4 +233,14 @@ class Inventario extends Model
             abort(500, "Error en aplicación de monto por ajuste: ".$e->getMessage());
         }
     }
+
+
+    private function cambiarMontoPagado($monto_pagado)
+    {
+        dd($monto_pagado);
+        $this->update([
+            'monto_pagado' => $monto_pagado
+        ]);
+        $this->distribuirPagoInventarios();
+    }
 }

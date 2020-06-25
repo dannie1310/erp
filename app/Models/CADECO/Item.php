@@ -57,7 +57,7 @@ class Item extends Model
         return $this->belongsTo(Transaccion::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function transaccion_antecedente()
+    public function transaccionAntecedente()
     {
         return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion');
     }
