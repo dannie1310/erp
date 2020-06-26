@@ -54,19 +54,4 @@ class PagoReposicionFF extends Pago
     {
         return $this->belongsTo(SolicitudReposicionFF::class, 'id_antecedente', 'id_transaccion');
     }
-
-    public function elimina()
-    {
-        /**
-         * Se cambia el valor del saldo del fondo
-         */
-        $saldo_a_modificar = $this->fondo->saldo + $this->monto;
-        $consulta = "'Pago reposicionff : id_fondo = ".$this->fondo->id_fondo." saldo = ".$this->fondo->saldo." monto= ".$this->monto." saldo(cambio)= ".$saldo_a_modificar."'";
-        $this->fondo->update(['saldo' => $saldo_a_modificar]);
-        PagoEliminadoLog::create([
-            'id_transaccion' => $this->id_transaccion,
-            'consulta' => $consulta
-        ]);
-        return $this->delete();
-    }
 }

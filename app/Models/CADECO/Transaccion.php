@@ -267,4 +267,9 @@ class Transaccion extends Model
     {
         return $this->hasMany(self::class,'id_transaccion', 'id_antecedente');
     }
+
+    public function transaccionReferente()
+    {
+        return $this->belongsTo(self::class, 'id_referente', 'id_transaccion');
+    }
 }

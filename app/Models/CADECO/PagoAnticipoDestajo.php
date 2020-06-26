@@ -120,9 +120,15 @@ class PagoAnticipoDestajo extends Pago
 
     public function ajustarOC()
     {//aqyui
+        dd("aqui OC PAD");
         if($this->transaccion->where('tipo_transaccion', '=', 19)->where('estado', '=', 1)->first())
-        {
-
+        {dd("probar esto we");
+            if(is_null(Transaccion::where('id_antecedente', '=', $this->id_referente)->first()) && is_null(Transaccion::where('id_referente', $this->id_referente)->first()))
+            {
+                $this->transaccion->update([
+                    'estado' => 0
+                ]);
+            }
         }
     }
 }

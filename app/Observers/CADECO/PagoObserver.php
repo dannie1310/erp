@@ -43,6 +43,7 @@ class PagoObserver extends TransaccionObserver
     {
         if($pago->opciones == 131073)
         {
+            dd("aqiu");
             $pago->pagoAnticipoDestajo->ajustarOC();
         }
     }
