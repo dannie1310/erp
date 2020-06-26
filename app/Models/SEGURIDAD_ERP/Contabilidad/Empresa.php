@@ -157,6 +157,16 @@ class Empresa extends Model
         return $query->whereHas('partidas_por_poliza')->orWhereHas('partidas_por_diferencias');
     }
 
+    public function scopeConDiferencias($query)
+    {
+        return $query->whereHas('diferencias');
+    }
+
+    public function diferencias()
+    {
+        return $this->hasMany(Diferencia::class,"base_datos_revisada","AliasBDD");
+    }
+
     public function partidas_por_diferencias()
     {
         return $this->hasManyThrough(SolicitudEdicionPartida::class,Diferencia::class,"base_datos_revisada","id_diferencia","AliasBDD","id");
