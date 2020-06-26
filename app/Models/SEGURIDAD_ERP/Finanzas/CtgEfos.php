@@ -131,7 +131,7 @@ class CtgEfos extends Model
                         $fecha_presunto_f = $fecha_presunto_obj->format('Y-m-d');
                     }
 
-                    $fecha_definitivo = (!isset($renglon[$t + 10])) ? '' : $renglon[$t + 10];
+                    $fecha_definitivo = (!isset($renglon[$t + 9])) ? '' : $renglon[$t + 9];
                     if($fecha_definitivo != '')
                     {
                         $fecha_definitivo_obj = DateTime::createFromFormat('d/m/Y', $fecha_definitivo);
@@ -156,6 +156,7 @@ class CtgEfos extends Model
                     $linea++;
                     $t = 2;
                     $razon = '';
+                    $fecha_definitivo_f = '';
                 }
             }else
             {
