@@ -146,6 +146,15 @@ class Diferencia extends Model
         return $query->where("activo",1);
     }
 
+    public function scopeSinPartidaSolicitud($query)
+    {
+        return $query->doesntHave("partida_solicitud");
+    }
+
+    public function scopeConPartidaSolicitud($query)
+    {
+        return $query->whereHas("partida_solicitud");
+    }
 
     public function poliza()
     {

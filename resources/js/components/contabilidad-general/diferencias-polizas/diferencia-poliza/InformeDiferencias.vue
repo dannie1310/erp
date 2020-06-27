@@ -13,8 +13,8 @@
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="solicitud_relacionada"  v-model="sin_solicitud_relacionda">
-                                    <label for="solicitud_relacionada" class="custom-control-label" v-model="sin_solicitud_relacionda">Sin Solicitud Relacionada</label>
+                                    <input type="checkbox" class="custom-control-input" id="solicitud_relacionada"  v-model="sin_solicitud_relacionada">
+                                    <label for="solicitud_relacionada" class="custom-control-label" v-model="sin_solicitud_relacionada">Sin Solicitud Relacionada</label>
                                 </div>
                             </div>
                             <div class="col">
@@ -44,7 +44,8 @@
             return {
                 id_empresa:'',
                 empresas :[],
-                sin_solicitud_relacionda : 1,
+                informe : [],
+                sin_solicitud_relacionada : 1,
                 solo_diferencias_activas : 1,
                 cargando : false
             }
@@ -70,12 +71,13 @@
             },
             consultar() {
                 this.cargando = true;
-                return this.$store.dispatch('controlInterno/empresa-facturera/buscar', {
-                    empresas_factureras: this.empresas_factureras
+                return this.$store.dispatch('contabilidadGeneral/incidente-poliza/obtenerInforme', {
+                    id_empresa: this.id_empresa,
+                    sin_solicitud_relacionada : this.sin_solicitud_relacionada,
+                    solo_diferencias_activas : this.solo_diferencias_activas,
                 })
                     .then(data => {
-                        this.resultados_coincidencias = data;
-                        this.empresas_factureras = [];
+                        this.informe = data;
                     })
                     .finally(() => {
                         this.cargando = false;

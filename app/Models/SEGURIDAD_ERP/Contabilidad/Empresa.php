@@ -220,7 +220,72 @@ class Empresa extends Model
         } catch (\Exception $e) {
 
         }
+    }
+
+    public function getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas){
+        $informe = ["empresa"=>$this->Nombre, "informe" => []];
+        $diferencias = $this->diferencias;
+        $tipos = $this->getTiposDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas);
+        $i=0;
+        foreach($tipos as $tipo){
+            $informe["informe"][$i]["tipo"]=$tipo->descripcion;
+            $diferencias = $this->getDiferenciasInforme($sin_solicitud_relacionada, $solo_diferencias_activas, $tipo->id);
+            $j = 0;
+            foreach($diferencias as $diferencia){
+                $informe["informe"][$i]["informe"][$j]["numero_folio_poliza"]=$diferencia->poliza->numero_folio;
+                $j++;
+            }
+
+            $i++;
+        }
+        return $informe;
+    }
 
 
+    private function getDiferenciasInforme($sin_solicitud_relacionada, $solo_diferencias_activas, $id_tipo = null)
+    {
+        if(is_null($id_tipo)){
+            if($sin_solicitud_relacionada == 1){
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",1)->get();
+                } else{
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",0)->get();
+                }
+            } else{
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",1)->get();
+                } else{
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",0)->get();
+                }
+            }
+        } else {
+            if($sin_solicitud_relacionada == 1){
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",1)->where("id_tipo","=",$id_tipo)->get();
+                } else{
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",0)->where("id_tipo","=",$id_tipo)->get();
+                }
+            } else{
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",1)->where("id_tipo","=",$id_tipo)->get();
+                } else{
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",0)->where("id_tipo","=",$id_tipo)->get();
+                }
+            }
+        }
+
+        return $diferencias;
+    }
+
+    public function getTiposDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas)
+    {
+        $diferencias = $this->getDiferenciasInforme($sin_solicitud_relacionada, $solo_diferencias_activas);
+
+        $tipos_diferencia = [];
+        foreach($diferencias as $diferencia){
+            $tipos_diferencia[] = $diferencia->tipo;
+        }
+        $tipos = array_unique($tipos_diferencia);
+        return $tipos;
     }
 }

@@ -228,4 +228,8 @@ class DiferenciaService
             return "q1920";
         }*/
     }
+
+    public function obtenerInforme($parametros){
+        $this->repository->getInforme($parametros->id_empresa, $parametros->sin_solicitud_relacionada, $parametros->solo_diferencias_activas);
+    }
 }
