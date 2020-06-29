@@ -111,7 +111,7 @@
                             id_moneda:pago.moneda.nombre,
                             buttons: $.extend({}, {
                                 id: pago.id,
-                                delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : false,
+                                delete: self.$root.can('eliminar_pagos') ? true : false,
                             })
                         })
                     });
