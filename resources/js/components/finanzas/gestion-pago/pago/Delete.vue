@@ -96,6 +96,7 @@
         },
         methods: {
             find() {
+                this.motivo = ''
                 this.cargando = true;
                 this.$store.commit('finanzas/pago/SET_PAGO', null);
                 return this.$store.dispatch('finanzas/pago/find', {

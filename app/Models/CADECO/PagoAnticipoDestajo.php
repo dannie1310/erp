@@ -103,7 +103,6 @@ class PagoAnticipoDestajo extends Pago
                     'anticipo_saldo' => $saldo
                 ]);
                 $this->crearLogRespaldo($consulta);
-                dd("aq anticipo??");
                 $consulta = "'Pago 131073: Pago anticipado destajo elimina anticipo id_transaccion".$this->anticipo->id_transaccion."'";
                 $this->anticipo->delete();
                 $this->crearLogRespaldo($consulta);
@@ -119,10 +118,9 @@ class PagoAnticipoDestajo extends Pago
     }
 
     public function ajustarOC()
-    {//aqyui
-        dd("aqui OC PAD");
+    {
         if($this->transaccion->where('tipo_transaccion', '=', 19)->where('estado', '=', 1)->first())
-        {dd("probar esto we");
+        {
             if(is_null(Transaccion::where('id_antecedente', '=', $this->id_referente)->first()) && is_null(Transaccion::where('id_referente', $this->id_referente)->first()))
             {
                 $this->transaccion->update([

@@ -1126,12 +1126,9 @@ class Estimacion extends Transaccion
         {
             $item->movimiento->delete();
         }
-        $this->update([
-            'estado' => 0,
-            'impreso' => 0,
-            'saldo' => $this->monto
-        ]);
-
-        dd("fin estimacion? really", $this);
+        $this->estado = 0;
+        $this->impreso = 0;
+        $this->saldo = $this->monto;
+        $this->save();
     }
 }

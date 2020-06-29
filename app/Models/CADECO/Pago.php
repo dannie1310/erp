@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 use App\Facades\Context;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Finanzas\PagoEliminado;
 use App\Models\CADECO\Finanzas\PagoEliminadoLog;
 use Illuminate\Support\Facades\DB;
@@ -75,6 +76,11 @@ class Pago extends Transaccion
         return $this->belongsTo(PagoAnticipoDestajo::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function distribucionPartida()
+    {
+        return $this->belongsTo(DistribucionRecursoRemesaPartida::class, 'id_transaccion', 'id_transaccion_pago');
+    }
+
     public function getEstadoStringAttribute()
     {
         $estado = "";
@@ -96,29 +102,23 @@ class Pago extends Transaccion
             $this->validarEliminacion();
             DB::connection('cadeco')->beginTransaction();
             $this->respaldar($motivo);
-            if($this->opciones == 0) //Pago Factura
-            {
-
-            }
 
             if($this->opciones == 1 && $this->estado == 1)  //Pago varios o Reposicion FF
             {
-                $fondo = Fondo::where('id_fondo', '=',$this->id_referente)->first();
+                $fondo = Fondo::where('id_fondo', '=', $this->id_referente)->first();
                 $saldo_a_modificar = $fondo->saldo + $this->monto;
-                $consulta = "'Pago (1) : id_fondo = ".$fondo->id_fondo." saldo = ".$fondo->saldo." monto= ".$this->monto." saldo(cambio)= ".$saldo_a_modificar."'";
-                $fondo->update([
-                    'saldo' => $saldo_a_modificar
-                ]);
+                $consulta = "'Pago (1) : id_fondo = " . $fondo->id_fondo . " saldo = " . $fondo->saldo . " monto= " . $this->monto . " saldo(cambio)= " . $saldo_a_modificar . "'";
+                $fondo->saldo = $saldo_a_modificar;
+                $fondo->save();
                 $this->crearLogRespaldo($consulta);
-           }
+            }
 
             if($this->opciones == 65537 && $this->estado == 1) {
                 $saldo_a_modificar = $this->transaccionReferente->saldo - $this->monto;
                 $consulta = "'Pago 65537: id_referente = " . $this->id_referente . " saldo = " . $this->transaccionReferente->saldo . " monto= " . $this->monto . " saldo(cambio)= " . $saldo_a_modificar . " estado = " . $this->transaccionReferente->estado . " cambio a 1'";
-                $this->transaccionReferente->update([
-                    'saldo' => $saldo_a_modificar,
-                    'estado' => 1
-                ]);
+                $this->transaccionReferente->saldo = $saldo_a_modificar;
+                $this->transaccionReferente->estado = 1;
+                $this->transaccionReferente->save();
                 $this->crearLogRespaldo($consulta);
 
                 if ($this->transaccionReferente->tipo_transaccion == 99) //Lista de Raya
@@ -126,9 +126,8 @@ class Pago extends Transaccion
                     $lista_raya = ListaRaya::where('id_transaccion', '=', $this->id_referente)->first();
                     foreach ($lista_raya->items as $item) {
                         $monto_a_modificar = ROUND($item->inventario->monto_pagado - $item->importe * (-$this->monto / $lista_raya->monto), 2);
-                        $item->inventario->update([
-                            'monto_pagado' => $monto_a_modificar
-                        ]);
+                        $item->inventario->monto_pagado = $monto_a_modificar;
+                        $item->inventario->save();
                         $this->crearLogRespaldo("'Pago 65537: listaraya (" . $lista_raya->id_transaccion . ") editado id_inventario" . $item->inventario->id_lote . " monto_pagado = " . $item->inventario->monto_pagado . " importe_lista_raya = " . $lista_raya->importe . " monto_pagado = " . $monto_a_modificar . "'");
                     }
                 }
@@ -137,9 +136,8 @@ class Pago extends Transaccion
                     $prestacion = Prestacion::where('id_transaccion', '=', $this->id_referente)->first();
                     foreach ($prestacion->items as $item) {
                         $monto_a_modificar = ROUND($item->inventario->monto_pagado - $item->importe * (-$this->monto / $prestacion->monto), 2);
-                        $item->inventario->update([
-                            'monto_pagado' => $monto_a_modificar
-                        ]);
+                        $item->inventario->monto_pagado = $monto_a_modificar;
+                        $item->inventario->save();
                         $this->crearLogRespaldo("'Pago 65537: Prestación (" . $prestacion->id_transaccion . ") editado id_inventario" . $item->inventario->id_lote . " monto_pagado = " . $item->inventario->monto_pagado . " importe_lista_raya = " . $prestacion->importe . " monto_pagado = " . $monto_a_modificar . "'");
                     }
                 }
@@ -170,9 +168,8 @@ class Pago extends Transaccion
             {
                 //reactivar el cheque
                 $consulta = "'Pago 262145: id_referente = ".$this->id_referente." estado = ".$this->transaccionReferente->estado." cambio a 1'";
-                $this->transaccionReferente->update([
-                    'estado' => 1
-                ]);
+                $this->transaccionReferente->estado = 1;
+                $this->transaccionReferente->save();
                 $this->crearLogRespaldo($consulta);
             }
 
@@ -183,7 +180,6 @@ class Pago extends Transaccion
             /**
              * Elimina Pago...
              */
-            dd("casi se elimina we");
             $this->delete();
 
             DB::connection('cadeco')->commit();
@@ -191,7 +187,7 @@ class Pago extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
-        } dd($motivo, "FIN...");
+        }
     }
 
     private function validarEliminacion()
@@ -278,6 +274,7 @@ class Pago extends Transaccion
                  * sp_desaplicar_pago
                  */
                 $this->desaplicarPago($orden_pago);
+                $orden_pago->respaldar("Eliminar-orden pago...");
                 $orden_pago->delete();
             }
         }
@@ -294,10 +291,13 @@ class Pago extends Transaccion
             }
         }
 
-        $this->update([
-            'saldo' => $this->monto,
-            'opciones' => 327681
-        ])->where('estado', '=', 1);
+        if($this->estado == 1)
+        {
+            $this->update([
+                'saldo' => $this->monto,
+                'opciones' => 327681
+            ]);
+        }
     }
 
     /**
@@ -309,9 +309,6 @@ class Pago extends Transaccion
         {
             abort(400, "No se puede eliminar este pago porque no existe la orden de pago para ser desaplicada.");
         }
-        $id_factura = $pago->id_referente;
-        $pagado = -$pago->monto;
-        //$pago_a_desaplicar = $pago->transaccionReferente;
 
         if ($pago->transaccionReferente->tipo_transaccion == 52)
         {
@@ -324,280 +321,217 @@ class Pago extends Transaccion
             abort(400, "Imposible determinar los items de la orden de pago, no puede ser anulado.");
         }
 
-        $id_contrarecibo = $pago->transaccionReferente->id_antecedente;
-        $tipo_cambio = $pago->transaccionReferente->tipo_cambio;
-        $factor_iva      = $pago->transaccionReferente->monto / ($pago->transaccionReferente->monto - $pago->transaccionReferente->impuesto);
-
         foreach ($pago->items as $partida_pago) {
-            $aplicado = $partida_pago->importe;
-            $id_item = $partida_pago->item_antecedente;
-           // $item_antecedente = $partida_pago->partida_antecedente->item_antecedente;
-	        $id_antecedente   = $partida_pago->partida_antecedente->id_antecedente;
-	        //$item_antecedente = $partida_pago->partida_antecedente->item_antecedente;
-	        $importe          = $partida_pago->partida_antecedente->importe;
-	        if($partida_pago->partida_antecedente->numero < 0 || $partida_pago->partida_antecedente->numero > 7)
+
+            if($partida_pago->partida_antecedente->numero < 0 || $partida_pago->partida_antecedente->numero > 7)
             {
                 abort(400, "Error al validar tipo de item no soportado, no puede ser anulado.");
             }
-            switch ($partida_pago->partida_antecedente->numero) {//$tipo_item
-                case 0:
-                    // actualizamos el monto pagado del lote original
-                    // atencion, falta el tipo_cambio del registro 68
 
-                    $this->recalculosInventario($partida_pago->partida_antecedente->item_antecedente,  ROUND($partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2));
-                    $this->recalculosMovimiento($partida_pago->partida_antecedente->item_antecedente, $partida_pago->partida_antecedente->importe);
+            if($partida_pago->partida_antecedente->numero == 0) {
+                // actualizamos el monto pagado del lote original
+                // atencion, falta el tipo_cambio del registro 68
+                $this->recalculosInventario($partida_pago->partida_antecedente->item_antecedente, ROUND($partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2));
+                $this->recalculosMovimiento($partida_pago->partida_antecedente->item_antecedente, $partida_pago->partida_antecedente->importe);
 
-                    $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->saldo + ROUND( $partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2);
-                    $consulta =  "'Pago 327681: tipo 0 - editar item antecedente: id_item = " .  $partida_pago->partida_antecedente->partida_antecedente->id_item. " saldo = " .  $partida_pago->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . "'";
-                    dd("por cambiar", $consulta);
-                    $partida_pago->partida_antecedente->partida_antecedente->update([
-                        'saldo' => $monto_a_modificar
-                    ]);
-                    $this->crearLogRespaldo($consulta);
-                    break;
-                case 1:
-                    $transaccion_antecedente = $partida_pago->partida_antecedente->transaccionAntecedente;
-                    if($transaccion_antecedente->tipo_transaccion == 51)
-                    {
-                        $factor = $partida_pago->importe / $transaccion_antecedente->anticipo_monto;
-                        $movimientos = Movimiento::join('items', 'items.id_item', 'movimientos.id_item')
-                            ->join('EstimacionesSubcontratos', 'EstimacionesSubcontratos.id_transaccion', 'items.id_transaccion')
-                            ->where('EstimacionesSubcontratos.id_antecedente', '=', $partida_pago->partida_antecedente->id_antecedente)->get();
-                        dd($movimientos, "movimiento ??? tipo 1");
-                        foreach ($movimientos as $movimiento)
-                        {
-                            $monto_a_modificar = $movimiento->monto_pagado - ROUND($movimiento->monto_total * ($partida_pago->importe / $transaccion_antecedente->anticipo_monto) * ((100 - $movimiento->retencion) / 100 - ($movimiento->monto - $movimiento->impuesto) / $movimiento->suma_importes), 2);
-                            $consulta = "'Pago 327681: tipo 1 - editar movimiento (transaccion: " . $transaccion_antecedente->id_transaccion . " ) : id_movimiento = " . $movimiento->id_movimiento . " monto_pagado = " . $movimiento->monto_pagado . " cambio a " . $monto_a_modificar . "'";
-                            $movimiento->update([
+                $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->saldo + ROUND($partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2);
+                $consulta = "'Pago 327681: tipo 0 - editar item antecedente: id_item = " . $partida_pago->partida_antecedente->partida_antecedente->id_item . " saldo = " . $partida_pago->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . "'";
+                $partida_pago->partida_antecedente->partida_antecedente->saldo = $monto_a_modificar;
+                $partida_pago->partida_antecedente->partida_antecedente->save();
+                $this->crearLogRespaldo($consulta);
+            }
+            elseif ($partida_pago->partida_antecedente->numero == 1) {
+                $transaccion_antecedente = $partida_pago->partida_antecedente->transaccionAntecedente;
+
+                if ($transaccion_antecedente->tipo_transaccion == 51) {
+                    $movimientos = Movimiento::join('items', 'items.id_item', 'movimientos.id_item')
+                        ->join('EstimacionesSubcontratos', 'EstimacionesSubcontratos.id_transaccion', 'items.id_transaccion')
+                        ->where('EstimacionesSubcontratos.id_antecedente', '=', $partida_pago->partida_antecedente->id_antecedente)->get();
+
+                    foreach ($movimientos as $movimiento) {
+                        $monto_a_modificar = $movimiento->monto_pagado - ROUND($movimiento->monto_total * ($partida_pago->importe / $transaccion_antecedente->anticipo_monto) * ((100 - $movimiento->retencion) / 100 - ($movimiento->monto - $movimiento->impuesto) / $movimiento->suma_importes), 2);
+                        $consulta = "'Pago 327681: tipo 1 - editar movimiento (transaccion: " . $transaccion_antecedente->id_transaccion . " ) : id_movimiento = " . $movimiento->id_movimiento . " monto_pagado = " . $movimiento->monto_pagado . " cambio a " . $monto_a_modificar . "'";
+                        $movimiento->update([
+                            'monto_pagado' => $monto_a_modificar
+                        ]);
+                        $this->crearLogRespaldo($consulta);
+                    }
+                }
+                if ($transaccion_antecedente->tipo_transaccion == 52) {
+                    $monto_total = $this->monto_total($transaccion_antecedente);
+                    if ($monto_total > 0) {
+                        foreach ($transaccion_antecedente->items as $partida_estimacion) {
+                            $monto_a_modificar = ROUND(($partida_estimacion->movimiento->monto_pagado - $partida_estimacion->movimiento->monto_total * $partida_pago->importe * $pago->transaccionReferente->tipo_cambio / $monto_total), 2);
+                            $consulta = "'Pago 327681: tipo 1 - editar movimiento(estimación - " . $partida_estimacion->id_transaccion . "): id_movimiento = " . $partida_estimacion->movimiento->id_movimiento . " monto_pagado = " . $partida_estimacion->movimiento->monto_pagado . " cambio a " . $monto_a_modificar . "'";
+                            $partida_estimacion->movimiento->update([
                                 'monto_pagado' => $monto_a_modificar
                             ]);
                             $this->crearLogRespaldo($consulta);
                         }
                     }
-                    if($transaccion_antecedente->tipo_transaccion == 52)
-                    {
-                        $monto_total = $this->monto_total($transaccion_antecedente);
-                        if($monto_total > 0)
-                        {
-                            foreach ($transaccion_antecedente->items as $partida_estimacion)
-                            {
-                                $monto_a_modificar = ROUND(($partida_estimacion->movimiento->monto_pagado - $partida_estimacion->movimiento->monto_total * $partida_pago->importe * $pago->transaccionReferente->tipo_cambio / $monto_total), 2);
-                                $consulta = "'Pago 327681: tipo 1 - editar movimiento(estimación - " . $partida_estimacion->id_transaccion . "): id_movimiento = " . $partida_estimacion->movimiento->id_movimiento . " monto_pagado = " . $partida_estimacion->movimiento->monto_pagado . " cambio a " . $monto_a_modificar . "'";
-                                $partida_estimacion->movimiento->update([
-                                    'monto_pagado' => $monto_a_modificar
-                                ]);
-                                $this->crearLogRespaldo($consulta);
-                            }
-                        }
-                    }
-                    break;
-                case 2:
-                    $transaccion_antecedente = $partida_pago->partida_antecedente->transaccionAntecedente;
-                    if($transaccion_antecedente->tipo_transaccion == 19 && in_array($transaccion_antecedente->opciones, [1, 65537, 327681, 65535]))
-                    {
-                        if($transaccion_antecedente->opciones == 65535)
-                        {
-                            $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->saldo + $partida_pago->importe;
-                            $consulta = "'Pago 327681: tipo 2 - editar item de tipo orden compra(" . $transaccion_antecedente->id_transaccion . "): id_item = " . $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->id_item . " saldo = " . $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . "'";
-                            // actualizacion de la remision
-                            $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->update([
-                                'saldo' => $monto_a_modificar
-                            ]);
-                            $this->crearLogRespaldo($consulta);
-                            // actualizacion de la Orden de Compra
-                            dd($partida_pago->partida_antecedente->partida_antecedente->partida_antecedente, $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente);
-                            $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente->importe - $partida_pago->importe;
-                            $consulta = "'Pago 327681: tipo 2 - editar item de tipo orden compra(" . $transaccion_antecedente->id_transaccion . "): id_item = " . $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente->id_item . " importe = " . $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente->importe . " cambio a " . $monto_a_modificar . "'";
-                            $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente->update([
-                                'importe' => $monto_a_modificar
-                            ]);
-                            $this->crearLogRespaldo($consulta);
-                            $this->recalculosInventario($partida_pago->partida_antecedente->partida_antecedente->item_antecedente, $partida_pago->importe);
-                        }
-                        else {
-                            $acumulado = 0;
-                            $anticipo_aplicado = $this->anticipoAplicado($partida_pago->importe,$transaccion_antecedente);
-                            $remisiones = Item::join('transacciones', 'items.id_transaccion', 'transacciones.id_transaccion')
-                                ->where('transacciones.tipo_transaccion', '=', 33)
-                                ->where('items.item_antecedente', '=', $partida_pago->partida_antecedente->item_antecedente)
-                                ->where('transacciones.id_obra', '=', Context::getIdObra())
-                                ->where('items.anticipo', '>', 0)
-                                ->orderBy('numero_folio', 'desc')
-                                ->get();
+                }
+            }
+            elseif ($partida_pago->partida_antecedente->numero == 2)
+            {
+                $transaccion_antecedente = $partida_pago->partida_antecedente->transaccionAntecedente;
+                if ($transaccion_antecedente->tipo_transaccion == 19 && in_array($transaccion_antecedente->opciones, [1, 65537, 327681, 65535])) {
+                    if ($transaccion_antecedente->opciones == 65535) {
+                        $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->saldo + $partida_pago->importe;
+                        $consulta = "'Pago 327681: tipo 2 - editar item de tipo orden compra(" . $transaccion_antecedente->id_transaccion . "): id_item = " . $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->id_item . " saldo = " . $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . "'";
+                        // actualizacion de la remision
+                        $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->saldo = $monto_a_modificar;
+                        $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->save();
+                        $this->crearLogRespaldo($consulta);
 
+                        // actualizacion de la Orden de Compra
+                        $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente->importe - $partida_pago->importe;
+                        $consulta = "'Pago 327681: tipo 2 - editar item de tipo orden compra(" . $transaccion_antecedente->id_transaccion . "): id_item = " . $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente->id_item . " importe = " . $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente->importe . " cambio a " . $monto_a_modificar . "'";
+                        $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente->importe = $monto_a_modificar;
+                        $partida_pago->partida_antecedente->partida_antecedente->partida_antecedente->partida_antecedente->save();
+                        $this->crearLogRespaldo($consulta);
+                        $this->recalculosInventario($partida_pago->partida_antecedente->partida_antecedente->item_antecedente, $partida_pago->importe);
+                    } else {
+                        $acumulado = 0;
+                        $anticipo_aplicado = $this->anticipoAplicado($partida_pago->importe, $transaccion_antecedente);
+                        $remisiones = Item::join('transacciones', 'items.id_transaccion', 'transacciones.id_transaccion')
+                            ->where('transacciones.tipo_transaccion', '=', 33)
+                            ->where('items.item_antecedente', '=', $partida_pago->partida_antecedente->item_antecedente)
+                            ->where('transacciones.id_obra', '=', Context::getIdObra())
+                            ->where('items.anticipo', '>', 0)
+                            ->orderBy('numero_folio', 'desc')->get();
 
-                            foreach ($remisiones as $remision)
-                            {
-                                $id_item_remision = $remision->id_item;
-                                //esta variable si se queda we $pagado_anticipo
-                                $pagado_anticipo = ($remision->importe - $remision->saldo);
-                                if($anticipo_aplicado > 0)
-                                {
-                                    $factura = Factura::whereHas('items')->where('id_item', '=', $remision->id_item)->first();
-                                    dd($factura);
-                                    $pagado_anticipo = $pagado_anticipo - $this->pagadoAnticipo($factura);
-                                    dd($pagado_anticipo);
+                        foreach ($remisiones as $remision) {
+                            $pagado_anticipo = ($remision->importe - $remision->saldo);
+                            if ($anticipo_aplicado > 0) {
+                                $factura = Factura::whereHas('items')->where('id_item', '=', $remision->id_item)->first();
+                                $pagado_anticipo = $pagado_anticipo - $this->pagadoAnticipo($factura);
 
-                                    if($pagado_anticipo > ($anticipo_aplicado - $acumulado))
-                                    {
-                                        $pagado_anticipo = $anticipo_aplicado - $acumulado;
-                                    }
-
-                                    $monto_a_modificar = $remision->saldo + $pagado_anticipo;
-                                    $consulta = "'Pago 327681: tipo 2 - editar item remisión (transaccion: " . $remision->id_transaccion . " ) : id_item = " . $remision->id_item . " saldo = " . $remision->saldo . " cambio a " . $monto_a_modificar . " pago_anticipo_calculado:'".$pagado_anticipo."'";
-                                    $remision->update([
-                                        'saldo'  => $monto_a_modificar,
-                                        'estado' => 0
-                                    ]);
-                                    $this->crearLogRespaldo($consulta);
-                                    $this->recalculosInventario($remision->id_item, $pagado_anticipo);
-                                    $this->recalculosMovimiento($remision->id_item, $pagado_anticipo);
-                                    //esta variable se debe quedar $acumulado
-                                    /**
-                                     * Acumular el anticipo amortizado en este pago
-                                     */
-                                    $acumulado = $acumulado + $pagado_anticipo;
-                                    dd("acumulado", $acumulado);
+                                if ($pagado_anticipo > ($anticipo_aplicado - $acumulado)) {
+                                    $pagado_anticipo = $anticipo_aplicado - $acumulado;
                                 }
-                            }
-                            $monto_a_modificar =  $partida_pago->partida_antecedente->partida_antecedente->saldo + $acumulado;
-                            $consulta = "'Pago 327681: tipo 2 - editar item: id_item = " . $partida_pago->partida_antecedente->partida_antecedente->id_item . " saldo = " . $partida_pago->partida_antecedente->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . " acumulado:'".$acumulado."'";
-                            $partida_pago->partida_antecedente->partida_antecedente->update([
-                                'saldo' => $monto_a_modificar
-                            ]);
-                            $this->crearLogRespaldo($consulta);
-                        }
-                    }
-                    else if($transaccion_antecedente->tipo_transaccion == 19)
-                    {
-                        $inventarios = Inventario::join('items', 'items.id_item', 'inventarios.id_item')
-                            ->join('transacciones', 'transacciones.id_transaccion', 'items.id_transaccion')
-                            ->where('item_antecedente', '=', $partida_pago->partida_antecedente->item_antecedente)
-                            ->where('tipo_transaccion', '=', 33);
 
-                        dd("inventarios", $inventarios->sum('inventarios.numero'));
-                        $numero_total = $inventarios->sum('inventarios.numero');
-                        if($numero_total > 0)
-                        {
-                            foreach ($inventarios as $inventario)
-                            {
-                                $monto_a_modificar = $inventario->monto_anticipo - ROUND($partida_pago->importe * $inventario->numero / $numero_total, 2);
-                                $consulta = "'Pago 327681: tipo 2 - editar inventario: id_lote = " . $inventario->id_lote . " monto_aplicado = " . $inventario->monto_aplicado . " cambio a " . $monto_a_modificar . "'";
-                                $inventarios->update([
-                                    'monto_aplicado' => $monto_a_modificar
-                                ]);
+                                $monto_a_modificar = $remision->saldo + $pagado_anticipo;
+                                $consulta = "'Pago 327681: tipo 2 - editar item remisión (transaccion: " . $remision->id_transaccion . " ) : id_item = " . $remision->id_item . " saldo = " . $remision->saldo . " cambio a " . $monto_a_modificar . " pago_anticipo_calculado:'" . $pagado_anticipo . "'";
+                                $remision->saldo = $monto_a_modificar;
+                                $remision->estado = 0;
+                                $remision->save();
                                 $this->crearLogRespaldo($consulta);
+                                $this->recalculosInventario($remision->id_item, $pagado_anticipo);
+                                $this->recalculosMovimiento($remision->id_item, $pagado_anticipo);
+
+                                /**
+                                 * Acumular el anticipo amortizado en este pago
+                                 */
+                                $acumulado = $acumulado + $pagado_anticipo;
                             }
-
-                            $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->saldo + $partida_pago->importe;
-                            $consulta = "'Pago 327681: tipo 2 - editar item: id_item = " .$partida_pago->partida_antecedente->partida_antecedente->id_item. " saldo = " .  $partida_pago->partida_antecedente->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . "'";
-                            $partida_pago->partida_antecedente->partida_antecedente->update([
-                               'saldo' => $monto_a_modificar
-                            ]);
-                            $this->crearLogRespaldo($consulta);
-                            dd("fin??", $monto_a_modificar);
                         }
-                    }
-                    else{
-                        $inventario = Inventario::where('id_item', '=',  $partida_pago->partida_antecedente->partida_antecedente->item_antecedente)->first();
-                        dd("else",$inventario, $partida_pago->partida_antecedente->partida_antecedente->item_antecedente);
-                        if ($inventario)
-                        {
-                            $monto_pagado =  $inventario->monto_pagado - $partida_pago->importe;
-                            $monto_anticipo = $inventario->monto_anticipo - $partida_pago->importe;
-                            $consulta = "'Pago 327681: tipo 2 - editar inventario: id_lote = " . $inventario->id_lote . " monto_pagado = " . $inventario->monto_pagado . " cambio a " . $monto_pagado .  "  monto_anticipo = " . $inventario->monto_anticipo ."cambio a ".$monto_anticipo."'";
-                            dd("cambio inventario ..",$monto_pagado, $monto_anticipo);
-                            $inventario->update([
-                                'monto_pagado' => $monto_pagado,
-                                'monto_anticipo' => $monto_anticipo
-                            ]);
-                            $inventario->distribuirPagoInventarios();
-                            $this->crearLogRespaldo($consulta);
-                        }
-                        $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->saldo - $partida_pago->importe;
-                        $consulta = "'Pago 327681: tipo 2 - editar item: id_item = " .$partida_pago->partida_antecedente->partida_antecedente->id_item. " saldo = " .  $partida_pago->partida_antecedente->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . "'";
-                        $partida_pago->partida_antecedente->partida_antecedente->update([
-                            'saldo' => $monto_a_modificar
-                        ]);
+                        $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->saldo + $acumulado;
+                        $consulta = "'Pago 327681: tipo 2 - editar item: id_item = " . $partida_pago->partida_antecedente->partida_antecedente->id_item . " saldo = " . $partida_pago->partida_antecedente->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . " acumulado:'" . $acumulado . "'";
+                        $partida_pago->partida_antecedente->partida_antecedente->saldo = $monto_a_modificar;
+                        $partida_pago->partida_antecedente->partida_antecedente->save();
                         $this->crearLogRespaldo($consulta);
                     }
-                    //actualiza el saldo de la O/C u O/R
-                    if($partida_pago->partida_antecedente->partida_antecedente->transaccion->tipo_transaccion == 19)
-                    {
-                        dd("OC o OR??");
-                        $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->transaccion->anticipo_saldo + ROUND($partida_pago->importe * ($pago->transaccionReferente->monto / ($pago->transaccionReferente->monto - $pago->transaccionReferente->impuesto)), 2);
-                        $consulta = "'Pago 327681: tipo 2 - editar transaccion: id_transaccion = " . $partida_pago->partida_antecedente->partida_antecedente->transaccion->id_transaccion . " anticipo_saldo = " . $partida_pago->partida_antecedente->partida_antecedente->transaccion->anticipo_saldo . " cambio a " . $monto_a_modificar . "'";
-                        $partida_pago->partida_antecedente->partida_antecedente->transaccion->update([
-                            'anticipo_saldo' => $monto_a_modificar
-                        ]);
+                } else if ($transaccion_antecedente->tipo_transaccion == 19) {
+                    $inventarios = Inventario::join('items', 'items.id_item', 'inventarios.id_item')
+                        ->join('transacciones', 'transacciones.id_transaccion', 'items.id_transaccion')
+                        ->where('item_antecedente', '=', $partida_pago->partida_antecedente->item_antecedente)
+                        ->where('tipo_transaccion', '=', 33)->get();
+
+                    $numero_total = $inventarios->sum('inventarios.numero');
+                    if ($numero_total > 0) {
+                        foreach ($inventarios as $inventario) {
+                            $monto_a_modificar = $inventario->monto_anticipo - ROUND($partida_pago->importe * $inventario->numero / $numero_total, 2);
+                            $consulta = "'Pago 327681: tipo 2 - editar inventario: id_lote = " . $inventario->id_lote . " monto_aplicado = " . $inventario->monto_aplicado . " cambio a " . $monto_a_modificar . "'";
+                            $inventario->monto_aplicado = $monto_a_modificar;
+                            $inventario->save();
+                            $this->crearLogRespaldo($consulta);
+                        }
+
+                        $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->saldo + $partida_pago->importe;
+                        $consulta = "'Pago 327681: tipo 2 - editar item: id_item = " . $partida_pago->partida_antecedente->partida_antecedente->id_item . " saldo = " . $partida_pago->partida_antecedente->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . "'";
+                        $partida_pago->partida_antecedente->partida_antecedente->saldo = $monto_a_modificar;
+                        $partida_pago->partida_antecedente->partida_antecedente->save();
                         $this->crearLogRespaldo($consulta);
                     }
-                    dd("paso");
-                    break;
-                case 3:
-                    dd("tipo 3");
-                    $this->recalculosInventario($partida_pago->partida_antecedente->item_antecedente, ROUND($partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2));
-                    break;
-                case 4:
-                    dd("inicio-4");
-                    $lista_raya = ListaRaya::find($partida_pago->partida_antecedente->id_antecedente);
-                    if($lista_raya)
-                    {
-                        $lista_raya->desaplicaPago();
-                        $this->crearLogRespaldo("'Pago 327681: tipo 4 - editar inventario (listaRaya: ".$lista_raya->id_transaccion." )todos los monto_pagado cambio a cero.'");
-                    }
-                    else{
-                        $prestacion = Prestacion::find($partida_pago->partida_antecedente->id_antecedente);
-                        if($prestacion)
-                        {
-                            $factor = $partida_pago->partida_antecedente->importe / $prestacion->monto;
-                            //posible cambio cuando se sepa que es $partida->partida_antecedente->importe
-                            $prestacion->desaplicaPago($factor);
-                            $this->crearLogRespaldo("'Pago 327681: tipo 4 - editar inventario (prestacion: ".$prestacion->id_transaccion." )todos los monto_pagado se recalcula.");
-                        }
-                    }
-                    dd("fin - 4");
-                break;
-                case 5:
-                    break;
-                case 6:
-                    break;
-                case 7:
-                    $this->recalculosInventario($partida_pago->item_antecedente, ROUND($partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2));
-                    $this->recalculosMovimiento($partida_pago->item_antecedente, ROUND($partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2));
-                    break;
+                } else {
+                    $inventario = Inventario::where('id_item', '=', $partida_pago->partida_antecedente->partida_antecedente->item_antecedente)->first();
 
-                default:
-                    abort(400, "Tipo de item no soportado, no puede ser anulado... ");
-                    break;
+                    if ($inventario) {
+                        $monto_pagado = $inventario->monto_pagado - $partida_pago->importe;
+                        $monto_anticipo = $inventario->monto_anticipo - $partida_pago->importe;
+                        $consulta = "'Pago 327681: tipo 2 - editar inventario: id_lote = " . $inventario->id_lote . " monto_pagado = " . $inventario->monto_pagado . " cambio a " . $monto_pagado . "  monto_anticipo = " . $inventario->monto_anticipo . "cambio a " . $monto_anticipo . "'";
+                        $inventario->monto_pagado = $monto_pagado;
+                        $inventario->monto_anticipo = $monto_anticipo;
+                        $inventario->save();
+                        $inventario->distribuirPagoInventarios();
+                        $this->crearLogRespaldo($consulta);
+                    }
+                    $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->saldo - $partida_pago->importe;
+                    $consulta = "'Pago 327681: tipo 2 - editar item: id_item = " . $partida_pago->partida_antecedente->partida_antecedente->id_item . " saldo = " . $partida_pago->partida_antecedente->partida_antecedente->saldo . " cambio a " . $monto_a_modificar . "'";
+                    $partida_pago->partida_antecedente->partida_antecedente->saldo = $monto_a_modificar;
+                    $partida_pago->partida_antecedente->partida_antecedente->save();
+                    $this->crearLogRespaldo($consulta);
+                }
+                //actualiza el saldo de la O/C u O/R
+                if ($partida_pago->partida_antecedente->partida_antecedente->transaccion->tipo_transaccion == 19) {
+                    $monto_a_modificar = $partida_pago->partida_antecedente->partida_antecedente->transaccion->anticipo_saldo + ROUND($partida_pago->importe * ($pago->transaccionReferente->monto / ($pago->transaccionReferente->monto - $pago->transaccionReferente->impuesto)), 2);
+                    $consulta = "'Pago 327681: tipo 2 - editar transaccion: id_transaccion = " . $partida_pago->partida_antecedente->partida_antecedente->transaccion->id_transaccion . " anticipo_saldo = " . $partida_pago->partida_antecedente->partida_antecedente->transaccion->anticipo_saldo . " cambio a " . $monto_a_modificar . "'";
+                    $partida_pago->partida_antecedente->partida_antecedente->transaccion->anticipo_saldo = $monto_a_modificar;
+                    $partida_pago->partida_antecedente->partida_antecedente->transaccion->save();
+                    $this->crearLogRespaldo($consulta);
+                }
+            }
+            elseif ($partida_pago->partida_antecedente->numero == 3)
+            {
+                $this->recalculosInventario($partida_pago->partida_antecedente->item_antecedente, ROUND($partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2));
+            }
+            elseif ($partida_pago->partida_antecedente->numero == 4)
+            {
+                $lista_raya = ListaRaya::find($partida_pago->partida_antecedente->id_antecedente)->first();
+                if ($lista_raya) {
+                    $lista_raya->desaplicaPago();
+                    $this->crearLogRespaldo("'Pago 327681: tipo 4 - editar inventario (listaRaya: " . $lista_raya->id_transaccion . " )todos los monto_pagado cambio a cero.'");
+                } else {
+                    $prestacion = Prestacion::find($partida_pago->partida_antecedente->id_antecedente)->first();
+                    if ($prestacion) {
+                        $factor = $partida_pago->partida_antecedente->importe / $prestacion->monto;
+                        $prestacion->desaplicaPago($factor);
+                        $this->crearLogRespaldo("'Pago 327681: tipo 4 - editar inventario (prestacion: " . $prestacion->id_transaccion . " )todos los monto_pagado se recalcula.");
+                    }
+                }
+            }
+            elseif ($partida_pago->partida_antecedente->numero == 7)
+            {
+                $this->recalculosInventario($partida_pago->item_antecedente, ROUND($partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2));
+                $this->recalculosMovimiento($partida_pago->item_antecedente, ROUND($partida_pago->importe * $pago->transaccionReferente->tipo_cambio, 2));
             }
 
 	        $monto_a_modificar = $partida_pago->partida_antecedente->saldo + $partida_pago->importe;
             $consulta = "'Pago 327681: id_item = ". $partida_pago->partida_antecedente->id_item." saldo  = ". $partida_pago->partida_antecedente->saldo." cambio a ".$monto_a_modificar."'";
-            $partida_pago->partida_antecedente->update([
-                'saldo' => $monto_a_modificar
-            ]);
+            $partida_pago->partida_antecedente->saldo = $monto_a_modificar;
+            $partida_pago->partida_antecedente->save();
             $this->crearLogRespaldo($consulta);
-            dd("FIN 327681");
         }
 
-        $monto_a_modificar = $pagado_anticipo->saldo + (-$pago->monto);
-        $consulta = "'Pago 327681:editar transaccion: id_transaccion = " . $pago->transaccionReferente->id_transaccion . " saldo = " . $pago->transaccionReferente->saldo . " cambio a " . $monto_pagado . "'";
-        $pago->transaccionReferente->update([
-            'saldo'  => $monto_a_modificar,
-            'estado' => 1
-        ]);
+        //Factura
+        $monto_a_modificar =  $pago->transaccionReferente->saldo + (-$pago->monto);
+        $consulta = "'Pago 327681:editar transaccion(Fatura): id_transaccion = " . $pago->transaccionReferente->id_transaccion . " saldo = " . $pago->transaccionReferente->saldo . " cambio a " . $monto_a_modificar . "'";
+        $pago->transaccionReferente->saldo = $monto_a_modificar;
+        $pago->transaccionReferente->estado = 1;
+        $pago->transaccionReferente->save();
         $this->crearLogRespaldo($consulta);
 
-        dd($pago->transaccionReferente->transaccionesRelacionadas, $pago->transaccionReferente->id_antecedente);
-        $monto_a_modificar = $pago->transaccionReferente->transaccionesRelacionadas->saldo +  (-$pago->monto);
-        $consulta = "'Pago 327681:editar transaccion: id_transaccion = " . $pago->transaccionReferente->transaccionesRelacionadas->id_transaccion . " saldo = " . $pago->transaccionReferente->transaccionesRelacionadas->saldo . " cambio a " . $monto_pagado . "'";
-        $pago->transaccionReferente->transaccionesRelacionadas->update([
-            'saldo'  => $monto_a_modificar,
-            'estado' => 1
-        ]);
-        $this->crearLogRespaldo($consulta);
-        dd("PASO");
+        //Contrarecibo
+        $contrarecibos = ContraRecibo::where('id_transaccion', '=', $pago->transaccionReferente->id_antecedente)->get();
+        foreach ($contrarecibos as $contrarecibo)
+        {
+            $monto_a_modificar = $contrarecibo->saldo +  (-$pago->monto);
+            $consulta = "'Pago 327681:editar transaccion(Contrarecibo): id_transaccion = " . $contrarecibo->id_transaccion . " saldo = " . $contrarecibo->saldo . " cambio a " . $monto_a_modificar . "'";
+            $contrarecibo->saldo =  $monto_a_modificar;
+            $contrarecibo->estado = 1;
+            $contrarecibo->save();
+            $this->crearLogRespaldo($consulta);
+        }
     }
 
     /**
@@ -615,9 +549,8 @@ class Pago extends Transaccion
          * Editar el estado de la estimación
          */
         $consulta = "'Pago 327681: editar estimación: id_referente = " . $estimacion->id_transaccion . " estado = " . $estimacion->estado . " cambio a 1'";
-        $estimacion->update([
-            'estado' => 1
-        ]);
+        $estimacion->estado = 1;
+        $estimacion->save();
         $this->crearLogRespaldo($consulta);
         $consulta = "'Pago 327681: editar estimación: id_transaccion = " . $estimacion->id_transaccion . " estado = " . $estimacion->estado . " cambio a 0, impreso 0, saldo = monto" . $estimacion->monto . "'";
         $estimacion->revertir_estimacion();
@@ -647,12 +580,6 @@ class Pago extends Transaccion
 
     private function pagadoAnticipo($factura)
     {
-        /**
-         * checar que haga esto:
-         *  SELECT @pagado_anticipo = @pagado_anticipo - COALESCE(SUM(importe-saldo),0)
-        FROM ItemsFacturados
-        WHERE ItemsFacturados.id_item = @id_item_remision
-         */
         $suma = 0;
         foreach ($factura->items as $partida)
         {
@@ -664,7 +591,6 @@ class Pago extends Transaccion
     private function recalculosInventario($id_item, $monto_a_restar)
     {
         $inventario = Inventario::where('id_item', '=', $id_item)->first();
-        dd($inventario);
         if ($inventario)
         {
             $monto_pagado =  $inventario->monto_pagado - $monto_a_restar;
@@ -677,44 +603,13 @@ class Pago extends Transaccion
     private function recalculosMovimiento($id_item, $monto_a_restar)
     {
         $movimiento = Movimiento::where('id_item', '=', $id_item)->first();
-        dd($movimiento);
         if($movimiento)
         {
             $monto_pagado = $movimiento->monto_pagado - $monto_a_restar;
             $consulta = "'Pago 327681: tipo 0 - editar movimiento: id_movimiento = " . $movimiento->id_movimiento . " monto_pagado = " . $movimiento->monto_pagado . " cambio a " . $monto_pagado . "'";
-            $movimiento->update([
-                'monto_pagado' => $monto_pagado
-            ]);
+            $movimiento->monto_pagado = $monto_pagado;
+            $movimiento->save();
             $this->crearLogRespaldo($consulta);
         }
-        /*
-        $inventario = Inventario::where('id_item', '=', $partida->partida_antecedente->item_antecedente)->first();
-        dd($inventario, $partida->partida_antecedente->item_antecedente);
-        if ($inventario)
-        {
-            $monto_a_modificar = $inventario->monto_pagado -  ROUND($partida->importe * $pago_a_desaplicar->tipo_cambio, 2);
-            $consulta = "'Pago 327681: tipo 0 - editar inventario: id_lote = " . $inventario->id_lote . " monto_pagado = " . $inventario->monto_pagado . " cambio a " . $monto_a_modificar . "'";
-            $inventario->update([
-                'monto_pagado' => $monto_a_modificar
-            ]);
-            $this->crearLogRespaldo($consulta);
-
-            //ejecuta sp_distribuir_pagado_inventarios
-            $inventario->distribuirPagoInventarios();
-        } else {
-            $movimiento = Movimiento::where('id_item', '=', $partida->partida_antecedente->item_antecedente)->first();
-            if($movimiento)
-            {
-                $monto_a_modificar = $movimiento->monto_pagado - $partida->partida_antecedente->importe;
-                $consulta =  "'Pago 327681: tipo 0 - editar movimiento: id_movimiento = " .  $movimiento->id_movimiento. " monto_pagado = " .  $movimiento->monto_pagado . " cambio a " . $monto_a_modificar . "'";
-                $movimiento->update([
-                    'monto_pagado' => $monto_a_modificar
-                ]);
-                $this->crearLogRespaldo($consulta);
-            }else{
-                dd("aqui??");
-            }
-        }
-        */
     }
 }

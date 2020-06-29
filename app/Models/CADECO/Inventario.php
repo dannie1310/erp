@@ -237,7 +237,6 @@ class Inventario extends Model
 
     private function cambiarMontoPagado($monto_pagado)
     {
-        dd($monto_pagado);
         $this->update([
             'monto_pagado' => $monto_pagado
         ]);
