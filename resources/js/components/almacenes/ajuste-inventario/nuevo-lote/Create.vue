@@ -45,22 +45,16 @@
                                                         <td v-else></td>
                                                         <td v-if="item.i === 2">{{item.material.descripcion}}</td>
                                                         <td v-else>
-                                                              <model-list-select
-                                                                      :name="`id_material[${i}]`"
-                                                                      :disabled = "!bandera"
-                                                                      :onchange="changeSelect(item)"
-                                                                      :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
-                                                                      data-vv-as="Material"
-                                                                      v-validate="{required: true}"
-                                                                      v-model="item.id_material"
-                                                                      option-value="id"
-                                                                      :custom-text="idAndNumeroParteAndDescripcion"
-                                                                      :list="materiales"
-                                                                      :isError="errors.has(`id_material[${i}]`)">
-                                                            </model-list-select>
-                                                            <div class="invalid-feedback"
-                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
-                                                            </div>
+                                                            <input type="text" class="form-control"
+                                                                readonly="readonly"
+                                                                @click="modalMaterial(i)"
+                                                                :name="`id_material[${i}]`"
+                                                                data-vv-as="Material"
+                                                                placeholder="Seleccionar Material"
+                                                                v-validate="{required:true}"
+                                                                :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
+                                                                :id="`descripcion[${i}]`">
+                                                            <div class="invalid-feedback" v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}</div>  
                                                         </td>
                                                         <td>
                                                             {{item.material.unidad}}
@@ -155,11 +149,87 @@
                 </div>
             </div>
         </div>
+        <div ref="modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-list" style="padding-right:3px"></i>Agregar Item</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" >
+                        <div class="col-md-12">
+                            <div class="form-group error-content">
+                                <label for="id_material">Material</label>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <input 
+                                            type="text"
+                                            name="busqueda"
+                                            class="form-control"
+                                            data-vv-as="Busqueda"
+                                            v-model="busqueda">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary" @click="buscarMateriales()" :disabled="busqueda === ''">Buscar</button>
+
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="form-group error-content" v-if="resultados.length > 0">
+                                <label for="id_material">Seleccionar</label>
+                                <div class="row">
+                                     <div class="col-md-12">
+                                        <select
+                                                :disabled="resultados.length == 0"
+                                                type="text"
+                                                name="seleccion"
+                                                data-vv-as="Seleccionar Material"
+                                                class="form-control"
+                                                id="seleccion"
+                                                v-model="id_seleccion"
+                                            >
+                                                    <option value>-- SELECCIONAR --</option>
+                                                    <option v-for="(material, i) in resultados" :value="i">{{ material.descripcion }}</option>
+                                            </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="form-group error-content">
+                                 <label for="id_material">Material</label>
+                                <MaterialSelect
+                                    :scope="scope"
+                                    :name="material"
+                                    v-model="material"
+                                    data-vv-as="Material"
+                                    v-validate="{required: true}"
+                                    ref="MaterialSelect"
+                                    :disableBranchNodes="false"/> -->
+
+                                <!-- <input type="text" autofocus class="form-control"
+                                    name="descripcion"
+                                    data-vv-as="Descripción"
+                                    v-model="descrip_temporal"
+                                    v-on:keyup.enter="()"
+                                    id="descripcion"> -->
+                                
+                            </div>
+                       </div>
+                       <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" @click="agregarMaterial()" :disabled="id_seleccion === ''">Agregar</button>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </span>
 </template>
 
 <script>
-    import MaterialSelect from "../../../cadeco/material/Select";
+    import MaterialSelect from "../../../cadeco/material/SelectAutocomplete";
     import {ModelListSelect} from 'vue-search-select';
     import Layout from "./CargaLayout";
     export default {
@@ -168,12 +238,18 @@
         components: {MaterialSelect, ModelListSelect, Layout},
         data() {
             return {
+                busqueda:'',
+                resultados:[],
+                id_seleccion:'',
+                material:[],
+                scope: ['insumos', 'tipo:1,4'],
                 id_material:'',
                 cargando: false,
                 id_almacen: this.$attrs.id_almacen,
                 tipo_almacen: this.$attrs.tipo_almacen,
                 referencia: '',
                 items: [],
+                index: '',
                 fecha: '',
                 observaciones: '',
                 materiales: [],
@@ -186,11 +262,40 @@
         },
 
         methods: {
+            buscarMateriales(){
+                this.cargando = true;
+                this.resultados = [];
+                this.id_seleccion = '';
+                return this.$store.dispatch('cadeco/material/buscarMateriales', {
+                    params: {
+                        busqueda:this.busqueda 
+                    }
+                })
+                .then(data => {
+                    this.resultados = data;
+                    this.cargando = false;
+                })
+            },
             init() {
                 this.cargando = true;
             },
             idAndNumeroParteAndDescripcion (item) {
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
+            },
+            agregarMaterial(){
+                this.items[this.index].id_material = this.resultados[this.id_seleccion].id_material;
+                this.items[this.index].material = this.resultados[this.id_seleccion];
+                this.items[this.index].i = 2;
+                $(this.$refs.modal).modal('hide')
+            },
+            modalMaterial(index){
+                this.resultados = [];
+                this.busqueda = '';
+                this.id_seleccion = '';
+                this.index =index;
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show')
+
             },
             changeSelect(item){
 
@@ -248,12 +353,13 @@
                     'i': 0,
                     'material':'',
                     'id_material' : '',
+                    'descripcion' : '',
                     'cantidad' : '',
                     'monto_total' : '',
                     'monto_pagado' : '',
                 }
                 if( this.materiales.length === 0 ) {
-                    this.getMateriales(this.id_almacen);
+                    // this.getMateriales(this.id_almacen);
                 }
                 this.referencia = this.$attrs.referencia;
                 this.fecha = this.$attrs.fecha;

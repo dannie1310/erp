@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Http\Transformers\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaTransformer;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartida;
 use League\Fractal\TransformerAbstract;
 
@@ -16,7 +17,8 @@ class SolicitudEdicionPartidaTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
         'polizas',
-        'polizas_autorizadas'
+        'polizas_autorizadas',
+        'diferencia'
     ];
     public function transform(SolicitudEdicionPartida $model) {
         return [
@@ -30,8 +32,11 @@ class SolicitudEdicionPartidaTransformer extends TransformerAbstract
             'concepto' => $model->concepto,
             'referencia' => $model->referencia,
             'numero_bd' => $model->numero_bd,
-            'numero_polizas' => $model->polizas()->count(),
-            'numero_movimientos' => $model->movimientos()->count(),
+            'numero_polizas' => $model->numero_polizas_format,
+            'numero_cuentas' => $model->numero_cuentas_format,
+            'numero_movimientos' => $model->numero_movimientos_format,
+            'estado' => ($model->estado == 0)?false:$model->estado,
+            'class_estado' => ($model->estado == 0)?"far fa-square":"fa fa-check-square",
         ];
     }
 
@@ -40,6 +45,14 @@ class SolicitudEdicionPartidaTransformer extends TransformerAbstract
         if($polizas = $model->polizas)
         {
             return $this->collection($polizas, new SolicitudEdicionPartidaPolizaTransformer);
+        }
+    }
+
+    public function includeDiferencia(SolicitudEdicionPartida $model)
+    {
+        if($diferencia = $model->diferencia)
+        {
+            return $this->item($diferencia, new DiferenciaTransformer);
         }
     }
 

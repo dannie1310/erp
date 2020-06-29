@@ -67,7 +67,7 @@
                                                 type="text"
                                                 name="nu_parte"
                                                 data-vv-as="N° Parte"
-                                                v-validate="{required: true}"
+                                                v-validate="{required: true, max:16}"
                                                 class="form-control"
                                                 id="nu_parte"
                                                 placeholder="######"

@@ -141,7 +141,7 @@ export default {
             },
             find(id){
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/sucursal/find', {
+                return this.$store.dispatch('cadeco/proveedor-contratista-sucursal/find', {
                     id: id
                 })
                 .then(data => {

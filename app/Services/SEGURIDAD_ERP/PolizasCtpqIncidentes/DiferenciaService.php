@@ -10,7 +10,9 @@ namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
 use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\CtgTipo;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
@@ -43,6 +45,23 @@ class DiferenciaService
 
     public function paginate($data)
     {
+
+        if (isset($data['id_empresa'])) {
+            $empresa = Empresa::find($data['id_empresa']);
+
+            $this->repository->where([['base_datos_revisada', '=', $empresa->AliasBDD]]);
+        }
+        if (isset($data['id_tipo_diferencia'])) {
+            $this->repository->where([['id_tipo', '=', $data['id_tipo_diferencia']]]);
+        }
+        /*if($data['sort'] == 'tipo'){
+            $tipos = CtgTipo::query()->orderBy('descripcion',$data['order'])->get();
+            foreach ($tipos as $tipo){
+                $this->repository->whereOr([['id_tipo', '=', $tipo->id]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }*/
         return $this->repository->paginate($data);
     }
 
@@ -54,7 +73,11 @@ class DiferenciaService
 
     public function buscarDiferencias($parametros)
     {
+        /*$busqueda = Busqueda::find(3845);
+        $busqueda->procesarBusquedaDiferencias();*/
         $datos_lote = [];
+        /*$lote = LoteBusqueda::find(1);
+        $lote->generaSolicitudesCambio();*/
         $lote =LoteBusqueda::getLoteActivo();
         if(!$lote){
             $lote = $this->generaPeticionesBusquedas($parametros);
