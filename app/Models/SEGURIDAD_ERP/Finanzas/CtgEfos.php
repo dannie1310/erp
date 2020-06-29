@@ -66,8 +66,6 @@ class CtgEfos extends Model
             abort(500, 'El procesamiento del archivo no arrojó EFOS');
         }
 
-        // dd('pardo', $efos);
-
         try {
         foreach ($efos['data'] as $key => $efo){
             $estado = $this->estadoId($efo['estado']);
@@ -122,6 +120,18 @@ class CtgEfos extends Model
                     abort(400,'---Verificar RFC vacio No'.$renglon[0]);
                 }
 
+                if(substr($renglon[count($renglon)-1], -2) != "\r\n"){
+                    $renglon[count($renglon)-1] = str_replace(["\n", '"'],"",$renglon[count($renglon)-1]);
+                    $fin = false;
+                    while(!$fin){
+                        $add = explode(",",fgets($myfile));
+                         array_shift($add);
+                        $renglon = array_merge($renglon , $add);
+                        $fin = substr($renglon[count($renglon)-1], -2) == "\r\n";
+                    }
+
+                }
+
                 $fecha_desvirtuado_f = '';
                 $fecha_definitivo_f = '';
                 $fecha_favorable_f = '';
@@ -133,6 +143,8 @@ class CtgEfos extends Model
                         $razon = $razon.$renglon[$t];
                         $t++;
                     }
+                    
+                    
                     if($renglon[$t + 2] == '' || strlen($razon) === 0)
                     {
                         abort(400,(($renglon[$t + 2] =='')? "--Verificar Fecha de Publicación de la página del  SAT \n":"")
@@ -146,35 +158,47 @@ class CtgEfos extends Model
                     {
                         $razon = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $razon);
                     }
+
                     $fecha_presunto = (!isset($renglon[$t + 2])) ? '' : $renglon[$t + 2];
-                    $fecha_presunto_obj = DateTime::createFromFormat('d/m/Y', $fecha_presunto);
-                    if($fecha_presunto_obj)
-                    {
-                        $fecha_presunto_f = $fecha_presunto_obj->format('Y-m-d');
-                    }
+                    if($fecha_presunto != ''){
+                        $fecha_presunto = str_replace(' ', '', $fecha_presunto);
+                        if(strlen($fecha_presunto) > 10) $fecha_presunto = \substr($fecha_presunto, 0, 10);
+                        
+                        $fecha_presunto_obj = DateTime::createFromFormat('d/m/Y', $fecha_presunto);
+                        if($fecha_presunto_obj)
+                        {
+                            $fecha_presunto_f = $fecha_presunto_obj->format('Y-m-d');
+                        }
+                    }                   
 
                     $fecha_desvirtuado = (!isset($renglon[$t + 5])) ? '' : $renglon[$t + 5];
                     if($fecha_desvirtuado != ''){
+                        $fecha_desvirtuado = str_replace(' ', '', $fecha_desvirtuado);
+                        if(strlen($fecha_desvirtuado) > 10) $fecha_desvirtuado = \substr($fecha_desvirtuado, 0, 10);
                         $fecha_desvirtuado_obj = DateTime::createFromFormat('d/m/Y', $fecha_desvirtuado);
                         if($fecha_desvirtuado_obj)
                         {
                             $fecha_desvirtuado_f = $fecha_desvirtuado_obj->format('Y-m-d');
                         }
                     }                   
-
-                    $fecha_definitivo = (!isset($renglon[$t + 9])) ? '' : $renglon[$t + 9];
+                   
+                    $fecha_definitivo = (!isset($renglon[$t + 9])) ? '' : $renglon[$t + 9];                    
                     if($fecha_definitivo != '')
                     {
+                        $fecha_definitivo = str_replace(' ', '', $fecha_definitivo);
+                        if(strlen($fecha_definitivo) > 10) $fecha_definitivo = \substr($fecha_definitivo, 0, 10);
                         $fecha_definitivo_obj = DateTime::createFromFormat('d/m/Y', $fecha_definitivo);
                         if($fecha_definitivo_obj)
                         {
                             $fecha_definitivo_f = $fecha_definitivo_obj->format('Y-m-d');
                         }
                     }
-
+                    
                     $fecha_favorable = (!isset($renglon[$t + 12])) ? '' : $renglon[$t + 12];
                     if($fecha_favorable != '')
                     {
+                        $fecha_favorable = str_replace(' ', '', $fecha_favorable);
+                        if(strlen($fecha_favorable) > 10) $fecha_favorable = \substr($fecha_favorable, 0, 10);
                         $fecha_favorable_obj = DateTime::createFromFormat('d/m/Y', $fecha_favorable);
                         if($fecha_favorable_obj)
                         {
@@ -213,6 +237,7 @@ class CtgEfos extends Model
         {
             $fecha_informacion = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $fecha_informacion);
         }
+        
         return [
             'data' => $content,
             'fecha_informacion' => $fecha_informacion,
