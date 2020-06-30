@@ -175,19 +175,20 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
             $diferencia->corregir();
         }
     }
-    public function getInforme($id_empresa, $sin_solicitud_relacionada, $solo_diferencias_activas)
+    public function getInforme($id_empresa, $sin_solicitud_relacionada, $solo_diferencias_activas, $tipo_agrupacion)
     {
         $informe = [];
         if(is_null($id_empresa)){
             $empresas = Empresa::conDiferencias()->get();
             foreach($empresas as $empresa)
             {
-                $informe [] = $empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas);
+                $informe [] = $empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas, $tipo_agrupacion);
             }
+            $informe ["tipo_agrupacion"] = $tipo_agrupacion;
         }else{
             $empresa = Empresa::find($id_empresa);
-            $informe ["informe"] = $empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas);
-            $informe ["tipo_agrupacion"] = 1;
+            $informe ["informe"] = $empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas, $tipo_agrupacion);
+            $informe ["tipo_agrupacion"] = $tipo_agrupacion;
         }
         return $informe;
     }

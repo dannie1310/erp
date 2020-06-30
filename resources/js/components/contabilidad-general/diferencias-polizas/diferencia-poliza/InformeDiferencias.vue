@@ -6,7 +6,8 @@
                     <div class="card-header">
                         <div class="form-row">
                             <div class="col">
-                                <select class="form-control" v-model="id_empresa">
+                                Empresa
+                                <select class="form-control" v-model="id_empresa" @change="limpia()">
                                     <option value>-- Empresa --</option>
                                     <option v-for="item in empresas" v-bind:value="item.id">{{ item.nombre }}</option>
                                 </select>
@@ -14,23 +15,36 @@
                             <div class="col">
                                 Solicitud Relacionada
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="solicitud_relacionada"  v-model="sin_solicitud_relacionada">
+                                    <input type="checkbox" class="custom-control-input" id="solicitud_relacionada"  v-model="sin_solicitud_relacionada" @change="limpia()">
                                     <label for="solicitud_relacionada" class="custom-control-label" v-model="sin_solicitud_relacionada">Sin Solicitud Relacionada</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="con_solicitud_relacionada"  v-model="con_solicitud_relacionada">
+                                    <input type="checkbox" class="custom-control-input" id="con_solicitud_relacionada"  v-model="con_solicitud_relacionada" @change="limpia()">
                                     <label for="con_solicitud_relacionada" class="custom-control-label" v-model="con_solicitud_relacionada">Con Solicitud Relacionada</label>
                                 </div>
                             </div>
                             <div class="col">
                                 ¿Sólo Diferencias Activas?
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="diferencias_activas"  v-model="solo_diferencias_activas">
+                                    <input type="checkbox" class="custom-control-input" id="diferencias_activas"  v-model="solo_diferencias_activas" @change="limpia()">
                                     <label for="diferencias_activas" class="custom-control-label" v-model="solo_diferencias_activas">Si</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="diferencias_activas_no"  v-model="no_solo_diferencias_activas">
+                                    <input type="checkbox" class="custom-control-input" id="diferencias_activas_no"  v-model="no_solo_diferencias_activas" @change="limpia()">
                                     <label for="diferencias_activas_no" class="custom-control-label" v-model="no_solo_diferencias_activas">No</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                Agrupación
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="por_tipo" name="agrupacion" checked value="1" v-model="tipo_agrupacion" @change="limpia()">
+                                    <label class="custom-control-label" for="por_tipo">Empresa->Tipo->Diferencia</label>
+                                </div>
+
+                                                                <!-- Group of default radios - option 2 -->
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="por_poliza" name="agrupacion" value="2" v-model="tipo_agrupacion" @change="limpia()">
+                                    <label class="custom-control-label" for="por_poliza">Empresa->Póliza->Diferencia</label>
                                 </div>
                             </div>
                             <div class="col">
@@ -94,7 +108,53 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="row" v-if="informe && tipo_agrupacion == 2">
+            <div class="col-md-12">
+                <table class="table">
+                    <tbody>
+                    <template v-for="(informe_empresa,i) in informe">
+                        <tr style="background-color: #000; color: #FFF">
+                            <td colspan="9">{{informe_empresa.empresa}}</td>
+                        </tr>
+                        <template v-for="(informe_poliza, j) in informe_empresa.informe">
+                            <tr style="background-color: #555555; color: #FFF">
+                                <td colspan="9">{{informe_poliza.poliza}} ({{informe_poliza.cantidad}})</td>
+                            </tr>
+                            <tr style="background-color: #999999" >
+                                <td class="index_corto">#</td>
+                                <td>Base de Datos Revisada</td>
+                                <td>Base de Datos Referencia</td>
+                                <td>Tipo Diferencia</td>
+                                <td>Código Cuenta</td>
+                                <td>No. Movto.</td>
+                                <td>Valor</td>
+                                <td>Valor referencia</td>
+                                <td>Solicitud</td>
+                            </tr>
+                            <template v-for="(diferencias, k) in informe_poliza.informe">
+                                <tr >
+                                    <td>{{k+1}}</td>
+                                    <td>{{diferencias.base_datos_revisada}}</td>
+                                    <td>{{diferencias.base_datos_referencia}}</td>
+                                    <td>{{diferencias.tipo}}</td>
+                                    <td>{{diferencias.codigo_cuenta}}</td>
+                                    <td>{{diferencias.numero_movimiento}}</td>
+                                    <td>{{diferencias.valor}}</td>
+                                    <td>{{diferencias.valor_referencia}}</td>
+                                    <td>
+                                        <router-link :to="{name: 'solicitud-edicion-poliza-show', params: { id: diferencias.solicitud_id }}" target="_blank" v-if="diferencias.solicitud_id > 0">
+                                            {{diferencias.solicitud_numero_folio}}
+                                        </router-link>
+                                    </td>
+                                </tr>
 
+                            </template>
+                        </template>
+                    </template>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </span>
 </template>
@@ -134,6 +194,9 @@
                         this.cargando = false;
                     })
             },
+            limpia(){
+                this.informe = [];
+            },
             consultar() {
                 this.cargando = true;
                 return this.$store.dispatch('contabilidadGeneral/incidente-poliza/obtenerInforme', {
@@ -142,6 +205,7 @@
                     solo_diferencias_activas : this.solo_diferencias_activas,
                     con_solicitud_relacionada : this.con_solicitud_relacionada,
                     no_solo_diferencias_activas : this.no_solo_diferencias_activas,
+                    tipo_agrupacion : this.tipo_agrupacion,
                 })
                     .then(data => {
                         this.informe = data;

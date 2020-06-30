@@ -231,6 +231,7 @@ class DiferenciaService
 
     public function obtenerInforme($parametros){
         ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
         $solicitud = 1;
         $diferencias = 1;
 
@@ -253,6 +254,6 @@ class DiferenciaService
         } else {
             $diferencias = 2;
         }
-        return $this->repository->getInforme($parametros->id_empresa, $solicitud, $diferencias);
+        return $this->repository->getInforme($parametros->id_empresa, $solicitud, $diferencias, $parametros->tipo_agrupacion);
     }
 }

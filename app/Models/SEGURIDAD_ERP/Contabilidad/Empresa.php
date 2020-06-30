@@ -222,14 +222,23 @@ class Empresa extends Model
         }
     }
 
-    public function getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas){
+    public function getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas, $tipo_agrupacion){
         $informe = ["empresa"=>$this->Nombre];
+        if($tipo_agrupacion==1){
+            $informe = $this->getInformeDiferenciasPorTipo($informe, $sin_solicitud_relacionada, $solo_diferencias_activas);
+        } else {
+            $informe = $this->getInformeDiferenciasPorPoliza($informe, $sin_solicitud_relacionada, $solo_diferencias_activas);
+        }
+        return $informe;
+    }
+
+    private function getInformeDiferenciasPorTipo($informe, $sin_solicitud_relacionada, $solo_diferencias_activas){
         $tipos = $this->getTiposDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas);
         $i=0;
         foreach($tipos as $tipo){
             $informe["informe"][$i]["tipo"]=$tipo->descripcion;
 
-            $diferencias = $this->getDiferenciasInforme($sin_solicitud_relacionada, $solo_diferencias_activas, $tipo->id);
+            $diferencias = $this->getDiferenciasInformePorTipo($sin_solicitud_relacionada, $solo_diferencias_activas, $tipo->id);
             $informe["informe"][$i]["cantidad"]=count($diferencias);
             $jc = 0;
             foreach($diferencias as $diferencia){
@@ -248,14 +257,13 @@ class Empresa extends Model
                 $informe["informe"][$i]["informe"][$jc]["solicitud_id"]=$diferencia->solicitud_id;
                 $jc++;
             }
-
             $i++;
         }
         return $informe;
     }
 
 
-    public function getDiferenciasInforme($sin_solicitud_relacionada, $solo_diferencias_activas, $id_tipo = null)
+    private function getDiferenciasInformePorTipo($sin_solicitud_relacionada, $solo_diferencias_activas, $id_tipo = null)
     {
         if(is_null($id_tipo)){
             if($sin_solicitud_relacionada == 1){
@@ -310,13 +318,12 @@ class Empresa extends Model
                 }
             }
         }
-
         return $diferencias;
     }
 
     public function getTiposDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas)
     {
-        $diferencias = $this->getDiferenciasInforme($sin_solicitud_relacionada, $solo_diferencias_activas);
+        $diferencias = $this->getDiferenciasInformePorTipo($sin_solicitud_relacionada, $solo_diferencias_activas);
 
         $tipos_diferencia = [];
         foreach($diferencias as $diferencia){
@@ -325,4 +332,100 @@ class Empresa extends Model
         $tipos = array_unique($tipos_diferencia);
         return $tipos;
     }
+
+    private function getInformeDiferenciasPorPoliza($informe, $sin_solicitud_relacionada, $solo_diferencias_activas){
+        $polizas = $this->getPolizas($sin_solicitud_relacionada, $solo_diferencias_activas);
+        $i=0;
+        foreach($polizas as $poliza){
+            $informe["informe"][$i]["poliza"]=$poliza->Ejercicio."-".$poliza->Periodo."-".$poliza->tipo."-".$poliza->Folio;
+            $diferencias = $this->getDiferenciasInformePorPoliza($sin_solicitud_relacionada, $solo_diferencias_activas, $poliza->Id);
+            $informe["informe"][$i]["cantidad"]=count($diferencias);
+            $jc = 0;
+            foreach($diferencias as $diferencia){
+                $informe["informe"][$i]["informe"][$jc]["tipo"]=$diferencia->tipo->descripcion;
+                $informe["informe"][$i]["informe"][$jc]["numero_movimiento"]=$diferencia->numero_movimiento;
+                $informe["informe"][$i]["informe"][$jc]["codigo_cuenta"]=$diferencia->codigo_cuenta;
+                $informe["informe"][$i]["informe"][$jc]["base_datos_revisada"]=$diferencia->base_datos_revisada;
+                $informe["informe"][$i]["informe"][$jc]["base_datos_referencia"]=$diferencia->base_datos_referencia;
+                $informe["informe"][$i]["informe"][$jc]["valor"]=$diferencia->valor_a_format;
+                $informe["informe"][$i]["informe"][$jc]["valor_referencia"]=$diferencia->valor_b_format;
+                $informe["informe"][$i]["informe"][$jc]["solicitud_numero_folio"]=$diferencia->solicitud_numero_folio;
+                $informe["informe"][$i]["informe"][$jc]["solicitud_id"]=$diferencia->solicitud_id;
+                $jc++;
+            }
+            $i++;
+        }
+        return $informe;
+    }
+
+    public function getPolizas($sin_solicitud_relacionada, $solo_diferencias_activas)
+    {
+        $diferencias = $this->getDiferenciasInformePorPoliza($sin_solicitud_relacionada, $solo_diferencias_activas);
+
+        $polizas_diferencia = [];
+        foreach($diferencias as $diferencia){
+            $polizas_diferencia[] = $diferencia->poliza;
+        }
+        $polizas = array_unique($polizas_diferencia);
+        return $polizas;
+    }
+
+    private function getDiferenciasInformePorPoliza($sin_solicitud_relacionada, $solo_diferencias_activas, $id_poliza= null)
+    {
+        if(is_null($id_poliza)){
+            if($sin_solicitud_relacionada == 1){
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",1)->get();
+                } else if($solo_diferencias_activas == 0){
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",0)->get();
+                } else {
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->get();
+                }
+            } else if($sin_solicitud_relacionada == 0){
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",1)->get();
+                } else if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",0)->get();
+                } else {
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->get();
+                }
+            } else {
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->where("activo","=",1)->get();
+                } else if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->where("activo","=",0)->get();
+                } else {
+                    $diferencias = $this->diferencias()->get();
+                }
+            }
+        } else {
+            if($sin_solicitud_relacionada == 1){
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",1)->where("id_poliza","=",$id_poliza)->get();
+                } else if($solo_diferencias_activas == 0){
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",0)->where("id_poliza","=",$id_poliza)->get();
+                } else {
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("id_poliza","=",$id_poliza)->get();
+                }
+            } else if($sin_solicitud_relacionada == 0){
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",1)->where("id_poliza","=",$id_poliza)->get();
+                } else if($solo_diferencias_activas == 0){
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",0)->where("id_poliza","=",$id_poliza)->get();
+                } else {
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("id_poliza","=",$id_poliza)->get();
+                }
+            } else{
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->where("activo","=",1)->where("id_poliza","=",$id_poliza)->get();
+                } else if($solo_diferencias_activas == 0){
+                    $diferencias = $this->diferencias()->where("activo","=",0)->where("id_poliza","=",$id_poliza)->get();
+                } else {
+                    $diferencias = $this->diferencias()->where("id_poliza","=",$id_poliza)->get();
+                }
+            }
+        }
+        return $diferencias;
+    }
+
 }

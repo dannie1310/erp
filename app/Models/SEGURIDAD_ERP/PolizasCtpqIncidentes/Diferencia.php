@@ -272,7 +272,7 @@ class Diferencia extends Model
         {
             return $this->cuenta->Codigo;
         } else {
-            return "";
+            return "-";
         }
     }
 
@@ -282,7 +282,7 @@ class Diferencia extends Model
         {
             return $this->poliza->Ejercicio .'-'. $this->poliza->Periodo .'-'. $this->poliza->tipo_poliza->Nombre .'-'. $this->poliza->Folio;
         } else {
-            return "";
+            return "-";
         }
     }
 
