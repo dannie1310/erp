@@ -186,7 +186,8 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
             }
         }else{
             $empresa = Empresa::find($id_empresa);
-            $informe [] = $empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas);
+            $informe ["informe"] = $empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas);
+            $informe ["tipo_agrupacion"] = 1;
         }
         return $informe;
     }

@@ -356,8 +356,12 @@ class Diferencia extends Model
 
     public function getValorAFormatAttribute()
     {
-        if(is_numeric($this->valor_a) && $this->id_tipo != 6){
+        if(is_numeric($this->valor_a) && in_array($this->id_tipo,[3,11])){
             return number_format($this->valor_a,2);
+        } else if($this->id_tipo==10 && $this->valor_a ==0) {
+            return "Cargo";
+        } else if($this->id_tipo==10 && $this->valor_a ==1) {
+            return "Abono";
         } else {
             return $this->valor_a;
         }
@@ -365,10 +369,30 @@ class Diferencia extends Model
 
     public function getValorBFormatAttribute()
     {
-        if(is_numeric($this->valor_b) && $this->id_tipo != 6){
+        if(is_numeric($this->valor_b) && in_array($this->id_tipo,[3,11])){
             return number_format($this->valor_b,2);
+        } else if($this->id_tipo==10 && $this->valor_b ==0) {
+            return "Cargo";
+        } else if($this->id_tipo==10 && $this->valor_b ==1) {
+            return "Abono";
         } else {
             return $this->valor_b;
+        }
+    }
+
+    public function getSolicitudNumeroFolioAttribute(){
+        if($this->partida_solicitud){
+            return $this->partida_solicitud->solicitud->numero_folio;
+        }else {
+            return "";
+        }
+    }
+
+    public function getSolicitudIdAttribute(){
+        if($this->partida_solicitud){
+            return $this->partida_solicitud->solicitud->id;
+        }else {
+            return "";
         }
     }
 }

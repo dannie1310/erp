@@ -44,17 +44,17 @@
                 </div>
             </div>
         </div>
-        <div class="row" v-if="informe">
+        <div class="row" v-if="informe && tipo_agrupacion == 1">
             <div class="col-md-12">
                 <table class="table">
                     <tbody>
                     <template v-for="(informe_empresa,i) in informe">
                         <tr style="background-color: #000; color: #FFF">
-                            <td colspan="10">{{informe_empresa.empresa}}</td>
+                            <td colspan="11">{{informe_empresa.empresa}}</td>
                         </tr>
                         <template v-for="(informe_tipo, j) in informe_empresa.informe">
                             <tr style="background-color: #555555; color: #FFF">
-                                <td colspan="10">{{informe_tipo.tipo}} ({{informe_tipo.cantidad}})</td>
+                                <td colspan="11">{{informe_tipo.tipo}} ({{informe_tipo.cantidad}})</td>
                             </tr>
                             <tr style="background-color: #999999" >
                                 <td class="index_corto">#</td>
@@ -62,11 +62,12 @@
                                 <td>Base de Datos Referencia</td>
                                 <td>Ejercicio</td>
                                 <td>Periodo</td>
-                                <td>Tipo</td>
+                                <td>Tipo Póliza</td>
                                 <td>Folio</td>
                                 <td>No. Movto.</td>
                                 <td>Valor</td>
                                 <td>Valor referencia</td>
+                                <td>Solicitud</td>
                             </tr>
                             <template v-for="(diferencias, k) in informe_tipo.informe">
                                 <tr >
@@ -80,6 +81,11 @@
                                     <td>{{diferencias.numero_movimiento}}</td>
                                     <td>{{diferencias.valor}}</td>
                                     <td>{{diferencias.valor_referencia}}</td>
+                                    <td>
+                                        <router-link :to="{name: 'solicitud-edicion-poliza-show', params: { id: diferencias.solicitud_id }}" target="_blank" v-if="diferencias.solicitud_id > 0">
+                                            {{diferencias.solicitud_numero_folio}}
+                                        </router-link>
+                                    </td>
                                 </tr>
 
                             </template>
@@ -101,10 +107,11 @@
                 id_empresa:'',
                 empresas :[],
                 informe : [],
-                sin_solicitud_relacionada : 1,
-                con_solicitud_relacionada : 0,
-                solo_diferencias_activas : 1,
-                no_solo_diferencias_activas : 0,
+                tipo_agrupacion : 1,
+                sin_solicitud_relacionada : true,
+                con_solicitud_relacionada : false,
+                solo_diferencias_activas : true,
+                no_solo_diferencias_activas : false,
                 cargando : false
             }
         },
@@ -142,6 +149,9 @@
                     .finally(() => {
                         this.cargando = false;
                     });
+            },
+            ver_solicitud() {
+                this.$router.push({name: 'solicitud-edicion-poliza-show', params: {id: this.value.id}});
             },
         }
     }

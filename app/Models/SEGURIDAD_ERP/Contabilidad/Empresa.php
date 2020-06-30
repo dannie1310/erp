@@ -244,6 +244,8 @@ class Empresa extends Model
                 $informe["informe"][$i]["informe"][$jc]["base_datos_referencia"]=$diferencia->base_datos_referencia;
                 $informe["informe"][$i]["informe"][$jc]["valor"]=$diferencia->valor_a_format;
                 $informe["informe"][$i]["informe"][$jc]["valor_referencia"]=$diferencia->valor_b_format;
+                $informe["informe"][$i]["informe"][$jc]["solicitud_numero_folio"]=$diferencia->solicitud_numero_folio;
+                $informe["informe"][$i]["informe"][$jc]["solicitud_id"]=$diferencia->solicitud_id;
                 $jc++;
             }
 
