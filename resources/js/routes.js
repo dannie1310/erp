@@ -289,7 +289,7 @@ export const routes = [
 
             {
                 path: 'cfd-sat',
-                component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
+                component: require('./components/contabilidad-general/cfd-sat/Layout.vue').default,
                 children:[
                     {
                         path:"/",
@@ -302,6 +302,25 @@ export const routes = [
                             permission: ['consultar_poliza'],
                             general: true
                         }
+                    },
+                    {
+                        path: 'autocorreccion-cfd-efos',
+                        component: require('./components/contabilidad-general/cfd-sat/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'autocorreccion-cfd-efos',
+                                component: require('./components/contabilidad-general/cfd-sat/autocorreccion-cfd-efo/Index').default,
+                                meta: {
+                                    title: 'Autocorrección de CFD EFOS',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_efos',
+                                    general: true,
+
+                                }
+                            },
+                        ]
                     }
                 ]
             },
