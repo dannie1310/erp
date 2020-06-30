@@ -154,7 +154,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" @click="agregar" :disabled="id_empresa_agregar ==''">Agregar</button>
+                        <button type="button" class="btn btn-primary" @click="agregar" :disabled="id_empresa_agregar =='' || cargando">
+                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                            <i class="fa fa-plus" v-else></i>Agregar
+                        </button>
                      </div>
                 </div>
             </div>
@@ -202,6 +205,7 @@ export default {
             if(duplicada || this.id_empresa == this.id_empresa_agregar){
                 swal('¡Error!', 'La empresa ya esta seleccionada para unificar', 'error')
             }else{
+                self.cargando = true;
                  return this.$store.dispatch('cadeco/empresa/detalleEmpresaUnificacion', {
                     id:this.id_empresa_agregar,
                     params: {
@@ -212,6 +216,7 @@ export default {
                 }).then(data => {
                     this.detalle_unificacion.empresas_unificadas.push(data);
                 }).finally(()=>{
+                    this.cargando = false;
                     $(this.$refs.modal).modal('hide')
                 })
             }
@@ -264,7 +269,7 @@ export default {
             this.cargando = true;
             return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
-                        // scope: '',
+                        scope: 'proveedorContratista',
                         sort: 'rfc',
                         order: 'desc'
                     }  
