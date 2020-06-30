@@ -230,6 +230,29 @@ class DiferenciaService
     }
 
     public function obtenerInforme($parametros){
-        $this->repository->getInforme($parametros->id_empresa, $parametros->sin_solicitud_relacionada, $parametros->solo_diferencias_activas);
+        ini_set('memory_limit', -1) ;
+        $solicitud = 1;
+        $diferencias = 1;
+
+        if($parametros->sin_solicitud_relacionada == 1 && $parametros->con_solicitud_relacionada == 1){
+            $solicitud = 2;
+        } else if($parametros->sin_solicitud_relacionada == 1 && $parametros->con_solicitud_relacionada === false){
+            $solicitud = 1;
+        } else if($parametros->sin_solicitud_relacionada === false && $parametros->con_solicitud_relacionada == 1){
+            $solicitud = 0;
+        } else {
+            $solicitud = 2;
+        }
+
+        if($parametros->solo_diferencias_activas == 1 && $parametros->no_solo_diferencias_activas == 1){
+            $diferencias = 2;
+        } else if($parametros->solo_diferencias_activas == 1 && $parametros->no_solo_diferencias_activas === false){
+            $diferencias = 1;
+        } else if($parametros->solo_diferencias_activas === false && $parametros->no_solo_diferencias_activas == 1){
+            $diferencias = 0;
+        } else {
+            $diferencias = 2;
+        }
+        return $this->repository->getInforme($parametros->id_empresa, $solicitud, $diferencias);
     }
 }

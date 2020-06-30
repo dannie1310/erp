@@ -223,17 +223,28 @@ class Empresa extends Model
     }
 
     public function getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas){
-        $informe = ["empresa"=>$this->Nombre, "informe" => []];
-        $diferencias = $this->diferencias;
+        $informe = ["empresa"=>$this->Nombre];
         $tipos = $this->getTiposDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas);
         $i=0;
         foreach($tipos as $tipo){
             $informe["informe"][$i]["tipo"]=$tipo->descripcion;
+
             $diferencias = $this->getDiferenciasInforme($sin_solicitud_relacionada, $solo_diferencias_activas, $tipo->id);
-            $j = 0;
+            $informe["informe"][$i]["cantidad"]=count($diferencias);
+            $jc = 0;
             foreach($diferencias as $diferencia){
-                $informe["informe"][$i]["informe"][$j]["numero_folio_poliza"]=$diferencia->poliza->numero_folio;
-                $j++;
+                $informe["informe"][$i]["informe"][$jc]["id_diferencia"]=$diferencia->id;
+                $informe["informe"][$i]["informe"][$jc]["ejercicio"]=$diferencia->poliza->Ejercicio;
+                $informe["informe"][$i]["informe"][$jc]["periodo"]=$diferencia->poliza->Periodo;
+                $informe["informe"][$i]["informe"][$jc]["tipo"]=$diferencia->poliza->tipo;
+                $informe["informe"][$i]["informe"][$jc]["numero_folio_poliza"]=$diferencia->poliza->Folio;
+                $informe["informe"][$i]["informe"][$jc]["numero_movimiento"]=$diferencia->numero_movimiento;
+                $informe["informe"][$i]["informe"][$jc]["codigo_cuenta"]=$diferencia->codigo_cuenta;
+                $informe["informe"][$i]["informe"][$jc]["base_datos_revisada"]=$diferencia->base_datos_revisada;
+                $informe["informe"][$i]["informe"][$jc]["base_datos_referencia"]=$diferencia->base_datos_referencia;
+                $informe["informe"][$i]["informe"][$jc]["valor"]=$diferencia->valor_a_format;
+                $informe["informe"][$i]["informe"][$jc]["valor_referencia"]=$diferencia->valor_b_format;
+                $jc++;
             }
 
             $i++;
@@ -242,34 +253,58 @@ class Empresa extends Model
     }
 
 
-    private function getDiferenciasInforme($sin_solicitud_relacionada, $solo_diferencias_activas, $id_tipo = null)
+    public function getDiferenciasInforme($sin_solicitud_relacionada, $solo_diferencias_activas, $id_tipo = null)
     {
         if(is_null($id_tipo)){
             if($sin_solicitud_relacionada == 1){
                 if($solo_diferencias_activas == 1){
                     $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",1)->get();
-                } else{
+                } else if($solo_diferencias_activas == 0){
                     $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",0)->get();
+                } else {
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->get();
                 }
-            } else{
+            } else if($sin_solicitud_relacionada == 0){
                 if($solo_diferencias_activas == 1){
                     $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",1)->get();
-                } else{
+                } else if($solo_diferencias_activas == 1){
                     $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",0)->get();
+                } else {
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->get();
+                }
+            } else {
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->where("activo","=",1)->get();
+                } else if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->where("activo","=",0)->get();
+                } else {
+                    $diferencias = $this->diferencias()->get();
                 }
             }
         } else {
             if($sin_solicitud_relacionada == 1){
                 if($solo_diferencias_activas == 1){
                     $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",1)->where("id_tipo","=",$id_tipo)->get();
-                } else{
+                } else if($solo_diferencias_activas == 0){
                     $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("activo","=",0)->where("id_tipo","=",$id_tipo)->get();
+                } else {
+                    $diferencias = $this->diferencias()->sinPartidaSolicitud()->where("id_tipo","=",$id_tipo)->get();
+                }
+            } else if($sin_solicitud_relacionada == 0){
+                if($solo_diferencias_activas == 1){
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",1)->where("id_tipo","=",$id_tipo)->get();
+                } else if($solo_diferencias_activas == 0){
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",0)->where("id_tipo","=",$id_tipo)->get();
+                } else {
+                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("id_tipo","=",$id_tipo)->get();
                 }
             } else{
                 if($solo_diferencias_activas == 1){
-                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",1)->where("id_tipo","=",$id_tipo)->get();
-                } else{
-                    $diferencias = $this->diferencias()->conPartidaSolicitud()->where("activo","=",0)->where("id_tipo","=",$id_tipo)->get();
+                    $diferencias = $this->diferencias()->where("activo","=",1)->where("id_tipo","=",$id_tipo)->get();
+                } else if($solo_diferencias_activas == 0){
+                    $diferencias = $this->diferencias()->where("activo","=",0)->where("id_tipo","=",$id_tipo)->get();
+                } else {
+                    $diferencias = $this->diferencias()->where("id_tipo","=",$id_tipo)->get();
                 }
             }
         }

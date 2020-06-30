@@ -180,12 +180,14 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
         $informe = [];
         if(is_null($id_empresa)){
             $empresas = Empresa::conDiferencias()->get();
-            dd($empresas);
+            foreach($empresas as $empresa)
+            {
+                $informe [] = $empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas);
+            }
         }else{
             $empresa = Empresa::find($id_empresa);
-            /*$informe [] = ["razon_social"=>$empresa->razon_social,"informe"=>$empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas)];*/
             $informe [] = $empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas);
-            dd($informe);
         }
+        return $informe;
     }
 }

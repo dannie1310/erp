@@ -148,12 +148,14 @@ class Diferencia extends Model
 
     public function scopeSinPartidaSolicitud($query)
     {
-        return $query->doesntHave("partida_solicitud");
+        //return $query->doesntHave("partida_solicitud");
+        return $query->whereIn("id_tipo", [1,3,4,5,6,10,11]);
     }
 
     public function scopeConPartidaSolicitud($query)
     {
-        return $query->whereHas("partida_solicitud");
+        //return $query->whereHas("partida_solicitud");
+        return $query->whereIn("id_tipo", [2,7,8,9,12]);
     }
 
     public function poliza()
@@ -349,6 +351,24 @@ class Diferencia extends Model
             return $arreglo;
         } else {
             return "";
+        }
+    }
+
+    public function getValorAFormatAttribute()
+    {
+        if(is_numeric($this->valor_a) && $this->id_tipo != 6){
+            return number_format($this->valor_a,2);
+        } else {
+            return $this->valor_a;
+        }
+    }
+
+    public function getValorBFormatAttribute()
+    {
+        if(is_numeric($this->valor_b) && $this->id_tipo != 6){
+            return number_format($this->valor_b,2);
+        } else {
+            return $this->valor_b;
         }
     }
 }
