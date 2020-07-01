@@ -146,6 +146,17 @@ class Diferencia extends Model
         return $query->where("activo",1);
     }
 
+    public function scopeSinPartidaSolicitud($query)
+    {
+        //return $query->doesntHave("partida_solicitud");
+        return $query->whereIn("id_tipo", [1,3,4,5,6,10,11]);
+    }
+
+    public function scopeConPartidaSolicitud($query)
+    {
+        //return $query->whereHas("partida_solicitud");
+        return $query->whereIn("id_tipo", [2,7,8,9,12]);
+    }
 
     public function poliza()
     {
@@ -261,7 +272,7 @@ class Diferencia extends Model
         {
             return $this->cuenta->Codigo;
         } else {
-            return "";
+            return "-";
         }
     }
 
@@ -271,7 +282,7 @@ class Diferencia extends Model
         {
             return $this->poliza->Ejercicio .'-'. $this->poliza->Periodo .'-'. $this->poliza->tipo_poliza->Nombre .'-'. $this->poliza->Folio;
         } else {
-            return "";
+            return "-";
         }
     }
 
@@ -340,6 +351,60 @@ class Diferencia extends Model
             return $arreglo;
         } else {
             return "";
+        }
+    }
+
+    public function getValorAFormatAttribute()
+    {
+        if(is_numeric($this->valor_a) && in_array($this->id_tipo,[3,11])){
+            return number_format($this->valor_a,2);
+        } else if($this->id_tipo==10 && $this->valor_a ==0) {
+            return "Cargo";
+        } else if($this->id_tipo==10 && $this->valor_a ==1) {
+            return "Abono";
+        } else {
+            return $this->valor_a;
+        }
+    }
+
+    public function getValorBFormatAttribute()
+    {
+        if(is_numeric($this->valor_b) && in_array($this->id_tipo,[3,11])){
+            return number_format($this->valor_b,2);
+        } else if($this->id_tipo==10 && $this->valor_b ==0) {
+            return "Cargo";
+        } else if($this->id_tipo==10 && $this->valor_b ==1) {
+            return "Abono";
+        } else {
+            return $this->valor_b;
+        }
+    }
+
+    public function getSolicitudNumeroFolioAttribute(){
+        if($this->partida_solicitud){
+            return $this->partida_solicitud->solicitud->numero_folio;
+        }else {
+            return "";
+        }
+    }
+
+    public function getSolicitudIdAttribute(){
+        if($this->partida_solicitud){
+            return $this->partida_solicitud->solicitud->id;
+        }else {
+            return "";
+        }
+    }
+
+    public function getIdRelacionAttribute()
+    {
+        $relacion = RelacionPolizas::where("id_poliza_a","=", $this->id_poliza)
+            ->where("base_datos_a","=",$this->base_datos_revisada)
+            ->where("tipo_relacion","=",$this->tipo_busqueda)->first();
+        if($relacion){
+            return $relacion->id;
+        } else {
+            return null;
         }
     }
 }
