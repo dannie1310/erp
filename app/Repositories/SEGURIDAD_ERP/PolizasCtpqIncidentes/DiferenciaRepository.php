@@ -192,4 +192,9 @@ class DiferenciaRepository extends Repository implements RepositoryInterface
         }
         return $informe;
     }
+
+    public function getRelacion($id_relacion){
+        $relacion = RelacionPolizas::find($id_relacion);
+        return $relacion;
+    }
 }

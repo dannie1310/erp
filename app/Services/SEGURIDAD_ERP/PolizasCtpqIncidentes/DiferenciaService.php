@@ -11,11 +11,13 @@ namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\CtgTipo;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginal;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
@@ -255,5 +257,18 @@ class DiferenciaService
             $diferencias = 2;
         }
         return $this->repository->getInforme($parametros->id_empresa, $solicitud, $diferencias, $parametros->tipo_agrupacion);
+    }
+
+    public function impresionPolizas($id_relacion){
+        $relacion = $this->repository->getRelacion($id_relacion);
+        if($relacion){
+            $polizas  = $relacion->polizas;
+            $pdf = new PolizaFormatoOriginal($polizas);
+            return $pdf->create();
+        } else {
+            dd("Relación no encontrada");
+        }
+
+
     }
 }

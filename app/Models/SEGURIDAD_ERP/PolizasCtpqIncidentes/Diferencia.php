@@ -395,4 +395,16 @@ class Diferencia extends Model
             return "";
         }
     }
+
+    public function getIdRelacionAttribute()
+    {
+        $relacion = RelacionPolizas::where("id_poliza_a","=", $this->id_poliza)
+            ->where("base_datos_a","=",$this->base_datos_revisada)
+            ->where("tipo_relacion","=",$this->tipo_busqueda)->first();
+        if($relacion){
+            return $relacion->id;
+        } else {
+            return null;
+        }
+    }
 }

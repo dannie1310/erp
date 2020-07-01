@@ -337,8 +337,10 @@ class Empresa extends Model
         $polizas = $this->getPolizas($sin_solicitud_relacionada, $solo_diferencias_activas);
         $i=0;
         foreach($polizas as $poliza){
-            $informe["informe"][$i]["poliza"]=$poliza->Ejercicio."-".$poliza->Periodo."-".$poliza->tipo."-".$poliza->Folio;
-            $diferencias = $this->getDiferenciasInformePorPoliza($sin_solicitud_relacionada, $solo_diferencias_activas, $poliza->Id);
+            $informe["informe"][$i]["poliza"]=$poliza["poliza"]->Ejercicio."-".$poliza["poliza"]->Periodo."-".$poliza["poliza"]->tipo."-".$poliza["poliza"]->Folio;
+            $informe["informe"][$i]["id_poliza"]=$poliza["poliza"]->Id;
+            $informe["informe"][$i]["id_relacion"]=$poliza["id_relacion"];
+            $diferencias = $this->getDiferenciasInformePorPoliza($sin_solicitud_relacionada, $solo_diferencias_activas, $poliza["poliza"]->Id);
             $informe["informe"][$i]["cantidad"]=count($diferencias);
             $jc = 0;
             foreach($diferencias as $diferencia){
@@ -363,10 +365,20 @@ class Empresa extends Model
         $diferencias = $this->getDiferenciasInformePorPoliza($sin_solicitud_relacionada, $solo_diferencias_activas);
 
         $polizas_diferencia = [];
+        $i = 0;
         foreach($diferencias as $diferencia){
-            $polizas_diferencia[] = $diferencia->poliza;
+            $polizas_diferencia["poliza"][$i]= $diferencia->poliza;
+            $polizas_diferencia["id_relacion"][$i] = $diferencia->id_relacion;
+            $i++;
         }
-        $polizas = array_unique($polizas_diferencia);
+        //dd($polizas_diferencia);
+        $polizas_unicas = array_unique($polizas_diferencia["poliza"]);
+        $i=0;
+        foreach($polizas_unicas as $k=>$v) {
+            $polizas[$i]["poliza"] = $v;
+            $polizas[$i]["id_relacion"] = $polizas_diferencia["id_relacion"][$k] ;
+            $i++;
+        }
         return $polizas;
     }
 

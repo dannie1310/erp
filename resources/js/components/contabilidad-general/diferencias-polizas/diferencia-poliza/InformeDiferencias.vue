@@ -119,7 +119,8 @@
                         </tr>
                         <template v-for="(informe_poliza, j) in informe_empresa.informe">
                             <tr style="background-color: #555555; color: #FFF">
-                                <td colspan="9">{{informe_poliza.poliza}} ({{informe_poliza.cantidad}})</td>
+                                <td colspan="9">{{informe_poliza.poliza}}
+                                    <ImpresionPolizas v-bind:id="informe_poliza.id_relacion"></ImpresionPolizas> ({{informe_poliza.cantidad}})</td>
                             </tr>
                             <tr style="background-color: #999999" >
                                 <td class="index_corto">#</td>
@@ -160,8 +161,10 @@
 </template>
 
 <script>
+    import ImpresionPolizas from "./partials/ImpresionPolizas";
     export default {
         name: "InformeDiferencias",
+        components: {ImpresionPolizas},
         data() {
             return {
                 id_empresa:'',
