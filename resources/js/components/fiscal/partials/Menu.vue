@@ -4,7 +4,7 @@
             <li class="nav-item"  v-if="$root.can('consultar_autocorreccion_cfd_efo',true) || $root.can('consultar_poliza',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-file-invoice nav-icon"></i>
-                    <p>CFD</p>
+                    <p>Gestión de CFD</p>
                     <i class="right fa fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview">
