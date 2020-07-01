@@ -80,7 +80,6 @@ import polizaGeneral from './modules/contabilidadGeneral/poliza';
 import empresaContabilidad from './modules/contabilidadGeneral/empresa';
 import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
 import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
-import CFDSAT from './modules/contabilidadGeneral/cfd-sat';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 import incidentePoliza from './modules/contabilidadGeneral/incidente-poliza';
 
@@ -114,6 +113,9 @@ import solicitudBaja from './modules/finanzas/solicitud-baja-cuenta-bancaria';
 import tipoMovimiento from './modules/finanzas/tipo-movimiento';
 import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
+
+//FISCAL
+import CFDSAT from './modules/fiscal/cfd-sat';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -252,10 +254,11 @@ export default new Vuex.Store({
         'contabilidadGeneral/poliza' :polizaGeneral,
         'contabilidadGeneral/empresa' :empresaContabilidad,
         'contabilidadGeneral/empresa-sat': empresaSAT,
-        'contabilidadGeneral/cfd-sat': CFDSAT,
         'contabilidadGeneral/empresa-contpaq': empresaContpaq,
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/incidente-poliza' : incidentePoliza,
+
+        'fiscal/cfd-sat': CFDSAT,
 
         'reportes/reporte': reporte,
 
