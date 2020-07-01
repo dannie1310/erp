@@ -66,7 +66,6 @@ class CtgEfos extends Model
             abort(500, 'El procesamiento del archivo no arrojó EFOS');
         }
 
-        // dd($efos);
         try {
         foreach ($efos['data'] as $key => $efo){
             $estado = $this->estadoId($efo['estado']);
@@ -162,8 +161,8 @@ class CtgEfos extends Model
 
                     $fecha_presunto = (!isset($renglon[$t + 2])) ? '' : $renglon[$t + 2];
                     if($fecha_presunto != ''){
-                        $fecha_presunto = str_replace(' ', '', $fecha_presunto);
-                        if(strlen($fecha_presunto) > 10) $fecha_presunto = \substr($fecha_presunto, 0, 10);
+                        // $fecha_presunto = str_replace(' ', '', $fecha_presunto);
+                        // if(strlen($fecha_presunto) > 10) $fecha_presunto = \substr($fecha_presunto, 0, 10);
                         $fecha_presunto = $this->validarFormatoFecha($fecha_presunto);
                         $fecha_presunto_obj = DateTime::createFromFormat('d/m/Y', $fecha_presunto);
                         if($fecha_presunto_obj)
@@ -174,8 +173,8 @@ class CtgEfos extends Model
 
                     $fecha_desvirtuado = (!isset($renglon[$t + 5])) ? '' : $renglon[$t + 5];
                     if($fecha_desvirtuado != ''){
-                        $fecha_desvirtuado = str_replace(' ', '', $fecha_desvirtuado);
-                        if(strlen($fecha_desvirtuado) > 10) $fecha_desvirtuado = \substr($fecha_desvirtuado, 0, 10);
+                        // $fecha_desvirtuado = str_replace(' ', '', $fecha_desvirtuado);
+                        // if(strlen($fecha_desvirtuado) > 10) $fecha_desvirtuado = \substr($fecha_desvirtuado, 0, 10);
                         $fecha_desvirtuado = $this->validarFormatoFecha($fecha_desvirtuado);
                         $fecha_desvirtuado_obj = DateTime::createFromFormat('d/m/Y', $fecha_desvirtuado);
                         if($fecha_desvirtuado_obj)
@@ -187,8 +186,8 @@ class CtgEfos extends Model
                     $fecha_definitivo = (!isset($renglon[$t + 9])) ? '' : $renglon[$t + 9];                    
                     if($fecha_definitivo != '')
                     {
-                        $fecha_definitivo = str_replace(' ', '', $fecha_definitivo);
-                        if(strlen($fecha_definitivo) > 10) $fecha_definitivo = \substr($fecha_definitivo, 0, 10);
+                        // $fecha_definitivo = str_replace(' ', '', $fecha_definitivo);
+                        // if(strlen($fecha_definitivo) > 10) $fecha_definitivo = \substr($fecha_definitivo, 0, 10);
                         $fecha_definitivo = $this->validarFormatoFecha($fecha_definitivo);
                         $fecha_definitivo_obj = DateTime::createFromFormat('d/m/Y', $fecha_definitivo);
                         if($fecha_definitivo_obj)
@@ -200,8 +199,8 @@ class CtgEfos extends Model
                     $fecha_favorable = (!isset($renglon[$t + 12])) ? '' : $renglon[$t + 12];
                     if($fecha_favorable != '')
                     {
-                        $fecha_favorable = str_replace(' ', '', $fecha_favorable);
-                        if(strlen($fecha_favorable) > 10) $fecha_favorable = \substr($fecha_favorable, 0, 10);
+                        // $fecha_favorable = str_replace(' ', '', $fecha_favorable);
+                        // if(strlen($fecha_favorable) > 10) $fecha_favorable = \substr($fecha_favorable, 0, 10);
                         $fecha_favorable = $this->validarFormatoFecha($fecha_favorable);
                         $fecha_favorable_obj = DateTime::createFromFormat('d/m/Y', $fecha_favorable);
                         if($fecha_favorable_obj)
@@ -241,7 +240,7 @@ class CtgEfos extends Model
         {
             $fecha_informacion = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $fecha_informacion);
         }
-        
+
         return [
             'data' => $content,
             'fecha_informacion' => $fecha_informacion,
@@ -249,7 +248,10 @@ class CtgEfos extends Model
     }
 
     private function validarFormatoFecha($fecha){
+        $fecha = str_replace(' ', '', $fecha);
+        $fecha = str_replace('-', '/', $fecha);
         $fecha_rev = explode('/', $fecha);
+        $fecha_rev = array_slice($fecha_rev,0,3);
         if(\strlen($fecha_rev[2]) == 2){
             $fecha_rev[2] = '20' . $fecha_rev[2];
         }
