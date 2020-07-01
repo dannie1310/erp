@@ -109,7 +109,7 @@ class CtgEfos extends Model
         $estado = array('DEFINITIVO', 'DESVIRTUADO', 'PRESUNTO', 'SENTENCIAFAVORABLE');
         $fecha_informacion = '';
         while(!feof($myfile)) {
-            // $linea == 4? dd(fgets($myfile)):'';
+            
             $renglon = explode(",",fgets($myfile));
             if($linea ==1){
                 $fecha_informacion = $renglon[0];
@@ -120,7 +120,7 @@ class CtgEfos extends Model
                 {
                     abort(400,'---Verificar RFC vacio No'.$renglon[0]);
                 }
-// dd($renglon, $linea);
+
                 if(substr($renglon[count($renglon)-1], -2) != "" && substr($renglon[count($renglon)-1], -2) != "\r\n"){
                     $renglon[count($renglon)-1] = str_replace(["\n", '"'],"",$renglon[count($renglon)-1]);
                     $fin = false;
@@ -209,7 +209,6 @@ class CtgEfos extends Model
                             $fecha_favorable_f = $fecha_favorable_obj->format('Y-m-d');
                         }
                     }
-                    dd('panda',$fecha_favorable, $fecha_favorable_f  );
                     
                     try{
                         $content[] = array(
@@ -242,7 +241,7 @@ class CtgEfos extends Model
         {
             $fecha_informacion = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $fecha_informacion);
         }
-        dd('stop');
+        
         return [
             'data' => $content,
             'fecha_informacion' => $fecha_informacion,
