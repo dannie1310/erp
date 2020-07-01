@@ -9,6 +9,7 @@ use App\Models\CADECO\AjustePositivoPartida;
 use App\Models\CADECO\Almacenes\AjusteEliminado;
 use App\Models\CADECO\Almacenes\EntregaContratista;
 use App\Models\CADECO\Anticipo;
+use App\Models\CADECO\AplicacionManual;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Cliente;
 use App\Models\CADECO\Compras\CotizacionComplemento;
@@ -58,6 +59,7 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLog;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
+use App\Models\CADECO\Finanzas\PagoEliminadoLog;
 use App\Models\CADECO\Finanzas\Servicio;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
@@ -136,6 +138,7 @@ use App\Observers\CADECO\AjustePositivoPartidaObserver;
 use App\Observers\CADECO\Almacenes\AjusteEliminadoObserver;
 use App\Observers\CADECO\Almacenes\EntregaContratistaObserver;
 use App\Observers\CADECO\AnticipoObserver;
+use App\Observers\CADECO\AplicacionManualObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\ClienteObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
@@ -187,6 +190,7 @@ use App\Models\CADECO\Finanzas\FacturaEliminada;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaPartidaObserver;
 use App\Observers\CADECO\Finanzas\LayoutPagoObserver;
 use App\Observers\CADECO\Finanzas\LayoutPagoPartidaObserver;
+use App\Observers\CADECO\Finanzas\PagoEliminadoLogObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudAltaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudBajaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
@@ -357,6 +361,7 @@ class AppServiceProvider extends ServiceProvider
             FacturaEliminada::observe(FacturaEliminadaObserver::class);
             LayoutPago::observe(LayoutPagoObserver::class);
             LayoutPagoPartida::observe(LayoutPagoPartidaObserver::class);
+            PagoEliminadoLog::observe(PagoEliminadoLogObserver::class);
 
             /**
              * FinanzasCBE
@@ -417,6 +422,7 @@ class AppServiceProvider extends ServiceProvider
             AjustePositivo::observe(AjustePositivoObserver::class);
             AjustePositivoPartida::observe(AjustePositivoPartidaObserver::class);
             Anticipo::observe(AnticipoObserver::class);
+            AplicacionManual::observe(AplicacionManualObserver::class);
             Banco::observe(BancoObserver::class);
             Cliente::observe(ClienteObserver::class);
             Credito::observe(CreditoObserver::class);

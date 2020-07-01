@@ -43,4 +43,22 @@ class Prestacion extends Transaccion
             }
         }
     }
+
+    /**
+     * Implementa lógica de SP: sp_desaplicar_pago
+     */
+    public function desaplicaPago($factor)
+    {
+        if($this->items)
+        {
+            foreach ($this->items as $item)
+            {
+                $monto_pagado = ROUND(($item->inventario->monto_pagado - $item->importe * $factor), 2);
+                $item->inventario->update([
+                    'monto_pagado' => $monto_pagado
+                ]);
+                $item->inventario->distribuirPagoInventarios();
+            }
+        }
+    }
 }

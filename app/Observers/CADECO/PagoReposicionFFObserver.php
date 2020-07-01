@@ -33,4 +33,9 @@ class PagoReposicionFFObserver extends PagoObserver
         }
         $pago->solicitud->actualizaEstadoPagada();
     }
+
+    public function deleting(Pago $pago)
+    {
+        parent::deleting($pago);
+    }
 }

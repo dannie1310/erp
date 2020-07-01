@@ -33,7 +33,6 @@ class AsignacionProveedores extends Model
     }
     public function solicitud()
     {
-        dd($this->belongsTo(SolicitudCompra::class, 'id_transaccion'));
         return $this->belongsTo(SolicitudCompra::class, 'id_transaccion');
     }
 }

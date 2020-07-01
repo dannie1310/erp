@@ -30,10 +30,8 @@
 </template>
 
 <script>
-
     export default {
         name: "gestion-pago-index",
-
         data() {
             return {
                 HeaderSettings: false,
@@ -47,6 +45,7 @@
                     { title: 'Monto', field: 'monto', thClass: 'th_money', tdClass: 'td_money', sortable: true},
                     { title: 'Moneda', field: 'id_moneda',  thComp:require('../../../globals/th-Filter').default, sortable: true },
                     { title: 'Estado', field: 'estado',  thComp:require('../../../globals/th-Filter').default, sortable: true },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -110,6 +109,10 @@
                             monto: pago.monto_format,
                             estado: pago.estado_string,
                             id_moneda:pago.moneda.nombre,
+                            buttons: $.extend({}, {
+                                id: pago.id,
+                                delete: self.$root.can('eliminar_pagos') ? true : false,
+                            })
                         })
                     });
                 },
