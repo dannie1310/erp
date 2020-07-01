@@ -445,7 +445,7 @@ export const routes = [
                         meta: {
                             title: 'Lista de EFOS',
                             breadcrumb: {parent: 'control-finanzas', name: 'EFOS'},
-                            middleware: [auth, permission],
+                            middleware: [auth],
                             permission: 'consultar_efos',
                             general: true,
 

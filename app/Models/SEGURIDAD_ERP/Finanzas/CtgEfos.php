@@ -120,12 +120,12 @@ class CtgEfos extends Model
                     abort(400,'---Verificar RFC vacio No'.$renglon[0]);
                 }
 
-                if(substr($renglon[count($renglon)-1], -2) != "\r\n"){
+                if(substr($renglon[count($renglon)-1], -2) != "" && substr($renglon[count($renglon)-1], -2) != "\r\n"){
                     $renglon[count($renglon)-1] = str_replace(["\n", '"'],"",$renglon[count($renglon)-1]);
                     $fin = false;
                     while(!$fin){
                         $add = explode(",",fgets($myfile));
-                         array_shift($add);
+                        array_shift($add);
                         $renglon = array_merge($renglon , $add);
                         $fin = substr($renglon[count($renglon)-1], -2) == "\r\n";
                     }
@@ -143,7 +143,6 @@ class CtgEfos extends Model
                         $razon = $razon.$renglon[$t];
                         $t++;
                     }
-                    
                     
                     if($renglon[$t + 2] == '' || strlen($razon) === 0)
                     {
