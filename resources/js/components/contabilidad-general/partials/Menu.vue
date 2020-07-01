@@ -37,6 +37,12 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item"  >
+                        <router-link :to="{name: 'informe-diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'informe-diferencia-poliza'}">
+                            <i class="fa fa-file-invoice nav-icon"></i>
+                            <p>Informe</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item"  >
                         <router-link :to="{name: 'diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'diferencia-poliza'}">
                             <i class="fa fa-search nav-icon"></i>
                             <p>Búsquedas</p>

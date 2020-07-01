@@ -11,11 +11,13 @@ namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\CtgTipo;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginal;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
@@ -227,5 +229,46 @@ class DiferenciaService
         {
             return "q1920";
         }*/
+    }
+
+    public function obtenerInforme($parametros){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        $solicitud = 1;
+        $diferencias = 1;
+
+        if($parametros->sin_solicitud_relacionada == 1 && $parametros->con_solicitud_relacionada == 1){
+            $solicitud = 2;
+        } else if($parametros->sin_solicitud_relacionada == 1 && $parametros->con_solicitud_relacionada === false){
+            $solicitud = 1;
+        } else if($parametros->sin_solicitud_relacionada === false && $parametros->con_solicitud_relacionada == 1){
+            $solicitud = 0;
+        } else {
+            $solicitud = 2;
+        }
+
+        if($parametros->solo_diferencias_activas == 1 && $parametros->no_solo_diferencias_activas == 1){
+            $diferencias = 2;
+        } else if($parametros->solo_diferencias_activas == 1 && $parametros->no_solo_diferencias_activas === false){
+            $diferencias = 1;
+        } else if($parametros->solo_diferencias_activas === false && $parametros->no_solo_diferencias_activas == 1){
+            $diferencias = 0;
+        } else {
+            $diferencias = 2;
+        }
+        return $this->repository->getInforme($parametros->id_empresa, $solicitud, $diferencias, $parametros->tipo_agrupacion);
+    }
+
+    public function impresionPolizas($id_relacion){
+        $relacion = $this->repository->getRelacion($id_relacion);
+        if($relacion){
+            $polizas  = $relacion->polizas;
+            $pdf = new PolizaFormatoOriginal($polizas);
+            return $pdf->create();
+        } else {
+            dd("Relación no encontrada");
+        }
+
+
     }
 }
