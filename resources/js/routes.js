@@ -1479,17 +1479,17 @@ export const routes = [
                 ]
             },
             {
-                path: 'asignacion-proveedores',
-                component: require('./components/contratos/asignacion-proveedores/partials/Layout').default,
+                path: 'asignacion-contratista',
+                component: require('./components/contratos/asignacion-contratista/partials/Layout').default,
                 children: [
                     {
                         path: '/',
-                        name: 'asignaciones',
-                        component: require('./components/contratos/asignacion-proveedores/Index').default,
+                        name: 'asignacion-contratista',
+                        component: require('./components/contratos/asignacion-contratista/Index').default,
                         meta: {
-                            title: 'Asiganciones Proveedores',
-                            breadcrumb: {parent: 'contratos', name: 'SUBCONTRATOS'},
-                            middleware: [auth, context, permission],
+                            title: 'Asignaciones Proveedores',
+                            breadcrumb: {parent: 'contratos', name: 'ASIGNACIONES'},
+                            middleware: [auth, context],
                             permission: 'consultar_subcontrato'
                         }
                     },

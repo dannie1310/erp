@@ -38,7 +38,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <router-link :to="{name: 'asignacion_proveedores'}" class="nav-link" :class="{active: this.$route.name == 'asignacion_proveedores'}">
+                        <router-link :to="{name: 'asignacion-contratista'}" class="nav-link" :class="{active: this.$route.name == 'asignacion-contratista'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Asignación Proveedores</p>
                         </router-link>
