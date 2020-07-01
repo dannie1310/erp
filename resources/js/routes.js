@@ -286,44 +286,6 @@ export const routes = [
                     }
                 ],
             },
-
-            {
-                path: 'cfd-sat',
-                component: require('./components/contabilidad-general/cfd-sat/Layout.vue').default,
-                children:[
-                    {
-                        path:"/",
-                        name:"cfd-sat",
-                        component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
-                        meta: {
-                            title: 'CFD SAT',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'CFD SAT'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_poliza'],
-                            general: true
-                        }
-                    },
-                    {
-                        path: 'autocorreccion-cfd-efos',
-                        component: require('./components/contabilidad-general/cfd-sat/Layout').default,
-                        children: [
-                            {
-                                path: '/',
-                                name: 'autocorreccion-cfd-efos',
-                                component: require('./components/contabilidad-general/cfd-sat/autocorreccion-cfd-efo/Index').default,
-                                meta: {
-                                    title: 'Autocorrección de CFD EFOS',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
-                                    middleware: [auth, permission],
-                                    permission: 'consultar_efos',
-                                    general: true,
-
-                                }
-                            },
-                        ]
-                    }
-                ]
-            },
             {
                 path: 'lista-empresa',
                 component: require('./components/contabilidad-general/empresas/Index.vue').default,
@@ -534,6 +496,73 @@ export const routes = [
                     general: true,
 
                 }
+            },
+        ]
+    },
+    {
+        path: '/fiscal',
+        components:  {
+            default: require('./components/fiscal/partials/Layout.vue').default,
+            menu: require('./components/fiscal/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'fiscal',
+                meta: {
+                    title: 'FISCAL',
+                    middleware: [auth, permission],
+                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza'],
+                    general: true
+                }
+            },
+            {
+                path: 'cfds',
+                component: require('./components/fiscal/cfd/cfd-sat/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cfd-sat",
+                        component: require('./components/fiscal/cfd/cfd-sat/Index.vue').default,
+                        meta: {
+                            title: 'CFD SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'autocorreccion-cfd-efos',
+                        component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Index').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'autocorreccion-cfd-efos',
+                                component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Index').default,
+                                meta: {
+                                    title: 'Autocorrección de CFD EFOS',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_poliza',
+                                    general: true,
+
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'autocorreccion-cfd-efos-create',
+                                component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Create').default,
+                                meta: {
+                                    title: 'Registrar Autocorrección de CFD EFOS',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_autocorreccion_cfd_efo']
+                                }
+                            }
+                        ]
+                    }
+                ]
             },
         ]
     },

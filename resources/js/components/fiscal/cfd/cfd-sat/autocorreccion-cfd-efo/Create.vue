@@ -4,7 +4,7 @@
 
 <script>
     export default {
-        name: "Index"
+        name: "autocorreccion-cfd-efos-create"
     }
 </script>
 
