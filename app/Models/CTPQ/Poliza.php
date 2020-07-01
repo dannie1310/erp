@@ -471,4 +471,12 @@ class Poliza extends Model
             return $this->getMovimientos($cuenta_padre);
         }
     }
+
+    public function getTipoAttribute(){
+        if($this->tipo_poliza){
+            return $this->tipo_poliza->Nombre;
+        } else {
+            return "";
+        }
+    }
 }

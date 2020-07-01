@@ -229,10 +229,12 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'incidente-poliza'], function ($api) {//buscar-diferencias
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@store');
             $api->post('buscar-diferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@buscarDiferencias');
+            $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@obtenerInforme');
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@update')->where(['id' => '[0-9]+']);
+            $api->get('{id}/impresion-polizas', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@impresionPolizas')->where(['id' => '[0-9]+']);
         });
         $api->group(['prefix' => 'solicitud-edicion-poliza'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@store');

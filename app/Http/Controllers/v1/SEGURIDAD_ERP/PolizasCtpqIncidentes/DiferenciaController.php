@@ -62,4 +62,15 @@ class DiferenciaController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function obtenerInforme(Request $request)
+    {
+        $respuesta =$this->service->obtenerInforme($request);
+        return response()->json($respuesta, 200);
+    }
+
+    public function impresionPolizas($id)
+    {
+        return $this->service->impresionPolizas($id)->create();
+    }
+
 }

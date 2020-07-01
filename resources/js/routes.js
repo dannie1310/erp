@@ -173,6 +173,24 @@ export const routes = [
                 ]
             },
             {
+                path: 'diferencias/informe',
+                component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/InformeDiferencias.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"informe-diferencia-poliza",
+                        component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/InformeDiferencias.vue').default,
+                        meta: {
+                            title: 'Informe de Diferencias en Pólizas',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'INFORME DE DIFERENCIAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'diferencias/detectar',
                 component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/DetectarDiferencia.vue').default,
                 children:[
