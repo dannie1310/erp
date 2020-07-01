@@ -109,6 +109,7 @@ class CtgEfos extends Model
         $estado = array('DEFINITIVO', 'DESVIRTUADO', 'PRESUNTO', 'SENTENCIAFAVORABLE');
         $fecha_informacion = '';
         while(!feof($myfile)) {
+            // $linea == 4? dd(fgets($myfile)):'';
             $renglon = explode(",",fgets($myfile));
             if($linea ==1){
                 $fecha_informacion = $renglon[0];
@@ -119,7 +120,7 @@ class CtgEfos extends Model
                 {
                     abort(400,'---Verificar RFC vacio No'.$renglon[0]);
                 }
-
+// dd($renglon, $linea);
                 if(substr($renglon[count($renglon)-1], -2) != "" && substr($renglon[count($renglon)-1], -2) != "\r\n"){
                     $renglon[count($renglon)-1] = str_replace(["\n", '"'],"",$renglon[count($renglon)-1]);
                     $fin = false;
@@ -131,6 +132,7 @@ class CtgEfos extends Model
                     }
 
                 }
+                
 
                 $fecha_desvirtuado_f = '';
                 $fecha_definitivo_f = '';
@@ -162,7 +164,7 @@ class CtgEfos extends Model
                     if($fecha_presunto != ''){
                         $fecha_presunto = str_replace(' ', '', $fecha_presunto);
                         if(strlen($fecha_presunto) > 10) $fecha_presunto = \substr($fecha_presunto, 0, 10);
-                        
+                        $fecha_presunto = $this->validarFormatoFecha($fecha_presunto);
                         $fecha_presunto_obj = DateTime::createFromFormat('d/m/Y', $fecha_presunto);
                         if($fecha_presunto_obj)
                         {
@@ -174,6 +176,7 @@ class CtgEfos extends Model
                     if($fecha_desvirtuado != ''){
                         $fecha_desvirtuado = str_replace(' ', '', $fecha_desvirtuado);
                         if(strlen($fecha_desvirtuado) > 10) $fecha_desvirtuado = \substr($fecha_desvirtuado, 0, 10);
+                        $fecha_desvirtuado = $this->validarFormatoFecha($fecha_desvirtuado);
                         $fecha_desvirtuado_obj = DateTime::createFromFormat('d/m/Y', $fecha_desvirtuado);
                         if($fecha_desvirtuado_obj)
                         {
@@ -186,6 +189,7 @@ class CtgEfos extends Model
                     {
                         $fecha_definitivo = str_replace(' ', '', $fecha_definitivo);
                         if(strlen($fecha_definitivo) > 10) $fecha_definitivo = \substr($fecha_definitivo, 0, 10);
+                        $fecha_definitivo = $this->validarFormatoFecha($fecha_definitivo);
                         $fecha_definitivo_obj = DateTime::createFromFormat('d/m/Y', $fecha_definitivo);
                         if($fecha_definitivo_obj)
                         {
@@ -198,12 +202,14 @@ class CtgEfos extends Model
                     {
                         $fecha_favorable = str_replace(' ', '', $fecha_favorable);
                         if(strlen($fecha_favorable) > 10) $fecha_favorable = \substr($fecha_favorable, 0, 10);
+                        $fecha_favorable = $this->validarFormatoFecha($fecha_favorable);
                         $fecha_favorable_obj = DateTime::createFromFormat('d/m/Y', $fecha_favorable);
                         if($fecha_favorable_obj)
                         {
                             $fecha_favorable_f = $fecha_favorable_obj->format('Y-m-d');
                         }
                     }
+                    dd('panda',$fecha_favorable, $fecha_favorable_f  );
                     
                     try{
                         $content[] = array(
@@ -236,11 +242,19 @@ class CtgEfos extends Model
         {
             $fecha_informacion = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $fecha_informacion);
         }
-        
+        dd('stop');
         return [
             'data' => $content,
             'fecha_informacion' => $fecha_informacion,
         ];
+    }
+
+    private function validarFormatoFecha($fecha){
+        $fecha_rev = explode('/', $fecha);
+        if(\strlen($fecha_rev[2]) == 2){
+            $fecha_rev[2] = '20' . $fecha_rev[2];
+        }
+        return  implode('/', $fecha_rev);
     }
 
     private function guardarCsv($file, $file_fingerprint)

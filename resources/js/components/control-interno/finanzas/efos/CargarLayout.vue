@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="load" class="btn btn-app btn-info float-right" title="Cargar Layout" :disabled="cargando" v-if="$root.can('actualizar_efos', true) || true">
+        <button @click="load" class="btn btn-app btn-info float-right" title="Cargar Layout" :disabled="cargando" v-if="$root.can('actualizar_efos', true)">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-upload" v-else></i>
             Carga de EFOS
