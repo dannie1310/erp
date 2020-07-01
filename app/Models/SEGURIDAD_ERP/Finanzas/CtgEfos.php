@@ -66,6 +66,7 @@ class CtgEfos extends Model
             abort(500, 'El procesamiento del archivo no arrojó EFOS');
         }
 
+        // dd($efos);
         try {
         foreach ($efos['data'] as $key => $efo){
             $estado = $this->estadoId($efo['estado']);
@@ -81,7 +82,6 @@ class CtgEfos extends Model
                     'estado' => $estado
                 ]
             );
-            if($key == 500 )break;
         }
        
             $this->guardarCsv($file, $file_fingerprint);
