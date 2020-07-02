@@ -75,8 +75,8 @@ class EFOS extends Model
                             $informe[$i]["empresa"] = $empresa->nombre_corto;
                             $informe[$i]["rfc"] = $efo->rfc;
                             $informe[$i]["razon_social"] = $efo->razon_social;
-                            $informe[$i]["fecha_presunto"] = $efo->efo->fecha_presunto;
-                            $informe[$i]["fecha_definitivo"] = $efo->efo->fecha_definitivo;
+                            $informe[$i]["fecha_presunto"] = $efo->efo->fecha_presunto_format;
+                            $informe[$i]["fecha_definitivo"] = $efo->efo->fecha_definitivo_format;
                             $informe[$i]["estatus"] = $efo->estadoEFOS->descripcion;
                             $informe[$i]["no_CFDI"] = count($comprobantes_efo);
                             $informe[$i]["importe"] = $comprobantes_efo->sum("total");
@@ -111,7 +111,7 @@ class EFOS extends Model
                         $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$tipo." ".$partidas[$i_p-1]["empresa"];
                         $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi;
                         $partidas_completas[$i]["importe"] = $importe_cfdi;
-                        $partidas_completas[$i]["importe_format"] = number_format($importe_cfdi,2,".",",");
+                        $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi,2,".",",");
                         $partidas_completas[$i]["tipo"] = "subtotal";
                         $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
                         $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
@@ -143,7 +143,7 @@ class EFOS extends Model
         $partidas_completas[$i]["etiqueta"] = "TOTAL ".$tipo;
         $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi_global;
         $partidas_completas[$i]["importe"] = $importe_cfdi_global;
-        $partidas_completas[$i]["importe_format"] = number_format($importe_cfdi_global,2,".",",");
+        $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi_global,2,".",",");
         $partidas_completas[$i]["tipo"] = "total";
         $partidas_completas[$i]["bg_color_hex"] = "#757575";
         $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
