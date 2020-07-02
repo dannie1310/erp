@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -438,6 +439,21 @@ class Empresa extends Model
             }
         }
         return $diferencias;
+    }
+
+    public static function getEmpresaDefinitivos()
+    {
+        $efos_definitivos = EFOS::definitivo()->get();
+        $i = 0;
+        foreach($efos_definitivos as $efo_definitivo){
+            $comprobantes = $efo_definitivo->cfd()->noAutoCorregidos()->get();
+            foreach($comprobantes as $comprobante){
+                $empresas[$comprobante->empresa->razon_social] = $comprobante->empresa;
+            }
+        }
+        ksort($empresas);
+        $empresas = array_unique($empresas);
+        return $empresas;
     }
 
 }

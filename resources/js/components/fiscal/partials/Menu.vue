@@ -22,6 +22,21 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item"  v-if="$root.can('consultar_informe_listado_efos_vs_cfdi_recibidos',true)">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="fa fa-user-slash nav-icon"></i>
+                    <p>Gestión de EFOS</p>
+                    <i class="right fa fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item"  v-if="$root.can('consultar_informe_listado_efos_vs_cfdi_recibidos',true)">
+                        <router-link :to="{name: 'informe-efos-vs-cfd'}" class="nav-link" :class="{active: this.$route.name == 'informe-efos-vs-cfd'}">
+                            <i class="fa fa-file-alt nav-icon"></i>
+                            <p>Informe EFOS vs CFD</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </nav>
 </template>

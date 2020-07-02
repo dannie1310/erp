@@ -535,6 +535,36 @@ export const routes = [
                 }
             },
             {
+                path: 'efos-empresa',
+                component: require('./components/fiscal/efos/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"efos-empresa",
+                        component: require('./components/fiscal/efos/Index.vue').default,
+                        meta: {
+                            title: 'EFOS',
+                            breadcrumb: {parent: 'fiscal', name: 'EFOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_efos_empresa'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-efos-vs-cfd',
+                        component: require('./components/fiscal/efos/InformeEFOSCFD').default,
+                        meta: {
+                            title: 'Informe Listado EFOS vs CFD Recibidos',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'cfds',
                 component: require('./components/fiscal/cfd/cfd-sat/Layout.vue').default,
                 children:[

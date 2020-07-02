@@ -49,4 +49,10 @@ class CtgEfosService
                 return $this->repository->paginate();
     }
 
+    public function obtenerInforme(){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        return $this->repository->getInformeCFD();
+    }
+
 }
