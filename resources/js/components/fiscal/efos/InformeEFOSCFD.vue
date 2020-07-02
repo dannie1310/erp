@@ -1,52 +1,53 @@
 <template>
     <span>
-        <div class="row" v-if="informe">
+        <div class="row" v-if="cargando">
+            <div class="col-md-12">
+                <div class="spinner-border text-success" role="status">
+                   <span class="sr-only">Cargando...</span>
+                </div>
+            </div>
+        </div>
+        <div class="row" v-else-if="informe && cargando== false">
             <div class="col-md-12">
                 <table class="table">
                     <tbody>
-                    <template v-for="(informe_empresa,i) in informe">
-                        <tr style="background-color: #000; color: #FFF">
-                            <td colspan="11">{{informe_empresa.empresa}}</td>
+                        <tr style="background-color: #7ac142; text-align:center" >
+                            <td class="index_corto">#</td>
+                            <td>Estatus</td>
+                            <td>RFC</td>
+                            <td>Razón Social</td>
+                            <td>Fecha Presunto</td>
+                            <td>Fecha Definitivo</td>
+                            <td>Empresa</td>
+                            <td># CFD</td>
+                            <td>Importe</td>
                         </tr>
-                        <template v-for="(informe_tipo, j) in informe_empresa.informe">
-                            <tr style="background-color: #555555; color: #FFF">
-                                <td colspan="11">{{informe_tipo.tipo}} ({{informe_tipo.cantidad}})</td>
-                            </tr>
-                            <tr style="background-color: #999999" >
-                                <td class="index_corto">#</td>
-                                <td>Base de Datos Revisada</td>
-                                <td>Base de Datos Referencia</td>
-                                <td>Ejercicio</td>
-                                <td>Periodo</td>
-                                <td>Tipo Póliza</td>
-                                <td>Folio</td>
-                                <td>No. Movto.</td>
-                                <td>Valor</td>
-                                <td>Valor referencia</td>
-                                <td>Solicitud</td>
-                            </tr>
-                            <template v-for="(diferencias, k) in informe_tipo.informe">
-                                <tr >
-                                    <td>{{k+1}}</td>
-                                    <td>{{diferencias.base_datos_revisada}}</td>
-                                    <td>{{diferencias.base_datos_referencia}}</td>
-                                    <td>{{diferencias.ejercicio}}</td>
-                                    <td>{{diferencias.periodo}}</td>
-                                    <td>{{diferencias.tipo}}</td>
-                                    <td>{{diferencias.numero_folio_poliza}}</td>
-                                    <td>{{diferencias.numero_movimiento}}</td>
-                                    <td>{{diferencias.valor}}</td>
-                                    <td>{{diferencias.valor_referencia}}</td>
-                                    <td>
-                                        <router-link :to="{name: 'solicitud-edicion-poliza-show', params: { id: diferencias.solicitud_id }}" target="_blank" v-if="diferencias.solicitud_id > 0">
-                                            {{diferencias.solicitud_numero_folio}}
-                                        </router-link>
-                                    </td>
+                        <template v-for="(tipo,i) in informe">
+                            <template v-for="(partidas, j) in tipo">
+                                <tr v-if="partidas.tipo == 'partida'" >
+                                    <td class="index_corto">{{partidas.indice}}</td>
+                                    <td>{{partidas.estatus}}</td>
+                                    <td>{{partidas.rfc}}</td>
+                                    <td>{{partidas.razon_social}}</td>
+                                    <td>{{partidas.fecha_presunto}}</td>
+                                    <td>{{partidas.fecha_definitivo}}</td>
+                                    <td>{{partidas.empresa}}</td>
+                                    <td style="text-align:right">{{partidas.no_CFDI}}</td>
+                                    <td style="text-align:right">{{partidas.importe_format}}</td>
                                 </tr>
-
+                                <tr v-else :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}"  >
+                                    <td class="index_corto">{{partidas.contador}}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>{{partidas.etiqueta}}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="text-align:right">{{partidas.contador_cfdi}}</td>
+                                    <td style="text-align:right">{{partidas.importe_format}}</td>
+                                </tr>
                             </template>
                         </template>
-                    </template>
                     </tbody>
                 </table>
             </div>
@@ -73,7 +74,7 @@
 
                 })
                     .then(data => {
-                        this.informe = data;
+                        this.informe = data.informe;
                     })
                     .finally(() => {
                         this.cargando = false;

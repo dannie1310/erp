@@ -48,13 +48,9 @@ class EFOS extends Model
     {
         $presuntos = [];
         $autocorregidos = [];
-        $informe[] = ["definitivos"=>EFOS::getPartidasInformeDefinitivos()];
+        $informe[] = EFOS::getPartidasInformeDefinitivos();
         $informe[] = ["presuntos"=>$presuntos];
         $informe[] = ["autocorregidos"=>$autocorregidos];
-        return $informe;
-    }
-    private static function getInformeDefinitivos(){
-        $informe ["partidas"] = EFOS::getPartidasInformeDefinitivos();
         return $informe;
     }
 
@@ -79,8 +75,8 @@ class EFOS extends Model
                             $informe[$i]["empresa"] = $empresa->nombre_corto;
                             $informe[$i]["rfc"] = $efo->rfc;
                             $informe[$i]["razon_social"] = $efo->razon_social;
-                            $informe[$i]["fecha_publicacion_presunto"] = $efo->efo->fecha_presunto;
-                            $informe[$i]["fecha_publicacion_definitivo"] = $efo->efo->fecha_definitivo;
+                            $informe[$i]["fecha_presunto"] = $efo->efo->fecha_presunto;
+                            $informe[$i]["fecha_definitivo"] = $efo->efo->fecha_definitivo;
                             $informe[$i]["estatus"] = $efo->estadoEFOS->descripcion;
                             $informe[$i]["no_CFDI"] = count($comprobantes_efo);
                             $informe[$i]["importe"] = $comprobantes_efo->sum("total");
@@ -117,8 +113,10 @@ class EFOS extends Model
                         $partidas_completas[$i]["importe"] = $importe_cfdi;
                         $partidas_completas[$i]["importe_format"] = number_format($importe_cfdi,2,".",",");
                         $partidas_completas[$i]["tipo"] = "subtotal";
-                        $partidas_completas[$i]["color_hex"] = "#d5d5d5";
-                        $partidas_completas[$i]["color_rgb"] = [213,213,213];
+                        $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
+                        $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
+                        $partidas_completas[$i]["color_hex"] = "#000";
+                        $partidas_completas[$i]["color_rgb"] = [0,0,0];
                         $i++;
                     }
                     $contador_partidas_empresa = 1;
@@ -130,6 +128,7 @@ class EFOS extends Model
 
             $partidas_completas[$i] = $partida;
             $partidas_completas[$i]["indice"] = $i_bis;
+            $partidas_completas[$i]["tipo"] = "partida";
             $contador_cfdi+=$partidas_completas[$i]["no_CFDI"];
             $importe_cfdi+=$partidas_completas[$i]["importe"];
             $contador_cfdi_global+=$partidas_completas[$i]["no_CFDI"];;
@@ -140,14 +139,16 @@ class EFOS extends Model
             $i_p++;
             $acumulador_partidas_empresa++;
         }
-        $partidas_completas[$i]["contador"] = $i_bis;
+        $partidas_completas[$i]["contador"] = $i_bis-1;
         $partidas_completas[$i]["etiqueta"] = "TOTAL ".$tipo;
         $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi_global;
         $partidas_completas[$i]["importe"] = $importe_cfdi_global;
         $partidas_completas[$i]["importe_format"] = number_format($importe_cfdi_global,2,".",",");
         $partidas_completas[$i]["tipo"] = "total";
-        $partidas_completas[$i]["color_hex"] = "#757575";
-        $partidas_completas[$i]["color_rgb"] = [117,117,117];
+        $partidas_completas[$i]["bg_color_hex"] = "#757575";
+        $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
+        $partidas_completas[$i]["color_hex"] = "#FFF";
+        $partidas_completas[$i]["color_rgb"] = [255,255,255];
         return $partidas_completas;
     }
 }
