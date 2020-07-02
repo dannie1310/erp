@@ -8,20 +8,21 @@
 
 namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
-use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\CTPQ\Poliza;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Config;
+use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginal;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
-use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
+use App\PDF\ContabilidadGeneral\InformeDiferenciasPolizas;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\CtgTipo;
-use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
-use App\PDF\ContabilidadGeneral\PolizaFormatoOriginal;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
 
 class DiferenciaService
 {
@@ -269,6 +270,12 @@ class DiferenciaService
             dd("Relación no encontrada");
         }
 
+
+    }
+
+    public function pdfDiferencias($data){
+        $pdf = new InformeDiferenciasPolizas($data);
+        return $pdf->create();
 
     }
 }
