@@ -304,4 +304,22 @@ class CtgEfos extends Model
         }
          return '';
     }
+    public function getFechaPresuntoFormatAttribute()
+    {
+        return date("d/m/Y", strtotime($this->fecha_presunto));
+    }
+    public function getFechaDefinitivoFormatAttribute()
+    {
+        return ($this->fecha_definitivo != NULL) ? date("d/m/Y", strtotime($this->fecha_definitivo)) : '-';
+    }
+
+    public function getFechaDesvirtuadoFormatAttribute()
+    {
+        return ($this->fecha_desvirtuado != NULL) ? date("d/m/Y", strtotime($this->fecha_desvirtuado)) : '-';
+    }
+
+    public function getFechaSentenciaFavorableFormatAttribute()
+    {
+        return ($this->fecha_sentecia_favorable != NULL) ? date("d/m/Y", strtotime($this->fecha_sentecia_favorable)) : '-';
+    }
 }
