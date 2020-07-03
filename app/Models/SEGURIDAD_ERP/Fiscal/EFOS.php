@@ -99,7 +99,7 @@ ORDER BY empresa ASC, ctg_efos.fecha_presunto DESC")
 
     private static function getPartidasInformeAutocorregidos(){
         $informe = DB::select("
-        SELECT ctg_estados_efos.descripcion AS estatus,
+        SELECT 'Corregido' AS estatus,
        efos.rfc,
        efos.razon_social,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
@@ -187,7 +187,7 @@ ORDER BY empresa ASC, ctg_efos.fecha_definitivo DESC
         return $informe;
     }
 
-    private static function getPartidasInformeDefinitivosV1(){
+    /*private static function getPartidasInformeDefinitivosV1(){
         $informe = [];
         $empresas = Empresa::getEmpresaDefinitivos();
         $i=0;
@@ -222,7 +222,7 @@ ORDER BY empresa ASC, ctg_efos.fecha_definitivo DESC
         }
         $informe = EFOS::setSubtotalesPartidas($informe, "DEFINITIVOS");
         return $informe;
-    }
+    }*/
     private static function setSubtotalesPartidas($partidas, $tipo){
         $partidas_completas = [];
         $i = 0;
