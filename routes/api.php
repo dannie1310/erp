@@ -263,12 +263,22 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@paginate');
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@update')->where(['id' => '[0-9]+']);
         });
+    });
+
+    /**
+     * FISCAL
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'fiscal'], function ($api) {
         $api->group(['prefix' => 'cfd-sat'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@paginate');
             $api->post('carga-zip', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@cargaZIP');
             $api->post('procesa-dir-zip-cfd', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@procesaDirectorioZIPCFD');
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@update')->where(['id' => '[0-9]+']);
+        });
+        $api->group(['prefix' => 'cfd-sat'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@paginate');
         });
     });
 
@@ -930,6 +940,8 @@ $api->version('v1', function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@cargaLayout');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@paginate');
             $api->post('rfc', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@rfc');
+            $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInforme');
+            $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformePDF');
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');

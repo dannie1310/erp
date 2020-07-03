@@ -17,4 +17,9 @@ class ProcesamientoListaEfos extends Model
         'fecha_actualizacion_sat',
         'fecha_actualizacion_sat_txt',
     ];
+
+    public static function getFechaActualizacion(){
+        $proceso = ProcesamientoListaEfos::orderBy("id","desc")->first();
+        return $proceso->fecha_actualizacion_sat_txt;
+    }
 }

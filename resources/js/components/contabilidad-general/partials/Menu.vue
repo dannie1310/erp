@@ -62,14 +62,6 @@
                     </li>
                 </ul>
             </li>
-
-            <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
-                <router-link :to="{name: 'cfd-sat'}" class="nav-link" :class="{active: this.$route.name == 'cfd-sat'}">
-                    <i class="fa fa-file-invoice nav-icon"></i>
-                    <p>CFD SAT</p>
-                </router-link>
-            </li>
-
             <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-cogs nav-icon"></i>
