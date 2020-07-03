@@ -25,7 +25,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     }
 
     public function getDuplicados($rfc){
-        return $this->model->where('rfc', '=', $rfc)->orderBy('id_empresa', 'ASC')->get();
+        return $this->model->where('rfc', '=', $rfc)->whereIn('tipo_empresa', [1,2,3])->orderBy('id_empresa', 'ASC')->get();
     }
 
 }
