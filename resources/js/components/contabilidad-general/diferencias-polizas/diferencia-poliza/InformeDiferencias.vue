@@ -188,7 +188,7 @@
             }
         },
         mounted() {
-            // this.getEmpresas();
+            this.getEmpresas();
         },
         computed:{
             datos(){
