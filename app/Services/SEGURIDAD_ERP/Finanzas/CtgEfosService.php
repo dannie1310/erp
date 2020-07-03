@@ -4,6 +4,7 @@
 namespace App\Services\SEGURIDAD_ERP\Finanzas;
 
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
+use App\PDF\Fiscal\InformeEFOSCFD;
 use App\Repositories\SEGURIDAD_ERP\CtgEfos\Repository;
 
 class CtgEfosService
@@ -53,6 +54,13 @@ class CtgEfosService
         ini_set('memory_limit', -1) ;
         ini_set('max_execution_time', '7200') ;
         return $this->repository->getInformeCFD();
+    }
+
+    public function obtenerInformePDF(){
+        $informe = $this->obtenerInforme();
+        //$informe = [];
+        $pdf = new InformeEFOSCFD($informe);
+        return $pdf->create();
     }
 
 }

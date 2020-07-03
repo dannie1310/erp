@@ -80,7 +80,7 @@ class EFOS extends Model
                             $informe[$i]["estatus"] = $efo->estadoEFOS->descripcion;
                             $informe[$i]["no_CFDI"] = count($comprobantes_efo);
                             $informe[$i]["importe"] = $comprobantes_efo->sum("total");
-                            $informe[$i]["importe_format"] = number_format($comprobantes_efo->sum("total"),2,".", ",");
+                            $informe[$i]["importe_format"] = "$ ". number_format($comprobantes_efo->sum("total"),2,".", ",");
                             $i++;
                         }
                     }

@@ -61,4 +61,10 @@ class CtgEfosController extends Controller
         $respuesta =$this->service->obtenerInforme();
         return response()->json($respuesta, 200);
     }
+
+    public function obtenerInformePDF(Request $request)
+    {
+        return $this->service->obtenerInformePDF()->create();
+    }
+
 }
