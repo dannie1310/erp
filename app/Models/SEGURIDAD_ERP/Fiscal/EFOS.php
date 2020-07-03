@@ -50,13 +50,15 @@ class EFOS extends Model
         $informe["informe"][] = EFOS::getPartidasInformeDefinitivos();
         $informe["informe"][] = EFOS::getPartidasInformePresuntos();
         $informe["informe"][] = EFOS::getPartidasInformeAutocorregidos();
-        $informe["fechas"][] = EFOS::getFechasInforme();
+        $informe["fechas"] = EFOS::getFechasInforme();
         return $informe;
     }
 
     private static function getFechasInforme()
     {
-        return [];
+        $fechas["lista_efos"]= ProcesamientoListaEfos::getFechaActualizacion();
+        $fechas["cfd_recibidos"]= CFDSAT::getFechaUltimoCFDTxt();
+        return $fechas;
     }
 
     private static function getPartidasInformePresuntos(){

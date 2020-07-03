@@ -9,10 +9,15 @@
         </div>
         <span v-else-if="informe && cargando== false">
             <div class="row" >
-                <div class="col-md-12">
+                <div class="col-md-6">
+                    <div v-if="fechas">{{fechas.lista_efos}}</div>
+                    <div v-if="fechas">{{fechas.cfd_recibidos}}</div>
+                </div>
+                <div class="col-md-6">
                     <ImpresionInforme ></ImpresionInforme>
                 </div>
             </div>
+            <br>
             <div class="row" >
                 <div class="col-md-12">
                     <table class="table">
@@ -71,6 +76,7 @@
         data() {
             return {
                 informe : [],
+                fechas : [],
                 cargando : false
             }
         },
@@ -85,6 +91,7 @@
                 })
                     .then(data => {
                         this.informe = data.informe;
+                        this.fechas = data.fechas;
                     })
                     .finally(() => {
                         this.cargando = false;

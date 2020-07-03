@@ -56,6 +56,9 @@ class InformeEFOSCFD extends Rotation
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Helvetica', 'B', 12);
         $this->MultiCell(16, .5, utf8_decode('Informe de Revisión de Listado de EFOS del SAT vs CFDI Recibidos') , '0', 'C', 0);
+        $this->setY(2.5);
+        $this->SetFont('Helvetica', '', 7);
+        $this->Cell(19.7,.3,utf8_decode($this->informe["fechas"]["lista_efos"]).' / '.utf8_decode($this->informe["fechas"]["cfd_recibidos"]),0,1,"L");
         $this->partidasTitle();
         if($this->en_cola != ''){
             $this->setEstilos($this->en_cola);

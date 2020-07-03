@@ -40,6 +40,8 @@ class CFDSAT extends Model
         ,"id_carga_cfd_sat"
     ];
 
+    protected $dates =["fecha"];
+
     public function carga()
     {
         return $this->belongsTo(CargaCFDSAT::class, 'id_carga_cfd_sat', 'id');
@@ -108,6 +110,15 @@ class CFDSAT extends Model
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
         }
+    }
+
+    public static function getFechaUltimoCFDTxt()
+    {
+
+        setlocale(LC_ALL, 'es_ES');
+        $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
+        $fecha = "CFD cargados al ".$ultimo_cfd->fecha->format("d")." de ".$ultimo_cfd->fecha->formatLocalized('%B'). " de ".$ultimo_cfd->fecha->format("Y");
+        return $fecha;
     }
 
 }
