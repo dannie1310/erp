@@ -71,14 +71,30 @@ class EFOS extends Model
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        SUM (cfd_sat.total) AS importe,
        format (sum (cfd_sat.total), 'C') AS importe_format
-  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-          INNER JOIN
-          SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
-             ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
-         INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
-            ON (efos.rfc = cfd_sat.rfc_emisor))
-        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
-           ON (efos.estado = ctg_estados_efos.id))
+  FROM ((((SEGURIDAD_ERP.Fiscal.efos efos
+           INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
+              ON (efos.estado = ctg_estados_efos.id))
+          INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+             ON (efos.rfc = cfd_sat.rfc_emisor))
+         INNER JOIN
+         SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+            ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
+        INNER JOIN
+        (SELECT ListaEmpresasSAT.id,
+                ListaEmpresasSAT.nombre_corto,
+                MAX (ctg_efos.fecha_presunto) AS fecha_presunto_maxima
+           FROM ((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+                  INNER JOIN
+                  SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+                     ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
+                 INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
+                    ON (efos.rfc = cfd_sat.rfc_emisor))
+                INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+                   ON (ctg_efos.rfc = efos.rfc)
+          WHERE (ctg_efos.estado = 2)
+         GROUP BY ListaEmpresasSAT.id, ListaEmpresasSAT.nombre_corto)
+        Subquery
+           ON (Subquery.id = ListaEmpresasSAT.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
  WHERE (efos.estado = 2)
@@ -87,8 +103,11 @@ GROUP BY ctg_estados_efos.descripcion,
          efos.razon_social,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
-         ctg_efos.fecha_presunto
-ORDER BY empresa ASC, ctg_efos.fecha_presunto DESC")
+         ctg_efos.fecha_presunto,
+         Subquery.fecha_presunto_maxima
+ORDER BY Subquery.fecha_presunto_maxima DESC,
+         empresa ASC,
+         ctg_efos.fecha_presunto DESC")
             ;
         $informe = array_map(function ($value) {
             return (array)$value;
@@ -152,32 +171,52 @@ ORDER BY 8 DESC
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        SUM (cfd_sat.total) AS importe,
-       format (sum (cfd_sat.total), 'C') AS importe_format
-  FROM ((((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-           INNER JOIN
-           SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
-              ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
-          INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
-             ON (efos.rfc = cfd_sat.rfc_emisor))
-         INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
-            ON (efos.estado = ctg_estados_efos.id))
-        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-           ON (ctg_efos.rfc = efos.rfc))
-       LEFT OUTER JOIN
-       (SELECT cfd_sat.id
-          FROM SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
-               INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-                  ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id))
-       cfd_autocorregidos
-          ON (cfd_sat.id = cfd_autocorregidos.id)
+       format (sum (cfd_sat.total), 'C') AS importe_format,
+       Subquery.fecha_devinitivo_maxima
+  FROM (((((SEGURIDAD_ERP.Fiscal.efos efos
+            INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
+               ON (efos.estado = ctg_estados_efos.id))
+           INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+              ON (efos.rfc = cfd_sat.rfc_emisor))
+          INNER JOIN
+          SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+             ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
+         INNER JOIN
+         (SELECT ListaEmpresasSAT.id,
+                 ListaEmpresasSAT.nombre_corto,
+                 MAX (ctg_efos.fecha_definitivo) AS fecha_devinitivo_maxima
+            FROM ((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+                   INNER JOIN
+                   SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+                      ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
+                  INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
+                     ON (cfd_sat.rfc_emisor = efos.rfc))
+                 INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+                    ON (efos.razon_social = ctg_efos.razon_social)
+           WHERE ctg_efos.estado = 0
+          GROUP BY ListaEmpresasSAT.id, ListaEmpresasSAT.nombre_corto)
+         Subquery
+            ON (ListaEmpresasSAT.id = Subquery.id))
+        LEFT OUTER JOIN
+        (SELECT cfd_sat.id
+           FROM SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
+                INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+                   ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id))
+        cfd_autocorregidos
+           ON (cfd_sat.id = cfd_autocorregidos.id))
+       INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+          ON (ctg_efos.rfc = efos.rfc)
  WHERE (efos.estado = 0) AND (cfd_autocorregidos.id IS NULL)
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
-         ctg_efos.fecha_presunto
-ORDER BY empresa ASC, ctg_efos.fecha_definitivo DESC
+         ctg_efos.fecha_presunto,
+         Subquery.fecha_devinitivo_maxima
+ORDER BY Subquery.fecha_devinitivo_maxima DESC,
+         empresa ASC,
+         ctg_efos.fecha_definitivo DESC
         ")
         ;
         $informe = array_map(function ($value) {
@@ -238,20 +277,20 @@ ORDER BY empresa ASC, ctg_efos.fecha_definitivo DESC
         {
             if($i_p>0){
                 if($partida["empresa"]!=$partidas[$i_p-1]["empresa"] ){
-                    if($acumulador_partidas_empresa>1){
-                        $partidas_completas[$i]["contador"] = $contador_partidas_empresa-1;
-                        $partidas_completas[$i]["acumulador"] = $acumulador_partidas_empresa;
-                        $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$tipo." ".$partidas[$i_p-1]["empresa"];
-                        $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi;
-                        $partidas_completas[$i]["importe"] = $importe_cfdi;
-                        $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi,2,".",",");
-                        $partidas_completas[$i]["tipo"] = "subtotal";
-                        $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
-                        $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
-                        $partidas_completas[$i]["color_hex"] = "#000";
-                        $partidas_completas[$i]["color_rgb"] = [0,0,0];
-                        $i++;
-                    }
+                    //if($acumulador_partidas_empresa>1){
+                    $partidas_completas[$i]["contador"] = $contador_partidas_empresa-1;
+                    $partidas_completas[$i]["acumulador"] = $acumulador_partidas_empresa;
+                    $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$tipo." ".$partidas[$i_p-1]["empresa"];
+                    $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi;
+                    $partidas_completas[$i]["importe"] = $importe_cfdi;
+                    $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi,2,".",",");
+                    $partidas_completas[$i]["tipo"] = "subtotal";
+                    $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
+                    $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
+                    $partidas_completas[$i]["color_hex"] = "#000";
+                    $partidas_completas[$i]["color_rgb"] = [0,0,0];
+                    $i++;
+                    //}
                     $contador_partidas_empresa = 1;
                     $contador_cfdi=0;
                     $importe_cfdi=0;
@@ -272,6 +311,21 @@ ORDER BY empresa ASC, ctg_efos.fecha_definitivo DESC
             $i_p++;
             $acumulador_partidas_empresa++;
         }
+
+        $partidas_completas[$i]["contador"] = $contador_partidas_empresa-1;
+        $partidas_completas[$i]["acumulador"] = $acumulador_partidas_empresa;
+        $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$tipo." ".$partidas[count($partidas)-1]["empresa"];
+        $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi;
+        $partidas_completas[$i]["importe"] = $importe_cfdi;
+        $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi,2,".",",");
+        $partidas_completas[$i]["tipo"] = "subtotal";
+        $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
+        $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
+        $partidas_completas[$i]["color_hex"] = "#000";
+        $partidas_completas[$i]["color_rgb"] = [0,0,0];
+        $i++;
+
+
         $partidas_completas[$i]["contador"] = $i_bis-1;
         $partidas_completas[$i]["etiqueta"] = "TOTAL ".$tipo;
         $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi_global;
