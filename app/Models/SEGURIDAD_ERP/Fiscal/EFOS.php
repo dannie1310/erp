@@ -47,12 +47,16 @@ class EFOS extends Model
 
     public static function  getInforme()
     {
-        $presuntos = [];
-        $autocorregidos = [];
-        $informe[] = EFOS::getPartidasInformeDefinitivos();
-        $informe[] = EFOS::getPartidasInformePresuntos();
-        $informe[] = ["autocorregidos"=>$autocorregidos];
+        $informe["informe"][] = EFOS::getPartidasInformeDefinitivos();
+        $informe["informe"][] = EFOS::getPartidasInformePresuntos();
+        $informe["informe"][] = EFOS::getPartidasInformeAutocorregidos();
+        $informe["fechas"][] = EFOS::getFechasInforme();
         return $informe;
+    }
+
+    private static function getFechasInforme()
+    {
+        return [];
     }
 
     private static function getPartidasInformePresuntos(){
@@ -91,7 +95,97 @@ ORDER BY empresa ASC, ctg_efos.fecha_presunto DESC")
         return $informe;
     }
 
+    private static function getPartidasInformeAutocorregidos(){
+        $informe = DB::select("
+        SELECT ctg_estados_efos.descripcion AS estatus,
+       efos.rfc,
+       efos.razon_social,
+       CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
+       CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+       ListaEmpresasSAT.nombre_corto AS empresa,
+       COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
+       SUM (cfd_sat.total) AS importe,
+       format (sum (cfd_sat.total), 'C') AS importe_format
+  FROM ((((SEGURIDAD_ERP.Fiscal.efos efos
+           INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
+              ON (efos.estado = ctg_estados_efos.id))
+          INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+             ON (efos.rfc = cfd_sat.rfc_emisor))
+         INNER JOIN
+         SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+            ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
+        INNER JOIN
+        (SELECT cfd_sat.id
+           FROM SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
+                INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+                   ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id))
+        Subquery
+           ON (cfd_sat.id = Subquery.id))
+       INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+          ON (ctg_efos.rfc = efos.rfc)
+ WHERE (efos.estado = 0)
+GROUP BY ctg_estados_efos.descripcion,
+         efos.rfc,
+         efos.razon_social,
+         ctg_efos.fecha_definitivo,
+         ListaEmpresasSAT.nombre_corto,
+         ctg_efos.fecha_presunto
+ORDER BY 8 DESC
+        ")
+        ;
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+        $informe = EFOS::setSubtotalesPartidas($informe, "CORREGIDOS");
+        return $informe;
+    }
+
     private static function getPartidasInformeDefinitivos(){
+        $informe = DB::select("
+        SELECT ctg_estados_efos.descripcion AS estatus,
+       efos.rfc,
+       efos.razon_social,
+       CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
+       CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+       ListaEmpresasSAT.nombre_corto AS empresa,
+       COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
+       SUM (cfd_sat.total) AS importe,
+       format (sum (cfd_sat.total), 'C') AS importe_format
+  FROM ((((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+           INNER JOIN
+           SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+              ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
+          INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
+             ON (efos.rfc = cfd_sat.rfc_emisor))
+         INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
+            ON (efos.estado = ctg_estados_efos.id))
+        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+           ON (ctg_efos.rfc = efos.rfc))
+       LEFT OUTER JOIN
+       (SELECT cfd_sat.id
+          FROM SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
+               INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+                  ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id))
+       cfd_autocorregidos
+          ON (cfd_sat.id = cfd_autocorregidos.id)
+ WHERE (efos.estado = 0) AND (cfd_autocorregidos.id IS NULL)
+GROUP BY ctg_estados_efos.descripcion,
+         efos.rfc,
+         efos.razon_social,
+         ctg_efos.fecha_definitivo,
+         ListaEmpresasSAT.nombre_corto,
+         ctg_efos.fecha_presunto
+ORDER BY empresa ASC, ctg_efos.fecha_definitivo DESC
+        ")
+        ;
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+        $informe = EFOS::setSubtotalesPartidas($informe, "DEFINITIVOS");
+        return $informe;
+    }
+
+    private static function getPartidasInformeDefinitivosV1(){
         $informe = [];
         $empresas = Empresa::getEmpresaDefinitivos();
         $i=0;

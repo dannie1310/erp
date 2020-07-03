@@ -17,7 +17,7 @@
                 <div class="col-md-12">
                     <table class="table">
                         <tbody>
-                            <tr style="background-color: #7ac142; text-align:center" >
+                            <tr style="background-color: #757575; color:#FFF; text-align:center" >
                                 <td class="index_corto">#</td>
                                 <td>Estatus</td>
                                 <td>RFC</td>
