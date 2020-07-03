@@ -14,6 +14,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEstadosEfos;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class EFOS extends Model
 {
@@ -49,8 +50,44 @@ class EFOS extends Model
         $presuntos = [];
         $autocorregidos = [];
         $informe[] = EFOS::getPartidasInformeDefinitivos();
-        $informe[] = ["presuntos"=>$presuntos];
+        $informe[] = EFOS::getPartidasInformePresuntos();
         $informe[] = ["autocorregidos"=>$autocorregidos];
+        return $informe;
+    }
+
+    private static function getPartidasInformePresuntos(){
+        $informe = DB::select("SELECT ctg_estados_efos.descripcion AS estatus,
+       efos.rfc,
+       efos.razon_social,
+       CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
+       CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+       ListaEmpresasSAT.nombre_corto AS empresa,
+       COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
+       SUM (cfd_sat.total) AS importe,
+       format (sum (cfd_sat.total), 'C') AS importe_format
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          INNER JOIN
+          SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+             ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
+         INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
+            ON (efos.rfc = cfd_sat.rfc_emisor))
+        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
+           ON (efos.estado = ctg_estados_efos.id))
+       INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+          ON (ctg_efos.rfc = efos.rfc)
+ WHERE (efos.estado = 2)
+GROUP BY ctg_estados_efos.descripcion,
+         efos.rfc,
+         efos.razon_social,
+         ctg_efos.fecha_definitivo,
+         ListaEmpresasSAT.nombre_corto,
+         ctg_efos.fecha_presunto
+ORDER BY empresa ASC, ctg_efos.fecha_presunto DESC")
+            ;
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+        $informe = EFOS::setSubtotalesPartidas($informe, "PRESUNTOS");
         return $informe;
     }
 
