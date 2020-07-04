@@ -552,7 +552,7 @@ export const routes = [
                     },
                     {
                         path: 'autocorreccion-cfd-efos',
-                        component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Index').default,
+                        component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Layout').default,
                         children: [
                             {
                                 path: '/',
@@ -574,8 +574,9 @@ export const routes = [
                                 meta: {
                                     title: 'Registrar Autocorrección de CFD EFOS',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
-                                    middleware: [auth, context, permission],
-                                    permission: ['registrar_autocorreccion_cfd_efo']
+                                    middleware: [auth, permission],
+                                    permission: ['registrar_autocorreccion_cfd_efo'],
+                                    general: true,
                                 }
                             }
                         ]

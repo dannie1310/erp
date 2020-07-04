@@ -1,7 +1,7 @@
 <template>
     <div class="row">
-        <div class="col-12"  :disabled="cargando">
-            <button  @click="create" title="Crear" class="btn btn-app btn-info float-right"  v-if="$root.can('cargar_bitacora', true)">
+        <div class="col-12"  v-if="$root.can('registrar_autocorreccion_cfd_efo', true)" :disabled="cargando">
+            <button @click="create" class="btn btn-app btn-info float-right">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -24,20 +24,21 @@
 </template>
 
 <script>
+    import Create from './Create'
     export default {
         name: "autocorreccion-cfd-index",
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Proveedor', field: 'numero_folio', thComp: require('../../../../globals/th-Filter').default, sortable: true},
+                    { title: 'Proveedor', field: 'proveedor', thComp: require('../../../../globals/th-Filter').default, sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Estado', field: 'estado',  thComp:require('../../../../globals/th-Filter').default, sortable: true },
-                ],
+                   ],
                 data: [],
                 total: 0,
-                query: {include: []},
+                query: {include: ['proveedor']},
                 estado: "",
                 cargando: false,
             }
@@ -54,44 +55,38 @@
                 this.$router.push({name: 'autocorreccion-cfd-efos-create'});
             },
             paginate() {
-                /* this.cargando = true;
-               * return this.$store.dispatch('finanzas/pago/paginate', { params: this.query})
+                this.cargando = true;
+                return this.$store.dispatch('fiscal/autocorreccion/paginate', { params: this.query})
                      .then(data => {
-                         this.$store.commit('finanzas/pago/SET_PAGOS', data.data);
-                         this.$store.commit('finanzas/pago/SET_META', data.meta);
+                         this.$store.commit('fiscal/autocorreccion/SET_AUTOCORRECCIONES', data.data);
+                         this.$store.commit('fiscal/autocorreccion/SET_META', data.meta);
                      })
                      .finally(() => {
                          this.cargando = false;
-                     })*/
+                     })
             },
         },
         computed: {
-            pagos(){
-                return this.$store.getters['finanzas/pago/pagos'];
+            autocorrecciones(){
+                return this.$store.getters['fiscal/autocorreccion/autocorrecciones'];
             },
             meta(){
-                return this.$store.getters['finanzas/pago/meta'];
+                return this.$store.getters['fiscal/autocorreccion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            pagos: {
-                handler(pagos) {
+            autocorrecciones: {
+                handler(autocorrecciones) {
                     let self = this
                     self.$data.data = []
-                    pagos.forEach(function (pago, i) {
+                    autocorrecciones.forEach(function (autocorreccion, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: pago.numero_folio_format,
-                            fecha: pago.fecha_format,
-                            destino: pago.destino,
-                            numero_cuenta: pago.cuenta.numero,
-                            observaciones: pago.observaciones.toLocaleUpperCase(),
-                            monto: pago.monto_format,
-                            estado: pago.estado_string,
-                            id_moneda:pago.moneda.nombre,
+                            proveedor: autocorreccion.proveedor.razon_social,
+                            fecha: autocorreccion.fecha
                         })
                     });
                 },

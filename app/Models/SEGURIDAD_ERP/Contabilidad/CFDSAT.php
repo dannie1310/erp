@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -63,6 +64,11 @@ class CFDSAT extends Model
         return $this->belongsTo(EmpresaSAT::class, 'id_empresa_sat', 'id');
     }
 
+    public function CFDAutocorreccion()
+    {
+        return $this->belongsTo(CFDAutocorreccion::class,  'id', 'id_cfd_sat');
+    }
+
     public function registrar($data)
     {
         $factura = null;
@@ -90,4 +96,24 @@ class CFDSAT extends Model
         }
     }
 
+    public function scopePorProveedor($query, $id_proveedor)
+    {
+        return $query->doesntHave('CFDAutocorreccion')->where('id_proveedor_sat', '=', $id_proveedor);
+    }
+
+    public function scopeBancoGlobal($query)
+    {
+        return $query->where('id_ctg_bancos', '!=', null);
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->total),2);
+    }
 }
