@@ -3,11 +3,9 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12">
+                      <div class="col-md-2">
                         <label>Empresa EFOS: </label>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-10">
                         <model-list-select
                             :disabled="!bandera"
@@ -19,9 +17,6 @@
                             :custom-text="razonSocialRfc"
                             :list="efos"
                         />
-                    </div>
-                    <div class="col-md-2" v-if="efo.length != 0">
-                        <h6>Estado: {{efo.estatus.descripcion}}</h6>
                     </div>
                 </div>
                 <div class="row col-md-12" v-if="sin_cfds">
@@ -124,7 +119,7 @@
             },
             getEfos() {
                 return this.$store.dispatch('fiscal/efos/index', {
-                    params: {include: ['proveedor'], sort: 'razon_social', order: 'asc'}
+                    params: {include: ['proveedor'], scope: ['definitivo'], sort: 'razon_social', order: 'asc'}
                 }).then(data => {
                     this.efos = data.data;
                     this.bandera = 1;
@@ -134,7 +129,7 @@
             {
                 this.cargando =  true;
                 return this.$store.dispatch('fiscal/cfd-sat/index', {
-                    params: {include: ['empresa', 'proveedor'], scope: ['porProveedor:' + this.efo.proveedor.id]}
+                    params: {include: ['empresa', 'proveedor'], scope: ['noAutocorregidos','porProveedor:' + this.efo.proveedor.id]}
                 }).then(data => {
                     this.cfds = data.data;
                     this.cargando = false;

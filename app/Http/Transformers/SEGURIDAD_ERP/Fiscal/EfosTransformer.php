@@ -54,7 +54,7 @@ class EfosTransformer extends TransformerAbstract
      */
     public function includeEstatus(EFOS $model)
     {
-        if($estado = $model->efoEstado)
+        if($estado = $model->estadoEFOS)
         {
             return $this->item($estado, new CtgEstadosEfosTransformer);
         }

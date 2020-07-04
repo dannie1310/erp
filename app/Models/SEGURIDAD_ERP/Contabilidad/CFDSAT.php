@@ -67,11 +67,6 @@ class CFDSAT extends Model
         return $this->belongsTo(EmpresaSAT::class, 'id_empresa_sat', 'id');
     }
 
-    public function CFDAutocorreccion()
-    {
-        return $this->belongsTo(CFDAutocorreccion::class,  'id', 'id_cfd_sat');
-    }
-
     public function efo()
     {
         return $this->belongsTo(EFOS::class,"rfc_emisor","rfc");
@@ -128,7 +123,7 @@ class CFDSAT extends Model
 
     public function scopePorProveedor($query, $id_proveedor)
     {
-        return $query->doesntHave('CFDAutocorreccion')->where('id_proveedor_sat', '=', $id_proveedor);
+        return $query->where('id_proveedor_sat', '=', $id_proveedor);
     }
 
     public function scopeBancoGlobal($query)

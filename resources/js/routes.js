@@ -576,7 +576,7 @@ export const routes = [
                             title: 'CFD SAT',
                             breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
                             middleware: [auth, permission],
-                            permission: ['consultar_poliza'],
+                            permission: ['consultar_poliza','consultar_autocorreccion_cfd_efo'],
                             general: true
                         }
                     },
@@ -592,7 +592,7 @@ export const routes = [
                                     title: 'Autocorrección de CFD EFOS',
                                     breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
                                     middleware: [auth, permission],
-                                    permission: 'consultar_poliza',
+                                    permission: 'consultar_autocorreccion_cfd_efo',
                                     general: true,
 
                                 }

@@ -489,6 +489,7 @@ class AppServiceProvider extends ServiceProvider
              */
             Autocorreccion::observe(AutocorreccionObserver::class);
             CFDAutocorreccion::observe(CFDAutocorreccionObserver::class);
+            ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
 
             /**
              * PolizasCtpqIncidentes
@@ -500,7 +501,6 @@ class AppServiceProvider extends ServiceProvider
         CtgEfos::observe(CtgEfosObserver::class);
         CtgEfosLog::observe(CtgEfosLogObserver::class);
         ConfiguracionObra::observe(ConfiguracionObraObserver::class);
-        ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
         \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
         UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
         FacturaRepositorio::observe(FacturaRepositorioObserver::class);
