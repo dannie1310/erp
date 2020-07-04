@@ -274,7 +274,10 @@ class DiferenciaService
     }
 
     public function pdfDiferencias($data){
-        $pdf = new InformeDiferenciasPolizas($data);
+        // dd($data);
+        $info = $this->obtenerInforme($data);
+        // dd($info);
+        $pdf = new InformeDiferenciasPolizas($data, $info);
         return $pdf->create();
 
     }
