@@ -8,6 +8,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
+use stdClass;
 use App\Models\CTPQ\Poliza;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Bus;
@@ -274,9 +275,15 @@ class DiferenciaService
     }
 
     public function pdfDiferencias($data){
-        // dd($data);
-        $info = $this->obtenerInforme($data);
-        // dd($info);
+        $solicitud = 2;
+        if($data['sin_solicitud_relacionada'] == 'true'  && $data['con_solicitud_relacionada'] == 'false' ) $solicitud = 1;
+        if($data['sin_solicitud_relacionada'] == 'false'  && $data['con_solicitud_relacionada'] == 'true' ) $solicitud = 0;
+
+        $diferencias = 2;
+        if($data['solo_diferencias_activas'] == 'true'  && $data['no_solo_diferencias_activas'] == 'false' ) $diferencias = 1;
+        if($data['solo_diferencias_activas'] == 'false'  && $data['no_solo_diferencias_activas'] == 'true' ) $diferencias = 0;
+
+        $info = $this->repository->getInforme($data['id_empresa'], $solicitud, $diferencias, $data['tipo_agrupacion']);
         $pdf = new InformeDiferenciasPolizas($data, $info);
         return $pdf->create();
 

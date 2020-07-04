@@ -1,10 +1,8 @@
 <?php
 
-
 namespace App\PDF\ContabilidadGeneral;
 
 use Ghidev\Fpdf\Rotation;
-
 class InformeDiferenciasPolizas extends Rotation
 {
     private $data;
@@ -26,11 +24,6 @@ class InformeDiferenciasPolizas extends Rotation
         $this->info = $info;
         $this->SetAutoPageBreak(true, 5);
         $this->WidthTotal = $this->GetPageWidth() - 2;
-        $this->txtTitleTam = 18;
-        $this->txtSubtitleTam = 13;
-        $this->txtSeccionTam = 9;
-        $this->txtContenidoTam = 11;
-        $this->txtFooterTam = 6;
     }
 
     function Header()
@@ -44,13 +37,14 @@ class InformeDiferenciasPolizas extends Rotation
 
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Arial', 'B', 12);
+        $this->SetDrawColor(0,0,0);
         $this->SetWidths(array($this->WidthTotal));
         $this->SetFills(array('255,255,255'));
         $this->SetTextColors(array('0,0,0'));
         $this->SetHeights(array(.55));
         $this->SetStyles(['DF']);
         $this->SetFont('Arial', '', 10);
-        $this->MultiCell($this->WidthTotal, .75, 'Empresa: '. 'Nombre de la empresa', 'LTR', 'L');
+        $this->MultiCell($this->WidthTotal, .75, 'Empresa: '. utf8_decode($this->info['informe']['empresa']), 'LTR', 'L');
 
         $w = $this->WidthTotal/3;
         
@@ -87,128 +81,121 @@ class InformeDiferenciasPolizas extends Rotation
         $this->Ln();
         $this->SetY($this->GetY() + 0.5);
         if($this->encola == 'partidas' && $this->data->tipo_agrupacion == 1){
-            
+            $this->SetDrawColor(200,200,200);
             $this->SetFont('Arial', '', 6);
             $this->SetWidths([.8,3,3,1.1,1,1.8,1.2,1.7,2.3,2.3,1.4]);
             $this->SetStyles(['F','F','F','F','F','F','F','F','F','F','F']);
-            // $this->SetRounds(['2','2','2','3','4','4','3']);
             $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
             $this->SetHeights([0.5]);
             $this->SetAligns(['C','L','L','L','L','L','L','L','L','L','L']);
             $this->Row(["#","Base de Datos Revisada","Base de Datos Referencia","Ejercicio","Periodo",utf8_decode("Tipo Póliza"), 'Folio', "No. Movto.", "Valor", "Valor Referencia", "Solicitud"]);
-            $this->SetFills(['220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220', '220,220,220', '220,220,220']);
+            $this->SetStyles(['D','D','D','D','D','D','D','D','D','D','D']);
         }
         if($this->encola == 'partidas' && $this->data->tipo_agrupacion == 2){
-            // $this->SetY($this->GetY() + 1);
+            $this->SetDrawColor(200,200,200);
             $this->SetFont('Arial', '', 6);
             $this->SetWidths([.8,3,3,3.1,2,1.7,2,2,2]);
             $this->SetStyles(['F','F','F','F','F','F','F','F','F']);
-            // $this->SetRounds(['2','2','2','3','4','4','3']);
             $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
             $this->SetHeights([0.5]);
             $this->SetAligns(['C','L','L','L','L','L','L','L','L']);
             $this->Row(["#","Base de Datos Revisada","Base de Datos Referencia","Tipo Diferencia", utf8_decode('Código de Cuenta'), "No. Movto.", "Valor", "Valor Referencia", "Solicitud"]);
-            $this->SetFills(['220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220']);
+            $this->SetStyles(['D','D','D','D','D','D','D','D','D']);
         }
 
     }
 
     public function polizas(){
         $datos = $this->info['informe'];
-        // $this->SetY($this->GetY() + 0.5);
+
         $this->SetFont('Arial', '', 8);
         $this->SetTextColor('255');
         $this->setFillColor(0,0,0); 
+        $this->SetDrawColor(200,200,200);
         $this->Cell($this->WidthTotal, .55,$datos['empresa'], 0,1, 'L', 1);
-
+        $this->encola = 'partidas';
         foreach($datos['informe'] as $informe){
             $this->SetTextColor('255');
             $this->setFillColor(100); 
             $this->SetFont('Arial', '', 8);
             
-
             if($this->data->tipo_agrupacion == 1){
                 $this->Cell($this->WidthTotal, .55,utf8_decode($informe['tipo']). ' (' . $informe['cantidad'] . ')', 0,1, 'L', 1);
                 $this->SetFont('Arial', '', 6);
                 $this->SetWidths([.8,3,3,1.1,1,1.8,1.2,1.7,2.3,2.3,1.4]);
                 $this->SetStyles(['F','F','F','F','F','F','F','F','F','F','F']);
-                // $this->SetRounds(['2','2','2','3','4','4','3']);
                 $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
                 $this->SetHeights([0.5]);
                 $this->SetAligns(['C','L','L','L','L','L','L','L','L','L','L']);
                 $this->Row(["#","Base de Datos Revisada","Base de Datos Referencia","Ejercicio","Periodo",utf8_decode("Tipo Póliza"), 'Folio', "No. Movto.", "Valor", "Valor Referencia", "Solicitud"]);
-                $this->SetFills(['220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220', '220,220,220', '220,220,220']);
+                $this->SetStyles(['D','D','D','D','D','D','D','D','D','D','D']);
             }
             if($this->data->tipo_agrupacion == 2){
                 $this->Cell($this->WidthTotal, .55,utf8_decode($informe['poliza']), 0,1, 'L', 1);
                 $this->SetFont('Arial', '', 6);
                 $this->SetWidths([.8,3,3,3.1,2,1.7,2,2,2]);
                 $this->SetStyles(['F','F','F','F','F','F','F','F','F']);
-                // $this->SetRounds(['2','2','2','3','4','4','3']);
                 $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
                 $this->SetHeights([0.5]);
                 $this->SetAligns(['C','L','L','L','L','L','L','L','L']);
                 $this->Row(["#","Base de Datos Revisada","Base de Datos Referencia","Tipo Diferencia", utf8_decode('Código de Cuenta'), "No. Movto.", "Valor", "Valor Referencia", "Solicitud"]);
-                $this->SetFills(['220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220','220,220,220']);
+                $this->SetStyles(['D','D','D','D','D','D','D','D','D']);
                 
             }
 
-            $this->encola = 'partidas';
-            foreach($informe['informe'] as $key => $data){
-                if($key == 2)break;
-                if($this->data->tipo_agrupacion == 1){
-                    $this->Row([
-                        $key,
-                        $data['base_datos_revisada'],
-                        $data['base_datos_referencia'],
-                        $data['ejercicio'],
-                        $data['periodo'],
-                        $data['tipo'],
-                        $data['numero_folio_poliza'],
-                        $data['numero_movimiento'],
-                        utf8_decode($data['valor']),
-                        utf8_decode($data['valor_referencia']),
-                        $data['solicitud_numero_folio'],
-                    ]);
+            if(isset($informe['informe'])){
+                foreach($informe['informe'] as $key => $data){
+                    if($this->data->tipo_agrupacion == 1){
+                        $this->Row([
+                            $key+1,
+                            $data['base_datos_revisada'],
+                            $data['base_datos_referencia'],
+                            $data['ejercicio'],
+                            $data['periodo'],
+                            $data['tipo'],
+                            $data['numero_folio_poliza'],
+                            $data['numero_movimiento'],
+                            utf8_decode($data['valor']),
+                            utf8_decode($data['valor_referencia']),
+                            $data['solicitud_numero_folio'],
+                        ]);
+                    }
+                    if($this->data->tipo_agrupacion == 2){
+                        $this->Row([
+                            $key+1,
+                            $data['base_datos_revisada'],
+                            $data['base_datos_referencia'],
+                            $data['tipo'],
+                            $data['codigo_cuenta'],
+                            $data['numero_movimiento'],
+                            utf8_decode($data['valor']),
+                            utf8_decode($data['valor_referencia']),
+                            $data['solicitud_numero_folio'],
+                        ]);
+                    }
                 }
-                if($this->data->tipo_agrupacion == 2){
-                    $this->Row([
-                        $key,
-                        $data['base_datos_revisada'],
-                        $data['base_datos_referencia'],
-                        $data['tipo'],
-                        $data['codigo_cuenta'],
-                        $data['numero_movimiento'],
-                        utf8_decode($data['valor']),
-                        utf8_decode($data['valor_referencia']),
-                        $data['solicitud_numero_folio'],
-                    ]);
-                }
-
-                
             }
-            $this->encola = '';
-        // break;
         }
-        
-        // $this->SetFont('Arial', 'B', 10);
-        // // $this->SetFillColor(200);
-        // $this->SetFills(['255,255,255']);
-        
+        $this->encola = '';
 
+    }
+
+    public function Footer()
+    {
+        $this->SetY(-0.8);
+        $this->SetFont('Arial', '', 8);
+        $this->SetTextColor(0, 0, 0);
+        $this->Cell(19.3, 0.5, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
 
     }
 
     function create() {
-
+        $this->SetMargins(1, 0.9, 1);
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->SetAutoPageBreak(true,0.8);
+        $this->polizas();
         
-            $this->SetMargins(1, 0.9, 1);
-            $this->AliasNbPages();
-            $this->AddPage();
-            $this->SetAutoPageBreak(true,2.2);
-            $this->polizas();
-        
-
         try {
             $this->Output('I', "Informe Diferencias Polizas.pdf", 1);
         } catch (\Exception $ex) {

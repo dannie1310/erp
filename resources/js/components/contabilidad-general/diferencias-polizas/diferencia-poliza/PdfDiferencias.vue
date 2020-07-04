@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-sm btn-outline-primary float-right" style="margin-top: 5px" title="Ver Formato PDF" :disabled="value.cargando">
+        <button @click="init" type="button" class="btn btn-sm btn-outline-primary float-right" style="margin-top: 5px" title="Ver Formato PDF" :disabled="value.cargando || value.informe.length == 0">
             <i class="fa fa-file-pdf-o"></i> PDF
         </button>
 
@@ -31,7 +31,6 @@
                 this.pdf()
             },
             pdf(){
-                console.log(this.value.no_solo_diferencias_activas);
                 let info = '&id_empresa='+  this.value.id_empresa + 
                     '&sin_solicitud_relacionada=' + this.value.sin_solicitud_relacionada +
                     '&solo_diferencias_activas=' + this.value.solo_diferencias_activas +
