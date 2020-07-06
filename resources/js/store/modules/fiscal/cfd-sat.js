@@ -1,4 +1,4 @@
-const URI = '/api/contabilidad-general/cfd-sat/';
+const URI = '/api/fiscal/cfd-sat/';
 export default {
     namespaced: true,
     state: {

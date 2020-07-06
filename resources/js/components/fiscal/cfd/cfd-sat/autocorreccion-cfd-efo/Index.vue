@@ -1,7 +1,11 @@
 <template>
     <div class="row">
-        <div class="col-12">
-            <Layout @change="paginate()"></Layout>
+        <div class="col-12"  :disabled="cargando">
+            <button  @click="create" title="Crear" class="btn btn-app btn-info float-right"  v-if="$root.can('cargar_bitacora', true)">
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-plus" v-else></i>
+                Registrar
+            </button>
         </div>
         <div class="col-12">
             <div class="card">
@@ -20,28 +24,22 @@
 </template>
 
 <script>
-    import Layout from  "./CargarLayout";
     export default {
-        name: "lista-efos-index",
-        components: {Layout},
+        name: "autocorreccion-cfd-index",
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'RFC', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Fecha Presunto', field: 'fecha_presunto', sortable: false},
-                    { title: 'Fecha Definitivo', field: 'fecha_definitivo', sortable: false},
-                    { title: 'Fecha Sentencia Favorable', field: 'fecha_sentencia_favorable', sortable: false},
-                    { title: 'Fecha Desvirtuado', field: 'fecha_desvirtuado', sortable: false},
-                    { title: 'Estado', field: 'estado', sortable: false}
+                    { title: 'Proveedor', field: 'numero_folio', thComp: require('../../../../globals/th-Filter').default, sortable: true},
+                    { title: 'Fecha', field: 'fecha', sortable: true},
+                    { title: 'Estado', field: 'estado',  thComp:require('../../../../globals/th-Filter').default, sortable: true },
                 ],
                 data: [],
                 total: 0,
-                query: {include: 'estado'},
+                query: {include: []},
                 estado: "",
-                cargando: false
+                cargando: false,
             }
         },
         mounted() {
@@ -51,49 +49,55 @@
                     this.$Progress.finish();
                 })
         },
-
         methods: {
+            create() {
+                this.$router.push({name: 'autocorreccion-cfd-efos-create'});
+            },
             paginate() {
-                this.cargando = true;
-                return this.$store.dispatch('seguridad/finanzas/ctg-efos/paginate', { params: this.query})
-                    .then(data => {
-                        this.$store.commit('seguridad/finanzas/ctg-efos/SET_EFOS', data.data);
-                        this.$store.commit('seguridad/finanzas/ctg-efos/SET_META', data.meta);
-                    })
-                    .finally(() => {
-                        this.cargando = false;
-                    })
+                /* this.cargando = true;
+               * return this.$store.dispatch('finanzas/pago/paginate', { params: this.query})
+                     .then(data => {
+                         this.$store.commit('finanzas/pago/SET_PAGOS', data.data);
+                         this.$store.commit('finanzas/pago/SET_META', data.meta);
+                     })
+                     .finally(() => {
+                         this.cargando = false;
+                     })*/
             },
         },
         computed: {
-            efos(){
-                return this.$store.getters['seguridad/finanzas/ctg-efos/efos'];
+            pagos(){
+                return this.$store.getters['finanzas/pago/pagos'];
             },
             meta(){
-                return this.$store.getters['seguridad/finanzas/ctg-efos/meta'];
+                return this.$store.getters['finanzas/pago/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            efos: {
-                handler(famls) {
+            pagos: {
+                handler(pagos) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = famls.map((efo, i) => ({
-                        index: (i + 1) + self.query.offset,
-                        rfc: efo.rfc,
-                        razon_social: efo.razon_social,
-                        fecha_presunto: efo.fecha_presunto,
-                        fecha_definitivo: efo.fecha_definitivo,
-                        fecha_sentencia_favorable: efo.fecha_sentencia_favorable,
-                        fecha_desvirtuado: efo.fecha_desvirtuado,
-                        estado: efo.estado.descripcion
-                    }));
+                    pagos.forEach(function (pago, i) {
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            numero_folio: pago.numero_folio_format,
+                            fecha: pago.fecha_format,
+                            destino: pago.destino,
+                            numero_cuenta: pago.cuenta.numero,
+                            observaciones: pago.observaciones.toLocaleUpperCase(),
+                            monto: pago.monto_format,
+                            estado: pago.estado_string,
+                            id_moneda:pago.moneda.nombre,
+                        })
+                    });
                 },
                 deep: true
             },
+
 
             meta: {
                 handler(meta) {
@@ -129,9 +133,7 @@
         }
     }
 </script>
-<style>
-    .money
-    {
-        text-align: right;
-    }
+
+<style scoped>
+
 </style>

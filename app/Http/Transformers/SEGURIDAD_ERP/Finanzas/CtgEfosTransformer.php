@@ -26,8 +26,10 @@ class CtgEfosTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'rfc' => $model->rfc,
             'razon_social' => $model->razon_social,
-            'fecha_presunto' => date("d/m/Y", strtotime($model->fecha_presunto)),
-            'fecha_definitivo' =>($model->fecha_definitivo != NULL) ? date("d/m/Y", strtotime($model->fecha_definitivo)) : '--------',
+            'fecha_presunto' => $model->fecha_presunto_format,
+            'fecha_definitivo' =>$model->fecha_definitivo_format,
+            'fecha_desvirtuado' =>$model->fecha_desvirtuado_format,
+            'fecha_sentencia_favorable' =>$model->fecha_sentencia_favorable_format,
             'estado' => $model->estado,
             'alert_icon' => $model->estado_badge
         ];
