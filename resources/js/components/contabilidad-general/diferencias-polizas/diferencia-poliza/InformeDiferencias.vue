@@ -48,10 +48,18 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <button @click="consultar" class="btn btn-primary float-right" :disabled="cargando">
-                                    <i class="fa fa-spinner" v-if="cargando"></i>
-                                    <i class="fa fa-search" v-else></i>Consultar
-                                </button>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button @click="consultar" class="btn btn-primary float-right" :disabled="cargando">
+                                            <i class="fa fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-search" v-else></i>Consultar
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="col-md-12">
+                                        <PdfDiferencias v-bind:value="datos"></PdfDiferencias>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -162,9 +170,10 @@
 
 <script>
     import ImpresionPolizas from "./partials/ImpresionPolizas";
+    import PdfDiferencias from "./PdfDiferencias";
     export default {
         name: "InformeDiferencias",
-        components: {ImpresionPolizas},
+        components: {ImpresionPolizas, PdfDiferencias},
         data() {
             return {
                 id_empresa:'',
@@ -180,6 +189,11 @@
         },
         mounted() {
             this.getEmpresas();
+        },
+        computed:{
+            datos(){
+                return this.$data;
+            },
         },
         methods :{
             getEmpresas() {
