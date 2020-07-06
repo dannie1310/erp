@@ -8,20 +8,22 @@
 
 namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
-use App\Jobs\ProcessBusquedaDiferenciasPolizas;
+use stdClass;
 use App\Models\CTPQ\Poliza;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Config;
+use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginal;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
-use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
+use App\PDF\ContabilidadGeneral\InformeDiferenciasPolizas;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\CtgTipo;
-use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
-use App\PDF\ContabilidadGeneral\PolizaFormatoOriginal;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
 
 class DiferenciaService
 {
@@ -269,6 +271,21 @@ class DiferenciaService
             dd("Relación no encontrada");
         }
 
+
+    }
+
+    public function pdfDiferencias($data){
+        $solicitud = 2;
+        if($data['sin_solicitud_relacionada'] == 'true'  && $data['con_solicitud_relacionada'] == 'false' ) $solicitud = 1;
+        if($data['sin_solicitud_relacionada'] == 'false'  && $data['con_solicitud_relacionada'] == 'true' ) $solicitud = 0;
+
+        $diferencias = 2;
+        if($data['solo_diferencias_activas'] == 'true'  && $data['no_solo_diferencias_activas'] == 'false' ) $diferencias = 1;
+        if($data['solo_diferencias_activas'] == 'false'  && $data['no_solo_diferencias_activas'] == 'true' ) $diferencias = 0;
+
+        $info = $this->repository->getInforme($data['id_empresa'], $solicitud, $diferencias, $data['tipo_agrupacion']);
+        $pdf = new InformeDiferenciasPolizas($data, $info);
+        return $pdf->create();
 
     }
 }
