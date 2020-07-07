@@ -9,6 +9,7 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
 use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
@@ -104,6 +105,37 @@ class CFDSATService
             mkdir($dir_xml, 777, true);
         }
         return ["path_zip" => $path_zip, "path_xml" => $path_xml, "dir_xml" => $dir_xml];
+    }
+
+    public function reprocesaCFDObtenerTipo()
+    {
+        ini_set('max_execution_time', '7200') ;
+        ini_set('memory_limit', -1) ;
+        $cantidad = CFDSAT::count();
+        $take = 1000;
+
+        for($i = 0; $i<=($cantidad+1000); $i+$take){
+            //dd($i, $cantidad, $take);
+            $cfd = CFDSAT::skip($i)->take($take)->get();
+            //dd(count($cfd));
+            foreach($cfd as $rcfd)
+            {
+                $xml = base64_decode($rcfd->xml_file);
+                $factura_xml = new \SimpleXMLElement($xml);
+                if ((string)$factura_xml["version"] == "3.2") {
+                    $this->arreglo_factura["version"] = (string)$factura_xml["version"];
+                    $this->setArreglo32($factura_xml);
+                } else if ($factura_xml["Version"] == "3.3") {
+                    $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
+                    $this->setArreglo33($factura_xml);
+                }
+                $rcfd->tipo_comprobante = $this->arreglo_factura["tipo_comprobante"];
+                $rcfd->save();
+            }
+            if($i>5000){
+                break;
+            }
+        }
     }
 
     public function procesaDirectorioZIPCFD()
