@@ -129,6 +129,7 @@ class InformeDiferenciasPolizas extends Rotation
                 $this->SetAligns(['C','C','C','C','C','C','C','C','C','C','C']);
                 $this->Row(["#","Base de Datos Revisada","Base de Datos Referencia","Ejercicio","Periodo",utf8_decode("Tipo Póliza"), 'Folio', "No. Movto.", "Valor", "Valor Referencia", "Solicitud"]);
                 $this->SetStyles(['D','D','D','D','D','D','D','D','D','D','D']);
+                $this->SetAligns(['C','L','L','L','L','L','L','L','L','L','L']);
             }
             if($this->data->tipo_agrupacion == 2){
                 $this->Cell($this->WidthTotal, .55,utf8_decode($informe['poliza']). ' (' . $informe['cantidad'] . ')', 0,1, 'L', 1);
@@ -140,6 +141,7 @@ class InformeDiferenciasPolizas extends Rotation
                 $this->SetAligns(['C','C','C','C','C','C','C','C','C']);
                 $this->Row(["#","Base de Datos Revisada","Base de Datos Referencia","Tipo Diferencia", utf8_decode('Código de Cuenta'), "No. Movto.", "Valor", "Valor Referencia", "Solicitud"]);
                 $this->SetStyles(['D','D','D','D','D','D','D','D','D']);
+                $this->SetAligns(['C','L','L','L','L','L','L','L','L']); 
                 
             }
 
