@@ -126,18 +126,18 @@ class InformeDiferenciasPolizas extends Rotation
                 $this->SetStyles(['F','F','F','F','F','F','F','F','F','F','F']);
                 $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
                 $this->SetHeights([0.5]);
-                $this->SetAligns(['C','L','L','L','L','L','L','L','L','L','L']);
+                $this->SetAligns(['C','C','C','C','C','C','C','C','C','C','C']);
                 $this->Row(["#","Base de Datos Revisada","Base de Datos Referencia","Ejercicio","Periodo",utf8_decode("Tipo Póliza"), 'Folio', "No. Movto.", "Valor", "Valor Referencia", "Solicitud"]);
                 $this->SetStyles(['D','D','D','D','D','D','D','D','D','D','D']);
             }
             if($this->data->tipo_agrupacion == 2){
-                $this->Cell($this->WidthTotal, .55,utf8_decode($informe['poliza']), 0,1, 'L', 1);
+                $this->Cell($this->WidthTotal, .55,utf8_decode($informe['poliza']). ' (' . $informe['cantidad'] . ')', 0,1, 'L', 1);
                 $this->SetFont('Arial', '', 6);
                 $this->SetWidths([.8,3,3,3.1,2,1.7,2,2,2]);
                 $this->SetStyles(['F','F','F','F','F','F','F','F','F']);
                 $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
                 $this->SetHeights([0.5]);
-                $this->SetAligns(['C','L','L','L','L','L','L','L','L']);
+                $this->SetAligns(['C','C','C','C','C','C','C','C','C']);
                 $this->Row(["#","Base de Datos Revisada","Base de Datos Referencia","Tipo Diferencia", utf8_decode('Código de Cuenta'), "No. Movto.", "Valor", "Valor Referencia", "Solicitud"]);
                 $this->SetStyles(['D','D','D','D','D','D','D','D','D']);
                 
@@ -165,7 +165,7 @@ class InformeDiferenciasPolizas extends Rotation
                             $key+1,
                             $data['base_datos_revisada'],
                             $data['base_datos_referencia'],
-                            $data['tipo'],
+                            utf8_decode($data['tipo']),
                             $data['codigo_cuenta'],
                             $data['numero_movimiento'],
                             utf8_decode($data['valor']),
