@@ -57,7 +57,7 @@ class Autocorreccion extends Model
                 foreach ( $data['cfds'] as $partida)
                 {
                     if($partida['selected']) {
-                        $this->partidas()->create([
+                        CFDAutocorreccion::create([
                             'id_autocorreccion' => $autocorreccion->id,
                             'id_cfd_sat' => $partida['id'],
                             'uuid' => $partida['uuid']

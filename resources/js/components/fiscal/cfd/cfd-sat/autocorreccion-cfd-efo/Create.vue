@@ -45,7 +45,7 @@
 					    <label>Total: {{parseFloat(total_cfds).formatMoney(2,'.',',')}}</label>
                     </div>
                     <div class="col-md-3" align="right">
-					    <label>Total Seleccionado: {{parseFloat(total_selecionado).formatMoney(2,'.',',')}}</label>
+					    <label>Total Seleccionado: {{parseFloat(sumaSeleccionTotales).formatMoney(2,'.',',')}}</label>
                     </div>
                 </div>
                 <div  class="table-responsive">
@@ -73,7 +73,9 @@
                         <td>{{cfd.serie}}</td>
                         <td>{{cfd.fecha_format}}</td>
                         <td>{{cfd.total_format}}</td>
-                        <td><input type="checkbox" :value="cfd.id" v-model="cfd.selected" @click="sumaSeleccionTotales(cfd)"></td>
+                        <td>
+                            <input type="checkbox" :value="cfd.id" v-model="cfd.selected" checked>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -111,7 +113,16 @@
             this.getEfos();
         },
         computed: {
-
+            sumaSeleccionTotales()
+            {
+                let total_selecionado = 0;
+                this.cfds.forEach(function (doc, i) {
+                    if(typeof doc.selected === 'undefined' || doc.selected === true) {
+                        total_selecionado += parseFloat(doc.total);
+                    }
+                })
+                return this.total_selecionado = total_selecionado
+            },
         },
         methods: {
             razonSocialRfc (item) {
@@ -148,20 +159,6 @@
                         this.$router.push({name: 'autocorreccion-cfd-efos'});
                     });
             },
-            sumaSeleccionTotales(cfd)
-            {
-                console.log(cfd.total, this.total_selecionado,cfd.selected, "aaaa")
-                if(cfd.selected == true)
-                {
-                    console.log(cfd.total, this.total_selecionado,cfd.selected, "sumar")
-                    this.total_selecionado += cfd.total;
-                }
-                if(cfd.selected == false)
-                {
-                    console.log(cfd.total, this.total_selecionado,cfd.selected, "restar")
-                    this.total_selecionado -= cfd.total;
-                }
-            },
 
             validate() {
                 this.$validator.validate().then(result => {
@@ -193,7 +190,7 @@
                 {
                     this.cfds.map(cfd => {
                         this.total_cfds += cfd.total
-                        cfd.selected = true;
+                       // cfd.selected = true;
                     });
                     this.total_selecionado = this.total_cfds;
                 }
