@@ -108,7 +108,7 @@ class EFOS extends Model
            ON (Subquery.id = ListaEmpresasSAT.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 2)
+ WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -167,7 +167,7 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
            ON (cfd_sat.id = Subquery.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 0)
+ WHERE (efos.estado = 0) and cfd_sat.tipo_comprobante != 'P'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -228,7 +228,7 @@ ORDER BY 8 DESC
                      ON (cfd_sat.rfc_emisor = efos.rfc))
                  INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
                     ON (efos.razon_social = ctg_efos.razon_social)
-           WHERE ctg_efos.estado = 0
+           WHERE ctg_efos.estado = 0 and cfd_sat.tipo_comprobante != 'P'
           GROUP BY ListaEmpresasSAT.id, ListaEmpresasSAT.nombre_corto)
          Subquery
             ON (ListaEmpresasSAT.id = Subquery.id))
