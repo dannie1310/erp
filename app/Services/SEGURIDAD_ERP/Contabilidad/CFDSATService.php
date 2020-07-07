@@ -9,6 +9,7 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
 use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
@@ -104,6 +105,37 @@ class CFDSATService
             mkdir($dir_xml, 777, true);
         }
         return ["path_zip" => $path_zip, "path_xml" => $path_xml, "dir_xml" => $dir_xml];
+    }
+
+    public function reprocesaCFDObtenerTipo()
+    {
+        ini_set('max_execution_time', '7200') ;
+        ini_set('memory_limit', -1) ;
+        $cantidad = CFDSAT::count();
+        $take = 1000;
+
+        for($i = 0; $i<=($cantidad+1000); $i+$take){
+            //dd($i, $cantidad, $take);
+            $cfd = CFDSAT::skip($i)->take($take)->get();
+            //dd(count($cfd));
+            foreach($cfd as $rcfd)
+            {
+                $xml = base64_decode($rcfd->xml_file);
+                $factura_xml = new \SimpleXMLElement($xml);
+                if ((string)$factura_xml["version"] == "3.2") {
+                    $this->arreglo_factura["version"] = (string)$factura_xml["version"];
+                    $this->setArreglo32($factura_xml);
+                } else if ($factura_xml["Version"] == "3.3") {
+                    $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
+                    $this->setArreglo33($factura_xml);
+                }
+                $rcfd->tipo_comprobante = $this->arreglo_factura["tipo_comprobante"];
+                $rcfd->save();
+            }
+            if($i>5000){
+                break;
+            }
+        }
     }
 
     public function procesaDirectorioZIPCFD()
@@ -224,6 +256,7 @@ class CFDSATService
         try {
             $this->arreglo_factura["descuento"] = null;
             $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
+            $this->arreglo_factura["tipo_comprobante"]  = strtoupper(substr((string)$factura_xml["TipoDeComprobante"],0,1));
             $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
             $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
             $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["Fecha"]);
@@ -325,6 +358,7 @@ class CFDSATService
     private function setArreglo32($factura_xml)
     {
         $this->arreglo_factura["subtotal"] = (float)$factura_xml["subTotal"];
+        $this->arreglo_factura["tipo_comprobante"]  = strtoupper(substr((string)$factura_xml["tipoDeComprobante"],0,1));
         $this->arreglo_factura["descuento"] = (float)$factura_xml["descuento"];
         $this->arreglo_factura["total"] = (float)$factura_xml["total"];
         $this->arreglo_factura["serie"] = (string)$factura_xml["serie"];

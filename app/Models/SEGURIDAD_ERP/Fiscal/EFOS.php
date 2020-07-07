@@ -68,8 +68,20 @@ class EFOS extends Model
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
-       SUM (cfd_sat.total) AS importe,
-       format (sum (cfd_sat.total), 'C') AS importe_format
+       format (
+          sum (
+             CASE cfd_sat.tipo_comprobante
+                WHEN 'I' THEN cfd_sat.total
+                WHEN 'E' THEN cfd_sat.total * -1
+             END),
+          'C')
+          AS importe_format,
+       sum (
+          CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.total
+             WHEN 'E' THEN cfd_sat.total * -1
+          END)
+          AS importe
   FROM ((((SEGURIDAD_ERP.Fiscal.efos efos
            INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
               ON (efos.estado = ctg_estados_efos.id))
@@ -124,8 +136,20 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
-       SUM (cfd_sat.total) AS importe,
-       format (sum (cfd_sat.total), 'C') AS importe_format
+       format (
+          sum (
+             CASE cfd_sat.tipo_comprobante
+                WHEN 'I' THEN cfd_sat.total
+                WHEN 'E' THEN cfd_sat.total * -1
+             END),
+          'C')
+          AS importe_format,
+       sum (
+          CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.total
+             WHEN 'E' THEN cfd_sat.total * -1
+          END)
+          AS importe
   FROM ((((SEGURIDAD_ERP.Fiscal.efos efos
            INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
               ON (efos.estado = ctg_estados_efos.id))
@@ -169,8 +193,20 @@ ORDER BY 8 DESC
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
-       SUM (cfd_sat.total) AS importe,
-       format (sum (cfd_sat.total), 'C') AS importe_format,
+       format (
+          sum (
+             CASE cfd_sat.tipo_comprobante
+                WHEN 'I' THEN cfd_sat.total
+                WHEN 'E' THEN cfd_sat.total * -1
+             END),
+          'C')
+          AS importe_format,
+       sum (
+          CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.total
+             WHEN 'E' THEN cfd_sat.total * -1
+          END)
+          AS importe,
        Subquery.fecha_devinitivo_maxima
   FROM (((((SEGURIDAD_ERP.Fiscal.efos efos
             INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
