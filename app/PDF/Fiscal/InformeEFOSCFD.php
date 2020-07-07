@@ -105,9 +105,9 @@ class InformeEFOSCFD extends Rotation
                     $this->setEstilos($partida["tipo"]);
                     if($partida["tipo"]== "partida"){
 
-                        $this->Row([$partida["indice"],$partida["estatus"],$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_presunto"], $partida["fecha_definitivo"], $partida["empresa"], $partida["no_CFDI"], $partida["importe_format"]]);
+                        $this->Row([$partida["indice"],$partida["estatus"],$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_presunto"], $partida["fecha_definitivo"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
                     }    else {
-                        $this->Row([$partida["contador"],'','', utf8_decode($partida["etiqueta"]), '', '', '', $partida["contador_cfdi"], $partida["importe_format"]]);
+                        $this->Row([$partida["contador"],'','', utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
                     }
                 }
             }
@@ -131,26 +131,26 @@ class InformeEFOSCFD extends Rotation
             $this->SetDrawColor(213,213,213);
             $this->SetFont('Arial', '', 7);
             $this->SetFillColor(255,255,255);
-            $this->SetWidths([0.8,1.5,2.2,6,1.8,1.8,2.2,1,2.4]);
-            $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF','DF']);
+            $this->SetWidths([0.8,1.5,2.2,11.8,1,2.4]);
+            $this->SetStyles(['DF','DF','DF','DF','DF','DF']);
             $this->SetRounds(['','','','','','','','','']);
-            $this->SetRadius([0,0,0,0,0,0,0,0,0]);
-            $this->SetFills(['213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213']);
-            $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+            $this->SetRadius([0,0,0,0,0,0]);
+            $this->SetFills(['213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213']);
+            $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
             $this->SetHeights([0.4]);
-            $this->SetAligns(['C','C','C','L','C','C','L','R','R']);
+            $this->SetAligns(['C','C','C','L','R','R']);
         }  else if($tipo == "total"){
             $this->SetDrawColor(117,117,117);
             $this->SetFont('Arial', '', 7);
             $this->SetFillColor(255,255,255);
-            $this->SetWidths([0.8,1.5,2.2,6,1.8,1.8,2.2,1,2.4]);
-            $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF','DF']);
-            $this->SetRounds(['','','','','','','','','']);
-            $this->SetRadius([0.2,0,0,0,0,0,0,0,0.2]);
-            $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
-            $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+            $this->SetWidths([0.8,1.5,2.2,11.8,1,2.4]);
+            $this->SetStyles(['DF','DF','DF','DF','DF','DF']);
+            $this->SetRounds(['','','','','','']);
+            $this->SetRadius([0.2,0,0,0,0,0.2]);
+            $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
+            $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
             $this->SetHeights([0.4]);
-            $this->SetAligns(['C','C','C','L','C','C','L','R','R']);
+            $this->SetAligns(['C','C','C','L','R','R']);
         }
     }
 
