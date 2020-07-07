@@ -1,14 +1,14 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-sm btn-outline-primary float-right" style="margin-top: 5px" title="Ver Formato PDF" :disabled="value.cargando || value.informe.length == 0">
-            <i class="fa fa-file-pdf-o"></i> PDF
+        <button @click="init" type="button" class="btn btn-primary float-right" style="margin-top: 5px" title="Ver PDF" :disabled="value.cargando || value.informe.length == 0">
+            <i class="fa fa-file-pdf-o"></i> Ver PDF
         </button>
 
          <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
              <div class="modal-dialog modal-lg" id="mdialTamanio">
                  <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Formato de Informe de Diferencias en Pólizas</h4>
+                        <h4 class="modal-title">Informe de Diferencias en Pólizas</h4>
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                     </div>
                     <div class="modal-body modal-lg" style="height: 800px" ref="body">
