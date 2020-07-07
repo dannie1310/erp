@@ -39,6 +39,7 @@ class CFDSAT extends Model
         ,"id_proveedor_sat"
         ,"moneda"
         ,"id_carga_cfd_sat"
+        ,"tipo_comprobante"
     ];
 
     protected $dates =["fecha"];
