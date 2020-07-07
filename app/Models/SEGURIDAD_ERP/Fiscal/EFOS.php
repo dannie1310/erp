@@ -10,7 +10,6 @@ namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEstadosEfos;
 use Illuminate\Database\Eloquent\Model;
