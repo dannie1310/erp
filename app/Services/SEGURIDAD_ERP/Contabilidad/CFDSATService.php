@@ -224,6 +224,7 @@ class CFDSATService
         try {
             $this->arreglo_factura["descuento"] = null;
             $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
+            $this->arreglo_factura["tipo_comprobante"]  = strtoupper(substr((string)$factura_xml["TipoDeComprobante"],0,1));
             $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
             $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
             $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["Fecha"]);
@@ -325,6 +326,7 @@ class CFDSATService
     private function setArreglo32($factura_xml)
     {
         $this->arreglo_factura["subtotal"] = (float)$factura_xml["subTotal"];
+        $this->arreglo_factura["tipo_comprobante"]  = strtoupper(substr((string)$factura_xml["tipoDeComprobante"],0,1));
         $this->arreglo_factura["descuento"] = (float)$factura_xml["descuento"];
         $this->arreglo_factura["total"] = (float)$factura_xml["total"];
         $this->arreglo_factura["serie"] = (string)$factura_xml["serie"];
