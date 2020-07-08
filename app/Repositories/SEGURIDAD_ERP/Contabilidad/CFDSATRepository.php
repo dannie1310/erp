@@ -8,6 +8,7 @@
 
 namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 
+use App\Informes\CFDEmpresaMes;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
@@ -107,5 +108,11 @@ class CFDSATRepository extends Repository implements RepositoryInterface
     {
         $cfd = CFDSAT::where("uuid","=", $uuid)->first();
         return $cfd;
+    }
+
+    public function getInformeEmpresaMes()
+    {
+        $informe["informe"] = CFDEmpresaMes::get();
+        return $informe;
     }
 }

@@ -469,4 +469,8 @@ class CFDSATService
             $this->log["proveedores_nuevos"] += 1;
         }
     }
+
+    public function obtenerInformeEmpresaMes(){
+        return $this->repository->getInformeEmpresaMes();
+    }
 }
