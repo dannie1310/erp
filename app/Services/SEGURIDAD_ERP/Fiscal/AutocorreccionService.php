@@ -33,6 +33,11 @@ class AutocorreccionService
         return $this->repository->all($data);
     }
 
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
     public function store(array $data)
     {
         $this->validarPartidas($data['cfds']);
@@ -43,12 +48,17 @@ class AutocorreccionService
     {
         foreach ($data as $partida)
         {
-            if($partida['selected'])
+            if(array_key_exists('selected', $partida) == false || ($partida['selected'] == true))
             {
-                return 0;
+                return "OK";
                 break;
             }
         }
         throw new \Exception('Se debe seleccionar al menos un CFD');
+    }
+
+    public function aplicar($id, array $data)
+    {
+        return $this->repository->show($id)->aplicarAutocorreccion($data);
     }
 }

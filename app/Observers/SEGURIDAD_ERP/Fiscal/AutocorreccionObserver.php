@@ -15,6 +15,6 @@ class AutocorreccionObserver
     {
         $autocorreccion->fecha_hora_registro = date('Y-m-d H:i:s');
         $autocorreccion->usuario_registro = auth()->id();
-        $autocorreccion->estado = 0;
+        $autocorreccion->estado = 5;
     }
 }

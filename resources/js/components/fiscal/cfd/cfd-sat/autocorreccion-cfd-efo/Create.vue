@@ -26,11 +26,11 @@
         </div>
         <div class="card" v-if="cargando">
             <div class="card-body">
-                 <div class="row">
-                     <div class="col-md-12">
-                         <div class="spinner-border text-success" role="status">
-                             <span class="sr-only">Cargando...</span>
-                         </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div>
                      </div>
                  </div>
             </div>
@@ -39,7 +39,7 @@
             <div class="card-body table-responsive">
                 <div class="row">
                     <div class="col-md-6">
-                        <label>CFDS</label>
+                        <label>CFD</label>
                     </div>
                     <div class="col-md-3" align="right">
 					    <label>Total: {{parseFloat(total_cfds).formatMoney(2,'.',',')}}</label>
@@ -49,22 +49,22 @@
                     </div>
                 </div>
                 <div  class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th class="index_corto">#</th>
-                        <th>Folio</th>
-                        <th>UUID</th>
-                        <th>RFC de Receptor</th>
-                        <th>Razón Social de Receptor</th>
-                        <th>Serie</th>
-                        <th>Fecha</th>
-                        <th>Total</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(cfd, i) in cfds">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="index_corto">#</th>
+                            <th>Folio</th>
+                            <th>UUID</th>
+                            <th>RFC de Receptor</th>
+                            <th>Razón Social de Receptor</th>
+                            <th>Serie</th>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(cfd, i) in cfds">
                         <td>{{i+1}}</td>
                         <td>{{cfd.folio}}</td>
                         <td>{{cfd.uuid}}</td>
@@ -72,10 +72,8 @@
                         <td>{{cfd.empresa.razon_social}}</td>
                         <td>{{cfd.serie}}</td>
                         <td>{{cfd.fecha_format}}</td>
-                        <td>{{cfd.total_format}}</td>
-                        <td>
-                            <input type="checkbox" :value="cfd.id" v-model="cfd.selected" checked>
-                        </td>
+                        <td class="money">{{cfd.total_format}}</td>
+                        <td><input type="checkbox" :value="cfd.id" v-model="cfd.selected" checked></td>
                     </tr>
                     </tbody>
                 </table>
@@ -140,7 +138,7 @@
             {
                 this.cargando =  true;
                 return this.$store.dispatch('fiscal/cfd-sat/index', {
-                    params: {include: ['empresa', 'proveedor'], scope: ['noAutocorregidos','porProveedor:' + this.efo.proveedor.id]}
+                    params: {include: ['empresa', 'proveedor'], scope: ['definitivo','porProveedor:' + this.efo.proveedor.id,'exceptoTipo:P']}
                 }).then(data => {
                     this.cfds = data.data;
                     this.cargando = false;

@@ -16,18 +16,20 @@ class CFDAutocorreccionTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'estatus'
     ];
 
     protected $availableIncludes = [
         'autocorreccion',
-        'cfd'
+        'cfd',
+        'estatus'
     ];
 
     public function transform(CFDAutocorreccion $model)
     {
         return [
             'id' => $model->getKey(),
+            'uuid' => $model->uuid,
         ];
     }
 
@@ -53,6 +55,19 @@ class CFDAutocorreccionTransformer extends TransformerAbstract
         if($cfd = $model->cfdSat)
         {
             return $this->item($cfd, new CFDSATTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param CFDAutocorreccion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEstatus(CFDAutocorreccion $model)
+    {
+        if($estatus = $model->ctgEstado)
+        {
+            return $this->item($estatus, new CtgEstadosCFDTransformer);
         }
         return null;
     }

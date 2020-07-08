@@ -44,4 +44,9 @@ class AutocorreccionController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function aplicar(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->aplicar($id, $request->all()));
+    }
 }

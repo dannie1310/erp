@@ -17,19 +17,22 @@ class AutocorreccionTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'estatus'
     ];
 
     protected $availableIncludes = [
         'partidas',
-        'proveedor'
+        'proveedor',
+        'efo',
+        'estatus'
     ];
 
     public function transform(Autocorreccion $model)
     {
         return [
             'id' => $model->getKey(),
-            'fecha' => $model->fecha_hora_registro_format
+            'fecha' => $model->fecha_hora_registro_format,
+            'total_partidas' => $model->total_partidas
         ];
     }
 
@@ -55,6 +58,32 @@ class AutocorreccionTransformer extends TransformerAbstract
         if($proveedor = $model->proveedor)
         {
             return $this->item($proveedor, new ProveedorSATTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Autocorreccion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEfo(Autocorreccion $model)
+    {
+        if($efo = $model->efo)
+        {
+            return $this->item($efo, new EfosTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Autocorreccion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEstatus(Autocorreccion $model)
+    {
+        if($estatus = $model->ctgEstado)
+        {
+            return $this->item($estatus, new CtgEstadosCFDTransformer);
         }
         return null;
     }

@@ -35,10 +35,12 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Proveedor', field: 'proveedor', thComp: require('../../../../globals/th-Filter').default, sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true},
-                   ],
+                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                ],
                 data: [],
                 total: 0,
-                query: {include: ['proveedor']},
+                query: {include: ['proveedor'], sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false,
             }
@@ -65,6 +67,21 @@
                          this.cargando = false;
                      })
             },
+            getEstadoCFD(estado, descripcion) {
+                let val = parseInt(estado);
+                switch (val) {
+                    case 5:
+                        return {
+                            color: '#f39c12',
+                            descripcion: descripcion
+                        }
+                    case 6:
+                        return {
+                            color: '#00a65a',
+                            descripcion: descripcion
+                        }
+                }
+            }
         },
         computed: {
             autocorrecciones(){
@@ -82,13 +99,17 @@
                 handler(autocorrecciones) {
                     let self = this
                     self.$data.data = []
-                    autocorrecciones.forEach(function (autocorreccion, i) {
-                        self.$data.data.push({
-                            index: (i + 1) + self.query.offset,
-                            proveedor: autocorreccion.proveedor.razon_social,
-                            fecha: autocorreccion.fecha
+                    self.$data.data = autocorrecciones.map((autocorreccion, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        proveedor: autocorreccion.proveedor.razon_social,
+                        fecha: autocorreccion.fecha,
+                        estado: this.getEstadoCFD(autocorreccion.estatus.id, autocorreccion.estatus.descripcion),
+                        buttons: $.extend({}, {
+                            id: autocorreccion.id,
+                            aplicar: autocorreccion.estatus.id == 5 ? true : false,
+                            show : true
                         })
-                    });
+                    }));
                 },
                 deep: true
             },

@@ -15,6 +15,13 @@ class CFDAutocorreccionObserver
     {
         $partida->registro = auth()->id();
         $partida->fecha_hora_registro = date('Y-m-d H:i:s');
-        $partida->estado = 0;
+        $partida->estado = 5;
+    }
+
+    public function created(CFDAutocorreccion $partida)
+    {
+        $partida->cfdSat->update([
+            'estado' => 5
+        ]);
     }
 }

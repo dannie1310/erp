@@ -37,4 +37,9 @@ class CFDAutocorreccion extends Model
     {
         return $this->belongsTo(CFDSAT::class, 'id_cfd_sat', 'id');
     }
+
+    public function ctgEstado()
+    {
+        return $this->belongsTo(CtgEstadoCFD::class, 'estado', 'id');
+    }
 }

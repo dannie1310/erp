@@ -40,7 +40,6 @@ export default {
                     })
             })
         },
-
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios.get(URI + payload.id, { params: payload.params })
@@ -87,6 +86,47 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 });
+                        }
+                    });
+            });
+        },
+        aplicar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Aplicar Autocorrección de CFD",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Aplicar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/aplicar', payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Autocorrección aplicada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        } else {
+                            reject();
                         }
                     });
             });

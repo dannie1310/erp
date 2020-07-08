@@ -10,6 +10,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,7 @@ class CFDSAT extends Model
         ,"id_proveedor_sat"
         ,"moneda"
         ,"id_carga_cfd_sat"
+        ,"estado"
     ];
 
     protected $dates =["fecha"];
@@ -77,12 +79,29 @@ class CFDSAT extends Model
         return $this->hasOne(CFDAutocorreccion::class, "id_cfd_sat", "id");
     }
 
-    public function scopeDeEFO($query){
+    public function ctgEstado()
+    {
+        return $this->belongsTo(CtgEstadoCFD::class, 'estado', 'id');
+    }
+
+    public function scopeDeEFO($query)
+    {
         return $query->whereHas("efo");
     }
 
-    public function scopeNoAutocorregidos($query){
+    public function scopeNoAutocorregidos($query)
+    {
         return $query->doesnthave("autocorreccion");
+    }
+
+    public function scopeDefinitivo($query)
+    {
+        return $query->where('estado', '=', 0);
+    }
+
+    public function scopeExceptoTipo($query, $tipo)
+    {
+        return $query->where('tipo_comprobante', '!=', $tipo);
     }
 
     public function registrar($data)
