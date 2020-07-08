@@ -115,7 +115,9 @@ import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
 
 //FISCAL
+import autocorreccion from './modules/fiscal/autocorreccion';
 import CFDSAT from './modules/fiscal/cfd-sat';
+import efos from './modules/fiscal/efos';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -156,6 +158,7 @@ import modelo from "./modules/sci/modelo";
 
 // VENTAS
 import venta from "./modules/ventas/venta";
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -258,7 +261,9 @@ export default new Vuex.Store({
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/incidente-poliza' : incidentePoliza,
 
+        'fiscal/autocorreccion' : autocorreccion,
         'fiscal/cfd-sat': CFDSAT,
+        'fiscal/efos' : efos,
 
         'reportes/reporte': reporte,
 
