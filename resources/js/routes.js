@@ -530,7 +530,7 @@ export const routes = [
                 meta: {
                     title: 'FISCAL',
                     middleware: [auth, permission],
-                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_efos_empresa','consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_efos_empresa','consultar_informe_listado_efos_vs_cfdi_recibidos'],
                     general: true
                 }
             },

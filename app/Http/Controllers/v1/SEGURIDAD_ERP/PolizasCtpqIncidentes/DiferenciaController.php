@@ -72,5 +72,9 @@ class DiferenciaController extends Controller
     {
         return $this->service->impresionPolizas($id)->create();
     }
+    
+    public function pdfDiferencias(Request $request){
+        return $this->service->pdfDiferencias($request);
+    }
 
 }

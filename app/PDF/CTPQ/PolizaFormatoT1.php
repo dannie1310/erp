@@ -70,10 +70,7 @@ class PolizaFormatoT1 extends Rotation
         $this->Cell(0, 0, utf8_decode('Impreso de pólizas del ').'01/'.$this->mes.'/'.$this->anio.' al 30/'.$this->mes.'/'.$this->anio, 0, 0, 'L');
         $this->setXY(16.6, 1.6);
 
-        $fecha = new DateTime($this->poliza->Fecha);
-        $fecha->add(new DateInterval('P5D'));
-        $fecha = strftime("%d/", $fecha->getTimestamp()).substr(ucfirst(strftime("%b", $fecha->getTimestamp())), 0, 3).strftime("/%Y", $fecha->getTimestamp());
-        $this->Cell(0, 0, utf8_decode('Fecha: ').$fecha, 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Fecha: ').$this->poliza->fecha_consulta, 0, 0, 'L');
 
         //TODO: CAMBIAR EL HARCODEO DEL TIPO DE MONEDA
         $this->setXY(8.3, 2);

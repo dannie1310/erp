@@ -12,6 +12,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -39,6 +40,7 @@ class CFDSAT extends Model
         ,"id_proveedor_sat"
         ,"moneda"
         ,"id_carga_cfd_sat"
+        ,"tipo_comprobante"
         ,"estado"
     ];
 
@@ -133,10 +135,10 @@ class CFDSAT extends Model
 
     public static function getFechaUltimoCFDTxt()
     {
-
-        setlocale(LC_ALL, 'es_ES');
         $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
-        $fecha = "CFD cargados al ".$ultimo_cfd->fecha->format("d")." de ".$ultimo_cfd->fecha->formatLocalized('%B'). " de ".$ultimo_cfd->fecha->format("Y");
+        $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
+        $mes = $meses[($ultimo_cfd->fecha->format('n')) - 1];
+        $fecha = "CFD cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
         return $fecha;
     }
 

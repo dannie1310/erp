@@ -235,6 +235,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}/impresion-polizas', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@impresionPolizas')->where(['id' => '[0-9]+']);
+            $api->get('/pdfDiferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@pdfDiferencias');
         });
         $api->group(['prefix' => 'solicitud-edicion-poliza'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@store');
@@ -257,6 +258,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/consolidar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@consolidar')->where(['id' => '[0-9]+']);
+            $api->get('/pdfDiferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@pdfDiferencias');
         });
         $api->group(['prefix' => 'empresa-sat'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@index');
