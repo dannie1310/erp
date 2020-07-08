@@ -106,8 +106,8 @@
                         estado: this.getEstadoCFD(autocorreccion.estatus.id, autocorreccion.estatus.descripcion),
                         buttons: $.extend({}, {
                             id: autocorreccion.id,
-                            aplicar: autocorreccion.estatus.id == 5 ? true : false,
-                            show : true
+                            aplicar: (self.$root.can('aplicar_autocorreccion_cfd_efo',true) && autocorreccion.estatus.id == 5) ? true : false,
+                            show : self.$root.can('consultar_autocorreccion_cfd_efo', true) ? true : false
                         })
                     }));
                 },
