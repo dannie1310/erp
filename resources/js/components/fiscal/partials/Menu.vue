@@ -8,6 +8,12 @@
                     <i class="right fa fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview">
+                    <li class="nav-item"  v-if="$root.can('consultar_informe_cfd_x_empresa_x_mes',true)">
+                        <router-link :to="{name: 'informe-cfd-empresa-tiempo'}" class="nav-link" :class="{active: this.$route.name == 'informe-cfd-empresa-tiempo'}">
+                            <i class="fa fa-file-alt nav-icon"></i>
+                            <p>Informe CFD x Empresa x Mes</p>
+                        </router-link>
+                    </li>
                     <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
                         <router-link :to="{name: 'cfd-sat'}" class="nav-link" :class="{active: this.$route.name == 'cfd-sat'}">
                             <i class="fa fa-file-invoice nav-icon"></i>

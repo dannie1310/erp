@@ -55,4 +55,10 @@ class CFDSATController extends Controller
 
     }
 
+    public function obtenerInformeEmpresaMes()
+    {
+        $respuesta =$this->service->obtenerInformeEmpresaMes();
+        return response()->json($respuesta, 200);
+    }
+
 }
