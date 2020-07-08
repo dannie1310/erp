@@ -14,6 +14,7 @@ use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
 use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
 use DateTime;
+use App\Utils\Files;
 
 class CFDSATService
 {
@@ -150,14 +151,13 @@ class CFDSATService
         while ($current = readdir($dir)) {
             if($current != "." && $current != ".."){
                 if(is_dir($path.$current)){
-                    $this->procesaZIPCFD($path.$current."/");
+                    $this->procesaCFD($path.$current."/");
                 } else {
                     if (strpos($current,".zip")) {
                         $this->log["nombre_archivo_zip"] = $current;
                         /*if (!file_exists($path_destino) && !is_dir($path_destino)) {
                             mkdir($path_destino, 777, true);
                         }*/
-
                         $this->extraeZIP($path.$current,$path_destino);
                         $this->procesaCFD($path_destino);
                     }
@@ -473,4 +473,12 @@ class CFDSATService
     public function obtenerInformeEmpresaMes(){
         return $this->repository->getInformeEmpresaMes();
     }
+
+    public function getContenidoDirectorio()
+    {
+        $path = "uploads/contabilidad/zip_cfd/";
+        $contenido = Files::getFiles($path);
+        return $contenido;
+    }
+
 }

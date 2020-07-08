@@ -15,7 +15,20 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <span v-if="procesado">
+                            <span v-if="contenido">
+                                <table style="width: 100%" class="table table-stripped">
+                                    <tbody>
+                                        <tr >
+                                            <td colspan="2" ><i class="fa fa-folder-open"></i></td>
+                                        </tr>
+                                        <tr v-for="(archivo, i) in contenido">
+                                            <td class="index_corto" >{{archivo.contador}}</td>
+                                            <td ><span style="color: #fff">{{archivo.anidacion}}</span><i :class="archivo.clase"></i>{{archivo.nombre}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </span>
+                            <span v-else-if="procesado">
                                 <h6><i class="fa fa-arrow-circle-right"></i><b>Resultado del procesamiento</b></h6>
                                 <div class="table-responsive">
                                     <table style="width: 100%" class="table table-stripped">
@@ -87,13 +100,30 @@
                 procesado : false,
                 procesando : false,
                 resultado : [],
+                contenido : []
             }
         },
         mounted(){
+            this.getContenidoDirectorio();
 
         },
 
         methods: {
+            getContenidoDirectorio(){
+                this.procesando = true;
+                return this.$store.dispatch('fiscal/cfd-sat/getContenidoDirectorio',
+                    {
+                        data: [],
+                        config: {
+                            params: { _method: 'POST'}
+                        }
+                    })
+                    .then(data => {
+                        this.contenido = data;
+                    }).finally(() => {
+                        this.procesando = false;
+                    });
+            },
             procesar(){
                 this.procesando = true;
                 return this.$store.dispatch('fiscal/cfd-sat/procesaDirZIPCFD',
