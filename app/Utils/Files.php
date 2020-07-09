@@ -18,24 +18,24 @@ class Files
     protected static $i=0;
     protected static $ifil=1;
 
-    public static function getFiles($path){
+    public static function getFiles($path, $anidacion_padre = ""){
         if(self::$i > 0){
-            self::$anidacion .= "____";
+            $anidacion_padre .= "____";
         }
 
         $dir = opendir(public_path($path));
         while ($current = readdir($dir)){
             if( $current != "." && $current != "..") {
                 if(is_dir($path.$current)) {
-                    self::$files[self::$i]["anidacion"] = self::$anidacion;
+                    self::$files[self::$i]["anidacion"] = $anidacion_padre;
                     self::$files[self::$i]["nombre"] = $current;
                     self::$files[self::$i]["contador"] = "";
                     self::$files[self::$i]["clase"] = "fa fa-folder-open";
                     self::$i +=1;
-                    self::getFiles($path.$current.'/');
+                    self::getFiles($path.$current.'/',$anidacion_padre);
                 }
                 else {
-                    self::$files[self::$i]["anidacion"] = self::$anidacion;
+                    self::$files[self::$i]["anidacion"] = $anidacion_padre;
                     self::$files[self::$i]["nombre"] = $current;
                     self::$files[self::$i]["contador"] = self::$ifil;
                     if (strpos($current,".zip")){
