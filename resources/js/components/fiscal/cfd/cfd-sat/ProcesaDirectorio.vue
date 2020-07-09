@@ -33,19 +33,15 @@
                                 <div class="table-responsive">
                                     <table style="width: 100%" class="table table-stripped">
                                         <tbody>
-                                            <tr v-if="resultado.duracion>0">
+                                            <tr >
                                                 <th style="text-align: left" >Duración de procesamiento (segundos):</th>
                                                 <td style="text-align: right">{{resultado.duracion}}</td>
                                             </tr>
-                                            <tr v-if="resultado.nombre_archivo_zip>0">
-                                                <th style="text-align: left" >Nombre de archivo zip:</th>
-                                                <td style="text-align: right">{{resultado.nombre_archivo_zip}}</td>
-                                            </tr>
-                                            <tr v-if="resultado.archivos_leidos>0">
+                                            <tr >
                                                 <th style="text-align: left" >Núm. archivos leidos:</th>
                                                 <td style="text-align: right">{{resultado.archivos_leidos}}</td>
                                             </tr>
-                                            <tr v-if="resultado.archivos_cargados>0">
+                                            <tr >
                                                 <th style="text-align: left" >Núm. archivos cargados:</th>
                                                 <td style="text-align: right">{{resultado.archivos_cargados}}</td>
                                             </tr>

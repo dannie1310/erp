@@ -22,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\FinalizaProcesamientoLoteBusquedas' => [
             'App\Listeners\SendFinalizaProcesamientoLoteBusquedaNotification',
             ],
+        'App\Events\FinalizaCargaCFD' => [
+            'App\Listeners\SendFinalizaCargaCFDNotification',
+        ],
 
             Registered::class => [
             SendEmailVerificationNotification::class,

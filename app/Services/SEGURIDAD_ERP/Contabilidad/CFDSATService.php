@@ -8,6 +8,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use App\Events\FinalizaCargaCFD;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
@@ -151,6 +152,9 @@ class CFDSATService
         $this->procesaDirectorio($path);
         $this->log["fecha_hora_fin"] = date("Y-m-d H:i:s");
         $this->carga->update($this->log);
+
+        event(new FinalizaCargaCFD($this->carga));
+
         return $this->carga;
     }
 
