@@ -27,9 +27,9 @@
                         </router-link>
                     </li>
                     <li class="nav-item"   v-if="$root.can('consultar_poliza',true)">
-                        <router-link :to="{name: 'autocorreccion-cfd-efos'}" class="nav-link" :class="{active: this.$route.name == 'autocorreccion-cfd-efos'}">
+                        <router-link :to="{name: 'no-deducidos-cfd-efos'}" class="nav-link" :class="{active: this.$route.name == 'no-deducidos-cfd-efos'}">
                             <i class="fa fa-file-invoice nav-icon"></i>
-                            <p>Autocorrección CFD EFOS</p>
+                            <p>CFD No Deducidos de EFOS</p>
                         </router-link>
                     </li>
                 </ul>

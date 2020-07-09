@@ -33,7 +33,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Proveedor', field: 'proveedor', thComp: require('../../../../globals/th-Filter').default, sortable: true},
+                    { title: 'Proveedor', field: 'proveedor', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true},
                     { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},

@@ -576,13 +576,12 @@ export const routes = [
                             title: 'CFD SAT',
                             breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
                             middleware: [auth, permission],
-                            permission: ['consultar_poliza','consultar_autocorreccion_cfd_efo'],
+                            permission: ['consultar_poliza','consultar_autocorreccion_cfd_efo', 'consultar_informe_cfd_x_empresa_x_mes'],
                             general: true
                         }
                     },
                     {
                         path: 'autocorreccion-cfd-efos',
-                        component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Layout').default,
                         component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Index').default,
                         children: [
                             {
@@ -613,15 +612,15 @@ export const routes = [
                     },
                     {
                         path: 'no-deducidos-cfd-efos',
-                        component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Index').default,
+                        component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Index').default,
                         children: [
                             {
                                 path: '/',
-                                name: 'autocorreccion-cfd-efos',
-                                component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Index').default,
+                                name: 'no-deducidos-cfd-efos',
+                                component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Index').default,
                                 meta: {
-                                    title: 'Autocorrección de CFD EFOS',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
+                                    title: 'CFD No Deducidos de EFOS',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'CFD No Deducidos'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_autocorreccion_cfd_efo',
                                     general: true,
@@ -630,11 +629,11 @@ export const routes = [
                             },
                             {
                                 path: 'create',
-                                name: 'autocorreccion-cfd-efos-create',
-                                component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Create').default,
+                                name: 'no-deducidos-cfd-efos-create',
+                                component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Create').default,
                                 meta: {
-                                    title: 'Registrar Autocorrección de CFD EFOS Definitivos',
-                                    breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
+                                    title: 'Registrar CFD No Deducidos EFOS Definitivos',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'no-deducidos-cfd-efos'},
                                     middleware: [auth, permission],
                                     permission: ['registrar_autocorreccion_cfd_efo'],
                                     general: true,
