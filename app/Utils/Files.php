@@ -55,7 +55,7 @@ class Files
 
 
 
-    public static function extraeZIP($ruta_origen, $ruta_destino = "")
+    public static function extraeZIPOriginal($ruta_origen, $ruta_destino = "")
     {
         if($ruta_destino == ""){
             $ruta_destino = substr($ruta_origen,0,strlen($ruta_origen)-4);
@@ -63,7 +63,26 @@ class Files
         try{
             $zipper = new Zipper();
             $zipper->make(public_path($ruta_origen))->extractTo(public_path($ruta_destino));
+            $zipper->close();
             $zipper->delete();
+        }catch (\Exception $e){
+            abort(500, "Hubo un error al extraer el archivo zip proporcionado. Ruta Origen: ".$ruta_origen . 'Ruta Destino: '.$ruta_destino.' Ln.' . $e->getLine() . ' ' . $e->getMessage());
+        }
+    }
+
+    public static function extraeZIP($ruta_origen, $ruta_destino = "")
+    {
+        if($ruta_destino == ""){
+            $ruta_destino = substr($ruta_origen,0,strlen($ruta_origen)-4);
+        }
+        try{
+            $zip = new \ZipArchive();
+            if ($zip->open($ruta_origen) === TRUE) {
+                $zip->extractTo($ruta_destino);
+                $zip->close();
+                unlink($ruta_origen);
+
+            }
         }catch (\Exception $e){
             abort(500, "Hubo un error al extraer el archivo zip proporcionado. Ruta Origen: ".$ruta_origen . 'Ruta Destino: '.$ruta_destino.' Ln.' . $e->getLine() . ' ' . $e->getMessage());
         }
