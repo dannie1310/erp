@@ -493,7 +493,7 @@ class CFDSATService
                 }
             }
         } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
+            //abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
             return 0;
         }
