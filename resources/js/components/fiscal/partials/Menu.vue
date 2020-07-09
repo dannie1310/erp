@@ -20,6 +20,12 @@
                             <p>Autocorrección CFD EFOS</p>
                         </router-link>
                     </li>
+                    <li class="nav-item"   v-if="$root.can('consultar_poliza',true)">
+                        <router-link :to="{name: 'autocorreccion-cfd-efos'}" class="nav-link" :class="{active: this.$route.name == 'autocorreccion-cfd-efos'}">
+                            <i class="fa fa-file-invoice nav-icon"></i>
+                            <p>Autocorrección CFD EFOS</p>
+                        </router-link>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_informe_listado_efos_vs_cfdi_recibidos',true)">

@@ -31,9 +31,9 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Proveedor', field: 'numero_folio', thComp: require('../../../../globals/th-Filter').default, sortable: true},
+                    { title: 'Proveedor', field: 'numero_folio', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Estado', field: 'estado',  thComp:require('../../../../globals/th-Filter').default, sortable: true },
+                    { title: 'Estado', field: 'estado',  thComp:require('../../../globals/th-Filter').default, sortable: true },
                 ],
                 data: [],
                 total: 0,
