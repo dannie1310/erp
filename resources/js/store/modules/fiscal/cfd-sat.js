@@ -149,6 +149,19 @@ export default {
                     })
             });
         },
+        getContenidoDirectorio(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'obtener-contenido-directorio', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        }
     },
 
     getters: {
