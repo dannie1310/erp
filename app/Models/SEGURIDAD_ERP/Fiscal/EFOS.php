@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: EMartinez
- * Date: 01/07/2020
- * Time: 05:12 PM
- */
+
 
 namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
@@ -14,12 +9,20 @@ use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEstadosEfos;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 
 class EFOS extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'SEGURIDAD_ERP.Fiscal.efos';
+    protected $primaryKey = 'id';
+
     public $timestamps = false;
+
+    public function proveedor()
+    {
+        return $this->belongsTo(ProveedorSAT::class, 'id_proveedor_sat', 'id');
+    }
 
     public function efo()
     {
@@ -29,6 +32,11 @@ class EFOS extends Model
     public function estadoEFOS()
     {
         return $this->belongsTo(CtgEstadosEfos::class, 'estado', 'id');
+    }
+
+    public function CFDAutocorreccion()
+    {
+        return $this->hasMany(CFDAutocorreccion::class, 'id_proveedor_sat', 'id_proveedor_sat');
     }
 
     public function cfd()
@@ -261,42 +269,6 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
         return $informe;
     }
 
-    /*private static function getPartidasInformeDefinitivosV1(){
-        $informe = [];
-        $empresas = Empresa::getEmpresaDefinitivos();
-        $i=0;
-        $efos = [];
-        foreach($empresas as $empresa){
-            $comprobantes = $empresa->cfd()->deEFO()->noAutocorregidos()->get();
-            if(count($comprobantes)>0){
-                foreach($comprobantes as $comprobante){
-                    $efos[$comprobante->efo->razon_social] = $comprobante->efo;
-                }
-                ksort($efos);
-                $efos = array_unique($efos);
-                foreach($efos as $efo){
-                    if($efo->estado==0)
-                    {
-                        $comprobantes_efo = $efo->cfd()->noAutoCorregidos()->where("rfc_receptor",$empresa->rfc)->get();
-                        if(count($comprobantes_efo)>0){
-                            $informe[$i]["empresa"] = $empresa->nombre_corto;
-                            $informe[$i]["rfc"] = $efo->rfc;
-                            $informe[$i]["razon_social"] = $efo->razon_social;
-                            $informe[$i]["fecha_presunto"] = $efo->efo->fecha_presunto_format;
-                            $informe[$i]["fecha_definitivo"] = $efo->efo->fecha_definitivo_format;
-                            $informe[$i]["estatus"] = $efo->estadoEFOS->descripcion;
-                            $informe[$i]["no_CFDI"] = count($comprobantes_efo);
-                            $informe[$i]["importe"] = $comprobantes_efo->sum("total");
-                            $informe[$i]["importe_format"] = "$ ". number_format($comprobantes_efo->sum("total"),2,".", ",");
-                            $i++;
-                        }
-                    }
-                }
-            }
-        }
-        $informe = EFOS::setSubtotalesPartidas($informe, "DEFINITIVOS");
-        return $informe;
-    }*/
     private static function setSubtotalesPartidas($partidas, $tipo){
         $partidas_completas = [];
         $i = 0;

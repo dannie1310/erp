@@ -530,7 +530,7 @@ export const routes = [
                 meta: {
                     title: 'FISCAL',
                     middleware: [auth, permission],
-                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_efos_empresa','consultar_informe_listado_efos_vs_cfdi_recibidos'],
                     general: true
                 }
             },
@@ -576,24 +576,13 @@ export const routes = [
                             title: 'CFD SAT',
                             breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
                             middleware: [auth, permission],
-                            permission: ['consultar_poliza'],
-                            general: true
-                        }
-                    },
-                    {
-                        path: 'informe',
-                        name: 'informe-cfd-empresa-tiempo',
-                        component: require('./components/fiscal/cfd/cfd-sat/InformeCFDEmpresaMes').default,
-                        meta: {
-                            title: 'Informe CFD Cargados x Empresa x Mes',
-                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            permission: ['consultar_poliza','consultar_autocorreccion_cfd_efo'],
                             general: true
                         }
                     },
                     {
                         path: 'autocorreccion-cfd-efos',
+                        component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Layout').default,
                         component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Index').default,
                         children: [
                             {
@@ -634,7 +623,7 @@ export const routes = [
                                     title: 'Autocorrección de CFD EFOS',
                                     breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
                                     middleware: [auth, permission],
-                                    permission: 'consultar_poliza',
+                                    permission: 'consultar_autocorreccion_cfd_efo',
                                     general: true,
 
                                 }
@@ -644,14 +633,27 @@ export const routes = [
                                 name: 'autocorreccion-cfd-efos-create',
                                 component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Create').default,
                                 meta: {
-                                    title: 'Registrar Autocorrección de CFD EFOS',
+                                    title: 'Registrar Autocorrección de CFD EFOS Definitivos',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
-                                    middleware: [auth, context, permission],
-                                    permission: ['registrar_autocorreccion_cfd_efo']
+                                    middleware: [auth, permission],
+                                    permission: ['registrar_autocorreccion_cfd_efo'],
+                                    general: true,
                                 }
                             }
                         ]
-                    }
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-cfd-empresa-tiempo',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeCFDEmpresaMes').default,
+                        meta: {
+                            title: 'Informe CFD Cargados x Empresa x Mes',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
                 ]
             },
         ]
