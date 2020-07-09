@@ -18,6 +18,14 @@
     <table  class="table table-stripped">
         <tbody>
         <tr >
+            <th style="text-align: left" >No. de Carga:</th>
+            <td style="text-align: right">{{$carga->id}}</td>
+        </tr>
+        <tr >
+            <th style="text-align: left" >Usuario:</th>
+            <td style="text-align: right">{{$carga->usuario->nombre_completo}}</td>
+        </tr>
+        <tr >
             <th style="text-align: left" >Duración de procesamiento (segundos):</th>
             <td style="text-align: right">{{$carga->duracion}}</td>
         </tr>

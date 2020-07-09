@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class CargaCFDSAT extends Model
@@ -34,6 +35,11 @@ class CargaCFDSAT extends Model
     public function cfd()
     {
         return $this->hasMany(CFDSAT::class, 'id_carga_cfd_sat', 'id');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_cargo', 'idusuario');
     }
 
 }

@@ -153,7 +153,15 @@ class CFDSATService
         $this->log["fecha_hora_fin"] = date("Y-m-d H:i:s");
         $this->carga->update($this->log);
 
+        if(file_exists(public_path("uploads/contabilidad/XML_errores/".$this->carga->id)))
+        {
+            $zipper = new Zipper;
+            $zipper->make(public_path("uploads/contabilidad/XML_errores/".$this->carga->id.".zip"))->add(public_path("uploads/contabilidad/XML_errores/".$this->carga->id));
+            $zipper->close();
+        }
+
         event(new FinalizaCargaCFD($this->carga));
+        $this->carga->load("usuario");
 
         return $this->carga;
     }

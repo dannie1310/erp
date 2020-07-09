@@ -34,6 +34,14 @@
                                     <table style="width: 100%" class="table table-stripped">
                                         <tbody>
                                             <tr >
+                                                <th style="text-align: left" >No. de Carga:</th>
+                                                <td style="text-align: right">{{resultado.id}}</td>
+                                            </tr>
+                                            <tr >
+                                                <th style="text-align: left" >Usuario:</th>
+                                                <td style="text-align: right">{{resultado.usuario.nombre}} {{resultado.usuario.apaterno}} {{resultado.usuario.amaterno}}</td>
+                                            </tr>
+                                            <tr >
                                                 <th style="text-align: left" >Duración de procesamiento (segundos):</th>
                                                 <td style="text-align: right">{{resultado.duracion}}</td>
                                             </tr>

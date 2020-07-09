@@ -44,11 +44,20 @@ class NotificacionFinalizaCargaCFD extends Notification
      */
     public function toMail($notifiable)
     {
+        $path0 = "uploads/contabilidad/XML_errores/".$this->carga->id.".zip";
 
-        return (new MailMessage)
-            ->subject("Finalización de Carga de CFD")
-            ->view('emails.carga_cfd',["carga"=>$this->carga]);
-            /*->attach($this->xml);*/
+        if(file_exists($path0)){
+            return (new MailMessage)
+                ->subject("Finalización de Carga de CFD")
+                ->view('emails.carga_cfd',["carga"=>$this->carga])
+                ->attach($path0);
+        } else {
+            return (new MailMessage)
+                ->subject("Finalización de Carga de CFD")
+                ->view('emails.carga_cfd',["carga"=>$this->carga]);
+        }
+
+
     }
 
     /**
