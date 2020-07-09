@@ -11,6 +11,7 @@ namespace App\Observers\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 
+use Carbon\Carbon;
 use DateTime;
 
 class CargaCFDSATObserver
@@ -30,10 +31,9 @@ class CargaCFDSATObserver
     public function updating(CargaCFDSAT $log)
     {
         $log->usuario_cargo = auth()->id();
-        $datetime1 = new DateTime($log->fecha_hora_inicio);
-        $datetime2 = new DateTime($log->fecha_hora_fin);
-        $duracion = $datetime1->diff($datetime2);
-        $log->duracion = $duracion->format('%s');
+        $startTime = Carbon::parse($log->fecha_hora_inicio);
+        $finishTime = Carbon::parse($log->fecha_hora_fin);
+        $log->duracion = $finishTime->diffInSeconds($startTime);
     }
 
 }
