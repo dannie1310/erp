@@ -24,6 +24,8 @@ class CargaCFDSAT extends Model
         ,"archivos_preexistentes"
         ,"archivos_receptor_no_valido"
         ,"archivos_no_cargados_error_app"
+        ,"archivos_corruptos"
+        ,"archivos_tipo_incorrecto"
         ,"proveedores_nuevos"
         ,"fecha_hora_fin"
         ,"usuario_cargo"

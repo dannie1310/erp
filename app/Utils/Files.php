@@ -9,6 +9,8 @@
 namespace App\Utils;
 
 
+use Chumper\Zipper\Zipper;
+
 class Files
 {
     protected static $files;
@@ -49,5 +51,23 @@ class Files
             }
         }
         return self::$files;
+    }
+
+
+
+    public static function extraeZIP($ruta_origen, $ruta_destino = "")
+    {
+        if($ruta_destino == ""){
+            $ruta_destino = substr($ruta_origen,0,strlen($ruta_origen)-4);
+        }
+        try{
+            $zipper = new Zipper();
+            $zipper->make(public_path($ruta_origen))->extractTo(public_path($ruta_destino));
+            $zipper->delete();
+        }catch (\Exception $e){
+            abort(500, "Hubo un error al extraer el archivo zip proporcionado. Ruta Origen: ".$ruta_origen . 'Ruta Destino: '.$ruta_destino.' Ln.' . $e->getLine() . ' ' . $e->getMessage());
+        }
+
+
     }
 }

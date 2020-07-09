@@ -121,6 +121,10 @@ return [
         'xml_sat' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_SAT')),
+        ],
+        'xml_errores' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_XML_ERRORES')),
         ]
     ],
 ];

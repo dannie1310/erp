@@ -15,7 +15,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <span v-if="contenido">
+                            <span v-if="contenido && !procesado">
                                 <table style="width: 100%" class="table table-stripped">
                                     <tbody>
                                         <tr >
@@ -28,46 +28,54 @@
                                     </tbody>
                                 </table>
                             </span>
-                            <span v-else-if="procesado">
+                            <span v-if="procesado">
                                 <h6><i class="fa fa-arrow-circle-right"></i><b>Resultado del procesamiento</b></h6>
                                 <div class="table-responsive">
                                     <table style="width: 100%" class="table table-stripped">
                                         <tbody>
-                                            <tr>
+                                            <tr v-if="resultado.duracion>0">
                                                 <th style="text-align: left" >Duración de procesamiento (segundos):</th>
                                                 <td style="text-align: right">{{resultado.duracion}}</td>
                                             </tr>
-                                            <tr>
+                                            <tr v-if="resultado.nombre_archivo_zip>0">
                                                 <th style="text-align: left" >Nombre de archivo zip:</th>
                                                 <td style="text-align: right">{{resultado.nombre_archivo_zip}}</td>
                                             </tr>
-                                            <tr>
+                                            <tr v-if="resultado.archivos_leidos>0">
                                                 <th style="text-align: left" >Núm. archivos leidos:</th>
                                                 <td style="text-align: right">{{resultado.archivos_leidos}}</td>
                                             </tr>
-                                            <tr>
+                                            <tr v-if="resultado.archivos_cargados>0">
                                                 <th style="text-align: left" >Núm. archivos cargados:</th>
                                                 <td style="text-align: right">{{resultado.archivos_cargados}}</td>
                                             </tr>
-                                            <tr>
+                                            <tr v-if="resultado.proveedores_nuevos>0">
                                                 <th style="text-align: left" >Núm. proveedores cargados:</th>
                                                 <td style="text-align: right">{{resultado.proveedores_nuevos}}</td>
                                             </tr>
-                                            <tr>
+                                            <tr v-if="resultado.archivos_no_cargados>0">
                                                 <th style="text-align: left" >Núm. archivos no cargados:</th>
                                                 <td style="text-align: right">{{resultado.archivos_no_cargados}}</td>
                                             </tr>
-                                            <tr>
+                                            <tr v-if="resultado.archivos_preexistentes>0">
                                                 <td style="text-align: left" >-Núm. archivos preexistentes:</td>
                                                 <td style="text-align: right">{{resultado.archivos_preexistentes}}</td>
                                             </tr>
-                                            <tr>
+                                            <tr v-if="resultado.archivos_receptor_no_valido>0">
                                                 <td style="text-align: left" >-Núm. archivos receptor no válido:</td>
                                                 <td style="text-align: right">{{resultado.archivos_receptor_no_valido}}</td>
                                             </tr>
-                                            <tr>
+                                            <tr v-if="resultado.archivos_no_cargados_error_app>0">
                                                 <td style="text-align: left" >-Núm. archivos error app:</td>
                                                 <td style="text-align: right">{{resultado.archivos_no_cargados_error_app}}</td>
+                                            </tr>
+                                            <tr v-if="resultado.archivos_corruptos>0">
+                                                <td style="text-align: left" >-Núm. archivos corruptos:</td>
+                                                <td style="text-align: right">{{resultado.archivos_corruptos}}</td>
+                                            </tr>
+                                            <tr v-if="resultado.archivos_tipo_incorrecto>0">
+                                                <td style="text-align: left" >-Núm. archivos tipo incorrecto:</td>
+                                                <td style="text-align: right">{{resultado.archivos_tipo_incorrecto}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
