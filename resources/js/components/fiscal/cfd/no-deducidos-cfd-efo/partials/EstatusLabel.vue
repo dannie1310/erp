@@ -1,5 +1,5 @@
 <template>
-    <span class="badge" :style="{'background-color': value.color}">{{ value.descripcion }}</span>
+    <span class="badge" v-if="value.id == 7" :style="{'background-color': '#00a65a'}">{{ value.descripcion }}</span>
 </template>
 <script>
     export default {

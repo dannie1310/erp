@@ -13,6 +13,7 @@ class CFDAutocorreccionObserver
      */
     public function creating(CFDAutocorreccion $partida)
     {
+        $partida->validar();
         $partida->registro = auth()->id();
         $partida->fecha_hora_registro = date('Y-m-d H:i:s');
         $partida->estado = 5;

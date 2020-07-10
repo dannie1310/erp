@@ -1,16 +1,14 @@
 <template>
     <div class="btn-group">
-       <!-- <Show v-bind:id="value.id" v-if="value.show" />
-        <Aplicar v-bind:id="value.id" v-if="value.aplicar"/>-->
+        <Show v-bind:id="value.id" v-if="value.show" />
     </div>
 </template>
 
 <script>
-//    import Aplicar from "../Aplicar";
-  //  import Show from "../Show";
+    import Show from "../Show";
     export default {
         name: "ActionButtons",
-    //    components:{Show, Aplicar},
+        components:{Show},
         props: ['value']
     }
 </script>

@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="row col-md-12" v-if="sin_cfds">
-                    <label><br>NO HAY CFDS</label>
+                    <label><br>NO HAY CFD</label>
                 </div>
             </div>
         </div>
@@ -127,7 +127,7 @@
                 return `[${item.rfc}] - [${item.razon_social}] `
             },
             getEfos() {
-                return this.$store.dispatch('fiscal/efos/index', {
+                return this.$store.dispatch('seguridad/fiscal/efos/index', {
                     params: {include: ['proveedor'], scope: ['definitivo'], sort: 'razon_social', order: 'asc'}
                 }).then(data => {
                     this.efos = data.data;
@@ -137,7 +137,7 @@
             getCFDS()
             {
                 this.cargando =  true;
-                return this.$store.dispatch('fiscal/cfd-sat/index', {
+                return this.$store.dispatch('seguridad/fiscal/cfd-sat/index', {
                     params: {include: ['empresa', 'proveedor'], scope: ['definitivo','porProveedor:' + this.efo.proveedor.id,'exceptoTipo:P']}
                 }).then(data => {
                     this.cfds = data.data;
@@ -149,7 +149,7 @@
                 })
             },
             store() {
-                return this.$store.dispatch('fiscal/autocorreccion/store',  {
+                return this.$store.dispatch('seguridad/fiscal/autocorreccion/store',  {
                     'efo' : this.efo,
                     'cfds' : this.cfds
                 })

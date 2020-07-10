@@ -96,7 +96,7 @@
         methods: {
             procesar(){
                 this.procesando = true;
-                return this.$store.dispatch('fiscal/cfd-sat/procesaDirZIPCFD',
+                return this.$store.dispatch('seguridad/fiscal/cfd-sat/procesaDirZIPCFD',
                 {
                     data: [],
                     config: {

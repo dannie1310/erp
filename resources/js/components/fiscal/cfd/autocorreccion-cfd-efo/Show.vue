@@ -97,7 +97,7 @@
             find() {
                 this.autocorreccion = [];
                 this.cargando = true;
-                return this.$store.dispatch('fiscal/autocorreccion/find', {
+                return this.$store.dispatch('seguridad/fiscal/autocorreccion/find', {
                     id: this.id,
                     params: {include:['efo', 'partidas.cfd.empresa']}
                 }).then(data => {

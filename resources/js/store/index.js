@@ -83,10 +83,6 @@ import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 import incidentePoliza from './modules/contabilidadGeneral/incidente-poliza';
 
-//REPORTES
-
-import reporte from './modules/reportes/reporte';
-
 //CONTRATOS
 import contratoConcepto from './modules/contratos/contrato-concepto';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
@@ -114,11 +110,6 @@ import tipoMovimiento from './modules/finanzas/tipo-movimiento';
 import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
 
-//FISCAL
-import autocorreccion from './modules/fiscal/autocorreccion';
-import CFDSAT from './modules/fiscal/cfd-sat';
-import efos from './modules/fiscal/efos';
-
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import incidencia from './modules/seguridad/control-interno/incidencia'
@@ -136,8 +127,12 @@ import transaccionEfo from './modules/seguridad/finanzas/transaccion-efo';
 import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
-//CONTROL INTERNO
- import empresaFacturera from './modules/seguridad/fiscal/empresa-facturera';
+//SEGURIDAD/FISCAL
+import autocorreccion from './modules/seguridad/fiscal/autocorreccion';
+import CFDSAT from './modules/seguridad/fiscal/cfd-sat';
+import efos from './modules/seguridad/fiscal/efos';
+import empresaFacturera from './modules/seguridad/fiscal/empresa-facturera';
+import noDeducido from './modules/seguridad/fiscal/no-deducido';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -151,6 +146,8 @@ import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
 
+//REPORTES
+import reporte from './modules/reportes/reporte';
 
 //SCI
 import marca from "./modules/sci/marca";
@@ -261,10 +258,6 @@ export default new Vuex.Store({
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/incidente-poliza' : incidentePoliza,
 
-        'fiscal/autocorreccion' : autocorreccion,
-        'fiscal/cfd-sat': CFDSAT,
-        'fiscal/efos' : efos,
-
         'reportes/reporte': reporte,
 
         'igh/usuario': usuario,
@@ -290,7 +283,11 @@ export default new Vuex.Store({
         'seguridad/tipo-proyecto': tipoProyecto,
         'seguridad/lista-empresas': listaEmpresas,
 
-        'controlInterno/empresa-facturera': empresaFacturera,
+        'seguridad/fiscal/empresa-facturera': empresaFacturera,
+        'seguridad/fiscal/autocorreccion' : autocorreccion,
+        'seguridad/fiscal/cfd-sat': CFDSAT,
+        'seguridad/fiscal/efos' : efos,
+        'seguridad/fiscal/no-deducido' : noDeducido,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

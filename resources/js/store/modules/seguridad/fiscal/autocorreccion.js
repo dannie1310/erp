@@ -55,7 +55,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar la Autocorrección de los CFDS",
+                    title: "Registrar la Autocorrección de los CFD",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {

@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-12"  v-if="$root.can('registrar_autocorreccion_cfd_efo', true)" :disabled="cargando">
+        <div class="col-12"  v-if="$root.can('registrar_no_deducido_cfd_efo', true)" :disabled="cargando">
             <button @click="create" class="btn btn-app btn-info float-right">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
@@ -58,10 +58,10 @@
             },
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('fiscal/autocorreccion/paginate', { params: this.query})
+                return this.$store.dispatch('seguridad/fiscal/no-deducido/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('fiscal/autocorreccion/SET_AUTOCORRECCIONES', data.data);
-                        this.$store.commit('fiscal/autocorreccion/SET_META', data.meta);
+                        this.$store.commit('seguridad/fiscal/no-deducido/SET_NODEDUCIDOS', data.data);
+                        this.$store.commit('seguridad/fiscal/no-deducido/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -84,30 +84,29 @@
             }
         },
         computed: {
-            autocorrecciones(){
-                return this.$store.getters['fiscal/autocorreccion/autocorrecciones'];
+            noDeducidos(){
+                return this.$store.getters['seguridad/fiscal/no-deducido/noDeducidos'];
             },
             meta(){
-                return this.$store.getters['fiscal/autocorreccion/meta'];
+                return this.$store.getters['seguridad/fiscal/no-deducido/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            autocorrecciones: {
-                handler(autocorrecciones) {
+            noDeducidos: {
+                handler(noDeducidos) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = autocorrecciones.map((autocorreccion, i) => ({
+                    self.$data.data = noDeducidos.map((noDeducido, i) => ({
                         index: (i + 1) + self.query.offset,
-                        proveedor: autocorreccion.proveedor.razon_social,
-                        fecha: autocorreccion.fecha,
-                        estado: this.getEstadoCFD(autocorreccion.estatus.id, autocorreccion.estatus.descripcion),
+                        proveedor: noDeducido.proveedor.razon_social,
+                        fecha: noDeducido.fecha,
+                        estado: noDeducido.estatus,
                         buttons: $.extend({}, {
-                            id: autocorreccion.id,
-                            aplicar: (self.$root.can('aplicar_autocorreccion_cfd_efo',true) && autocorreccion.estatus.id == 5) ? true : false,
-                            show : self.$root.can('consultar_autocorreccion_cfd_efo', true) ? true : false
+                            id: noDeducido.id,
+                            show : self.$root.can('consultar_no_deducido_cfd_efo', true) ? true : false
                         })
                     }));
                 },

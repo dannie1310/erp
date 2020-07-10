@@ -165,7 +165,7 @@
                 var formData = new FormData();
                 formData.append('archivo_zip',  this.file_zip);
                 formData.append('nombre_archivo',  this.file_zip_name);
-                return this.$store.dispatch('fiscal/cfd-sat/cargarZIP',
+                return this.$store.dispatch('seguridad/fiscal/cfd-sat/cargarZIP',
                 {
                     data: formData,
                     config: {
