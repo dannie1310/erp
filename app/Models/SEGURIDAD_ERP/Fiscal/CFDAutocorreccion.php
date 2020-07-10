@@ -43,12 +43,19 @@ class CFDAutocorreccion extends Model
         return $this->belongsTo(CtgEstadoCFD::class, 'estado', 'id');
     }
 
-    public function validar()
+    public function validarCreacion()
     {
         if ($this->cfdSat->estado != 0)
         {
             abort(400, "El CFD (" . $this->uuid . ") tiene estado: ".$this->cfdSat->ctgEstado->descripcion.".");
         }
+    }
 
+    public function validarAplicacion()
+    {
+        if ($this->cfdSat->estado != 5)
+        {
+            abort(400, "El CFD (" . $this->uuid . ") tiene estado: ".$this->cfdSat->ctgEstado->descripcion.".");
+        }
     }
 }

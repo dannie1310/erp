@@ -121,6 +121,7 @@ class Autocorreccion extends Model
         foreach ($data['partidas'] as $partida)
         {
             $buscar_partida = $this->partidas->find($partida['id']);
+            $buscar_partida->validarAplicacion();
             if(array_key_exists('selected',$partida) == false || $partida['selected'])
             {
                 $buscar_partida->update([
