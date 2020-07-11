@@ -21,9 +21,21 @@ class EFOS extends Model
     protected $table = 'SEGURIDAD_ERP.Fiscal.efos';
     public $timestamps = false;
 
+    protected $fillable = [
+        'rfc',
+        'razon_social',
+        'estado',
+        'id_proveedor_sat'
+    ];
+
     public function efo()
     {
         return $this->belongsTo(CtgEfos::class,"rfc","rfc");
+    }
+
+    public function cambios()
+    {
+        return $this->hasMany(EFOSCambio::class, "id_efo", "id");
     }
 
     public function estadoEFOS()
@@ -108,7 +120,7 @@ class EFOS extends Model
            ON (Subquery.id = ListaEmpresasSAT.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P'
+ WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P' and ctg_efos.estado_registro = 1
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -167,7 +179,7 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
            ON (cfd_sat.id = Subquery.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 0) and cfd_sat.tipo_comprobante != 'P'
+ WHERE (efos.estado = 0) and cfd_sat.tipo_comprobante != 'P' and ctg_efos.estado_registro = 1
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -228,7 +240,7 @@ ORDER BY 8 DESC
                      ON (cfd_sat.rfc_emisor = efos.rfc))
                  INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
                     ON (efos.razon_social = ctg_efos.razon_social)
-           WHERE ctg_efos.estado = 0 and cfd_sat.tipo_comprobante != 'P'
+           WHERE ctg_efos.estado = 0 and cfd_sat.tipo_comprobante != 'P' and ctg_efos.estado_registro = 1
           GROUP BY ListaEmpresasSAT.id, ListaEmpresasSAT.nombre_corto)
          Subquery
             ON (ListaEmpresasSAT.id = Subquery.id))
@@ -241,7 +253,7 @@ ORDER BY 8 DESC
            ON (cfd_sat.id = cfd_autocorregidos.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 0) AND (cfd_autocorregidos.id IS NULL)
+ WHERE (efos.estado = 0) AND (cfd_autocorregidos.id IS NULL) and ctg_efos.estado_registro = 1
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -372,5 +384,23 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
         $partidas_completas[$i]["color_hex"] = "#FFF";
         $partidas_completas[$i]["color_rgb"] = [255,255,255];
         return $partidas_completas;
+    }
+
+    public static function actualizaEFOS($proceso = null) {
+        /*
+         * Detectar nuevos EFOS, presuntos o definitivos
+         * Actualizar estado de EFOS existentes
+         * */
+        $nuevos = CtgEfos::esProveedor()->noRegistrado()->esPresuntoDefinitivo()->get();
+        foreach($nuevos as $nuevo){
+            $efo = EFOS::create([
+                "rfc"=>$nuevo->rfc,
+                "razon_social"=>$nuevo->razon_social,
+                "estado"=>$nuevo->estado,
+                "id_proveedor_sat"=>$nuevo->proveedor->id,
+            ]);
+            $cambios = $efo->cambios;
+            dd($cambios);
+        }
     }
 }

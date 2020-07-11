@@ -16,6 +16,8 @@ class ProcesamientoListaEfos extends Model
         'id_usuario',
         'fecha_actualizacion_sat',
         'fecha_actualizacion_sat_txt',
+        'nombre_archivo',
+        'hash_file'
     ];
 
     public static function getFechaActualizacion(){
