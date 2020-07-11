@@ -386,7 +386,7 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
         return $partidas_completas;
     }
 
-    public static function actualizaEFOS($proceso = null) {
+    public static function actualizaEFOS($procesamiento = null, $carga = null) {
         /*
          * Detectar nuevos EFOS, presuntos o definitivos
          * Actualizar estado de EFOS existentes
@@ -400,7 +400,17 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
                 "id_proveedor_sat"=>$nuevo->proveedor->id,
             ]);
             $cambios = $efo->cambios;
-            dd($cambios);
+
+            foreach ($cambios as $cambio)
+            {
+                if($procesamiento){
+                    $cambio->id_procesamiento_efos = $procesamiento->id;
+                } else if($carga){
+                    $cambio->id_carga_cfd = $carga->id;
+                }
+
+                $cambio->save();
+            }
         }
     }
 }

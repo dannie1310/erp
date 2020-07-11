@@ -13,7 +13,7 @@ use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 
 class EFOSObserver
 {
-    public function creating(EFOS $efos){
+    public function created(EFOS $efos){
         $efos->cambios()->create([
             "id_efo"=> $efos->id,
             "estado_final"=>$efos->estado

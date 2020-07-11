@@ -104,9 +104,9 @@ class CtgEfos extends Model
                     ]
                 );
             }
-       
+
             $this->guardarCsv($file, $file_fingerprint);
-            EFOS::actualizaEFOS();
+            EFOS::actualizaEFOS($procesamiento);
 
             DB::connection('seguridad')->commit();
             return [];
@@ -127,7 +127,7 @@ class CtgEfos extends Model
         $estado = array('DEFINITIVO', 'DESVIRTUADO', 'PRESUNTO', 'SENTENCIAFAVORABLE');
         $fecha_informacion = '';
         while(!feof($myfile)) {
-            
+
             $renglon = explode(",",fgets($myfile));
             if($linea ==1){
                 $fecha_informacion = $renglon[0];
@@ -150,7 +150,7 @@ class CtgEfos extends Model
                     }
 
                 }
-                
+
 
                 $fecha_desvirtuado_f = '';
                 $fecha_definitivo_f = '';
@@ -163,7 +163,7 @@ class CtgEfos extends Model
                         $razon = $razon.$renglon[$t];
                         $t++;
                     }
-                    
+
                     if($renglon[$t + 2] == '' || strlen($razon) === 0)
                     {
                         abort(400,(($renglon[$t + 2] =='')? "--Verificar Fecha de Publicación de la página del  SAT \n":"")
@@ -188,7 +188,7 @@ class CtgEfos extends Model
                         {
                             $fecha_presunto_f = $fecha_presunto_obj->format('Y-m-d');
                         }
-                    }                   
+                    }
 
                     $fecha_desvirtuado = (!isset($renglon[$t + 5])) ? '' : $renglon[$t + 5];
                     if($fecha_desvirtuado != ''){
@@ -200,9 +200,9 @@ class CtgEfos extends Model
                         {
                             $fecha_desvirtuado_f = $fecha_desvirtuado_obj->format('Y-m-d');
                         }
-                    }                   
-                   
-                    $fecha_definitivo = (!isset($renglon[$t + 9])) ? '' : $renglon[$t + 9];                    
+                    }
+
+                    $fecha_definitivo = (!isset($renglon[$t + 9])) ? '' : $renglon[$t + 9];
                     if($fecha_definitivo != '')
                     {
                         // $fecha_definitivo = str_replace(' ', '', $fecha_definitivo);
@@ -214,7 +214,7 @@ class CtgEfos extends Model
                             $fecha_definitivo_f = $fecha_definitivo_obj->format('Y-m-d');
                         }
                     }
-                    
+
                     $fecha_favorable = (!isset($renglon[$t + 12])) ? '' : $renglon[$t + 12];
                     if($fecha_favorable != '')
                     {
@@ -227,7 +227,7 @@ class CtgEfos extends Model
                             $fecha_favorable_f = $fecha_favorable_obj->format('Y-m-d');
                         }
                     }
-                    
+
                     try{
                         $content[] = array(
                             'rfc' => $renglon[1],
@@ -246,7 +246,7 @@ class CtgEfos extends Model
                     $linea++;
                     $t = 2;
                     $razon = '';
-                    
+
                 }
             }else
             {
@@ -327,7 +327,7 @@ class CtgEfos extends Model
 
     private function getNuevosEFOS(){
         $efos = DB::select("
-        
+
         ")
         ;
         $efos = array_map(function ($value) {
