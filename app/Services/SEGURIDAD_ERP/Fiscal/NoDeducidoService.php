@@ -4,6 +4,7 @@
 namespace App\Services\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoDeducido;
 use App\Repositories\SEGURIDAD_ERP\Fiscal\NoDeducido\Repository;
 
@@ -22,7 +23,19 @@ class NoDeducidoService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $nodeducido = $this->repository;
+
+        if(isset($data['fecha_hora_registro'])) {
+            $nodeducido = $nodeducido->where( [['fecha_hora_registro', '=', request( 'fecha_hora_registro' )]] );
+        }
+        if(isset($data['id_proveedor_sat'])){
+            $proveedores = ProveedorSAT::where([['razon_social', 'LIKE', '%'.request('id_proveedor_sat').'%']])->get();
+            foreach ($proveedores as $a){
+                $nodeducido = $nodeducido->whereOr([['id_proveedor_sat', '=', $a->id]]);
+            }
+        }
+
+        return $nodeducido->paginate($data);
     }
 
     public function index($data)

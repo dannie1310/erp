@@ -106,4 +106,9 @@ class NoDeducido extends Model
         }
         return $suma;
     }
+
+    public function getCantidadPartidasAttribute()
+    {
+        return number_format($this->partidas->count(),0);
+    }
 }

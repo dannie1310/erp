@@ -620,8 +620,8 @@ export const routes = [
                                 name: 'no-deducidos-cfd-efos',
                                 component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Index.vue').default,
                                 meta: {
-                                    title: 'CFD No Deducidos de EFOS',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'CFD No Deducidos'},
+                                    title: 'CFD No Deducidos de EFOS Definitivos',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'CFD NO DEDUCIDOS'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_no_deducido_cfd_efo',
                                     general: true,
@@ -633,7 +633,7 @@ export const routes = [
                                 name: 'no-deducidos-cfd-efos-create',
                                 component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Create.vue').default,
                                 meta: {
-                                    title: 'Registrar CFD No Deducidos EFOS Definitivos',
+                                    title: 'Registrar CFD No Deducidos de EFOS Definitivos',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'no-deducidos-cfd-efos'},
                                     middleware: [auth, permission],
                                     permission: ['registrar_no_deducido_cfd_efo'],

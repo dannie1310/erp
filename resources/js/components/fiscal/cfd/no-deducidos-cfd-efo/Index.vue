@@ -33,9 +33,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Proveedor', field: 'proveedor', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Proveedor', field: 'id_proveedor_sat', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                    { title: 'Fecha', field: 'fecha_hora_registro', sortable: true},
+                    { title: 'Cantidad de CFD', field:'cantidad_partidas',  tdClass: 'td_money', sortable: false},
+                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default, sortable: false},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -67,21 +68,6 @@
                         this.cargando = false;
                     })
             },
-            getEstadoCFD(estado, descripcion) {
-                let val = parseInt(estado);
-                switch (val) {
-                    case 5:
-                        return {
-                            color: '#f39c12',
-                            descripcion: descripcion
-                        }
-                    case 6:
-                        return {
-                            color: '#00a65a',
-                            descripcion: descripcion
-                        }
-                }
-            }
         },
         computed: {
             noDeducidos(){
@@ -101,8 +87,9 @@
                     self.$data.data = []
                     self.$data.data = noDeducidos.map((noDeducido, i) => ({
                         index: (i + 1) + self.query.offset,
-                        proveedor: noDeducido.proveedor.razon_social,
-                        fecha: noDeducido.fecha,
+                        id_proveedor_sat: noDeducido.proveedor.razon_social,
+                        fecha_hora_registro: noDeducido.fecha,
+                        cantidad_partidas: noDeducido.cantidad_partidas,
                         estado: noDeducido.estatus,
                         buttons: $.extend({}, {
                             id: noDeducido.id,

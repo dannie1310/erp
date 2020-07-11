@@ -31,7 +31,8 @@ class NoDeducidoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'fecha' => $model->fecha_hora_registro_format,
-            'total_partidas' => $model->total_partidas
+            'total_partidas' => $model->total_partidas,
+            'cantidad_partidas' => $model->cantidad_partidas
         ];
     }
 
