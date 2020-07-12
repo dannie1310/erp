@@ -159,8 +159,9 @@ class CFDSATService
             $zipper->make(public_path("uploads/contabilidad/XML_errores/".$this->carga->id.".zip"))->add(public_path("uploads/contabilidad/XML_errores/".$this->carga->id));
             $zipper->close();
         }
+        $this->repository->finalizaCarga($this->carga);
 
-        event(new FinalizaCargaCFD($this->carga));
+        //event(new FinalizaCargaCFD($this->carga));
         $this->carga->load("usuario");
 
         return $this->carga;
@@ -493,7 +494,7 @@ class CFDSATService
                 }
             }
         } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
+            //abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
             return 0;
         }

@@ -10,6 +10,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOSCambio;
 use Illuminate\Database\Eloquent\Model;
 
 class CargaCFDSAT extends Model
@@ -40,6 +41,11 @@ class CargaCFDSAT extends Model
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'usuario_cargo', 'idusuario');
+    }
+
+    public function cambios()
+    {
+        return $this->hasMany(EFOSCambio::class, "id_carga_cfd", "id");
     }
 
 }

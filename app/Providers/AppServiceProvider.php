@@ -133,6 +133,7 @@ use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
@@ -263,8 +264,9 @@ use App\Observers\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
-use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver; 
-use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver; 
+use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
 use App\Observers\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSolicitanteObserver;
@@ -513,6 +515,10 @@ class AppServiceProvider extends ServiceProvider
         LogEdicion::observe(LogEdicionObserver::class);
         CargaCFDSAT::observe(CargaCFDSATObserver::class);
         SolicitudEdicion::observe(SolicitudEdicionObserver::class);
+
+        /*Fiscal*/
+
+        EFOS::observe(EFOSObserver::class);
     }
 
     /**
