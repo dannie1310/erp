@@ -272,8 +272,10 @@ class CtgEfos extends Model
         $fecha = str_replace('-', '/', $fecha);
         $fecha_rev = explode('/', $fecha);
         $fecha_rev = array_slice($fecha_rev,0,3);
-        if(\strlen($fecha_rev[2]) == 2){
-            $fecha_rev[2] = '20' . $fecha_rev[2];
+        if(key_exists(2,$fecha_rev)){
+            if(\strlen($fecha_rev[2]) == 2){
+                $fecha_rev[2] = '20' . $fecha_rev[2];
+            }
         }
         return  implode('/', $fecha_rev);
     }
