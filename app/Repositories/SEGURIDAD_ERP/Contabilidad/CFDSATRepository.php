@@ -12,6 +12,7 @@ use App\Informes\CFDEmpresaMes;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +52,10 @@ class CFDSATRepository extends Repository implements RepositoryInterface
 
     public function iniciaCarga($nombre_archivo){
         return $this->model->carga()->create(["nombre_archivo_zip"=>$nombre_archivo]);
+    }
+
+    public function finalizaCarga($carga){
+        EFOS::actualizaEFOS(null,$carga);
     }
 
     public function getIdProveedorSAT($datos, $id_empresa){

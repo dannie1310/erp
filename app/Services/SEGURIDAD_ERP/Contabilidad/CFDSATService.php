@@ -159,8 +159,9 @@ class CFDSATService
             $zipper->make(public_path("uploads/contabilidad/XML_errores/".$this->carga->id.".zip"))->add(public_path("uploads/contabilidad/XML_errores/".$this->carga->id));
             $zipper->close();
         }
+        $this->repository->finalizaCarga($this->carga);
 
-        event(new FinalizaCargaCFD($this->carga));
+        //event(new FinalizaCargaCFD($this->carga));
         $this->carga->load("usuario");
 
         return $this->carga;

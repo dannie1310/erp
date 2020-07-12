@@ -17,7 +17,8 @@ class EFOSObserver
         $efos->cambios()->create([
             "id_efo"=> $efos->id,
             "estado_final"=>$efos->estado,
-            "id_procesamiento_efos"=>$efos->id_procesamiento_registro
+            "id_procesamiento_efos"=>$efos->id_procesamiento_registro,
+            "id_carga_cfd"=>$efos->id_carga_cfd,
         ]);
     }
 

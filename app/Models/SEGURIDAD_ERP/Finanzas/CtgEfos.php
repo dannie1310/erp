@@ -71,13 +71,14 @@ class CtgEfos extends Model
         $file_fingerprint = hash_file('md5', $file);
         if(ProcesamientoListaEfos::where('hash_file','=', $file_fingerprint)->first())
         {
-            //abort(500, 'Archivo CSV registrado previamente');
+            abort(500, 'Archivo CSV registrado previamente');
         }
 
         CtgEfos::where("estado_registro","=",1)->update(["estado_registro"=>0]);
 
         $efos=$this->getCsvData($file);
-        if(!count($efos['data'])>0){
+        if(!count($efos['data'])>0)
+        {
             abort(500, 'El procesamiento del archivo no arrojó resultados');
         }
 

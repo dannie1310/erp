@@ -19,6 +19,7 @@ class EFOSCambio extends Model
 
     protected $fillable = [
         'id_procesamiento_efos',
+        'id_carga_cfd',
         'id_efo',
         'estado_inicial',
         'estado_final'

@@ -24,4 +24,9 @@ class ProcesamientoListaEfos extends Model
         $proceso = ProcesamientoListaEfos::orderBy("id","desc")->first();
         return $proceso->fecha_actualizacion_sat_txt;
     }
+
+    public function cambios()
+    {
+        return $this->hasMany(EFOSCambio::class, "id_procesamiento_efos", "id");
+    }
 }

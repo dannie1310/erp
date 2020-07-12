@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEstadosEfos;
@@ -27,7 +28,8 @@ class EFOS extends Model
         'estado',
         'id_proveedor_sat',
         'id_procesamiento_registro',
-        'id_procesamiento_actualizacion'
+        'id_procesamiento_actualizacion',
+        'id_carga_cfd'
     ];
 
     public function efo()
@@ -388,17 +390,19 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
         return $partidas_completas;
     }
 
-    public static function actualizaEFOS($procesamiento = null, $carga = null) {
-
-        $existentes = CtgEfos::esProveedor()->registrado()->get();
-        $nuevos = CtgEfos::esProveedor()->noRegistrado()->esPresuntoDefinitivo()->get();
-        foreach($existentes as $existente){
-            $efo = EFOS::where("rfc",$existente->rfc)->first();
-            $efo->update([
-                "estado"=>$existente->estado,
-                "id_procesamiento_actualizacion" => $procesamiento->id
-            ]);
+    public static function actualizaEFOS(ProcesamientoListaEfos $procesamiento = null, CargaCFDSAT $carga = null) {
+        if($procesamiento){
+            $existentes = CtgEfos::esProveedor()->registrado()->get();
+            foreach($existentes as $existente){
+                $efo = EFOS::where("rfc",$existente->rfc)->first();
+                $efo->update([
+                    "estado"=>$existente->estado,
+                    "id_procesamiento_actualizacion" => $procesamiento->id
+                ]);
+            }
         }
+
+        $nuevos = CtgEfos::esProveedor()->noRegistrado()->esPresuntoDefinitivo()->get();
         foreach($nuevos as $nuevo){
             if($procesamiento) {
                 EFOS::create([
@@ -414,8 +418,18 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
                     "razon_social" => $nuevo->razon_social,
                     "estado" => $nuevo->estado,
                     "id_proveedor_sat" => $nuevo->proveedor->id,
-                    "id_carga_registro" => $carga->id
+                    "id_carga_cfd" => $carga->id
                 ]);
+            }
+        }
+        if($procesamiento){
+            if($procesamiento->cambios){
+
+            }
+        }
+        if($carga){
+            if($carga->cambios){
+
             }
         }
     }
