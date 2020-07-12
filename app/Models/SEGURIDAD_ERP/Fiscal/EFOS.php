@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEstadosEfos;
@@ -21,9 +22,24 @@ class EFOS extends Model
     protected $table = 'SEGURIDAD_ERP.Fiscal.efos';
     public $timestamps = false;
 
+    protected $fillable = [
+        'rfc',
+        'razon_social',
+        'estado',
+        'id_proveedor_sat',
+        'id_procesamiento_registro',
+        'id_procesamiento_actualizacion',
+        'id_carga_cfd'
+    ];
+
     public function efo()
     {
         return $this->belongsTo(CtgEfos::class,"rfc","rfc");
+    }
+
+    public function cambios()
+    {
+        return $this->hasMany(EFOSCambio::class, "id_efo", "id");
     }
 
     public function estadoEFOS()
@@ -108,7 +124,7 @@ class EFOS extends Model
            ON (Subquery.id = ListaEmpresasSAT.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P'
+ WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P' and ctg_efos.estado_registro = 1
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -167,7 +183,7 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
            ON (cfd_sat.id = Subquery.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 0) and cfd_sat.tipo_comprobante != 'P'
+ WHERE (efos.estado = 0) and cfd_sat.tipo_comprobante != 'P' and ctg_efos.estado_registro = 1
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -228,7 +244,7 @@ ORDER BY 8 DESC
                      ON (cfd_sat.rfc_emisor = efos.rfc))
                  INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
                     ON (efos.razon_social = ctg_efos.razon_social)
-           WHERE ctg_efos.estado = 0 and cfd_sat.tipo_comprobante != 'P'
+           WHERE ctg_efos.estado = 0 and cfd_sat.tipo_comprobante != 'P' and ctg_efos.estado_registro = 1
           GROUP BY ListaEmpresasSAT.id, ListaEmpresasSAT.nombre_corto)
          Subquery
             ON (ListaEmpresasSAT.id = Subquery.id))
@@ -241,7 +257,7 @@ ORDER BY 8 DESC
            ON (cfd_sat.id = cfd_autocorregidos.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 0) AND (cfd_autocorregidos.id IS NULL)
+ WHERE (efos.estado = 0) AND (cfd_autocorregidos.id IS NULL) and ctg_efos.estado_registro = 1
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -372,5 +388,49 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
         $partidas_completas[$i]["color_hex"] = "#FFF";
         $partidas_completas[$i]["color_rgb"] = [255,255,255];
         return $partidas_completas;
+    }
+
+    public static function actualizaEFOS(ProcesamientoListaEfos $procesamiento = null, CargaCFDSAT $carga = null) {
+        if($procesamiento){
+            $existentes = CtgEfos::esProveedor()->registrado()->get();
+            foreach($existentes as $existente){
+                $efo = EFOS::where("rfc",$existente->rfc)->first();
+                $efo->update([
+                    "estado"=>$existente->estado,
+                    "id_procesamiento_actualizacion" => $procesamiento->id
+                ]);
+            }
+        }
+
+        $nuevos = CtgEfos::esProveedor()->noRegistrado()->esPresuntoDefinitivo()->get();
+        foreach($nuevos as $nuevo){
+            if($procesamiento) {
+                EFOS::create([
+                    "rfc" => $nuevo->rfc,
+                    "razon_social" => $nuevo->razon_social,
+                    "estado" => $nuevo->estado,
+                    "id_proveedor_sat" => $nuevo->proveedor->id,
+                    "id_procesamiento_registro" => $procesamiento->id
+                ]);
+            } else if($carga){
+                EFOS::create([
+                    "rfc" => $nuevo->rfc,
+                    "razon_social" => $nuevo->razon_social,
+                    "estado" => $nuevo->estado,
+                    "id_proveedor_sat" => $nuevo->proveedor->id,
+                    "id_carga_cfd" => $carga->id
+                ]);
+            }
+        }
+        if($procesamiento){
+            if($procesamiento->cambios){
+
+            }
+        }
+        if($carga){
+            if($carga->cambios){
+
+            }
+        }
     }
 }
