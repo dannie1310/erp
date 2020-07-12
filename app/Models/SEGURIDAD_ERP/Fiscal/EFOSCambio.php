@@ -18,7 +18,7 @@ class EFOSCambio extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id_procesamiento',
+        'id_procesamiento_efos',
         'id_efo',
         'estado_inicial',
         'estado_final'

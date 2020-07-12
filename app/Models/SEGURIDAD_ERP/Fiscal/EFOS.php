@@ -25,7 +25,9 @@ class EFOS extends Model
         'rfc',
         'razon_social',
         'estado',
-        'id_proveedor_sat'
+        'id_proveedor_sat',
+        'id_procesamiento_registro',
+        'id_procesamiento_actualizacion'
     ];
 
     public function efo()
@@ -387,29 +389,33 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
     }
 
     public static function actualizaEFOS($procesamiento = null, $carga = null) {
-        /*
-         * Detectar nuevos EFOS, presuntos o definitivos
-         * Actualizar estado de EFOS existentes
-         * */
+
+        $existentes = CtgEfos::esProveedor()->registrado()->get();
         $nuevos = CtgEfos::esProveedor()->noRegistrado()->esPresuntoDefinitivo()->get();
-        foreach($nuevos as $nuevo){
-            $efo = EFOS::create([
-                "rfc"=>$nuevo->rfc,
-                "razon_social"=>$nuevo->razon_social,
-                "estado"=>$nuevo->estado,
-                "id_proveedor_sat"=>$nuevo->proveedor->id,
+        foreach($existentes as $existente){
+            $efo = EFOS::where("rfc",$existente->rfc)->first();
+            $efo->update([
+                "estado"=>$existente->estado,
+                "id_procesamiento_actualizacion" => $procesamiento->id
             ]);
-            $cambios = $efo->cambios;
-
-            foreach ($cambios as $cambio)
-            {
-                if($procesamiento){
-                    $cambio->id_procesamiento_efos = $procesamiento->id;
-                } else if($carga){
-                    $cambio->id_carga_cfd = $carga->id;
-                }
-
-                $cambio->save();
+        }
+        foreach($nuevos as $nuevo){
+            if($procesamiento) {
+                EFOS::create([
+                    "rfc" => $nuevo->rfc,
+                    "razon_social" => $nuevo->razon_social,
+                    "estado" => $nuevo->estado,
+                    "id_proveedor_sat" => $nuevo->proveedor->id,
+                    "id_procesamiento_registro" => $procesamiento->id
+                ]);
+            } else if($carga){
+                EFOS::create([
+                    "rfc" => $nuevo->rfc,
+                    "razon_social" => $nuevo->razon_social,
+                    "estado" => $nuevo->estado,
+                    "id_proveedor_sat" => $nuevo->proveedor->id,
+                    "id_carga_registro" => $carga->id
+                ]);
             }
         }
     }

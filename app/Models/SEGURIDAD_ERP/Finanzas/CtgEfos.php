@@ -325,6 +325,10 @@ class CtgEfos extends Model
         return $query->doesnthave("efos");
     }
 
+    public function scopeRegistrado($query){
+        return $query->whereHas("efos");
+    }
+
     private function getNuevosEFOS(){
         $efos = DB::select("
 
