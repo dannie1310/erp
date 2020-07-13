@@ -8,6 +8,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use App\Events\CambioEFOS;
 use App\Events\FinalizaCargaCFD;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
@@ -162,6 +163,9 @@ class CFDSATService
         $this->repository->finalizaCarga($this->carga);
 
         event(new FinalizaCargaCFD($this->carga));
+        if($this->carga->cambios){
+            event(new CambioEFOS($this->carga->cambios));
+        }
         $this->carga->load("usuario");
 
         return $this->carga;

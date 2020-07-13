@@ -3,6 +3,7 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
+use App\Events\CambioEFOS;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use DateTime;
@@ -110,6 +111,9 @@ class CtgEfos extends Model
             EFOS::actualizaEFOS($procesamiento);
 
             DB::connection('seguridad')->commit();
+            if($procesamiento->cambios){
+                event(new CambioEFOS($procesamiento->cambios));
+            }
             return [];
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
