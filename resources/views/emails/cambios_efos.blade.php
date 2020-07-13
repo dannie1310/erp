@@ -16,7 +16,6 @@
             <h3><i class="fa fa-arrow-circle-right"></i><b>Cambios en EFOS</b></h3>
             <table  class="table table-stripped" >
                 <thead>
-
                 <tr>
                     <th>EFO</th>
                     <th>RFC</th>
@@ -36,7 +35,7 @@
                             <td >{{$cambio->efos->rfc}}</td>
                             <td >{{$cambio->estado_inicial_txt}}</td>
                             <td >{{$cambio->estado_final_txt}}</td>
-                            <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                            <td style="text-align: right">${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
                         </tr>
                     @endforeach
                 @endif
@@ -50,7 +49,7 @@
                         <td >{{$cambio->efos->rfc}}</td>
                         <td >{{$cambio->estado_inicial_txt}}</td>
                         <td >{{$cambio->estado_final_txt}}</td>
-                        <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                        <td style="text-align: right">${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
                     </tr>
                 @endforeach
                 @endif
@@ -64,7 +63,7 @@
                             <td >{{$cambio->efos->rfc}}</td>
                             <td >{{$cambio->estado_inicial_txt}}</td>
                             <td >{{$cambio->estado_final_txt}}</td>
-                            <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                            <td style="text-align: right">${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
                         </tr>
                     @endforeach
                 @endif
@@ -78,7 +77,7 @@
                             <td >{{$cambio->efos->rfc}}</td>
                             <td >{{$cambio->estado_inicial_txt}}</td>
                             <td >{{$cambio->estado_final_txt}}</td>
-                            <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                            <td style="text-align: right">${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
                         </tr>
                     @endforeach
                 @endif
@@ -92,7 +91,7 @@
                             <td >{{$cambio->efos->rfc}}</td>
                             <td >{{$cambio->estado_inicial_txt}}</td>
                             <td >{{$cambio->estado_final_txt}}</td>
-                            <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                            <td style="text-align: right" >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
                         </tr>
                     @endforeach
                 @endif
