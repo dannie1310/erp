@@ -14,25 +14,88 @@
     <div class="row">
         <div class="col-md-5" >
             <h3><i class="fa fa-arrow-circle-right"></i><b>Cambios en EFOS</b></h3>
-            <table  class="table table-stripped">
+            <table  class="table table-stripped" >
                 <thead>
+
                 <tr>
                     <th>EFO</th>
                     <th>RFC</th>
                     <th>Estado Inicial</th>
                     <th>Estado Final</th>
+                    <th>Monto</th>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($cambios as $cambio)
-                <tr >
-                    <td >{{$cambio->efos->razon_social}}</td>
-                    <td >{{$cambio->efos->rfc}}</td>
-                    <td >{{$cambio->estado_inicial}}</td>
-                    <td >{{$cambio->estado_final}}</td>
-                </tr>
+                @if(count($cambios->where("estado_final",0))>0)
+                    <tr style="background-color: #aaaaaa">
+                        <td colspan="5">Nuevos Definitivos</td>
+                    </tr>
+                    @foreach($cambios->where("estado_final",0) as $cambio)
+                        <tr >
+                            <td >{{$cambio->efos->razon_social}}</td>
+                            <td >{{$cambio->efos->rfc}}</td>
+                            <td >{{$cambio->estado_inicial_txt}}</td>
+                            <td >{{$cambio->estado_final_txt}}</td>
+                            <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                        </tr>
+                    @endforeach
+                @endif
+                @if(count($cambios->where("estado_final",2))>0)
+                    <tr style="background-color: #aaaaaa">
+                        <td colspan="5">Nuevos Presuntos</td>
+                    </tr>
+                    @foreach($cambios->where("estado_final",2) as $cambio)
+                    <tr >
+                        <td >{{$cambio->efos->razon_social}}</td>
+                        <td >{{$cambio->efos->rfc}}</td>
+                        <td >{{$cambio->estado_inicial_txt}}</td>
+                        <td >{{$cambio->estado_final_txt}}</td>
+                        <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                    </tr>
                 @endforeach
-
+                @endif
+                @if(count($cambios->where("estado_final",1))>0)
+                    <tr style="background-color: #aaaaaa">
+                        <td colspan="5">Nuevos Desvirtuados</td>
+                    </tr>
+                    @foreach($cambios->where("estado_final",1) as $cambio)
+                        <tr >
+                            <td >{{$cambio->efos->razon_social}}</td>
+                            <td >{{$cambio->efos->rfc}}</td>
+                            <td >{{$cambio->estado_inicial_txt}}</td>
+                            <td >{{$cambio->estado_final_txt}}</td>
+                            <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                        </tr>
+                    @endforeach
+                @endif
+                @if(count($cambios->where("estado_final",3))>0)
+                    <tr style="background-color: #aaaaaa">
+                        <td colspan="5">Nuevos Sentencia Favorable</td>
+                    </tr>
+                    @foreach($cambios->where("estado_final",3) as $cambio)
+                        <tr >
+                            <td >{{$cambio->efos->razon_social}}</td>
+                            <td >{{$cambio->efos->rfc}}</td>
+                            <td >{{$cambio->estado_inicial_txt}}</td>
+                            <td >{{$cambio->estado_final_txt}}</td>
+                            <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                        </tr>
+                    @endforeach
+                @endif
+                @if(count($cambios->where("estado_final",4))>0)
+                <tr style="background-color: #aaaaaa">
+                    <td colspan="5">Nuevos Situación del Contribuyente</td>
+                </tr>
+                    @foreach($cambios->where("estado_final",4) as $cambio)
+                        <tr >
+                            <td >{{$cambio->efos->razon_social}}</td>
+                            <td >{{$cambio->efos->rfc}}</td>
+                            <td >{{$cambio->estado_inicial_txt}}</td>
+                            <td >{{$cambio->estado_final_txt}}</td>
+                            <td >${{number_format($cambio->efos->cfd->where("tipo_comprobante","I")->sum("total")-$cambio->efos->cfd->where("tipo_comprobante","E")->sum("total"),2,".",",")}}</td>
+                        </tr>
+                    @endforeach
+                @endif
                 </tbody>
             </table>
         </div>
