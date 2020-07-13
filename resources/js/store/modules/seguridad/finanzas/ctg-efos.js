@@ -73,7 +73,7 @@ export default {
                                             resolve(data);
                                         })
                                     }else{
-                                        swal("Lista de EFOS actualizados correctamente:"+data, {
+                                        swal("Lista de EFOS actualizada correctamente"+data, {
                                             icon: "success",
                                             timer: 2000,
                                             buttons: false

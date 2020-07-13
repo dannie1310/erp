@@ -19,6 +19,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendIncidenciaCINotification',
         ],
 
+        'App\Events\CambioEFOS' => [
+            'App\Listeners\SendCambiosEFOSNotification',
+        ],
+
         'App\Events\FinalizaProcesamientoLoteBusquedas' => [
             'App\Listeners\SendFinalizaProcesamientoLoteBusquedaNotification',
             ],
