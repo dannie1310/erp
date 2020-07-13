@@ -19,6 +19,7 @@ use App\Models\CADECO\Compras\RequisicionComplemento;
 use App\Models\CADECO\Compras\RequisicionEliminada;
 use App\Models\CADECO\Compras\RequisicionPartidaComplemento;
 use App\Models\CADECO\Compras\MovimientoEliminado;
+use App\Models\CADECO\Compras\OrdenCompraComplemento;
 use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Configuracion\NodoTipo;
@@ -149,6 +150,7 @@ use App\Observers\CADECO\ClienteObserver;
 use App\Observers\CADECO\Compras\AsignacionProveedoresObserver;
 use App\Observers\CADECO\Compras\AsignacionProveedoresPartidaObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
+use App\Observers\CADECO\Compras\OrdenCompraComplementoObserver;
 use App\Observers\CADECO\Compras\RequisicionComplementoObserver;
 use App\Observers\CADECO\Compras\RequisicionEliminadaObserver;
 use App\Observers\CADECO\Compras\RequisicionPartidaComplementoObserver;
@@ -328,6 +330,7 @@ class AppServiceProvider extends ServiceProvider
             RequisicionComplemento::observe(RequisicionComplementoObserver::class);
             RequisicionEliminada::observe(RequisicionEliminadaObserver::class);
             RequisicionPartidaComplemento::observe(RequisicionPartidaComplementoObserver::class);
+            OrdenCompraComplemento::observe(OrdenCompraComplementoObserver::class);
             SalidaEliminada::observe(SalidaEliminadaObserver::class);
             SolicitudComplemento::observe(SolicitudComplementoObserver::class);
 

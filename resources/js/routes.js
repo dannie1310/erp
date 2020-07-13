@@ -1134,6 +1134,18 @@ export const routes = [
                         }
                     },
                     {
+                        path: ':id/edit',
+                        name: 'asignacion-proveedores-edit',
+                        component: require('./components/compras/asignacion/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Editar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedores', name: 'EDITAR'},
+                            middleware: [auth, context],
+                            // permission: 'registrar_proveedor'
+                        }
+                    },
+                    {
                         path: 'create',
                         name: 'asignacion-proveedores-create',
                         component: require('./components/compras/asignacion/Create').default,
@@ -1249,17 +1261,30 @@ export const routes = [
             {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue').default,
-                children: [{
-                    path: '/',
-                    name: 'orden-compra',
-                    component: require('./components/compras/orden-compra/Index').default,
-                    meta: {
-                        title: 'Ordenes de Compra',
-                        breadcrumb: { parent: 'compras', name: 'ORDENES DE COMPRA' },
-                        middleware: [auth, context, permission],
-                        permission: ['consultar_orden_compra']
-                    }
-                }]
+                children: [
+                    {
+                        path: '/',
+                        name: 'orden-compra',
+                        component: require('./components/compras/orden-compra/Index').default,
+                        meta: {
+                            title: 'Ordenes de Compra',
+                            breadcrumb: { parent: 'compras', name: 'ORDENES DE COMPRA' },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_orden_compra']
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'orden-compra-edit',
+                        props: true,
+                        component: require('./components/compras/orden-compra/Edit').default,
+                        meta: {
+                            title: 'Editar Orden Compra',
+                            breadcrumb: { parent: 'orden-compra', name: 'EDITAR'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
             },
             {
                 path: 'requisicion',

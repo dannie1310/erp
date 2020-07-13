@@ -25,6 +25,15 @@ class AsignacionProveedores extends Model
         'registro',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->whereHas('solicitud');
+        });
+    }
+
     public function estadoAsignacion(){
         return $this->belongsTo(CtgEstadoAsignacionProveedor::class, 'estado', 'id');
     }
@@ -47,6 +56,10 @@ class AsignacionProveedores extends Model
     public function ordenCompraComplemento()
     {
         return $this->belongsTo(OrdenCompraComplemento::class, 'id', 'id_asignacion_proveedor');
+    }
+
+    public function scopePendientes($query){
+        return $query->where('estado', '=', 1);
     }
 
     public function getFechaFormatAttribute(){
@@ -97,5 +110,29 @@ class AsignacionProveedores extends Model
             abort(400, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function getEstadoAsignacionFormatAttribute(){
+        $total = count($this->partidas);
+        $con_Orden = 0;
+        foreach($this->partidas as $partida){
+            if($partida->con_orden_compra){
+                $con_Orden++;
+            }
+        }
+        $res = $total > $con_Orden?1:2;
+        $this->estado = $res;
+        $this->save();
+        return $this->estadoAsignacion->descripcion;
+    }
+
+    public function getOrdenCompraPendienteAttribute(){
+        $partidas = $this->partidas;
+        foreach($partidas as $partida){
+            if(!$partida->con_orden_compra){
+                return true;
+            }
+        }
+        return false;
     }
 }

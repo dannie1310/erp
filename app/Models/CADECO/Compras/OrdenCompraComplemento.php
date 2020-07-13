@@ -16,8 +16,19 @@ class OrdenCompraComplemento extends Model
     public $timestamps = false;
     protected $fillable = [
         'id_transaccion',
+        'plazos_entrega_ejecucion',
         'estatus',
+        'id_forma_pago',
+        'id_forma_pago_credito',
+        'id_tipo_credito',
+        'domicilio_entrega',
+        'otras_condiciones',
+        'fecha_entrega',
+        'con_fianza',
+        'id_tipo_fianza',
         'registro',
+        'timestamp_registro',
+        'id_asignacion_proveedor',
     ];
 
     public function usuario()

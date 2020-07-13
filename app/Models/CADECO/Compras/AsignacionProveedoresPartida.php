@@ -5,6 +5,7 @@ namespace App\Models\CADECO\Compras;
 
 
 use App\Models\CADECO\Material;
+use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompra;
 use Illuminate\Database\Eloquent\Model;
@@ -39,7 +40,7 @@ class AsignacionProveedoresPartida extends Model
     }
 
     public function asignacion(){
-        return $this->belongsTo(AsignacionProveedores::class, 'id', 'id_asignacion_proveedor');
+        return $this->belongsTo(AsignacionProveedores::class, 'id_asignacion_proveedores', 'id');
     }
 
     public function cotizacion()
@@ -56,6 +57,10 @@ class AsignacionProveedoresPartida extends Model
         return $this->belongsTo(ItemSolicitudCompra::class, 'id_item_solicitud', 'id_item');
     }
 
+    public function ordenCompra(){
+        return $this->hasMany(OrdenCompra::class, 'id_referente', 'id_transaccion_cotizacion');
+    }
+
     public function material(){
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
@@ -67,5 +72,9 @@ class AsignacionProveedoresPartida extends Model
     public function getCantidadAsignadaFormatAttribute()
     {
         return number_format($this->cantidad_asignada, 1, '.', ',');
+    }
+
+    public function getConOrdenCompraAttribute(){
+        return $this->cotizacion?$this->ordenCompra()->where('id_moneda', '=', $this->cotizacion->id_moneda)->count() > 0:0;
     }
 }

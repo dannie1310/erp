@@ -94,9 +94,14 @@
                                             <input
                                                 type="number"
                                                 data-vv-as="Folio Requisición"
+                                                name = "folio_requisicion"
+                                                id="folio_requisicion"
                                                 class="form-control"
                                                 placeholder="Folio Requisición"
+                                                v-validate="{min_value:0, max_value: 999999999}"
+                                                :class="{'is-invalid': errors.has('folio_requisicion')}"
                                                 v-model="folio_req"/>
+                                                <div class="invalid-feedback" v-show="errors.has('folio_requisicion')">{{ errors.first('folio_requisicion') }}</div>
                                         </div>
                                     </div>
                                 </div>

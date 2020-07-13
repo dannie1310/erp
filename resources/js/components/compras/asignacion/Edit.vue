@@ -1,8 +1,7 @@
 <template>
     <span>
         <div class="row">
-            <div class="col-12">
-                
+            <div class="col-12">    
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <i class="fa fa-spin fa-spinner fa-2x" v-if="cargando"></i>
@@ -16,7 +15,7 @@
                             <div class="col-md-5" >
                                 <div class="form-group">
                                     <label><b>Usuario Registro Asignación: </b></label>
-                                    {{asignaciones.usuario.nombre}} {{ asignaciones.usuario.apaterno}} {{asignaciones.usuario.amaterno}}
+                                    {{asignaciones.usuario.nombre}}
                                 </div>
                             </div>
                             
@@ -63,6 +62,11 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
+                                <button type="button" class="btn btn-primary pull-right" @click="generarOC"  v-if="asignaciones.asignaciones_pendientes_o_compra">Generar Ordenes de Compra</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <br/>
                                 <div class="col-12 table-responsive">
                                     <table class="table table-striped">
@@ -73,6 +77,7 @@
                                             <tr class="bg-gray-light">
                                                 <th colspan="6" >
                                                     <select
+                                                        :disabled="Object.keys(asignaciones.data).length === 1"
                                                         type="text"
                                                         name="id_transaccion"
                                                         data-vv-as="Razón Social"
@@ -82,6 +87,9 @@
                                                         <option v-for="asignacion in asignaciones.data" :value="asignacion.id_transaccion">{{ asignacion.razon_social }}</option>
                                                     </select>
                                                 </th>
+                                                <!-- <th colspan="2"  v-if="!asignaciones.data[id_transaccion].orden_compra">
+                                                    <button type="button" class="btn btn-primary pull-right" @click="generarOrdenCompraIndividual">Generar Orden Compra</button> 
+                                                </th> -->
                                             </tr>
                                             <tr class="bg-gray-light">
                                                 <th colspan="6" >{{asignaciones.data[id_transaccion].sucursal}}</th>
@@ -121,16 +129,109 @@
                                 </div>
                             </div>
                         </div>
+                       
                     </div>
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12" v-if="Object.keys(asignaciones).length > 0 && asignaciones.asignaciones_con_o_compra > 0">    
+                <div class="invoice p-3 mb-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>
+                                <i class="fa fa-list"></i> Ordenes de Compra Generadas
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Folio O. Compra</th>
+                                            <th>Razón Social</th>
+                                            <th>Concepto</th>
+                                            <th>Fecha</th>
+                                            <th>Monto</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody v-for="(ordenes, i) in asignaciones.data" v-if="ordenes.orden_compra.length > 0">
+                                        <tr v-for="(item, j) in ordenes.orden_compra">
+                                            <td>{{ item.numero_folio_format}}</td>
+                                            <td>{{ ordenes.razon_social}}</td>
+                                            <td :title="item.observaciones">{{ item.observaciones_format}}</td>
+                                            <td>{{ item.fecha_format}}</td>
+                                            <td class="money">{{ item.monto_format}}</td>
+                                            <td>
+                                                <div class="custom-control custom-switch" v-if="$root.can('eliminar_orden_compra')">
+                                                    <input type="checkbox" class="custom-control-input" v-if="!item.entradas_almacen" :id="`enable[${i}-${j}]`" v-model="item.eliminar" >&nbsp;
+                                                    <label class="custom-control-label" :for="`enable[${i}-${j}]`" :title="item.entradas_almacen?'Con Entrada Almacen':'Eliminar'">
+                                                        <i class="fa fa-trash" v-if="!item.entradas_almacen"></i>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-primary pull-right" @click="modalEliminacion" v-if="$root.can('eliminar_orden_compra')" :disabled="!eliminarOrdenes">Eliminar Orden(es) de Compra</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-sn" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> ELIMINAR ORDEN(ES) DE COMPRA</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                            <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
+                                        <div class="col-sm-10">
+                                            <textarea
+                                                name="motivo"
+                                                id="motivo"
+                                                class="form-control"
+                                                v-model="motivo"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Motivo"
+                                                :class="{'is-invalid': errors.has('motivo')}"
+                                            ></textarea>
+                                                <div class="error-label" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-danger" @click="eliminarOC"  :disabled="motivo == ''">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
     </span>
 </template>
 
 <script>
 export default {
-    name: "asignacion-proveedores-show",
+    name: "asignacion-proveedores-edit",
     props: ['id'],
     data() {
         return {
@@ -138,13 +239,26 @@ export default {
             asignaciones:[],
             cotizacion:[],
             id_transaccion:'',
+            motivo:'',
         }
     },
     mounted() {
         this.getAsignacion();
     },
     computed: {
-        
+        eliminarOrdenes(){
+            let cantidad = 0;
+            if(this.asignaciones.data){
+                Object.values(this.asignaciones.data).forEach(item => {
+                    item.orden_compra.forEach(orden => {
+                        if(orden.eliminar){
+                        cantidad = cantidad +1;
+                    }
+                    });
+                });
+            }
+            return cantidad > 0;
+        }
     },
     methods: {
         asignacion(){
@@ -162,14 +276,39 @@ export default {
                     this.cargando = false;
                 })
         },
+        eliminarOC(){
+            this.cargando = true;
+            let ordenes_c = [];
+            Object.values(this.asignaciones.data).forEach(item => {
+                item.orden_compra.forEach(orden => {
+                    if(orden.eliminar){
+                        ordenes_c.push(orden.id);
+                    }
+                });
+                
+            });
+            if(ordenes_c.length > 0){
+                return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:{data:ordenes_c, motivo:this.motivo}}
+                  ).then(data => {
+                    this.getAsignacion();
+                }).finally(()=>{
+                    this.cargando = false;
+                    $(this.$refs.modal).modal('hide');
+                })
+            }else{
+                swal('Atención', 'Seleccione al menos una orden de compra a eliminar', 'warning');
+            }
+        },
+        modalEliminacion(){
+            $(this.$refs.modal).appendTo('body')
+            $(this.$refs.modal).modal('show');
+        },
         getAsignacion(){
             this.cargando = true;
             this.asignacion = [];
             return this.$store.dispatch('compras/asignacion/getAsignacion', {
                     id: this.id,
-                    params:{
-                        
-                    }
+                    params:{}
                 }).then(data => {
                     this.asignaciones = data;
                     this.id_transaccion = Object.keys(data.data)[0];
@@ -184,6 +323,18 @@ export default {
                     }
                 }).then(data => {
                     this.$router.push({name: 'asignacion-proveedores'});
+                }) .finally(() => {
+                    this.descargando = false;
+                })
+        },
+        generarOrdenCompraIndividual(){
+            return this.$store.dispatch('compras/asignacion/generarOrdenIndividual', {
+                    data: {
+                        id_transaccion: this.id_transaccion,
+                        id: this.id,
+                    }
+                }).then(data => {
+                    this.getAsignacion();
                 }) .finally(() => {
                     this.descargando = false;
                 })
