@@ -7,20 +7,16 @@ namespace App\Models\SEGURIDAD_ERP\Fiscal;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Database\Eloquent\Model;
 
-class CFDAutocorreccion extends Model
+class CFDNoDeducido extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones';
+    protected $table = 'SEGURIDAD_ERP.Fiscal.cfd_no_deducidos';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_autocorreccion',
+        'id_no_deducido',
         'registro',
         'fecha_hora_registro',
-        'aprobo',
-        'fecha_hora_aprobacion',
-        'rechazo',
-        'fecha_hora_rechazo',
         'id_cfd_sat',
         'estado',
         'uuid'
@@ -28,9 +24,9 @@ class CFDAutocorreccion extends Model
 
     public $timestamps = false;
 
-    public function autocorreccion()
+    public function noDeducido()
     {
-        return $this->belongsTo(Autocorreccion::class, 'id_autocorreccion', 'id');
+        return $this->belongsTo(NoDeducido::class, 'id_no_deducido', 'id');
     }
 
     public function cfdSat()
@@ -43,17 +39,9 @@ class CFDAutocorreccion extends Model
         return $this->belongsTo(CtgEstadoCFD::class, 'estado', 'id');
     }
 
-    public function validarCreacion()
+    public function validar()
     {
         if ($this->cfdSat->estado != 0)
-        {
-            abort(400, "El CFD (" . $this->uuid . ") tiene estado: ".$this->cfdSat->ctgEstado->descripcion.".");
-        }
-    }
-
-    public function validarAplicacion()
-    {
-        if ($this->cfdSat->estado != 5)
         {
             abort(400, "El CFD (" . $this->uuid . ") tiene estado: ".$this->cfdSat->ctgEstado->descripcion.".");
         }

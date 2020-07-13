@@ -1,7 +1,7 @@
 <template>
     <div class="row">
-        <div class="col-12"  :disabled="cargando">
-            <button  @click="create" title="Crear" class="btn btn-app btn-info float-right"  v-if="$root.can('cargar_bitacora', true)">
+        <div class="col-12"  v-if="$root.can('registrar_autocorreccion_cfd_efo', true)" :disabled="cargando">
+            <button @click="create" class="btn btn-app btn-info float-right">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -24,20 +24,23 @@
 </template>
 
 <script>
+    import Create from './Create'
     export default {
         name: "autocorreccion-cfd-index",
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Proveedor', field: 'numero_folio', thComp: require('../../../../globals/th-Filter').default, sortable: true},
+                    { title: 'Proveedor', field: 'proveedor', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Estado', field: 'estado',  thComp:require('../../../../globals/th-Filter').default, sortable: true },
+                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {include: []},
+                query: {include: ['proveedor'], sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false,
             }
@@ -54,46 +57,59 @@
                 this.$router.push({name: 'autocorreccion-cfd-efos-create'});
             },
             paginate() {
-                /* this.cargando = true;
-               * return this.$store.dispatch('finanzas/pago/paginate', { params: this.query})
+                this.cargando = true;
+                return this.$store.dispatch('seguridad/fiscal/autocorreccion/paginate', { params: this.query})
                      .then(data => {
-                         this.$store.commit('finanzas/pago/SET_PAGOS', data.data);
-                         this.$store.commit('finanzas/pago/SET_META', data.meta);
+                         this.$store.commit('seguridad/fiscal/autocorreccion/SET_AUTOCORRECCIONES', data.data);
+                         this.$store.commit('seguridad/fiscal/autocorreccion/SET_META', data.meta);
                      })
                      .finally(() => {
                          this.cargando = false;
-                     })*/
+                     })
             },
+            getEstadoCFD(estado, descripcion) {
+                let val = parseInt(estado);
+                switch (val) {
+                    case 5:
+                        return {
+                            color: '#f39c12',
+                            descripcion: descripcion
+                        }
+                    case 6:
+                        return {
+                            color: '#00a65a',
+                            descripcion: descripcion
+                        }
+                }
+            }
         },
         computed: {
-            pagos(){
-                return this.$store.getters['finanzas/pago/pagos'];
+            autocorrecciones(){
+                return this.$store.getters['seguridad/fiscal/autocorreccion/autocorrecciones'];
             },
             meta(){
-                return this.$store.getters['finanzas/pago/meta'];
+                return this.$store.getters['seguridad/fiscal/autocorreccion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            pagos: {
-                handler(pagos) {
+            autocorrecciones: {
+                handler(autocorrecciones) {
                     let self = this
                     self.$data.data = []
-                    pagos.forEach(function (pago, i) {
-                        self.$data.data.push({
-                            index: (i + 1) + self.query.offset,
-                            numero_folio: pago.numero_folio_format,
-                            fecha: pago.fecha_format,
-                            destino: pago.destino,
-                            numero_cuenta: pago.cuenta.numero,
-                            observaciones: pago.observaciones.toLocaleUpperCase(),
-                            monto: pago.monto_format,
-                            estado: pago.estado_string,
-                            id_moneda:pago.moneda.nombre,
+                    self.$data.data = autocorrecciones.map((autocorreccion, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        proveedor: autocorreccion.proveedor.razon_social,
+                        fecha: autocorreccion.fecha,
+                        estado: this.getEstadoCFD(autocorreccion.estatus.id, autocorreccion.estatus.descripcion),
+                        buttons: $.extend({}, {
+                            id: autocorreccion.id,
+                            aplicar: (self.$root.can('aplicar_autocorreccion_cfd_efo',true) && autocorreccion.estatus.id == 5) ? true : false,
+                            show : self.$root.can('consultar_autocorreccion_cfd_efo', true) ? true : false
                         })
-                    });
+                    }));
                 },
                 deep: true
             },
