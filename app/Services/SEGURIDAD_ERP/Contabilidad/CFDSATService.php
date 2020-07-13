@@ -161,7 +161,7 @@ class CFDSATService
         }
         $this->repository->finalizaCarga($this->carga);
 
-        //event(new FinalizaCargaCFD($this->carga));
+        event(new FinalizaCargaCFD($this->carga));
         $this->carga->load("usuario");
 
         return $this->carga;
