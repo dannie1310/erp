@@ -163,7 +163,7 @@ class CFDSATService
         $this->repository->finalizaCarga($this->carga);
 
         event(new FinalizaCargaCFD($this->carga));
-        if($this->carga->cambios){
+        if(count($this->carga->cambios)>0){
             event(new CambioEFOS($this->carga->cambios));
         }
         $this->carga->load("usuario");
