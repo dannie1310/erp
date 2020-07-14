@@ -30,7 +30,7 @@ class SolicitudEdicionTransformer extends TransformerAbstract
             'estado_format' => $model->estado_format,
             'estado' => $model->estado,
             'numero_bd' => $model->numero_bd,
-            'tipo_solicitud' => ($model->tipo)?$model->tipo->descripcion:'',
+            'tipo_solicitud' => $model->tipo->descripcion,
             'numero_polizas' => $model->numero_polizas_format,
             'numero_cuentas' => $model->numero_cuentas_format,
             'numero_partidas' => $model->partidas()->count(),
