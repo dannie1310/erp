@@ -48,6 +48,16 @@ class Contrato extends Model
         return '<span>'.str_repeat('<i class="fas fa-angle-right"></i>&nbsp;&nbsp;', substr_count($this->nivel, '.') - 1) . $this->descripcion .'</span>';
     }
 
+    public function getCantidadOriginalFormatAttribute()
+    {
+        return number_format(abs($this->cantidad_original), 2);
+    }
+
+    public function getCantidadPresupuestadaFormatAttribute()
+    {
+        return number_format(abs($this->cantidad_presupuestada), 2);
+    }
+    
     public function getDescripcionGuionNivelFormatAttribute()
     {
         return str_repeat('__', substr_count($this->nivel, '.')) . $this->descripcion;

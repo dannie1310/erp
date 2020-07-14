@@ -18,7 +18,12 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\IncidenciaCI' => [
             'App\Listeners\SendIncidenciaCINotification',
         ],
-        Registered::class => [
+
+        'App\Events\FinalizaProcesamientoLoteBusquedas' => [
+            'App\Listeners\SendFinalizaProcesamientoLoteBusquedaNotification',
+            ],
+
+            Registered::class => [
             SendEmailVerificationNotification::class,
         ],
     ];

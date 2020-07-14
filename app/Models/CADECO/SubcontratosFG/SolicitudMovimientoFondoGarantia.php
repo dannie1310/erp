@@ -30,6 +30,14 @@ class SolicitudMovimientoFondoGarantia extends Model
     protected $with = array('movimientos');
     protected $appends = array('ultimo_movimiento', 'movimiento_autorizacion');
 
+    protected static function boot()
+    {
+        parent::boot();
+        self::addGlobalScope('subcontrato_fondo', function ($query) {
+            return $query->whereHas('fondo_garantia');
+        });
+    }
+
     public function getNumeroFolioFormatAttribute()
     {
         return '# ' . sprintf("%05d", $this->id);

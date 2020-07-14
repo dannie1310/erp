@@ -54,11 +54,12 @@ class CotizacionCompra  extends Transaccion
 
         self::addGlobalScope(function($query) {
             return $query->where('tipo_transaccion', '=', 18)
-            ->where('opciones','=', 1)->where('estado', '!=', 2);
+            ->where('opciones','=', 1)->where('estado', '!=', 2)->whereHas('complemento');
         });
     }
 
-    public function partidas() {
+    public function partidas()
+    {
         return $this->hasMany(CotizacionCompraPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
@@ -280,6 +281,8 @@ class CotizacionCompra  extends Transaccion
                                 'precio_unitario' => $data['precio'][$x],
                                 'descuento' => ($data['descuento_cot'] + $data['descuento'][$x] - (($data['descuento_cot'] * $data['descuento'][$x]) / 100)),
                                 'anticipo' => $data['anticipo'],
+                                'dias_credito' => $data['credito'],
+                                'dias_entrega' => $data['tiempo'],
                                 'no_cotizado' => 0,
                                 'disponibles' => 1,
                                 'id_moneda' => $data['moneda'][$x]
@@ -412,5 +415,38 @@ class CotizacionCompra  extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, 'Error en el proceso de eliminación de la cotización de compra, no se respaldo los items correctamente.');
         }
+    }
+
+    public function getSumaSubtotalPartidasAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            $suma += $partida->total_precio_moneda;
+        }
+        return $suma;
+    }
+
+    public function getIVAPartidasAttribute()
+    {
+        return $this->suma_subtotal_partidas * 0.16;
+    }
+
+    public function getTotalPartidasAttribute()
+    {
+        return $this->suma_subtotal_partidas + $this->iva_Partidas;
+    }
+
+    public function sumaSubtotalPartidas($tipo_moneda)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            if($tipo_moneda == $partida->id_moneda)
+            {
+                $suma += $partida->total_precio_moneda;
+            }
+        }
+        return $suma;
     }
 }

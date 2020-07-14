@@ -34,6 +34,11 @@ class SolicitudEdicionPartidaPoliza extends Model
         return $this->hasMany(SolicitudEdicionPartidaPolizaMovimiento::class,"id_solicitud_partida_poliza","id");
     }
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'bd_contpaq','AliasBDD');
+    }
+
     public function getMontoFormatAttribute()
     {
         return '$ ' . number_format(abs($this->monto),2);

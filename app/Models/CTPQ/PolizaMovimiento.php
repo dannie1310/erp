@@ -18,6 +18,11 @@ class PolizaMovimiento extends Model
     protected $primaryKey = 'Id';
     public $timestamps = false;
 
+    public function poliza()
+    {
+        return $this->belongsTo(Poliza::class, 'IdPoliza', 'Id');
+    }
+
     public function cuenta()
     {
         return $this->belongsTo(Cuenta::class, 'IdCuenta', 'Id');
@@ -63,6 +68,11 @@ class PolizaMovimiento extends Model
         else {
             return "-";
         }
+    }
+
+    public function  getImporteComaFormatAttribute()
+    {
+        return number_format($this->Importe,2,".",",");
     }
 
     public function  getImporteFormatAttribute(){

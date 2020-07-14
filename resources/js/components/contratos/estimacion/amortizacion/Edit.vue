@@ -58,14 +58,13 @@
 <script>
 export default {
     name: "amortizacion-edit",
-    props: ['id', 'estimacion_anticipo'],
+    props: ['id'],
     data() {
         return {
-            descuentos:[],
             cargando:false,
             campo:'',
             anticipo:'',
-            estado:''
+            importe_anticipo:''
         }
     },
     mounted() {
@@ -75,7 +74,7 @@ export default {
             $(this.$refs.modalAmortizacion).modal('hide');
         },
         update() {
-            if(this.campo == this.estimacion_anticipo.monto_anticipo_aplicado)
+            if(this.campo == this.importe_anticipo)
             {
                 swal('Atención', 'El valor de la Amortización de Anticipo es el mismo.', 'warning');
             }
@@ -90,9 +89,17 @@ export default {
             }
         },
         find() {
-            this.anticipo = this.estimacion_anticipo.anticipo_format;
-            this.campo = this.estimacion_anticipo.monto_anticipo_aplicado.toFixed(2);
-            $(this.$refs.modalAmortizacion).modal('show');
+            return this.$store.dispatch('contratos/estimacion/find', {
+                id: this.id,
+                params: {}
+            }).then(data => {
+                this.anticipo = data.anticipo_format;
+                this.campo = data.monto_anticipo_aplicado;
+                this.importe_anticipo = data.monto_anticipo_aplicado;
+                $(this.$refs.modalAmortizacion).modal('show');
+            }).finally(() => {
+                this.cargando = false;
+            })
         },
     }
 

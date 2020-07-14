@@ -43,6 +43,7 @@ import itemContratista from './modules/compras/item-contratista';
 import ordenCompra from './modules/compras/orden-compra';
 import requisicion from './modules/compras/requisicion';
 import solicitudCompra from './modules/compras/solicitud-compra';
+import formaPagoCredito from './modules/compras/forma-pago-credito';
 
 //CONFIGURACION
 import areaCompradora from './modules/configuracion/area-compradora';
@@ -81,6 +82,7 @@ import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
 import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
 import CFDSAT from './modules/contabilidadGeneral/cfd-sat';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
+import incidentePoliza from './modules/contabilidadGeneral/incidente-poliza';
 
 //REPORTES
 
@@ -91,6 +93,7 @@ import contratoConcepto from './modules/contratos/contrato-concepto';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
 import estimacion from './modules/contratos/estimacion';
 import fondoGarantia from './modules/contratos/fondo-garantia';
+import presupuesto from './modules/contratos/presupuesto';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
 
@@ -190,6 +193,8 @@ export default new Vuex.Store({
         'compras/orden-compra' : ordenCompra,
         'compras/requisicion' : requisicion,
         'compras/solicitud-compra' : solicitudCompra,
+        'compras/forma-pago-credito' : formaPagoCredito,
+        
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,
@@ -203,6 +208,7 @@ export default new Vuex.Store({
         'contratos/contrato-proyectado': contratoProyectado,
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
+        'contratos/presupuesto' : presupuesto,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
 
@@ -249,6 +255,8 @@ export default new Vuex.Store({
         'contabilidadGeneral/cfd-sat': CFDSAT,
         'contabilidadGeneral/empresa-contpaq': empresaContpaq,
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
+        'contabilidadGeneral/incidente-poliza' : incidentePoliza,
+
         'reportes/reporte': reporte,
 
         'igh/usuario': usuario,

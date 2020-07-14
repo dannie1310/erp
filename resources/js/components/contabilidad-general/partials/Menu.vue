@@ -14,14 +14,21 @@
                             <p>Pólizas</p>
                         </router-link>
                     </li>
-                    <li class="nav-item"  v-if="$root.can('consultar_solicitud_edicion_poliza_ctpq',true)">
+                    <li class="nav-item"  v-if="$root.can('consultar_solicitud_edicion_poliza_ctpq',true) || true">
                         <router-link :to="{name: 'solicitud-edicion-poliza'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-edicion-poliza'}">
                             <i class="fa fa-file-contract nav-icon"></i>
                             <p>Solicitud de Edición</p>
                         </router-link>
                     </li>
+                    <li class="nav-item"  >
+                        <router-link :to="{name: 'diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'diferencia-poliza'}">
+                            <i class="fa fa-warning nav-icon"></i>
+                            <p>Diferencias</p>
+                        </router-link>
+                    </li>
                 </ul>
             </li>
+
             <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
                 <router-link :to="{name: 'cfd-sat'}" class="nav-link" :class="{active: this.$route.name == 'cfd-sat'}">
                     <i class="fa fa-file-invoice nav-icon"></i>
