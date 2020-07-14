@@ -12,6 +12,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 
 class SolicitudEdicionRepository extends Repository implements RepositoryInterface
@@ -27,10 +28,17 @@ class SolicitudEdicionRepository extends Repository implements RepositoryInterfa
         return $this->model->registrar($datos);
     }
 
-    public function autorizar(array $data, $id)
+    public function autorizarPorPolizas(array $data, $id)
     {
         $item = $this->show($id);
-        $item->autorizar($data);
+        $item->autorizarPorPolizas($data);
+        return $item;
+    }
+
+    public function autorizarPorPartidas(array $data, $id)
+    {
+        $item = $this->show($id);
+        $item->autorizarPorPartidas($data);
         return $item;
     }
 

@@ -156,12 +156,12 @@ export const routes = [
             },
             {
                 path: 'diferencias',
-                component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/Index.vue').default,
                 children:[
                     {
                         path:"/",
                         name:"diferencia-poliza",
-                        component: require('./components/contabilidad-general/incidente-poliza/Index.vue').default,
+                        component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/Index.vue').default,
                         meta: {
                             title: 'Diferencias en Pólizas',
                             breadcrumb: {parent: 'poliza-contpaq', name: 'DIFERENCIAS'},
@@ -173,13 +173,31 @@ export const routes = [
                 ]
             },
             {
+                path: 'diferencias/informe',
+                component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/InformeDiferencias.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"informe-diferencia-poliza",
+                        component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/InformeDiferencias.vue').default,
+                        meta: {
+                            title: 'Informe de Diferencias en Pólizas',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'INFORME DE DIFERENCIAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'diferencias/detectar',
-                component: require('./components/contabilidad-general/incidente-poliza/DetectarDiferencia.vue').default,
+                component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/DetectarDiferencia.vue').default,
                 children:[
                     {
                         path:"/",
                         name:"detectar-diferencias-polizas",
-                        component: require('./components/contabilidad-general/incidente-poliza/DetectarDiferencia.vue').default,
+                        component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/DetectarDiferencia.vue').default,
                         meta: {
                             title: 'Detectar Diferencias en Pólizas',
                             breadcrumb: {parent: 'diferencia-poliza', name: 'DETECTAR'},
@@ -285,25 +303,6 @@ export const routes = [
                         }
                     }
                 ],
-            },
-
-            {
-                path: 'cfd-sat',
-                component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
-                children:[
-                    {
-                        path:"/",
-                        name:"cfd-sat",
-                        component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
-                        meta: {
-                            title: 'CFD SAT',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'CFD SAT'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_poliza'],
-                            general: true
-                        }
-                    }
-                ]
             },
             {
                 path: 'lista-empresa',
@@ -493,6 +492,137 @@ export const routes = [
                     general: true,
 
                 }
+            },
+        ]
+    },
+    {
+        path: '/control-interno/empresas-factureras',
+        components: {
+            default: require('./components/control-interno/partials/Layout.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'busqueda-empresas-factureras',
+                component: require('./components/control-interno/empresas-factureras/Busqueda').default,
+                meta: {
+                    title: 'Busqueda de Empresas Factureras',
+                    breadcrumb: {parent: 'control-interno', name: 'EMPRESAS FACTURERAS'},
+                    middleware: [auth],
+                    permission: 'consultar_incidencias',
+                    general: true,
+
+                }
+            },
+        ]
+    },
+    {
+        path: '/fiscal',
+        components:  {
+            default: require('./components/fiscal/partials/Layout.vue').default,
+            menu: require('./components/fiscal/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'fiscal',
+                meta: {
+                    title: 'FISCAL',
+                    middleware: [auth, permission],
+                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                    general: true
+                }
+            },
+            {
+                path: 'efos-empresa',
+                component: require('./components/fiscal/efos/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"efos-empresa",
+                        component: require('./components/fiscal/efos/Index.vue').default,
+                        meta: {
+                            title: 'EFOS',
+                            breadcrumb: {parent: 'fiscal', name: 'EFOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_efos_empresa'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-efos-vs-cfd',
+                        component: require('./components/fiscal/efos/InformeEFOSCFD').default,
+                        meta: {
+                            title: 'Informe Listado EFOS vs CFD Recibidos',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'cfds',
+                component: require('./components/fiscal/cfd/cfd-sat/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cfd-sat",
+                        component: require('./components/fiscal/cfd/cfd-sat/Index.vue').default,
+                        meta: {
+                            title: 'CFD SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-cfd-empresa-tiempo',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeCFDEmpresaMes').default,
+                        meta: {
+                            title: 'Informe CFD Cargados x Empresa x Mes',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'autocorreccion-cfd-efos',
+                        component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Index').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'autocorreccion-cfd-efos',
+                                component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Index').default,
+                                meta: {
+                                    title: 'Autocorrección de CFD EFOS',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_poliza',
+                                    general: true,
+
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'autocorreccion-cfd-efos-create',
+                                component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Create').default,
+                                meta: {
+                                    title: 'Registrar Autocorrección de CFD EFOS',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_autocorreccion_cfd_efo']
+                                }
+                            }
+                        ]
+                    }
+                ]
             },
         ]
     },

@@ -7,6 +7,29 @@
                  </button>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="form-row">
+                            <div class="col">
+                                <select class="form-control" v-model="id_empresa">
+                                    <option value>-- Empresa --</option>
+                                    <option v-for="item in empresas" v-bind:value="item.id">{{ item.nombre }}</option>
+                                </select>
+                            </div>
+
+                            <div class="col">
+                                <select class="form-control" v-model="id_tipo_diferencia">
+                                    <option value>-- Tipo de Diferencia --</option>
+                                    <option v-for="item in tiposDiferencia" v-bind:value="item.id">{{ item.descripcion }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <br />
         <div class="row">
             <div class="col-md-12">
@@ -23,28 +46,45 @@
         name: "Index",
         data() {
             return {
+                tiposDiferencia: [
+                    {"id" : 1, "descripcion":"Póliza No Encontrada"},
+                    {"id" : 2, "descripcion":"Diferente Concepto en Póliza"},
+                    {"id" : 3, "descripcion":"Diferente Suma Cargos / Abonos"},
+                    {"id" : 4, "descripcion":"Diferente No. Movimientos"},
+                    {"id" : 5, "descripcion":"Movimiento No Encontrado"},
+                    {"id" : 6, "descripcion":"Diferente Código de Cuenta"},
+                    {"id" : 7, "descripcion":"Diferente Nombre de Cuenta"},
+                    {"id" : 8, "descripcion":"Diferente Referencia"},
+                    {"id" : 9, "descripcion":"Diferente Concepto en Movimiento"},
+                    {"id" : 10, "descripcion":"Diferente Tipo de Movimiento"},
+                    {"id" : 11, "descripcion":"Diferente Importe en Movimiento"},
+                    {"id" : 12, "descripcion":"Movimientos Desordenados"},
+                ],
                 cargando: false,
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index_corto', sortable: false },
-                    { title: 'Folio', field: 'id', thClass: 'th_folio', thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Tipo Diferencia', field: 'tipo', thClass: 'fecha_hora', sortable: true},
+                    { title: 'Folio', field: 'id', thClass: 'th_folio', sortable: true},
+                    { title: 'Tipo Diferencia', field: 'tipo', thClass: 'fecha_hora', sortable: false},
                     { title: 'Fecha / Hora Detección', field: 'fecha_hora_deteccion', thClass: 'fecha_hora', sortable: true},
-                    { title: 'Base de Datos Revisada', field: 'base_datos', sortable: true},
+                    { title: 'Base de Datos Revisada', field: 'base_datos_revisada', sortable: true},
                     { title: 'Base de Datos Referencia', field: 'base_datos_referencia', sortable: true},
-                    { title: 'Ejercicio', field: 'ejercicio', sortable: true},
-                    { title: 'Periodo', field: 'periodo', sortable: true},
-                    { title: 'Tipo Poliza', field: 'tipo_poliza', sortable: true},
-                    { title: 'Folio Póliza', field: 'folio_poliza', sortable: true},
+                    { title: 'Ejercicio', field: 'ejercicio', sortable: false},
+                    { title: 'Periodo', field: 'periodo', sortable: false},
+                    { title: 'Tipo Poliza', field: 'tipo_poliza', sortable: false},
+                    { title: 'Folio Póliza', field: 'folio_poliza', sortable: false},
                     { title: 'Detalle de Error', field: 'observaciones', sortable: true},
 
                 ],
                 data: [],
                 total: 0,
                 query: {scope:['activos'], include:['poliza'], sort: 'id', order: 'desc'},
+                id_tipo_diferencia: '',
+                id_empresa:'',
             }
         },
         mounted() {
+            this.getEmpresas();
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -66,6 +106,22 @@
                         this.cargando = false;
                     })
             },
+            getEmpresas() {
+                this.empresas = [];
+                this.cargando = true;
+                return this.$store.dispatch('contabilidadGeneral/empresa/index', {
+                    params: {
+                        sort: 'Nombre',
+                        order: 'asc',
+                        scope:'solicitudes',
+                    }
+                })
+                    .then(data => {
+                        this.empresas = data.data;
+                        this.cargando = false;
+                    })
+            },
+
         },
         computed: {
             incidentes(){
@@ -88,7 +144,7 @@
                             index: (i + 1) + self.query.offset,
                             id:incidente.id,
                             fecha_hora_deteccion:incidente.fecha_hora_deteccion_format,
-                            base_datos:incidente.base_datos,
+                            base_datos_revisada:incidente.base_datos,
                             base_datos_referencia:incidente.base_datos_referencia,
                             ejercicio:incidente.poliza.ejercicio,
                             periodo:incidente.poliza.periodo,
@@ -131,7 +187,17 @@
                     '-webkit-filter': val ? 'blur(2px)' : '',
                     'pointer-events': val ? 'none' : ''
                 });
-            }
+            },
+            id_tipo_diferencia(id_tipo) {
+                this.$data.query.id_tipo_diferencia = id_tipo;
+                this.query.offset = 0;
+                this.paginate()
+            },
+            id_empresa(id_empresa) {
+                this.$data.query.id_empresa = id_empresa;
+                this.query.offset = 0;
+                this.paginate()
+            },
         }
     }
 </script>

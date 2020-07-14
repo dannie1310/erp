@@ -31,6 +31,7 @@ import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
 import proveedorContratista from './modules/cadeco/proveedor-contratista';
+import proveedorContratistaSucursal from './modules/cadeco/proveedor-contratista-sucursal';
 import sucursal from './modules/cadeco/sucursal';
 import suministrado from './modules/cadeco/suministrado';
 import unidad from './modules/cadeco/unidad'
@@ -80,7 +81,6 @@ import polizaGeneral from './modules/contabilidadGeneral/poliza';
 import empresaContabilidad from './modules/contabilidadGeneral/empresa';
 import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
 import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
-import CFDSAT from './modules/contabilidadGeneral/cfd-sat';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 import incidentePoliza from './modules/contabilidadGeneral/incidente-poliza';
 
@@ -116,6 +116,9 @@ import tipoMovimiento from './modules/finanzas/tipo-movimiento';
 import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
 
+//FISCAL
+import CFDSAT from './modules/fiscal/cfd-sat';
+
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import incidencia from './modules/seguridad/control-interno/incidencia'
@@ -132,6 +135,9 @@ import sistema from './modules/seguridad/sistema';
 import transaccionEfo from './modules/seguridad/finanzas/transaccion-efo';
 import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
+
+//CONTROL INTERNO
+ import empresaFacturera from './modules/seguridad/fiscal/empresa-facturera';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -183,6 +189,7 @@ export default new Vuex.Store({
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
         'cadeco/proveedor-contratista': proveedorContratista,
+        'cadeco/proveedor-contratista-sucursal': proveedorContratistaSucursal,
         'cadeco/sucursal': sucursal,
         'cadeco/suministrado': suministrado,
         'cadeco/unidad': unidad,
@@ -252,10 +259,11 @@ export default new Vuex.Store({
         'contabilidadGeneral/poliza' :polizaGeneral,
         'contabilidadGeneral/empresa' :empresaContabilidad,
         'contabilidadGeneral/empresa-sat': empresaSAT,
-        'contabilidadGeneral/cfd-sat': CFDSAT,
         'contabilidadGeneral/empresa-contpaq': empresaContpaq,
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/incidente-poliza' : incidentePoliza,
+
+        'fiscal/cfd-sat': CFDSAT,
 
         'reportes/reporte': reporte,
 
@@ -281,6 +289,8 @@ export default new Vuex.Store({
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
         'seguridad/lista-empresas': listaEmpresas,
+
+        'controlInterno/empresa-facturera': empresaFacturera,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

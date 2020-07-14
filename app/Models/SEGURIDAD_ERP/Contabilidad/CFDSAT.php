@@ -9,6 +9,9 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -36,7 +39,10 @@ class CFDSAT extends Model
         ,"id_proveedor_sat"
         ,"moneda"
         ,"id_carga_cfd_sat"
+        ,"tipo_comprobante"
     ];
+
+    protected $dates =["fecha"];
 
     public function carga()
     {
@@ -61,6 +67,24 @@ class CFDSAT extends Model
     public function empresa()
     {
         return $this->belongsTo(EmpresaSAT::class, 'id_empresa_sat', 'id');
+    }
+
+    public function efo()
+    {
+        return $this->belongsTo(EFOS::class,"rfc_emisor","rfc");
+    }
+
+    public function autocorreccion()
+    {
+        return $this->hasOne(CFDAutocorreccion::class, "id_cfd_sat", "id");
+    }
+
+    public function scopeDeEFO($query){
+        return $query->whereHas("efo");
+    }
+
+    public function scopeNoAutocorregidos($query){
+        return $query->doesnthave("autocorreccion");
     }
 
     public function registrar($data)
@@ -88,6 +112,15 @@ class CFDSAT extends Model
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
         }
+    }
+
+    public static function getFechaUltimoCFDTxt()
+    {
+        $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
+        $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
+        $mes = $meses[($ultimo_cfd->fecha->format('n')) - 1];
+        $fecha = "CFD cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
+        return $fecha;
     }
 
 }

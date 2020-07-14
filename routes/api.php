@@ -126,6 +126,7 @@ $api->version('v1', function ($api) {
             $api->get('/descargar_lista_material', 'App\Http\Controllers\v1\CADECO\MaterialController@descargar_lista_material');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@destroy')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@update')->where(['id' => '[0-9]+']);
+            $api->get('buscarMateriales', 'App\Http\Controllers\v1\CADECO\MaterialController@buscarMateriales');
         });
 
         // MONEDA
@@ -160,9 +161,16 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\SucursalController@store');
-            $api->post('proveedor', 'App\Http\Controllers\v1\CADECO\SucursalController@storeProveedorSucursal');
-            $api->patch('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\SucursalController@updateProveedorSucursal');
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+         // PROVEEDOR/CONTRATISTA/SUCURSAL
+        $api->group(['prefix' => 'proveedor-contratista-sucursal'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@show')->where(['id' => '[0-9]+']);
+            $api->post('proveedor', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@storeProveedorSucursal');
+            $api->patch('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@updateProveedorSucursal');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorContratistaSucursalController@destroy')->where(['id' => '[0-9]+']);
         });
 
         // SUMINISTRADO
@@ -221,10 +229,13 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'incidente-poliza'], function ($api) {//buscar-diferencias
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@store');
             $api->post('buscar-diferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@buscarDiferencias');
+            $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@obtenerInforme');
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@update')->where(['id' => '[0-9]+']);
+            $api->get('{id}/impresion-polizas', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@impresionPolizas')->where(['id' => '[0-9]+']);
+            $api->get('/pdfDiferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@pdfDiferencias');
         });
         $api->group(['prefix' => 'solicitud-edicion-poliza'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@store');
@@ -238,6 +249,8 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@index');
             $api->post('/carga-masiva', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@cargaXLS');
             $api->get('{id}/impresion-polizas', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@impresionPolizas')->where(['id' => '[0-9]+']);
+            $api->get('{id}/impresion-polizas-propuesta', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@impresionPolizasPropuesta')->where(['id' => '[0-9]+']);
+            $api->get('{id}/impresion-polizas-original', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionController@impresionPolizasOriginal')->where(['id' => '[0-9]+']);
         });
         $api->group(['prefix' => 'lista-empresa'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@index');
@@ -245,18 +258,27 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/consolidar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@consolidar')->where(['id' => '[0-9]+']);
+            $api->get('/pdfDiferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@pdfDiferencias');
         });
         $api->group(['prefix' => 'empresa-sat'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@paginate');
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@update')->where(['id' => '[0-9]+']);
         });
+    });
+
+    /**
+     * FISCAL
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'fiscal'], function ($api) {
         $api->group(['prefix' => 'cfd-sat'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@paginate');
             $api->post('carga-zip', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@cargaZIP');
             $api->post('procesa-dir-zip-cfd', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@procesaDirectorioZIPCFD');
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@update')->where(['id' => '[0-9]+']);
+            $api->post('obtener-informe-empresa-mes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeEmpresaMes');
+            $api->post('obtener-contenido-directorio', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@getContenidoDirectorio');
         });
     });
 
@@ -954,6 +976,8 @@ $api->version('v1', function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@cargaLayout');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@paginate');
             $api->post('rfc', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@rfc');
+            $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInforme');
+            $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformePDF');
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');
@@ -963,6 +987,11 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'incidencia'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ControlInterno\IncidenciaController@paginate');
+        });
+
+        $api->group(['prefix' => 'empresa-facturera'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\EmpresaFactureraController@index');
+            $api->post('/buscar-coincidencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\EmpresaFactureraController@buscarCoincidencias');
         });
     });
 

@@ -9,6 +9,8 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOSCambio;
 use Illuminate\Database\Eloquent\Model;
 
 class CargaCFDSAT extends Model
@@ -24,6 +26,8 @@ class CargaCFDSAT extends Model
         ,"archivos_preexistentes"
         ,"archivos_receptor_no_valido"
         ,"archivos_no_cargados_error_app"
+        ,"archivos_corruptos"
+        ,"archivos_tipo_incorrecto"
         ,"proveedores_nuevos"
         ,"fecha_hora_fin"
         ,"usuario_cargo"
@@ -32,6 +36,16 @@ class CargaCFDSAT extends Model
     public function cfd()
     {
         return $this->hasMany(CFDSAT::class, 'id_carga_cfd_sat', 'id');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_cargo', 'idusuario');
+    }
+
+    public function cambios()
+    {
+        return $this->hasMany(EFOSCambio::class, "id_carga_cfd", "id");
     }
 
 }

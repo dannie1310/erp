@@ -51,7 +51,7 @@ class SolicitudEdicionController extends Controller
 
     public function autorizar(Request $request, $id)
     {
-        return $this->service->autorizar($id,$request->partidas);
+        return $this->service->autorizar($id,$request);
     }
 
     public function rechazar($id)
@@ -72,5 +72,15 @@ class SolicitudEdicionController extends Controller
     public function impresionPolizas($id)
     {
         return $this->service->impresionPolizas($id)->create();
+    }
+
+    public function impresionPolizasPropuesta($id)
+    {
+        return $this->service->impresionPolizasPropuesta($id)->create();
+    }
+
+    public function impresionPolizasOriginal($id)
+    {
+        return $this->service->impresionPolizasOriginal($id)->create();
     }
 }

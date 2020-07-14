@@ -39,7 +39,7 @@ class CtgEfosController extends Controller
     public function __construct(CtgEfosService $service, Manager $fractal, CtgEfosTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['paginate','cargaLayout','rfc']);
+        /*$this->middleware('context')->except(['paginate','cargaLayout','rfc']);*/
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -55,4 +55,16 @@ class CtgEfosController extends Controller
         $respuesta = $this->service->rfcApi($request->rfc);
         return response()->json( $respuesta, 200);
     }
+
+    public function obtenerInforme(Request $request)
+    {
+        $respuesta =$this->service->obtenerInforme();
+        return response()->json($respuesta, 200);
+    }
+
+    public function obtenerInformePDF(Request $request)
+    {
+        return $this->service->obtenerInformePDF()->create();
+    }
+
 }

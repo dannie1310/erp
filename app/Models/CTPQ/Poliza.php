@@ -8,7 +8,9 @@
 
 namespace App\Models\CTPQ;
 
+use App\Models\CADECO\Movimiento;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use DateTime;
@@ -24,11 +26,18 @@ class Poliza extends Model
     protected $table = 'Polizas';
     protected $primaryKey = 'Id';
 
+    protected $dates = ["Fecha"];
+
     public $timestamps = false;
 
     public function movimientos()
     {
         return $this->hasMany(PolizaMovimiento::class, 'IdPoliza', 'Id');
+    }
+
+    public function cuentas()
+    {
+        return $this->hasManyThrough(Cuenta::class, PolizaMovimiento::class, "IdPoliza", "Id","Id", "IdCuenta");
     }
 
     public function tipo_poliza()
@@ -54,9 +63,21 @@ class Poliza extends Model
 
     public function getFechaMesLetraFormatAttribute()
     {
-        setlocale(LC_ALL,"es_ES");
+        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+        $mes = $meses[($this->Fecha->format('n')) - 1];
+        //setlocale(LC_ALL,"es_ES");
         $fecha =New DateTime($this->Fecha);
-        return strftime("%d/",$fecha->getTimestamp()).substr(ucfirst(strftime("%b",$fecha->getTimestamp())), 0, 3).strftime("/%Y",$fecha->getTimestamp());
+        return strftime("%d/",$fecha->getTimestamp()).substr($mes, 0, 3).strftime("/%Y",$fecha->getTimestamp());
+    }
+
+    public function getFechaConsultaAttribute()
+    {
+        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+        $mes = $meses[($this->Fecha->format('n')) - 1];
+        $fecha = new DateTime($this->Fecha);
+        $fecha->add(new \DateInterval('P5D'));
+        $fecha = strftime("%d/", $fecha->getTimestamp()).substr($mes, 0, 3).strftime("/%Y", $fecha->getTimestamp());
+        return $fecha;
     }
 
     public function actualiza($datos)
@@ -79,6 +100,26 @@ class Poliza extends Model
                 throw $e;
             }
         }
+    }
+
+    public function getPolizaReferencia(RelacionPolizas $relacion)
+    {
+        $poliza_relacionada = null;
+        try {
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
+            $poliza_relacionada = Poliza::find($relacion->id_poliza_b);
+            $poliza_relacionada->load("movimientos");
+            foreach ($poliza_relacionada->movimientos as $movimiento)
+            {
+                $movimiento->load("cuenta");
+            }
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $relacion->base_datos_a);
+        } catch (\Exception $e) {
+
+        }
+        return $poliza_relacionada;
     }
 
     public function getPolizaRelacionada($busqueda)
@@ -198,9 +239,11 @@ class Poliza extends Model
                     "concepto_b" => $movimientos_referencia[$i]->Concepto,
                     "id_poliza_a" => $movimiento->IdPoliza,
                     "id_poliza_b" => $movimientos_referencia[$i]->IdPoliza,
+                    "id_cuenta_a" => $movimiento->IdCuenta,
+                    "id_cuenta_b" => $movimientos_referencia[$i]->IdCuenta,
                 ];}
                 catch (\Exception $e){
-                    dd($busqueda->base_datos_busqueda,$movimiento);
+                   // dd($busqueda->base_datos_busqueda,$movimiento);
                 }
                 $relaciones_movimientos[$i] = RelacionMovimientos::registrar($datos_relacion);
                 $i++;
@@ -209,16 +252,245 @@ class Poliza extends Model
         return $relaciones_movimientos;
     }
 
-    public function sumaMismoPadre($codigo_padre)
+    public function sumaMismoPadreCargos($cuenta)
     {
         $suma = 0;
-        foreach ($this->movimientos()->orderBy('IdCuenta')->get() as $movimiento)
+        foreach ($this->movimientos()->where("TipoMovto","=",0)->orderBy('IdCuenta')->get() as $movimiento)
         {
-            if(substr($codigo_padre, 0,4) == substr($movimiento->cuenta->Codigo, 0, 4))
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta->Codigo)
             {
                 $suma = $suma + $movimiento->Importe;
             }
         }
         return $suma;
+    }
+
+    public function sumaMismoPadreAbonos($cuenta)
+    {
+        $suma = 0;
+        foreach ($this->movimientos()->where("TipoMovto","=",1)->orderBy('IdCuenta')->get() as $movimiento)
+        {
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta->Codigo)
+            {
+                $suma = $suma + $movimiento->Importe;
+            }
+        }
+        return $suma;
+    }
+
+    public function getConceptoPropuesta(SolicitudEdicion $solicitud_edicion){
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","2")->where("id_poliza","=",$this->Id)->toArray());
+        if(count($diferencias) > 0){
+            return $diferencias[0]["valor_b"];
+
+        } else {
+            return $this->Concepto;
+        }
+    }
+
+    public function getConceptoOriginalT2(SolicitudEdicion $solicitud_edicion){
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","2")->where("id_poliza","=",$this->Id)->toArray());
+        if(count($diferencias) > 0){
+            return $diferencias[0]["valor_a"];
+
+        } else {
+            return $this->Concepto;
+        }
+    }
+
+    public function getCuentasPadresAttribute()
+    {
+        $cuentas_padres = [];
+        foreach($this->cuentas()->orderBy("NumMovto")->get() as $cuenta)
+        {
+            $cuentas_padres [] = $cuenta->cuenta_mayor;
+        }
+        return array_unique($cuentas_padres);
+    }
+
+    public function getCuentasPadresReordenadas(SolicitudEdicion $solicitud_edicion)
+    {
+        $parametro = Parametro::find(1);
+        $cuentas_padres = [];
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->toArray());
+
+        if(count($diferencias) > 0){
+            $relacion = RelacionPolizas::where("id_poliza_a","=", $this->Id)
+                ->where("tipo_relacion","=",$diferencias[0]["tipo_busqueda"])
+                ->where("base_datos_a",Config::get('database.connections.cntpq.database'))->first();
+            $poliza_relacion = $this->getPolizaReferencia($relacion);
+            foreach($poliza_relacion->movimientos as $movimiento_relacionado)
+            {
+                $cuenta = Cuenta::where("Codigo", $movimiento_relacionado->cuenta->getCodigoLongitud($parametro->longitud_cuenta))->first();
+                try{
+                    $movimiento = $this->movimientos()->where("Importe",$movimiento_relacionado->Importe)
+                        ->where("TipoMovto", $movimiento_relacionado->TipoMovto)
+                        ->where("IdCuenta", $cuenta->Id)
+                        ->first();
+                    if($movimiento){
+                        $cuentas_padres [] = $movimiento->cuenta->cuenta_mayor;
+                    } else {
+                        $solicitud_edicion->partidas->where("id_diferencia","=", $diferencias[0]["id"])->first()->cancelaPartidaSolicitudReordenamientoImprocedente();
+                    }
+                } catch (\Exception $e){
+                }
+            }
+            return array_unique($cuentas_padres);
+        } else {
+            return $this->cuentas_padres;
+        }
+    }
+
+    public function getMovimientosReordenados(Cuenta $cuenta_padre, SolicitudEdicion $solicitud_edicion)
+    {
+        $parametro = Parametro::find(1);
+        $cuentas_padres = [];
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->toArray());
+        $relacion = RelacionPolizas::where("id_poliza_a","=", $this->Id)
+            ->where("tipo_relacion","=",$diferencias[0]["tipo_busqueda"])
+            ->where("base_datos_a",Config::get('database.connections.cntpq.database'))->first();
+        $poliza_relacion = $this->getPolizaReferencia($relacion);
+        $movimientos_cuenta_padre = [];
+        foreach($poliza_relacion->movimientos as $movimiento_relacionado)
+        {
+            $cuenta = Cuenta::where("Codigo", $movimiento_relacionado->cuenta->getCodigoLongitud($parametro->longitud_cuenta))->first();
+            try{
+                $movimiento = $this->movimientos()->where("Importe",$movimiento_relacionado->Importe)
+                    ->where("TipoMovto", $movimiento_relacionado->TipoMovto)
+                    ->where("IdCuenta", $cuenta->Id)
+                    ->first();
+                if($movimiento){
+                    if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
+                    {
+                        $movimientos_cuenta_padre[] = $movimiento;
+                    }
+                } else {
+                    $solicitud_edicion->partidas->where("id_diferencia","=", $diferencias[0]["id"])->first()->cancelaPartidaSolicitudReordenamientoImprocedente();
+                }
+            } catch (\Exception $e){
+            }
+        }
+        return $movimientos_cuenta_padre;
+    }
+
+    public function getPrimerMovimiento(Cuenta $cuenta_padre)
+    {
+        $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
+        $primer_movimiento = "";
+        foreach($movimientos as $movimiento)
+        {
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
+            {
+                $primer_movimiento = $movimiento;
+                break;
+            }
+        }
+        return $primer_movimiento;
+    }
+
+    public function getPrimerMovimientoReordenado(Cuenta $cuenta_padre, SolicitudEdicion $solicitud_edicion)
+    {
+        $movimientos = $this->getMovimientosReordenados($cuenta_padre, $solicitud_edicion);
+        $primer_movimiento = "";
+        foreach($movimientos as $movimiento)
+        {
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
+            {
+                $primer_movimiento = $movimiento;
+                break;
+            }
+        }
+        return $primer_movimiento;
+    }
+
+    public function getMovimientos(Cuenta $cuenta_padre)
+    {
+        $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
+        $movimientos_cuenta_padre = [];
+        foreach($movimientos as $movimiento)
+        {
+            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
+            {
+                $movimientos_cuenta_padre[] = $movimiento;
+            }
+        }
+        return $movimientos_cuenta_padre;
+    }
+
+    public function getCuentasPadresOrdenOriginal(SolicitudEdicion $solicitud_edicion)
+    {
+        $parametro = Parametro::find(1);
+        $cuentas_padres = [];
+        $diferencia = $solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->first();
+        $partida_solicitud = $diferencia->partida_solicitud;
+        $movimientos_ordenados = [];
+
+        if($diferencia){
+
+            foreach($this->movimientos as $movimiento)
+            {
+                $log = LogEdicion::where("id_solicitud_partida","=", $partida_solicitud->id)
+                    ->where("id_movimiento",$movimiento->Id)
+                    ->first();
+                if($log){
+                    $movimientos_ordenados[$log->valor_original]=$movimiento;
+                } else {
+                    return $this->cuentas_padres;
+                }
+
+            }
+            ksort($movimientos_ordenados);
+            foreach($movimientos_ordenados as $movimiento)
+            {
+                $cuentas_padres [] = $movimiento->cuenta->cuenta_mayor;
+            }
+            return array_unique($cuentas_padres);
+        } else {
+            return $this->cuentas_padres;
+        }
+    }
+
+    public function getMovimientosOrdenOriginal(Cuenta $cuenta_padre, SolicitudEdicion $solicitud_edicion)
+    {
+        $parametro = Parametro::find(1);
+        $cuentas_padres = [];
+        $diferencia = $solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->first();
+        $partida_solicitud = $diferencia->partida_solicitud;
+        $movimientos_ordenados = [];
+
+        if($diferencia){
+
+            foreach($this->movimientos as $movimiento)
+            {
+                $log = LogEdicion::where("id_solicitud_partida","=", $partida_solicitud->id)
+                    ->where("id_movimiento",$movimiento->Id)
+                    ->first();
+                if($log){
+                    $movimientos_ordenados[$log->valor_original]=$movimiento;
+                } else {
+                    return $this->getMovimientos($cuenta_padre);
+                }
+
+            }
+            ksort($movimientos_ordenados);
+            foreach($movimientos_ordenados as $movimiento)
+            {
+                if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
+                {
+                    $movimientos_cuenta_padre[] = $movimiento;
+                }
+            }
+            return $movimientos_cuenta_padre;
+        } else {
+            return $this->getMovimientos($cuenta_padre);
+        }
+    }
+
+    public function getTipoAttribute(){
+        if($this->tipo_poliza){
+            return $this->tipo_poliza->Nombre;
+        } else {
+            return "";
+        }
     }
 }

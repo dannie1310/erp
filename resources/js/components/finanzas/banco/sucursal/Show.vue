@@ -66,7 +66,7 @@
                               <div class="col-md-6" v-if="sucursal">
                                                  <div class="form-group">
                                                         <label><b>Voz: </b></label>
-                                                     {{ sucursal.voz }}
+                                                     {{ sucursal.telefono }}
                                                     </div>
                                            </div>
                                 <!--Fax-->

@@ -22,20 +22,46 @@
                     </li>
                     <li class="nav-item"  >
                         <router-link :to="{name: 'diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'diferencia-poliza'}">
-                            <i class="fa fa-warning nav-icon"></i>
+                            <i class="fa fa-not-equal nav-icon"></i>
                             <p>Diferencias</p>
                         </router-link>
                     </li>
                 </ul>
             </li>
 
-            <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
-                <router-link :to="{name: 'cfd-sat'}" class="nav-link" :class="{active: this.$route.name == 'cfd-sat'}">
-                    <i class="fa fa-file-invoice nav-icon"></i>
-                    <p>CFD SAT</p>
-                </router-link>
+            <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="fa fa-not-equal nav-icon"></i>
+                    <p>Gestión de Diferencias</p>
+                    <i class="right fa fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item"  >
+                        <router-link :to="{name: 'informe-diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'informe-diferencia-poliza'}">
+                            <i class="fa fa-file-invoice nav-icon"></i>
+                            <p>Informe</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item"  >
+                        <router-link :to="{name: 'diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'diferencia-poliza'}">
+                            <i class="fa fa-search nav-icon"></i>
+                            <p>Búsquedas</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item"  >
+                        <router-link :to="{name: 'diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'diferencia-poliza'}">
+                            <i class="fa fa-not-equal nav-icon"></i>
+                            <p>Diferencias</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item"  v-if="$root.can('consultar_solicitud_edicion_poliza_ctpq',true)">
+                        <router-link :to="{name: 'solicitud-edicion-poliza'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-edicion-poliza'}">
+                            <i class="fa fa-file-contract nav-icon"></i>
+                            <p>Solicitudes de Edición</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
-
             <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-cogs nav-icon"></i>

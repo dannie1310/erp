@@ -9,6 +9,7 @@
 namespace App\Observers\CTPQ;
 
 
+use App\Models\CTPQ\Empresa;
 use App\Models\CTPQ\Poliza;
 
 class PolizaObserver
@@ -24,15 +25,16 @@ class PolizaObserver
 
     public function updated(Poliza $poliza)
     {
+        $base_datos = config('database.connections.cntpq.database');
         if($poliza->getOriginal("Concepto") !=  $poliza->Concepto){
             $poliza->logs()->create([
                 "id_poliza"=>$poliza->Id,
-                "id_empresa"=>666,
-                "empresa"=>666,
+                "id_empresa"=>Empresa::getIdEmpresa($base_datos),
+                "empresa"=>Empresa::getNombreEmpresa($base_datos),
                 "id_campo"=>1,
                 "valor_original"=>$poliza->getOriginal("Concepto"),
                 "valor_modificado"=>$poliza->Concepto,
-                "bd_contpaq" => config('database.connections.cntpq.database')
+                "bd_contpaq" => $base_datos
             ]);
         }
     }
