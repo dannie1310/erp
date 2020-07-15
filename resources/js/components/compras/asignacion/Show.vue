@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-12">
-                
+
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <i class="fa fa-spin fa-spinner fa-2x" v-if="cargando"></i>
@@ -19,7 +19,7 @@
                                     {{asignaciones.usuario.nombre}} {{ asignaciones.usuario.apaterno}} {{asignaciones.usuario.amaterno}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-2" >
                                 <div class="form-group">
                                     <label><b>Estado: </b></label>
@@ -45,7 +45,7 @@
                                     {{asignaciones.observaciones}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-3" >
                                 <div class="form-group">
                                     <label><b>Fecha y Hora de Registro: </b></label>
@@ -58,7 +58,7 @@
                 </div>
             </div>
             <div class="col-12" v-if="Object.keys(asignaciones).length > 0">
-                
+
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
@@ -94,7 +94,7 @@
                                                 <th style="width: 32%;">Descripción</th>
                                                 <th style="width: 8%;">Unidad</th>
                                                 <th style="width: 8%;">Cantidad Solicitada</th>
-                                                
+
                                                 <th class="bg-gray-light ">Precio Unitario</th>
                                                 <th class="bg-gray-light">% Descuento</th>
                                                 <th class="bg-gray-light ">Precio Total</th>
@@ -130,7 +130,7 @@
 
 <script>
 export default {
-    name: "asignacion-proveedores-show",
+    name: "asignacion-proveedor-show",
     props: ['id'],
     data() {
         return {
@@ -144,7 +144,7 @@ export default {
         this.getAsignacion();
     },
     computed: {
-        
+
     },
     methods: {
         asignacion(){
@@ -168,7 +168,7 @@ export default {
             return this.$store.dispatch('compras/asignacion/getAsignacion', {
                     id: this.id,
                     params:{
-                        
+
                     }
                 }).then(data => {
                     this.asignaciones = data;

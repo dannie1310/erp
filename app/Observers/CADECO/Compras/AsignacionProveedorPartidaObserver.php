@@ -8,14 +8,14 @@
 
 namespace App\Observers\CADECO\Compras;
 
-use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 
-class AsignacionProveedoresPartidaObserver
+class AsignacionProveedorPartidaObserver
 {
     /**
      * @param AsignacionProveedores $asignacion_proveedor
      */
-    public function creating(AsignacionProveedoresPartida $asignacion_proveedor_partida)
+    public function creating(AsignacionProveedorPartida $asignacion_proveedor_partida)
     {
         $asignacion_proveedor_partida->registro = auth()->id();
     }

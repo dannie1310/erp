@@ -7,11 +7,11 @@ namespace App\Models\CADECO\Compras;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\SolicitudCompra;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\CotizacionCompra;
 use Illuminate\Support\Facades\DB;
 
-class AsignacionProveedores extends Model
+class AsignacionProveedor extends Model
 {
     protected $connection = 'cadeco';
     protected $table      = 'Compras.asignacion_proveedores';
@@ -40,7 +40,7 @@ class AsignacionProveedores extends Model
 
     public function partidas()
     {
-        return $this->hasMany(AsignacionProveedoresPartida::class, 'id_asignacion_proveedores', 'id');
+        return $this->hasMany(AsignacionProveedorPartida::class, 'id_asignacion_proveedores', 'id');
     }
 
     public function solicitud()
@@ -99,9 +99,9 @@ class AsignacionProveedores extends Model
     public function eliminarAsignacion($motivo)
     {
         try {
-            DB::connection('cadeco')->beginTransaction();            
+            DB::connection('cadeco')->beginTransaction();
             $this->delete();
-            $eliminada = AsignacionProveedoresEliminada::find($this->id);
+            $eliminada = AsignacionProveedorEliminada::find($this->id);
             $eliminada->motivo_elimino = $motivo;
             $eliminada->save();
             DB::connection('cadeco')->commit();

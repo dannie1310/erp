@@ -25,31 +25,17 @@
                  </router-link>
              </li>
              <li class="nav-item" v-if="$root.can('consultar_asignacion_proveedor')">
-                 <router-link :to="{name: 'asignacion-proveedores'}" class="nav-link">
+                 <router-link :to="{name: 'asignacion-proveedor'}" class="nav-link">
                      <i class="fa fa-circle nav-icon"></i>
                      <p>Asignación de Proveedores</p>
                  </router-link>
              </li>
-            
-
-             <li class="nav-item" v-if="gestion_orden_compra">
-                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                     <i class="nav-icon fa fa-circle"></i>
-                     <p>
-                         Gestión de OC
-                         <i class="right fa fa-angle-left"></i>
-                     </p>
-                 </a>
-
-                 <ul class="nav nav-treeview">
-                     <li class="nav-item" v-if="$root.can('consultar_orden_compra')">
-                         <router-link :to="{name: 'orden-compra'}" class="nav-link" :class="{active: this.$route.name == 'orden-compra'}">
-                             <i class="fa fa-circle-o nav-icon"></i>
-                             <p>Ordenes de Compra</p>
-                         </router-link>
-                     </li>
-                 </ul>
-             </li>
+            <li class="nav-item" v-if="$root.can('consultar_orden_compra')">
+                <router-link :to="{name: 'orden-compra'}" class="nav-link">
+                    <i class="fa fa-circle nav-icon"></i>
+                    <p>Ordenes de Compra</p>
+                </router-link>
+            </li>
              <li class="nav-item" v-if="catalogo">
                  <a href="#" class="nav-link" @click="mostrarMenu($event)">
                      <i class="nav-icon fa fa-circle"></i>

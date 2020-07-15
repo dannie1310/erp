@@ -11,7 +11,7 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Compras\SolicitudPartidaComplemento;
-use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 
 class ItemSolicitudCompra extends Item
 {
@@ -54,7 +54,7 @@ class ItemSolicitudCompra extends Item
     }
 
     public function asignaciones(){
-        return $this->hasMany(AsignacionProveedoresPartida::class, 'id_item_solicitud', 'id_item');
+        return $this->hasMany(AsignacionProveedorPartida::class, 'id_item_solicitud', 'id_item');
     }
 
     public function getCantidadOrdenCompraAttribute()

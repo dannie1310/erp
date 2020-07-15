@@ -1,14 +1,13 @@
 <?php
 
 
-namespace App\Http\Transformers\CADECO;
+namespace App\Http\Transformers\CADECO\Compras;
 
 use App\Http\Transformers\CADECO\Compras\CotizacionComplementoTransaformer;
-use App\Http\Transformers\CADECO\Compras\CotizacionComplementoTransformer;
-use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\CotizacionCompra;
-use App\Models\CADECO\Transaccion;
 use League\Fractal\TransformerAbstract;
 
 class CotizacionCompraTransformer extends TransformerAbstract

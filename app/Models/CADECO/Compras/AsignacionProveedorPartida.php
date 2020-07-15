@@ -11,9 +11,9 @@ use App\Models\CADECO\CotizacionCompra;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
-use App\Models\CADECO\Compras\AsignacionProveedores;
+use App\Models\CADECO\Compras\AsignacionProveedor;
 
-class AsignacionProveedoresPartida extends Model
+class AsignacionProveedorPartida extends Model
 {
     protected $connection = 'cadeco';
     protected $table      = 'Compras.asignacion_proveedores_partidas';
@@ -40,7 +40,7 @@ class AsignacionProveedoresPartida extends Model
     }
 
     public function asignacion(){
-        return $this->belongsTo(AsignacionProveedores::class, 'id_asignacion_proveedores', 'id');
+        return $this->belongsTo(AsignacionProveedor::class, 'id_asignacion_proveedores', 'id');
     }
 
     public function cotizacion()

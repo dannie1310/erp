@@ -5,7 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\CSV\CotizacionLayout;
-use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 use App\Models\CADECO\Compras\CotizacionEliminada;
@@ -76,7 +76,7 @@ class CotizacionCompra  extends Transaccion
 
     public function asignacionPartida()
     {
-        return $this->hasOne(AsignacionProveedoresPartida::class, 'id_transaccion_cotizacion', 'id_transaccion');
+        return $this->hasOne(AsignacionProveedorPartida::class, 'id_transaccion_cotizacion', 'id_transaccion');
     }
 
     public function empresa()

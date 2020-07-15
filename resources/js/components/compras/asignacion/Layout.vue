@@ -4,7 +4,7 @@
 
 <script>
     export default {
-        name: "asignacion-proveedores-layout"
+        name: "asignacion-proveedor-layout"
     }
 </script>
 

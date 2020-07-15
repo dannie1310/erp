@@ -5,7 +5,7 @@ namespace App\Models\CADECO\Compras;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AsignacionProveedoresEliminada extends Model
+class AsignacionProveedorEliminada extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Compras.asignacion_proveedores_eliminadas';

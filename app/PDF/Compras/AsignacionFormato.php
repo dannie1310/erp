@@ -5,8 +5,7 @@ namespace App\PDF\Compras;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\Compras\Asignacion;
-use App\Models\CADECO\Compras\AsignacionProveedores;
+use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Models\CADECO\Obra;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
@@ -14,37 +13,48 @@ use Ghidev\Fpdf\Rotation;
 class AsignacionFormato extends Rotation
 {
     private $asignacion;
-    public function __construct( $id)
+    private $obra;
+    var $encola = '';
+    private $cadena_qr = '';
+    private $cadena = '';
+    private $dato = '';
+    private $qr_name = '';
+
+    public function __construct(AsignacionProveedor $asignacion)
     {
-        $this->asignacion = new AsignacionProveedores();
-       parent::__construct('L', 'cm', 'A4');
-//        $verifica = new ValidacionSistema();
-//        $datos_qr[] = utf8_decode("TABLA DE ASIGNACIÓN DE PROVEEDORES");
-//        $datos_qr[] = date('d-m-Y', strtotime($this->asignacion->timestamp_registro));
-//        $datos_qr[] = $this->asignacion->id;
-//        $datos_qr[] = $this->asignacion->solicitud->complemento->folio_compuesto;
-//        dd($datos_qr);
-//        $datos_qr[] = $this->asignacion->solicitud->numero_folio_string;
-//        $datos_qr2["tipo"] = "tabla_asignacion";
-//        $datos_qr2["base"] = "controlrec";
-//        $datos_qr2["tabla"] = "rqctoc_tabla_comparativa";
-//        $datos_qr2["campo_id"] = "idrqctoc_tabla_comparativa";
-//        $datos_qr2["id"] = $this->asignacion->id;
-//        $cadena_json_id = json_encode($datos_qr2);
-//        $cadena_encriptar = $cadena_json_id . ">";
-//        $cadena_encriptar .= implode("_",$datos_qr);
-//        $firmada = $verifica->encripta($cadena_encriptar);
-//        $this->cadena_qr = "http://saoweb.grupohi.mx/?controlador=QR&accion=recibeCadena&c=" . urlencode($firmada);
-//        $this->cadena = $firmada;
+        $this->asignacion = $asignacion;
+       parent::__construct('L', 'cm', 'Letter');
+        $this->obra = Obra::find(Context::getIdObra());
+
+        $this->SetAutoPageBreak(true, 5);
+        $this->createQR();
+        dd("aqui",$asignacion);
+    }
+
+    private function createQR()
+    {
+        $verifica = new ValidacionSistema();
+        $datos_qr2['titulo'] = "Formato TABLA DE ASIGNACIÓN DE PROVEEDORES_".date("d-m-Y")."_".$this->asignacion."_".($this->asignacion->solicitud->complemento ? $this->asignacion->solicitud->complemento->folio_compuesto : '')."_".$this->asignacion->solicitud->numero_folio_format;
+        $datos_qr2["base"] = Context::getDatabase();
+        $datos_qr2["obra"] = $this->obra->nombre;
+        $datos_qr2["tabla"] = "Compras.asignacion_proveedores";
+        $datos_qr2["campo_id"] = "id";
+        $datos_qr2["id"] = $this->asignacion->id;
+        $cadena_json_id = json_encode($datos_qr2);
+
+        $firmada = $verifica->encripta($cadena_json_id);
+        $this->cadena_qr = "http://".$_SERVER['SERVER_NAME'].":". $_SERVER['SERVER_PORT']."/api/compras/solicitud-compra/leerQR?data=" . urlencode($firmada);
+        $this->cadena = $firmada;
+
+        $this->dato = $verifica->encripta($cadena_json_id);
+
+        $this->qr_name = 'qrcode_'. mt_rand() .'.png';
     }
 
     public function Header()
     {
         $this->Ln(.5);
-
-            // if(true){
-//            $this->image('../../site_media/img/LOGOTIPO_REHABILITACION_ATLACOMULCO.png', 1, .3, 5, 2);
-//
+        dd($this->asignacion);
         $this->SetTextColor(0, 0, 0);
         $this->SetFont('Arial', 'B', 15); /* 20 */ /* 19,05 */
 
@@ -54,7 +64,7 @@ class AsignacionFormato extends Rotation
 
         $this->Cell(4, .5, 'FOLIO:', 'L T', 0, 'L');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(3, .5, 8888, 'R T', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->folio_format, 'R T', 0, 'L');
 
 
         $this->Ln(.5);
@@ -273,7 +283,7 @@ class AsignacionFormato extends Rotation
 //                        $partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion][$partida_solicitud->id_item]["cantidad"] = $partida_cotizacion->cantidad;
 //                        $partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion][$partida_solicitud->id_item]["precio_unitario_conv"] =
 //                            $partida_cotizacion->precio_unitario - ($partida_cotizacion->precio_unitario * $partida_cotizacion->descuento / 100);
-//                        $asignacion_partida = AsignacionProveedoresPartida::where('id_item_solicitud', '=', $partida_solicitud->id_item)->where('id_transaccion_cotizacion', '=', $partida_cotizacion->id_transaccion)->where('id_asignacion_proveedores', '=', $this->asignacion->id)->first();
+//                        $asignacion_partida = AsignacionProveedorPartida::where('id_item_solicitud', '=', $partida_solicitud->id_item)->where('id_transaccion_cotizacion', '=', $partida_cotizacion->id_transaccion)->where('id_asignacion_proveedores', '=', $this->asignacion->id)->first();
 //                        $cant_asignada = $asignacion_partida != null ? $asignacion_partida->cantidad_asignada : 0;
 //
 //                        array_key_exists($partida_cotizacion->id_transaccion, $partidas_comprobacion_mejor_opcion) ?
