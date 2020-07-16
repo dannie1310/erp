@@ -28,7 +28,7 @@
                     </li>
                     <li class="nav-item"   v-if="$root.can('consultar_no_deducido_cfd_efo',true)">
                         <router-link :to="{name: 'no-deducidos-cfd-efos'}" class="nav-link" :class="{active: this.$route.name == 'no-deducidos-cfd-efos'}">
-                            <i class="fa fa-file-invoice nav-icon"></i>
+                            <i class="fa fa-check-square nav-icon"></i>
                             <p>CFD No Deducidos de EFOS</p>
                         </router-link>
                     </li>

@@ -53,30 +53,30 @@
                         <thead>
                         <tr>
                             <th class="index_corto">#</th>
-                            <th>Folio</th>
-                            <th>UUID</th>
-                            <th>RFC de Receptor</th>
+                            <th class="fecha">Serie</th>
+                            <th class="fecha">Folio</th>
+                            <th style="width: 300px;">UUID</th>
+                            <th class="fecha_hora">RFC de Receptor</th>
                             <th>Razón Social de Receptor</th>
-                            <th>Serie</th>
-                            <th>Fecha</th>
-                            <th>Total</th>
-                            <th></th>
+                            <th class="fecha_hora">Fecha</th>
+                            <th class="money_input">Total</th>
+                            <th class="index_corto"></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="(p, i) in cfd">
-                        <td>{{i+1}}</td>
-                        <td>{{p.folio}}</td>
-                        <td>{{p.uuid}}</td>
-                        <td>{{p.rfc_receptor}}</td>
-                        <td>{{p.empresa.razon_social}}</td>
-                        <td>{{p.serie}}</td>
-                        <td>{{p.fecha_format}}</td>
-                        <td class="money">{{p.total_format}}</td>
-                        <td><input type="checkbox" :value="p.id" v-model="p.selected" checked></td>
-                    </tr>
-                    </tbody>
-                </table>
+                            <tr v-for="(p, i) in cfd">
+                                <td>{{i+1}}</td>
+                                <td>{{p.serie}}</td>
+                                <td>{{p.folio}}</td>
+                                <td>{{p.uuid}}</td>
+                                <td>{{p.rfc_receptor}}</td>
+                                <td>{{p.empresa.razon_social}}</td>
+                                <td>{{p.fecha_format}}</td>
+                                <td class="money">{{p.total_format}}</td>
+                                <td><input type="checkbox" :value="p.id" v-model="p.selected" checked></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

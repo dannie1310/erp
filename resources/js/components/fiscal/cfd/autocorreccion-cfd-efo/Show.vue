@@ -45,11 +45,11 @@
                                             <thead>
                                             <tr>
                                                 <th class="index_corto">#</th>
+                                                <th>Serie</th>
                                                 <th>Folio</th>
                                                 <th>UUID</th>
                                                 <th>RFC de Receptor</th>
                                                 <th>Razón Social de Receptor</th>
-                                                <th>Serie</th>
                                                 <th>Fecha</th>
                                                 <th>Total</th>
                                                 <th>Estado</th>
@@ -58,11 +58,11 @@
                                             <tbody>
                                             <tr v-for="(p, i) in autocorreccion.partidas.data">
                                                 <td>{{i+1}}</td>
+                                                <td>{{p.cfd.serie}}</td>
                                                 <td>{{p.cfd.folio}}</td>
                                                 <td>{{p.cfd.uuid}}</td>
                                                 <td>{{p.cfd.rfc_receptor}}</td>
                                                 <td>{{p.cfd.empresa.razon_social}}</td>
-                                                <td>{{p.cfd.serie}}</td>
                                                 <td>{{p.cfd.fecha_format}}</td>
                                                 <td class="money">{{p.cfd.total_format}}</td>
                                                 <td>{{p.estatus.descripcion}}</td>
