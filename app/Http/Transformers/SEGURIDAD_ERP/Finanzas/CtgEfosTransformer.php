@@ -44,7 +44,7 @@ class CtgEfosTransformer extends TransformerAbstract
     {
         if ($estado = $model->estadoEfo)
         {
-            return $this->item($estado, new CtgEstadosCFDTransformer);
+            return $this->item($estado, new CtgEstadosEfosTransformer);
         }
 
         return null;
