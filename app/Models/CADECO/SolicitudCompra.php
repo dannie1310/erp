@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Compras\ActivoFijo;
+use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Models\CADECO\Compras\EntregaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Compras\SolicitudEliminada;
@@ -77,6 +78,11 @@ class SolicitudCompra extends Transaccion
     public function transaccionesRelacionadas()
     {
         return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function asignacionesProveedores()
+    {
+        return $this->hasMany(AsignacionProveedor::class, 'id_transaccion_solicitud', 'id_transaccion');
     }
 
     public function getRegistroAttribute()

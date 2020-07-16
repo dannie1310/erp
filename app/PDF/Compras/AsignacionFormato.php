@@ -9,6 +9,7 @@ use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Models\CADECO\Obra;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AsignacionFormato extends Rotation
 {
@@ -28,7 +29,6 @@ class AsignacionFormato extends Rotation
 
         $this->SetAutoPageBreak(true, 5);
         $this->createQR();
-        dd("aqui",$asignacion);
     }
 
     private function createQR()
@@ -54,7 +54,6 @@ class AsignacionFormato extends Rotation
     public function Header()
     {
         $this->Ln(.5);
-        dd($this->asignacion);
         $this->SetTextColor(0, 0, 0);
         $this->SetFont('Arial', 'B', 15); /* 20 */ /* 19,05 */
 
@@ -71,17 +70,17 @@ class AsignacionFormato extends Rotation
         $this->Cell(19);
         $this->SetFont('Arial', 'B', 7);
         $this->Cell(4, .5, 'FECHA: ', 'L B', 0, 'L');
-        $this->Cell(3, .5, date('d-m-Y', strtotime('10-09-2020')), 'R B', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->fecha_format, 'R B', 0, 'L');
         $this->SetFont('Arial', '', 6);
         $this->Ln(.5);
         $this->Cell(19);
         $this->Cell(4, .5, 'SOLICITUD ORIGEN: ', 'L', 0, 'L');
-        $this->Cell(3, .5, 'SIS-AF-547', 'R', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->solicitud->complemento ? $this->asignacion->solicitud->complemento->folio_compuesto : '' , 'R', 0, 'L');
 
         $this->Ln(.5);
         $this->Cell(19);
         $this->Cell(4, .5, utf8_decode('REQUISICIÓN SAO: '), 'LB', 0, 'L');
-        $this->Cell(3, .5, '#00338', 'RB', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->solicitud->complemento ? $this->asignacion->solicitud->complemento->requisicion_folio_format : '', 'RB', 0, 'L');
 
         $this->Ln(.7);
         $this->y_para_descripcion = $this->GetY();
@@ -97,12 +96,20 @@ class AsignacionFormato extends Rotation
 
     public function partidas()
     {
-
-        $no_cotizaciones = 3;
+        $partidas = [];
+        //$no_cotizaciones = count($this->asignacion->solicitud->cotizaciones);
+        $no_cotizaciones = 1;
         $total_asignado = 0;
         $subtotal_asignado = 0;
         $iva_total_asignado = 0;
-
+        $asignaciones = $this->asignacion->solicitud->asignacionesProveedores;
+        foreach ($this->asignacion->solicitud->items as $key => $item) {
+            if (array_key_exists($item->id_material, $partidas)) {
+                $partidas[$item->id_material]->cantidad = $partidas[$item->id_material]['cantidad'] + $item->cantidad;
+            } else {
+                $partidas[$item->id_material] = $item;
+            }
+        }
         $font = 5;
         $font2 = 4;
         $font_importes = 5;
@@ -142,14 +149,14 @@ class AsignacionFormato extends Rotation
                 $this->SetFillColor(0, 0, 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["p"], $heigth, utf8_decode('COMUNICACIONES ETC SA DE CV'), 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["p"], $heigth, utf8_decode('PANDA'), 1, 0, 'C', 1);
             }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["p"], $heigth, "CONDICIONES GENERALES", 1, 0, 'C', 0);
+                $this->CellFitScale($anchos["p"], $heigth, "PANDA", 1, 0, 'C', 0);
             }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
@@ -666,29 +673,6 @@ class AsignacionFormato extends Rotation
     public function Footer()
     {
         $this->SetTextColor(0, 0, 0);
-//        $this->SetY(-6.2);
-//        $this->SetFont('Arial', '', 6);
-//        $this->SetFillColor(180, 180, 180);
-//        $this->Cell(6.6, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.6, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(12.8, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-//        $this->Ln();
-//        $this->Cell(6.6, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.6, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.4, .4, 'Control de Costos', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.4, .4, 'Director de proyecto', 'TRLB', 0, 'C', 1);
-//        $this->Ln();
-//        $this->Cell(6.6, 1.2, '', 'TRLB', 0, 'C');
-//        $this->Cell(6.6, 1.2, '', 'TRLB', 0, 'C');
-//        $this->Cell(6.4, 1.2, '', 'TRLB', 0, 'C');
-//        $this->Cell(6.4, 1.2, '', 'TRLB', 0, 'C');
-//
-//        $this->Ln();
-//        $this->Cell(6.6, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.6, .4, 'C.P. ROGELIO HERNANDEZ BELTRAN', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.4, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.4, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
-
         $this->SetY(-5.8);
         $encabezados[0] = utf8_decode("Elaboró");
         $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
@@ -704,18 +688,26 @@ class AsignacionFormato extends Rotation
             $this->Cell(.4);
         }
 
+        $this->SetY(-3.8);
+        $this->image("data:image/png;base64,".base64_encode(QrCode::format('png')->generate($this->cadena_qr)), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
+        $this->SetY(-3.6);
+        $this->setX(4.5);
+        $this->SetFont('Arial', '', 4.5);
+        $this->MultiCell(22.5, .3, utf8_decode($this->cadena), 0, 'L');
+        $this->Ln(.2);
+        $this->SetY(16.5);
+        $this->setX(4.5);
 
-        $this->SetFont('Arial', 'B', 6);
+        $this->SetFont('Arial', 'B', 6.5);
         $this->SetTextColor('100,100,100');
-        $this->SetY(-1.5);
-        $this->Cell(26, .4, ( utf8_decode('Sistema de Administración de Obra')), 0, 0, 'R');
-        $this->SetY(-1);
-        $this->SetFont('Arial', 'BI', 6);
+        $this->SetY(20.5);
+        $this->Cell(26.5, .4, utf8_decode('Sistema de Administración de Obra'), 0, 0, 'R');
+        $this->SetY(-0.9);
+        $this->SetFont('Arial', 'BI', 6.5);
         $this->SetTextColor('0,0,0');
-        $this->Cell(3.5);
-        $this->Cell(6.5, .4, (utf8_decode('Formato generado desde el módulo de ordenes de compra. Fecha de registro: '. date('d-m-Y', strtotime('10/11/2019')))), 0, 0, 'L');
-        $this->Cell(16, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
-
+        $this->SetX(4.5);
+        $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de compras. Fecha de registro: ' . date("d-m-Y", strtotime($this->asignacion->fecha_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
+        $this->Cell(15, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     function create()
@@ -725,7 +717,6 @@ class AsignacionFormato extends Rotation
         $this->AddPage();
         $this->SetAutoPageBreak(true, 2);
         $this->partidas();
-//        var_dump('Listo');
 
         try {
             $this->Output('I', 'Asignación de Proveedores.pdf', 1);
