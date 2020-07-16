@@ -7,7 +7,7 @@ use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ContratoProyectado;
 
-class PresupuestoContratistaEliminado extends Model
+class AsignacionContratista extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Subcontratos.asignaciones';
@@ -34,5 +34,15 @@ class PresupuestoContratistaEliminado extends Model
 
     public function usuarioAutorizo(){
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
+    }
+
+    public function getFechaRegistroFormatAttribute(){
+        $date = date_create($this->fecha_hora_registro);
+        return date_format($date,"d/m/Y HH:mm:ss");
+    }
+
+    public function getFechaAutorizoFormatAttribute(){
+        $date = date_create($this->fecha_hora_autorizacion);
+        return date_format($date,"d/m/Y HH:mm:ss");
     }
 }

@@ -13,7 +13,8 @@ use League\Fractal\Manager;
 use Illuminate\Http\Request;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Contratos\AsignacionContratistaTransformer;
+use App\Services\CADECO\Contratos\AsignacionContratistaService;
+use App\Http\Transformers\CADECO\Contrato\AsignacionContratistaTransformer;
 
 class AsignacionContratistaController extends Controller
 {

@@ -6,11 +6,12 @@
  * Time: 03:22 PM
  */
 
-namespace App\Http\Transformers\CADECO\Contratos;
+namespace App\Http\Transformers\CADECO\Contrato;
 
 use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
+use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
 
 class AsignacionContratistaTransformer extends TransformerAbstract
 {
@@ -20,6 +21,7 @@ class AsignacionContratistaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'contrato'
     ];
 
     /**
@@ -34,6 +36,19 @@ class AsignacionContratistaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
         ];
+    }
+
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeContrato(AsignacionContratista $model)
+    {
+        if($contrato = $model->contratoProyectado)
+        {
+            return $this->item($contrato, new ContratoProyectadoTransformer);
+        }
+        return null;
     }
 
 }

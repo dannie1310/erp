@@ -33,13 +33,10 @@ export default {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default,  sortable: true},
-                    { title: 'Observaciones', field: 'observaciones', sortable: true },
-                    { title: 'Contratista', field: 'id_empresa',  sortable: true  },
-                    { title: 'Subtotal', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: true  },
-                    { title: 'IVA', field: 'impuesto', tdClass: 'money', thClass: 'th_money', sortable: true },
-                    { title: 'Total', field: 'total', tdClass: 'money', thClass: 'th_money', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Folio Asignación', field: 'folio_asignacion', thComp: require('../../globals/th-Filter').default,  sortable: true},
+                    { title: 'Folio Contrato proyectado', field: 'numero_folio', sortable: true },
+                    { title: 'Fecha Contrato Proyectado', field: 'fecha',  sortable: true  },
+                    { title: 'Referencia Contrato Proyectado', field: 'referencia', sortable: true  },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -50,8 +47,8 @@ export default {
             }
         },
         mounted() {
-            this.query.include = 'subcontrato.empresa';
-            this.query.sort = 'numero_folio';
+            this.query.include = 'contrato';
+            this.query.sort = 'id_asignacion';
             this.query.order = 'DESC';
 
             this.$Progress.start();
@@ -63,12 +60,12 @@ export default {
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('contratos/estimacion/paginate', {
+                return this.$store.dispatch('contratos/asignacion-contratista/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('contratos/estimacion/SET_ESTIMACIONES', data.data);
-                        this.$store.commit('contratos/estimacion/SET_META', data.meta);
+                        this.$store.commit('contratos/asignacion-contratista/SET_ASIGNACIONES', data.data);
+                        this.$store.commit('contratos/asignacion-contratista/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -102,8 +99,8 @@ export default {
             }
         },
         computed: {
-            estimaciones(){
-                return this.$store.getters['contratos/estimacion/estimaciones'];
+            asignaciones(){
+                return this.$store.getters['contratos/asignacion-contratista/asignaciones'];
             },
             meta(){
                 return this.$store.getters['contratos/estimacion/meta'];
@@ -113,7 +110,7 @@ export default {
             }
         },
         watch: {
-            estimaciones: {
+            asignaciones: {
                 handler(estimaciones) {
                     let self = this
                     self.$data.data = []

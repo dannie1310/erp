@@ -11,7 +11,7 @@ namespace App\Services\CADECO\Contratos;
 use App\Repositories\Repository;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 
-class ContratoProyectadoService
+class AsignacionContratistaService
 {
     /**
      * @var Repository
@@ -19,8 +19,8 @@ class ContratoProyectadoService
     protected $repository;
 
     /**
-     * ContratoProyectadoService constructor.
-     * @param ContratoProyectado $model
+     * AsignacionContratistaService constructor.
+     * @param AsignacionContratista $model
      */
     public function __construct(AsignacionContratista $model)
     {
