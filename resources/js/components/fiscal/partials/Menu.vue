@@ -22,7 +22,7 @@
                     </li>
                     <li class="nav-item"   v-if="$root.can('consultar_autocorreccion_cfd_efo',true)">
                         <router-link :to="{name: 'autocorreccion-cfd-efos'}" class="nav-link" :class="{active: this.$route.name == 'autocorreccion-cfd-efos'}">
-                            <i class="fa fa-file-invoice nav-icon"></i>
+                            <i class="fa fa-check-circle nav-icon"></i>
                             <p>Autocorrección CFD EFOS</p>
                         </router-link>
                     </li>

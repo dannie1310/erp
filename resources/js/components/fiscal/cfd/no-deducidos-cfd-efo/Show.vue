@@ -96,7 +96,7 @@
             find() {
                 this.no_deducido = [];
                 this.cargando = true;
-                return this.$store.dispatch('seguridad/fiscal/no-deducido/find', {
+                return this.$store.dispatch('fiscal/no-deducido/find', {
                     id: this.id,
                     params: {include:['efo', 'partidas.cfd.empresa']}
                 }).then(data => {

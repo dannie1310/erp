@@ -58,10 +58,10 @@
             },
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('seguridad/fiscal/autocorreccion/paginate', { params: this.query})
+                return this.$store.dispatch('fiscal/autocorreccion/paginate', { params: this.query})
                      .then(data => {
-                         this.$store.commit('seguridad/fiscal/autocorreccion/SET_AUTOCORRECCIONES', data.data);
-                         this.$store.commit('seguridad/fiscal/autocorreccion/SET_META', data.meta);
+                         this.$store.commit('fiscal/autocorreccion/SET_AUTOCORRECCIONES', data.data);
+                         this.$store.commit('fiscal/autocorreccion/SET_META', data.meta);
                      })
                      .finally(() => {
                          this.cargando = false;
@@ -85,10 +85,10 @@
         },
         computed: {
             autocorrecciones(){
-                return this.$store.getters['seguridad/fiscal/autocorreccion/autocorrecciones'];
+                return this.$store.getters['fiscal/autocorreccion/autocorrecciones'];
             },
             meta(){
-                return this.$store.getters['seguridad/fiscal/autocorreccion/meta'];
+                return this.$store.getters['fiscal/autocorreccion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}

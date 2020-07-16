@@ -127,7 +127,7 @@
                 return `[${item.rfc}] - [${item.razon_social}] `
             },
             getEfos() {
-                return this.$store.dispatch('seguridad/fiscal/efos/index', {
+                return this.$store.dispatch('fiscal/efos/index', {
                     params: {include: ['proveedor'], scope: ['definitivo'], sort: 'razon_social', order: 'asc'}
                 }).then(data => {
                     this.efos = data.data;
@@ -137,7 +137,7 @@
             getCFD()
             {
                 this.cargando =  true;
-                return this.$store.dispatch('seguridad/fiscal/cfd-sat/index', {
+                return this.$store.dispatch('fiscal/cfd-sat/index', {
                     params: {include: ['empresa', 'proveedor'], scope: ['definitivo','porProveedor:' + this.efo.proveedor.id,'exceptoTipo:P']}
                 }).then(data => {
                     this.cfd = data.data;
@@ -149,7 +149,7 @@
                 })
             },
             store() {
-                return this.$store.dispatch('seguridad/fiscal/no-deducido/store',  {
+                return this.$store.dispatch('fiscal/no-deducido/store',  {
                     'efo' : this.efo,
                     'cfd' : this.cfd
                 })

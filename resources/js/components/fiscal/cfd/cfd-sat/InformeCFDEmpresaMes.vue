@@ -53,7 +53,7 @@
         methods :{
             getInforme() {
                 this.cargando = true;
-                return this.$store.dispatch('seguridad/fiscal/cfd-sat/obtenerInformeCFDEmpresaMes', {
+                return this.$store.dispatch('fiscal/cfd-sat/obtenerInformeCFDEmpresaMes', {
 
                 })
                     .then(data => {

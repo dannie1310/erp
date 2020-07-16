@@ -59,10 +59,10 @@
             },
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('seguridad/fiscal/no-deducido/paginate', { params: this.query})
+                return this.$store.dispatch('fiscal/no-deducido/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('seguridad/fiscal/no-deducido/SET_NODEDUCIDOS', data.data);
-                        this.$store.commit('seguridad/fiscal/no-deducido/SET_META', data.meta);
+                        this.$store.commit('fiscal/no-deducido/SET_NODEDUCIDOS', data.data);
+                        this.$store.commit('fiscal/no-deducido/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -71,10 +71,10 @@
         },
         computed: {
             noDeducidos(){
-                return this.$store.getters['seguridad/fiscal/no-deducido/noDeducidos'];
+                return this.$store.getters['fiscal/no-deducido/noDeducidos'];
             },
             meta(){
-                return this.$store.getters['seguridad/fiscal/no-deducido/meta'];
+                return this.$store.getters['fiscal/no-deducido/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}

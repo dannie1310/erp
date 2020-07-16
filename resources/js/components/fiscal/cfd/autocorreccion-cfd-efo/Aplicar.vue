@@ -112,7 +112,7 @@
             find() {
                 this.autocorreccion = [];
                 this.cargando = true;
-                return this.$store.dispatch('seguridad/fiscal/autocorreccion/find', {
+                return this.$store.dispatch('fiscal/autocorreccion/find', {
                     id: this.id,
                     params: {include:['efo', 'partidas.cfd.empresa']}
                 }).then(data => {
@@ -134,12 +134,12 @@
                 var datos = {
                     'partidas': this.autocorreccion.partidas.data
                 }
-                return this.$store.dispatch('seguridad/fiscal/autocorreccion/aplicar', {
+                return this.$store.dispatch('fiscal/autocorreccion/aplicar', {
                     id: this.id,
                     data: datos
                 })
                     .then((data) => {
-                        this.$store.commit('seguridad/fiscal/autocorreccion/UPDATE_AUTOCORRECCION', data);
+                        this.$store.commit('fiscal/autocorreccion/UPDATE_AUTOCORRECCION', data);
                         $(this.$refs.modal).modal('hide');
                     })
             },

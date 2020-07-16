@@ -53,30 +53,41 @@
                         <thead>
                         <tr>
                             <th class="index_corto">#</th>
-                            <th>Folio</th>
-                            <th>UUID</th>
-                            <th>RFC de Receptor</th>
+                            <th class="fecha">Serie</th>
+                            <th class="fecha">Folio</th>
+                            <th style="width: 300px;">UUID</th>
+                            <th class="fecha_hora">RFC de Receptor</th>
                             <th>Razón Social de Receptor</th>
-                            <th>Serie</th>
-                            <th>Fecha</th>
-                            <th>Total</th>
-                            <th></th>
+                            <th class="fecha_hora">Fecha</th>
+                            <th class="money_input">Total</th>
+                            <th class="index_corto"></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="(cfd, i) in cfds">
-                        <td>{{i+1}}</td>
-                        <td>{{cfd.folio}}</td>
-                        <td>{{cfd.uuid}}</td>
-                        <td>{{cfd.rfc_receptor}}</td>
-                        <td>{{cfd.empresa.razon_social}}</td>
-                        <td>{{cfd.serie}}</td>
-                        <td>{{cfd.fecha_format}}</td>
-                        <td class="money">{{cfd.total_format}}</td>
-                        <td><input type="checkbox" :value="cfd.id" v-model="cfd.selected" checked></td>
-                    </tr>
-                    </tbody>
-                </table>
+                            <tr v-for="(cfd, i) in cfds">
+                                <td>{{i+1}}</td>
+                                <td>{{cfd.serie}}</td>
+                                <td>{{cfd.folio}}</td>
+                                <td>{{cfd.uuid}}</td>
+                                <td>{{cfd.rfc_receptor}}</td>
+                                <td>{{cfd.empresa.razon_social}}</td>
+                                <td>{{cfd.fecha_format}}</td>
+                                <td class="money">{{cfd.total_format}}</td>
+                                <td><input type="checkbox" :value="cfd.id" v-model="cfd.selected" checked></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+
+                    </div>
+                    <div class="col-md-3" align="right">
+					    <label>Total: {{parseFloat(total_cfds).formatMoney(2,'.',',')}}</label>
+                    </div>
+                    <div class="col-md-3" align="right">
+					    <label>Total Seleccionado: {{parseFloat(sumaSeleccionTotales).formatMoney(2,'.',',')}}</label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,7 +138,7 @@
                 return `[${item.rfc}] - [${item.razon_social}] `
             },
             getEfos() {
-                return this.$store.dispatch('seguridad/fiscal/efos/index', {
+                return this.$store.dispatch('fiscal/efos/index', {
                     params: {include: ['proveedor'], scope: ['definitivo'], sort: 'razon_social', order: 'asc'}
                 }).then(data => {
                     this.efos = data.data;
@@ -137,7 +148,7 @@
             getCFDS()
             {
                 this.cargando =  true;
-                return this.$store.dispatch('seguridad/fiscal/cfd-sat/index', {
+                return this.$store.dispatch('fiscal/cfd-sat/index', {
                     params: {include: ['empresa', 'proveedor'], scope: ['definitivo','porProveedor:' + this.efo.proveedor.id,'exceptoTipo:P']}
                 }).then(data => {
                     this.cfds = data.data;
@@ -149,7 +160,7 @@
                 })
             },
             store() {
-                return this.$store.dispatch('seguridad/fiscal/autocorreccion/store',  {
+                return this.$store.dispatch('fiscal/autocorreccion/store',  {
                     'efo' : this.efo,
                     'cfds' : this.cfds
                 })

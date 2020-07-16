@@ -128,11 +128,11 @@ import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
 //SEGURIDAD/FISCAL
-import autocorreccion from './modules/seguridad/fiscal/autocorreccion';
-import CFDSAT from './modules/seguridad/fiscal/cfd-sat';
-import efos from './modules/seguridad/fiscal/efos';
-import empresaFacturera from './modules/seguridad/fiscal/empresa-facturera';
-import noDeducido from './modules/seguridad/fiscal/no-deducido';
+import autocorreccion from './modules/fiscal/autocorreccion';
+import CFDSAT from './modules/fiscal/cfd-sat';
+import efos from './modules/fiscal/efos';
+import empresaFacturera from './modules/fiscal/empresa-facturera';
+import noDeducido from './modules/fiscal/no-deducido';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -283,11 +283,11 @@ export default new Vuex.Store({
         'seguridad/tipo-proyecto': tipoProyecto,
         'seguridad/lista-empresas': listaEmpresas,
 
-        'seguridad/fiscal/empresa-facturera': empresaFacturera,
-        'seguridad/fiscal/autocorreccion' : autocorreccion,
-        'seguridad/fiscal/cfd-sat': CFDSAT,
-        'seguridad/fiscal/efos' : efos,
-        'seguridad/fiscal/no-deducido' : noDeducido,
+        'fiscal/empresa-facturera': empresaFacturera,
+        'fiscal/autocorreccion' : autocorreccion,
+        'fiscal/cfd-sat': CFDSAT,
+        'fiscal/efos' : efos,
+        'fiscal/no-deducido' : noDeducido,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,
