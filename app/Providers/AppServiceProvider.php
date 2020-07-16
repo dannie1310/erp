@@ -131,6 +131,7 @@ use App\Models\SEGURIDAD_ERP\Fiscal\Autocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDNoDeducido;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoDeducido;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
@@ -261,6 +262,9 @@ use App\Observers\SEGURIDAD_ERP\Fiscal\NoDeducidoObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\AutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDAutocorreccionObserver;
+use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
 use App\Observers\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSolicitanteObserver;
@@ -292,7 +296,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /**
+        Diferencia::observe(DiferenciaObserver::class);
+        /*
          * CTPQ
          * */
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
@@ -513,6 +518,16 @@ class AppServiceProvider extends ServiceProvider
         AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
         AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
         Rol::observe(RolObserver::class);
+        /*
+         * Contabilidad
+         * */
+        LogEdicion::observe(LogEdicionObserver::class);
+        CargaCFDSAT::observe(CargaCFDSATObserver::class);
+        SolicitudEdicion::observe(SolicitudEdicionObserver::class);
+
+        /*Fiscal*/
+
+        EFOS::observe(EFOSObserver::class);
     }
 
     /**

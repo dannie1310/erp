@@ -3,17 +3,30 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
+use App\Events\CambioEFOS;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
+use phpDocumentor\Reflection\Types\Self_;
 
 class CtgEfos extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'SEGURIDAD_ERP.Fiscal.ctg_efos';
     public $timestamps = false;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->where('estado_registro', '=', 1);
+        });
+    }
 
     protected $fillable = [
         'rfc',
@@ -22,7 +35,9 @@ class CtgEfos extends Model
         'fecha_definitivo',
         'fecha_desvirtuado',
         'fecha_sentencia_favorable',
-        'estado'
+        'estado',
+        'id_procesamiento',
+        'estado_registro'
     ];
 
     public function estadoEfo()
@@ -55,41 +70,50 @@ class CtgEfos extends Model
             abort(403, 'Archivo CSV inválido');
         }
         $file_fingerprint = hash_file('md5', $file);
-        if(CtgEfosLog::where('hash_file','=', $file_fingerprint)->first())
+        if(ProcesamientoListaEfos::where('hash_file','=', $file_fingerprint)->first())
         {
             abort(500, 'Archivo CSV registrado previamente');
         }
-            $this->truncate();
+
+        CtgEfos::where("estado_registro","=",1)->update(["estado_registro"=>0]);
 
         $efos=$this->getCsvData($file);
-        if(!count($efos['data'])>0){
-            abort(500, 'El procesamiento del archivo no arrojó EFOS');
+        if(!count($efos['data'])>0)
+        {
+            abort(500, 'El procesamiento del archivo no arrojó resultados');
         }
+
+        $procesamiento = ProcesamientoListaEfos::create([
+            'fecha_actualizacion_sat_txt' => $efos['fecha_informacion'],
+            'hash_file'=>$file_fingerprint,
+            'nombre_archivo'=> 'actualizacion '.date('d-m-Y h:i:s.u').'.csv'
+        ]);
 
         try {
-        foreach ($efos['data'] as $key => $efo){
-            $estado = $this->estadoId($efo['estado']);
+            foreach ($efos['data'] as $key => $efo){
+                $estado = $this->estadoId($efo['estado']);
 
-            $efos_layout = $this->create(
-                [
-                    'rfc' => $efo['rfc'],
-                    'razon_social' => $efo['razon_social'],
-                    'fecha_presunto' => $efo['fecha_presunto'],
-                    'fecha_definitivo' =>$efo['fecha_definitivo'],
-                    'fecha_desvirtuado' =>$efo['fecha_desvirtuado'],
-                    'fecha_sentencia_favorable' =>$efo['fecha_sentencia_favorable'],
-                    'estado' => $estado
-                ]
-            );
-        }
-       
+                $efos_layout = $this->create(
+                    [
+                        'id_procesamiento'=> $procesamiento->id,
+                        'rfc' => $efo['rfc'],
+                        'razon_social' => $efo['razon_social'],
+                        'fecha_presunto' => $efo['fecha_presunto'],
+                        'fecha_definitivo' =>$efo['fecha_definitivo'],
+                        'fecha_desvirtuado' =>$efo['fecha_desvirtuado'],
+                        'fecha_sentencia_favorable' =>$efo['fecha_sentencia_favorable'],
+                        'estado' => $estado
+                    ]
+                );
+            }
+
             $this->guardarCsv($file, $file_fingerprint);
-
-            ProcesamientoListaEfos::create([
-                'fecha_actualizacion_sat_txt' => $efos['fecha_informacion']
-            ]);
+            EFOS::actualizaEFOS($procesamiento);
 
             DB::connection('seguridad')->commit();
+            if(count($procesamiento->cambios)>0){
+                event(new CambioEFOS($procesamiento->cambios));
+            }
             return [];
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
@@ -108,7 +132,7 @@ class CtgEfos extends Model
         $estado = array('DEFINITIVO', 'DESVIRTUADO', 'PRESUNTO', 'SENTENCIAFAVORABLE');
         $fecha_informacion = '';
         while(!feof($myfile)) {
-            
+
             $renglon = explode(",",fgets($myfile));
             if($linea ==1){
                 $fecha_informacion = $renglon[0];
@@ -131,7 +155,7 @@ class CtgEfos extends Model
                     }
 
                 }
-                
+
 
                 $fecha_desvirtuado_f = '';
                 $fecha_definitivo_f = '';
@@ -144,7 +168,7 @@ class CtgEfos extends Model
                         $razon = $razon.$renglon[$t];
                         $t++;
                     }
-                    
+
                     if($renglon[$t + 2] == '' || strlen($razon) === 0)
                     {
                         abort(400,(($renglon[$t + 2] =='')? "--Verificar Fecha de Publicación de la página del  SAT \n":"")
@@ -169,7 +193,7 @@ class CtgEfos extends Model
                         {
                             $fecha_presunto_f = $fecha_presunto_obj->format('Y-m-d');
                         }
-                    }                   
+                    }
 
                     $fecha_desvirtuado = (!isset($renglon[$t + 5])) ? '' : $renglon[$t + 5];
                     if($fecha_desvirtuado != ''){
@@ -181,9 +205,9 @@ class CtgEfos extends Model
                         {
                             $fecha_desvirtuado_f = $fecha_desvirtuado_obj->format('Y-m-d');
                         }
-                    }                   
-                   
-                    $fecha_definitivo = (!isset($renglon[$t + 9])) ? '' : $renglon[$t + 9];                    
+                    }
+
+                    $fecha_definitivo = (!isset($renglon[$t + 9])) ? '' : $renglon[$t + 9];
                     if($fecha_definitivo != '')
                     {
                         // $fecha_definitivo = str_replace(' ', '', $fecha_definitivo);
@@ -195,7 +219,7 @@ class CtgEfos extends Model
                             $fecha_definitivo_f = $fecha_definitivo_obj->format('Y-m-d');
                         }
                     }
-                    
+
                     $fecha_favorable = (!isset($renglon[$t + 12])) ? '' : $renglon[$t + 12];
                     if($fecha_favorable != '')
                     {
@@ -208,7 +232,7 @@ class CtgEfos extends Model
                             $fecha_favorable_f = $fecha_favorable_obj->format('Y-m-d');
                         }
                     }
-                    
+
                     try{
                         $content[] = array(
                             'rfc' => $renglon[1],
@@ -227,7 +251,7 @@ class CtgEfos extends Model
                     $linea++;
                     $t = 2;
                     $razon = '';
-                    
+
                 }
             }else
             {
@@ -252,8 +276,10 @@ class CtgEfos extends Model
         $fecha = str_replace('-', '/', $fecha);
         $fecha_rev = explode('/', $fecha);
         $fecha_rev = array_slice($fecha_rev,0,3);
-        if(\strlen($fecha_rev[2]) == 2){
-            $fecha_rev[2] = '20' . $fecha_rev[2];
+        if(key_exists(2,$fecha_rev)){
+            if(\strlen($fecha_rev[2]) == 2){
+                $fecha_rev[2] = '20' . $fecha_rev[2];
+            }
         }
         return  implode('/', $fecha_rev);
     }
@@ -265,13 +291,7 @@ class CtgEfos extends Model
             abort(403,'No existe el directorio destino: STORAGE_LISTA_EFOS. Favor de comunicarse con el área de Soporte a Aplicaciones.');
         }
 
-        $nombre = 'actualizacion '.date('d-m-Y').'.csv';
-        $log = CtgEfosLog::create([
-            'nombre_archivo' => $nombre,
-            'hash_file' => $file_fingerprint
-        ]);
-
-        Storage::disk('lista_efos')->put( $nombre, fopen($file,'r'));
+        Storage::disk('lista_efos')->put( $file_fingerprint.".csv", fopen($file,'r'));
     }
 
     public function estadoId($id)
@@ -290,6 +310,41 @@ class CtgEfos extends Model
                 return 3;
                 break;
         }
+    }
+
+    public function proveedor(){
+        return $this->belongsTo(ProveedorSAT::class, "rfc","rfc");
+    }
+
+    public function efos(){
+        return $this->belongsTo(EFOS::class, "rfc","rfc");
+    }
+
+    public function scopeEsPresuntoDefinitivo($query){
+        return $query->whereIn("estado",[0,2]);
+    }
+
+    public function scopeEsProveedor($query){
+        return $query->whereHas("proveedor");
+    }
+
+    public function scopeNoRegistrado($query){
+        return $query->doesnthave("efos");
+    }
+
+    public function scopeRegistrado($query){
+        return $query->whereHas("efos");
+    }
+
+    private function getNuevosEFOS(){
+        $efos = DB::select("
+
+        ")
+        ;
+        $efos = array_map(function ($value) {
+            return (array)$value;
+        }, $efos);
+        return $efos;
     }
 
     public function getEstadoBadgeAttribute()

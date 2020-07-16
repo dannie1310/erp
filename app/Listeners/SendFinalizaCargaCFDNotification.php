@@ -29,10 +29,7 @@ class SendFinalizaCargaCFDNotification
     }
 
     /**
-     * Handle the event.
-     *
-     * @param  IncidenciaCI  $event
-     * @return void
+     * @param FinalizaCargaCFD $event
      */
     public function handle(FinalizaCargaCFD $event)
     {
