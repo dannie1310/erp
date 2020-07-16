@@ -105,7 +105,7 @@ class InformeEFOSCFD extends Rotation
                     $this->setEstilos($partida["tipo"]);
                     if($partida["tipo"]== "partida"){
 
-                        $this->Row([$partida["indice"],$partida["estatus"],$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_presunto"], $partida["fecha_definitivo"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
+                        $this->Row([$partida["indice"],utf8_decode($partida["estatus"]),$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_presunto"], $partida["fecha_definitivo"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
                     }    else {
                         $this->Row([$partida["contador"],'','', utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
                     }
