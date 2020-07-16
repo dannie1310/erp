@@ -530,7 +530,7 @@ export const routes = [
                 meta: {
                     title: 'FISCAL',
                     middleware: [auth, permission],
-                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_efos_empresa','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_no_deducido_cfd_efo'],
                     general: true
                 }
             },
@@ -565,7 +565,7 @@ export const routes = [
                 ]
             },
             {
-                path: 'cfds',
+                path: 'cfd',
                 component: require('./components/fiscal/cfd/cfd-sat/Layout.vue').default,
                 children:[
                     {
@@ -576,9 +576,71 @@ export const routes = [
                             title: 'CFD SAT',
                             breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
                             middleware: [auth, permission],
-                            permission: ['consultar_poliza'],
+                            permission: ['consultar_poliza','consultar_autocorreccion_cfd_efo', 'consultar_informe_cfd_x_empresa_x_mes','consultar_no_deducido_cfd_efo'],
                             general: true
                         }
+                    },
+                    {
+                        path: 'autocorreccion-cfd-efos',
+                        component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Layout.vue').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'autocorreccion-cfd-efos',
+                                component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Index.vue').default,
+                                meta: {
+                                    title: 'Autocorrección de CFD EFOS',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_autocorreccion_cfd_efo',
+                                    general: true,
+
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'autocorreccion-cfd-efos-create',
+                                component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Create.vue').default,
+                                meta: {
+                                    title: 'Registrar Autocorrección de CFD EFOS',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
+                                    middleware: [auth, permission],
+                                    permission: ['registrar_autocorreccion_cfd_efo'],
+                                    general: true
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        path: 'no-deducidos-cfd-efos',
+                        component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Layout.vue').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'no-deducidos-cfd-efos',
+                                component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Index.vue').default,
+                                meta: {
+                                    title: 'CFD No Deducidos de EFOS Definitivos',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'CFD NO DEDUCIDOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_no_deducido_cfd_efo',
+                                    general: true,
+
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'no-deducidos-cfd-efos-create',
+                                component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Create.vue').default,
+                                meta: {
+                                    title: 'Registrar CFD No Deducidos de EFOS Definitivos',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'no-deducidos-cfd-efos'},
+                                    middleware: [auth, permission],
+                                    permission: ['registrar_no_deducido_cfd_efo'],
+                                    general: true,
+                                }
+                            }
+                        ]
                     },
                     {
                         path: 'informe',
@@ -592,36 +654,6 @@ export const routes = [
                             general: true
                         }
                     },
-                    {
-                        path: 'autocorreccion-cfd-efos',
-                        component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Index').default,
-                        children: [
-                            {
-                                path: '/',
-                                name: 'autocorreccion-cfd-efos',
-                                component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Index').default,
-                                meta: {
-                                    title: 'Autocorrección de CFD EFOS',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
-                                    middleware: [auth, permission],
-                                    permission: 'consultar_poliza',
-                                    general: true,
-
-                                }
-                            },
-                            {
-                                path: 'create',
-                                name: 'autocorreccion-cfd-efos-create',
-                                component: require('./components/fiscal/cfd/cfd-sat/autocorreccion-cfd-efo/Create').default,
-                                meta: {
-                                    title: 'Registrar Autocorrección de CFD EFOS',
-                                    breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
-                                    middleware: [auth, context, permission],
-                                    permission: ['registrar_autocorreccion_cfd_efo']
-                                }
-                            }
-                        ]
-                    }
                 ]
             },
         ]
