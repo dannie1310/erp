@@ -1,6 +1,6 @@
 <template>
       <span>
-         <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar" v-if="$root.can('consultar_subcontrato')">
+         <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar" v-if="$root.can('consultar_asignacion_contratista')">
              <i class="fa fa-eye"></i>
          </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">

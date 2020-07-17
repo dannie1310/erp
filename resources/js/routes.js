@@ -1489,8 +1489,8 @@ export const routes = [
                         meta: {
                             title: 'Asignaciones Proveedores',
                             breadcrumb: {parent: 'contratos', name: 'ASIGNACIONES'},
-                            middleware: [auth, context],
-                            permission: 'consultar_subcontrato'
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_asignacion_contratista'
                         }
                     },
                 ]

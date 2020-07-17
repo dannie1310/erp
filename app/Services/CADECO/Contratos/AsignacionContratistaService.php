@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Contratos;
 
 use App\Repositories\Repository;
+use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 
 class AsignacionContratistaService
@@ -29,7 +30,17 @@ class AsignacionContratistaService
 
     public function paginate($data)
     {
-        return $this->repository->paginate();
+        $asignaciones = $this->repository;
+
+        if(isset($data['busqueda'])){
+            $contratos = ContratoProyectado::where('numero_folio', 'LIKE', '%'.$data['busqueda'].'%')->
+                                            orWhere('referencia', 'LIKE','%'.$data['busqueda'].'%' )->get();
+                                            
+            foreach ($contratos as $e){
+                $asignaciones = $asignaciones->whereOr([['id_transaccion', '=', $e->id_transaccion]]);
+            }
+        }
+        return $asignaciones->paginate($data);
     }
 
     public function show($id)

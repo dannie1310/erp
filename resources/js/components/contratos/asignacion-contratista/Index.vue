@@ -6,7 +6,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
+                                <input type="text" class="form-control" placeholder="Buscar" v-model="busqueda">
                             </div>
                         </div>
                     </div>
@@ -33,18 +33,19 @@ export default {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio Asignación', field: 'folio_asignacion',  sortable: true},
-                    { title: 'Fecha Asignación', field: 'fecha_asignacion',  sortable: true},
-                    { title: 'Folio Contrato proyectado', field: 'numero_folio', sortable: true },
-                    { title: 'Fecha Contrato Proyectado', field: 'fecha',  sortable: true  },
-                    { title: 'Referencia Contrato Proyectado', field: 'referencia', sortable: true  },
+                    { title: 'Folio Asignación', field: 'id_asignacion',  sortable: true},
+                    { title: 'Fecha Asignación', field: 'fecha_hora_registro',  sortable: true},
+                    { title: 'Folio Contrato proyectado', field: 'numero_folio'},
+                    { title: 'Fecha Contrato Proyectado', field: 'fecha' },
+                    { title: 'Referencia Contrato Proyectado', field: 'referencia' },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {},
                 search: '',
-                cargando: false
+                cargando: false,
+                busqueda:''
             }
         },
         mounted() {
@@ -104,7 +105,7 @@ export default {
                 return this.$store.getters['contratos/asignacion-contratista/asignaciones'];
             },
             meta(){
-                return this.$store.getters['contratos/estimacion/meta'];
+                return this.$store.getters['contratos/asignacion-contratista/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -117,8 +118,8 @@ export default {
                     self.$data.data = []
                     self.$data.data = asignaciones.map((asignacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        folio_asignacion: asignacion.numero_folio_asignacion,
-                        fecha_asignacion: asignacion.fecha_registro,
+                        id_asignacion: asignacion.numero_folio_asignacion,
+                        fecha_hora_registro: asignacion.fecha_registro,
                         numero_folio: asignacion.contrato.numero_folio_format,
                         fecha: asignacion.contrato.fecha,
                         referencia: asignacion.contrato.referencia,
@@ -150,6 +151,17 @@ export default {
                 }
                 this.timer = setTimeout(() => {
                     this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+                }, 500);
+            },
+            busqueda(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.busqueda = val;
                     this.query.offset = 0;
                     this.paginate();
                 }, 500);
