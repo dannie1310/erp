@@ -31,6 +31,11 @@ class CargaCFDSAT extends Model
         ,"proveedores_nuevos"
         ,"fecha_hora_fin"
         ,"usuario_cargo"
+        ,"cfd_cargados"
+        ,"cfd_no_cargados"
+        ,"cfd_receptor_no_valido"
+        ,"cfd_preexistentes"
+        ,"cfd_no_cargados_error_app"
     ];
 
     public function cfd()
