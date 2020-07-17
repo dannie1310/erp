@@ -43,10 +43,10 @@ class CFDSAT extends Model
         ,"tipo_comprobante"
         ,"estado"
         ,"estado_txt"
+        ,"fecha_cancelacion"
     ];
 
-    protected $dates =["fecha"];
-    protected $dateFormat ="Y-m-d H:i:s";
+    protected $dates =["fecha", "fecha_cancelacion"];
 
     public function carga()
     {
@@ -130,6 +130,7 @@ class CFDSAT extends Model
             return $cfd;
 
         } catch (\Exception $e) {
+            dd($data);
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
         }

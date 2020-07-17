@@ -312,20 +312,33 @@ class CFDSATService
         $linea = 0;
         $i = 0;
         while(!feof($myfile)) {
-            $renglon = explode("~", fgets($myfile));
+            $linea_archivo = fgets($myfile);
+            $renglon = explode("~", $linea_archivo);
             if(key_exists(1, $renglon) &&  $renglon[0] != "Uuid"){
+
+                if(substr($renglon[count($renglon)-1], -2) != "" && substr($renglon[count($renglon)-1], -2) != "\r\n"){
+                    $renglon[count($renglon)-1] = str_replace(["\n", '"'],"",$renglon[count($renglon)-1]);
+                    $fin = false;
+                    while(!$fin){
+                        $add = explode("~",fgets($myfile));
+                        $renglon[count($renglon)-1] .= " ".$add[0];
+                        array_shift($add);
+                        $renglon = array_merge($renglon , $add);
+                        $fin = substr($renglon[count($renglon)-1], -2) == "\r\n";
+                    }
+                }
                 $this->arreglos_factura[$i]["id_carga_cfd_sat"] = $this->carga->id;
                 $this->arreglos_factura[$i]["version"] = "txt";
                 $this->arreglos_factura[$i]["uuid"] = $renglon[0];
                 $this->arreglos_factura[$i]["rfc_emisor"] = $renglon[1];
                 $this->arreglos_factura[$i]["rfc_receptor"] = $renglon[3];
-                $this->arreglos_factura[$i]["fecha"] = $renglon[6];
+                $this->arreglos_factura[$i]["fecha"] = $renglon[6].".000";
                 $this->arreglos_factura[$i]["total"] = $renglon[8];
                 $this->arreglos_factura[$i]["subtotal"] = 100 * $renglon[8] /116;
                 $this->arreglos_factura[$i]["importe_iva"] = 16 * $renglon[8] /116;
                 $this->arreglos_factura[$i]["tipo_comprobante"] = $renglon[9];
                 $this->arreglos_factura[$i]["estado_txt"] = $renglon[10];
-                $this->arreglos_factura[$i]["fecha_cancelacion"] = $renglon[11];
+                $this->arreglos_factura[$i]["fecha_cancelacion"] = ($renglon[11]!="\r\n")?$renglon[11].".000":null;
 
                 $this->arreglos_factura[$i]["emisor"]["rfc"] = (string)$renglon[1];
                 $this->arreglos_factura[$i]["emisor"]["razon_social"] = (string)$renglon[2];
