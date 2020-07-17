@@ -42,9 +42,11 @@ class CFDSAT extends Model
         ,"id_carga_cfd_sat"
         ,"tipo_comprobante"
         ,"estado"
+        ,"estado_txt"
     ];
 
     protected $dates =["fecha"];
+    protected $dateFormat ="Y-m-d H:i:s";
 
     public function carga()
     {
