@@ -621,6 +621,7 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'asignacion-contratista'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@show')->where(['id' => '[0-9]+']);
         });
 
 

@@ -33,7 +33,8 @@ export default {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio Asignación', field: 'folio_asignacion', thComp: require('../../globals/th-Filter').default,  sortable: true},
+                    { title: 'Folio Asignación', field: 'folio_asignacion',  sortable: true},
+                    { title: 'Fecha Asignación', field: 'fecha_asignacion',  sortable: true},
                     { title: 'Folio Contrato proyectado', field: 'numero_folio', sortable: true },
                     { title: 'Fecha Contrato Proyectado', field: 'fecha',  sortable: true  },
                     { title: 'Referencia Contrato Proyectado', field: 'referencia', sortable: true  },
@@ -111,26 +112,18 @@ export default {
         },
         watch: {
             asignaciones: {
-                handler(estimaciones) {
+                handler(asignaciones) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = estimaciones.map((estimacion, i) => ({
+                    self.$data.data = asignaciones.map((asignacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: estimacion.numero_folio_format,
-                        observaciones: estimacion.observaciones,
-                        id_empresa: estimacion.subcontrato.empresa.razon_social,
-                        estado: this.getEstado(estimacion.estado),
-                        total: estimacion.monto_pagar_format,
-                        impuesto:estimacion.impuesto_format,
-                        subtotal: estimacion.subtotal_format,
+                        folio_asignacion: asignacion.numero_folio_asignacion,
+                        fecha_asignacion: asignacion.fecha_registro,
+                        numero_folio: asignacion.contrato.numero_folio_format,
+                        fecha: asignacion.contrato.fecha,
+                        referencia: asignacion.contrato.referencia,
                         buttons: $.extend({}, {
-                            aprobar: (this.$root.can('aprobar_estimacion_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
-                            desaprobar: (this.$root.can('revertir_aprobacion_estimacion_subcontrato') && estimacion.estado == 1 ) ? true : undefined ,
-                            id: estimacion.id,
-                            estimacion: estimacion,
-                            estado: estimacion.estado,
-                            delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : false,
-                            edit: self.$root.can('editar_estimacion_subcontrato') ? true : false
+                            id: asignacion.id,
                         })
 
                     }));

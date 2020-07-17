@@ -6,6 +6,7 @@ namespace App\Models\CADECO\Subcontratos;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
 
 class AsignacionContratista extends Model
 {
@@ -24,6 +25,10 @@ class AsignacionContratista extends Model
         'estado'
     ];
 
+    public function asignacionSubcontrato(){
+        return $this->belongsTo(AsignacionSubcontrato::class, 'id_asignacion', 'id_asignacion');
+    }
+
     public function contratoProyectado(){
         return $this->belongsTo(ContratoProyectado::class, 'id_transaccion', 'id_transaccion');
     }
@@ -38,11 +43,20 @@ class AsignacionContratista extends Model
 
     public function getFechaRegistroFormatAttribute(){
         $date = date_create($this->fecha_hora_registro);
-        return date_format($date,"d/m/Y HH:mm:ss");
+        return date_format($date,"d/m/Y H:m");
     }
 
     public function getFechaAutorizoFormatAttribute(){
         $date = date_create($this->fecha_hora_autorizacion);
-        return date_format($date,"d/m/Y HH:mm:ss");
+        return date_format($date,"d/m/Y H:m");
+    }
+
+    public function getNumeroFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->id_asignacion);
+    }
+
+    public function getUsuarioRegistroNombreAttribute(){
+        return $this->usuarioRegistro['nombre'] . ' ' . $this->usuarioRegistro['apaterno'] . ' ' . $this->usuarioRegistro['amaterno'];
     }
 }

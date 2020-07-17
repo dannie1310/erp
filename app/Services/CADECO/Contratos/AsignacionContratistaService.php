@@ -31,4 +31,9 @@ class AsignacionContratistaService
     {
         return $this->repository->paginate();
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

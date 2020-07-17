@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
+use App\Http\Transformers\CADECO\Contrato\AsignacionSubcontratoTransformer;
 
 class AsignacionContratistaTransformer extends TransformerAbstract
 {
@@ -21,7 +22,8 @@ class AsignacionContratistaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'contrato'
+        'contrato',
+        'asignacionEstimacion'
     ];
 
     /**
@@ -35,6 +37,9 @@ class AsignacionContratistaTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
+            'numero_folio_asignacion' => $model->numero_folio_format,
+            'fecha_registro' => $model->fecha_registro_format,
+            'usuario_registro' => $model->Usuario_registro_nombre,
         ];
     }
 
@@ -47,6 +52,19 @@ class AsignacionContratistaTransformer extends TransformerAbstract
         if($contrato = $model->contratoProyectado)
         {
             return $this->item($contrato, new ContratoProyectadoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeAsignacionEstimacion(AsignacionContratista $model)
+    {
+        if($asignacion_subcontrato = $model->asignacionSubcontrato)
+        {
+            return $this->item($asignacion_subcontrato, new AsignacionSubcontratoTransformer);
         }
         return null;
     }
