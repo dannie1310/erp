@@ -44,6 +44,7 @@ import itemContratista from './modules/compras/item-contratista';
 import ordenCompra from './modules/compras/orden-compra';
 import requisicion from './modules/compras/requisicion';
 import solicitudCompra from './modules/compras/solicitud-compra';
+import formaPagoCredito from './modules/compras/forma-pago-credito';
 
 //CONFIGURACION
 import areaCompradora from './modules/configuracion/area-compradora';
@@ -80,13 +81,8 @@ import polizaGeneral from './modules/contabilidadGeneral/poliza';
 import empresaContabilidad from './modules/contabilidadGeneral/empresa';
 import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
 import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
-import CFDSAT from './modules/contabilidadGeneral/cfd-sat';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 import incidentePoliza from './modules/contabilidadGeneral/incidente-poliza';
-
-//REPORTES
-
-import reporte from './modules/reportes/reporte';
 
 //CONTRATOS
 import asigacionContratista from './modules/contratos/asignacion-contratista'
@@ -134,8 +130,12 @@ import transaccionEfo from './modules/seguridad/finanzas/transaccion-efo';
 import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
-//CONTROL INTERNO
- import empresaFacturera from './modules/seguridad/fiscal/empresa-facturera';
+//SEGURIDAD/FISCAL
+import autocorreccion from './modules/fiscal/autocorreccion';
+import CFDSAT from './modules/fiscal/cfd-sat';
+import efos from './modules/fiscal/efos';
+import empresaFacturera from './modules/fiscal/empresa-facturera';
+import noDeducido from './modules/fiscal/no-deducido';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -149,6 +149,8 @@ import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
 
+//REPORTES
+import reporte from './modules/reportes/reporte';
 
 //SCI
 import marca from "./modules/sci/marca";
@@ -156,6 +158,7 @@ import modelo from "./modules/sci/modelo";
 
 // VENTAS
 import venta from "./modules/ventas/venta";
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -198,6 +201,8 @@ export default new Vuex.Store({
         'compras/orden-compra' : ordenCompra,
         'compras/requisicion' : requisicion,
         'compras/solicitud-compra' : solicitudCompra,
+        'compras/forma-pago-credito' : formaPagoCredito,
+        
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,
@@ -256,7 +261,6 @@ export default new Vuex.Store({
         'contabilidadGeneral/poliza' :polizaGeneral,
         'contabilidadGeneral/empresa' :empresaContabilidad,
         'contabilidadGeneral/empresa-sat': empresaSAT,
-        'contabilidadGeneral/cfd-sat': CFDSAT,
         'contabilidadGeneral/empresa-contpaq': empresaContpaq,
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/incidente-poliza' : incidentePoliza,
@@ -286,7 +290,11 @@ export default new Vuex.Store({
         'seguridad/tipo-proyecto': tipoProyecto,
         'seguridad/lista-empresas': listaEmpresas,
 
-        'controlInterno/empresa-facturera': empresaFacturera,
+        'fiscal/empresa-facturera': empresaFacturera,
+        'fiscal/autocorreccion' : autocorreccion,
+        'fiscal/cfd-sat': CFDSAT,
+        'fiscal/efos' : efos,
+        'fiscal/no-deducido' : noDeducido,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

@@ -1,5 +1,8 @@
 <template>
     <div class="row">
+        <div class="col-md-12">
+            <Registro @created="paginate()"></Registro>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -19,10 +22,10 @@
 </template>
 
 <script>
-
+    import Registro from "./partials/Registrar";
     export default {
         name: "orden-compra-index",
-
+        components:{Registro},
         data() {
             return {
                 HeaderSettings: false,
@@ -92,6 +95,7 @@
                                 show: true,
                                 pdf: self.$root.can('consultar_orden_compra') ? true : false,
                                 id: orden.id,
+                                tiene_entradas: orden.entradas_almacen,
                             })
                         })
                     });

@@ -54,7 +54,7 @@ class CotizacionCompra  extends Transaccion
 
         self::addGlobalScope(function($query) {
             return $query->where('tipo_transaccion', '=', 18)
-            ->where('opciones','=', 1)->where('estado', '!=', 2);
+            ->where('opciones','=', 1)->where('estado', '!=', 2)->whereHas('complemento');
         });
     }
 
@@ -281,6 +281,8 @@ class CotizacionCompra  extends Transaccion
                                 'precio_unitario' => $data['precio'][$x],
                                 'descuento' => ($data['descuento_cot'] + $data['descuento'][$x] - (($data['descuento_cot'] * $data['descuento'][$x]) / 100)),
                                 'anticipo' => $data['anticipo'],
+                                'dias_credito' => $data['credito'],
+                                'dias_entrega' => $data['tiempo'],
                                 'no_cotizado' => 0,
                                 'disponibles' => 1,
                                 'id_moneda' => $data['moneda'][$x]

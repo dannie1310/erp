@@ -16,6 +16,7 @@ class OrdenCompraPartidaComplemento extends Model
     protected $fillable = [
         'id_item',
         'descuento',
+        'id_moneda',
         'observaciones',
     ];
 }

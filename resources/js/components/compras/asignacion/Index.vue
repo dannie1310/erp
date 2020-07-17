@@ -92,10 +92,11 @@
                             id_transaccion_solicitud: asignacion.folio_solicitud_format,
                             id: asignacion.folio_asignacion_format,
                             observaciones: asignacion.observaciones,
-                            estado: asignacion.estado,
+                            estado: asignacion.estado_format,
                             fecha_format: asignacion.fecha_format,
                             buttons: $.extend({}, {
                                 id:asignacion.id,
+                                estado:asignacion.estado,
                             })
                         })
                     });

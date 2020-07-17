@@ -146,7 +146,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $query->whereIn("idusuario",$arreglo_usuarios);
     }
 
-    public function scopeSuscripcion($query, $suscripciones, $id_usuario){
+    public function scopeSuscripcion($query, $suscripciones, $id_usuario=null){
         $arreglo_usuarios = [[$id_usuario]];
         foreach($suscripciones as $suscripcion)
         {
@@ -224,7 +224,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function rolesSinContexto()
     {
-        return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user', 'user_id', 'role_id');
+        return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
     }
 
     public function rolesGlobales()

@@ -27,7 +27,7 @@ class SolicitudCompra extends Transaccion
 
         self::addGlobalScope(function($query) {
             return $query->where('tipo_transaccion', '=', 17)
-            ->where('opciones', '=', 1);
+            ->where('opciones', '=', 1)->whereHas('complemento');
         });
     }
 

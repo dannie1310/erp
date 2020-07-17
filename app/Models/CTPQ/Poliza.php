@@ -26,6 +26,8 @@ class Poliza extends Model
     protected $table = 'Polizas';
     protected $primaryKey = 'Id';
 
+    protected $dates = ["Fecha"];
+
     public $timestamps = false;
 
     public function movimientos()
@@ -61,9 +63,21 @@ class Poliza extends Model
 
     public function getFechaMesLetraFormatAttribute()
     {
-        setlocale(LC_ALL,"es_ES");
+        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+        $mes = $meses[($this->Fecha->format('n')) - 1];
+        //setlocale(LC_ALL,"es_ES");
         $fecha =New DateTime($this->Fecha);
-        return strftime("%d/",$fecha->getTimestamp()).substr(ucfirst(strftime("%b",$fecha->getTimestamp())), 0, 3).strftime("/%Y",$fecha->getTimestamp());
+        return strftime("%d/",$fecha->getTimestamp()).substr($mes, 0, 3).strftime("/%Y",$fecha->getTimestamp());
+    }
+
+    public function getFechaConsultaAttribute()
+    {
+        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+        $mes = $meses[($this->Fecha->format('n')) - 1];
+        $fecha = new DateTime($this->Fecha);
+        $fecha->add(new \DateInterval('P5D'));
+        $fecha = strftime("%d/", $fecha->getTimestamp()).substr($mes, 0, 3).strftime("/%Y", $fecha->getTimestamp());
+        return $fecha;
     }
 
     public function actualiza($datos)
@@ -469,6 +483,14 @@ class Poliza extends Model
             return $movimientos_cuenta_padre;
         } else {
             return $this->getMovimientos($cuenta_padre);
+        }
+    }
+
+    public function getTipoAttribute(){
+        if($this->tipo_poliza){
+            return $this->tipo_poliza->Nombre;
+        } else {
+            return "";
         }
     }
 }

@@ -4,8 +4,8 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 use App\Models\CADECO\SolicitudCompra;
-use App\Http\Transformers\IGH\UsuarioTransformer;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Compras\AsignacionProveedores;
 use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
 use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
@@ -44,7 +44,8 @@ class AsignacionProveedoresTransformer extends TransformerAbstract
             'fecha_asignacion' => date('d/m/Y H:i', strtotime($model->timestamp_registro)),
             'fecha_format' => $model->fecha_format,
             'observaciones' => (string) $model->solicitud->observaciones,
-            'estado' => $model->estadoAsignacion->descripcion,
+            'estado_format' => $model->estadoAsignacion->descripcion,
+            'estado' => $model->estado,
             'folio_solicitud_format' => $model->solicitud->numero_folio_format,
             'opciones' => $model->solicitud->opciones,
             'folio_asignacion_format' => $model->folio_format,
