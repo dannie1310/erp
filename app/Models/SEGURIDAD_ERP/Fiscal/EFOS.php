@@ -381,8 +381,7 @@ ORDER BY 8 DESC
            ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id))
        LEFT OUTER JOIN SEGURIDAD_ERP.Fiscal.cfd_no_deducidos cfd_no_deducidos
           ON (cfd_no_deducidos.id_cfd_sat = cfd_sat.id)
- WHERE     (cfd_sat.estado = 0)
-       AND (ctg_efos.estado_registro = 1)
+ WHERE     (ctg_efos.estado_registro = 1)
        AND (cfd_sat_autocorrecciones.id IS NULL)
        AND (cfd_no_deducidos.id IS NULL)
        AND (efos.estado = 0)
