@@ -39,7 +39,8 @@ class AsignacionProveedorPartida extends Model
         });
     }
 
-    public function asignacion(){
+    public function asignacion()
+    {
         return $this->belongsTo(AsignacionProveedor::class, 'id_asignacion_proveedores', 'id');
     }
 
@@ -48,7 +49,8 @@ class AsignacionProveedorPartida extends Model
         return $this->belongsTo(CotizacionCompraPartida::class, 'id_transaccion_cotizacion', 'id_transaccion')->where('id_material', '=', $this->id_material);
     }
 
-    public function cotizacionCompra(){
+    public function cotizacionCompra()
+    {
         return $this->belongsTo(CotizacionCompra::class, 'id_transaccion_cotizacion', 'id_transaccion');
     }
 
@@ -57,11 +59,13 @@ class AsignacionProveedorPartida extends Model
         return $this->belongsTo(ItemSolicitudCompra::class, 'id_item_solicitud', 'id_item');
     }
 
-    public function ordenCompra(){
+    public function ordenCompra()
+    {
         return $this->hasMany(OrdenCompra::class, 'id_referente', 'id_transaccion_cotizacion');
     }
 
-    public function material(){
+    public function material()
+    {
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
 
@@ -76,5 +80,21 @@ class AsignacionProveedorPartida extends Model
 
     public function getConOrdenCompraAttribute(){
         return $this->cotizacion?$this->ordenCompra()->where('id_moneda', '=', $this->cotizacion->id_moneda)->count() > 0:0;
+    }
+
+    public function getTotalPrecioMonedaAttribute()
+    {
+        switch ($this->cotizacion->id_moneda)
+        {
+            case (1):
+                return $this->cantidad * $this->cotizacion->precio_compuesto;
+                break;
+            case (2):
+                return($this->cotizacionCompra->complemento) ? ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->cotizacionCompra->complemento->tc_usd) : ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(1));
+                break;
+            case (3):
+                return ($this->cotizacionCompra->complemento) ? $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->cotizacionCompra->complemento->tc_eur : $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(2);
+                break;
+        }
     }
 }

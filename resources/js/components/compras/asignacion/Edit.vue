@@ -322,7 +322,7 @@ export default {
                         id: this.id
                     }
                 }).then(data => {
-                    this.$router.push({name: 'asignacion-proveedores'});
+                    this.$router.push({name: 'asignacion-proveedor'});
                 }) .finally(() => {
                     this.descargando = false;
                 })

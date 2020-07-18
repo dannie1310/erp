@@ -232,7 +232,7 @@ export default {
                 cotizaciones:this.data.cotizaciones
             })
             .then((data) => {
-                this.$router.push({name: 'asignacion-proveedores'});
+                this.$router.push({name: 'asignacion-proveedor'});
             })
             .finally(() => {
                 this.cargando = false;

@@ -48,13 +48,14 @@ class ItemSolicitudCompra extends Item
         return $this->hasMany(Inventario::class, 'id_material', 'id_material');
     }
 
+    public function asignaciones()
+    {
+        return $this->hasMany(AsignacionProveedorPartida::class, 'id_item_solicitud', 'id_item');
+    }
+
     public function itemsOrdenCompra()
     {
         return $this->hasMany(ItemOrdenCompra::class, 'item_antecedente', 'id_item');
-    }
-
-    public function asignaciones(){
-        return $this->hasMany(AsignacionProveedorPartida::class, 'id_item_solicitud', 'id_item');
     }
 
     public function getCantidadOrdenCompraAttribute()
