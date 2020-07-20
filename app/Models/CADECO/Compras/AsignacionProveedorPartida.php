@@ -87,7 +87,7 @@ class AsignacionProveedorPartida extends Model
         switch ($this->cotizacion->id_moneda)
         {
             case (1):
-                return $this->cantidad * $this->cotizacion->precio_compuesto;
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto;
                 break;
             case (2):
                 return($this->cotizacionCompra->complemento) ? ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->cotizacionCompra->complemento->tc_usd) : ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(1));
