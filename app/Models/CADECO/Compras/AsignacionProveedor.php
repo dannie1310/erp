@@ -145,4 +145,39 @@ class AsignacionProveedor extends Model
         }
         return $suma;
     }
+
+    public function getMejorAsignadoAttribute()
+    {
+        $suma_mejor_asignado = 0;
+        $valor_calculado = 0;
+        $suma_mejor_por_partida = 0;
+        foreach ($this->partidas as $partida_asignacion) {
+            foreach ($partida_asignacion->asignacion->solicitud->cotizaciones as $cotizacion) {
+               $partida_encontrada = $cotizacion->partidas()->where('id_material','=',$partida_asignacion->id_material)->first();
+               if($partida_encontrada) {
+                   switch ($partida_encontrada->id_moneda) {
+                       case (1):
+                           $valor_calculado = $partida_asignacion->cantidad_asignada * $partida_encontrada->precio_compuesto;
+                           break;
+                       case (2):
+                           $valor_calculado =  ($partida_asignacion->cantidad_asignada * $cotizacion->precio_compuesto * $cotizacion->complemento->tc_usd);
+                           break;
+                       case (3):
+                           $valor_calculado =  ($partida_asignacion->cantidad_asignada * $cotizacion->precio_compuesto * $cotizacion->complemento->tc_eur);
+                           break;
+                   }
+                   if($suma_mejor_por_partida == 0)
+                   {
+                       $suma_mejor_por_partida = $valor_calculado;
+                   }
+                   if($valor_calculado < $suma_mejor_por_partida)
+                   {
+                        $suma_mejor_por_partida = $valor_calculado;
+                   }
+               }
+            }
+            $suma_mejor_asignado += $suma_mejor_por_partida;
+        }
+        return $suma_mejor_asignado;
+    }
 }

@@ -469,4 +469,5 @@ class CotizacionCompra  extends Transaccion
     {
         return $this->subtotal_con_descuento + $this->iva_con_descuento;
     }
+
 }
