@@ -135,4 +135,14 @@ class AsignacionProveedor extends Model
         }
         return false;
     }
+
+    public function getSumaSubtotalPartidasAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            $suma += $partida->total_precio_moneda;
+        }
+        return $suma;
+    }
 }
