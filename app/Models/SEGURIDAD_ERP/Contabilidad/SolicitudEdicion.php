@@ -559,29 +559,35 @@ class SolicitudEdicion extends Model
                         $hashs_a[$i] = $hash_a;
                         $hashs_b[$i] = $hash_b;
 
-                        $arreglo_a[$hash_a]["id_movimiento"] = $relacion_movimiento->id_movimiento_a;
-                        $arreglo_a[$hash_a]["num_movto"] = $relacion_movimiento->num_movto_a;
-                        $arreglo_a[$hash_a]["tipo_movto"] = $relacion_movimiento->tipo_movto_a;
-                        $arreglo_a[$hash_a]["codigo_cuenta"] = $relacion_movimiento->codigo_cuenta_a;
-                        $arreglo_a[$hash_a]["nombre_cuenta"] = $relacion_movimiento->nombre_cuenta_a;
-                        $arreglo_a[$hash_a]["importe"] = $relacion_movimiento->importe_a;
-                        $arreglo_a[$hash_a]["referencia"] = $relacion_movimiento->referencia_a;
-                        $arreglo_a[$hash_a]["concepto"] = $relacion_movimiento->concepto_a;
-                        $arreglo_a[$hash_a]["id_cuenta"] = $relacion_movimiento->id_cuenta_a;
-                        $arreglo_a[$hash_a]["base_datos"] = $relacion_movimiento->base_datos_a;
-                        $id_poliza_a = $relacion_movimiento->id_poliza_a;
+                        try{
+                            $arreglo_a[$hash_a]["id_movimiento"] = $relacion_movimiento->id_movimiento_a;
+                            $arreglo_a[$hash_a]["num_movto"] = $relacion_movimiento->num_movto_a;
+                            $arreglo_a[$hash_a]["tipo_movto"] = $relacion_movimiento->tipo_movto_a;
+                            $arreglo_a[$hash_a]["codigo_cuenta"] = $relacion_movimiento->codigo_cuenta_a;
+                            $arreglo_a[$hash_a]["nombre_cuenta"] = $relacion_movimiento->nombre_cuenta_a;
+                            $arreglo_a[$hash_a]["importe"] = $relacion_movimiento->importe_a;
+                            $arreglo_a[$hash_a]["referencia"] = $relacion_movimiento->referencia_a;
+                            $arreglo_a[$hash_a]["concepto"] = $relacion_movimiento->concepto_a;
+                            $arreglo_a[$hash_a]["id_cuenta"] = $relacion_movimiento->id_cuenta_a;
+                            $arreglo_a[$hash_a]["base_datos"] = $relacion_movimiento->base_datos_a;
+                            $id_poliza_a = $relacion_movimiento->id_poliza_a;
 
-                        $arreglo_b[$hash_b]["id_movimiento"] = $relacion_movimiento->id_movimiento_b;
-                        $arreglo_b[$hash_b]["num_movto"] = $relacion_movimiento->num_movto_b;
-                        $arreglo_b[$hash_b]["tipo_movto"] = $relacion_movimiento->tipo_movto_b;
-                        $arreglo_b[$hash_b]["codigo_cuenta"] = $relacion_movimiento->codigo_cuenta_b;
-                        $arreglo_b[$hash_b]["nombre_cuenta"] = $relacion_movimiento->nombre_cuenta_b;
-                        $arreglo_b[$hash_b]["importe"] = $relacion_movimiento->importe_b;
-                        $arreglo_b[$hash_b]["referencia"] = $relacion_movimiento->referencia_b;
-                        $arreglo_b[$hash_b]["concepto"] = $relacion_movimiento->concepto_b;
-                        $arreglo_b[$hash_b]["id_cuenta"] = $relacion_movimiento->id_cuenta_b;
-                        $arreglo_b[$hash_a]["base_datos"] = $relacion_movimiento->base_datos_b;
-                        $id_poliza_b = $relacion_movimiento->id_poliza_b;
+                            $arreglo_b[$hash_b]["id_movimiento"] = $relacion_movimiento->id_movimiento_b;
+                            $arreglo_b[$hash_b]["num_movto"] = $relacion_movimiento->num_movto_b;
+                            $arreglo_b[$hash_b]["tipo_movto"] = $relacion_movimiento->tipo_movto_b;
+                            $arreglo_b[$hash_b]["codigo_cuenta"] = $relacion_movimiento->codigo_cuenta_b;
+                            $arreglo_b[$hash_b]["nombre_cuenta"] = $relacion_movimiento->nombre_cuenta_b;
+                            $arreglo_b[$hash_b]["importe"] = $relacion_movimiento->importe_b;
+                            $arreglo_b[$hash_b]["referencia"] = $relacion_movimiento->referencia_b;
+                            $arreglo_b[$hash_b]["concepto"] = $relacion_movimiento->concepto_b;
+                            $arreglo_b[$hash_b]["id_cuenta"] = $relacion_movimiento->id_cuenta_b;
+                            $arreglo_b[$hash_a]["base_datos"] = $relacion_movimiento->base_datos_b;
+                            $id_poliza_b = $relacion_movimiento->id_poliza_b;
+
+                        }catch(\Exception $e){
+                            dd($relacion_movimiento);
+                            abort(500, $e->getMessage());
+                        }
                         $i++;
                     }
 
@@ -632,6 +638,7 @@ class SolicitudEdicion extends Model
                                 $relacion_movimientos[$r]->save();
                             }catch(\Exception $e)
                             {
+                                dd($relacion_movimientos, $arreglo_a);
                                 abort(500, $e->getMessage());
                             }
                             $r ++;

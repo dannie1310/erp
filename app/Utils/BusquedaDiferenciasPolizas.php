@@ -98,7 +98,7 @@ class BusquedaDiferenciasPolizas
 
     private function buscaDiferenciaSumaImportesPoliza()
     {
-        if($this->poliza_a->Cargos != $this->poliza_b->Abonos)
+        if(abs($this->poliza_a->Cargos - $this->poliza_b->Abonos) > 0.99)
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 3;
@@ -169,6 +169,8 @@ class BusquedaDiferenciasPolizas
         $cadena_b = "";
         $cadena_b_ordenada = "";
 
+        $arreglo_registros = [];
+
 
         $i = 0;
         foreach($this->relaciones_movimientos as $relacion_movimiento){
@@ -181,10 +183,21 @@ class BusquedaDiferenciasPolizas
 
             $arreglo_importes_a[$i] = $relacion_movimiento->importe_a;
             $arreglo_importes_b[$i] = $relacion_movimiento->importe_b;
+
+            $arreglo_registros_a[$i]["codigo"] = $codigos["codigo_a"];
+            $arreglo_registros_a[$i]["tipo"] = $relacion_movimiento->tipo_movto_a;
+            $arreglo_registros_a[$i]["importe"] =  $relacion_movimiento->importe_a;
+
+            $arreglo_registros_b[$i]["codigo"] = $codigos["codigo_b"];
+            $arreglo_registros_b[$i]["tipo"] = $relacion_movimiento->tipo_movto_b;
+            $arreglo_registros_b[$i]["importe"] =  $relacion_movimiento->importe_b;
+
             $cadena_a .= $codigos["codigo_a"] . $relacion_movimiento->tipo_movto_a . $relacion_movimiento->importe_a;
-            $cadena_b .= $codigos["codigo_b"] . $relacion_movimiento->tipo_movto_b. $relacion_movimiento->importe_b;
+            $cadena_b .= $codigos["codigo_b"] . $relacion_movimiento->tipo_movto_b . $relacion_movimiento->importe_b;
+
             $i++;
         }
+
         $md5_a = md5($cadena_a);
         $md5_b = md5($cadena_b);
         if($md5_a == $md5_b){
@@ -194,6 +207,16 @@ class BusquedaDiferenciasPolizas
             return false;
 
         } else {
+
+            foreach ($arreglo_registros_a as $clave => $fila) {
+                $orden1[$clave] = $fila['codigo'];
+                $orden2[$clave] = $fila['tipo'];
+                $orden3[$clave] = $fila['importe'];
+            }
+
+            array_multisort($orden1, SORT_ASC, $orden2, SORT_ASC, $orden3, SORT_ASC, $arreglo_registros_a);
+            dd($arreglo_registros_a);
+
             sort($arreglo_codigos_a);
             sort($arreglo_codigos_b);
             sort($arreglo_tipos_a);
