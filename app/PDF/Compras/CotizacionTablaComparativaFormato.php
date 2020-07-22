@@ -316,7 +316,6 @@ class CotizacionTablaComparativaFormato extends Rotation
                 }
                 $this->Ln();
             }
-
             asort($this->y_fin_obs_par_sol_arr);
             $this->y_fin_obs_par_sol = array_pop($this->y_fin_obs_par_sol_arr);
             $this->SetY($this->y_fin_obs_par_sol);
@@ -410,7 +409,7 @@ class CotizacionTablaComparativaFormato extends Rotation
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal Importe Dolar(USD):", 1, 0, "R", 1);
-
+dd("A");
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);

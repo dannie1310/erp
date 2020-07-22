@@ -96,4 +96,9 @@ class ItemSolicitudCompra extends Item
     {
         return number_format($this->inventario->sum('saldo'), 1,'.',',');
     }
+
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad, 1, '.', ',');
+    }
 }
