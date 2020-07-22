@@ -10,6 +10,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -40,9 +41,12 @@ class CFDSAT extends Model
         ,"moneda"
         ,"id_carga_cfd_sat"
         ,"tipo_comprobante"
+        ,"estado"
+        ,"estado_txt"
+        ,"fecha_cancelacion"
     ];
 
-    protected $dates =["fecha"];
+    protected $dates =["fecha", "fecha_cancelacion"];
 
     public function carga()
     {
@@ -79,12 +83,29 @@ class CFDSAT extends Model
         return $this->hasOne(CFDAutocorreccion::class, "id_cfd_sat", "id");
     }
 
-    public function scopeDeEFO($query){
+    public function ctgEstado()
+    {
+        return $this->belongsTo(CtgEstadoCFD::class, 'estado', 'id');
+    }
+
+    public function scopeDeEFO($query)
+    {
         return $query->whereHas("efo");
     }
 
-    public function scopeNoAutocorregidos($query){
+    public function scopeNoAutocorregidos($query)
+    {
         return $query->doesnthave("autocorreccion");
+    }
+
+    public function scopeDefinitivo($query)
+    {
+        return $query->where('estado', '=', 0);
+    }
+
+    public function scopeExceptoTipo($query, $tipo)
+    {
+        return $query->where('tipo_comprobante', '!=', $tipo);
     }
 
     public function registrar($data)
@@ -109,6 +130,7 @@ class CFDSAT extends Model
             return $cfd;
 
         } catch (\Exception $e) {
+            dd($data);
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
         }
@@ -123,4 +145,24 @@ class CFDSAT extends Model
         return $fecha;
     }
 
+    public function scopePorProveedor($query, $id_proveedor)
+    {
+        return $query->where('id_proveedor_sat', '=', $id_proveedor);
+    }
+
+    public function scopeBancoGlobal($query)
+    {
+        return $query->where('id_ctg_bancos', '!=', null);
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->total),2);
+    }
 }

@@ -423,27 +423,45 @@ class SolicitudEdicion extends Model
                 foreach ($polizas as $poliza_obj){
                     DB::purge('cntpq');
                     \Config::set('database.connections.cntpq.database', $poliza_obj->bd_contpaq);
-                    $poliza_contpaq = Poliza::find($poliza_obj->id_poliza);
-                    if($poliza_obj->partida_solicitud->concepto != "" && $poliza_contpaq->Concepto == $poliza_obj->concepto_original){
-                        $poliza_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
-                        $poliza_contpaq->save();
-                    }
-                    foreach($poliza_obj->movimientos as $movimiento_obj){
-                        $movimiento_contpaq = PolizaMovimiento::find($movimiento_obj->id_movimiento);
-
-                        if($poliza_obj->partida_solicitud->concepto != "" && $movimiento_contpaq->Concepto == $movimiento_obj->concepto_original){
-                            $movimiento_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
+                    DB::connection('cntpq')->beginTransaction();
+                    try {
+                        $poliza_contpaq = Poliza::find($poliza_obj->id_poliza);
+                        if ($poliza_obj->partida_solicitud->concepto != "" && $poliza_contpaq->Concepto == $poliza_obj->concepto_original) {
+                            $poliza_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
+                            $poliza_contpaq->save();
+                            $log_pol = $poliza_contpaq->logs()->orderBy("id", "desc")->first();
+                            if ($log_pol) {
+                                $log_pol->id_solicitud_partida = $poliza_obj->id;
+                                $log_pol->save();
+                            }
                         }
+                        foreach ($poliza_obj->movimientos as $movimiento_obj) {
+                            $movimiento_contpaq = PolizaMovimiento::find($movimiento_obj->id_movimiento);
 
-                        if($poliza_obj->partida_solicitud->referencia != "" && $movimiento_contpaq->Referencia == $movimiento_obj->referencia_original){
-                            $movimiento_contpaq->Referencia = $poliza_obj->partida_solicitud->referencia;
+                            if ($poliza_obj->partida_solicitud->concepto != "" && $movimiento_contpaq->Concepto == $movimiento_obj->concepto_original) {
+                                $movimiento_contpaq->Concepto = $poliza_obj->partida_solicitud->concepto;
+                            }
+
+                            if ($poliza_obj->partida_solicitud->referencia != "" && $movimiento_contpaq->Referencia == $movimiento_obj->referencia_original) {
+                                $movimiento_contpaq->Referencia = $poliza_obj->partida_solicitud->referencia;
+                            }
+                            $movimiento_contpaq->save();
+                            $log = $movimiento_contpaq->logs()->orderBy("id", "desc")->first();
+                            if ($log) {
+                                $log->id_solicitud_partida = $poliza_obj->id;
+                                $log->save();
+                            }
                         }
-                        $movimiento_contpaq->save();
-                        $log = $movimiento_contpaq->logs()->orderBy("id","desc")->first();
-                        $log->id_solicitud_partida = $poliza_obj->id;
-                        $log->save();
+                        DB::connection('cntpq')->commit();
+                    } catch (\Exception $e) {
+                        DB::connection('cntpq')->rollBack();
+                        DB::connection('seguridad')->rollBack();
+                        abort(400, $e->getMessage());
+                        throw $e;
                     }
+
                 }
+
                 DB::connection('seguridad')->commit();
                 return $this;
             } catch (\Exception $e) {

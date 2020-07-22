@@ -28,6 +28,7 @@ class CFDSATRepository extends Repository implements RepositoryInterface
     public function registrar(array $datos)
     {
         return $this->model->registrar($datos);
+
     }
 
     public function getArchivoSQL($archivo)
@@ -36,18 +37,23 @@ class CFDSATRepository extends Repository implements RepositoryInterface
     }
 
     public function getIdEmpresa($datos_receptor){
-        $empresa = EmpresaSAT::where("rfc","=",$datos_receptor["rfc"])
-            ->first();
-        $salida = null;
+        try{
+            $empresa = EmpresaSAT::where("rfc","=",$datos_receptor["rfc"])
+                ->first();
+            $salida = null;
 
-        if($empresa){
-            return $empresa->id;
-        } else {
-            $empresa = EmpresaSAT::create(
-                ["rfc"=>$datos_receptor["rfc"], "razon_social"=>$datos_receptor["nombre"]]
-            );
-            return $empresa->id;
+            if($empresa){
+                return $empresa->id;
+            } else {
+                $empresa = EmpresaSAT::create(
+                    ["rfc"=>$datos_receptor["rfc"], "razon_social"=>$datos_receptor["nombre"]]
+                );
+                return $empresa->id;
+            }
+        } catch (\Exception $e){
+            dd($datos_receptor);
         }
+
     }
 
     public function iniciaCarga($nombre_archivo){

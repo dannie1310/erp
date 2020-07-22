@@ -25,24 +25,31 @@ class CFDSATService
      */
     protected $repository;
     protected $arreglo_factura;
+    protected $arreglos_factura;
     protected $log;
     protected $carga;
 
     public function __construct(Model $model)
     {
+        $this->arreglos_factura = [];
         $this->repository = new Repository($model);
         $this->log["nombre_archivo_zip"] = "";
         $this->log["archivos_leidos"] = 0;
         $this->log["archivos_cargados"] = 0;
+        $this->log["cfd_cargados"] = 0;
         $this->log["archivos_corruptos"] = 0;
         $this->log["archivos_tipo_incorrecto"] = 0;
         $this->log["archivos_no_cargados"] = 0;
+        $this->log["cfd_no_cargados"] = 0;
         $this->log["archivos_preexistentes"] = 0;
+        $this->log["cfd_preexistentes"] = 0;
         $this->log["archivos_receptor_no_valido"] = 0;
+        $this->log["cfd_receptor_no_valido"] = 0;
         $this->log["receptores_no_validos"] = [];
         $this->log["proveedores_preexistentes"] = 0;
         $this->log["proveedores_nuevos"] = 0;
         $this->log["archivos_no_cargados_error_app"] = 0;
+        $this->log["cfd_no_cargados_error_app"] = 0;
         $this->log["errores"] = [];
     }
 
@@ -61,9 +68,14 @@ class CFDSATService
         return $this->repository->paginate($data);
     }
 
-    private function store()
+    private function store($arreglo_factura = null)
     {
-        $transaccion_cfd = $this->repository->registrar($this->arreglo_factura);
+        if($arreglo_factura){
+            $transaccion_cfd = $this->repository->registrar($arreglo_factura);
+        } else {
+            $transaccion_cfd = $this->repository->registrar($this->arreglo_factura);
+        }
+
         return $transaccion_cfd;
     }
 
@@ -163,7 +175,7 @@ class CFDSATService
         $this->repository->finalizaCarga($this->carga);
 
         event(new FinalizaCargaCFD($this->carga));
-        if($this->carga->cambios){
+        if(count($this->carga->cambios)>0){
             event(new CambioEFOS($this->carga->cambios));
         }
         $this->carga->load("usuario");
@@ -213,8 +225,10 @@ class CFDSATService
                                             Storage::disk('xml_sat')->put($this->carga->id .'/'.$this->arreglo_factura["rfc_receptor"]. '/' . $current, fopen($ruta_archivo, "r"));
                                             unlink($ruta_archivo);
                                             $this->log["archivos_cargados"] += 1;
+                                            $this->log["cfd_cargados"] += 1;
                                         }
                                     } else {
+                                        $this->log["cfd_no_cargados"] += 1;
                                         $this->log["archivos_no_cargados"] += 1;
                                         $this->log["archivos_receptor_no_valido"] += 1;
                                         $this->log["receptores_no_validos"][] = $this->arreglo_factura["receptor"];
@@ -222,17 +236,53 @@ class CFDSATService
                                 } else {
                                     $this->log["archivos_preexistentes"] += 1;
                                     $this->log["archivos_no_cargados"] += 1;
+                                    $this->log["cfd_no_cargados"] += 1;
                                     unlink($ruta_archivo);
                                 }
                             } else {
+                                $this->log["cfd_no_cargados"] += 1;
                                 $this->log["archivos_no_cargados"] += 1;
                                 $this->log["archivos_corruptos"] += 1;
                                 Storage::disk('xml_errores')->put($this->carga->id . '/corruptos/' . $current, fopen($ruta_archivo, "r"));
                                 unlink($ruta_archivo);
                             }
                         }
-                    } else {
+                    } else if (strpos($current, ".txt")) {
+                        $contenido_archivo_txt = file_get_contents($ruta_archivo);
+                        $resultado = $this->setArreglosFacturas($ruta_archivo);
+                        if ($resultado == 0) {
+                            Storage::disk('xml_errores')->put($this->carga->id . '/error_app/' . $current, fopen($ruta_archivo, "r"));
+                            unlink($ruta_archivo);
+                            $this->log["archivos_no_cargados"] += 1;
+                            $this->log["archivos_corruptos"] += 1;
+
+                        } else {
+                            $this->log["archivos_cargados"] += 1;
+                            Storage::disk('xml_sat')->put($this->carga->id .'/'.$this->arreglos_factura[0]["rfc_receptor"]. '/' . $current, fopen($ruta_archivo, "r"));
+                            unlink($ruta_archivo);
+                            foreach ($this->arreglos_factura as $arreglo_factura){
+                                if (key_exists("uuid", $arreglo_factura)) {
+                                    if (!$this->repository->validaExistencia($arreglo_factura["uuid"])) {
+                                        if ($arreglo_factura["id_empresa_sat"] > 0) {
+                                            if ($this->store($arreglo_factura)) {
+                                                $this->log["cfd_cargados"] += 1;
+                                            }
+                                        } else {
+                                            $this->log["cfd_no_cargados"] += 1;
+                                            $this->log["cfd_receptor_no_valido"] += 1;
+                                            $this->log["receptores_no_validos"][] = $arreglo_factura["receptor"];
+                                        }
+                                    } else {
+                                        $this->log["cfd_preexistentes"] += 1;
+                                        $this->log["cfd_no_cargados"] += 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
                         $this->log["archivos_no_cargados"] += 1;
+                        $this->log["cfd_no_cargados"] += 1;
                         $this->log["archivos_tipo_incorrecto"] += 1;
                         Storage::disk('xml_errores')->put($this->carga->id . '/tipo_incorrecto/' . $current, fopen($ruta_archivo, "r"));
                         unlink($ruta_archivo);
@@ -244,10 +294,71 @@ class CFDSATService
         $contenido = @scandir($path);
 
         if (count($contenido) <= 2 && $path != "uploads/contabilidad/zip_cfd/") {
-            //echo '#'.$path ."<_>". public_path("uploads/contabilidad/zip_cfd/");
             closedir($dir);
             rmdir($path);
         }
+    }
+
+    private function setArreglosFacturas($archivo_txt){
+        $this->arreglos_factura = [];
+        try{
+            $myfile = fopen($archivo_txt, "r");
+        } catch (\Exception $e) {
+            $this->log["archivos_no_cargados_error_app"] += 1;
+            $this->log["cfd_no_cargados_error_app"] += 1;
+            return 0;
+        }
+
+        $linea = 0;
+        $i = 0;
+        while(!feof($myfile)) {
+            $linea_archivo = fgets($myfile);
+            $renglon = explode("~", $linea_archivo);
+            if(key_exists(1, $renglon) &&  $renglon[0] != "Uuid"){
+
+                if(substr($renglon[count($renglon)-1], -2) != "" && substr($renglon[count($renglon)-1], -2) != "\r\n"){
+                    $renglon[count($renglon)-1] = str_replace(["\n", '"'],"",$renglon[count($renglon)-1]);
+                    $fin = false;
+                    while(!$fin){
+                        $add = explode("~",fgets($myfile));
+                        $renglon[count($renglon)-1] .= " ".$add[0];
+                        array_shift($add);
+                        $renglon = array_merge($renglon , $add);
+                        $fin = substr($renglon[count($renglon)-1], -2) == "\r\n";
+                    }
+                }
+                $this->arreglos_factura[$i]["id_carga_cfd_sat"] = $this->carga->id;
+                $this->arreglos_factura[$i]["version"] = "txt";
+                $this->arreglos_factura[$i]["uuid"] = $renglon[0];
+                $this->arreglos_factura[$i]["rfc_emisor"] = $renglon[1];
+                $this->arreglos_factura[$i]["rfc_receptor"] = $renglon[3];
+                $this->arreglos_factura[$i]["fecha"] = $renglon[6].".000";
+                $this->arreglos_factura[$i]["total"] = $renglon[8];
+                $this->arreglos_factura[$i]["subtotal"] = 100 * $renglon[8] /116;
+                $this->arreglos_factura[$i]["importe_iva"] = 16 * $renglon[8] /116;
+                $this->arreglos_factura[$i]["tipo_comprobante"] = $renglon[9];
+                $this->arreglos_factura[$i]["estado_txt"] = $renglon[10];
+                $this->arreglos_factura[$i]["fecha_cancelacion"] = ($renglon[11]!="\r\n")?$renglon[11].".000":null;
+
+                $this->arreglos_factura[$i]["emisor"]["rfc"] = (string)$renglon[1];
+                $this->arreglos_factura[$i]["emisor"]["razon_social"] = (string)$renglon[2];
+                $this->arreglos_factura[$i]["receptor"]["rfc"] = (string)$renglon[3];
+                $this->arreglos_factura[$i]["receptor"]["nombre"] = (string)$renglon[4];
+
+                $this->arreglos_factura[$i]["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglos_factura[$i]["receptor"]);
+                $proveedor = $this->repository->getProveedorSAT($this->arreglos_factura[$i]["emisor"], $this->arreglos_factura[$i]["id_empresa_sat"]);
+                $this->arreglos_factura[$i]["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglos_factura[$i]["receptor"]);
+                $this->arreglos_factura[$i]["id_proveedor_sat"] = $proveedor["id_proveedor"];
+
+                if ($proveedor["nuevo"] > 0) {
+                    $this->log["proveedores_nuevos"] += 1;
+                }
+                $i++;
+            }
+            $linea++;
+
+        }
+        return 1;
     }
 
     private function setArregloFactura($archivo_xml)
@@ -261,6 +372,7 @@ class CFDSATService
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
+            $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
         //$factura_simple_xml = new \SimpleXMLElement(file_get_contents($archivo_xml));
@@ -308,6 +420,7 @@ class CFDSATService
             $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
         } catch (\Exception $e) {
             $this->log["archivos_no_cargados_error_app"] += 1;
+            $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
 
@@ -357,6 +470,7 @@ class CFDSATService
 
         } catch (\Exception $e) {
             $this->log["archivos_no_cargados_error_app"] += 1;
+            $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
 
@@ -378,6 +492,7 @@ class CFDSATService
             }
         } catch (\Exception $e) {
             $this->log["archivos_no_cargados_error_app"] += 1;
+            $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
         $this->arreglo_factura["subtotal"] = $this->arreglo_factura["total"] - $this->arreglo_factura["total_impuestos_trasladados"];
@@ -428,6 +543,7 @@ class CFDSATService
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el emisor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
+            $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
 
@@ -449,6 +565,7 @@ class CFDSATService
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el receptor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
+            $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
 
@@ -481,6 +598,7 @@ class CFDSATService
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer la ruta de impuestos o conceptos: " . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
+            $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
         try {
@@ -500,6 +618,7 @@ class CFDSATService
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
+            $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
         $this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]);

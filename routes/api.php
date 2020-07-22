@@ -280,6 +280,20 @@ $api->version('v1', function ($api) {
             $api->post('obtener-informe-empresa-mes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeEmpresaMes');
             $api->post('obtener-contenido-directorio', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@getContenidoDirectorio');
         });
+        $api->group(['prefix' => 'autocorreccion'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/aplicar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@aplicar')->where(['id' => '[0-9]+']);
+        });
+        $api->group(['prefix' => 'efos'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\EfosController@index');
+        });
+        $api->group(['prefix' => 'no-deducido'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@show')->where(['id' => '[0-9]+']);
+        });
     });
 
     /**

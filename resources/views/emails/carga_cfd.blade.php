@@ -37,6 +37,12 @@
             <th style="text-align: left" >Núm. archivos cargados:</th>
             <td style="text-align: right">{{$carga->archivos_cargados}}</td>
         </tr>
+        @if($carga->cfd_cargados>0 && $carga->archivos_cargados!=$carga->cfd_cargados)
+        <tr>
+            <th style="text-align: left" >CFD cargados:</th>
+            <td style="text-align: right">{{$carga->cfd_cargados}}</td>
+        </tr>
+        @endif
         @if($carga->proveedores_nuevos>0)
         <tr >
             <th style="text-align: left" >Núm. proveedores cargados:</th>
@@ -77,6 +83,30 @@
         <tr >
             <td style="text-align: left" >-Núm. archivos tipo incorrecto:</td>
             <td style="text-align: right">{{$carga->archivos_tipo_incorrecto}}</td>
+        </tr>
+        @endif
+        @if($carga->cfd_no_cargados>0 && $carga->archivos_no_cargados != $carga->cfd_no_cargados)
+        <tr >
+            <th style="text-align: left" >CFD no cargados:</th>
+            <td style="text-align: right">{{$carga->cfd_no_cargados}}</td>
+        </tr>
+        @endif
+        @if($carga->cfd_preexistentes>0 && $carga->archivos_preexistentes != $carga->cfd_preexistentes)
+        <tr >
+            <th style="text-align: left" >-Núm. CFD preexistentes:</th>
+            <td style="text-align: right">{{$carga->cfd_preexistentes}}</td>
+        </tr>
+        @endif
+        @if($carga->cfd_receptor_no_valido>0 && $carga->archivos_receptor_no_valido != $carga->cfd_receptor_no_valido)
+        <tr >
+            <th style="text-align: left" >-Núm. CFD receptor no valido:</th>
+            <td style="text-align: right">{{$carga->cfd_receptor_no_valido}}</td>
+        </tr>
+        @endif
+        @if($carga->cfd_no_cargados_error_app>0 && $carga->archivos_no_cargados_error_app != $carga->cfd_no_cargados_error_app)
+        <tr >
+            <th style="text-align: left" >-Núm. CFD receptor no valido:</th>
+            <td style="text-align: right">{{$carga->cfd_no_cargados_error_app}}</td>
         </tr>
         @endif
         </tbody>

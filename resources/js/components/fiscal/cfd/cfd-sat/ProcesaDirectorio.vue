@@ -53,6 +53,10 @@
                                                 <th style="text-align: left" >Núm. archivos cargados:</th>
                                                 <td style="text-align: right">{{resultado.archivos_cargados}}</td>
                                             </tr>
+                                            <tr v-if="resultado.cfd_cargados>0 && resultado.archivos_cargados!=resultado.cfd_cargados">
+                                                <th style="text-align: left" >CFD cargados:</th>
+                                                <td style="text-align: right">{{resultado.cfd_cargados}}</td>
+                                            </tr>
                                             <tr v-if="resultado.proveedores_nuevos>0">
                                                 <th style="text-align: left" >Núm. proveedores cargados:</th>
                                                 <td style="text-align: right">{{resultado.proveedores_nuevos}}</td>
@@ -80,6 +84,22 @@
                                             <tr v-if="resultado.archivos_tipo_incorrecto>0">
                                                 <td style="text-align: left" >-Núm. archivos tipo incorrecto:</td>
                                                 <td style="text-align: right">{{resultado.archivos_tipo_incorrecto}}</td>
+                                            </tr>
+                                            <tr v-if="resultado.cfd_no_cargados>0 && resultado.archivos_no_cargados!=resultado.cfd_no_cargados">
+                                                <th style="text-align: left" >CFD no cargados:</th>
+                                                <td style="text-align: right">{{resultado.cfd_no_cargados}}</td>
+                                            </tr>
+                                            <tr v-if="resultado.cfd_preexistentes>0 && resultado.archivos_preexistentes!=resultado.cfd_preexistentes">
+                                                <th style="text-align: left" >-Núm. CFD preexistentes:</th>
+                                                <td style="text-align: right">{{resultado.cfd_preexistentes}}</td>
+                                            </tr>
+                                            <tr v-if="resultado.cfd_receptor_no_valido>0 && resultado.archivos_receptor_no_valido!=resultado.cfd_receptor_no_valido">
+                                                <th style="text-align: left" >-Núm. CFD receptor no valido:</th>
+                                                <td style="text-align: right">{{resultado.cfd_receptor_no_valido}}</td>
+                                            </tr>
+                                            <tr v-if="resultado.cfd_no_cargados_error_app>0 && resultado.archivos_no_cargados_error_app!=resultado.cfd_no_cargados_error_app">
+                                                <th style="text-align: left" >-Núm. CFD receptor no valido:</th>
+                                                <td style="text-align: right">{{resultado.cfd_receptor_no_valido}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
