@@ -22,20 +22,31 @@
                 <div class="col-md-12">
                     <table class="table">
                         <tbody>
-                            <tr style="background-color: #757575; color:#FFF; text-align:center" >
-                                <td class="index_corto">#</td>
-                                <td>Estatus</td>
-                                <td>RFC</td>
-                                <td>Razón Social</td>
-                                <td>Fecha Presunto</td>
-                                <td>Fecha Definitivo</td>
-                                <td>Empresa</td>
-                                <td># CFD</td>
-                                <td>Importe</td>
-                            </tr>
+
                             <template v-for="(tipo,i) in informe">
                                 <template v-for="(partidas, j) in tipo">
-                                    <tr v-if="partidas.tipo == 'partida'" >
+                                     <template v-if="partidas.tipo == 'titulo'">
+                                         <tr>
+                                            <td colspan="9" style="background-color: #fff" ></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="9" :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}" >
+                                                {{partidas.etiqueta}}
+                                            </td>
+                                        </tr>
+                                        <tr style="background-color: #757575; color:#FFF; text-align:center" >
+                                            <td class="index_corto">#</td>
+                                            <td>Estatus</td>
+                                            <td>RFC</td>
+                                            <td>Razón Social</td>
+                                            <td>Fecha Presunto</td>
+                                            <td>Fecha Definitivo</td>
+                                            <td>Empresa</td>
+                                            <td># CFD</td>
+                                            <td>Importe</td>
+                                        </tr>
+                                    </template>
+                                    <tr v-else-if="partidas.tipo == 'partida'" >
                                         <td class="index_corto">{{partidas.indice}}</td>
                                         <td>{{partidas.estatus}}</td>
                                         <td>{{partidas.rfc}}</td>
@@ -46,6 +57,7 @@
                                         <td style="text-align:right">{{partidas.no_CFDI}}</td>
                                         <td style="text-align:right">{{partidas.importe_format}}</td>
                                     </tr>
+
                                     <tr v-else :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}"  >
                                         <td class="index_corto">{{partidas.contador}}</td>
                                         <td></td>
