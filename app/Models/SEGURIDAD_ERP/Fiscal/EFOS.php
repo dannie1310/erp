@@ -75,6 +75,7 @@ class EFOS extends Model
         $informe["informe"][] = EFOS::getPartidasInformeEnAclaracion();
         $informe["informe"][] = EFOS::getPartidasInformeAutocorregidos();
         $informe["informe"][] = EFOS::getPartidasInformeNoDeducidos();
+        $informe["informe"][] = EFOS::getPartidasInformeDefinitivos2012();
 
         $informe["fechas"] = EFOS::getFechasInforme();
         return $informe;
@@ -213,7 +214,7 @@ ORDER BY 8 DESC
 
     private static function getPartidasInformeEnAclaracion(){
         $informe = DB::select("
-        SELECT 'En Aclaración' AS estatus,
+        SELECT 'En Aclaración SAT' AS estatus,
        efos.rfc,
        efos.razon_social,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
@@ -385,6 +386,7 @@ ORDER BY 8 DESC
        AND (cfd_sat_autocorrecciones.id IS NULL)
        AND (cfd_no_deducidos.id IS NULL)
        AND (efos.estado = 0)
+       AND (cfd_sat.estado !=8)
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -404,6 +406,86 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
         return $informe;
     }
 
+    private static function getPartidasInformeDefinitivos2012(){
+        $informe = DB::select("
+        SELECT 'Definitivos Antes 2012' AS estatus,
+       efos.rfc,
+       efos.razon_social,
+       CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
+       CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+       ListaEmpresasSAT.nombre_corto AS empresa,
+       COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
+       format (
+          sum (
+             CASE cfd_sat.tipo_comprobante
+                WHEN 'I' THEN cfd_sat.total
+                WHEN 'E' THEN cfd_sat.total * -1
+             END),
+          'C')
+          AS importe_format,
+       sum (
+          CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.total
+             WHEN 'E' THEN cfd_sat.total * -1
+          END)
+          AS importe,
+       Subquery.fecha_devinitivo_maxima
+  FROM ((((((SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+             INNER JOIN
+             (SELECT ListaEmpresasSAT.id,
+                     ListaEmpresasSAT.nombre_corto,
+                     MAX (ctg_efos.fecha_definitivo)
+                        AS fecha_devinitivo_maxima
+                FROM ((SEGURIDAD_ERP.Fiscal.efos efos
+                       INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+                          ON (efos.razon_social = ctg_efos.razon_social))
+                      INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+                         ON (cfd_sat.rfc_emisor = efos.rfc))
+                     INNER JOIN
+                     SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+                        ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
+               WHERE ctg_efos.estado = 0
+              GROUP BY ListaEmpresasSAT.id, ListaEmpresasSAT.nombre_corto)
+             Subquery
+                ON (ListaEmpresasSAT.id = Subquery.id))
+            INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+               ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
+           INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
+              ON (efos.rfc = cfd_sat.rfc_emisor))
+          INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+             ON (ctg_efos.rfc = efos.rfc))
+         INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
+            ON     (efos.estado = ctg_estados_efos.id)
+               AND (ctg_efos.estado = ctg_estados_efos.id))
+        LEFT OUTER JOIN
+        SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
+           ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id))
+       LEFT OUTER JOIN SEGURIDAD_ERP.Fiscal.cfd_no_deducidos cfd_no_deducidos
+          ON (cfd_no_deducidos.id_cfd_sat = cfd_sat.id)
+ WHERE     (ctg_efos.estado_registro = 1)
+       AND (cfd_sat_autocorrecciones.id IS NULL)
+       AND (cfd_no_deducidos.id IS NULL)
+       AND (efos.estado = 0)
+       AND (cfd_sat.estado =8)
+GROUP BY ctg_estados_efos.descripcion,
+         efos.rfc,
+         efos.razon_social,
+         ctg_efos.fecha_definitivo,
+         ListaEmpresasSAT.nombre_corto,
+         ctg_efos.fecha_presunto,
+         Subquery.fecha_devinitivo_maxima
+ORDER BY Subquery.fecha_devinitivo_maxima DESC,
+         empresa ASC,
+         ctg_efos.fecha_definitivo DESC  
+        ")
+        ;
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+        $informe = EFOS::setSubtotalesPartidas($informe, "DEFINITIVOS ANTES 2012");
+        return $informe;
+    }
+
     private static function setSubtotalesPartidas($partidas, $tipo){
         $partidas_completas = [];
         if(count($partidas)>0){
@@ -416,6 +498,13 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
             $i_bis = 1;
             $i_p =0;
             $acumulador_partidas_empresa = 0;
+            $partidas_completas[$i]["etiqueta"] = $tipo;
+            $partidas_completas[$i]["tipo"] = "titulo";
+            $partidas_completas[$i]["bg_color_hex"] = "#757575";
+            $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
+            $partidas_completas[$i]["color_hex"] = "#FFF";
+            $partidas_completas[$i]["color_rgb"] = [255,255,255];
+            $i++;
             foreach($partidas as $partida)
             {
                 if($i_p>0){
