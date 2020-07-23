@@ -32,9 +32,13 @@
                     { title: 'RFC', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Fecha Presunto', field: 'fecha_presunto', sortable: false},
+                    { title: 'Fecha Presunto DOF', field: 'fecha_presunto_dof', sortable: false},
                     { title: 'Fecha Definitivo', field: 'fecha_definitivo', sortable: false},
+                    { title: 'Fecha Definitivo DOF', field: 'fecha_definitivo_dof', sortable: false},
                     { title: 'Fecha Sentencia Favorable', field: 'fecha_sentencia_favorable', sortable: false},
+                    { title: 'Fecha Sentencia Favorable DOF', field: 'fecha_sentencia_favorable_dof', sortable: false},
                     { title: 'Fecha Desvirtuado', field: 'fecha_desvirtuado', sortable: false},
+                    { title: 'Fecha Desvirtuado DOF', field: 'fecha_desvirtuado_dof', sortable: false},
                     { title: 'Estado', field: 'estado', sortable: false}
                 ],
                 data: [],
@@ -89,6 +93,10 @@
                         fecha_definitivo: efo.fecha_definitivo,
                         fecha_sentencia_favorable: efo.fecha_sentencia_favorable,
                         fecha_desvirtuado: efo.fecha_desvirtuado,
+                        fecha_presunto_dof: efo.fecha_presunto_dof,
+                        fecha_definitivo_dof: efo.fecha_definitivo_dof,
+                        fecha_sentencia_favorable_dof: efo.fecha_sentencia_favorable_dof,
+                        fecha_desvirtuado_dof: efo.fecha_desvirtuado_dof,
                         estado: efo.estado.descripcion
                     }));
                 },
