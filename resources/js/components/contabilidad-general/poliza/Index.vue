@@ -75,13 +75,13 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Ejercicio', field: 'ejercicio', tdClass: 'td_fecha', thClass: 'th_fecha',  sortable: true },
-                    { title: 'Periodo', field: 'periodo', tdClass: 'td_fecha', thClass: 'th_fecha',  sortable: true },
+                    { title: 'Ejercicio', field: 'ejercicio', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default,  sortable: true },
+                    { title: 'Periodo', field: 'periodo', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Fecha', field: 'fecha', tdClass: 'td_fecha', thClass: 'th_fecha', sortable: true },
-                    { title: 'Tipo', field: 'tipo', tdClass: 'td_fecha', thClass: 'th_fecha',  sortable: true },
-                    { title: 'Folio', field: 'folio', tdClass: 'td_fecha', thClass: 'th_fecha',  sortable: true},
+                    { title: 'Tipo', field: 'tipo', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Folio', field: 'folio', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Monto', field: 'monto', tdClass: 'td_money', thClass: 'th_money', sortable: true},
-                    { title: 'Concepto', field: 'concepto', sortable: false},
+                    { title: 'Concepto', field: 'concepto',thComp: require('../../globals/th-Filter').default, sortable: false},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -154,6 +154,17 @@
                 },
                 deep: true
             },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.getPolizas();
+                }, 500);
+            },
             cargando(val) {
                 $('tbody').css({
                     '-webkit-filter': val ? 'blur(2px)' : '',
@@ -172,13 +183,12 @@
             },
             getPolizas(){
                 this.query.id_empresa = this.id_empresa;
-                this.query.ejercicio = this.ejercicio;
-                this.query.periodo = this.periodo;
-                this.query.tipo_poliza = this.tipo_poliza;
-                this.query.numero_poliza = this.numero_poliza;
-                this.query.texto = this.texto;
                 this.buscando = true;
                 this.$Progress.start();
+                if(this.polizas)
+                {
+                    this.$store.commit('contabilidadGeneral/poliza/SET_POLIZAS', []);
+                }
                 return this.$store.dispatch('contabilidadGeneral/poliza/paginate',
                     {
                         params: this.query
