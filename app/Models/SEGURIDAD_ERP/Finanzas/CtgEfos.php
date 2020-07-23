@@ -436,6 +436,25 @@ class CtgEfos extends Model
 
     public function getFechaSentenciaFavorableFormatAttribute()
     {
-        return ($this->fecha_sentecia_favorable != NULL) ? date("d/m/Y", strtotime($this->fecha_sentecia_favorable)) : '-';
+        return ($this->fecha_sentencia_favorable != NULL) ? date("d/m/Y", strtotime($this->fecha_sentencia_favorable)) : '-';
+    }
+
+    public function getFechaPresuntoDofFormatAttribute()
+    {
+        return date("d/m/Y", strtotime($this->fecha_presunto_dof));
+    }
+    public function getFechaDefinitivoDofFormatAttribute()
+    {
+        return ($this->fecha_definitivo_dof != NULL) ? date("d/m/Y", strtotime($this->fecha_definitivo_dof)) : '-';
+    }
+
+    public function getFechaDesvirtuadoDofFormatAttribute()
+    {
+        return ($this->fecha_desvirtuado_dof != NULL) ? date("d/m/Y", strtotime($this->fecha_desvirtuado_dof)) : '-';
+    }
+
+    public function getFechaSentenciaFavorableDofFormatAttribute()
+    {
+        return ($this->fecha_sentencia_favorable_dof != NULL) ? date("d/m/Y", strtotime($this->fecha_sentencia_favorable_dof)) : '-';
     }
 }
