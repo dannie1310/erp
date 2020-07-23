@@ -202,7 +202,7 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto
-ORDER BY 8 DESC
+ORDER BY 6 DESC
         ")
         ;
         $informe = array_map(function ($value) {
@@ -259,7 +259,7 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto
-ORDER BY 8 DESC
+ORDER BY 6 DESC
         ")
         ;
         $informe = array_map(function ($value) {
@@ -316,7 +316,7 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto
-ORDER BY 8 DESC
+ORDER BY 6 DESC
         ")
         ;
         $informe = array_map(function ($value) {
