@@ -332,6 +332,7 @@ class CtgEfos extends Model
     }
 
     private function validarFormatoFecha($fecha){
+        $fecha = str_replace("\r\n", '', $fecha);
         $fecha = str_replace(' ', '', $fecha);
         $fecha = str_replace('-', '/', $fecha);
         $fecha_rev = explode('/', $fecha);
