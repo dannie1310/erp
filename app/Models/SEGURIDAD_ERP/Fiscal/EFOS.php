@@ -93,6 +93,7 @@ class EFOS extends Model
        efos.rfc,
        efos.razon_social,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
+       CONVERT(varchar,ctg_efos.fecha_presunto_dof,103) as fecha_presunto_dof,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
@@ -143,6 +144,7 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto,
+         ctg_efos.fecha_presunto_dof,
          Subquery.fecha_presunto_maxima
 ORDER BY Subquery.fecha_presunto_maxima DESC,
          empresa ASC,
@@ -162,6 +164,7 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
        efos.razon_social,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+       CONVERT(varchar,Subquery.fecha_autocorreccion,103)  as fecha_autocorreccion,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
@@ -180,7 +183,7 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
           AS importe
   FROM ((((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
            INNER JOIN
-           (SELECT cfd_sat.id, cfd_sat.estado
+           (SELECT cfd_sat.id, cfd_sat.estado, cfd_sat_autocorrecciones.fecha_autocorreccion
               FROM SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
                    INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
                       ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id)
@@ -201,6 +204,7 @@ GROUP BY ctg_estados_efos.descripcion,
          efos.razon_social,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
+         Subquery.fecha_autocorreccion,
          ctg_efos.fecha_presunto
 ORDER BY 6 DESC
         ")
@@ -219,6 +223,7 @@ ORDER BY 6 DESC
        efos.razon_social,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+       CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
@@ -257,6 +262,7 @@ GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
          ctg_efos.fecha_definitivo,
+         ctg_efos.fecha_definitivo_dof,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto
 ORDER BY 6 DESC
@@ -276,6 +282,7 @@ ORDER BY 6 DESC
        efos.razon_social,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+       CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
@@ -314,6 +321,7 @@ GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
          ctg_efos.fecha_definitivo,
+         ctg_efos.fecha_definitivo_dof,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto
 ORDER BY 6 DESC
@@ -333,6 +341,7 @@ ORDER BY 6 DESC
        efos.razon_social,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+       CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
@@ -393,6 +402,7 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto,
+         ctg_efos.fecha_definitivo_dof,
          Subquery.fecha_devinitivo_maxima
 ORDER BY Subquery.fecha_devinitivo_maxima DESC,
          empresa ASC,
@@ -413,6 +423,7 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
        efos.razon_social,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+       CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
@@ -473,6 +484,7 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto,
+         ctg_efos.fecha_definitivo_dof,
          Subquery.fecha_devinitivo_maxima
 ORDER BY Subquery.fecha_devinitivo_maxima DESC,
          empresa ASC,

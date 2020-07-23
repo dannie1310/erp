@@ -96,7 +96,13 @@ class InformeEFOSCFD extends Rotation
         $this->SetDrawColor(117,117,117);
         $this->SetHeights([0.4]);
         $this->SetAligns(['C','C','C','C','C','C','C','C','C']);
-        $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Presunto", "Fecha Definitivo", "Empresa", "# CFD", "Importe"]);
+        if($this->etiqueta_titulo == "DEFINITIVOS" || $this->etiqueta_titulo == "EN ACLARACIÓN" || $this->etiqueta_titulo == "NO DEDUCIDOS" || $this->etiqueta_titulo == "DEFINITIVOS ANTES 2012"){
+            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", "Fecha Definitivo DOF", "Empresa", "# CFD", "Importe Incluyendo IVA"]);
+        } else if($this->etiqueta_titulo == "PRESUNTOS"){
+            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Presuntos SAT", "Fecha Presuntos DOF", "Empresa", "# CFD", "Importe Incluyendo IVA"]);
+        }else if($this->etiqueta_titulo == "CORREGIDOS"){
+            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", utf8_decode("Fecha Corrección"), "Empresa", "# CFD", "Importe Incluyendo IVA"]);
+        }
 
     }
 
@@ -108,7 +114,14 @@ class InformeEFOSCFD extends Rotation
                     $this->en_cola = $partida["tipo"];
                     $this->setEstilos($partida["tipo"]);
                     if($partida["tipo"]== "partida"){
-                        $this->Row([$partida["indice"],utf8_decode($partida["estatus"]),$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_presunto"], $partida["fecha_definitivo"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
+                        if($this->etiqueta_titulo == "DEFINITIVOS" || $this->etiqueta_titulo == "EN ACLARACIÓN" || $this->etiqueta_titulo == "NO DEDUCIDOS" || $this->etiqueta_titulo == "DEFINITIVOS ANTES 2012"){
+                            $this->Row([$partida["indice"],utf8_decode($partida["estatus"]),$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_definitivo"], $partida["fecha_definitivo_dof"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
+                        } else if($this->etiqueta_titulo == "PRESUNTOS"){
+                            $this->Row([$partida["indice"],utf8_decode($partida["estatus"]),$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_presunto"], $partida["fecha_presunto_dof"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
+                        }
+                        else if($this->etiqueta_titulo == "CORREGIDOS"){
+                            $this->Row([$partida["indice"],utf8_decode($partida["estatus"]),$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_definitivo"], $partida["fecha_autocorreccion"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
+                        }
                     }    else if($partida["tipo"]== "titulo"){
                         $this->etiqueta_titulo = $partida["etiqueta"];
                         $this->AddPage();
