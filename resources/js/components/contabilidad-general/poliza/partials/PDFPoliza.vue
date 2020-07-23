@@ -15,10 +15,10 @@
                     <div class="modal-body modal-lg" id="pdf_frame">
                         <div class="row">
                             <div class="col-md-12">
-                                <button @click="pdf()" type="button" class="btn btn-primary pull-right" style="margin-left:5px" title="Ver Pólizas">
+                                <button @click="pdfB()" type="button" class="btn btn-primary pull-right" style="margin-left:5px" title="Ver Póliza">
                                     <i class="fa fa-file-pdf-o"></i>Ver PDF B
                                 </button>
-                                <button  type="button" class="btn btn-primary pull-right" title="Ver Pólizas">
+                                <button @click="pdfA()" type="button" class="btn btn-primary pull-right" title="Ver Póliza">
                                     <i class="fa fa-file-pdf-o"></i>Ver PDF A
                                 </button>
                             </div>
@@ -49,7 +49,11 @@
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
-            pdf(){
+            pdfA(){
+                var url = '/api/contabilidad-general/poliza/' + this.id +'/pdf?'+'&id_empresa='+this.id_empresa+'&access_token='+this.$session.get('jwt');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" style="height: 800px" height="100%" width="100%">Formato Polizas</iframe>');
+            },
+            pdfB(){
                 var url = '/api/contabilidad-general/poliza/' + this.id +'/pdf-b?'+'&id_empresa='+this.id_empresa+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" style="height: 800px" height="100%" width="100%">Formato Polizas</iframe>');
             }

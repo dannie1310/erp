@@ -102,9 +102,10 @@ class PolizaService
         return $poliza->paginate($data);
     }
 
-    public function pdf($id)
+    public function pdf($data, $id)
     {
-        $pdf = new PolizaFormatoT1($this->show($id));
+        $empresa = Empresa::find($data["id_empresa"]);
+        $pdf = new PolizaFormatoT1([$this->repository->show($id)]);
         return $pdf->create();
     }
 
