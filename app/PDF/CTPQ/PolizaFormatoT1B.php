@@ -181,7 +181,7 @@ class PolizaFormatoT1B extends Rotation
         $this->cell($this->WidthTotal-5.1,0.3, '', '', 0, 'L', 180);
         $this->cell(2.6,0.3, 'Total CFD/CFDI :', '', 0, 'R', 180);
         $this->cell(2.6,0.3, 0, '', 0, 'R', 180);
-        $this->Ln(0.3);
+        $this->Ln(0.4);
         $this->cell($this->WidthTotal-5.1,0.3, '', '', 0, 'L', 180);
         $this->cell(2.6,0.3, 'Total Comp. Ext..', '', 0, 'R', 180);
         $this->cell(2.6,0.3, 0, '', 0, 'R', 180);

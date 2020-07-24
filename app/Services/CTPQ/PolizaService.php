@@ -10,8 +10,9 @@ namespace App\Services\CTPQ;
 use App\Models\CTPQ\Poliza;
 use App\Models\CTPQ\Empresa;
 use App\PDF\CTPQ\PolizaFormatoT1;
-use App\PDF\CTPQ\PolizaFormatoT1B;
+use App\PDF\CTPQ\PolizaFormatoT1A;
 
+use App\PDF\CTPQ\PolizaFormatoT1B;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\CTPQ\PolizaRepository as Repository;
 
@@ -105,7 +106,7 @@ class PolizaService
     public function pdf($data, $id)
     {
         $empresa = Empresa::find($data["id_empresa"]);
-        $pdf = new PolizaFormatoT1([$this->repository->show($id)]);
+        $pdf = new PolizaFormatoT1A($this->show($data->all(), $id), $empresa);
         return $pdf->create();
     }
 
