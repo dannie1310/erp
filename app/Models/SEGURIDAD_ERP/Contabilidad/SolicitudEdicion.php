@@ -95,38 +95,44 @@ class SolicitudEdicion extends Model
 
     public function getNumeroMovimientosAttribute()
     {
-        if($this->id_tipo == 1)
-        {
-            $no_movimientos = 0;
-            $polizas = $this->polizas;
-            if($polizas){
-                foreach($polizas as $poliza){
-                    $no_movimientos+= $poliza->movimientos()->count();
+        try{
+            if($this->id_tipo == 1)
+            {
+                $no_movimientos = 0;
+                $polizas = $this->polizas;
+                if($polizas){
+                    foreach($polizas as $poliza){
+                        $no_movimientos+= $poliza->movimientos()->count();
+                    }
                 }
-            }
-            return $no_movimientos;
-        } else if($this->id_tipo == 2)
-        {
-            $ids_movimientos = [];
-            $diferencias = $this->diferencias;
-            foreach($diferencias as $diferencia){
-                if($diferencia->id_movimiento>0){
-                    $ids_movimientos[] = $diferencia->id_movimiento;
+                return $no_movimientos;
+            } else if($this->id_tipo == 2)
+            {
+                $ids_movimientos = [];
+                $diferencias = $this->diferencias;
+                foreach($diferencias as $diferencia){
+                    if($diferencia->id_movimiento>0){
+                        $ids_movimientos[] = $diferencia->id_movimiento;
+                    }
                 }
+                $ids_movimientos_unicos = array_unique($ids_movimientos);
+                return count($ids_movimientos_unicos);
+            } else if($this->id_tipo == 3)
+            {
+                $no_movimientos = 0;
+                $diferencias = $this->diferencias;
+                foreach($diferencias as $diferencia){
+                    $no_movimientos += $diferencia->poliza->movimientos()->count();
+                }
+                return $no_movimientos;
+            } else {
+                return '-';
             }
-            $ids_movimientos_unicos = array_unique($ids_movimientos);
-            return count($ids_movimientos_unicos);
-        } else if($this->id_tipo == 3)
-        {
-            $no_movimientos = 0;
-            $diferencias = $this->diferencias;
-            foreach($diferencias as $diferencia){
-                $no_movimientos += $diferencia->poliza->movimientos()->count();
-            }
-            return $no_movimientos;
-        } else {
-            return '-';
+
+        } catch (\Exception $e){
+            return "Sin Permiso";
         }
+
     }
 
     public function getNumeroMovimientosFormatAttribute()
@@ -587,7 +593,7 @@ class SolicitudEdicion extends Model
                             $id_poliza_b = $relacion_movimiento->id_poliza_b;
 
                         }catch(\Exception $e){
-                            abort(500, $e->getMessage());
+                            $error_edicion_movimientos++;
                         }
                         $i++;
                     }
@@ -636,7 +642,7 @@ class SolicitudEdicion extends Model
                                 $relacion_movimientos[$r]->save();
                             }catch(\Exception $e)
                             {
-                                abort(500, $e->getMessage());
+                                $error_edicion_movimientos++;
                             }
                             $r ++;
                         }
@@ -658,12 +664,17 @@ class SolicitudEdicion extends Model
                     {
                         $partida->cancelaPartidaSolicitudReordenamientoImprocedente();
                     } else {
-                        $partida->estado = 2;
-                        $partida->save();
+                        try {
+                            if($partida->diferencia->activo == 1){
+                                $partida->estado = 2;
+                                $partida->save();
+                                $partida->diferencia->activo = 0;
+                                $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
+                                $partida->diferencia->save();
+                            }
+                        } catch (\Exception $e){
+                        }
 
-                        $partida->diferencia->activo = 0;
-                        $partida->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
-                        $partida->diferencia->save();
                     }
 
                     $cantidad_afectaciones_aplicadas++;
