@@ -11,9 +11,9 @@ use App\Models\CADECO\CotizacionCompra;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
-use App\Models\CADECO\Compras\AsignacionProveedores;
+use App\Models\CADECO\Compras\AsignacionProveedor;
 
-class AsignacionProveedoresPartida extends Model
+class AsignacionProveedorPartida extends Model
 {
     protected $connection = 'cadeco';
     protected $table      = 'Compras.asignacion_proveedores_partidas';
@@ -39,8 +39,9 @@ class AsignacionProveedoresPartida extends Model
         });
     }
 
-    public function asignacion(){
-        return $this->belongsTo(AsignacionProveedores::class, 'id_asignacion_proveedores', 'id');
+    public function asignacion()
+    {
+        return $this->belongsTo(AsignacionProveedor::class, 'id_asignacion_proveedores', 'id');
     }
 
     public function cotizacion()
@@ -48,7 +49,8 @@ class AsignacionProveedoresPartida extends Model
         return $this->belongsTo(CotizacionCompraPartida::class, 'id_transaccion_cotizacion', 'id_transaccion')->where('id_material', '=', $this->id_material);
     }
 
-    public function cotizacionCompra(){
+    public function cotizacionCompra()
+    {
         return $this->belongsTo(CotizacionCompra::class, 'id_transaccion_cotizacion', 'id_transaccion');
     }
 
@@ -57,11 +59,13 @@ class AsignacionProveedoresPartida extends Model
         return $this->belongsTo(ItemSolicitudCompra::class, 'id_item_solicitud', 'id_item');
     }
 
-    public function ordenCompra(){
+    public function ordenCompra()
+    {
         return $this->hasMany(OrdenCompra::class, 'id_referente', 'id_transaccion_cotizacion');
     }
 
-    public function material(){
+    public function material()
+    {
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
 
@@ -76,5 +80,21 @@ class AsignacionProveedoresPartida extends Model
 
     public function getConOrdenCompraAttribute(){
         return $this->cotizacion?$this->ordenCompra()->where('id_moneda', '=', $this->cotizacion->id_moneda)->count() > 0:0;
+    }
+
+    public function getTotalPrecioMonedaAttribute()
+    {
+        switch ($this->cotizacion->id_moneda)
+        {
+            case (1):
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto;
+                break;
+            case (2):
+                return($this->cotizacionCompra->complemento) ? ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->cotizacionCompra->complemento->tc_usd) : ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(1));
+                break;
+            case (3):
+                return ($this->cotizacionCompra->complemento) ? $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->cotizacionCompra->complemento->tc_eur : $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(2);
+                break;
+        }
     }
 }

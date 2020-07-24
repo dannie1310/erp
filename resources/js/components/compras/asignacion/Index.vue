@@ -1,11 +1,9 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <!-- v-if="$root.can('registrar_requisicion_compra')" -->
             <button @click="create" class="btn btn-app btn-default pull-right" v-if="$root.can('registrar_asignacion_proveedor')" :disabled="cargando">
                 <i class="fa fa-plus"></i> Registrar
             </button>
-            <!-- <Layout @change="paginate()"></Layout> -->
         </div>
         <div class="col-12">
             <div class="card">
@@ -26,7 +24,7 @@
 <script>
     import Layout from "./CargaLayout";
     export default {
-        name: "asignacion-proveedores-index",
+        name: "asignacion-proveedor-index",
         components: {Layout},
         data() {
             return {
@@ -60,7 +58,7 @@
 
         methods: {
             create(){
-                this.$router.push({name: 'asignacion-proveedores-create'});
+                this.$router.push({name: 'asignacion-proveedor-create'});
             },
             paginate() {
                 return this.$store.dispatch('compras/asignacion/paginate', { params: this.query})
@@ -97,6 +95,8 @@
                             buttons: $.extend({}, {
                                 id:asignacion.id,
                                 estado:asignacion.estado,
+                                eliminar: (self.$root.can('eliminar_asignacion_proveedor') && asignacion.estado == 1) ? true : false,
+                                editar: self.$root.can('registrar_orden_compra') ? true : false
                             })
                         })
                     });

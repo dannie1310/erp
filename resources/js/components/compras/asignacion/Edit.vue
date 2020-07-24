@@ -1,7 +1,7 @@
 <template>
     <span>
         <div class="row">
-            <div class="col-12">    
+            <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <i class="fa fa-spin fa-spinner fa-2x" v-if="cargando"></i>
@@ -18,7 +18,7 @@
                                     {{asignaciones.usuario.nombre}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-2" >
                                 <div class="form-group">
                                     <label><b>Estado: </b></label>
@@ -44,7 +44,7 @@
                                     {{asignaciones.observaciones}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-3" >
                                 <div class="form-group">
                                     <label><b>Fecha y Hora de Registro: </b></label>
@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div class="col-12" v-if="Object.keys(asignaciones).length > 0">
-                
+
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
@@ -88,7 +88,7 @@
                                                     </select>
                                                 </th>
                                                 <!-- <th colspan="2"  v-if="!asignaciones.data[id_transaccion].orden_compra">
-                                                    <button type="button" class="btn btn-primary pull-right" @click="generarOrdenCompraIndividual">Generar Orden Compra</button> 
+                                                    <button type="button" class="btn btn-primary pull-right" @click="generarOrdenCompraIndividual">Generar Orden Compra</button>
                                                 </th> -->
                                             </tr>
                                             <tr class="bg-gray-light">
@@ -102,7 +102,7 @@
                                                 <th style="width: 32%;">Descripción</th>
                                                 <th style="width: 8%;">Unidad</th>
                                                 <th style="width: 8%;">Cantidad Solicitada</th>
-                                                
+
                                                 <th class="bg-gray-light ">Precio Unitario</th>
                                                 <th class="bg-gray-light">% Descuento</th>
                                                 <th class="bg-gray-light ">Precio Total</th>
@@ -129,13 +129,13 @@
                                 </div>
                             </div>
                         </div>
-                       
+
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-12" v-if="Object.keys(asignaciones).length > 0 && asignaciones.asignaciones_con_o_compra > 0">    
+            <div class="col-12" v-if="Object.keys(asignaciones).length > 0 && asignaciones.asignaciones_con_o_compra > 0">
                 <div class="invoice p-3 mb-3">
                     <div class="row">
                         <div class="col-12">
@@ -231,7 +231,7 @@
 
 <script>
 export default {
-    name: "asignacion-proveedores-edit",
+    name: "asignacion-proveedor-edit",
     props: ['id'],
     data() {
         return {
@@ -285,7 +285,7 @@ export default {
                         ordenes_c.push(orden.id);
                     }
                 });
-                
+
             });
             if(ordenes_c.length > 0){
                 return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:{data:ordenes_c, motivo:this.motivo}}
@@ -322,7 +322,7 @@ export default {
                         id: this.id
                     }
                 }).then(data => {
-                    this.$router.push({name: 'asignacion-proveedores'});
+                    this.$router.push({name: 'asignacion-proveedor'});
                 }) .finally(() => {
                     this.descargando = false;
                 })

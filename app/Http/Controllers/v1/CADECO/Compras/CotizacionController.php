@@ -5,7 +5,7 @@ namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\CotizacionCompraTransformer;
+use App\Http\Transformers\CADECO\Compras\CotizacionCompraTransformer;
 use App\Services\CADECO\Compras\CotizacionService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;

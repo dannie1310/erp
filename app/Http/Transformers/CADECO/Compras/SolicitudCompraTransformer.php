@@ -5,7 +5,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\Compras\SolicitudComplementoTransformer;
-use App\Http\Transformers\CADECO\CotizacionCompraTransformer;
+use App\Http\Transformers\CADECO\Compras\CotizacionCompraTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\SolicitudCompra;
 use League\Fractal\TransformerAbstract;

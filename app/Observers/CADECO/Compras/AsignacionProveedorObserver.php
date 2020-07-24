@@ -8,24 +8,24 @@
 
 namespace App\Observers\CADECO\Compras;
 
-use App\Models\CADECO\Compras\AsignacionProveedores;
-use App\Models\CADECO\Compras\AsignacionProveedoresEliminada;
+use App\Models\CADECO\Compras\AsignacionProveedor;
+use App\Models\CADECO\Compras\AsignacionProveedorEliminada;
 
-class AsignacionProveedoresObserver
+class AsignacionProveedorObserver
 {
     /**
-     * @param AsignacionProveedores $asignacion_proveedor
+     * @param AsignacionProveedor $asignacion_proveedor
      */
-    public function creating(AsignacionProveedores $asignacion_proveedor)
+    public function creating(AsignacionProveedor $asignacion_proveedor)
     {
         $asignacion_proveedor->registro = auth()->id();
     }
 
-    public function deleting(AsignacionProveedores $asignacion_proveedor)
+    public function deleting(AsignacionProveedor $asignacion_proveedor)
     {
         $asignacion_proveedor->validaAsociadaOrdenCompra();
         $partidas = $asignacion_proveedor->datosPartidas();
-        AsignacionProveedoresEliminada::create([
+        AsignacionProveedorEliminada::create([
             'id_asignacion' => $asignacion_proveedor->id,
             'id_solicitud' => $asignacion_proveedor->id_transaccion_solicitud,
             'id_empresa' => $partidas[0]['id_empresa'],

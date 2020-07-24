@@ -5,46 +5,59 @@ namespace App\PDF\Compras;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\Compras\Asignacion;
-use App\Models\CADECO\Compras\AsignacionProveedores;
+use App\Models\CADECO\Compras\AsignacionProveedor;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
+use App\Models\CADECO\CotizacionCompraPartida;
+use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Obra;
+use App\Models\IGH\TipoCambio;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AsignacionFormato extends Rotation
 {
     private $asignacion;
-    public function __construct( $id)
+    private $obra;
+    var $encola = '';
+    private $cadena_qr = '';
+    private $cadena = '';
+    private $dato = '';
+    private $qr_name = '';
+
+    public function __construct(AsignacionProveedor $asignacion)
     {
-        $this->asignacion = new AsignacionProveedores();
-       parent::__construct('L', 'cm', 'A4');
-//        $verifica = new ValidacionSistema();
-//        $datos_qr[] = utf8_decode("TABLA DE ASIGNACIÓN DE PROVEEDORES");
-//        $datos_qr[] = date('d-m-Y', strtotime($this->asignacion->timestamp_registro));
-//        $datos_qr[] = $this->asignacion->id;
-//        $datos_qr[] = $this->asignacion->solicitud->complemento->folio_compuesto;
-//        dd($datos_qr);
-//        $datos_qr[] = $this->asignacion->solicitud->numero_folio_string;
-//        $datos_qr2["tipo"] = "tabla_asignacion";
-//        $datos_qr2["base"] = "controlrec";
-//        $datos_qr2["tabla"] = "rqctoc_tabla_comparativa";
-//        $datos_qr2["campo_id"] = "idrqctoc_tabla_comparativa";
-//        $datos_qr2["id"] = $this->asignacion->id;
-//        $cadena_json_id = json_encode($datos_qr2);
-//        $cadena_encriptar = $cadena_json_id . ">";
-//        $cadena_encriptar .= implode("_",$datos_qr);
-//        $firmada = $verifica->encripta($cadena_encriptar);
-//        $this->cadena_qr = "http://saoweb.grupohi.mx/?controlador=QR&accion=recibeCadena&c=" . urlencode($firmada);
-//        $this->cadena = $firmada;
+        $this->asignacion = $asignacion;
+       parent::__construct('L', 'cm', 'Letter');
+        $this->obra = Obra::find(Context::getIdObra());
+
+        $this->SetAutoPageBreak(true, 5);
+        $this->createQR();
+    }
+
+    private function createQR()
+    {
+        $verifica = new ValidacionSistema();
+        $datos_qr2['titulo'] = "Formato TABLA DE ASIGNACIÓN DE PROVEEDORES_".date("d-m-Y")."_".$this->asignacion."_".($this->asignacion->solicitud->complemento ? $this->asignacion->solicitud->complemento->folio_compuesto : '')."_".$this->asignacion->solicitud->numero_folio_format;
+        $datos_qr2["base"] = Context::getDatabase();
+        $datos_qr2["obra"] = $this->obra->nombre;
+        $datos_qr2["tabla"] = "Compras.asignacion_proveedores";
+        $datos_qr2["campo_id"] = "id";
+        $datos_qr2["id"] = $this->asignacion->id;
+        $cadena_json_id = json_encode($datos_qr2);
+
+        $firmada = $verifica->encripta($cadena_json_id);
+        $this->cadena_qr = "http://".$_SERVER['SERVER_NAME'].":". $_SERVER['SERVER_PORT']."/api/compras/solicitud-compra/leerQR?data=" . urlencode($firmada);
+        $this->cadena = $firmada;
+
+        $this->dato = $verifica->encripta($cadena_json_id);
+
+        $this->qr_name = 'qrcode_'. mt_rand() .'.png';
     }
 
     public function Header()
     {
         $this->Ln(.5);
-
-            // if(true){
-//            $this->image('../../site_media/img/LOGOTIPO_REHABILITACION_ATLACOMULCO.png', 1, .3, 5, 2);
-//
         $this->SetTextColor(0, 0, 0);
         $this->SetFont('Arial', 'B', 15); /* 20 */ /* 19,05 */
 
@@ -54,24 +67,24 @@ class AsignacionFormato extends Rotation
 
         $this->Cell(4, .5, 'FOLIO:', 'L T', 0, 'L');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(3, .5, 8888, 'R T', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->folio_format, 'R T', 0, 'L');
 
 
         $this->Ln(.5);
         $this->Cell(19);
         $this->SetFont('Arial', 'B', 7);
         $this->Cell(4, .5, 'FECHA: ', 'L B', 0, 'L');
-        $this->Cell(3, .5, date('d-m-Y', strtotime('10-09-2020')), 'R B', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->fecha_format, 'R B', 0, 'L');
         $this->SetFont('Arial', '', 6);
         $this->Ln(.5);
         $this->Cell(19);
         $this->Cell(4, .5, 'SOLICITUD ORIGEN: ', 'L', 0, 'L');
-        $this->Cell(3, .5, 'SIS-AF-547', 'R', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->solicitud->complemento ? $this->asignacion->solicitud->complemento->folio_compuesto : '' , 'R', 0, 'L');
 
         $this->Ln(.5);
         $this->Cell(19);
         $this->Cell(4, .5, utf8_decode('REQUISICIÓN SAO: '), 'LB', 0, 'L');
-        $this->Cell(3, .5, '#00338', 'RB', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->solicitud->complemento ? $this->asignacion->solicitud->complemento->requisicion_folio_format : '', 'RB', 0, 'L');
 
         $this->Ln(.7);
         $this->y_para_descripcion = $this->GetY();
@@ -87,18 +100,18 @@ class AsignacionFormato extends Rotation
 
     public function partidas()
     {
-
-        $no_cotizaciones = 3;
-        $total_asignado = 0;
-        $subtotal_asignado = 0;
-        $iva_total_asignado = 0;
+        $no_cotizaciones = count($this->asignacion->solicitud->cotizaciones);
+        $moneda_dolar = TipoCambio::where('moneda','=', 1)->orderByDesc('fecha')->first()->tipo_cambio;
+        $moneda_euro = TipoCambio::where('moneda','=', 2)->orderByDesc('fecha')->first()->tipo_cambio;
+        $cotizaciones = $this->asignacion->solicitud->cotizaciones;
 
         $font = 5;
         $font2 = 4;
         $font_importes = 5;
         $heigth = 0.3;
         $cotizacinesXFila = 3;
-        $anchos["des"] = 4.5;
+        $bandera_asignacion = 0;
+        $anchos["des"] = 4.75;
         $anchos["u"] = $anchos["c"] = $anchos["ca"] = 0.71;
         $anchos["aesp"] = $anchos["u"] + $anchos["c"];
         $anchos["espacio_detalles_globales"] = ($anchos["aesp"] + $anchos["des"]) / 2;
@@ -110,7 +123,7 @@ class AsignacionFormato extends Rotation
         $anchos["ic"] = 0.9;
 
         $anchos["dg"] = $anchos["pu"] + $anchos["d"];
-        //$anchos["op"] = $anchos["og"] = $anchos["p"] = $anchos["pu"] + $anchos["d"] + $anchos["it"] + $anchos["m"] + $anchos["ic"] + $anchos["ca"] + $anchos["ita"];
+        $anchos["op"] = $anchos["og"] = $anchos["p"] = $anchos["pu"] + $anchos["d"] + $anchos["it"] + $anchos["m"] + $anchos["ic"] + $anchos["ca"] + $anchos["ita"];
         $anchos["op"] = $anchos["og"] = $anchos["p"] = 6.6;
         $anchos["fe"] = $anchos["vig"] = $anchos["og"] / 6;
         $anchos["ant"] = $anchos["cre"] = $anchos["ent"] = $anchos["ivg"] = $anchos["og"] / 6;
@@ -119,6 +132,10 @@ class AsignacionFormato extends Rotation
         $i_e = 0;
         $total_mejor_opcion = 0;
         $partidas_comprobacion_mejor_opcion = array();
+        $asignado_pesos = 0;
+        $asignado_dolar = 0;
+        $asignado_euro = 0;
+        $asignado_libras = 0;
 
         for ($x = 0; $x < $no_arreglos; $x++) {
             $this->Cell($anchos["aesp"] + $anchos["des"]);
@@ -132,7 +149,7 @@ class AsignacionFormato extends Rotation
                 $this->SetFillColor(0, 0, 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["p"], $heigth, utf8_decode('COMUNICACIONES ETC SA DE CV'), 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["p"], $heigth, utf8_decode($cotizaciones[$i]->empresa->razon_social), 1, 0, 'C', 1);
             }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
@@ -151,11 +168,11 @@ class AsignacionFormato extends Rotation
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["fe"] + $anchos["fe"], $heigth, utf8_decode("Fecha Cotización:"), 1, 0, 'C', 1);
                 $this->SetTextColor(100, 100, 100);
-                $this->CellFitScale($anchos["fe"], $heigth, '2/Oct/2012', 1, 0, 'C', 0);
+                $this->CellFitScale($anchos["fe"], $heigth, $cotizaciones[$i]->fecha_format, 1, 0, 'C', 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["vig"], $heigth, "Vigencia:", 1, 0, 'C', 1);
                 $this->SetTextColor(100, 100, 100);
-                $this->CellFitScale($anchos["vig"], $heigth, '34/ago/2020', 1, 0, 'C', 0);
+                $this->CellFitScale($anchos["vig"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->vigencia : '-', 1, 0, 'C', 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["vig"], $heigth, utf8_decode("Días"), 1, 0, 'C', 1);
             }
@@ -167,13 +184,13 @@ class AsignacionFormato extends Rotation
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["ant"], $heigth, "Anticipo:", 1, 0, 'C', 1);
                 $this->SetTextColor(100, 100, 100);
-                $this->CellFitScale($anchos["ant"], $heigth, '-', 1, 0, 'C', 0);
+                $this->CellFitScale($anchos["ant"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->anticipo : '-', 1, 0, 'C', 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["ant"], $heigth, "%", 1, 0, 'C', 1);
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["cre"], $heigth, utf8_decode("Crédito:"), 1, 0, 'C', 1);
                 $this->SetTextColor(100, 100, 100);
-                $this->CellFitScale($anchos["cre"], $heigth, '-', 1, 0, 'C', 0);
+                $this->CellFitScale($anchos["cre"], $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->dias_credito : '-', 1, 0, 'C', 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["cre"], $heigth, utf8_decode("Días"), 1, 0, 'C', 1);
             }
@@ -187,32 +204,30 @@ class AsignacionFormato extends Rotation
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["ent"] * 2, $heigth, "Plazo de Entrega:", 1, 0, 'C', 1);
                 $this->SetTextColor(100, 100, 100);
-                $this->CellFitScale($anchos["ent"], $heigth,  '-', 1, 0, 'C', 0);
+                $this->CellFitScale($anchos["ent"], $heigth,  $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->plazo_entrega : '-', 1, 0, 'C', 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["ent"], $heigth, utf8_decode("Días"), 1, 0, 'C', 1);
             }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->CellFitScale($anchos["p"], $heigth, "", 0, 0, 'C', 0);
-
-            endfor;
+            }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetTextColor(255, 255, 255);
                 $this->SetFillColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->CellFitScale($anchos["pu"] * 4, $heigth, "Cotizado", 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["pu"] * 2, $heigth, "Asignado", 1, 0, 'C', 1);
-
-            endfor;
+            }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
 
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(100, 100, 100);
                 $this->SetTextColor(255, 255, 255);
                 $this->SetFont('Arial', 'B', $font);
@@ -222,7 +237,7 @@ class AsignacionFormato extends Rotation
                 $this->CellFitScale($anchos["pu"], $heigth, "Importe Moneda", 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["pu"], $heigth, "", 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["pu"], $heigth, "", 1, 0, 'C', 1);
-            endfor;
+            }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
@@ -230,7 +245,7 @@ class AsignacionFormato extends Rotation
             $this->Cell($anchos["des"], $heigth, utf8_decode("Descripción"), 1, 0, 'C', 1);
             $this->Cell($anchos["u"], $heigth, "Unidad", 1, 0, 'C', 1);
             $this->Cell($anchos["c"], $heigth, "Cantidad", 1, 0, 'C', 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(100, 100, 100);
                 $this->SetTextColor(255, 255, 255);
                 $this->SetFont('Arial', 'B', $font);
@@ -240,97 +255,83 @@ class AsignacionFormato extends Rotation
                 $this->CellFitScale($anchos["pu"], $heigth, "Comparable", 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["pu"], $heigth, "Cantidad", 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["pu"], $heigth, "Importe", 1, 0, 'C', 1);
-            endfor;
+            }
             $this->Ln();
             $this->y_para_descripcion = $this->GetY();
             $this->y_para_descripcion_arr[] = $this->GetY();
-            $partidas_solicitud = ['uno' => 1,'dos' => 2, 'tres' => 3];
+            $partidas_solicitud = $this->asignacion->solicitud->partidas;
             $subtotal_adesc_f = array();
             $resumen_moneda = array();
             foreach ($partidas_solicitud as $partida_solicitud){
+
                 asort($this->y_para_descripcion_arr);
                 $this->y_para_descripcion = array_pop($this->y_para_descripcion_arr);
                 $this->SetY($this->y_para_descripcion);
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font2);
-                $this->CellFitScale($anchos["des"], $heigth, 'Descripcion del texto', 1, 0, 'L', 0, '');
-                $this->Cell($anchos["c"], $heigth, 'MXS', 1, 0, 'L', 0, '');
-                $this->Cell($anchos["u"], $heigth, number_format(100,2, '.', ''), 1, 0, 'L', 0, '');
+                $this->CellFitScale($anchos["des"], $heigth, $partida_solicitud->material->descripcion, 1, 0, 'L', 0, '');
+                $this->Cell($anchos["c"], $heigth, $partida_solicitud->unidad, 1, 0, 'L', 0, '');
+                $this->Cell($anchos["u"], $heigth,number_format($partida_solicitud->cantidad, '2', '.', ','), 1, 0, 'L', 0, '');
 
-                for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
-//                    $partida_cotizacion = Cotizacion::where('id_transaccion', '=', $cotizaciones[$i]->id_transaccion)->where('id_material', '=', $partida_solicitud->id_material)->first();
-//                    if (count($partida_cotizacion) > 0 && $partida_cotizacion->precio_unitario > 0) {
-//                        if ($this->calcular_ki($partida_cotizacion->precio_unitario, $precios[$partida_solicitud->id_material]) == 0) {
-//                            $this->SetFillColor(150, 150, 150);
-//                            $this->SetTextColor(0, 0, 0);
-////
-////
-//                        } else {
-                            $this->SetFillColor(255, 255, 255);
-                            $this->SetTextColor(0, 0, 0);
-//                        }
-//                        $partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion][$partida_solicitud->id_item]["cantidad"] = $partida_cotizacion->cantidad;
-//                        $partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion][$partida_solicitud->id_item]["precio_unitario_conv"] =
-//                            $partida_cotizacion->precio_unitario - ($partida_cotizacion->precio_unitario * $partida_cotizacion->descuento / 100);
-//                        $asignacion_partida = AsignacionProveedoresPartida::where('id_item_solicitud', '=', $partida_solicitud->id_item)->where('id_transaccion_cotizacion', '=', $partida_cotizacion->id_transaccion)->where('id_asignacion_proveedores', '=', $this->asignacion->id)->first();
-//                        $cant_asignada = $asignacion_partida != null ? $asignacion_partida->cantidad_asignada : 0;
-//
-//                        array_key_exists($partida_cotizacion->id_transaccion, $partidas_comprobacion_mejor_opcion) ?
-//                            array_key_exists($partida_solicitud->id_item, $partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion]) ?
-//                                array_key_exists('cantidad_asignada',  $partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion][$partida_solicitud->id_item]) ? $partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion][$partida_solicitud->id_item]["cantidad_asignada"] += $cant_asignada
-//                                    :$partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion][$partida_solicitud->id_item]["cantidad_asignada"] = $cant_asignada
-//                                :$partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion][$partida_solicitud->id_item]["cantidad_asignada"] = $cant_asignada
-//                            :$partidas_comprobacion_mejor_opcion[$partida_cotizacion->id_transaccion][$partida_solicitud->id_item]["cantidad_asignada"] = $cant_asignada;
-
-
-//                        $precio_desc = $partida_cotizacion->precio_unitario - ($partida_cotizacion->precio_unitario * $partida_cotizacion->cotizacion_partidas_complemento->descuento_partida / 100);
-//                        $t_c = 1;
-//                        $partida_cotizacion->id_moneda == 2 ? $t_c = $partida_cotizacion->cotizacion_compra->complemento->tc_usd : '';
-//                        $partida_cotizacion->id_moneda == 3 ? $t_c = $partida_cotizacion->cotizacion_compra->complemento->tc_eur : '';
+                for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
+                    $partida_cotizacion = CotizacionCompraPartida::where('id_transaccion', '=', $cotizaciones[$i]->id_transaccion)
+                        ->where('id_material', '=', $partida_solicitud->id_material)
+                        ->where('precio_unitario', '!=', 0)
+                        ->first();
+                    if($partida_cotizacion) {
+                        $this->SetFillColor(255, 255, 255);
+                        $this->SetTextColor(0, 0, 0);
                         $this->SetFont('Arial', '', $font_importes);
-                        $this->Cell($anchos["pu"], $heigth, number_format(2334, 2, '.', ','), "T B L", 0, "R", 1);
-                        $this->Cell($anchos["pu"], $heigth, number_format(54322, 2, '.', ','), "T B L", 0, "R", 1);
-                        $this->CellFitScale($anchos["pu"], $heigth, 'nombre', "T B L", 0, "R", 1);
-                        $this->Cell($anchos["pu"], $heigth, number_format(5555, 2, '.', ','), "B L R T", 0, "R", 1);
-                        $this->Cell($anchos["pu"], $heigth, '-', "B L R T", 0, "R", 1);
-                        $this->Cell($anchos["pu"], $heigth, '-Mucho', "B L R T", 0, "R", 1);
-//
-                    //__JAJAJA
-//                        array_key_exists($partida_cotizacion->id_transaccion, $subtotal_adesc_f) ? $subtotal_adesc_f[$partida_cotizacion->id_transaccion] += ($precio_desc * $partida_solicitud->cantidad * $t_c)
-//                            : $subtotal_adesc_f[$partida_cotizacion->id_transaccion] = ($precio_desc * $partida_solicitud->cantidad * $t_c);
-//                        array_key_exists($partida_cotizacion->id_transaccion, $asignados) ? $asignados[$partida_cotizacion->id_transaccion] += ($cant_asignada * $precio_desc * $t_c)
-//                            : $asignados[$partida_cotizacion->id_transaccion] = ($cant_asignada * $precio_desc * $t_c);
-//                        array_key_exists($partida_cotizacion->cotizacion_compra->id_empresa, $resumen_moneda) ?
-//                            array_key_exists($partida_cotizacion->id_transaccion, $resumen_moneda[$partida_cotizacion->cotizacion_compra->id_empresa]) ?
-//                                array_key_exists($partida_cotizacion->id_moneda, $resumen_moneda[$partida_cotizacion->cotizacion_compra->id_empresa][$partida_cotizacion->id_transaccion]) ? $resumen_moneda[$partida_cotizacion->cotizacion_compra->id_empresa][$partida_cotizacion->id_transaccion][$partida_cotizacion->id_moneda] += ($cant_asignada * $precio_desc * $t_c)
-//                                    : $resumen_moneda[$partida_cotizacion->cotizacion_compra->id_empresa][$partida_cotizacion->id_transaccion][$partida_cotizacion->id_moneda] = ($cant_asignada * $precio_desc * $t_c)
-//                                : $resumen_moneda[$partida_cotizacion->cotizacion_compra->id_empresa][$partida_cotizacion->id_transaccion][$partida_cotizacion->id_moneda] = ($cant_asignada * $precio_desc * $t_c)
-//                            : $resumen_moneda[$partida_cotizacion->cotizacion_compra->id_empresa][$partida_cotizacion->id_transaccion][$partida_cotizacion->id_moneda] = ($cant_asignada * $precio_desc * $t_c);
-//                    } else {
-//                        $subtotal_adesc_f[$cotizaciones[$i]->id_transaccion] = 0;
-//                        $asignados[$cotizaciones[$i]->id_transaccion] = 0;
-//                        $resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion][$cotizaciones[$i]->id_moneda] = 0;
-//                        $this->SetFillColor(200, 200, 200);
-//                        $this->SetTextColor(200, 200, 200);
-//                        $this->Cell($anchos["pu"], $heigth, '', "T B L", 0, "R", 1);
-//                        $this->Cell($anchos["pu"], $heigth, '', "T B L", 0, "R", 1);
-//                        $this->CellFitScale($anchos["pu"], $heigth, '', "T B L", 0, "R", 1);
-//                        $this->Cell($anchos["pu"], $heigth, '', "B L R T", 0, "R", 1);
-//                        $this->Cell($anchos["pu"], $heigth, '', "B L R T", 0, "R", 1);
-//                        $this->Cell($anchos["pu"], $heigth, '', "B L R T", 0, "R", 1);
-//                    }
+                        $this->Cell($anchos["pu"], $heigth, $partida_cotizacion ? number_format($partida_cotizacion->precio_compuesto, 2, '.', ',') : '', "T B L R", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, $partida_cotizacion ? number_format($partida_cotizacion->cantidad * $partida_cotizacion->precio_compuesto, 2, '.', ',') : '', "T B L R", 0, "R", 1);
+                        $this->CellFitScale($anchos["pu"], $heigth, $partida_cotizacion ? $partida_cotizacion->moneda ? $partida_cotizacion->moneda->nombre : '' : '', "T B L R", 0, "R", 1);
+                        $asignacion_partida = AsignacionProveedorPartida::where('id_transaccion_cotizacion', '=', $cotizaciones[$i]->id_transaccion)
+                            ->where('id_material', '=', $partida_cotizacion->id_material)
+                            ->where('id_asignacion_proveedores', '=', $this->asignacion->id)->first();
 
+                        $this->Cell($anchos["pu"], $heigth, number_format($partida_cotizacion->total_precio_moneda, 2, '.', ','), "B L R T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, $asignacion_partida ? $asignacion_partida->cantidad_asignada : '-', "B L R T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, $asignacion_partida ? number_format($asignacion_partida->total_precio_moneda, 2, '.', ',') : '-', "B L R T", 0, "R", 1);
+                        if($asignacion_partida) {
+                            $bandera_asignacion = $cotizaciones[$i]->id_transaccion;
+                            if($partida_cotizacion->id_moneda == 1)
+                            {
+                                $asignado_pesos += ($asignacion_partida->total_precio_moneda * 1.16);
+                            }
+                            if($partida_cotizacion->id_moneda == 2)
+                            {
+                                $asignado_dolar += ($asignacion_partida->total_precio_moneda* 1.16);
+                            }
+                            if($partida_cotizacion->id_moneda == 3)
+                            {
+                                $asignado_euro += ($asignacion_partida->total_precio_moneda* 1.16);
+                            }
+                            if($partida_cotizacion->id_moneda == 4)
+                            {
+                                $asignado_libras += ($asignacion_partida->total_precio_moneda * 1.16);
+                            }
+                        }
+                    }else {
+                        $this->SetTextColor(0, 0, 0);
+                        $this->SetFont('Arial', '', $font_importes);
+                        $this->Cell($anchos["pu"], $heigth, '', "L T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, '', "T", 0, "R", 1);
+                        $this->CellFitScale($anchos["pu"], $heigth, '', "T", 0, "R", 1);
 
-                endfor;
-                    //-----Primera
+                        $this->Cell($anchos["pu"], $heigth, '', "T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, '', "T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, '', "R T", 0, "R", 1);
+                    }
+                }
+
                 $this->Ln();
                 $this->SetTextColor(0, 0, 0);
+                $this->y_para_obs_partidas = $this->getY();
                 $yos_ini = $this->getY();
                 $xos_ini = $this->getX();
-                $this->y_para_obs_partidas = $this->getY();
                 $this->SetFont('Arial', 'B', $font2);
-                $this->MultiCell($anchos["des"], $heigth,  '', 1, 'L', 0, 1); ///$partidas_solicitud[$p]["observaciones"]
+                $this->MultiCell($anchos["des"], $heigth,   '', 1, 'L', 0, 1);
                 $this->y_para_descripcion_arr[] = $this->GetY();
                 $this->y_fin_obs_par_sol_arr[] = $this->GetY();
                 $xos_ini += $anchos["des"];
@@ -338,71 +339,60 @@ class AsignacionFormato extends Rotation
                 $this->setX($xos_ini);
                 $this->SetFont('Arial', 'B', $font2);
                 $this->CellFitScale($anchos["aesp"], $heigth, 'Observaciones de Partida:', 'B', 0, 'R', 0);
+
                 $yop_ini = $this->getY();
                 $xop_ini = $this->getX();
-//                Segunda
-                for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
-//                    $partida_cotizacion = Cotizacion::where('id_transaccion', '=', $cotizaciones[$i]->id_transaccion)->where('id_material', '=', $partida_solicitud->id_material)->first();
-//                    if (count($partida_cotizacion) > 0 && $partida_cotizacion->precio_unitario > 0) {
-//                        if ($this->calcular_ki($partida_cotizacion->precio_unitario, $precios[$partida_solicitud->id_material]) == 0) {
-//                            $this->SetFillColor(150, 150, 150);
-//                            $this->SetTextColor(0, 0, 0);
-//                        } else {
-//                            $this->SetFillColor(255, 255, 255);
-//                            $this->SetTextColor(0, 0, 0);
-//                        }
-//                    } else {
-//
-                        $this->SetFillColor(200, 200, 200);
-                        $this->SetTextColor(200, 200, 200);
-//                    }
-                    $this->SetFont('Arial', '', $font);
-                    $this->setY($yop_ini);
-                    $this->setX($xop_ini);
-                    $this->MultiCell($anchos["op"], $heigth, 'Otra cotizacion', "B L R T", "L", 1);
-                    $this->y_para_descripcion_arr[] = $this->GetY();
-                    $xop_ini += $anchos["op"];
-                endfor;
+                for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
+                    $partida_cotizacion = CotizacionCompraPartida::where('id_transaccion', '=', $cotizaciones[$i]->id_transaccion)
+                        ->where('id_material', '=', $partida_solicitud->id_material)
+                        ->where('precio_unitario', '!=', 0)
+                        ->first();
+
+                    if ($partida_cotizacion) {
+                        $this->SetFillColor(255, 255, 255);
+                        $this->SetTextColor(0, 0, 0);
+                        $this->SetFont('Arial', '', $font2);
+                        $this->setY($yop_ini);
+                        $this->setX($xop_ini);
+                        $this->MultiCell($anchos["op"], $heigth, utf8_decode($partida_cotizacion->partida ? $partida_cotizacion->partida->observaciones : '-'), "T R L B", "L", 1);
+                        $this->y_para_descripcion_arr[] = $this->GetY();
+                        $xop_ini += $anchos["op"];
+                    } else {
+                        $this->SetFillColor(255, 255, 255);
+                        $this->SetTextColor(0, 0, 0);
+                        $this->SetFont('Arial', '', $font2);
+                        $this->setY($yop_ini);
+                        $this->setX($xop_ini);
+                        $this->MultiCell($anchos["op"], $heigth, '', "L B R", "L", 1);
+                        $this->y_para_descripcion_arr[] = $this->GetY();
+                        $xop_ini += $anchos["op"];
+                    }
+                }
                 $this->Ln();
             }
+            $asignacion_descuento = 0;
+            $total_asignado = 0;
             asort($this->y_fin_obs_par_sol_arr);
             $this->y_fin_obs_par_sol = array_pop($this->y_fin_obs_par_sol_arr);
             $this->SetY($this->y_fin_obs_par_sol);
-//
-            $this->Ln();
-            $this->Cell($anchos["aesp"] + $anchos["des"]);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
-                $this->SetTextColor(255, 255, 255);
-                $this->SetFillColor(0, 0, 0);
-                $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["pu"] * 4, $heigth, "Cotizado", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["pu"] * 2, $heigth, "Asignado", 1, 0, 'C', 1);
-
-            endfor;
-//
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal Antes Descuentos", 1, 0, "R", 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["pu"] * 2, $heigth,"",1,0,"",1);
+                $this->Cell($anchos["pu"] * 2, $heigth, "", 1, 0, "", 1);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
-                $this->Cell($anchos["pu"], $heigth, number_format(7655, 2, ".", ","), 1, 0, 'R', 1);
-//                if ($asignados[$cotizaciones[$i]->id_transaccion] > 0) {
-                    $this->SetFillColor(0, 0, 0);
-                    $this->SetTextColor(255, 255, 255);
-//                } else {
-//                    $this->SetFillColor(255, 255, 255);
-//                    $this->SetTextColor(0, 0, 0);
-//                }
-                $this->Cell($anchos["pu"]*2, $heigth, number_format(84655, 2, ".", ","), 1, 0, 'R', 1);
-            endfor;
-//
+                $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->suma_subtotal_partidas, 2, ".", ","), 1, 0, 'R', 1);
+                $this->SetFillColor(0, 0, 0);
+                $this->SetTextColor(255, 255, 255);
+                $this->Cell($anchos["pu"] * 2, $heigth, $bandera_asignacion == $cotizaciones[$i]->id_transaccion ? number_format($this->asignacion->suma_subtotal_partidas, 2, ".", ",") : '-', 1, 0, 'R', 1);
+            }
+
             $this->Ln();
             $this->Ln(0.1);
             $this->SetFillColor(100, 100, 100);
@@ -410,24 +400,19 @@ class AsignacionFormato extends Rotation
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "% Descuento Global", 1, 0, "R", 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-//                $importe_descuento_f[$cotizaciones[$i]->id_transaccion] = $subtotal_adesc_f[$cotizaciones[$i]->id_transaccion] * $cotizaciones[$i]->complemento->descuento/100;
-                $this->Cell($anchos["pu"] * 2, $heigth,  '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["pu"] * 2, $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->descuento : '-', 1, 0, 'R', 1);
                 $this->Cell($anchos["pu"], $heigth, "%", 1, 0, "C");
-                $this->Cell($anchos["pu"], $heigth, '-', 1, 0, 'R', 1);
-//                if ($asignados[$cotizaciones[$i]->id_transaccion] > 0) {
-                    $this->SetFillColor(0, 0, 0);
-                    $this->SetTextColor(255, 255, 255);
-//                } else {
-//                    $this->SetFillColor(255, 255, 255);
-//                    $this->SetTextColor(0, 0, 0);
-//                }
-                $this->Cell($anchos["pu"] * 2, $heigth,'-', 1, 0, 'R', 1);
-            endfor;
-//
+                $this->Cell($anchos["pu"], $heigth, $cotizaciones[$i]->descuento != 0 ? number_format($cotizaciones[$i]->descuento, 2, ".", ",") : '-', 1, 0, 'R', 1);
+                $this->SetFillColor(0, 0, 0);
+                $this->SetTextColor(255, 255, 255);
+                $asignacion_descuento = $bandera_asignacion == $cotizaciones[$i]->id_transaccion ? ($this->asignacion->suma_subtotal_partidas * $cotizaciones[$i]->complemento->descuento/100) : 0;
+                $this->Cell($anchos["pu"] * 2, $heigth, $asignacion_descuento != 0 ? number_format($asignacion_descuento, 2, ".", ",") : '-', 1, 0, 'R', 1);
+            }
+
             $this->Ln();
             $this->Ln(0.1);
             $this->SetFillColor(100, 100, 100);
@@ -435,251 +420,258 @@ class AsignacionFormato extends Rotation
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal:", 1, 0, "R", 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetDrawColor(199, 199, 199);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["pu"] * 2, $heigth);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
-                $this->Cell($anchos["pu"], $heigth, number_format(23455, 2, ".", ","), 1, 0, 'R', 1);
-
-//                if ($asignados[$cotizaciones[$i]->id_transaccion] > 0) {
-                    $this->SetFillColor(0, 0, 0);
-                    $this->SetTextColor(255, 255, 255);
-//                    $subtotal_asignado += $asignados[$cotizaciones[$i]->id_transaccion]-($asignados[$cotizaciones[$i]->id_transaccion]*$cotizaciones[$i]->complemento->descuento/100);
-//                } else {
-//                    $this->SetFillColor(255, 255, 255);
-//                    $this->SetTextColor(0, 0, 0);
-//                }
-                $this->Cell($anchos["pu"]*2, $heigth, number_format(433234, 2, ".", ","), 1, 0, 'R', 1);
-            endfor;
+                $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->subtotal_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
+                $this->SetFillColor(0, 0, 0);
+                $this->SetTextColor(255, 255, 255);
+                $this->Cell($anchos["pu"] * 2, $heigth, $bandera_asignacion == $cotizaciones[$i]->id_transaccion ? number_format($this->asignacion->suma_subtotal_partidas - $asignacion_descuento, 2, ".", ",") : '-', 1, 0, 'R', 1);
+            }
             $this->Ln();
-//            $this->Ln(0.1);
             $this->SetFillColor(100, 100, 100);
             $this->SetDrawColor(0, 0, 0);
             $this->SetTextColor(255, 255, 255);
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "IVA:", 1, 0, "R", 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetDrawColor(199, 199, 199);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["pu"] * 2, $heigth);
-//                if($cotizaciones[$i]->complemento->importe >0){
-//                    $tasa_iva = $cotizaciones[$i]->impuesto * 100 / $cotizaciones[$i]->complemento->importe / 100;
-//                }else{
-//                    $tasa_iva = 0;
-//                }
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
-//                $iva_c[$cotizaciones[$i]->id_transaccion] = ($subtotal_adesc_f[$cotizaciones[$i]->id_transaccion] - $importe_descuento_f[$cotizaciones[$i]->id_transaccion]) * $tasa_iva;
-                $this->Cell($anchos["pu"], $heigth, number_format(13562.4, 2, ".", ","), 1, 0, 'R', 1);
+                $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->IVA_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
 
-//                $resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion]["tasa_iva"] = $tasa_iva;
-//                if ($asignados[$cotizaciones[$i]->id_transaccion] > 0) {
-                    $this->SetFillColor(0, 0, 0);
-                    $this->SetTextColor(255, 255, 255);
-//                    $iva_total_asignado += ($asignados[$cotizaciones[$i]->id_transaccion]-($asignados[$cotizaciones[$i]->id_transaccion]*$cotizaciones[$i]->complemento->descuento / 100)) * $tasa_iva;
-//                } else {
-//                    $this->SetFillColor(255, 255, 255);
-//                    $this->SetTextColor(0, 0, 0);
-//                }
-                $this->Cell($anchos["pu"] * 2, $heigth, number_format(13562.4, 2, ".", ","), 1, 0, 'R', 1);
-            endfor;
+                $this->SetFillColor(0, 0, 0);
+                $this->SetTextColor(255, 255, 255);
+                $this->Cell($anchos["pu"] * 2, $heigth, $bandera_asignacion == $cotizaciones[$i]->id_transaccion ? number_format(($this->asignacion->suma_subtotal_partidas - $asignacion_descuento) * 0.16, 2, ".", ",") : '-', 1, 0, 'R', 1);
+            }
             $this->Ln();
-//            $this->Ln(0.1);
             $this->SetFillColor(100, 100, 100);
             $this->SetDrawColor(0, 0, 0);
             $this->SetTextColor(255, 255, 255);
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Total:", 1, 0, "R", 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetDrawColor(199, 199, 199);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["pu"] * 2, $heigth);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
-//                $total_f[$cotizaciones[$i]->id_transaccion] = ($subtotal_adesc_f[$cotizaciones[$i]->id_transaccion]-$importe_descuento_f[$cotizaciones[$i]->id_transaccion]) * (1+$tasa_iva);
-                $this->Cell($anchos["pu"], $heigth, number_format(98321.6,2,".",","), 1, 0, 'R', 1);
-//                if ($asignados[$cotizaciones[$i]->id_transaccion] > 0) {
-                    $this->SetFillColor(0, 0, 0);
-                    $this->SetTextColor(255, 255, 255);
-//                    $total_asignado += ($asignados[$cotizaciones[$i]->id_transaccion]-($asignados[$cotizaciones[$i]->id_transaccion]*$cotizaciones[$i]->complemento->descuento/100)) * (1 + $tasa_iva);
-//                } else {
-//                    $this->SetFillColor(255, 255, 255);
-//                    $this->SetTextColor(0, 0, 0);
-//                }
-//                if($cotizaciones[$i]->complemento->importe >0){
-//                    $tasa_iva = $cotizaciones[$i]->impuesto*100/$cotizaciones[$i]->complemento->importe/100;
-//                }else{
-//                    $tasa_iva = 0;
-//                }
-                $this->Cell($anchos["pu"] * 2, $heigth, number_format(98321.3,2,".",","), 1, 0, 'R', 1);
-            endfor;
-            $this->Ln();
+                if($bandera_asignacion == $cotizaciones[$i]->id_transaccion)
+                {
+                    $total_asignado = $this->asignacion->suma_subtotal_partidas + (($this->asignacion->suma_subtotal_partidas - $asignacion_descuento) * 0.16);
+                }
+
+                $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->total_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
+                $this->SetFillColor(0, 0, 0);
+                $this->SetTextColor(255, 255, 255);
+                $this->Cell($anchos["pu"] * 2, $heigth, $bandera_asignacion == $cotizaciones[$i]->id_transaccion && $total_asignado != 0 ? number_format($total_asignado, 2, ".", ",") : '-', 1, 0, 'R', 1);
+            }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetTextColor(255, 255, 255);
                 $this->SetFillColor(100, 100, 100);
                 $this->SetFont('Arial', 'B', $font);
                 $this->CellFitScale($anchos["pu"] * 6, $heigth, "Observaciones Globales", 1, 0, 'C', 1);
-            endfor;
-
+            }
             $this->Ln();
-
             $this->Cell($anchos["aesp"] + $anchos["des"]);
             $y_ini = $this->getY();
             $x_ini = $this->getX();
-
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->setY($y_ini);
                 $this->setX($x_ini);
-                $this->MultiCell($anchos["og"], $heigth, 'Se  asigna  la  compra  al  proveedor  SOLUCIONES  EN  COMPUTO  SARYBA,derivado  de  que  su  propuesta  en  conjunto  es  mas  baja.        Tiempo  deEntrega Optimo de 2 a 4 dias.', 1, 'J', false);
+                $this->MultiCell($anchos["og"], $heigth, utf8_decode($cotizaciones[$i]->observaciones), 1, 'J', false);
                 $this->y_fin_og_arr[] = $this->getY();
-                $x_ini+=$anchos["og"];
-            endfor;
+                $x_ini += $anchos["og"];
+            }
+
             asort($this->y_fin_og_arr);
             $this->y_fin_og = array_pop($this->y_fin_og_arr);
             $this->SetY($this->y_fin_og);
             $this->Ln();
-            //$this->Ln();
-
-
             $total_asignado_ic = array();
-
-            $this->Ln();
-            $this->Cell($anchos["espacio_detalles_globales"]*2);
+            $this->Cell($anchos["espacio_detalles_globales"]);
             $this->SetFont('Arial', 'B', 7);
             $this->Cell($anchos["p"]*3,.5, utf8_decode("RESUMEN DE ASIGNACIÓN POR MONEDA"), "B", 1, 'C', 0);
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "", 0, 0, 'C', 0);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(0, 0, 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["p"], $heigth, utf8_decode('COMUNICACIONES ETC SA DE CV'), 1, 0, 'C', 1);
-            endfor;
+                $this->CellFitScale($anchos["p"], $heigth, utf8_decode($cotizaciones[$i]->empresa->razon_social), 1, 0, 'C', 1);
+            }
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "TIPO DE CAMBIO", 1, 0, 'C', 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(100, 100, 100);
                 $this->SetTextColor(255, 255, 255);
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["pu"]*3, $heigth, "TOTAL EN PESOS(MX)", 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["pu"] * 3, $heigth, "TOTAL EN PESOS(MX)", 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["pu"], $heigth, "Pagaderos en:", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["pu"]*2, $heigth, "", 1, 0, 'C', 1);
-            endfor;
-//
+                $this->CellFitScale($anchos["pu"] * 2, $heigth, "", 1, 0, 'C', 1);
+            }
+
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(0, 0, 0);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "1", 1, 0, 'C', 0);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
-//                $res_moneda = array_key_exists(1, $resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion]) ? $resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion][1]:0;
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFont('Arial', 'B', $font);
                 $this->SetTextColor(0, 0, 0);
-                $this->CellFitScale($anchos["pu"]*3, $heigth,number_format(98321.6,2,".",","), 1, 0, 'R', 0);
+                $this->CellFitScale($anchos["pu"] * 3, $heigth, $bandera_asignacion == $cotizaciones[$i]->id_transaccion ? number_format($asignado_pesos, 2, ".", ",") : '-', 1, 0, 'R', 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["pu"], $heigth, "PESOS (MX)", 1, 0, 'C', 1);
                 $this->SetTextColor(0, 0, 0);
-                $this->CellFitScale($anchos["pu"]*2, $heigth, number_format(98321.6,2,".",","), 1, 0, 'R', 0);
-//                array_key_exists($cotizaciones[$i]->id_empresa, $total_asignado_ic) ? array_key_exists($cotizaciones[$i]->id_transaccion, $total_asignado_ic[$cotizaciones[$i]->id_empresa]) ?
-//                    $total_asignado_ic[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion] += $res_moneda * (1+$resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion]["tasa_iva"]) * 1:
-//                    $total_asignado_ic[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion] = $res_moneda * (1+$resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion]["tasa_iva"]) * 1:
-//                    $total_asignado_ic[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion] = $res_moneda * (1+$resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion]["tasa_iva"]) * 1;
-            endfor;
-//
-            $mon_extranjeras = [1,2,3];   #BORRAR
-            $billetes = 0;
+                $this->CellFitScale($anchos["pu"] * 2, $heigth, $bandera_asignacion == $cotizaciones[$i]->id_transaccion ? number_format($asignado_pesos, 2, ".", ",") : '-', 1, 0, 'R', 0);
+            }
+            $mon_extranjeras = [1,2,4];
             foreach ($mon_extranjeras as $key => $moneda_e) {
-//                $tc_ = TipoCambio::cambio(1, $key);
-                $billetes ++;
+                $tipo_cambio = TipoCambio::where('moneda','=',$moneda_e)->orderByDesc('fecha', 'desc')->first();
                 $this->Ln();
                 $this->Cell($anchos["espacio_detalles_globales"]);
                 $this->SetFillColor(100, 100, 100);
                 $this->SetTextColor(0, 0, 0);
-                $this->Cell($anchos["espacio_detalles_globales"], $heigth, 'PESO'.$billetes, 1, 0, 'C', 0);
-                for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
-//                    $res_moneda = array_key_exists($key, $resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion]) ? $resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion][$key]:0;
+                $this->Cell($anchos["espacio_detalles_globales"], $heigth, $tipo_cambio ? number_format($tipo_cambio->tipo_cambio, 2, ".", ",") : '-', 1, 0, 'C', 0);
+                for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     $this->SetFont('Arial', 'B', $font);
                     $this->SetTextColor(0, 0, 0);
-                    $this->CellFitScale($anchos["pu"] * 3, $heigth, '-', 1, 0, 'R', 0);
-                    $this->SetTextColor(255, 255, 255);
-                    $this->CellFitScale($anchos["pu"], $heigth, 'DOLAR(USD)', 1, 0, 'C', 1);
-                    $this->SetTextColor(0, 0, 0);
-                    $this->CellFitScale($anchos["pu"] * 2, $heigth, '-', 1, 0, 'R', 0);
-//                    array_key_exists($cotizaciones[$i]->id_empresa, $total_asignado_ic) ? array_key_exists($cotizaciones[$i]->id_transaccion, $total_asignado_ic[$cotizaciones[$i]->id_empresa]) ?
-//                        $total_asignado_ic[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion] += $res_moneda * (1+$resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion]["tasa_iva"]) * $tc_ :
-//                        $total_asignado_ic[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion] = $res_moneda * (1+$resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion]["tasa_iva"]) * $tc_ :
-//                        $total_asignado_ic[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion] = $res_moneda * (1+$resumen_moneda[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion]["tasa_iva"]) * $tc_ ;
-                endfor;
+                    if($bandera_asignacion == $cotizaciones[$i]->id_transaccion)
+                    {
+                        if($moneda_e == 1)
+                        {
+                            $this->CellFitScale($anchos["pu"] * 3, $heigth, $asignado_dolar != 0 ? number_format($asignado_dolar, 2, ".", ",") : '-', 1, 0, 'R', 0);
+                            $this->SetTextColor(255, 255, 255);
+                            $this->CellFitScale($anchos["pu"], $heigth, 'DOLAR(USD)', 1, 0, 'C', 1);
+                            $this->SetTextColor(0, 0, 0);
+                            $this->CellFitScale($anchos["pu"] * 2, $heigth, $asignado_dolar != 0 ? number_format($asignado_dolar / $tipo_cambio->tipo_cambio, 2, ".", ",") : '-', 1, 0, 'R', 0);
+                        }
+                        if($moneda_e == 2)
+                        {
+                            $this->CellFitScale($anchos["pu"] * 3, $heigth,  $asignado_euro != 0 ? number_format($asignado_euro, 2, ".", ",") : '-', 1, 0, 'R', 0);
+                            $this->SetTextColor(255, 255, 255);
+                            $this->CellFitScale($anchos["pu"], $heigth, 'EUROS', 1, 0, 'C', 1);
+                            $this->SetTextColor(0, 0, 0);
+                            $this->CellFitScale($anchos["pu"] * 2, $heigth, $asignado_euro != 0 ? number_format($asignado_euro / $tipo_cambio->tipo_cambio, 2, ".", ",") : '-', 1, 0, 'R', 0);
+                        }
+                        if($moneda_e == 4)
+                        {
+                            $this->CellFitScale($anchos["pu"] * 3, $heigth, $asignado_libras != 0 ? number_format($asignado_libras, 2, ".", ",") : '-', 1, 0, 'R', 0);
+                            $this->SetTextColor(255, 255, 255);
+                            $this->CellFitScale($anchos["pu"], $heigth, 'LIBRAS', 1, 0, 'C', 1);
+                            $this->SetTextColor(0, 0, 0);
+                            $this->CellFitScale($anchos["pu"] * 2, $heigth, $asignado_libras != 0 ? number_format($asignado_libras / $tipo_cambio->tipo_cambio, 2, ".", ",") : '-', 1, 0, 'R', 0);
+                        }
+                    }else {
+                        $this->SetTextColor(255, 255, 255);
+                        $this->CellFitScale($anchos["pu"] * 3, $heigth, '-', 1, 0, 'R', 0);
+                        if ($moneda_e == 1) {
+                            $this->CellFitScale($anchos["pu"], $heigth, 'DOLAR(USD)', 1, 0, 'C', 1);
+                        }
+                        if ($moneda_e == 2) {
+                            $this->CellFitScale($anchos["pu"], $heigth, 'EUROS', 1, 0, 'C', 1);
+                        }
+                        if ($moneda_e == 4) {
+                            $this->CellFitScale($anchos["pu"], $heigth, 'LIBRAS', 1, 0, 'C', 1);
+                        }
+                        $this->SetTextColor(0, 0, 0);
+                        $this->CellFitScale($anchos["pu"] * 2, $heigth, '-', 1, 0, 'R', 0);
+                    }
+                }
             }
-//
+
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
             $this->SetDrawColor(0,0,0);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "TOTAL IVA INCLUIDO", 1, 0, 'R', 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++):
-//                $t_asignado = $total_asignado_ic[$cotizaciones[$i]->id_empresa][$cotizaciones[$i]->id_transaccion];
-                $this->SetDrawColor(0,0,0);
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
+                $this->SetDrawColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->SetTextColor(0, 0, 0);
-                $this->CellFitScale($anchos["pu"]*3, $heigth, number_format(98342.1,2,".",","), 1, 0, 'R', 0);
+                $this->CellFitScale($anchos["pu"] * 3, $heigth, $bandera_asignacion == $cotizaciones[$i]->id_transaccion && $total_asignado != 0 ? number_format($total_asignado, 2, ".", ",") : '-', 1, 0, 'R', 0);
                 $this->SetTextColor(0, 0, 0);
                 $this->CellFitScale($anchos["pu"], $heigth, "PESOS (MX)", 1, 0, 'C', 0);
                 $this->SetTextColor(0, 0, 0);
-                $this->CellFitScale($anchos["pu"]*2, $heigth, "", 0, 0, 'C', 0);
-                $this->SetDrawColor(200,200,200);
-            endfor;
+                $this->CellFitScale($anchos["pu"] * 2, $heigth, "", 0, 0, 'C', 0);
+                $this->SetDrawColor(200, 200, 200);
+            }
             $this->Ln();
-            $this->Ln(.2);
+            $this->Ln();
+            $this->Cell($anchos["espacio_detalles_globales"]);
+            $this->SetFillColor(0, 0, 0);
+            $this->SetTextColor(255, 255, 255);
+            $this->SetFont('Arial', 'B', $font);
+            $this->SetX(16.5);
+            $this->Cell($anchos["espacio_detalles_globales"]+0.19, $heigth, utf8_decode("Comprobación Mejor Opción"), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth, utf8_decode("Total Asignado"), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth, utf8_decode("Total Mejor Opción"), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth, utf8_decode("Diferencia"), 1, 0, 'R', 1);
 
-//            $i_e+=$cotizacinesXFila;
+            $this->Ln();
+            $this->SetFillColor(100, 100, 100);
+            $this->SetTextColor(255, 255, 255);
+            $this->SetFont('Arial', '', $font2);
+            $this->SetX(16.5);
+            $this->Cell(($anchos["espacio_detalles_globales"]/2)+0.19, $heigth, "SUBTOTAL", 1, 0, 'C', 1);
+            $this->SetFillColor(255, 255, 255);
+            $this->SetTextColor(0, 0, 0);
+            $this->Cell(($anchos["espacio_detalles_globales"]/2), $heigth, "PESO MXP", 1, 0, 'C', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($total_asignado, 2, ".", ","), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($this->asignacion->mejor_asignado, 2, ".", ","), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($total_asignado - $this->asignacion->mejor_asignado, 2, ".", ","), 1, 0, 'R', 1);
+
+            $this->Ln();
+            $this->SetFillColor(100, 100, 100);
+            $this->SetTextColor(255, 255, 255);
+            $this->SetFont('Arial', '', $font2);
+            $this->SetX(16.5);
+            $this->Cell(($anchos["espacio_detalles_globales"]/2)+0.19, $heigth, "IVA", 1, 0, 'C', 1);
+            $this->SetFillColor(255, 255, 255);
+            $this->SetTextColor(0, 0, 0);
+            $this->Cell(($anchos["espacio_detalles_globales"]/2), $heigth, "PESO MXP", 1, 0, 'C', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($total_asignado * 0.16, 2, ".", ","), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  '', "T R L", 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format(($total_asignado - $this->asignacion->mejor_asignado)*0.16, 2, ".", ","), 1, 0, 'R', 1);
+            $this->Ln();
+            $this->SetFillColor(100, 100, 100);
+            $this->SetTextColor(255, 255, 255);
+            $this->SetFont('Arial', '', $font2);
+            $this->SetX(16.5);
+            $this->Cell(($anchos["espacio_detalles_globales"]/2)+0.19, $heigth, "TOTAL", 1, 0, 'C', 1);
+            $this->SetFillColor(255, 255, 255);
+            $this->SetTextColor(0, 0, 0);
+            $this->Cell(($anchos["espacio_detalles_globales"]/2), $heigth, "PESO MXP", 1, 0, 'C', 1);
+            $this->Cell(($anchos["espacio_detalles_globales"]-0.8), $heigth, number_format($total_asignado + ($total_asignado * 0.16)), 1, 0, 'R', 1);
+            $this->Ln(2);
+            $i_e+=$cotizacinesXFila;
         }
     }
 
     public function Footer()
     {
         $this->SetTextColor(0, 0, 0);
-//        $this->SetY(-6.2);
-//        $this->SetFont('Arial', '', 6);
-//        $this->SetFillColor(180, 180, 180);
-//        $this->Cell(6.6, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.6, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(12.8, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-//        $this->Ln();
-//        $this->Cell(6.6, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.6, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.4, .4, 'Control de Costos', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.4, .4, 'Director de proyecto', 'TRLB', 0, 'C', 1);
-//        $this->Ln();
-//        $this->Cell(6.6, 1.2, '', 'TRLB', 0, 'C');
-//        $this->Cell(6.6, 1.2, '', 'TRLB', 0, 'C');
-//        $this->Cell(6.4, 1.2, '', 'TRLB', 0, 'C');
-//        $this->Cell(6.4, 1.2, '', 'TRLB', 0, 'C');
-//
-//        $this->Ln();
-//        $this->Cell(6.6, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.6, .4, 'C.P. ROGELIO HERNANDEZ BELTRAN', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.4, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
-//        $this->Cell(6.4, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
-
-        $this->SetY(-5.8);
+        $this->SetY(-5.4);
         $encabezados[0] = utf8_decode("Elaboró");
         $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
         $encabezados[2] = "Gerencia Solicitante";
@@ -694,18 +686,26 @@ class AsignacionFormato extends Rotation
             $this->Cell(.4);
         }
 
+        $this->SetY(-3.8);
+        $this->image("data:image/png;base64,".base64_encode(QrCode::format('png')->generate($this->cadena_qr)), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
+        $this->SetY(-3.6);
+        $this->setX(4.5);
+        $this->SetFont('Arial', '', 4.5);
+        $this->MultiCell(22.5, .3, utf8_decode($this->cadena), 0, 'L');
+        $this->Ln(.2);
+        $this->SetY(16.5);
+        $this->setX(4.5);
 
-        $this->SetFont('Arial', 'B', 6);
+        $this->SetFont('Arial', 'B', 6.5);
         $this->SetTextColor('100,100,100');
-        $this->SetY(-1.5);
-        $this->Cell(26, .4, ( utf8_decode('Sistema de Administración de Obra')), 0, 0, 'R');
-        $this->SetY(-1);
-        $this->SetFont('Arial', 'BI', 6);
+        $this->SetY(20.5);
+        $this->Cell(26.5, .4, utf8_decode('Sistema de Administración de Obra'), 0, 0, 'R');
+        $this->SetY(-0.9);
+        $this->SetFont('Arial', 'BI', 6.5);
         $this->SetTextColor('0,0,0');
-        $this->Cell(3.5);
-        $this->Cell(6.5, .4, (utf8_decode('Formato generado desde el módulo de ordenes de compra. Fecha de registro: '. date('d-m-Y', strtotime('10/11/2019')))), 0, 0, 'L');
-        $this->Cell(16, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
-
+        $this->SetX(4.5);
+        $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de compras. Fecha de registro: ' . date("d-m-Y", strtotime($this->asignacion->fecha_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
+        $this->Cell(15, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     function create()
@@ -713,9 +713,8 @@ class AsignacionFormato extends Rotation
         $this->SetMargins(1, .5, 2);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 2);
+        $this->SetAutoPageBreak(true, 5);
         $this->partidas();
-//        var_dump('Listo');
 
         try {
             $this->Output('I', 'Asignación de Proveedores.pdf', 1);

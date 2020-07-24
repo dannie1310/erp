@@ -82,4 +82,10 @@ class SolicitudComplemento extends Model
             'id_transaccion' => $this->id_transaccion
         ]);
     }
+
+    public function getRequisicionFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->requisicion_origen);
+    }
+
 }
