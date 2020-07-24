@@ -257,6 +257,10 @@ export default {
                 }
             }
         },
+        id_empresa(value) {
+
+            console.log("1",value)
+        }
     }
 }
 </script>
