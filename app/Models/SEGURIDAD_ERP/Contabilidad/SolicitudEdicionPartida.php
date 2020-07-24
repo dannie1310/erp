@@ -169,9 +169,14 @@ class SolicitudEdicionPartida extends Model
                 $busqueda_movimiento = New BusquedaDiferenciasMovimientos($relacion_movimiento, $this->diferencia->busqueda);
                 $busqueda_movimiento->buscarDiferenciasMovimientos();
             }
-            $this->diferencia->activo = 0;
-            $this->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
-            $this->diferencia->save();
+            try{
+                $this->diferencia->activo = 0;
+                $this->diferencia->fecha_hora_resolucion =  date('Y-m-d H:i:s');
+                $this->diferencia->save();
+            }catch (\Exception $e){
+
+            }
+
         }catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
