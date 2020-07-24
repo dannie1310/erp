@@ -1,17 +1,14 @@
 <template>
     <span>
-        <div class="modal fade" ref="modalEditPoliza" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog modal-xl">
-                <form role="form" @submit.prevent="validate">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-pencil"></i> EDICIÓN DE PÓLIZA</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <span v-if="poliza" class="detalle_poliza">
+        <div class="row" v-if="!cargando">
+             <form role="form" @submit.prevent="validate">
+            <div class="card">
+                <div class="card-header">
+                    <h6>EDICIÓN DE PÓLIZA</h6>
+                </div>
+
+                    <div class="card-body">
+                     <span v-if="poliza" class="detalle_poliza">
                                 <div class="row">
                                     <div class="col-md-1 offset-9">
                                          <div class="form-group row error-content">
@@ -20,12 +17,12 @@
                                      </div>
                                     <div class="col-md-2">
                                          <input
-                                                 type="text"
-                                                 disabled="disabled"
-                                                 name="texto"
-                                                 class="form-control"
-                                                 id="fecha"
-                                                 v-model="poliza.fecha"
+                                             type="text"
+                                             disabled="disabled"
+                                             name="texto"
+                                             class="form-control"
+                                             id="fecha"
+                                             v-model="poliza.fecha"
                                          >
                                     </div>
                                 </div>
@@ -50,36 +47,36 @@
                                 <div class="row" >
                                     <div class="col-md-2">
                                          <input
-                                                 type="text"
-                                                 disabled="disabled"
-                                                 name="texto"
-                                                 class="form-control"
-                                                 id="numero_poliza_edit"
-                                                 v-model="poliza.folio"
+                                             type="text"
+                                             disabled="disabled"
+                                             name="texto"
+                                             class="form-control"
+                                             id="numero_poliza_edit"
+                                             v-model="poliza.folio"
                                          >
                                     </div>
                                     <div class="col-md-2">
                                          <input
-                                                 type="text"
-                                                 disabled="disabled"
-                                                 name="texto"
-                                                 class="form-control"
-                                                 id="tipo_poliza_edit"
-                                                 v-model="poliza.tipo"
+                                             type="text"
+                                             disabled="disabled"
+                                             name="texto"
+                                             class="form-control"
+                                             id="tipo_poliza_edit"
+                                             v-model="poliza.tipo"
                                          >
                                     </div>
                                     <div class="col-md-8">
                                         <div class="form-group row error-content">
                                              <textarea
-                                                     type="text"
-                                                     v-validate="{required: true, max:100}"
-                                                     name="concepto_edit"
-                                                     class="form-control"
-                                                     id="concepto_edit"
-                                                     v-model="poliza.concepto"
-                                                     placeholder="CONCEPTO DE PÓLIZA"
-                                                     :class="{'is-invalid': errors.has('concepto_edit')}"
-                                                     v-on:keyup ="repiteConceptos()"
+                                                 type="text"
+                                                 v-validate="{required: true, max:100}"
+                                                 name="concepto_edit"
+                                                 class="form-control"
+                                                 id="concepto_edit"
+                                                 v-model="poliza.concepto"
+                                                 placeholder="CONCEPTO DE PÓLIZA"
+                                                 :class="{'is-invalid': errors.has('concepto_edit')}"
+                                                 v-on:keyup ="repiteConceptos()"
                                              ></textarea>
                                             <div class="invalid-feedback" v-show="errors.has('concepto_edit')">{{ errors.first('concepto_edit') }}</div>
                                         </div>
@@ -120,14 +117,14 @@
                                                 <td>
                                                     <div class="form-group row error-content">
                                                         <input
-                                                                type="text"
-                                                                v-validate="{required: true, max:30}"
-                                                                :name="`referencia[${i}]`"
-                                                                class="form-control"
-                                                                :id="`referencia[${i}]`"
-                                                                v-model="movimiento.referencia"
-                                                                placeholder="REFERENCIA DE MOVIMIENTO"
-                                                                :class="{'is-invalid': errors.has(`referencia[${i}]`)}"
+                                                            type="text"
+                                                            v-validate="{required: true, max:30}"
+                                                            :name="`referencia[${i}]`"
+                                                            class="form-control"
+                                                            :id="`referencia[${i}]`"
+                                                            v-model="movimiento.referencia"
+                                                            placeholder="REFERENCIA DE MOVIMIENTO"
+                                                            :class="{'is-invalid': errors.has(`referencia[${i}]`)}"
                                                         />
                                                         <div class="invalid-feedback" v-show="errors.has(`referencia[${i}]`)">{{ errors.first(`referencia[${i}]`) }}</div>
                                                     </div>
@@ -152,14 +149,14 @@
                                     </table>
                                 </div>
                             </span>
-                        </div>
-                        <div class="modal-footer">
+                    </div>
+
+            </div>
+             <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click="closeModal()"><i class="fa fa-times-circle"></i> Cerrar</button>
                             <button type="submit" class="btn btn-danger" v-if="$root.can('editar_poliza', true)" :disabled="errors.count() > 0"><i class="fa fa-save"></i> Guardar</button>
                         </div>
-                    </div>
-                </form>
-            </div>
+             </form>
         </div>
     </span>
 </template>
@@ -168,10 +165,11 @@
 
 export default {
     name: "poliza-edit",
-    props: ['tipo_modal','id_empresa'],
+    props: ['id','id_empresa'],
     data(){
         return {
             repite_concepto : false,
+            cargando : false,
             edit:{
                 id_empresa:'',
                 id : '',
@@ -180,6 +178,9 @@ export default {
             },
 
         }
+    },
+    mounted() {
+      this.find();
     },
     methods: {
         closeModal(){
@@ -196,6 +197,20 @@ export default {
                     this.update();
                 }
             });
+        },
+        find()
+        {
+            console.log(this.id_empresa, this.id)
+            this.cargando = true
+            this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
+            return this.$store.dispatch('contabilidadGeneral/poliza/find', {
+                id: this.id,
+                id_empresa: this.id_empresa,
+                params: {include: ['movimientos_poliza'], id_empresa : this.id_empresa}
+            }).then(data => {
+                this.cargando = false
+                this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+            })
         },
         fillEdit() {
 

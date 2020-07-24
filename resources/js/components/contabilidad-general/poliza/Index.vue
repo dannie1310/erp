@@ -1,16 +1,5 @@
 <template>
     <span>
-     <!--   <div class="row">
-            <div class="col-12">
-                <show v-bind:tipo_modal="tipo_modal"></show>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <edit v-bind:tipo_modal="tipo_modal" v-bind:id_empresa="id_empresa"></edit>
-            </div>
-        </div>
--->
         <div class="row">
             <div class="col-md-12">
                 <h6><i class="fa fa-plug" ></i>Datos de Conexión:</h6>
@@ -57,11 +46,9 @@
 
 <script>
     import {ModelListSelect} from 'vue-search-select';
-    import Show from "./Show";
-    import Edit from "./Edit";
     export default {
         name: "index-poliza",
-        components: {Edit, ModelListSelect, Show},
+        components: {ModelListSelect},
         data() {
             return {
                 cargando: false,
@@ -97,9 +84,6 @@
             polizas(){
                 return this.$store.getters['contabilidadGeneral/poliza/polizas'];
             },
-            poliza() {
-                return this.$store.getters['contabilidadGeneral/poliza/currentPoliza'];
-            },
             meta(){
                 return this.$store.getters['contabilidadGeneral/poliza/meta'];
             },
@@ -131,15 +115,6 @@
                     }));
                 },
                 deep: true
-            },
-            poliza:{
-                handler(poliza) {
-                    if(poliza !== null){
-                        this.tipo_modal = poliza.tipo_modal;
-                    }else{
-                        this.tipo_modal = '';
-                    }
-                }
             },
             meta: {
                 handler (meta) {

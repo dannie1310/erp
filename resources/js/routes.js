@@ -138,7 +138,7 @@ export const routes = [
             },
             {
                 path: 'polizas',
-                component: require('./components/contabilidad-general/poliza/Index.vue').default,
+                component: require('./components/contabilidad-general/poliza/Layout.vue').default,
                 children:[
                     {
                         path:"/",
@@ -150,6 +150,33 @@ export const routes = [
                             middleware: [auth, permission],
                             permission: ['editar_poliza','consultar_poliza'],
                             general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'poliza-contpaq-show',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/Show').default,
+                        meta: {
+                            title: 'Información de la Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'poliza-contpaq-edit',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/Edit').default,
+                        meta: {
+                            title: 'Editar Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza'
+
                         }
                     },
                 ]
