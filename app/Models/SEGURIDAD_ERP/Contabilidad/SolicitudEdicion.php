@@ -549,6 +549,8 @@ class SolicitudEdicion extends Model
 
                     $arreglo_a = [];
                     $arreglo_b = [];
+                    $hashs_a = [];
+                    $hashs_b = [];
 
                     $i = 0;
 
@@ -585,7 +587,6 @@ class SolicitudEdicion extends Model
                             $id_poliza_b = $relacion_movimiento->id_poliza_b;
 
                         }catch(\Exception $e){
-                            dd($relacion_movimiento);
                             abort(500, $e->getMessage());
                         }
                         $i++;
@@ -598,7 +599,6 @@ class SolicitudEdicion extends Model
                     DB::purge('cntpq');
                     \Config::set('database.connections.cntpq.database', $arreglo_b[$hashs_b[0]]["base_datos"]);
                     $no_movtos_b = Poliza::find($id_poliza_b)->movimientos->max("NumMovto");
-                    //dd($no_movtos_a,$no_movtos_b);
                     $error_edicion_movimientos = 0;
                     if($no_movtos_a == $no_movtos_b){
                         DB::purge('cntpq');
@@ -616,8 +616,6 @@ class SolicitudEdicion extends Model
                                 $movimiento_contpaq = PolizaMovimiento::find($arreglo_a[$hash_b]["id_movimiento"]);
                                 $movimiento_contpaq->NumMovto=$arreglo_b[$hash_b]["num_movto"];
                                 $movimiento_contpaq->save();
-
-
                             }catch(\Exception $e)
                             {
                                 $error_edicion_movimientos++;
@@ -638,7 +636,6 @@ class SolicitudEdicion extends Model
                                 $relacion_movimientos[$r]->save();
                             }catch(\Exception $e)
                             {
-                                dd($relacion_movimientos, $arreglo_a);
                                 abort(500, $e->getMessage());
                             }
                             $r ++;
