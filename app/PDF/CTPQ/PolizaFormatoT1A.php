@@ -199,28 +199,18 @@ class PolizaFormatoT1A extends Rotation
     }
 
     function create() {
-        // foreach ($this->folios as $k => $folio)
-        // {
-            // dd('panda', $folio);
-            // DB::purge('cntpq');
-            // \Config::set('database.connections.cntpq.database', ($folio->bd_contpaq!="")?($folio->bd_contpaq):($folio->base_datos_revisada));
-            // $this->poliza = Poliza::find($folio->id_poliza);
-            // $this->key_folio = $k;
-            // $this->empresa = $folio->empresa;
-            
-
-            DB::purge('cntpq');
-            \Config::set('database.connections.cntpq.database',$this->empresa->AliasBDD);
-            $this->poliza = Poliza::find($this->data->Id);
-            $this->fecha = date_create($this->poliza->Fecha);
-            $this->mes = substr($this->poliza->fecha_mes_letra_format, 3,3);
-            $this->anio = substr($this->poliza->fecha_mes_letra_format, 7,4);
-            $this->SetMargins(1, 0.9, 1);
-            $this->AliasNbPages();
-            $this->AddPage();
-            $this->SetAutoPageBreak(true,5);
-            $this->partidas();
-        // }
+        DB::purge('cntpq');
+        \Config::set('database.connections.cntpq.database',$this->empresa->AliasBDD);
+        $this->poliza = Poliza::find($this->data->Id);
+        $this->fecha = date_create($this->poliza->Fecha);
+        $this->mes = substr($this->poliza->fecha_mes_letra_format, 3,3);
+        $this->anio = substr($this->poliza->fecha_mes_letra_format, 7,4);
+        $this->SetMargins(1, 0.9, 1);
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->SetAutoPageBreak(true,5);
+        $this->partidas();
+        
 
         try {
             $this->Output('I', "Formato - poliza.pdf", 1);
