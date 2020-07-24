@@ -207,13 +207,14 @@ class PolizaFormatoT1A extends Rotation
             // $this->poliza = Poliza::find($folio->id_poliza);
             // $this->key_folio = $k;
             // $this->empresa = $folio->empresa;
-            // $this->mes = substr($this->poliza->fecha_mes_letra_format, 3,3);
-            // $this->anio = substr($this->poliza->fecha_mes_letra_format, 7,4);
+            
 
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database',$this->empresa->AliasBDD);
             $this->poliza = Poliza::find($this->data->Id);
             $this->fecha = date_create($this->poliza->Fecha);
+            $this->mes = substr($this->poliza->fecha_mes_letra_format, 3,3);
+            $this->anio = substr($this->poliza->fecha_mes_letra_format, 7,4);
             $this->SetMargins(1, 0.9, 1);
             $this->AliasNbPages();
             $this->AddPage();

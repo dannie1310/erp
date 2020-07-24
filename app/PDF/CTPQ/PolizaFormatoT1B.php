@@ -55,12 +55,12 @@ class PolizaFormatoT1B extends Rotation
         $this->Cell(0, 0, 'CONTPAQ i', 0, 0, 'L');
         $this->setXY(1 , 1.2);
         $this->SetTextColor('0', '0', '0');
-        $this->SetFont('Arial', '', 12);
+        $this->SetFont('Arial', 'B', 12);
         $this->Cell($this->WidthTotal, 0, utf8_decode($this->empresa->Nombre), 0, 0, 'C');
         $this->setXY(18.50, 1.2);
         $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
         $this->setXY(5.85, 1.6);
-        $this->SetFont('Arial', '', 11.5);
+        $this->SetFont('Arial', 'B', 11.5);
         $this->Cell(0, 0, utf8_decode('Impreso de pólizas del ').date_format($this->fecha,"d/M/Y").' al '.date_format($this->fecha,"d/M/Y"), 0, 0, 'L');
         $this->setXY(16.6, 1.6);
         $this->Cell(0, 0, utf8_decode('Fecha: ').$this->poliza->fecha_consulta, 0, 0, 'L');
