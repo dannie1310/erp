@@ -212,6 +212,24 @@ class SolicitudEdicion extends Model
         return $no_bd;
     }
 
+    public function getBDNumeroBDAttribute()
+    {
+        if($this->id_tipo == 1){
+            $bd = [];
+            $polizas = $this->polizas;
+            if($polizas){
+                foreach($polizas as $poliza){
+                    $bd[]= $poliza->bd_contpaq;
+                }
+            }
+            $no_bd = count(array_unique($bd));
+        } else {
+            $no_bd = $this->base_datos.' ('. $this->empresa_ctpq->Nombre.')';
+        }
+
+        return $no_bd;
+    }
+
     public static function getFolio()
     {
         $solicitud = SolicitudEdicion::orderBy('numero_folio', 'DESC')->first();
