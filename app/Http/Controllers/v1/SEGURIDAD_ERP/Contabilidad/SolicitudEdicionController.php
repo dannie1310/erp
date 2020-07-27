@@ -36,7 +36,7 @@ class SolicitudEdicionController extends Controller
 
     public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
-        $this->middleware( 'auth:api')->except('impresionPolizas');
+        // $this->middleware( 'auth:api')->except('impresionPolizas');
 
         $this->fractal = $fractal;
         $this->service = $service;
