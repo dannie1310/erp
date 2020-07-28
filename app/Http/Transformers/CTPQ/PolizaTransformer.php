@@ -43,20 +43,23 @@ class PolizaTransformer extends TransformerAbstract
     }
 
     /**
-     * Include Movimienos
      * @param Poliza $model
-     * @return \League\Fractal\Resource\Collection
+     * @return \League\Fractal\Resource\Collection|null
      */
     public function includeMovimientosPoliza(Poliza $model){
         if ($movimientos = $model->movimientos()->orderBy("Id")->get()) {
-            return $this->collection($movimientos, new PolizaMovimientoTransformer());
+            return $this->collection($movimientos, new PolizaMovimientoTransformer);
         }
         return null;
     }
 
+    /**
+     * @param Poliza $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeIncidentesActivos(Poliza $model){
         if ($incidentes = $model->incidentes->activos()->get()) {
-            return $this->collection($incidentes, new IncidenteIndividualConsolidadaTransformer());
+            return $this->collection($incidentes, new IncidenteIndividualConsolidadaTransformer);
         }
         return null;
     }

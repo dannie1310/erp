@@ -22,7 +22,9 @@ class PolizaMovimientoTransformer extends TransformerAbstract
             'fecha' => (string) $model->Fecha,
             'cargo_format' => (string) $model->cargo_format,
             'abono_format' => (string) $model->abono_format,
-            'cuenta' => (string) $model->cuenta->Codigo
+            'cuenta' => (string) $model->cuenta->Codigo,
+            'tipo' => (int) $model->TipoMovto,
+            'importe' => (float) $model->Importe
         ];
     }
 }
