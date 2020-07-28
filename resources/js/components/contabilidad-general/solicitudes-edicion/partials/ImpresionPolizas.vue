@@ -28,10 +28,16 @@
         props: ['id'],
         methods: {
             init() {
-                this.pdf()
+                this.pdfA()
             },
-            pdf(){
-                var url = '/api/contabilidad-general/solicitud-edicion-poliza/' + this.id +'/impresion-polizas?'+'&access_token='+this.$session.get('jwt');
+            pdfA(){
+                var url = '/api/contabilidad-general/solicitud-edicion-poliza/' + this.id +'/impresion-polizas?&caida=1'+'&access_token='+this.$session.get('jwt');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Polizas</iframe>');
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
+            },
+            pdfB(){
+                var url = '/api/contabilidad-general/solicitud-edicion-poliza/' + this.id +'/impresion-polizas?&caida=2'+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Polizas</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');

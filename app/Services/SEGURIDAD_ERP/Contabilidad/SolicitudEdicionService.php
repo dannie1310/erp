@@ -8,10 +8,22 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use DateTime;
+use Chumper\Zipper\Zipper;
+use App\Models\CTPQ\Poliza;
+use App\Models\IGH\Usuario;
+use App\PDF\CTPQ\PolizaFormatoT1;
+use App\PDF\CTPQ\PolizaFormatoT2;
+use App\PDF\CTPQ\PolizaFormatoT3;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SolicitudEdicionExport;
+use App\Imports\SolicitudEdicionImport;
+use Illuminate\Support\Facades\Storage;
+use App\Repositories\CTPQ\PolizaRepository;
+use App\Http\Transformers\CTPQ\PolizaTransformer;
+use App\PDF\CTPQ\PolizaFormatoTB2;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
-use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartidaPoliza;
-use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT1;
 use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT2;
 use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT3;
@@ -19,23 +31,12 @@ use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT1;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT2;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT3;
 use App\Http\Transformers\CTPQ\PolizaMovimientoTransformer;
-use App\Http\Transformers\CTPQ\PolizaTransformer;
-use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
-use App\Imports\SolicitudEdicionImport;
-use App\Models\CTPQ\Poliza;
-use App\PDF\CTPQ\PolizaFormatoT2;
-use App\PDF\CTPQ\PolizaFormatoT3;
-use App\Models\IGH\Usuario;
-use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
-use App\PDF\CTPQ\PolizaFormatoT1;
-use App\Repositories\CTPQ\PolizaRepository;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion as Model;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartidaPoliza;
+use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CtgTipoSolicitudEdicion;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionRepository as Repository;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Chumper\Zipper\Zipper;
-use DateTime;
-use Maatwebsite\Excel\Facades\Excel;
 
 class SolicitudEdicionService
 {
@@ -286,41 +287,63 @@ class SolicitudEdicionService
         return $partidas;
     }
 
-    public function impresionPolizas($id){
+    public function impresionPolizas($id, $caida){
         $tipo =  $this->repository->show($id)->id_tipo;
         switch ($tipo) {
             case 1:
-                return $this->impresionPolizasTipo1($id);
+                return $this->impresionPolizasTipo1($id, $caida);
                 break;
             case 2:
-                return $this->impresionPolizasTipo2($id);
+                return $this->impresionPolizasTipo2($id, $caida);
                 break;
             case 3:
-                return $this->impresionPolizasTipo3($id);
+                return $this->impresionPolizasTipo3($id, $caida);
                 break;
         }
     }
 
-    private function impresionPolizasTipo1($id){
-        $folios  = $this->repository->show($id)->polizas;
-        $pdf = new PolizaFormatoT1($folios);
-        return $pdf->create();
-    }
-
-    private function impresionPolizasTipo2($id)
-    {
-        $solicitud = $this->repository->show($id);
-        $diferencias  = $solicitud->diferencias;
-        $polizas = [];
-        foreach($diferencias as $diferencia){
-            $polizas[] = $diferencia->poliza;
+    private function impresionPolizasTipo1($id, $caida){
+        if($caida == 1){
+            $folios  = $this->repository->show($id)->polizas;
+            $pdf = new PolizaFormatoT1($folios);
+            return $pdf->create();
         }
-        $polizas  = array_values(array_unique($polizas));
-        $pdf = new PolizaFormatoT2($polizas, $diferencias[0]->empresa);
-        return $pdf->create();
+        if($caida == 2){
+            $folios  = $this->repository->show($id)->polizas;
+            $pdf = new PolizaFormatoTB1($folios);
+            return $pdf->create();
+        }
+        
     }
 
-    private function impresionPolizasTipo3($id)
+    private function impresionPolizasTipo2($id, $caida)
+    {
+        if($caida == 1){
+            $solicitud = $this->repository->show($id);
+            $diferencias  = $solicitud->diferencias;
+            $polizas = [];
+            foreach($diferencias as $diferencia){
+                $polizas[] = $diferencia->poliza;
+            }
+            $polizas  = array_values(array_unique($polizas));
+            $pdf = new PolizaFormatoT2($polizas, $diferencias[0]->empresa);
+            return $pdf->create();
+        }
+        if($caida == 2){
+            $solicitud = $this->repository->show($id);
+            $diferencias  = $solicitud->diferencias;
+            $polizas = [];
+            foreach($diferencias as $diferencia){
+                $polizas[] = $diferencia->poliza;
+            }
+            $polizas  = array_values(array_unique($polizas));
+            $pdf = new PolizaFormatoTB2($polizas, $diferencias[0]->empresa);
+            return $pdf->create();
+        }
+        
+    }
+
+    private function impresionPolizasTipo3($id, $caida)
     {
         $solicitud = $this->repository->show($id);
         $diferencias  = $solicitud->diferencias;

@@ -69,9 +69,9 @@ class SolicitudEdicionController extends Controller
         return $this->service->descargarXLS($id);
     }
 
-    public function impresionPolizas($id)
+    public function impresionPolizas(Request $request, $id)
     {
-        return $this->service->impresionPolizas($id)->create();
+        return $this->service->impresionPolizas($id, $request->caida)->create();
     }
 
     public function impresionPolizasPropuesta($id)
