@@ -136,6 +136,7 @@ class AsignacionFormato extends Rotation
         $asignado_dolar = 0;
         $asignado_euro = 0;
         $asignado_libras = 0;
+        $subtotal = 0;
 
         for ($x = 0; $x < $no_arreglos; $x++) {
             $this->Cell($anchos["aesp"] + $anchos["des"]);
@@ -260,8 +261,6 @@ class AsignacionFormato extends Rotation
             $this->y_para_descripcion = $this->GetY();
             $this->y_para_descripcion_arr[] = $this->GetY();
             $partidas_solicitud = $this->asignacion->solicitud->partidas;
-            $subtotal_adesc_f = array();
-            $resumen_moneda = array();
             foreach ($partidas_solicitud as $partida_solicitud){
 
                 asort($this->y_para_descripcion_arr);
@@ -311,6 +310,8 @@ class AsignacionFormato extends Rotation
                             {
                                 $asignado_libras += ($asignacion_partida->total_precio_moneda * 1.16);
                             }
+                            $moneda_dolar = $cotizaciones[$i]->complemento->tc_usd;
+                            $moneda_euro = $cotizaciones[$i]->complemento->tc_eur;
                         }
                     }else {
                         $this->SetTextColor(0, 0, 0);
@@ -427,6 +428,7 @@ class AsignacionFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["pu"] * 2, $heigth);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
+                $subtotal = $bandera_asignacion == $cotizaciones[$i]->id_transaccion ? ($this->asignacion->suma_subtotal_partidas - $asignacion_descuento) : 0;
                 $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->subtotal_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
                 $this->SetFillColor(0, 0, 0);
                 $this->SetTextColor(255, 255, 255);
@@ -551,7 +553,7 @@ class AsignacionFormato extends Rotation
                 $this->Cell($anchos["espacio_detalles_globales"]);
                 $this->SetFillColor(100, 100, 100);
                 $this->SetTextColor(0, 0, 0);
-                $this->Cell($anchos["espacio_detalles_globales"], $heigth, $tipo_cambio ? number_format($tipo_cambio->tipo_cambio, 2, ".", ",") : '-', 1, 0, 'C', 0);
+                $this->Cell($anchos["espacio_detalles_globales"], $heigth, $moneda_e == 1 ? number_format($moneda_dolar, 4, ".", ",") : $moneda_e == 2 ? number_format($moneda_euro, 4, ".", ",") : $tipo_cambio ? number_format($tipo_cambio->tipo_cambio, 4, ".", ",") : '-', 1, 0, 'C', 0);
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     $this->SetFont('Arial', 'B', $font);
                     $this->SetTextColor(0, 0, 0);
@@ -563,7 +565,7 @@ class AsignacionFormato extends Rotation
                             $this->SetTextColor(255, 255, 255);
                             $this->CellFitScale($anchos["pu"], $heigth, 'DOLAR(USD)', 1, 0, 'C', 1);
                             $this->SetTextColor(0, 0, 0);
-                            $this->CellFitScale($anchos["pu"] * 2, $heigth, $asignado_dolar != 0 ? number_format($asignado_dolar / $tipo_cambio->tipo_cambio, 2, ".", ",") : '-', 1, 0, 'R', 0);
+                            $this->CellFitScale($anchos["pu"] * 2, $heigth, $asignado_dolar != 0 ? number_format($asignado_dolar / $moneda_dolar, 2, ".", ",") : '-', 1, 0, 'R', 0);
                         }
                         if($moneda_e == 2)
                         {
@@ -571,7 +573,7 @@ class AsignacionFormato extends Rotation
                             $this->SetTextColor(255, 255, 255);
                             $this->CellFitScale($anchos["pu"], $heigth, 'EUROS', 1, 0, 'C', 1);
                             $this->SetTextColor(0, 0, 0);
-                            $this->CellFitScale($anchos["pu"] * 2, $heigth, $asignado_euro != 0 ? number_format($asignado_euro / $tipo_cambio->tipo_cambio, 2, ".", ",") : '-', 1, 0, 'R', 0);
+                            $this->CellFitScale($anchos["pu"] * 2, $heigth, $asignado_euro != 0 ? number_format($asignado_euro /$moneda_euro, 2, ".", ",") : '-', 1, 0, 'R', 0);
                         }
                         if($moneda_e == 4)
                         {
@@ -637,9 +639,9 @@ class AsignacionFormato extends Rotation
             $this->SetFillColor(255, 255, 255);
             $this->SetTextColor(0, 0, 0);
             $this->Cell(($anchos["espacio_detalles_globales"]/2), $heigth, "PESO MXP", 1, 0, 'C', 1);
-            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($total_asignado, 2, ".", ","), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($subtotal, 2, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($this->asignacion->mejor_asignado, 2, ".", ","), 1, 0, 'R', 1);
-            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($total_asignado - $this->asignacion->mejor_asignado, 2, ".", ","), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($subtotal - $this->asignacion->mejor_asignado, 2, ".", ","), 1, 0, 'R', 1);
 
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -650,9 +652,9 @@ class AsignacionFormato extends Rotation
             $this->SetFillColor(255, 255, 255);
             $this->SetTextColor(0, 0, 0);
             $this->Cell(($anchos["espacio_detalles_globales"]/2), $heigth, "PESO MXP", 1, 0, 'C', 1);
-            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($total_asignado * 0.16, 2, ".", ","), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($subtotal * 0.16, 2, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  '', "T R L", 0, 'R', 1);
-            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format(($total_asignado - $this->asignacion->mejor_asignado)*0.16, 2, ".", ","), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format(($subtotal - $this->asignacion->mejor_asignado)*0.16, 2, ".", ","), 1, 0, 'R', 1);
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
@@ -662,7 +664,7 @@ class AsignacionFormato extends Rotation
             $this->SetFillColor(255, 255, 255);
             $this->SetTextColor(0, 0, 0);
             $this->Cell(($anchos["espacio_detalles_globales"]/2), $heigth, "PESO MXP", 1, 0, 'C', 1);
-            $this->Cell(($anchos["espacio_detalles_globales"]-0.8), $heigth, number_format($total_asignado + ($total_asignado * 0.16)), 1, 0, 'R', 1);
+            $this->Cell(($anchos["espacio_detalles_globales"]-0.8), $heigth, number_format($subtotal + ($subtotal * 0.16)), 1, 0, 'R', 1);
             $this->Ln(2);
             $i_e+=$cotizacinesXFila;
         }
