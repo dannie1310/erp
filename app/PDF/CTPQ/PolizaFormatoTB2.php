@@ -58,7 +58,12 @@ class PolizaFormatoTB2 extends Rotation
         $this->SetFont('Arial', 'B', 12);
         $this->Cell($this->WidthTotal, 0, utf8_decode($this->empresa->Nombre), 0, 0, 'C');
         $this->setXY(18.50, 1.2);
-        $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
+        if($this->key_folio == 0)
+        {
+            $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
+        }else{
+            $this->Cell(0, 0, 'Hoja:   '.($this->PageNo() - $this->num), 0, 0, 'L');
+        }
         $this->setXY(5.85, 1.6);
         $this->SetFont('Arial', 'B', 11.5);
         $this->Cell(0, 0, utf8_decode('Impreso de pólizas del ').date_format($this->fecha,"d/M/Y").' al '.date_format($this->fecha,"d/M/Y"), 0, 0, 'L');
@@ -188,7 +193,7 @@ class PolizaFormatoTB2 extends Rotation
         $this->cell(2.6,0.3, 0, '', 0, 'R', 180);
 
 
-        
+        $this->num = $this->PageNo();
     }
 
     function create() {
