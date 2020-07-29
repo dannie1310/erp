@@ -212,6 +212,9 @@ $api->version('v1', function ($api) {
      * CONTABILIDAD GENERAL
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad-general'], function ($api) {
+        $api->group(['prefix' => 'cuenta'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CTPQ\CuentaController@index');
+        });
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CTPQ\EmpresaController@store');
             $api->post('/connect','App\Http\Controllers\v1\CTPQ\EmpresaController@conectar');

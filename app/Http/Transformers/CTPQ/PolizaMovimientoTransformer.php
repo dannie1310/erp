@@ -14,6 +14,19 @@ use League\Fractal\TransformerAbstract;
 
 class PolizaMovimientoTransformer extends TransformerAbstract
 {
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'cuenta',
+    ];
+
+    protected $defaultIncludes = [
+      'cuenta'
+    ];
+
     public function transform(PolizaMovimiento $model) {
         return [
             'id' => (int) $model->getKey(),
@@ -26,5 +39,14 @@ class PolizaMovimientoTransformer extends TransformerAbstract
             'tipo' => (int) $model->TipoMovto,
             'importe' => (float) $model->Importe
         ];
+    }
+
+    public function includeCuenta(PolizaMovimiento $movimiento)
+    {
+        if($cuenta = $movimiento->cuenta)
+        {
+            return $this->item($cuenta, new CuentaTransformer);
+        }
+        return null;
     }
 }

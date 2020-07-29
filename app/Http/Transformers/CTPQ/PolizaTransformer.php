@@ -22,7 +22,8 @@ class PolizaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'movimientos_poliza',
-        'incidentes_activos'
+        'incidentes_activos',
+        'tipo'
     ];
 
     public function transform(Poliza $model) {
@@ -62,5 +63,13 @@ class PolizaTransformer extends TransformerAbstract
             return $this->collection($incidentes, new IncidenteIndividualConsolidadaTransformer);
         }
         return null;
+    }
+
+    public function includeTipo(Poliza $poliza)
+    {
+        if($tipo = $poliza->tipo_poliza)
+        {
+            return $this->item($tipo, new TipoPolizaTransformer);
+        }
     }
 }

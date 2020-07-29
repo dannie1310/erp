@@ -75,7 +75,7 @@ import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 
 //CONTABILIDAD GRAL
-
+import cuentaCTPQ from './modules/contabilidadGeneral/cuenta';
 import polizaGeneral from './modules/contabilidadGeneral/poliza';
 import empresaContabilidad from './modules/contabilidadGeneral/empresa';
 import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
@@ -251,6 +251,7 @@ export default new Vuex.Store({
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
         'contabilidad/transaccion-interfaz': transaccionInterfaz,
 
+        'contabilidadGeneral/cuenta' : cuentaCTPQ,
         'contabilidadGeneral/poliza' :polizaGeneral,
         'contabilidadGeneral/empresa' :empresaContabilidad,
         'contabilidadGeneral/empresa-sat': empresaSAT,
