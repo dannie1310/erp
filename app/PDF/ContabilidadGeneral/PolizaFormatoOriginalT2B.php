@@ -15,7 +15,8 @@ class PolizaFormatoOriginalT1B extends Rotation
 {
     private $poliza;
     private $empresa;
-    private $data;
+    private $solicitud;
+    private $folios;
 
     const DPI = 96;
     const MM_IN_INCH = 25.4;
@@ -33,10 +34,11 @@ class PolizaFormatoOriginalT1B extends Rotation
     private $num = 1;
     private $key_folio = 0;
 
-    public function __construct($data, $empresa)
+    public function __construct($folios, $solicitud, $empresa)
     {
         parent::__construct('P', 'cm', 'Letter');
-        $this->data = $data;
+        $this->folios = $folios;
+        $this->solicitud = $solicitud;
         $this->empresa = $empresa;
         $this->SetAutoPageBreak(true, 5);
         $this->WidthTotal = $this->GetPageWidth() - 2;
@@ -58,7 +60,12 @@ class PolizaFormatoOriginalT1B extends Rotation
         $this->SetFont('Arial', 'B', 12);
         $this->Cell($this->WidthTotal, 0, utf8_decode($this->empresa->Nombre), 0, 0, 'C');
         $this->setXY(18.50, 1.2);
-        $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
+        if($this->key_folio == 0)
+        {
+            $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
+        }else{
+            $this->Cell(0, 0, 'Hoja:   '.($this->PageNo() - $this->num), 0, 0, 'L');
+        }
         $this->setXY(5.85, 1.6);
         $this->SetFont('Arial', 'B', 11.5);
         $this->Cell(0, 0, utf8_decode('Impreso de pólizas del ').date_format($this->fecha,"d/M/Y").' al '.date_format($this->fecha,"d/M/Y"), 0, 0, 'L');

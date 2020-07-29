@@ -79,8 +79,8 @@ class SolicitudEdicionController extends Controller
         return $this->service->impresionPolizasPropuesta($id)->create();
     }
 
-    public function impresionPolizasOriginal($id)
+    public function impresionPolizasOriginal(Request $request, $id)
     {
-        return $this->service->impresionPolizasOriginal($id)->create();
+        return $this->service->impresionPolizasOriginal($id, $request->caid)->create();
     }
 }

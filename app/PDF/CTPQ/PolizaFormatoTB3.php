@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\PDF\ContabilidadGeneral;
+namespace App\PDF\CTPQ;
 
 
 use App\Models\CTPQ\Parametro;
@@ -11,11 +11,11 @@ use DateTime;
 use Ghidev\Fpdf\Rotation;
 use Illuminate\Support\Facades\DB;
 
-class PolizaFormatoOriginalT1B extends Rotation
+class PolizaFormatoTB3 extends Rotation
 {
     private $poliza;
     private $empresa;
-    private $data;
+    private $folios;
 
     const DPI = 96;
     const MM_IN_INCH = 25.4;
@@ -33,10 +33,10 @@ class PolizaFormatoOriginalT1B extends Rotation
     private $num = 1;
     private $key_folio = 0;
 
-    public function __construct($data, $empresa)
+    public function __construct($folios, $empresa)
     {
         parent::__construct('P', 'cm', 'Letter');
-        $this->data = $data;
+        $this->folios = $folios;
         $this->empresa = $empresa;
         $this->SetAutoPageBreak(true, 5);
         $this->WidthTotal = $this->GetPageWidth() - 2;
@@ -58,7 +58,12 @@ class PolizaFormatoOriginalT1B extends Rotation
         $this->SetFont('Arial', 'B', 12);
         $this->Cell($this->WidthTotal, 0, utf8_decode($this->empresa->Nombre), 0, 0, 'C');
         $this->setXY(18.50, 1.2);
-        $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
+        if($this->key_folio == 0)
+        {
+            $this->Cell(0, 0, 'Hoja:   '.$this->PageNo(), 0, 0, 'L');
+        }else{
+            $this->Cell(0, 0, 'Hoja:   '.($this->PageNo() - $this->num), 0, 0, 'L');
+        }
         $this->setXY(5.85, 1.6);
         $this->SetFont('Arial', 'B', 11.5);
         $this->Cell(0, 0, utf8_decode('Impreso de pólizas del ').date_format($this->fecha,"d/M/Y").' al '.date_format($this->fecha,"d/M/Y"), 0, 0, 'L');
@@ -186,23 +191,24 @@ class PolizaFormatoOriginalT1B extends Rotation
         $this->cell(2.6,0.3, 'Total Comp. Ext..', '', 0, 'R', 180);
         $this->cell(2.6,0.3, 0, '', 0, 'R', 180);
 
-
+        $this->num = $this->PageNo();
         
     }
 
     function create() {
-        DB::purge('cntpq');
-        \Config::set('database.connections.cntpq.database',$this->empresa->AliasBDD);
-        $this->poliza = Poliza::find($this->data->Id);
-        $this->fecha = date_create($this->poliza->Fecha);
-
-        
-        
-        $this->SetMargins(1, 0.9, 1);
-        $this->AliasNbPages();
-        $this->AddPage();
-        $this->SetAutoPageBreak(true,5);
-        $this->partidas();
+        foreach ($this->folios as $k => $folio)
+        {
+// dd('pando');
+            $this->poliza = $folio;
+            $this->key_folio = $k;
+            $this->fecha = date_create($this->poliza->Fecha);
+            
+            $this->SetMargins(1, 0.9, 1);
+            $this->AliasNbPages();
+            $this->AddPage();
+            $this->SetAutoPageBreak(true,5);
+            $this->partidas();
+        }
 
         try {
             $this->Output('I', "Formato - poliza.pdf", 1);
