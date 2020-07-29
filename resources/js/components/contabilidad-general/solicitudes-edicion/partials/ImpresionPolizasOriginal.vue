@@ -49,7 +49,7 @@
                 
             },
             pdfB(){
-                var url = '/api/contabilidad-general/solicitud-edicion-poliza/' + this.id +'/impresion-polizas-original?&caida=1'+'&access_token='+this.$session.get('jwt');
+                var url = '/api/contabilidad-general/solicitud-edicion-poliza/' + this.id +'/impresion-polizas-original?&caida=2'+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" style="height: 800px" height="100%" width="100%">Formato Polizas</iframe>');
             }
         }

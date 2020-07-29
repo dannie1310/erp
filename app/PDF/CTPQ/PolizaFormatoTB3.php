@@ -141,35 +141,38 @@ class PolizaFormatoTB3 extends Rotation
         $this->suma_cargo = 0;
         $count = 1;
 
-        foreach($this->poliza->movimientos as $movimiento){
+        foreach($this->poliza->cuentas_padres as $cuenta_padre){
+            foreach($this->poliza->getMovimientos($cuenta_padre) as $k => $movimiento){
 
-            $this->SetFont('Arial', '', 10);
-            $this->SetFillColor(255, 255, 255);
+                $this->SetFont('Arial', '', 10);
+                $this->SetFillColor(255, 255, 255);
 
-            $this->Cell(1.2,0.3, $count, '', 0, 'R', 180);
-            $this->Cell(2.3,0.3, strlen($movimiento->Referencia) > 11 ? utf8_decode(substr($movimiento->Referencia, 1, 10)) . ' ..' : utf8_decode($movimiento->Referencia), '', 0, 'L', 180);
-            $this->Cell(3.1,0.3, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
-            $this->Cell(7.2,0.3, strlen($movimiento->cuenta->Nombre) > 27 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 26)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
-            $this->Cell(1.1, 0.3, '', '', 0, 'L', 180);
-            $this->Cell(2.26, 0.3, $movimiento->TipoMovto == 0 ? \number_format($movimiento->Importe,2) : '', '', 0, 'R', 180);
-            $this->Cell(2.6, 0.3, $movimiento->TipoMovto == 1 ? \number_format($movimiento->Importe,2) : '', '', 0, 'R', 180);
-            
-            $this->Ln(0.45);
-            $this->SetFont('Arial', '', 10);
+                $this->Cell(1.2,0.3, $count, '', 0, 'R', 180);
+                $this->Cell(2.3,0.3, strlen($movimiento->Referencia) > 11 ? utf8_decode(substr($movimiento->Referencia, 1, 10)) . ' ..' : utf8_decode($movimiento->Referencia), '', 0, 'L', 180);
+                $this->Cell(3.1,0.3, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
+                $this->Cell(7.2,0.3, strlen($movimiento->cuenta->Nombre) > 27 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 26)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
+                $this->Cell(1.1, 0.3, '', '', 0, 'L', 180);
+                $this->Cell(2.26, 0.3, $movimiento->TipoMovto == 0 ? \number_format($movimiento->Importe,2) : '', '', 0, 'R', 180);
+                $this->Cell(2.6, 0.3, $movimiento->TipoMovto == 1 ? \number_format($movimiento->Importe,2) : '', '', 0, 'R', 180);
+                
+                $this->Ln(0.45);
+                $this->SetFont('Arial', '', 10);
 
-            $this->Cell(1.4,0.3, '', '', 0, 'R', 180);
-            $this->Cell(1.9,0.3, '', '', 0, 'L', 180);
-            $this->Cell(3.3,0.3, '', '', 0, 'L', 180);
-            $this->Cell(7.2,0.3,  strlen($movimiento->Concepto) > 27 ? '' . utf8_decode(substr($movimiento->Concepto, 0, 26)) . '..' : utf8_decode($movimiento->Concepto), '', 0, 'L', 180);
-            $this->Cell(1.1, 0.3, '', '', 0, 'L', 180);
-            $this->Cell(2.26, 0.3, '', '', 0, 'R', 180);
-            $this->Cell(2.6, 0.3,  '', '', 0, 'R', 180);
-            
-            $this->Ln(0.4);
-            $movimiento->TipoMovto == 0 ? $this->suma_cargo += $movimiento->Importe:'';
-            $movimiento->TipoMovto == 1 ? $this->suma_abono += $movimiento->Importe:'';
-            $count++;
+                $this->Cell(1.4,0.3, '', '', 0, 'R', 180);
+                $this->Cell(1.9,0.3, '', '', 0, 'L', 180);
+                $this->Cell(3.3,0.3, '', '', 0, 'L', 180);
+                $this->Cell(7.2,0.3,  strlen($movimiento->Concepto) > 27 ? '' . utf8_decode(substr($movimiento->Concepto, 0, 26)) . '..' : utf8_decode($movimiento->Concepto), '', 0, 'L', 180);
+                $this->Cell(1.1, 0.3, '', '', 0, 'L', 180);
+                $this->Cell(2.26, 0.3, '', '', 0, 'R', 180);
+                $this->Cell(2.6, 0.3,  '', '', 0, 'R', 180);
+                
+                $this->Ln(0.4);
+                $movimiento->TipoMovto == 0 ? $this->suma_cargo += $movimiento->Importe:'';
+                $movimiento->TipoMovto == 1 ? $this->suma_abono += $movimiento->Importe:'';
+                $count++;
+            }
         }
+        
         $this->cell($this->WidthTotal-5,0.1, '', '', 0, 'L', 180);
         $this->cell(5,0.1, '', 'B', 0, 'L', 180);
         $this->Ln(0.4);
