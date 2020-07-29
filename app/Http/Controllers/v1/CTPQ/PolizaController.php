@@ -57,8 +57,13 @@ class PolizaController extends Controller
         return $this->respondWithItem($item);
     }
 
-    public function pdf($id)
+    public function pdf(Request $request,$id)
     {
-        return $this->service->pdf($id);
+        return $this->service->pdf($request,$id);
+    }
+    
+    public function pdfCaidaB(Request $request, $id)
+    {
+        return $this->service->pdfCaidaB($request->all(), $id);
     }
 }
