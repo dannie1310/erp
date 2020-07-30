@@ -76,12 +76,13 @@ import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 
 //CONTABILIDAD GRAL
 import cuentaCTPQ from './modules/contabilidadGeneral/cuenta';
-import polizaGeneral from './modules/contabilidadGeneral/poliza';
 import empresaContabilidad from './modules/contabilidadGeneral/empresa';
 import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
 import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
-import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 import incidentePoliza from './modules/contabilidadGeneral/incidente-poliza';
+import polizaGeneral from './modules/contabilidadGeneral/poliza';
+import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
+import tipoPoliza from './modules/contabilidadGeneral/tipo-poliza';
 
 //CONTRATOS
 import contratoConcepto from './modules/contratos/contrato-concepto';
@@ -252,12 +253,13 @@ export default new Vuex.Store({
         'contabilidad/transaccion-interfaz': transaccionInterfaz,
 
         'contabilidadGeneral/cuenta' : cuentaCTPQ,
-        'contabilidadGeneral/poliza' :polizaGeneral,
         'contabilidadGeneral/empresa' :empresaContabilidad,
         'contabilidadGeneral/empresa-sat': empresaSAT,
         'contabilidadGeneral/empresa-contpaq': empresaContpaq,
-        'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/incidente-poliza' : incidentePoliza,
+        'contabilidadGeneral/poliza' :polizaGeneral,
+        'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
+        'contabilidadGeneral/tipo-poliza' : tipoPoliza,
 
         'reportes/reporte': reporte,
 

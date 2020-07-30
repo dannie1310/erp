@@ -2,102 +2,104 @@
     <span>
         <div class="row" v-if="!cargando">
             <div class="col-12">
-            <form role="form" @submit.prevent="validate" v-if="poliza" class="detalle_poliza">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-1 offset-9">
-                                <div class="form-group row error-content">
-                                    <label for="fecha" class="col-md-12 col-form-label">Fecha:</label>
+                <form role="form" @submit.prevent="validate" v-if="poliza" class="detalle_poliza">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-3">
+                                    <div class="form-group error-content">
+                                        <label for="fecha" class="col-form-label">Fecha:</label>
+                                        <datepicker v-model = "poliza.fecha"
+                                                    name = "fecha"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :disabled-dates="fechasDeshabilitadas"
+                                                    :class="{'is-invalid': errors.has('fecha')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <datepicker v-model = "poliza.fecha"
-                                            name = "fecha"
-                                            :format = "formatoFecha"
-                                            :language = "es"
-                                            :bootstrap-styling = "true"
-                                            class = "form-control"
+                        </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group row error-content">
+                                        <label for="numero_poliza" class="col-form-label"># Poliza:</label>
+                                        <input
+                                            type="text"
+                                            name="texto"
+                                            class="form-control"
+                                            id="numero_poliza"
+                                            v-model="poliza.folio"
                                             v-validate="{required: true}"
-                                            :disabled-dates="fechasDeshabilitadas"
-                                            :class="{'is-invalid': errors.has('fecha')}"
-                                ></datepicker>
-                                <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                            </div>
-                        </div>
-                        <div class="row" >
-                            <div class="col-md-2">
-                                <div class="form-group row error-content">
-                                    <label for="numero_poliza_edit" class="col-md-12 col-form-label"># Poliza:</label>
+                                            :class="{'is-invalid': errors.has('numero_poliza')}">
+                                        <div class="invalid-feedback" v-show="errors.has('numero_poliza')">{{ errors.first('numero_poliza') }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group error-content">
+                                        <label for="tipo_poliza" class="col-form-label">Tipo de Poliza:</label>
+                                        <select
+                                            class="form-control"
+                                            name="tipo_poliza"
+                                            v-model="poliza.tipo.id"
+                                            v-validate="{required: true}"
+                                            data-vv-as="Tipo Poliza"
+                                            :class="{'is-invalid': errors.has('tipo_poliza')}">
+                                            <option value>-- Tipo -- </option>
+                                            <option v-for="tipo in tipos" :value="tipo.id">{{ tipo.nombre }}</option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('tipo_poliza')">
+                                            {{ errors.first('tipo_poliza') }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <div class="form-group row error-content">
-                                    <label for="tipo_poliza_edit" class="col-md-12 col-form-label">Tipo de Poliza:</label>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <label for="texto" class="col-md-12 col-form-label">Concepto:</label>
-                            </div>
-                        </div>
-                        <div class="row" >
-                            <div class="col-md-2">
-                                <input
-                                    type="text"
-                                    name="texto"
-                                    class="form-control"
-                                    id="numero_poliza_edit"
-                                    v-model="poliza.folio"
-                                >
-                            </div>
-                            <div class="col-md-2">
-                                <input
-                                    type="text"
-                                    disabled="disabled"
-                                    name="texto"
-                                    class="form-control"
-                                    id="tipo_poliza_edit"
-                                    v-model="poliza.tipo"
-                                >
-                            </div>
-                            <div class="col-md-8">
-                                <div class="form-group row error-content">
-                                    <textarea
-                                        type="text"
-                                        v-validate="{required: true, max:100}"
-                                        name="concepto_edit"
-                                        class="form-control"
-                                        id="concepto_edit"
-                                        v-model="poliza.concepto"
-                                        placeholder="CONCEPTO DE PÓLIZA"
-                                        :class="{'is-invalid': errors.has('concepto_edit')}"
-                                        v-on:keyup ="repiteConceptos()"
-                                    ></textarea>
-                                    <div class="invalid-feedback" v-show="errors.has('concepto_edit')">{{ errors.first('concepto_edit') }}</div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="concepto" class="col-md-12 col-form-label">Concepto:</label>
+                                        <textarea
+                                            type="text"
+                                            v-validate="{required: true, max:100}"
+                                            name="concepto"
+                                            class="form-control"
+                                            id="concepto"
+                                            v-model="poliza.concepto"
+                                            placeholder="CONCEPTO DE PÓLIZA"
+                                            :class="{'is-invalid': errors.has('concepto')}"
+                                            v-on:keyup ="repiteConceptos()"
+                                        ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                         <div class="row">
-                             <div class="col-md-12">
-                                 <div class="custom-control custom-checkbox">
-                                     <input type="checkbox" class="custom-control-input" id="repetir_concepto" v-on:change="repiteConceptos()" v-model="repite_concepto" >
-                                     <label for="repetir_concepto" class="custom-control-label" >Replicar concepto de póliza en concepto de movimientos</label>
+                    <div class="card">
+                        <div class="card-body">
+                             <div class="row">
+                                 <div class="col-md-12">
+                                     <div class="custom-control custom-checkbox">
+                                         <input type="checkbox" class="custom-control-input" id="repetir_concepto" v-on:change="repiteConceptos()" v-model="repite_concepto" >
+                                         <label for="repetir_concepto" class="custom-control-label" >Replicar concepto de póliza en concepto de movimientos</label>
+                                     </div>
                                  </div>
                              </div>
-                         </div>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <label ><i class="fa fa-th-list icon"></i>Movimientos</label>
-                    </div>
-                    <div class="card-body table-responsive">
-                        <table class="table table-striped">
+                    <div class="card">
+                        <div class="card-header">
+                            <label ><i class="fa fa-th-list icon"></i>Movimientos</label>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="table table-striped">
                             <thead>
                             <tr>
                                 <th class="bg-gray-light index_corto">#</th>
@@ -117,7 +119,6 @@
                                 <td class="index_corto">{{ i + 1 }}</td>
                                 <td>
                                     <model-list-select
-                                        :disabled="cuentas != []"
                                         :name="`id_cuenta[${i}]`"
                                         placeholder="Seleccionar o buscar por código o nombre de la cuenta"
                                         data-vv-as="Cuenta"
@@ -185,7 +186,6 @@
                                             v-validate="{required: true, max:30}"
                                             :name="`referencia[${i}]`"
                                             class="form-control"
-                                            :id="`referencia[${i}]`"
                                             v-model="movimiento.referencia"
                                             placeholder="REFERENCIA DE MOVIMIENTO"
                                             :class="{'is-invalid': errors.has(`referencia[${i}]`)}"
@@ -200,7 +200,6 @@
                                             v-validate="{required: true, max:100}"
                                             :name="`concepto_movto_edit[${i}]`"
                                             class="form-control"
-                                            :id="`concepto_movto_edit[${i}]`"
                                             v-model="movimiento.concepto"
                                             placeholder="CONCEPTO DE MOVIMIENTO"
                                             :class="{'is-invalid': errors.has(`concepto_movto_edit[${i}]`)}"
@@ -230,18 +229,13 @@
                             </tr>
                             </tfoot>
                         </table>
-                       <!-- <div class="col-sm-12" style="text-align: right">
-                            <h4><b>Total de la Póliza:</b>
-                                $&nbsp;{{ (parseFloat(poliza.total)).formatMoney(2, '.', ',') }}
-                            </h4>
-                        </div>-->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="salir()"> Cerrar</button>
+                            <button type="submit" class="btn btn-info" :disabled="errors.count() > 0 || !cuadrado || !cambio">Guardar</button>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="salir()"><i class="fa fa-times-circle"></i> Cerrar</button>
-                    <button type="submit" class="btn btn-danger" v-if="$root.can('editar_poliza', true)" :disabled="errors.count() > 0"><i class="fa fa-save"></i> Guardar</button>
-                </div>
-            </form>
+                </form>
             </div>
         </div>
     </span>
@@ -263,16 +257,10 @@
                 original: null,
                 poliza : null,
                 cuentas: [],
+                tipos:[],
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha_hoy : '',
-                edit:{
-                    id_empresa:'',
-                    id : '',
-                    concepto: '',
-                    movimientos: {},
-                },
-
             }
         },
         mounted() {
@@ -280,6 +268,7 @@
             this.fechasDeshabilitadas.from = new Date();
             this.find()
             this.getCuentas();
+            this.getTipos();
         },
         methods: {
             cuentaDescripcion (item) {
@@ -314,33 +303,25 @@
                     return this.$store.dispatch('contabilidadGeneral/poliza/find', {
                         id: this.id,
                         id_empresa: this.id_empresa,
-                        params: {include: ['movimientos_poliza'], id_empresa: this.id_empresa}
+                        params: {include: ['movimientos_poliza', 'tipo'], id_empresa: this.id_empresa}
                     }).then(data => {
                         this.cargando = false
                         this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
                     })
                 }
             },
-            fillEdit() {
-
-                this.edit.id = this.poliza.id;
-                this.edit.concepto = this.poliza.concepto;
-                this.edit.id_empresa = this.id_empresa;
-                let self = this;
-                (self.poliza.movimientos_poliza.data).forEach(function (movimiento, i) {
-                    self.edit.movimientos[i] = {id:movimiento.id, concepto : movimiento.concepto, referencia : movimiento.referencia};
-                });
-            },
             update(){
-                this.fillEdit();
+                this.poliza.id_empresa = this.id_empresa
+                this.poliza.abono_nuevo = this.sumaHaber
+                this.poliza.cargo_nuevo = this.sumaDebe
                 return this.$store.dispatch('contabilidadGeneral/poliza/update', {
-                    id: this.poliza.id,
-                    data: this.edit,
+                    id: this.id,
+                    data: this.poliza,
                 })
                     .then(data => {
                         this.$store.commit('contabilidadGeneral/poliza/UPDATE_POLIZA', data);
                     }).finally(()=>{
-                        this.closeModal();
+                      //  this.salir();
                     })
             },
             repiteConceptos(){
@@ -360,6 +341,14 @@
                 })
                     .then(data => {
                         this.cuentas = data.data;
+                    })
+            },
+            getTipos() {
+                return this.$store.dispatch('contabilidadGeneral/tipo-poliza/index', {
+                    params: {id_empresa: this.id_empresa}
+                })
+                    .then(data => {
+                        this.tipos = data.data;
                     })
             },
             add(movimiento) {

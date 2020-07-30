@@ -65,11 +65,16 @@ class PolizaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Poliza $poliza
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeTipo(Poliza $poliza)
     {
         if($tipo = $poliza->tipo_poliza)
         {
             return $this->item($tipo, new TipoPolizaTransformer);
         }
+        return null;
     }
 }

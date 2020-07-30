@@ -84,8 +84,36 @@ class Poliza extends Model
     {
         if ($this->Ejercicio != 2015) {
             try {
+                dd("aqui");
                 DB::connection('cntpq')->beginTransaction();
-                $this->Concepto = $datos["concepto"];
+                if($datos['concepto'] != $this->Concepto) {
+                    $this->Concepto = $datos["concepto"];
+                    $this->createLog($datos['id_empresa'], $datos['empresa'], 1,$this->Concepto, $datos['concepto'], null);
+                }
+                if($datos['fecha'] != $this->Fecha) {
+                    $this->Fecha = $datos["fecha"];
+                    $this->createLog($datos['id_empresa'], $datos['empresa'], 8,$this->Fecha, $datos['fecha'], null);
+                    $this->Ejercicio = $datos["fecha"];
+                    $this->createLog($datos['id_empresa'], $datos['empresa'], 6,$this->Ejercicio, $datos['fecha'], null);//modificar
+                    $this->Periodo = $datos["fecha"];
+                    $this->createLog($datos['id_empresa'], $datos['empresa'], 7,$this->Periodo, $datos['fecha'], null);
+                }
+                if($datos['tipo'] != $this->TipoPol) {
+                    $this->TipoPol = $datos["tipo"]["id"];
+                    $this->createLog($datos['id_empresa'], $datos['empresa'], 9,$this->TipoPol, $datos['tipo']['id'], null);
+                }
+                if($datos['folio'] != $this->Folio) {
+                    $this->Folio = $datos["folio"];
+                    $this->createLog($datos['id_empresa'], $datos['empresa'], 10,$this->Folio, $datos['folio'], null);
+                }
+                if($datos['cargo_nuevo'] != $this->Cargos) {
+                    $this->Cargos = $datos["cargo_nuevo"];
+                    $this->createLog($datos['id_empresa'], $datos['empresa'], 11,$this->Cargos, $datos['cargo_nuevo'], null);
+                }
+                if($datos['abono_nuevo'] != $this->Abonos) {
+                    $this->Abonos = $datos["abono_nuevo"];
+                    $this->createLog($datos['id_empresa'], $datos['empresa'], 12,$this->Abonos, $datos['abono_nuevo'], null);
+                }
                 $this->update();
                 foreach ($datos["movimientos"] as $datos_movimiento) {
                     $movimiento = PolizaMovimiento::find($datos_movimiento["id"]);
@@ -492,5 +520,18 @@ class Poliza extends Model
         } else {
             return "";
         }
+    }
+
+    private function createLog($id_empresa, $empresa, $campo, $valor_original, $valor_modificado,$id_movimiento)
+    {
+        $this->logs()->create([
+            'id_empresa' => $id_empresa,
+            'empresa' => $empresa,
+            'id_poliza' => $this->Id,
+            'id_campo' => $campo,
+            'valor_original' => $valor_original,
+            'valor_modificado' => $valor_modificado,
+            'id_movimiento' => $id_movimiento
+        ]);
     }
 }

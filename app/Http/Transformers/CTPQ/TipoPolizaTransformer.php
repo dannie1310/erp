@@ -12,7 +12,7 @@ class TipoPolizaTransformer extends TransformerAbstract
     public function transform(TipoPoliza $model) {
         return [
             'id' => (int) $model->getKey(),
-            'tipo' => (string) $model->Nombre
+            'nombre' => (string) $model->Nombre
         ];
     }
 }

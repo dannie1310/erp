@@ -19,5 +19,6 @@ class LogEdicionObserver
     {
         $log->usuario_modifico = auth()->id();
         $log->bd_contpaq = config('database.connections.cntpq.database');
+        $log->fecha_hora = date("Y-m-d H:i:s");
     }
 }
