@@ -152,7 +152,7 @@ class PolizaFormatoPropuestaT1 extends Rotation
                 $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
                 $this->Ln(0.4);
                 $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
-                $this->Cell(5.2, 0.3, strlen($this->poliza->partida_solicitud->concepto) > 23 ? '  ' . utf8_decode(substr($this->poliza->partida_solicitud->concepto, 0, 22)) . ' ..' : utf8_decode($this->poliza->partida_solicitud->concepto), '', 1, 'L', 180);
+                $this->Cell(5.2, 0.3, strlen(cccc) > 23 ? '  ' . utf8_decode(substr($this->poliza->partida_solicitud->concepto, 0, 22)) . ' ..' : utf8_decode($this->poliza->partida_solicitud->concepto), '', 1, 'L', 180);
                 $this->suma_abono += $movimiento->abono;
                 $this->suma_cargo += $movimiento->cargo;
             }

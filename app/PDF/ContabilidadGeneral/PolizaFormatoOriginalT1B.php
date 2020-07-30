@@ -75,17 +75,17 @@ class PolizaFormatoOriginalT1B extends Rotation
 
         $this->setXY(0.9, 2.3);
         $this->SetFont('Arial', '', 10);
-        // $this->Cell(0, 0, utf8_decode('Dirección: ') . Parametro::getDireccion(), 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Dirección: ') . Parametro::getDireccion(), 0, 0, 'L');
         $this->setXY(16.6, 2.3);
-        // $this->Cell(0, 0, utf8_decode('Código postal: ') . Parametro::getCodPostal(), 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Código postal: ') . Parametro::getCodPostal(), 0, 0, 'L');
 
-        // $this->setXY(0.9, 2.6);
-        // $this->SetFont('Arial', '', 10);
-        // $this->Cell(0, 0, utf8_decode('Reg. Fed.: '). Parametro::getRFC(), 0, 0, 'L');
-        // $this->setXY(5.83, 2.6);
-        // $this->Cell(0, 0, utf8_decode('Reg. Cámara: ') . Parametro::getRegCamara(), 0, 0, 'L');
-        // $this->setXY(12.7, 2.6);
-        // $this->Cell(0, 0, utf8_decode('Cta. Estatal: ') . Parametro::getRegEstatal(), 0, 0, 'L');
+        $this->setXY(0.9, 2.6);
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(0, 0, utf8_decode('Reg. Fed.: '). Parametro::getRFC(), 0, 0, 'L');
+        $this->setXY(5.83, 2.6);
+        $this->Cell(0, 0, utf8_decode('Reg. Cámara: ') . Parametro::getRegCamara(), 0, 0, 'L');
+        $this->setXY(12.7, 2.6);
+        $this->Cell(0, 0, utf8_decode('Cta. Estatal: ') . Parametro::getRegEstatal(), 0, 0, 'L');
 
         $this->partidasTitle();
     }

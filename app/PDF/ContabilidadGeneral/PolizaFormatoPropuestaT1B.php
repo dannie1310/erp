@@ -130,7 +130,7 @@ class PolizaFormatoPropuestaT1B extends Rotation
         $this->Cell(2.35,0.5, $this->poliza->fecha_mes_letra_format, '', 0, 'L', 180);
         $this->Cell(2.6,0.5, $this->poliza->poliza->tipo_poliza->Nombre, '', 0, 'L', 180);
         $this->Cell(1.5,0.5, $this->poliza->Folio, '', 0, 'R', 180);
-        $this->Cell(7.8,0.5, strlen($this->poliza->Concepto) > 32 ? '' . utf8_decode(substr($this->poliza->Concepto, 0, 32)) . '' : utf8_decode($this->poliza->Concepto), '', 0, 'L', 180);
+        $this->Cell(7.8,0.5, strlen($this->poliza->partida_solicitud->concepto) > 32 ? '' . utf8_decode(substr($this->poliza->partida_solicitud->concepto, 0, 32)) . '' : utf8_decode($this->poliza->partida_solicitud->concepto), '', 0, 'L', 180);
         $this->Cell(2.6, 0.5, '', '', 0, 'C', 180);
         $this->Cell(2.27, 0.5, '', '', 0, 'L', 180);
         $this->Ln(0.48);
@@ -160,7 +160,7 @@ class PolizaFormatoPropuestaT1B extends Rotation
                 $this->Cell(1.4,0.3, '', '', 0, 'R', 180);
                 $this->Cell(1.9,0.3, '', '', 0, 'L', 180);
                 $this->Cell(3.3,0.3, '', '', 0, 'L', 180);
-                $this->Cell(7.2,0.3,  strlen($movimiento->Concepto) > 27 ? '' . utf8_decode(substr($movimiento->Concepto, 0, 26)) . '..' : utf8_decode($movimiento->Concepto), '', 0, 'L', 180);
+                $this->Cell(7.2,0.3,  strlen($this->poliza->partida_solicitud->concepto) > 27 ? '' . utf8_decode(substr($this->poliza->partida_solicitud->concepto, 0, 26)) . '..' : utf8_decode($this->poliza->partida_solicitud->concepto), '', 0, 'L', 180);
                 $this->Cell(1.1, 0.3, '', '', 0, 'L', 180);
                 $this->Cell(2.26, 0.3, '', '', 0, 'R', 180);
                 $this->Cell(2.6, 0.3,  '', '', 0, 'R', 180);

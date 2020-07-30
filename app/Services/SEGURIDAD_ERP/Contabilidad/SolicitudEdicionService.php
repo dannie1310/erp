@@ -36,6 +36,7 @@ use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT1;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT2;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT3;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT1B;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT2B;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT3B;
 use App\Http\Transformers\CTPQ\PolizaMovimientoTransformer;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
@@ -418,9 +419,9 @@ class SolicitudEdicionService
             $pdf = new PolizaFormatoPropuestaT2($polizas, $solicitud, $diferencias[0]->empresa);
         }
         if($caida == 2){
-            $pdf = new PolizaFormatoPropuestaT2($polizas, $solicitud, $diferencias[0]->empresa);
+            $pdf = new PolizaFormatoPropuestaT2B($polizas, $solicitud, $diferencias[0]->empresa);
         }
-        $pdf = new PolizaFormatoPropuestaT2($polizas, $solicitud, $diferencias[0]->empresa);
+        
         return $pdf->create();
     }
 
