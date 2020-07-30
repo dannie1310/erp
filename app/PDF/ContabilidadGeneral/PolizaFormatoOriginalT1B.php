@@ -75,17 +75,17 @@ class PolizaFormatoOriginalT1B extends Rotation
 
         $this->setXY(0.9, 2.3);
         $this->SetFont('Arial', '', 10);
-        $this->Cell(0, 0, utf8_decode('Dirección: ') . Parametro::getDireccion(), 0, 0, 'L');
+        // $this->Cell(0, 0, utf8_decode('Dirección: ') . Parametro::getDireccion(), 0, 0, 'L');
         $this->setXY(16.6, 2.3);
-        $this->Cell(0, 0, utf8_decode('Código postal: ') . Parametro::getCodPostal(), 0, 0, 'L');
+        // $this->Cell(0, 0, utf8_decode('Código postal: ') . Parametro::getCodPostal(), 0, 0, 'L');
 
-        $this->setXY(0.9, 2.6);
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(0, 0, utf8_decode('Reg. Fed.: '). Parametro::getRFC(), 0, 0, 'L');
-        $this->setXY(5.83, 2.6);
-        $this->Cell(0, 0, utf8_decode('Reg. Cámara: ') . Parametro::getRegCamara(), 0, 0, 'L');
-        $this->setXY(12.7, 2.6);
-        $this->Cell(0, 0, utf8_decode('Cta. Estatal: ') . Parametro::getRegEstatal(), 0, 0, 'L');
+        // $this->setXY(0.9, 2.6);
+        // $this->SetFont('Arial', '', 10);
+        // $this->Cell(0, 0, utf8_decode('Reg. Fed.: '). Parametro::getRFC(), 0, 0, 'L');
+        // $this->setXY(5.83, 2.6);
+        // $this->Cell(0, 0, utf8_decode('Reg. Cámara: ') . Parametro::getRegCamara(), 0, 0, 'L');
+        // $this->setXY(12.7, 2.6);
+        // $this->Cell(0, 0, utf8_decode('Cta. Estatal: ') . Parametro::getRegEstatal(), 0, 0, 'L');
 
         $this->partidasTitle();
     }
@@ -128,9 +128,9 @@ class PolizaFormatoOriginalT1B extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->SetFillColor(255, 255, 255);
         $this->Cell(2.35,0.5, $this->poliza->fecha_mes_letra_format, '', 0, 'L', 180);
-        $this->Cell(2.6,0.5, $this->poliza->tipo_poliza->Nombre, '', 0, 'L', 180);
+        $this->Cell(2.6,0.5, $this->poliza->poliza->tipo_poliza->Nombre, '', 0, 'L', 180);
         $this->Cell(1.5,0.5, $this->poliza->Folio, '', 0, 'R', 180);
-        $this->Cell(7.8,0.5, strlen($this->poliza->Concepto) > 32 ? '' . utf8_decode(substr($this->poliza->Concepto, 0, 32)) . '' : utf8_decode($this->poliza->Concepto), '', 0, 'L', 180);
+        $this->Cell(7.8,0.5, strlen($this->poliza->concepto_original) > 32 ? '' . utf8_decode(substr($this->poliza->concepto_original, 0, 32)) . '' : utf8_decode($this->poliza->concepto_original), '', 0, 'L', 180);
         $this->Cell(2.6, 0.5, '', '', 0, 'C', 180);
         $this->Cell(2.27, 0.5, '', '', 0, 'L', 180);
         $this->Ln(0.48);
@@ -140,34 +140,36 @@ class PolizaFormatoOriginalT1B extends Rotation
         $this->suma_cargo = 0;
         $count = 1;
 
-        foreach($this->poliza->movimientos as $movimiento){
+        foreach($this->poliza->poliza->cuentas_padres as $cuenta_padre){
+            foreach($this->poliza->poliza->getMovimientos($cuenta_padre) as $k => $movimiento){
 
-            $this->SetFont('Arial', '', 10);
-            $this->SetFillColor(255, 255, 255);
+                $this->SetFont('Arial', '', 10);
+                $this->SetFillColor(255, 255, 255);
 
-            $this->Cell(1.2,0.3, $count, '', 0, 'R', 180);
-            $this->Cell(2.3,0.3, strlen($movimiento->getReferenciaOriginalT1($this->poliza)) > 11 ? utf8_decode(substr($movimiento->getReferenciaOriginalT1($this->poliza), 1, 10)) . ' ..' : utf8_decode($movimiento->getReferenciaOriginalT1($this->poliza)), '', 0, 'L', 180);
-            $this->Cell(3.1,0.3, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
-            $this->Cell(7.2,0.3, strlen($movimiento->cuenta->Nombre) > 27 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 26)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
-            $this->Cell(1.1, 0.3, '', '', 0, 'L', 180);
-            $this->Cell(2.26, 0.3, $movimiento->TipoMovto == 0 ? \number_format($movimiento->Importe,2) : '', '', 0, 'R', 180);
-            $this->Cell(2.6, 0.3, $movimiento->TipoMovto == 1 ? \number_format($movimiento->Importe,2) : '', '', 0, 'R', 180);
-            
-            $this->Ln(0.45);
-            $this->SetFont('Arial', '', 10);
+                $this->Cell(1.2,0.3, $count, '', 0, 'R', 180);
+                $this->Cell(2.3,0.3, strlen($movimiento->getReferenciaOriginalT1($this->poliza)) > 11 ? utf8_decode(substr($movimiento->getReferenciaOriginalT1($this->poliza), 1, 10)) . ' ..' : utf8_decode($movimiento->getReferenciaOriginalT1($this->poliza)), '', 0, 'L', 180);
+                $this->Cell(3.1,0.3, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
+                $this->Cell(7.2,0.3, strlen($movimiento->cuenta->Nombre) > 27 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 26)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
+                $this->Cell(1.1, 0.3, '', '', 0, 'L', 180);
+                $this->Cell(2.26, 0.3, $movimiento->TipoMovto == 0 ? \number_format($movimiento->Importe,2) : '', '', 0, 'R', 180);
+                $this->Cell(2.6, 0.3, $movimiento->TipoMovto == 1 ? \number_format($movimiento->Importe,2) : '', '', 0, 'R', 180);
+                
+                $this->Ln(0.45);
+                $this->SetFont('Arial', '', 10);
 
-            $this->Cell(1.4,0.3, '', '', 0, 'R', 180);
-            $this->Cell(1.9,0.3, '', '', 0, 'L', 180);
-            $this->Cell(3.3,0.3, '', '', 0, 'L', 180);
-            $this->Cell(7.2,0.3,  strlen($movimiento->getConceptoOriginalT1($this->poliza)) > 27 ? '' . utf8_decode(substr($movimiento->getConceptoOriginalT1($this->poliza), 0, 26)) . '..' : utf8_decode($movimiento->getConceptoOriginalT1($this->poliza)), '', 0, 'L', 180);
-            $this->Cell(1.1, 0.3, '', '', 0, 'L', 180);
-            $this->Cell(2.26, 0.3, '', '', 0, 'R', 180);
-            $this->Cell(2.6, 0.3,  '', '', 0, 'R', 180);
-            
-            $this->Ln(0.4);
-            $movimiento->TipoMovto == 0 ? $this->suma_cargo += $movimiento->Importe:'';
-            $movimiento->TipoMovto == 1 ? $this->suma_abono += $movimiento->Importe:'';
-            $count++;
+                $this->Cell(1.4,0.3, '', '', 0, 'R', 180);
+                $this->Cell(1.9,0.3, '', '', 0, 'L', 180);
+                $this->Cell(3.3,0.3, '', '', 0, 'L', 180);
+                $this->Cell(7.2,0.3,  strlen($movimiento->getConceptoOriginalT1($this->poliza)) > 27 ? '' . utf8_decode(substr($movimiento->getConceptoOriginalT1($this->poliza), 0, 26)) . '..' : utf8_decode($movimiento->getConceptoOriginalT1($this->poliza)), '', 0, 'L', 180);
+                $this->Cell(1.1, 0.3, '', '', 0, 'L', 180);
+                $this->Cell(2.26, 0.3, '', '', 0, 'R', 180);
+                $this->Cell(2.6, 0.3,  '', '', 0, 'R', 180);
+                
+                $this->Ln(0.4);
+                $movimiento->TipoMovto == 0 ? $this->suma_cargo += $movimiento->Importe:'';
+                $movimiento->TipoMovto == 1 ? $this->suma_abono += $movimiento->Importe:'';
+                $count++;
+            }
         }
         $this->cell($this->WidthTotal-5,0.1, '', '', 0, 'L', 180);
         $this->cell(5,0.1, '', 'B', 0, 'L', 180);
@@ -198,6 +200,8 @@ class PolizaFormatoOriginalT1B extends Rotation
         foreach ($this->folios as $k => $folio)
         {
             $this->poliza = $folio;
+            $this->key_folio = $k;
+            $this->empresa = $folio->empresa;
             $this->fecha = date_create($this->poliza->Fecha);
             $this->SetMargins(1, 0.9, 1);
             $this->AliasNbPages();

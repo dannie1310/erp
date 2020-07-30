@@ -35,6 +35,7 @@ use App\PDF\ContabilidadGeneral\PolizaFormatoOriginalT3B;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT1;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT2;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT3;
+use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT1B;
 use App\PDF\ContabilidadGeneral\PolizaFormatoPropuestaT3B;
 use App\Http\Transformers\CTPQ\PolizaMovimientoTransformer;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;

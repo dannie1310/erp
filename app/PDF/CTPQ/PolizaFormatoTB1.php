@@ -210,7 +210,6 @@ class PolizaFormatoTB1 extends Rotation
                 $this->AddPage();
                 $this->SetAutoPageBreak(true,5);
                 $this->partidas();
-            
             }
         
             $this->Output('I', "Formato - poliza.pdf", 1);
