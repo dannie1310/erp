@@ -270,7 +270,12 @@ class Diferencia extends Model
     {
         if($this->id_cuenta>0)
         {
-            return $this->cuenta->Codigo;
+            try{
+                return $this->cuenta->Codigo;
+            } catch (\Exception $e){
+                return "Sin Acceso a BD";
+            }
+
         } else {
             return "-";
         }
@@ -278,22 +283,31 @@ class Diferencia extends Model
 
     public function getIdentificadorPolizaAttribute()
     {
-        if($this->poliza)
-        {
-            return $this->poliza->Ejercicio .'-'. $this->poliza->Periodo .'-'. $this->poliza->tipo_poliza->Nombre .'-'. $this->poliza->Folio;
-        } else {
-            return "-";
+        try{
+            if($this->poliza)
+            {
+                return $this->poliza->Ejercicio .'-'. $this->poliza->Periodo .'-'. $this->poliza->tipo_poliza->Nombre .'-'. $this->poliza->Folio;
+            } else {
+                return "-";
+            }
+        } catch (\Exception $e){
+            return "Sin Acceso a BD";
         }
     }
 
     public function getNumeroMovimientoAttribute()
     {
-        if($this->movimiento)
-        {
-            return $this->movimiento->NumMovto;
-        } else {
-            return "-";
+        try{
+            if($this->movimiento)
+            {
+                return $this->movimiento->NumMovto;
+            } else {
+                return "-";
+            }
+        } catch (\Exception $e){
+            return "Sin Acceso a BD";
         }
+
     }
     public function getCampoAttribute()
     {
@@ -310,48 +324,55 @@ class Diferencia extends Model
     public function getMovimientosOrdenarAttribute()
     {
         $arreglo = [];
-        if($this->id_tipo ==12){
+        if($this->id_tipo ==12) {
             $arreglo = [];
-            if($this->poliza)
-            {
-                $relacion = RelacionPolizas::where("id_poliza_a","=", $this->id_poliza)
-                    ->where("base_datos_a","=",$this->base_datos_revisada)
-                    ->where("tipo_relacion","=",$this->tipo_busqueda)->first();
-                $movimientos = $this->poliza->movimientos()->orderBy("NumMovto")->get();
-
-                DB::purge('cntpq');
-                Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
-                $poliza_relacionada = Poliza::find($relacion->id_poliza_b);
-                $movimientos_relacionados = $poliza_relacionada->movimientos()->orderBy("NumMovto")->get();
-                $i=0;
-                foreach($movimientos as $movimiento){
-                    DB::purge('cntpq');
-                    Config::set('database.connections.cntpq.database', $relacion->base_datos_a);
-                    $movimiento->load("cuenta");
+            try {
+                if($this->poliza)
+                {
+                    $relacion = RelacionPolizas::where("id_poliza_a","=", $this->id_poliza)
+                        ->where("base_datos_a","=",$this->base_datos_revisada)
+                        ->where("tipo_relacion","=",$this->tipo_busqueda)->first();
+                    $movimientos = $this->poliza->movimientos()->orderBy("NumMovto")->get();
 
                     DB::purge('cntpq');
                     Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
-                    $movimientos_relacionados[$i]->load("cuenta");
+                    $poliza_relacionada = Poliza::find($relacion->id_poliza_b);
+                    $movimientos_relacionados = $poliza_relacionada->movimientos()->orderBy("NumMovto")->get();
+                    $i=0;
+                    foreach($movimientos as $movimiento){
+                        DB::purge('cntpq');
+                        Config::set('database.connections.cntpq.database', $relacion->base_datos_a);
+                        $movimiento->load("cuenta");
 
-                    $arreglo[] = [
-                        "no_movto_a"=>$movimiento->NumMovto,
-                        "no_movto_b"=>$movimientos_relacionados[$i]->NumMovto,
-                        "codigo_a"=>$movimiento->cuenta->Codigo,
-                        "codigo_b"=>$movimientos_relacionados[$i]->cuenta->Codigo,
-                        "cuenta_a"=>$movimiento->cuenta->Nombre,
-                        "cuenta_b"=>$movimientos_relacionados[$i]->cuenta->Nombre,
-                        "cargo_a"=>$movimiento->cargo_format,
-                        "cargo_b"=>$movimientos_relacionados[$i]->cargo_format,
-                        "abono_a"=>$movimiento->abono_format,
-                        "abono_b"=>$movimientos_relacionados[$i]->abono_format,
-                    ];
-                    $i++;
+                        DB::purge('cntpq');
+                        Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
+                        $movimientos_relacionados[$i]->load("cuenta");
+
+                        $arreglo[] = [
+                            "no_movto_a"=>$movimiento->NumMovto,
+                            "no_movto_b"=>$movimientos_relacionados[$i]->NumMovto,
+                            "codigo_a"=>$movimiento->cuenta->Codigo,
+                            "codigo_b"=>$movimientos_relacionados[$i]->cuenta->Codigo,
+                            "cuenta_a"=>$movimiento->cuenta->Nombre,
+                            "cuenta_b"=>$movimientos_relacionados[$i]->cuenta->Nombre,
+                            "cargo_a"=>$movimiento->cargo_format,
+                            "cargo_b"=>$movimientos_relacionados[$i]->cargo_format,
+                            "abono_a"=>$movimiento->abono_format,
+                            "abono_b"=>$movimientos_relacionados[$i]->abono_format,
+                        ];
+                        $i++;
+                    }
                 }
+                return $arreglo;
+
+            } catch (\Exception $e){
+                return "";
             }
-            return $arreglo;
-        } else {
+        }
+        else {
             return "";
         }
+
     }
 
     public function getValorAFormatAttribute()
