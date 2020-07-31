@@ -8,6 +8,7 @@ use App\Models\CADECO\Material;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompra;
+use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
@@ -90,11 +91,17 @@ class AsignacionProveedorPartida extends Model
                 return $this->cantidad_asignada * $this->cotizacion->precio_compuesto;
                 break;
             case (2):
-                return($this->cotizacionCompra->complemento) ? ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->cotizacionCompra->complemento->tc_usd) : ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(1));
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(1);
                 break;
             case (3):
-                return ($this->cotizacionCompra->complemento) ? $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->cotizacionCompra->complemento->tc_eur : $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(2);
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(2);
                 break;
         }
+    }
+
+    public function tipo_cambio($tipo)
+    {
+        $tipo_cambio = TipoCambio::where('moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
+        return $tipo_cambio ? $tipo_cambio->tipo_cambio : $tipo_cambio = TipoCambio::where('moneda','=', $tipo)->orderByDesc('fecha')->first()->tipo_cambio;
     }
 }

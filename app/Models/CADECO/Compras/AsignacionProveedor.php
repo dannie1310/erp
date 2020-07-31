@@ -146,6 +146,19 @@ class AsignacionProveedor extends Model
         return $suma;
     }
 
+    public function subtotalPorCotizacion($id_cotizacion)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            if($partida->id_transaccion_cotizacion == $id_cotizacion)
+            {
+                $suma += $partida->total_precio_moneda;
+            }
+        }
+        return $suma;
+    }
+
     public function getMejorAsignadoAttribute()
     {
         $suma_mejor_asignado = 0;
@@ -160,10 +173,10 @@ class AsignacionProveedor extends Model
                            $valor_calculado = $partida_asignacion->cantidad_asignada * $partida_encontrada->precio_compuesto;
                            break;
                        case (2):
-                           $valor_calculado =  ($partida_asignacion->cantidad_asignada * $cotizacion->precio_compuesto * $cotizacion->complemento->tc_usd);
+                           $valor_calculado =  ($partida_asignacion->cantidad_asignada * $cotizacion->precio_compuesto * $partida_asignacion->tipo_cambio(1));
                            break;
                        case (3):
-                           $valor_calculado =  ($partida_asignacion->cantidad_asignada * $cotizacion->precio_compuesto * $cotizacion->complemento->tc_eur);
+                           $valor_calculado =  ($partida_asignacion->cantidad_asignada * $cotizacion->precio_compuesto * $partida_asignacion->tipo_cambio(2));
                            break;
                    }
                    if($suma_mejor_por_partida == 0)
@@ -172,7 +185,7 @@ class AsignacionProveedor extends Model
                    }
                    if($valor_calculado < $suma_mejor_por_partida)
                    {
-                        $suma_mejor_por_partida = $valor_calculado;
+                        $suma_mejor_por_partida += $valor_calculado;
                    }
                }
             }
