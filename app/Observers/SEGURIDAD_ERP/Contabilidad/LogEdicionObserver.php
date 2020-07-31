@@ -8,6 +8,7 @@
 
 namespace App\Observers\SEGURIDAD_ERP\Contabilidad;
 
+use App\Models\CTPQ\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 
 class LogEdicionObserver
@@ -17,6 +18,9 @@ class LogEdicionObserver
      */
     public function creating(LogEdicion $log)
     {
+        $base_datos = config('database.connections.cntpq.database');
+        $empresa = Empresa::where("AliasBDD","=", $base_datos);
+        dd($empresa); //probar a ver si furula....
         $log->usuario_modifico = auth()->id();
         $log->bd_contpaq = config('database.connections.cntpq.database');
         $log->fecha_hora = date("Y-m-d H:i:s");

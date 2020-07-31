@@ -13,6 +13,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,12 @@ class Poliza extends Model
     protected $connection = 'cntpq';
     protected $table = 'Polizas';
     protected $primaryKey = 'Id';
+
+    protected $fillable = [
+        'Fecha',
+        'Ejercicio',
+        'Periodo'
+    ];
 
     protected $dates = ["Fecha"];
 
@@ -84,47 +91,85 @@ class Poliza extends Model
     {
         if ($this->Ejercicio != 2015) {
             try {
-                dd("aqui");
                 DB::connection('cntpq')->beginTransaction();
                 if($datos['concepto'] != $this->Concepto) {
                     $this->Concepto = $datos["concepto"];
-                    $this->createLog($datos['id_empresa'], $datos['empresa'], 1,$this->Concepto, $datos['concepto'], null);
                 }
-                if($datos['fecha'] != $this->Fecha) {
-                    $this->Fecha = $datos["fecha"];
-                    $this->createLog($datos['id_empresa'], $datos['empresa'], 8,$this->Fecha, $datos['fecha'], null);
-                    $this->Ejercicio = $datos["fecha"];
-                    $this->createLog($datos['id_empresa'], $datos['empresa'], 6,$this->Ejercicio, $datos['fecha'], null);//modificar
-                    $this->Periodo = $datos["fecha"];
-                    $this->createLog($datos['id_empresa'], $datos['empresa'], 7,$this->Periodo, $datos['fecha'], null);
-                }
+                $fecha = date_format(date_create($datos['fecha']), "d/m/Y");
+
+                if($fecha != $this->fecha_format) {
+
+
+                    $this->Fecha = Carbon::createFromFormat('d/m/Y', $fecha);
+                    dd($this, $fecha,$this->Fecha );
+                    $this->Ejercicio = date("Y", strtotime($fecha));
+                    $this->Periodo = date("m", strtotime($fecha));
+                }dd("aqui");
                 if($datos['tipo'] != $this->TipoPol) {
                     $this->TipoPol = $datos["tipo"]["id"];
-                    $this->createLog($datos['id_empresa'], $datos['empresa'], 9,$this->TipoPol, $datos['tipo']['id'], null);
                 }
                 if($datos['folio'] != $this->Folio) {
                     $this->Folio = $datos["folio"];
-                    $this->createLog($datos['id_empresa'], $datos['empresa'], 10,$this->Folio, $datos['folio'], null);
                 }
                 if($datos['cargo_nuevo'] != $this->Cargos) {
                     $this->Cargos = $datos["cargo_nuevo"];
-                    $this->createLog($datos['id_empresa'], $datos['empresa'], 11,$this->Cargos, $datos['cargo_nuevo'], null);
                 }
                 if($datos['abono_nuevo'] != $this->Abonos) {
                     $this->Abonos = $datos["abono_nuevo"];
-                    $this->createLog($datos['id_empresa'], $datos['empresa'], 12,$this->Abonos, $datos['abono_nuevo'], null);
                 }
+
                 $this->update();
-                foreach ($datos["movimientos"] as $datos_movimiento) {
-                    $movimiento = PolizaMovimiento::find($datos_movimiento["id"]);
-                    $movimiento->Referencia = $datos_movimiento["referencia"];
-                    $movimiento->Concepto = $datos_movimiento["concepto"];
-                    $movimiento->update();
+                $num_movimiento = 0;
+                $find = 0;
+                foreach ($this->movimientos as $movimiento) {
+                    foreach ($datos["movimientos_poliza"] as $key => $datos_movimiento) {
+
+                        dd(isset($datos_movimiento['id']));
+                        if (array_key_exists('id', $datos_movimiento) && $datos_movimiento['id'] == $movimiento->Id) {
+                            $find = 1;
+                            dd($find, "encontrado");
+                            $movimiento = PolizaMovimiento::find($datos_movimiento["id"]);
+                            if ($movimiento->Referencia != $datos_movimiento["referencia"]) {
+                                $movimiento->Referencia = $datos_movimiento["referencia"];
+                            }
+                            if ($movimiento->Concepto != $datos_movimiento["concepto"]) {
+                                $movimiento->Concepto = $datos_movimiento["concepto"];
+                            }
+                            if ($movimiento->NumMovto != $datos_movimiento["num_mov"]) {
+                                $movimiento->NumMovto = $datos_movimiento["num_mov"];
+                            }
+                            if ($datos['fecha'] != $movimiento->Fecha) {
+                                $movimiento->Fecha = $datos["fecha"];
+                                $movimiento->Ejercicio = date("Y", strtotime($datos['fecha']));
+                                $movimiento->Periodo = date("m", strtotime($datos['fecha']));
+                            }
+                            if ($datos['tipo'] != $movimiento->TipoPol) {
+                                $movimiento->TipoPol = $datos["tipo"]["id"];
+                            }
+                            if ($datos['folio'] != $movimiento->Folio) {
+                                $movimiento->Folio = $datos["folio"];
+                            }
+                            if ($movimiento->IdCuenta != $datos_movimiento["cuenta"]["id"]) {
+                                $movimiento->IdCuenta = $datos_movimiento["cuenta"]["id"];
+                            }
+                            if ($movimiento->TipoMovto != $datos_movimiento["tipo"]) {
+                                $movimiento->TipoMovto = $datos_movimiento["tipo"];
+                            }
+                            if ($movimiento->Importe != $datos_movimiento["importe"]) {
+                                $movimiento->Importe = $datos_movimiento["importe"];
+                            }
+                            $movimiento->update();
+                        }
+                    }
+                    if ($find == 0) { //No se encontro es nuevo movimiento
+
+                    }
+                    $find = 0;
                 }
                 DB::connection('cntpq')->commit();
             } catch (\Exception $e) {
                 DB::connection('cntpq')->rollBack();
-                abort(400, $e->getMessage());
+                abort(400, $e);
                 throw $e;
             }
         }
@@ -522,16 +567,16 @@ class Poliza extends Model
         }
     }
 
-    private function createLog($id_empresa, $empresa, $campo, $valor_original, $valor_modificado,$id_movimiento)
+    public function createLog($id_empresa, $empresa, $campo, $valor_original, $valor_modificado)
     {
+        dd($id_empresa, $empresa, $campo, $valor_original, $valor_modificado);
         $this->logs()->create([
             'id_empresa' => $id_empresa,
             'empresa' => $empresa,
             'id_poliza' => $this->Id,
             'id_campo' => $campo,
             'valor_original' => $valor_original,
-            'valor_modificado' => $valor_modificado,
-            'id_movimiento' => $id_movimiento
+            'valor_modificado' => $valor_modificado
         ]);
     }
 }

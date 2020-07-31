@@ -148,4 +148,17 @@ class PolizaMovimiento extends Model
         return $movimiento->referencia_original;
     }
 
+    public function createLog($id_empresa, $empresa, $campo, $valor_original, $valor_modificado)
+    {
+        dd($id_empresa, $empresa, $campo, $valor_original, $valor_modificado);
+        $this->logs()->create([
+            'id_empresa' => $id_empresa,
+            'empresa' => $empresa,
+            'id_poliza' => $this->IdPoliza,
+            'id_campo' => $campo,
+            'valor_original' => $valor_original,
+            'valor_modificado' => $valor_modificado,
+            'id_movimiento' => $this->Id
+        ]);
+    }
 }

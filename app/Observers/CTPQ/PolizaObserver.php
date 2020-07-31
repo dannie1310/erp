@@ -26,17 +26,27 @@ class PolizaObserver
     public function updated(Poliza $poliza)
     {
         $base_datos = config('database.connections.cntpq.database');
+        $empresa = Empresa::where("AliasBDD","=", $base_datos);
+        dd($empresa, $empresa->IdContpaq, $empresa->Nombre);
         if($poliza->getOriginal("Concepto") !=  $poliza->Concepto){
-            $poliza->logs()->create([
-                "id_poliza"=>$poliza->Id,
-                "id_empresa"=>Empresa::getIdEmpresa($base_datos),
-                "empresa"=>Empresa::getNombreEmpresa($base_datos),
-                "id_campo"=>1,
-                "valor_original"=>$poliza->getOriginal("Concepto"),
-                "valor_modificado"=>$poliza->Concepto,
-                "bd_contpaq" => $base_datos
-            ]);
+            $poliza->createLog($empresa->IdContpaq, $empresa->Nombre,1,$poliza->getOriginal("Concepto"), $poliza->Concepto);
+        }
+        if($poliza->getOriginal("Fecha") != $this->Fecha) {
+            $poliza->createLog($empresa->IdContpaq, $empresa->Nombre,8,$poliza->getOriginal("Fecha"),$this->Fecha);
+            $poliza->createLog($empresa->IdContpaq, $empresa->Nombre,6, $poliza->getOriginal("Ejercicio"),$this->Ejercicio);
+            $poliza->createLog($empresa->IdContpaq, $empresa->Nombre,7,$poliza->getOriginal("Periodo"), $this->Periodo);
+        }
+        if($poliza->getOriginal("TipoPol") != $this->TipoPol) {
+            $poliza->createLog($empresa->IdContpaq, $empresa->Nombre,9,$poliza->getOriginal("TipoPol"),$this->TipoPol);
+        }
+        if($poliza->getOriginal("Folio") != $this->Folio) {
+            $poliza->createLog($empresa->IdContpaq, $empresa->Nombre, 10,$poliza->getOriginal("Folio"),$this->Folio);
+        }
+        if($poliza->getOriginal("Cargos") != $this->Cargos) {
+            $poliza->createLog($empresa->IdContpaq, $empresa->Nombre, 11,$poliza->getOriginal("Cargos"),$this->Cargos);
+        }
+        if($poliza->getOriginal("Abonos") != $this->Abonos) {
+            $poliza->createLog($empresa->IdContpaq, $empresa->Nombre, 12,$poliza->getOriginal("Abonos"),$this->Abonos);
         }
     }
-
 }

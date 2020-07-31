@@ -486,6 +486,7 @@ class AppServiceProvider extends ServiceProvider
             LogEdicion::observe(LogEdicionObserver::class);
             CargaCFDSAT::observe(CargaCFDSATObserver::class);
             SolicitudEdicion::observe(SolicitudEdicionObserver::class);
+
             /**
              * ControlInterno
              */
@@ -497,6 +498,7 @@ class AppServiceProvider extends ServiceProvider
             Autocorreccion::observe(AutocorreccionObserver::class);
             CFDAutocorreccion::observe(CFDAutocorreccionObserver::class);
             CFDNoDeducido::observe(CFDNoDeducidoObserver::class);
+            EFOS::observe(EFOSObserver::class);
             NoDeducido::observe(NoDeducidoObserver::class);
             ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
 
@@ -505,27 +507,16 @@ class AppServiceProvider extends ServiceProvider
              */
             Diferencia::observe(DiferenciaObserver::class);
 
-        \App\Models\SEGURIDAD_ERP\AuditoriaPermisoRol::observe(\App\Observers\SEGURIDAD_ERP\AuditoriaPermisoRolObserver::class);
-        AuditoriaRolUsuario::observe(AuditoriaRolUsuarioObserver::class);
-        CtgEfos::observe(CtgEfosObserver::class);
-        CtgEfosLog::observe(CtgEfosLogObserver::class);
-        ConfiguracionObra::observe(ConfiguracionObraObserver::class);
-        \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
-        UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
-        FacturaRepositorio::observe(FacturaRepositorioObserver::class);
         AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
+        AuditoriaRolUsuario::observe(AuditoriaRolUsuarioObserver::class);
         AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
+        ConfiguracionObra::observe(ConfiguracionObraObserver::class);
+        CtgEfosLog::observe(CtgEfosLogObserver::class);
+        CtgEfos::observe(CtgEfosObserver::class);
+        FacturaRepositorio::observe(FacturaRepositorioObserver::class);
+        \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
         Rol::observe(RolObserver::class);
-        /*
-         * Contabilidad
-         * */
-        LogEdicion::observe(LogEdicionObserver::class);
-        CargaCFDSAT::observe(CargaCFDSATObserver::class);
-        SolicitudEdicion::observe(SolicitudEdicionObserver::class);
-
-        /*Fiscal*/
-
-        EFOS::observe(EFOSObserver::class);
+        UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
     }
 
     /**
