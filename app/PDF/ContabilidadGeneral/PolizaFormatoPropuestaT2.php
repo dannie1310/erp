@@ -138,8 +138,8 @@ class PolizaFormatoPropuestaT2 extends Rotation
             $this->Cell(5.2, 0.5, strlen($cuenta_padre->Nombre) > 25 ? utf8_decode(substr($cuenta_padre->Nombre, 0, 25)) . '..' : utf8_decode($cuenta_padre->Nombre), '', 0, 'L', 180);
             $this->Cell(4, 0.5, '', '', 0, 'L', 180);
             $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
-            $this->Cell(2.5, 0.5, $suma_cargos > 0 ? $suma_cargos : '', '', 0, 'R', 180);
-            $this->Cell(2.29, 0.5,$suma_abonos > 0 ? $suma_abonos : '', '', 0, 'R', 180);
+            $this->Cell(2.5, 0.5, $suma_cargos != 0 ? $suma_cargos : '', '', 0, 'R', 180);
+            $this->Cell(2.29, 0.5,$suma_abonos != 0 ? $suma_abonos : '', '', 0, 'R', 180);
             $this->Ln(0.45);
             $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
             $this->Cell(5.2, 0.3, strlen($movimiento->getConceptoPropuesta($this->solicitud)) > 23 ? '  ' . utf8_decode(substr($movimiento->getConceptoPropuesta($this->solicitud), 0, 22)) . '..' : '  ' . utf8_decode($movimiento->getConceptoPropuesta($this->solicitud)), '', 1, 'L', 180);
