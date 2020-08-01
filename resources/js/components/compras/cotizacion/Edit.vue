@@ -28,7 +28,7 @@
                                         <table class="table">
                                             <tbody>
                                                 <tr>
-                                                    <td class="bg-gray-light" align="center" colspan="6"><b>{{(cotizacion.empresa) ? cotizacion.empresa.razon_social : '-----------'}}</b></td>
+                                                    <td class="bg-gray-light" align="center" colspan="8"><b>{{(cotizacion.empresa) ? cotizacion.empresa.razon_social : '-----------'}}</b></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
@@ -37,10 +37,12 @@
                                                     <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</td>
                                                     <td class="bg-gray-light"><b>TC EURO:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</td>
+                                                    <td class="bg-gray-light"><b>TC LIBRA:</b></td>
+                                                    <td class="bg-gray-light">{{libra}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="bg-gray-light"><b>Direccion:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.direccion : '----------'}}</td>
+                                                    <td class="bg-gray-light" colspan="2"><b>Direccion:</b></td>
+                                                    <td class="bg-gray-light" colspan="2">{{(cotizacion.sucursal) ? cotizacion.sucursal.direccion : '----------'}}</td>
                                                     <td class="bg-gray-light"><b>Folio:</b></td>
                                                     <td class="bg-gray-light">{{cotizacion.folio_format}}</td>
                                                     <td class="bg-gray-light"><b>Importe:</b></td>
@@ -172,12 +174,20 @@
                                         <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal Precios LIBRA:</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">TC USD:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">TC EURO:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</label>
+                                    </div>
+                                     <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">TC LIBRA:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{libra}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
@@ -293,7 +303,7 @@
                             </div>
                              <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Registrar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
                              </div>
                         </form>
                     </div>
@@ -331,6 +341,7 @@
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
+                libras:0,
                 cotizacion: [],
                 moneda_input:[],
                 sucursal: true,
@@ -373,9 +384,7 @@
             this.moneda_input = [];
             this.observaciones_inputs = [];
             this.descuento = [];
-            this.find();
             this.$validator.reset();
-
         },
         methods : {
             formatoFecha(date){
@@ -387,6 +396,7 @@
                 return this.$store.dispatch('cadeco/moneda/index', {
                 }).then(data => {
                     this.monedas = data.data;
+                    this.find();
                 }).finally(()=>{
 
                 })
@@ -450,6 +460,11 @@
                             this.euros = (this.euros + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] -
                             ((this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
                         }
+                        if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
+                        {
+                            this.libras = (this.libras + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] -
+                                ((this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
+                        }
                     }
                     this.x ++;
                 }
@@ -494,9 +509,9 @@
                     this.cotizacion.observaciones = this.carga.observaciones_generales;
                 }
                         this.tipo_cambio[1] = 1;
-                        this.tipo_cambio[2] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_igh;
-                        this.tipo_cambio[3] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_eur : this.monedas[2].tipo_cambio_igh;
-                        this.tipo_cambio[4] = 1;
+                        this.tipo_cambio[2] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_cadeco.cambio_formato;
+                        this.tipo_cambio[3] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_eur : this.monedas[2].tipo_cambio_cadeco.cambio_formato;
+                        this.tipo_cambio[4] =  this.monedas[3].tipo_cambio_cadeco.cambio_formato;
 
                     this.calcular();
             },
@@ -548,8 +563,8 @@
             },
             subtotal()
             {
-                return ((this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3])) -
-                ((this.descuento_cot * (this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]))) / 100 ));
+                return ((this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]) + (this.libras * this.tipo_cambio[4])) -
+                ((this.descuento_cot * (this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]) + (this.libras * this.tipo_cambio[4]))) / 100 ));
             },
             iva()
             {
@@ -561,11 +576,15 @@
             },
             dolar()
             {
-                return '$ ' + this.monedas[1].tipo_cambio_igh;
+                return this.monedas[1].tipo_cambio_cadeco.cambio_format;
             },
             euro()
             {
-                return '$ ' + this.monedas[2].tipo_cambio_igh;
+                return this.monedas[2].tipo_cambio_cadeco.cambio_format;
+            },
+            libra()
+            {
+                return this.monedas[3].tipo_cambio_cadeco.cambio_format;
             },
             carga()
             {
