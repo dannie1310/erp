@@ -4,6 +4,7 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\IGH\TipoCambio;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\SolicitudCompra;
 use Illuminate\Database\Eloquent\Model;
@@ -159,37 +160,47 @@ class AsignacionProveedor extends Model
         return $suma;
     }
 
+    public function tipo_cambio($tipo)
+    {
+        $tipo_cambio = TipoCambio::where('moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
+        return $tipo_cambio ? $tipo_cambio->tipo_cambio : $tipo_cambio = TipoCambio::where('moneda','=', $tipo)->orderByDesc('fecha')->first()->tipo_cambio;
+    }
+
     public function getMejorAsignadoAttribute()
     {
         $suma_mejor_asignado = 0;
         $valor_calculado = 0;
         $suma_mejor_por_partida = 0;
-        foreach ($this->partidas as $partida_asignacion) {
-            foreach ($partida_asignacion->asignacion->solicitud->cotizaciones as $cotizacion) {
-               $partida_encontrada = $cotizacion->partidas()->where('id_material','=',$partida_asignacion->id_material)->first();
-               if($partida_encontrada) {
-                   switch ($partida_encontrada->id_moneda) {
-                       case (1):
-                           $valor_calculado = $partida_asignacion->cantidad_asignada * $partida_encontrada->precio_compuesto;
-                           break;
-                       case (2):
-                           $valor_calculado =  ($partida_asignacion->cantidad_asignada * $cotizacion->precio_compuesto * $partida_asignacion->tipo_cambio(1));
-                           break;
-                       case (3):
-                           $valor_calculado =  ($partida_asignacion->cantidad_asignada * $cotizacion->precio_compuesto * $partida_asignacion->tipo_cambio(2));
-                           break;
-                   }
-                   if($suma_mejor_por_partida == 0)
-                   {
-                       $suma_mejor_por_partida = $valor_calculado;
-                   }
-                   if($valor_calculado < $suma_mejor_por_partida)
-                   {
-                        $suma_mejor_por_partida += $valor_calculado;
-                   }
-               }
+        $dolar = $this->tipo_cambio(1);
+        $euro = $this->tipo_cambio(2);
+        $materiales = $this->partidas()->groupBy('id_material')->pluck('id_material');
+        foreach ($materiales as $material) {
+            $partida_asignacion = $this->partidas()->where('id_material', $material)->first();
+            foreach ($this->solicitud->cotizaciones as $cotizacion) {
+                $partida_encontrada = $cotizacion->partidas()->where('id_material', '=', $material)->first();
+                if ($partida_encontrada) {
+                    switch ($partida_encontrada->id_moneda) {
+                        case (1):
+                            $valor_calculado = $partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto;
+                            break;
+                        case (2):
+                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $dolar);
+                            break;
+                        case (3):
+                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $euro);
+                            break;
+                    }
+
+                    if ($suma_mejor_por_partida === 0) {
+                        $suma_mejor_por_partida = $valor_calculado;
+                    }
+                    if ($valor_calculado < $suma_mejor_por_partida) {
+                        $suma_mejor_por_partida = $valor_calculado;
+                    }
+                }
             }
-            $suma_mejor_asignado += $suma_mejor_por_partida;
+            $suma_mejor_asignado = $suma_mejor_asignado + (float)$suma_mejor_por_partida;
+            $suma_mejor_por_partida = 0;
         }
         return $suma_mejor_asignado;
     }

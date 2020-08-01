@@ -104,4 +104,17 @@ class AsignacionProveedorPartida extends Model
         $tipo_cambio = TipoCambio::where('moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
         return $tipo_cambio ? $tipo_cambio->tipo_cambio : $tipo_cambio = TipoCambio::where('moneda','=', $tipo)->orderByDesc('fecha')->first()->tipo_cambio;
     }
+
+    public function getSumaCantidadAsignadaAttribute()
+    {
+        $suma = 0;
+        foreach ($this->asignacion->partidas as $partida)
+        {
+            if($partida->id_material == $this->id_material)
+            {
+                $suma += $partida->cantidad_asignada;
+            }
+        }
+        return $suma;
+    }
 }

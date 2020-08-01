@@ -533,7 +533,6 @@ class AsignacionFormato extends Rotation
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(0, 0, 0);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "1", 1, 0, 'C', 0);
-           // dd($datos_partidas_globales);
             $pesos = 0;
             $dolar = 0;
             $euro = 0;
@@ -662,7 +661,6 @@ class AsignacionFormato extends Rotation
             $this->SetFillColor(255, 255, 255);
             $this->SetTextColor(0, 0, 0);
             $this->Cell(($anchos["espacio_detalles_globales"]/2), $heigth, "PESO MXP", 1, 0, 'C', 1);
-
             $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($this->asignacion->suma_subtotal_partidas, 3, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($this->asignacion->mejor_asignado, 3, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($this->asignacion->suma_subtotal_partidas - $this->asignacion->mejor_asignado, 3, ".", ","), 1, 0, 'R', 1);
