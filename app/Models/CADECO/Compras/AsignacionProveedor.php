@@ -4,6 +4,7 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\CADECO\Cambio;
 use App\Models\IGH\TipoCambio;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\SolicitudCompra;
@@ -172,8 +173,8 @@ class AsignacionProveedor extends Model
 
     public function tipo_cambio($tipo)
     {
-        $tipo_cambio = TipoCambio::where('moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
-        return $tipo_cambio ? $tipo_cambio->tipo_cambio : $tipo_cambio = TipoCambio::where('moneda','=', $tipo)->orderByDesc('fecha')->first()->tipo_cambio;
+        $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
+        return $tipo_cambio ? $tipo_cambio->cambio : $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->orderByDesc('fecha')->first()->cambio;
     }
 
     public function getMejorAsignadoAttribute()
@@ -181,8 +182,9 @@ class AsignacionProveedor extends Model
         $suma_mejor_asignado = 0;
         $valor_calculado = 0;
         $suma_mejor_por_partida = 0;
-        $dolar = $this->tipo_cambio(1);
-        $euro = $this->tipo_cambio(2);
+        $dolar = $this->tipo_cambio(2);
+        $euro = $this->tipo_cambio(3);
+        $libra = $this->tipo_cambio(4);
         $materiales = $this->partidas()->groupBy('id_material')->pluck('id_material');
         foreach ($materiales as $material) {
             $partida_asignacion = $this->partidas()->where('id_material', $material)->first();
@@ -198,6 +200,9 @@ class AsignacionProveedor extends Model
                             break;
                         case (3):
                             $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $euro);
+                            break;
+                        case (4):
+                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $libra);
                             break;
                     }
 

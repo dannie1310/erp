@@ -5,12 +5,12 @@ namespace App\PDF\Compras;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\CotizacionCompraPartida;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Obra;
-use App\Models\IGH\TipoCambio;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -101,17 +101,21 @@ class AsignacionFormato extends Rotation
     public function partidas()
     {
         $no_cotizaciones = count($this->asignacion->solicitud->cotizaciones);
-        $moneda_dolar = TipoCambio::where('moneda','=', 1)->where('fecha', '=', $this->asignacion->timestamp_registro)->first();
+        $moneda_dolar = Cambio::where('id_moneda','=', 2)->where('fecha', '=', $this->asignacion->timestamp_registro)->first();
         if(is_null($moneda_dolar)){
-            $moneda_dolar = TipoCambio::where('moneda','=', 1)->orderByDesc('fecha')->first()->tipo_cambio;
+            $moneda_dolar = Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio;
         }else{
-            $moneda_dolar = $moneda_dolar->tipo_cambio;
+            $moneda_dolar = $moneda_dolar->cambio;
         }
-        $moneda_euro = TipoCambio::where('moneda','=', 2)->where('fecha', '=', $this->asignacion->timestamp_registro)->first();
+        $moneda_euro = Cambio::where('id_moneda','=', 3)->where('fecha', '=', $this->asignacion->timestamp_registro)->first();
         if(is_null($moneda_euro)){
-            $moneda_euro = TipoCambio::where('moneda','=', 2)->orderByDesc('fecha')->first()->tipo_cambio;
+            $moneda_euro = Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio;
         }else{
-            $moneda_euro = $moneda_euro->tipo_cambio;
+            $moneda_euro = $moneda_euro->cambio;
+        }
+        $moneda_libra = Cambio::where('id_moneda','=', 4)->where('fecha', '=', $this->asignacion->timestamp_registro)->first();
+        if(!is_null($moneda_libra)){
+            $moneda_libra = $moneda_libra->cambio;
         }
 
         $cotizaciones = $this->asignacion->solicitud->cotizaciones;
@@ -546,21 +550,21 @@ class AsignacionFormato extends Rotation
 
                 $this->SetFont('Arial', 'B', $font);
                 $this->SetTextColor(0, 0, 0);
-                $this->CellFitScale($anchos["pu"] * 3, $heigth, array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) ? number_format($pesos, 3, ".", ",") : '-', 1, 0, 'R', 0);
+                $this->CellFitScale($anchos["pu"] * 3, $heigth, array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) && $pesos != 0 ? number_format($pesos, 3, ".", ",") : '-', 1, 0, 'R', 0);
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["pu"], $heigth, "PESOS (MX)", 1, 0, 'C', 1);
                 $this->SetTextColor(0, 0, 0);
-                $this->CellFitScale($anchos["pu"] * 2, $heigth, array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) ? number_format($pesos, 3, ".", ",") : '-', 1, 0, 'R', 0);
+                $this->CellFitScale($anchos["pu"] * 2, $heigth, array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) && $pesos != 0 ? number_format($pesos, 3, ".", ",") : '-', 1, 0, 'R', 0);
                 $pesos = 0;
             }
-            $mon_extranjeras = [1,2,4];
+            $mon_extranjeras = [2,3,4];
             foreach ($mon_extranjeras as $key => $moneda_e) {
-                $tipo_cambio = TipoCambio::where('moneda','=',$moneda_e)->orderByDesc('fecha', 'desc')->first();
+                $tipo_cambio = Cambio::where('id_moneda','=',$moneda_e)->orderByDesc('fecha', 'desc')->first();
                 $this->Ln();
                 $this->Cell($anchos["espacio_detalles_globales"]);
                 $this->SetFillColor(100, 100, 100);
                 $this->SetTextColor(0, 0, 0);
-                $this->Cell($anchos["espacio_detalles_globales"], $heigth, $moneda_e == 1 ? number_format($moneda_dolar, 4, ".", ",") : $moneda_e == 2 ? number_format($moneda_euro, 4, ".", ",") : $tipo_cambio ? number_format($tipo_cambio->tipo_cambio, 4, ".", ",") : '-', 1, 0, 'C', 0);
+                $this->Cell($anchos["espacio_detalles_globales"], $heigth, $moneda_e == 1 ? number_format($moneda_dolar, 4, ".", ",") : $moneda_e == 2 ? number_format($moneda_euro, 4, ".", ",") : $tipo_cambio ? number_format($tipo_cambio->cambio, 4, ".", ",") : '-', 1, 0, 'C', 0);
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales)) {
                         if(array_key_exists('2',$datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['porMoneda'])) {
@@ -578,7 +582,7 @@ class AsignacionFormato extends Rotation
                     $this->SetTextColor(0, 0, 0);
                     if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales))
                     {
-                        if($moneda_e == 1)
+                        if($moneda_e == 2)
                         {
                             $this->CellFitScale($anchos["pu"] * 3, $heigth, $dolar != 0 ? number_format($dolar, 3, ".", ",") : '-', 1, 0, 'R', 0);
                             $this->SetTextColor(255, 255, 255);
@@ -586,7 +590,7 @@ class AsignacionFormato extends Rotation
                             $this->SetTextColor(0, 0, 0);
                             $this->CellFitScale($anchos["pu"] * 2, $heigth, $dolar != 0 ? number_format($dolar / $moneda_dolar, 2, ".", ",") : '-', 1, 0, 'R', 0);
                         }
-                        if($moneda_e == 2)
+                        if($moneda_e == 3)
                         {
                             $this->CellFitScale($anchos["pu"] * 3, $heigth,  $euro != 0 ? number_format($euro, 2, ".", ",") : '-', 1, 0, 'R', 0);
                             $this->SetTextColor(255, 255, 255);
@@ -600,15 +604,15 @@ class AsignacionFormato extends Rotation
                             $this->SetTextColor(255, 255, 255);
                             $this->CellFitScale($anchos["pu"], $heigth, 'LIBRAS', 1, 0, 'C', 1);
                             $this->SetTextColor(0, 0, 0);
-                            $this->CellFitScale($anchos["pu"] * 2, $heigth, $libra != 0 ? number_format($libra / $tipo_cambio->tipo_cambio, 2, ".", ",") : '-', 1, 0, 'R', 0);
+                            $this->CellFitScale($anchos["pu"] * 2, $heigth, $libra != 0 ? number_format($libra / $tipo_cambio->cambio, 2, ".", ",") : '-', 1, 0, 'R', 0);
                         }
                     }else {
                         $this->SetTextColor(255, 255, 255);
                         $this->CellFitScale($anchos["pu"] * 3, $heigth, '-', 1, 0, 'R', 0);
-                        if ($moneda_e == 1) {
+                        if ($moneda_e == 2) {
                             $this->CellFitScale($anchos["pu"], $heigth, 'DOLAR(USD)', 1, 0, 'C', 1);
                         }
-                        if ($moneda_e == 2) {
+                        if ($moneda_e == 3) {
                             $this->CellFitScale($anchos["pu"], $heigth, 'EUROS', 1, 0, 'C', 1);
                         }
                         if ($moneda_e == 4) {
