@@ -147,6 +147,16 @@ class AsignacionProveedor extends Model
         return $suma;
     }
 
+    public function getSumaSubtotalPartidasIvaAttribute()
+    {
+        return $this->suma_subtotal_partidas * 0.16;
+    }
+
+    public function getSumaSubtotalPartidasTotalAttribute()
+    {
+        return $this->suma_subtotal_partidas + $this->suma_subtotal_partidas_iva;
+    }
+
     public function subtotalPorCotizacion($id_cotizacion)
     {
         $suma = 0;
@@ -203,5 +213,30 @@ class AsignacionProveedor extends Model
             $suma_mejor_por_partida = 0;
         }
         return $suma_mejor_asignado;
+    }
+
+    public function getMejorAsignadoIvaAttribute()
+    {
+        return $this->mejor_asignado * 0.16;
+    }
+
+    public function getMejorAsignadoTotalAttribute()
+    {
+        return $this->mejor_asignado + $this->mejor_asignado_iva;
+    }
+
+    public function getDiferenciaAttribute()
+    {
+        return $this->suma_subtotal_partidas - $this->mejor_asignado;
+    }
+
+    public function getDiferenciaIvaAttribute()
+    {
+        return $this->diferencia * 0.16;
+    }
+
+    public function getDiferenciaTotalAttribute()
+    {
+        return $this->diferencia + $this->diferencia_iva;
     }
 }
