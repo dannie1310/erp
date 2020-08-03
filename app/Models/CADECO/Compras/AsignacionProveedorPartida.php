@@ -4,10 +4,12 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompra;
+use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
@@ -90,11 +92,33 @@ class AsignacionProveedorPartida extends Model
                 return $this->cantidad_asignada * $this->cotizacion->precio_compuesto;
                 break;
             case (2):
-                return($this->cotizacionCompra->complemento) ? ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->cotizacionCompra->complemento->tc_usd) : ($this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(1));
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(2);
                 break;
             case (3):
-                return ($this->cotizacionCompra->complemento) ? $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->cotizacionCompra->complemento->tc_eur : $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(2);
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(3);
+                break;
+            case (4):
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(4);
                 break;
         }
+    }
+
+    public function tipo_cambio($tipo)
+    {
+        $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
+        return $tipo_cambio ? $tipo_cambio->cambio : $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getSumaCantidadAsignadaAttribute()
+    {
+        $suma = 0;
+        foreach ($this->asignacion->partidas as $partida)
+        {
+            if($partida->id_material == $this->id_material)
+            {
+                $suma += $partida->cantidad_asignada;
+            }
+        }
+        return $suma;
     }
 }

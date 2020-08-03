@@ -244,8 +244,8 @@ class CotizacionCompra  extends Transaccion
                     'vigencia' => $data['vigencia'],
                     'plazo_entrega' => $data['tiempo'],
                     'descuento' => $data['descuento_cot'],
-                    'tc_usd' => $moneda[0]->cambioIgh->tipo_cambio,
-                    'tc_eur' => $moneda[1]->cambioIgh->tipo_cambio,
+                    'tc_usd' => $moneda[1]->cambio->cambio,
+                    'tc_eur' => $moneda[2]->cambio->cambio,
                     'anticipo' => $data['anticipo'],
                     'importe' => $data['importe'],
                     'timestamp_registro' => $fecha->format("Y-m-d")
@@ -300,8 +300,8 @@ class CotizacionCompra  extends Transaccion
                     'vigencia' => 0,
                     'plazo_entrega' => 0,
                     'descuento' => 0,
-                    'tc_usd' => $moneda[0]->cambioIgh->tipo_cambio,
-                    'tc_eur' => $moneda[1]->cambioIgh->tipo_cambio,
+                    'tc_usd' => $moneda[1]->cambio->cambio,
+                    'tc_eur' => $moneda[2]->cambio->cambio,
                     'anticipo' => 0,
                     'importe' => 0,
                     'timestamp_registro' => $fecha->format("Y-m-d")

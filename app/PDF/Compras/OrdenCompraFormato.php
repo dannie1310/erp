@@ -543,8 +543,10 @@ class OrdenCompraFormato extends Rotation
         }
         $total = $this->ordenCompra[0]->monto;
         $moneda = Moneda::where('id_moneda', '=', $this->ordenCompra[0]->id_moneda)->first()->nombre;
-        $cambio = Cambio::where('id_moneda', '=', $this->ordenCompra[0]->id_moneda)->whereDate('fecha', '=', Carbon::now())->first();
-        //dd($this->ordenCompra->id_moneda, $cambio);
+        $cambio = Cambio::where('id_moneda', '=', $this->ordenCompra[0]->id_moneda)->where('fecha', '=',$this->ordenCompra[0]->fecha)->first();
+        if(is_null($cambio)){
+            $cambio = Cambio::where('id_moneda','=',  $this->ordenCompra[0]->id_moneda)->orderByDesc('fecha')->first();
+        }
         $tipo_cambio = $this->ordenCompra[0]->id_moneda != 1 ? $cambio->cambio : 1;
         $total_pesos = ($total * $tipo_cambio);
         $anticipo_monto = $this->ordenCompra[0]->anticipo_monto;
@@ -552,30 +554,10 @@ class OrdenCompraFormato extends Rotation
         $subtotal = $total - $iva;
         $anticipo_pactado_monetario = $total * $this->ordenCompra[0]->porcentaje_anticipo_pactado / 100;
 
-        // @TODO usar tabla cotizacion_complemento
-        //$descuento = RQCTOCCotizaciones::where('idtransaccion_sao', '=', $this->ordenCompra->id_referente)->first()->descuento;
-        //$anticipo = RQCTOCCotizaciones::where('idtransaccion_sao', '=', $this->ordenCompra->id_referente)->first()->anticipo;
-
-//        $descuento = $this->ordenCompra->cotizacion->complemento->descuento;
-//        $anticipo = $this->ordenCompra->cotizacion->complemento->anticipo;
-
         $descuento= 0;
-        // Subtotal antes del descuento global.
         $subtotal_antes_descuento = (100 * $subtotal) / (100 - (float) $descuento);
         $descuento_monetario = $subtotal_antes_descuento - $subtotal;
-        //$anticipo_monetario = $total * $this->ordenCompra->anticipo / 100;
 
-//        if (!is_null($this->ordenCompra[0]->complemento->id_forma_pago_credito))
-//        {
-//            $forma_pago_txt = is_null($this->ordenCompra[0]->complemento->id_forma_pago_credito) ? '' : FormaPagoCredito::where('id',  '=', $this->ordenCompra->complemento->id_forma_pago_credito)->first()->descripcion;
-//            $tipo_credito_txt = false;
-//        }
-//
-//        else
-//        {
-//            $forma_pago_txt = is_null($this->ordenCompra->complemento->id_forma_pago) ? '' : utf8_decode(FormaPago::where('id',  '=', $this->ordenCompra->complemento->id_forma_pago)->first()->descripcion);
-//            $tipo_credito_txt = is_null($this->ordenCompra->complemento->id_tipo_credito) ? '' : TipoCredito::where('id', '=', $this->ordenCompra->complemento->id_tipo_credito)->first()->descripcion;
-//        }
         $this->encola="";
         $this->y_subtotal = $this->GetY();
         $this->SetTextColor(0,0,0);
@@ -629,16 +611,6 @@ class OrdenCompraFormato extends Rotation
         $this->CellFitScale(5, .5, utf8_decode(""), 1, 0,'L');
         $this->Ln(.7);
 
-//        if($tipo_credito_txt)
-//        {
-//            $this->SetTextColor(0,0,0);
-//            $this->SetFont('Arial', 'B', 9);
-//            $this->CellFitScale(4, .5, utf8_decode('Tipo de Crédito:'), 0, 0,'L');
-//            $this->SetFont('Arial', '', 9);
-//            $this->CellFitScale(5, .5, utf8_decode($tipo_credito_txt), 1, 0,'L');
-//            $this->Ln(.7);
-//        }
-
         $this->Ln(0.4);
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
@@ -664,14 +636,9 @@ class OrdenCompraFormato extends Rotation
         $tipo_gasto = 'NO REGISTRADO';
         $this->MultiCell(15.5, .5, utf8_decode($tipo_gasto), 1, 'J');
 
-        // Tipo de gasto para pista  id_costo
         if (in_array(Context::getDatabase(), ["SAO1814_PISTA_AEROPUERTO", "SAO1814_DEV_PISTA_AEROPUERTO"]))
         {
             $tipo_gasto = 'NO REGISTRADO';
-//            $tipos_gasto = Costo::where('id_costo', '=', $this->ordenCompra[0]->id_costo)->first();
-//
-//            if (!is_null($tipos_gasto))
-//                $tipo_gasto = $tipos_gasto->descripcion;
 
             $this->Ln(.2);
             $this->SetTextColor(0,0,0);
@@ -707,25 +674,7 @@ class OrdenCompraFormato extends Rotation
 
         $this->NuevoClausulado=2;
         $this->AddPage();
-
-//        $this->SetFont('Arial', 'B', 12);
-//        $this->Cell(165);
-//        $this->Cell(60,10, 'Principal');
-//        $this->Cell(60,10, 'Anotador');
-//        $this->Ln(5);
-//        $this->Cell(165);
-//        $this->Cell(60,10, 'Auxiliar');
-//        $this->Cell(60,10, 'Cronometrador');
-//        $this->Ln(5);
-//        $this->Cell(10);
-//        $this->Cell(10,10,'Encuentro');
-//        $this->Cell(40);
-//        $this->Cell(25,10, 'Fecha');
-//        $this->Cell(15,10, 'Hora');
-//        $this->Cell(30,10, 'Categoria');
-//        $this->Cell(25,10, 'Compet.');
         $this->image($this->clausulado_page, 0, 3.1, 21);
-
     }
 
 
@@ -817,17 +766,12 @@ class OrdenCompraFormato extends Rotation
                 $this->SetRadius([0.2,0,0,0,0,0,0,0,0]);
             }
 
-
             $this->SetWidths([19.5]);
             $this->SetAligns(['L']);
-
 
             if(!empty( $this->obs_item)){
                 $this->Row([utf8_decode($this->obs_item)]);
             }
-
-
-
 
             if(!empty($p->complemento->observaciones))
             {
@@ -850,11 +794,7 @@ class OrdenCompraFormato extends Rotation
             $this->AddPage();
             $this->dim_aux=1;
         }
-
-
     }
-
-
 
     public function Footer()
     {

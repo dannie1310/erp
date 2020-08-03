@@ -77,6 +77,9 @@ class CotizacionCompraPartida extends Model
             case (3):
                 return ($this->cotizacion->complemento) ? '$ '. number_format(($this->cantidad * $this->precio_unitario * $this->cotizacion->complemento->tc_eur), 2, '.', ',') : '---------';
                 break;
+            case (4):
+                return  '$ '. number_format(($this->cantidad * $this->precio_unitario * $this->tipo_cambio), 2, '.', ',');
+                break;
         }
     }
 
@@ -88,10 +91,13 @@ class CotizacionCompraPartida extends Model
                 return $this->cantidad * $this->precio_compuesto;
                 break;
             case (2):
-                return($this->cotizacion->complemento) ? $this->cantidad * $this->precio_compuesto * $this->cotizacion->complemento->tc_usd : $this->cantidad * $this->precio_compuesto * $this->tipo_cambio(1);
+                return($this->cotizacion->complemento) ? $this->cantidad * $this->precio_compuesto * $this->cotizacion->complemento->tc_usd : $this->cantidad * $this->precio_compuesto * $this->tipo_cambio;
                 break;
             case (3):
-                return ($this->cotizacion->complemento) ? $this->cantidad * $this->precio_compuesto * $this->cotizacion->complemento->tc_eur : $this->cantidad * $this->precio_compuesto * $this->tipo_cambio(2);
+                return ($this->cotizacion->complemento) ? $this->cantidad * $this->precio_compuesto * $this->cotizacion->complemento->tc_eur : $this->cantidad * $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            case (4):
+                return $this->cantidad * $this->precio_compuesto * $this->tipo_cambio;
                 break;
         }
     }
@@ -106,9 +112,8 @@ class CotizacionCompraPartida extends Model
         return $this->precio_compuesto * $this->cantidad;
     }
 
-    public function tipo_cambio($tipo)
+    public function getTipoCambioAttribute()
     {
-        $tipo_cambio = TipoCambio::where('moneda','=', $tipo)->orderByDesc('fecha')->first();
-        return $tipo_cambio ? $tipo_cambio->tipo_cambio : 0;
+        return $this->moneda->cambio ? $this->moneda->cambio->cambio : 1;
     }
 }
