@@ -30,8 +30,12 @@ class Poliza extends Model
     protected $fillable = [
         'Fecha',
         'Ejercicio',
-        'Periodo'
-    ];
+        'Periodo',
+        'TipoPol',
+        'Folio',
+        'Cargos',
+        'Abonos'
+        ];
 
     protected $dates = ["Fecha"];
 
@@ -89,22 +93,18 @@ class Poliza extends Model
 
     public function actualiza($datos)
     {
+        $fecha = date_format(date_create($datos['fecha']), "d/m/Y");
         if ($this->Ejercicio != 2015) {
             try {
                 DB::connection('cntpq')->beginTransaction();
                 if($datos['concepto'] != $this->Concepto) {
                     $this->Concepto = $datos["concepto"];
                 }
-                $fecha = date_format(date_create($datos['fecha']), "d/m/Y");
-
                 if($fecha != $this->fecha_format) {
-
-
                     $this->Fecha = Carbon::createFromFormat('d/m/Y', $fecha);
-                    dd($this, $fecha,$this->Fecha );
                     $this->Ejercicio = date("Y", strtotime($fecha));
                     $this->Periodo = date("m", strtotime($fecha));
-                }dd("aqui");
+                }
                 if($datos['tipo'] != $this->TipoPol) {
                     $this->TipoPol = $datos["tipo"]["id"];
                 }
@@ -117,12 +117,77 @@ class Poliza extends Model
                 if($datos['abono_nuevo'] != $this->Abonos) {
                     $this->Abonos = $datos["abono_nuevo"];
                 }
-
                 $this->update();
                 $num_movimiento = 0;
                 $find = 0;
                 foreach ($this->movimientos as $movimiento) {
+                    foreach ($datos["movimientos_poliza"]["data"] as $key => $dato_nuevo) {
+                        if(array_key_exists('id', $dato_nuevo)) {
+                            if ($dato_nuevo['id'] == $movimiento->Id) {
+                                $find = 1;
+                                if ($movimiento->Referencia != $dato_nuevo["referencia"]) {
+                                    $movimiento->Referencia = $dato_nuevo["referencia"];
+                                }
+                                if ($movimiento->Concepto != $dato_nuevo["concepto"]) {
+                                    $movimiento->Concepto = $dato_nuevo["concepto"];
+                                }
+                                if ($movimiento->NumMovto != $key) {
+                                    $movimiento->NumMovto = $key;
+                                }
+                                if($fecha != $this->fecha_format) {
+                                    $movimiento->Fecha = Carbon::createFromFormat('d/m/Y', $fecha);
+                                    $movimiento->Ejercicio = date("Y", strtotime($fecha));
+                                    $movimiento->Periodo = date("m", strtotime($fecha));
+                                }
+                                if ($datos['tipo'] != $this->TipoPol) {
+                                    $movimiento->TipoPol = $datos["tipo"]["id"];
+                                }
+                                if ($datos['folio'] != $this->Folio) {
+                                    $movimiento->Folio = $datos["folio"];
+                                }
+                                if ($movimiento->IdCuenta != $dato_nuevo["cuenta"]["id"]) {
+                                    $movimiento->IdCuenta = $dato_nuevo["cuenta"]["id"];
+                                }
+                                if ($movimiento->TipoMovto != $dato_nuevo["tipo"]) {
+                                    $movimiento->TipoMovto = $dato_nuevo["tipo"];
+                                }
+                                if ($movimiento->Importe != $dato_nuevo["importe"]) {
+                                    $movimiento->Importe = $dato_nuevo["importe"];
+                                }
+                                $movimiento->update();
+                            }
+                        }else{
+                            print_r($key.' .-. ');
+                            $this->movimientos()->create([
+                                'IdPoliza' => $this->Id,
+                                'Ejercicio' => date("Y", strtotime($fecha)),
+                                'Periodo' => date("m", strtotime($fecha)),
+                                'TipoPol' => $datos["tipo"]["id"],
+                                'Folio' => $datos["folio"],
+                                'NumMovto' => $key,
+                                'IdCuenta' => $dato_nuevo["cuenta"]["id"],
+                                'TipoMovto' => $dato_nuevo["tipo"],
+                                'Importe' => $dato_nuevo["importe"],
+                                'Referencia' => $dato_nuevo["referencia"],
+                                'Concepto' => dato_nuevo["concepto"],
+                                'Fecha' => Carbon::createFromFormat('d/m/Y', $fecha),
+                            ]);
+                            //Crear nuevos cambios
+
+                        }
+                    }
+                    if($find == 0)
+                    {
+                        dd($find);
+                        //Elimina ....
+                        $movimiento->delete();
+                    }
+                }
+                dd("se pasooo....");
+                //dd("iniciar los calculos de partidas aqui...");
+                foreach ($this->movimientos as $movimiento) {
                     foreach ($datos["movimientos_poliza"] as $key => $datos_movimiento) {
+                        dd($movimiento, $datos_movimiento);
 
                         dd(isset($datos_movimiento['id']));
                         if (array_key_exists('id', $datos_movimiento) && $datos_movimiento['id'] == $movimiento->Id) {
@@ -567,12 +632,9 @@ class Poliza extends Model
         }
     }
 
-    public function createLog($id_empresa, $empresa, $campo, $valor_original, $valor_modificado)
+    public function createLog($campo, $valor_original, $valor_modificado)
     {
-        dd($id_empresa, $empresa, $campo, $valor_original, $valor_modificado);
         $this->logs()->create([
-            'id_empresa' => $id_empresa,
-            'empresa' => $empresa,
             'id_poliza' => $this->Id,
             'id_campo' => $campo,
             'valor_original' => $valor_original,

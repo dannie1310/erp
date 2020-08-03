@@ -19,8 +19,9 @@ class LogEdicionObserver
     public function creating(LogEdicion $log)
     {
         $base_datos = config('database.connections.cntpq.database');
-        $empresa = Empresa::where("AliasBDD","=", $base_datos);
-        dd($empresa); //probar a ver si furula....
+        $empresa = Empresa::where("AliasBDD","=", $base_datos)->first();
+        $log->id_empresa = $empresa->IdContpaq;
+        $log->empresa = $empresa->Nombre;
         $log->usuario_modifico = auth()->id();
         $log->bd_contpaq = config('database.connections.cntpq.database');
         $log->fecha_hora = date("Y-m-d H:i:s");
