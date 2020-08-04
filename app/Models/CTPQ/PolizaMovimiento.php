@@ -36,7 +36,11 @@ class PolizaMovimiento extends Model
         'Concepto',
         'Fecha',
         'TimeStamp',
-        'Guid'
+        'Guid',
+        'RowVersion',
+        'ImporteME',
+        'IdDiario',
+        'IdSegNeg',
     ];
 
     public function poliza()
@@ -180,5 +184,15 @@ class PolizaMovimiento extends Model
     public function getNuevoIdAttribute()
     {
       return self::orderBy('Id', 'desc')->first()->Id + 1;
+    }
+
+    public function getNuevoRowversionAttribute()
+    {
+
+    }
+
+    public function getNuevoGuidAttribute()
+    {
+
     }
 }
