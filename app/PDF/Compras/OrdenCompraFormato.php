@@ -795,7 +795,7 @@ class OrdenCompraFormato extends Rotation
             }
 
             $precio = !empty($p->orden_partida_complemento->descuento) ? $p->precio_material : $p->precio_unitario;
-            $precio_neto = !empty($p->orden_partida_complemento->descuento) ? ($p->precio_material - ($p->orden_partida_complemento->descuento / 100)) : $p->precio_material;
+            $precio_neto = !empty($p->orden_partida_complemento->descuento) ? ($p->precio_material - (($p->orden_partida_complemento->descuento * $p->precio_material) / 100)) : $p->precio_material;
 
             $this->Row([$ac,
                 number_format($p->cantidad,2, '.', ','),
