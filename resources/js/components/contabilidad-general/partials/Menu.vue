@@ -8,7 +8,7 @@
                     <i class="right fa fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
+                    <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
                         <router-link :to="{name: 'poliza-contpaq'}" class="nav-link" :class="{active: this.$route.name == 'poliza-contpaq'}">
                             <i class="fa fa-file-powerpoint nav-icon"></i>
                             <p>Pólizas</p>

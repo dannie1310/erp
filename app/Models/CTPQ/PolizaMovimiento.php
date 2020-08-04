@@ -13,6 +13,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartidaPoliza;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
+use Webpatser\Uuid\Uuid;
 
 class PolizaMovimiento extends Model
 {
@@ -37,12 +38,11 @@ class PolizaMovimiento extends Model
         'Fecha',
         'TimeStamp',
         'Guid',
-        'RowVersion',
         'ImporteME',
         'IdDiario',
         'IdSegNeg',
     ];
-
+//'RowVersion',
     public function poliza()
     {
         return $this->belongsTo(Poliza::class, 'IdPoliza', 'Id');
@@ -193,6 +193,6 @@ class PolizaMovimiento extends Model
 
     public function getNuevoGuidAttribute()
     {
-
+        return Uuid::generate()->string;
     }
 }

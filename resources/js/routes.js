@@ -175,8 +175,8 @@ export const routes = [
                             title: 'Editar Póliza',
                             breadcrumb: {parent: 'poliza-contpaq', name: 'EDITAR'},
                             middleware: [auth, permission],
-                            permission: 'consultar_poliza'
-
+                            permission: 'editar_poliza',
+                            general: true
                         }
                     },
                 ]

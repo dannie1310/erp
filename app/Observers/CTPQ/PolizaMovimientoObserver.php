@@ -23,7 +23,7 @@ class PolizaMovimientoObserver
         $movimiento->Id = $movimiento->nuevo_id;
         $movimiento->TimeStamp = date('Y-m-d H:i:s');
         $movimiento->Guid = $movimiento->nuevo_guid;
-        $movimiento->RowVersion = $movimiento->nuevo_rowversion;
+       // $movimiento->RowVersion = $movimiento->nuevo_rowversion;
         $movimiento->ImporteME = 0;
         $movimiento->IdDiario = 0;
         $movimiento->IdSegNeg = 0;
