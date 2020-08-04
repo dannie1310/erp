@@ -21,6 +21,24 @@ class PolizaMovimiento extends Model
     protected $primaryKey = 'Id';
     public $timestamps = false;
 
+    protected $fillable = [
+        'Id',
+        'IdPoliza',
+        'Ejercicio',
+        'Periodo',
+        'TipoPol',
+        'Folio',
+        'NumMovto',
+        'IdCuenta',
+        'TipoMovto',
+        'Importe',
+        'Referencia',
+        'Concepto',
+        'Fecha',
+        'TimeStamp',
+        'Guid'
+    ];
+
     public function poliza()
     {
         return $this->belongsTo(Poliza::class, 'IdPoliza', 'Id');
@@ -161,6 +179,6 @@ class PolizaMovimiento extends Model
 
     public function getNuevoIdAttribute()
     {
-
+      return self::orderBy('Id', 'desc')->first()->Id + 1;
     }
 }

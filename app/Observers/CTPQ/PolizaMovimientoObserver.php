@@ -11,6 +11,7 @@ namespace App\Observers\CTPQ;
 
 use App\Models\CTPQ\PolizaMovimiento;
 use App\Models\CTPQ\Empresa;
+use Illuminate\Support\Facades\DB;
 
 class PolizaMovimientoObserver
 {
@@ -19,10 +20,8 @@ class PolizaMovimientoObserver
      */
     public function creating(PolizaMovimiento $movimiento)
     {
-       /* $this->Id;
-        $this->RowVersion;*/
-        $this->TimeStamp = date('Y-m-d H:i:s');
-        //$this->Guid;
+        $movimiento->Id = $movimiento->nuevo_id;
+        $movimiento->TimeStamp = date('Y-m-d H:i:s');
     }
 
     public function created(PolizaMovimiento $movimiento)

@@ -43,7 +43,7 @@ class Poliza extends Model
 
     public function movimientos()
     {
-        return $this->hasMany(PolizaMovimiento::class, 'IdPoliza', 'Id');
+        return $this->hasMany(PolizaMovimiento::class, 'Id', 'IdPoliza');
     }
 
     public function cuentas()
@@ -132,10 +132,10 @@ class Poliza extends Model
                                     $movimiento->Concepto = $dato_nuevo["concepto"];
                                 }
                                 if ($movimiento->NumMovto != $key) {
-                                    $movimiento->NumMovto = $key;
+                                    $movimiento->NumMovto = $key+1;
                                 }
                                 if($fecha != $this->fecha_format) {
-                                    $movimiento->Fecha = Carbon::createFromFormat('d/m/Y', $fecha);
+                                    $movimiento->Fecha = $fecha;
                                     $movimiento->Ejercicio = date("Y", strtotime($fecha));
                                     $movimiento->Periodo = date("m", strtotime($fecha));
                                 }
@@ -157,20 +157,22 @@ class Poliza extends Model
                                 $movimiento->update();
                             }
                         }else{
-                            print_r($key.' .-. ');
-                            $this->movimientos()->create([
-                                'IdPoliza' => $this->Id,
+                            $empresa = Empresa::find($datos["id_empresa"]);
+                            DB::purge('cntpq');
+                            \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
+                                $this->movimientos()->create([
+                                    'IdPoliza' => $this->Id,
                                 'Ejercicio' => date("Y", strtotime($fecha)),
                                 'Periodo' => date("m", strtotime($fecha)),
                                 'TipoPol' => $datos["tipo"]["id"],
                                 'Folio' => $datos["folio"],
-                                'NumMovto' => $key,
+                                'NumMovto' => $key+1,
                                 'IdCuenta' => $dato_nuevo["cuenta"]["id"],
                                 'TipoMovto' => $dato_nuevo["tipo"],
                                 'Importe' => $dato_nuevo["importe"],
                                 'Referencia' => $dato_nuevo["referencia"],
-                                'Concepto' => dato_nuevo["concepto"],
-                                'Fecha' => Carbon::createFromFormat('d/m/Y', $fecha),
+                                'Concepto' => $dato_nuevo["concepto"],
+                                'Fecha' => $fecha,
                             ]);
                             //Crear nuevos cambios
 
@@ -178,59 +180,10 @@ class Poliza extends Model
                     }
                     if($find == 0)
                     {
-                        dd($find);
-                        //Elimina ....
                         $movimiento->delete();
                     }
                 }
-                dd("se pasooo....");
-                //dd("iniciar los calculos de partidas aqui...");
-                foreach ($this->movimientos as $movimiento) {
-                    foreach ($datos["movimientos_poliza"] as $key => $datos_movimiento) {
-                        dd($movimiento, $datos_movimiento);
-
-                        dd(isset($datos_movimiento['id']));
-                        if (array_key_exists('id', $datos_movimiento) && $datos_movimiento['id'] == $movimiento->Id) {
-                            $find = 1;
-                            dd($find, "encontrado");
-                            $movimiento = PolizaMovimiento::find($datos_movimiento["id"]);
-                            if ($movimiento->Referencia != $datos_movimiento["referencia"]) {
-                                $movimiento->Referencia = $datos_movimiento["referencia"];
-                            }
-                            if ($movimiento->Concepto != $datos_movimiento["concepto"]) {
-                                $movimiento->Concepto = $datos_movimiento["concepto"];
-                            }
-                            if ($movimiento->NumMovto != $datos_movimiento["num_mov"]) {
-                                $movimiento->NumMovto = $datos_movimiento["num_mov"];
-                            }
-                            if ($datos['fecha'] != $movimiento->Fecha) {
-                                $movimiento->Fecha = $datos["fecha"];
-                                $movimiento->Ejercicio = date("Y", strtotime($datos['fecha']));
-                                $movimiento->Periodo = date("m", strtotime($datos['fecha']));
-                            }
-                            if ($datos['tipo'] != $movimiento->TipoPol) {
-                                $movimiento->TipoPol = $datos["tipo"]["id"];
-                            }
-                            if ($datos['folio'] != $movimiento->Folio) {
-                                $movimiento->Folio = $datos["folio"];
-                            }
-                            if ($movimiento->IdCuenta != $datos_movimiento["cuenta"]["id"]) {
-                                $movimiento->IdCuenta = $datos_movimiento["cuenta"]["id"];
-                            }
-                            if ($movimiento->TipoMovto != $datos_movimiento["tipo"]) {
-                                $movimiento->TipoMovto = $datos_movimiento["tipo"];
-                            }
-                            if ($movimiento->Importe != $datos_movimiento["importe"]) {
-                                $movimiento->Importe = $datos_movimiento["importe"];
-                            }
-                            $movimiento->update();
-                        }
-                    }
-                    if ($find == 0) { //No se encontro es nuevo movimiento
-
-                    }
-                    $find = 0;
-                }
+            //    dd("se pasooo....");
                 DB::connection('cntpq')->commit();
             } catch (\Exception $e) {
                 DB::connection('cntpq')->rollBack();
