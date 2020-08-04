@@ -43,6 +43,32 @@ export default{
                     })
             });
         },
+        getContratos(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'getContratos', {params: payload.params})
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        getCotizaciones(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/getCotizaciones', {params: payload.params})
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Contratos;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contrato;
 use App\Repositories\Repository;
@@ -251,6 +252,91 @@ class ContratoProyectadoService
             mkdir($dir_xls, 777, true);
         }
         return ["path_xls" => $path_xls, "dir_xls" => $dir_xls];
+    }
+
+    
+    public function getContratos(){
+        $contratos = DB::connection('cadeco')->select(' SELECT DISTINCT(id_transaccion), id_transaccion_b64, folio, referencia FROM (
+
+            SELECT 
+                cp.id_transaccion as id_transaccion_b64
+                , cp.numero_folio as folio
+                , cp.referencia
+                , cp.id_transaccion 
+				, con.id_concepto
+				, con.cantidad_original
+				, sum(pa.cantidad_asignada) as total_asignado
+				, con.cantidad_original - sum(pa.cantidad_asignada) as restante,
+				 ( 
+				 SELECT SUM(pa.cantidad_asignada) as asignada
+				   FROM Subcontratos.partidas_asignacion pa 
+				     WHERE id_transaccion in(
+                     SELECT id_transaccion 
+					 FROM dbo.transacciones 
+					   WHERE tipo_transaccion=50 and id_antecedente =cp.id_transaccion
+                     ) 
+				 )as asignada,
+				( 
+				      SELECT SUM (cantidad_original) from contratos where id_transaccion=cp.id_transaccion
+				)as proyectada
+
+
+            FROM 
+                transacciones as cp  
+                
+				JOIN dbo.transacciones as pc on(cp.id_transaccion = pc.id_antecedente)
+				 
+				JOIN dbo.contratos as con ON(con.id_transaccion = cp.id_transaccion)
+				
+				JOIN dbo.presupuestos AS pre ON(pre.id_concepto = con.id_concepto AND pre.id_transaccion = pc.id_transaccion AND pre.no_cotizado != 1)
+                                LEFT JOIN Subcontratos.partidas_asignacion AS pa ON(pa.id_transaccion = pc.id_transaccion AND pa.id_concepto = con.id_concepto)
+             
+              INNER JOIN Contratos.cp_areas_subcontratantes m ON
+                         cp.id_transaccion=m.id_transaccion  AND m.id_area_subcontratante IN (1,2)  
+            WHERE 
+                cp.tipo_transaccion = 49 
+                AND cp.id_obra = '.Context::getIdObra().'
+
+            GROUP BY 
+                cp.numero_folio 
+                , cp.referencia
+                , cp.id_transaccion
+				, con.id_concepto
+				, con.cantidad_original
+
+             HAVING con.cantidad_original - sum(pa.cantidad_asignada) > 0 OR sum(pa.cantidad_asignada) is null 
+             ) AS TA  where (TA.proyectada-Ta.asignada )>0 or TA.asignada is null  ORDER BY folio desc ');
+        
+
+             $data = [];
+            foreach($contratos as $contrato){
+                $data[] = [
+                    'id_transaccion' => $contrato->id_transaccion,
+                    'folio' => '#' . str_pad($contrato->folio, 5,0,0),
+                    'referencia' => $contrato->referencia,
+                ];
+            }
+
+        return $data;
+    }
+
+    public function getCotizaciones($id){
+        try{
+            $items = array();
+            $cotizaciones = array();
+            $Contrato_p = $this->repository->show($id);
+            $contratos = $Contrato_p->conceptos;
+            // dd($contratos);
+            foreach($contratos as $contrato){
+                if($contrato->asignados->sum('cantidad') <= $contrato->cantidad_original){
+                    
+                    dd('pardito', $contrato);
+                }
+            }
+            dd('pardo');
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     /**

@@ -43,6 +43,10 @@ class Contrato extends Model
         return $this->belongsTo(Destino::class, 'id_transaccion', 'id_transaccion')->where('id_concepto_contrato', '=', $this->id_concepto);
     }
 
+    public function asignados(){
+        return $this->hasMany(ItemSubcontrato::class, 'id_concepto', 'id_concepto');
+    }
+
     public function getDescripcionFormatAttribute()
     {
         return '<span>'.str_repeat('<i class="fas fa-angle-right"></i>&nbsp;&nbsp;', substr_count($this->nivel, '.') - 1) . $this->descripcion .'</span>';
