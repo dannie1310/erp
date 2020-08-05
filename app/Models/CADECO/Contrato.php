@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 
 class Contrato extends Model
 {
@@ -44,7 +45,7 @@ class Contrato extends Model
     }
 
     public function asignados(){
-        return $this->hasMany(ItemSubcontrato::class, 'id_concepto', 'id_concepto');
+        return $this->hasMany(AsignacionContratistaPartida::class, 'id_concepto', 'id_concepto');
     }
 
     public function getDescripcionFormatAttribute()

@@ -18,6 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
+use App\Models\CADECO\PresupuestoContratistaPartida;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 
 class ContratoProyectadoService
@@ -323,17 +324,68 @@ class ContratoProyectadoService
     public function getCotizaciones($id){
         try{
             $items = array();
-            $cotizaciones = array();
-            $Contrato_p = $this->repository->show($id);
-            $contratos = $Contrato_p->conceptos;
-            // dd($contratos);
-            foreach($contratos as $contrato){
-                if($contrato->asignados->sum('cantidad') <= $contrato->cantidad_original){
+            $presupuestos = array();
+            $contrato_p = $this->repository->show($id);
+            $contratos = $contrato_p->conceptos;
+            $presupuesto_contratistas = $contrato_p->presupuestos;
+            
+            foreach($contratos as $i => $contrato){
+                $cantidad_pendiente = 0;
+                if(($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada')) > 0){
+                    $items[$i] = [
+                        'id_concepto' => $contrato->id_concepto,
+                        'descripcion' => $contrato->descripcion,
+                        'descripcion_corta' => substr($contrato->descripcion, 0, 20),
+                        'destino' => $contrato->destino->concepto->getAncestrosAttribute($contrato->destino->concepto->nivel),
+                        'destino_corto' => substr($contrato->destino->concepto->getAncestrosAttribute($contrato->destino->concepto->nivel), 0, 20),
+                        'unidad' => $contrato->unidad,
+                        'cantidad_solicitada' => number_format($contrato->cantidad_original, 4, '.', ''),
+                        'cantidad_aprobada' => number_format($contrato->cantidad_original, 4, '.', ''),
+                        'cantidad_disponible' => number_format($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada'), 4, '.', ''),
+                        'cantidad_base' => number_format($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada'), 4, '.', ''),
+                        'item_pendiente' => $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada') > 0?true:false,
+                    ];
+                    $cantidad_pendiente = $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada');
+                    foreach($presupuesto_contratistas as $presupuesto){
+                        if(!array_key_exists($presupuesto->id_transaccion, $presupuestos)){
+                            $presupuestos[$presupuesto->id_transaccion] = [
+                                'id_transaccion' => $presupuesto->id_transaccion,
+                                'razon_social' => $presupuesto->empresa->razon_social,
+                                'sucursal' => $presupuesto->sucursal->descripcion,
+                                'direccion' => $presupuesto->sucursal->direccion,
+                            ];
+                            $presupuestos[$presupuesto->id_transaccion]['partidas'] = array();
+                        }
+                        array_key_exists($presupuesto->id_transaccion, $presupuestos)?'': $presupuestos[$presupuesto->id_transaccion] = array();
+                        $partida_presupuestada = PresupuestoContratistaPartida::where('id_transaccion', '=',$presupuesto->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+                        $desc = 1;
+                        $partida_presupuestada->descuento > 0?$desc = $partida_presupuestada->descuento / 100:'';
+                        if($partida_presupuestada && $partida_presupuestada->precio_unitario > 0){
+                            $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = [
+                                'id_concepto' => $contrato->id_concepto,
+                                'precio_unitario' => '$ ' . number_format($partida_presupuestada->precio_unitario, 2, '.', ','),
+                                'precio_total_antes_desc' => '$ ' . number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente, 2, '.', ','),
+                                'precio_unitario_con_desc' =>  number_format($partida_presupuestada->precio_unitario * $desc , 2, '.', ','),
+                                'precio_total_con_desc' =>   number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc , 2, '.', ','),
+                                'descuento' => $partida_presupuestada->descuento,
+                                'moneda' => $partida_presupuestada->moneda->abreviatura,
+                                'tipo_cambio' => $partida_presupuestada->moneda->tipo == 1?1: number_format($partida_presupuestada->moneda->cambio->cambio, 4, '.', ','),
+                                'importe_moneda_conversion' => $partida_presupuestada->moneda->tipo == 1? number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc , 2, '.', ',')
+                                                            : number_format($partida_presupuestada->moneda->cambio->cambio * ($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc), 4, '.', ','),
+                                'observaciones' => $partida_presupuestada->Observaciones,
+                                'cantidad_asignada' => '',
+                            ];
+                        }else{
+                            $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = null;
+                        }
+
+                    }
+
                     
-                    dd('pardito', $contrato);
                 }
             }
-            dd('pardo');
+            return ['items'=>$items,'presupuestos'=> $presupuestos];
+            
         } catch (\Exception $e) {
             throw $e;
         }
