@@ -246,12 +246,11 @@
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
-    import AddMovimiento from "./partials/AddMovimiento";
     import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "poliza-edit",
         props: ['id','id_empresa'],
-        components: {Datepicker,es, AddMovimiento,ModelListSelect},
+        components: {Datepicker,es, ModelListSelect},
         data(){
             return {
                 repite_concepto : false,
@@ -349,10 +348,6 @@
                     .then(data => {
                         this.tipos = data.data;
                     })
-            },
-            add(movimiento) {
-                this.poliza.movimientos_poliza.data.push(movimiento)
-                this.original.movimientos_poliza.data.push(movimiento)
             },
             remove(movimiento) {
                 swal({

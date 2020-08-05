@@ -153,20 +153,6 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id',
-                        name: 'poliza-contpaq-show',
-                        props: true,
-                        component: require('./components/contabilidad-general/poliza/Show').default,
-                        meta: {
-                            title: 'Información de la Póliza',
-                            breadcrumb: {parent: 'poliza-contpaq', name: 'VER'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_poliza'],
-                            general: true
-
-                        }
-                    },
-                    {
                         path: ':id/editar',
                         name: 'poliza-contpaq-edit',
                         props: true,
