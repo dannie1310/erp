@@ -10,7 +10,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group error-content">
                                         <label for="fecha" class="col-form-label">Fecha:</label>
-                                        <datepicker v-model = "poliza.fecha"
+                                        <datepicker v-model = "poliza.fecha_completa.date"
                                                     name = "fecha"
                                                     :format = "formatoFecha"
                                                     :language = "es"
@@ -109,8 +109,11 @@
                                 <th class="bg-gray-light">Abono</th>
                                 <th class="bg-gray-light">Referencia</th>
                                 <th class="bg-gray-light">Concepto</th>
-                                <th class="bg-gray-light">
-                                    <add-movimiento v-on:add="add" v-bind:id_empresa="id_empresa" v-bind:cuentas="cuentas"></add-movimiento>
+                                <th class="bg-gray-light icono">
+                                    <button type="button" class="btn btn-sm btn-outline-success" @click="agregar" :disabled="cargando">
+                                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                                <i class="fa fa-plus" v-else></i>
+                                                            </button>
                                 </th>
                             </tr>
                             </thead>
@@ -157,14 +160,13 @@
                                         class="form-control"
                                         :name="`importe[${i}]`"
                                         v-model="movimiento.importe"
-                                        v-validate="{required: true, decimal: true}"
+                                        v-validate="{required: true, decimal: true, min_value: 0.1}"
                                         data-vv-as="Debe"
                                         :class="{'is-invalid': errors.has(`importe[${i}]`)}"
                                     />
                                     <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                 </td>
                                 <td v-else></td>
-                                <!-- <td v-else> ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}</td>-->
                                 <td class="money" v-if="movimiento.tipo == 1">
                                     <input
                                         type="number"
@@ -266,9 +268,23 @@
         mounted() {
             this.fecha_hoy = new Date();
             this.fechasDeshabilitadas.from = new Date();
-            this.find()
-            this.getCuentas();
-            this.getTipos();
+            if(this.id_empresa === undefined) {
+                swal("Error iniciar nuevamente el proceso", {
+                    icon: "error",
+                    buttons: {
+                        confirm: {
+                            text: 'OK',
+                            closeModal: true,
+                        }
+                    }
+                }).then(() => {
+                    this.salir()
+                })
+            }else {
+                this.find()
+                this.getCuentas();
+                this.getTipos();
+            }
         },
         methods: {
             cuentaDescripcion (item) {
@@ -284,31 +300,16 @@
                     }
                 });
             },
-            find()
-            {
-                if(this.id_empresa === undefined) {
-                    swal("Error iniciar nuevamente el proceso", {
-                        icon: "error",
-                        buttons: {
-                            confirm: {
-                                text: 'OK',
-                                closeModal: true,
-                            }
-                        }
-                    }).then(() => {
-                        this.salir()
-                    })
-                }else {
-                    this.cargando = true
-                    return this.$store.dispatch('contabilidadGeneral/poliza/find', {
-                        id: this.id,
-                        id_empresa: this.id_empresa,
-                        params: {include: ['movimientos_poliza', 'tipo'], id_empresa: this.id_empresa}
-                    }).then(data => {
-                        this.cargando = false
-                        this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
-                    })
-                }
+            find() {
+                this.cargando = true
+                return this.$store.dispatch('contabilidadGeneral/poliza/find', {
+                    id: this.id,
+                    id_empresa: this.id_empresa,
+                    params: {include: ['movimientos_poliza', 'tipo'], id_empresa: this.id_empresa}
+                }).then(data => {
+                    this.cargando = false
+                    this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+                })
             },
             update(){
                 this.poliza.id_empresa = this.id_empresa
@@ -319,9 +320,7 @@
                     data: this.poliza,
                 })
                     .then(data => {
-                        this.$store.commit('contabilidadGeneral/poliza/UPDATE_POLIZA', data);
-                    }).finally(()=>{
-                      //  this.salir();
+                         this.salir();
                     })
             },
             repiteConceptos(){
@@ -384,6 +383,18 @@
                             })
                         }
                     });
+            },
+            agregar() {
+                var array = {
+                    'cuenta': {
+                       'id' : ''
+                    },
+                    'concepto' : '',
+                    'importe' : 0,
+                    'referencia' : '',
+                    'tipo': 2
+                }
+                this.poliza.movimientos_poliza.data.push(array);
             },
         },
 

@@ -13,6 +13,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicionPartidaPoliza;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
+use Illuminate\Support\Facades\DB;
 use Webpatser\Uuid\Uuid;
 
 class PolizaMovimiento extends Model
@@ -172,7 +173,7 @@ class PolizaMovimiento extends Model
 
     public function createLog($campo, $valor_original, $valor_modificado)
     {
-        $this->logs()->create([
+        LogEdicion::create([
             'id_poliza' => $this->IdPoliza,
             'id_campo' => $campo,
             'valor_original' => $valor_original,
@@ -186,13 +187,14 @@ class PolizaMovimiento extends Model
       return self::orderBy('Id', 'desc')->first()->Id + 1;
     }
 
-    public function getNuevoRowversionAttribute()
-    {
-
-    }
-
     public function getNuevoGuidAttribute()
     {
-        return Uuid::generate()->string;
+        return strtoupper(Uuid::generate()->string);
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->Fecha);
+        return date_format($date, "d/m/Y");
     }
 }

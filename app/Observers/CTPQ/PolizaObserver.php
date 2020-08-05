@@ -17,22 +17,29 @@ class PolizaObserver
     /**
      * @param Poliza $poliza
      */
-    public function updating(Poliza $poliza)
+    public function creating(Poliza $poliza)
     {
 
+    }
 
+    public function updating(Poliza $poliza)
+    {
+        $poliza->validarReglas();
     }
 
     public function updated(Poliza $poliza)
     {
-        $base_datos = config('database.connections.cntpq.database');
-        $empresa = Empresa::where("AliasBDD","=", $base_datos)->first();
         if($poliza->getOriginal("Concepto") !=  $poliza->Concepto){
             $poliza->createLog(1,$poliza->getOriginal("Concepto"), $poliza->Concepto);
         }
-        if($poliza->getOriginal("Fecha") != $poliza->Fecha) {
+        $date = date_create($poliza->getOriginal("Fecha"));
+        if(date_format($date, "d/m/Y") != $poliza->fecha_format) {
             $poliza->createLog(8,$poliza->getOriginal("Fecha"),$poliza->Fecha);
+        }
+        if($poliza->getOriginal("Ejercicio") != $poliza->Ejercicio) {
             $poliza->createLog(6, $poliza->getOriginal("Ejercicio"),$poliza->Ejercicio);
+        }
+        if($poliza->getOriginal("Periodo") != $poliza->Periodo) {
             $poliza->createLog(7,$poliza->getOriginal("Periodo"), $poliza->Periodo);
         }
         if($poliza->getOriginal("TipoPol") != $poliza->TipoPol) {

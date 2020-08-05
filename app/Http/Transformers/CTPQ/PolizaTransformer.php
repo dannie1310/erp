@@ -34,6 +34,7 @@ class PolizaTransformer extends TransformerAbstract
             'ejercicio' => (string) $model->Ejercicio,
             'periodo' => (string) $model->Periodo,
             'fecha' => (string) $model->fecha_format,
+            'fecha_completa' => $model->Fecha,
             'cargos' => (string) $model->cargos_format,
             'abonos' => (float) $model->Abonos,
             'tipo' => (string) $model->tipo_poliza->Nombre,

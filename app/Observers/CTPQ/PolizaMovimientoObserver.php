@@ -23,14 +23,10 @@ class PolizaMovimientoObserver
         $movimiento->Id = $movimiento->nuevo_id;
         $movimiento->TimeStamp = date('Y-m-d H:i:s');
         $movimiento->Guid = $movimiento->nuevo_guid;
-       // $movimiento->RowVersion = $movimiento->nuevo_rowversion;
         $movimiento->ImporteME = 0;
         $movimiento->IdDiario = 0;
         $movimiento->IdSegNeg = 0;
-    }
-
-    public function created(PolizaMovimiento $movimiento)
-    {
+        $movimiento->createLog(22,null, $movimiento->Id);
         $movimiento->createLog(2, null, $movimiento->Referencia);
         $movimiento->createLog(3, null, $movimiento->Concepto);
         $movimiento->createLog(4, null, $movimiento->NumMovto);
@@ -42,6 +38,7 @@ class PolizaMovimientoObserver
         $movimiento->createLog(18,null, $movimiento->TipoMovto);
         $movimiento->createLog(19,null, $movimiento->Importe);
         $movimiento->createLog(20,null, $movimiento->Fecha);
+        $movimiento->createLog(21,null, $movimiento->IdPoliza);
     }
 
     public function updated(PolizaMovimiento $movimiento)
@@ -95,5 +92,6 @@ class PolizaMovimientoObserver
         $movimiento->createLog(19,$movimiento->getOriginal("Importe"), null);
         $movimiento->createLog(20,$movimiento->getOriginal("Fecha"), null);
         $movimiento->createLog(21,$movimiento->getOriginal("IdPoliza"), null);
+        $movimiento->createLog(22,$movimiento->getOriginal("Id"), null);
     }
 }
