@@ -183,6 +183,7 @@ class Poliza extends Model
                 }
                 DB::connection('seguridad')->commit();
                 DB::connection('cntpq')->commit();
+                return $this;
             } catch (\Exception $e) {
                 DB::connection('seguridad')->rollBack();
                 DB::connection('cntpq')->rollBack();

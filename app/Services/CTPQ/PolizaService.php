@@ -93,15 +93,17 @@ class PolizaService
             if (isset($data['concepto']))
             {
                 if ($data['concepto'] != "") {
-                    $poliza = $poliza->where([['Concepto','like', '%'.strtoupper($data['concepto']).'%']]);
+                    $poliza = $poliza->where([['Concepto','like', '%'.$data['concepto'].'%']]);
                 }
             }
 
             if (isset($data['tipo'])) {
                 if($data['tipo'] != '') {
-                    $tipos = TipoPoliza::where('Nombre', 'like', '%'.ucfirst(request('tipo')).'%')->get();
-                    foreach ($tipos as $a) {
-                        $poliza = $poliza->whereOr([['TipoPol', '=', $a->Id]]);
+                    $tipo = TipoPoliza::where('Nombre', 'like', '%'.ucfirst(request('tipo')).'%')->first();
+                    if($tipo) {
+                        $poliza = $poliza->where([['TipoPol', '=', $tipo->Id]]);
+                    }else{
+                        $poliza = $poliza->where([['TipoPol', '=', 0]]);
                     }
                 }
             }
