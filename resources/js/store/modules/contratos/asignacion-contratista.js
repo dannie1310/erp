@@ -43,32 +43,6 @@ export default{
                     })
             });
         },
-        getContratos(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + 'getContratos', {params: payload.params})
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
-        },
-        getCotizaciones(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + payload.id + '/getCotizaciones', {params: payload.params})
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
-        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -80,6 +54,44 @@ export default{
                     .catch(error => {
                         reject(error)
                     })
+            });
+        },
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Asignación de Contratistas",
+                    text: "¿Está seguro/a de que desea registrar la asignación de contratistas?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Asignación de contratistas registrada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
             });
         },
     },

@@ -218,6 +218,19 @@ export default {
             this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_base - asignadas).toFixed(4);
 
         },
+        store() {
+            this.cargando = true;
+            return this.$store.dispatch('contratos/asignacion-contratista/store', {
+                id_contrato:this.id_contrato,
+                presupuestos:this.data.presupuestos
+            })
+            .then((data) => {
+                this.$router.push({name: 'asignacion-contratista'});
+            })
+            .finally(() => {
+                this.cargando = false;
+            })
+        },
         validate() {
             this.$validator.validate().then(result => {
                 if (result){
