@@ -682,13 +682,13 @@ export const routes = [
                 children: [
                     {
                         path: 'edit',
-                        name: 'proveedores-edit',
+                        name: 'proveedor-edit',
                         component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
                         meta: {
-                            title: 'Modificar Proveedor',
-                            breadcrumb: {name: 'MODIFICAR', parent: 'padron-proveedores'},
+                            title: 'Editar Proveedor',
+                            breadcrumb: {name: 'EDITAR', parent: 'padron-proveedores'},
                             middleware: [auth],
-                            permission: ['actualizar_expediente_proveedores'],
+                            permission: ['editar_expediente_proveedor'],
                             general: true
                         }
                     },
