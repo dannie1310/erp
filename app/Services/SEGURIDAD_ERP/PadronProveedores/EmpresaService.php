@@ -37,4 +37,9 @@ class EmpresaService
     {
         return $this->repository->paginate($data);
     }
+
+    public function store($data)
+    {
+        dd($data);
+    }
 }
