@@ -298,6 +298,17 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * PADRON PROVEEDORES
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'padron-proveedores'], function ($api) {
+        $api->group(['prefix' => 'empresa'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@store');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@paginate');
+        });
+    });
+
+    /**
      * CONFIGURACION
      */
     $api->group(['middleware' => 'api', 'prefix' => 'configuracion'], function ($api) {
