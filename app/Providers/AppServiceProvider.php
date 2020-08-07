@@ -133,6 +133,9 @@ use App\Models\SEGURIDAD_ERP\Fiscal\CFDNoDeducido;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoDeducido;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacion;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
@@ -263,6 +266,9 @@ use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\AutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDAutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
+use App\Observers\SEGURIDAD_ERP\PadronProveedores\ArchivoObserver;
+use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacionObserver;
+use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadoraObserver;
 use App\Observers\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSolicitanteObserver;
@@ -294,7 +300,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Diferencia::observe(DiferenciaObserver::class);
         /*
          * CTPQ
          * */
@@ -490,16 +495,22 @@ class AppServiceProvider extends ServiceProvider
              * ControlInterno
              */
             Incidencia::observe(IncidenciaObserver::class);
-
             /**
              * Fiscal
              */
             Autocorreccion::observe(AutocorreccionObserver::class);
             CFDAutocorreccion::observe(CFDAutocorreccionObserver::class);
             CFDNoDeducido::observe(CFDNoDeducidoObserver::class);
+            EFOS::observe(EFOSObserver::class);
             NoDeducido::observe(NoDeducidoObserver::class);
             ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
-
+            /**
+             *  PadronProveedores
+             */
+            Archivo::observe(ArchivoObserver::class);
+            EmpresaExcluidaDocumentacion::observe(EmpresaExcluidaDocumentacionObserver::class);
+            \App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa::observe(\App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaObserver::class);
+            EmpresaPrestadora::observe(EmpresaPrestadoraObserver::class);
             /**
              * PolizasCtpqIncidentes
              */
@@ -516,16 +527,6 @@ class AppServiceProvider extends ServiceProvider
         AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
         AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
         Rol::observe(RolObserver::class);
-        /*
-         * Contabilidad
-         * */
-        LogEdicion::observe(LogEdicionObserver::class);
-        CargaCFDSAT::observe(CargaCFDSATObserver::class);
-        SolicitudEdicion::observe(SolicitudEdicionObserver::class);
-
-        /*Fiscal*/
-
-        EFOS::observe(EFOSObserver::class);
     }
 
     /**
