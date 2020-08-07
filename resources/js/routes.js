@@ -670,9 +670,10 @@ export const routes = [
                 name: 'padron-proveedores',
                 component: require('./components/padron-proveedores/Index').default,
                 meta: {
-                    title: 'Padrón Proveedor',
-                    breadcrumb: {parent:'home', name: 'PADRÓN PROVEEDORES'},
+                    title: 'Padrón de Proveedores',
+                    breadcrumb: {parent:'home', name: 'PADRÓN DE PROVEEDORES'},
                     middleware: [auth, access],
+                    permission: ['consultar_expediente_proveedor'],
                     general: true
                 }
             },
@@ -680,6 +681,31 @@ export const routes = [
                 path: 'gestion-proveedores',
                 component: require('./components/padron-proveedores/gestion-proveedores/Layout').default,
                 children: [
+                    {
+                        path: '/',
+                        name: 'proveedores-index',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Index.vue').default,
+                        meta: {
+                            title: 'Listado de Proveedores',
+                            breadcrumb: {parent: 'padron-proveedores', name: 'PROVEEDORES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_expediente_proveedor',
+                            general: true,
+
+                        }
+                    },
+                    {
+                        path: 'iniciar-expediente',
+                        name: 'proveedores-iniciar-expediente',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Create').default,
+                        meta: {
+                            title: 'Iniciar Expediente de Proveedor',
+                            breadcrumb: {name: 'INICIAR EXPEDIENTE', parent: 'proveedores-index'},
+                            middleware: [auth],
+                            permission: ['iniciar_expediente_proveedor'],
+                            general: true
+                        }
+                    },
                     {
                         path: 'edit',
                         name: 'proveedor-edit',
