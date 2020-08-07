@@ -668,9 +668,9 @@ export const routes = [
             {
                 path: '',
                 name: 'padron-proveedores',
-                component: require('./components/padron-proveedores/Index').default,
+                // component: require('./components/padron-proveedores/Index').default,
                 meta: {
-                    title: 'Padrón Proveedor',
+                    title: 'PADRÓN PROVEEDORES',
                     breadcrumb: {parent:'home', name: 'PADRÓN PROVEEDORES'},
                     middleware: [auth, access],
                     general: true
@@ -681,14 +681,14 @@ export const routes = [
                 component: require('./components/padron-proveedores/gestion-proveedores/Layout').default,
                 children: [
                     {
-                        path: 'edit',
+                        path: ':id',
                         name: 'proveedores-edit',
                         component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
                         meta: {
-                            title: 'Modificar Proveedor',
+                            title: 'Modificar Documentación Proveedor',
                             breadcrumb: {name: 'MODIFICAR', parent: 'padron-proveedores'},
                             middleware: [auth],
-                            permission: ['actualizar_expediente_proveedores'],
+                            permission: ['actualizar_expediente_proveedor'],
                             general: true
                         }
                     },
