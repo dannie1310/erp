@@ -659,6 +659,44 @@ export const routes = [
         ]
     },
     {
+        path: '/padron-proveedores',
+        components:  {
+            default: require('./components/padron-proveedores/partials/Layout.vue').default,
+            menu: require('./components/padron-proveedores/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'padron-proveedores',
+                component: require('./components/padron-proveedores/Index').default,
+                meta: {
+                    title: 'Padrón Proveedor',
+                    breadcrumb: {parent:'home', name: 'PADRÓN PROVEEDORES'},
+                    middleware: [auth, access],
+                    general: true
+                }
+            },
+            {
+                path: 'gestion-proveedores',
+                component: require('./components/padron-proveedores/gestion-proveedores/Layout').default,
+                children: [
+                    {
+                        path: 'edit',
+                        name: 'proveedores-edit',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
+                        meta: {
+                            title: 'Modificar Proveedor',
+                            breadcrumb: {name: 'MODIFICAR', parent: 'padron-proveedores'},
+                            middleware: [auth],
+                            permission: ['actualizar_expediente_proveedores'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {
