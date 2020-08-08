@@ -1,21 +1,22 @@
 <template>
     <span>
         <nav>
-            <div class="row">
-                <div class="col-md-8">
-                <div class="form-group">
-                    <label><b>Razón Social:</b></label>
-                    Proveedor S.A.
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">Razón Social: </label>
+                        <div class="col-md-6">
+                            Proveedor S.A.
+                        </div>
+                        <label class="col-md-1 col-form-label">RFC: </label>
+                        <div class="col-md-3">
+                            PRTIUDASNSD
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label><b>RFC:</b></label>
-                    ABC010101XYZ
-                </div>
-            </div>
             </div>
         </nav>
+
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
                 <a aria-controls="nav-datos" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-datos"
@@ -36,11 +37,11 @@
             <div aria-labelledby="nav-documentacion-tab" class="tab-pane fade" id="nav-documentacion" role="tabpanel">
                 <TabGeneral v-bind:id="id"></TabGeneral>
             </div>
-            <div aria-labelledby="nav-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
-                <b>pandita</b>
-            </div>
-            <div aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-documentacion-prestadora" role="tabpanel">
+              <div aria-labelledby="nav-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
                 <DatosPrestadora></DatosPrestadora>
+            </div>
+            <div aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
+                <b>pandita</b>
             </div>
         </div>
     </span>
