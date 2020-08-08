@@ -40,7 +40,7 @@
               <div aria-labelledby="nav-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
                 <DatosPrestadora></DatosPrestadora>
             </div>
-            <div aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
+            <div aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-documentacion-prestadora" role="tabpanel">
                 <b>pandita</b>
             </div>
         </div>
