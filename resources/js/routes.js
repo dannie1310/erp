@@ -673,7 +673,7 @@ export const routes = [
                     title: 'PADRÓN PROVEEDORES',
                     breadcrumb: {parent:'home', name: 'PADRÓN PROVEEDORES'},
                     middleware: [auth, access],
-                    // permission: ['consultar_expediente_proveedor'],
+                    permission: ['consultar_expediente_proveedor'],
                     general: true
                 }
             },
@@ -690,7 +690,7 @@ export const routes = [
                             title: 'Listado de Proveedores',
                             breadcrumb: {parent: 'padron-proveedores', name: 'PROVEEDORES'},
                             middleware: [auth, permission],
-                            // permission: 'consultar_expediente_proveedor',
+                            permission: 'consultar_expediente_proveedor',
                             general: true,
 
                         }

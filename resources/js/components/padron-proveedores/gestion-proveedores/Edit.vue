@@ -4,19 +4,19 @@
             <div class="row">
                 <div class="col-md-8">
                 <div class="form-group">
-                    <label><b>Proveedor:</b></label>
+                    <label><b>Razón Social:</b></label>
                     Proveedor S.A.
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label><b>R.F.C.:</b></label>
+                    <label><b>RFC:</b></label>
                     ABC010101XYZ
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label><b>No. I.M.S.S.:</b></label>
+                    <label><b>Registró Patronal del IMSS:</b></label>
                     1234567890
                 </div>
             </div>
