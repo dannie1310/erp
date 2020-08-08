@@ -1,10 +1,10 @@
 <template>
-<label>Empresa prestadora</label>
+    <label>Empresa prestadora</label>
 </template>
 
 <script>
     export default {
-        name: "prestadora-edit"
+        name: "TabDatosPrestadora"
     }
 </script>
 

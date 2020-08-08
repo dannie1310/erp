@@ -682,7 +682,6 @@ export const routes = [
                 component: require('./components/padron-proveedores/gestion-proveedores/Layout').default,
                 children: [
                     {
-                        path: ':id',
                         path: '/',
                         name: 'proveedores-index',
                         component: require('./components/padron-proveedores/gestion-proveedores/Index.vue').default,
@@ -711,8 +710,8 @@ export const routes = [
                         name: 'proveedores-edit',
                         component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
                         meta: {
-                            title: 'Editar Proveedor',
-                            breadcrumb: {name: 'EDITAR', parent: 'padron-proveedores'},
+                            title: 'Editar Expediente Proveedor',
+                            breadcrumb: {name: 'EDITAR', parent: 'proveedores-index'},
                             middleware: [auth, permission],
                             permission: ['editar_expediente_proveedor'],
                             general: true

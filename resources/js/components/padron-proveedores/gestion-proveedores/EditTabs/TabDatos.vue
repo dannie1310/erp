@@ -29,7 +29,7 @@
 
 <script>
     export default {
-        name: "proveedor-edit"
+        name: "TabDatos"
     }
 </script>
 

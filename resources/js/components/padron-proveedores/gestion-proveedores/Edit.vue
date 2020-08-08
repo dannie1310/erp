@@ -18,41 +18,42 @@
         </nav>
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <a aria-controls="nav-home" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-home"
-                   id="nav-home-tab" role="tab">Datos Proveedor</a><!-- Perfilar  -->
-                <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
-                   href="#nav-profile" id="nav-profile-tab" role="tab">Datos Prestadora de Servicios</a>
-                 <a aria-controls="nav-info" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-info"
-                    id="nav-info-tab" role="tab">Documentación General</a>
-                    <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
-                       href="#nav-profile" id="nav-profile-tab" role="tab">Documentación de Nómina</a>
+                <a aria-controls="nav-datos" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-datos"
+                   id="nav-datos-tab" role="tab">Datos Proveedor</a>
+                <a aria-controls="nav-documentacion" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-documentacion"
+                    id="nav-documentacion-tab" role="tab">Documentación General</a>
+                <a aria-controls="nav-prestadora" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-prestadora"
+                   id="nav-prestadora-tab" role="tab">Datos Prestadora de Servicios</a>
+                <a aria-controls="nav-documentacion-prestadora" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-documentacion-prestadora"
+                   id="nav-documentacion-prestadora-tab" role="tab">Documentación de Prestadora de Servicios</a>
 
             </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">
-            <div aria-labelledby="nav-home-tab" class="tab-pane fade show active" id="nav-home" role="tabpanel">
-                <Proveedor></Proveedor>
+            <div aria-labelledby="nav-datos-tab" class="tab-pane fade show active" id="nav-datos" role="tabpanel">
+                <DatosGenerales></DatosGenerales>
             </div>
-            <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
-                <EmpresaPrestadora></EmpresaPrestadora>
+            <div aria-labelledby="nav-documentacion-tab" class="tab-pane fade" id="nav-documentacion" role="tabpanel">
+                <TabGeneral v-bind:id="id"></TabGeneral>
             </div>
-             <div aria-labelledby="nav-info-tab" class="tab-pane fade show active" id="nav-info" role="tabpanel">
-                    <TabGeneral v-bind:id="id"></TabGeneral>
-                </div>
-                <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
-                    <b>pandita</b>
-                </div>
+            <div aria-labelledby="nav-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
+                <b>pandita</b>
+            </div>
+            <div aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-documentacion-prestadora" role="tabpanel">
+                <DatosPrestadora></DatosPrestadora>
+            </div>
         </div>
     </span>
 </template>
 
 <script>
-    import Proveedor from "./proveedor/Edit";
-    import EmpresaPrestadora from './empresa-prestadora/Edit'
+    import DatosGenerales from "./EditTabs/TabDatos";
     import TabGeneral from './EditTabs/TabGeneral';
+    import DatosPrestadora from './EditTabs/TabDatosPrestadora'
+
     export default {
-        name: "proveedor-edit",
-        components: {Proveedor, EmpresaPrestadora,TabGeneral},
+        name: "proveedores-edit",
+        components: {DatosGenerales, DatosPrestadora,TabGeneral},
         props: ['id'],
         data() {
             return {
