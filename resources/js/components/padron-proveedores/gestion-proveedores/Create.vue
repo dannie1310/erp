@@ -47,7 +47,7 @@
                                style="text-transform:uppercase;"
                                name="numero_imss"
                                data-vv-as="'NSS'"
-                               v-model="registro_proveedor.numero_imss"
+                               v-model="registro_proveedor.no_imss"
                                :class="{'is-invalid': errors.has('numero_imss')}"
                                v-validate="{ required: true, numeric:true, min:11 }"
                                id="numero_imss"
@@ -64,7 +64,7 @@
                                style="text-transform:uppercase;"
                                name="contacto"
                                data-vv-as="'Contacto'"
-                               v-model="registro_proveedor.contacto"
+                               v-model="registro_proveedor.nombre_contacto"
                                :class="{'is-invalid': errors.has('contacto')}"
                                v-validate="{ required: true, min:10 }"
                                id="contacto"
@@ -99,7 +99,7 @@
                         <input class="form-control"
                                name="correo"
                                data-vv-as="'Correo'"
-                               v-model="registro_proveedor.correo"
+                               v-model="registro_proveedor.correo_electronico"
                                :class="{'is-invalid': errors.has('correo')}"
                                v-validate="{ required: true, email:true }"
                                id="correo"
@@ -166,17 +166,24 @@
         data() {
             return {
                 cargando: false,
+                giros : [],
+                especialidades: [],
                 registro_proveedor : {
                     razon_social : '',
                     rfc : '',
-                    numero_imss: '',
-                    contacto : '',
+                    no_imss: '',
+                    nombre_contacto : '',
                     telefono : '',
-                    correo : '',
+                    correo_electronico : '',
                     giro : '',
                     especialidad: '',
+                    id_giro : '',
+                    id_especialidad: '',
                 },
             }
+        },
+        mounted() {
+            this.getGiros();
         },
         methods:{
 
@@ -196,6 +203,28 @@
                         this.store()
                     }
                 });
+            },
+            getGiros() {
+                return this.$store.dispatch('padronProveedores/giro/index', {
+                    params: {sort: 'descripcion', order: 'asc'}
+                })
+                    .then(data => {
+                        this.giros = data.data;
+                    })
+                    .finally(()=>{
+                        this.getEspecialidades();
+                    })
+            },
+            getEspecialidades() {
+                return this.$store.dispatch('padronProveedores/especialidad/index', {
+                    params: {sort: 'descripcion', order: 'asc'}
+                })
+                    .then(data => {
+                        this.especialidades = data.data;
+                    })
+                    .finally(()=>{
+                        this.cargando = false;
+                    })
             },
         },
     }

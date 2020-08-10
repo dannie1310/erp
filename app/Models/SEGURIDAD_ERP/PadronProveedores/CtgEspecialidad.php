@@ -11,4 +11,7 @@ class CtgEspecialidad extends Model
     protected $connection = 'seguridad';
     protected $table = 'SEGURIDAD_ERP.PadronProveedores.ctg_especialidades';
     public $timestamps = false;
+    protected $fillable = [
+        'descripcion'
+    ];
 }
