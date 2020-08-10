@@ -9,7 +9,7 @@
                              <input class="form-control"
                                     name="razon"
                                     data-vv-as="RAZÓN SOCIAL"
-                                    v-model="razon"
+                                    v-model="empresa.razon_social"
                                     v-validate="{ required: true, max_value:234}"
                                     id="razon"
                                     :class="{'is-invalid': errors.has('razon')}"
@@ -25,7 +25,7 @@
                             <input class="form-control"
                                    name="rfc"
                                    data-vv-as="RFC"
-                                   v-model="rfc"
+                                   v-model="empresa.rfc"
                                    :class="{'is-invalid':rfcValidate}"
                                    v-validate="{ required: true, regex: /\.(js|ts)$/ }"
                                    id="rfc"
@@ -39,7 +39,7 @@
                             <input class="form-control"
                                    name="nss"
                                    data-vv-as="NSS"
-                                   v-model="nss"
+                                   v-model="empresa.nss"
                                    v-validate="{ required: true }"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
@@ -55,7 +55,7 @@
                             <input class="form-control"
                                    name="contacto"
                                    data-vv-as="CONTACTO"
-                                   v-model="contacto"
+                                   v-model="empresa.contacto"
                                    v-validate="{ required: true }"
                                    id="contacto"
                                    :class="{'is-invalid': errors.has('contacto')}"
@@ -69,7 +69,7 @@
                             <input class="form-control"
                                    name="telefono"
                                    data-vv-as="TELÉFONO"
-                                   v-model="telefono"
+                                   v-model="empresa.telefono"
                                    v-validate="{ required: true }"
                                    id="telefono"
                                    :class="{'is-invalid': errors.has('telefono')}"
@@ -85,7 +85,7 @@
                             <input class="form-control"
                                    name="correo"
                                    data-vv-as="CORREO"
-                                   v-model="correo"
+                                   v-model="empresa.correo"
                                    v-validate="{ required: true }"
                                    id="correo"
                                    :class="{'is-invalid': errors.has('correo')}"
@@ -99,7 +99,7 @@
                             <input class="form-control"
                                    name="giro"
                                    data-vv-as="GIRO"
-                                   v-model="giro"
+                                   v-model="empresa.giro.descripcion"
                                    v-validate="{ required: true }"
                                    id="giro"
                                    :class="{'is-invalid': errors.has('giro')}"
@@ -115,7 +115,7 @@
                             <input class="form-control"
                                    name="especialidad"
                                    data-vv-as="ESPECIALIDAD"
-                                   v-model="especialidad"
+                                   v-model="empresa.especialidad.descripcion"
                                    v-validate="{ required: true }"
                                    id="especialidad"
                                    :class="{'is-invalid': errors.has('especialidad')}"
@@ -139,6 +139,7 @@
         props: ['id'],
         data(){
             return{
+                empresa : [],
                 rfc : '',
                 razon : '',
                 nss : '',
@@ -148,7 +149,11 @@
                 giro:'',
                 especialidad : '',
                 rfcValidate: false,
+                cargando : true
             }
+        },
+        mounted(){
+            this.find();
         },
         methods: {
             invalidRFC() {
@@ -162,6 +167,17 @@
                     }
                 });
             },
+            find() {
+                this.$store.commit('padronProveedores/empresa/SET_EMPRESA', null);
+                return this.$store.dispatch('padronProveedores/empresa/find', {
+                    id: this.id,
+                    params: {include: ['tipo', 'giro', 'especialidad']}
+                }).then(data => {
+                    this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
+                    this.empresa = data;
+                    this.cargando = false;
+                })
+            }
         }
     }
 </script>

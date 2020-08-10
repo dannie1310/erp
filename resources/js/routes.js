@@ -709,6 +709,7 @@ export const routes = [
                         path: ':id',
                         name: 'proveedores-edit',
                         component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
+                        props: true,
                         meta: {
                             title: 'Editar Expediente Proveedor',
                             breadcrumb: {name: 'EDITAR', parent: 'proveedores-index'},

@@ -27,12 +27,11 @@
                    id="nav-prestadora-tab" role="tab">Datos Prestadora de Servicios</a>
                 <a aria-controls="nav-documentacion-prestadora" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-documentacion-prestadora"
                    id="nav-documentacion-prestadora-tab" role="tab">Documentación de Prestadora de Servicios</a>
-
             </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">
             <div aria-labelledby="nav-datos-tab" class="tab-pane fade show active" id="nav-datos" role="tabpanel">
-                <DatosGenerales></DatosGenerales>
+                <DatosGenerales v-bind:id="id"></DatosGenerales>
             </div>
             <div aria-labelledby="nav-documentacion-tab" class="tab-pane fade" id="nav-documentacion" role="tabpanel">
                 <TabGeneral v-bind:id="id"></TabGeneral>
