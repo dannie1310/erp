@@ -1,23 +1,23 @@
 <template>
     <span>
         <nav>
-            <div class="card">
+            <div class="card" v-if="empresa">
                 <div class="card-body">
                     <div class="form-group row">
                         <label class="col-md-2 col-form-label">Razón Social: </label>
-                        <div class="col-md-6">
-                            Proveedor S.A.
+                        <div class="col-md-6 col-form-label">
+                            {{empresa.razon_social}}
                         </div>
                         <label class="col-md-1 col-form-label">RFC: </label>
-                        <div class="col-md-3">
-                            PRTIUDASNSD
+                        <div class="col-md-3 col-form-label">
+                            {{empresa.rfc}}
                         </div>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <nav>
+        <nav v-if="empresa">
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
                 <a aria-controls="nav-datos" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-datos"
                    id="nav-datos-tab" role="tab">Datos Proveedor</a>
@@ -57,10 +57,25 @@
         props: ['id'],
         data() {
             return {
-                es: es,
                 cargando: false,
             }
         },
+        methods: {
+            find() {
+                this.$store.commit('padronProveedores/empresa/SET_EMPRESA', null);
+                return this.$store.dispatch('padronProveedores/empresa/find', {
+                    id: this.id
+                }).then(data => {
+                    this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
+                    this.cargando = false;
+                })
+            }
+        },
+        computed: {
+            empresa() {
+                return this.$store.getters['padronProveedores/empresa/currentEmpresa'];
+            }
+        }
     }
 </script>
 

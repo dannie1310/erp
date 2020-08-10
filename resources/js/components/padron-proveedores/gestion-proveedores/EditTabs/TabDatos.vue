@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card">
+        <div class="card" v-if="empresa">
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -140,14 +140,6 @@
         data(){
             return{
                 empresa : [],
-                rfc : '',
-                razon : '',
-                nss : '',
-                telefono : '',
-                contacto : '',
-                correo : '',
-                giro:'',
-                especialidad : '',
                 rfcValidate: false,
                 cargando : true
             }
