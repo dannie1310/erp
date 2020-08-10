@@ -11,4 +11,7 @@ class CtgGiro extends Model
     protected $connection = 'seguridad';
     protected $table = 'SEGURIDAD_ERP.PadronProveedores.ctg_giros';
     public $timestamps = false;
+    protected $fillable = [
+        'descripcion'
+    ];
 }
