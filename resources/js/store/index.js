@@ -112,6 +112,8 @@ import rubro from './modules/finanzas/rubro';
 
 //PADRON PROVEEDORES
 import empresaProveedor from './modules/padronProveedores/empresa';
+import giro from './modules/padronProveedores/giro';
+import especialidad from './modules/padronProveedores/especialidad';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -293,6 +295,8 @@ export default new Vuex.Store({
         'fiscal/no-deducido' : noDeducido,
 
         'padronProveedores/empresa' : empresaProveedor,
+        'padronProveedores/giro' : giro,
+        'padronProveedores/especialidad' : especialidad,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,
