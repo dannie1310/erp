@@ -43,4 +43,8 @@ class EmpresaController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function getDoctosGenerales($id){
+        return $this->service->getDoctosGenerales($id);
+    }
 }

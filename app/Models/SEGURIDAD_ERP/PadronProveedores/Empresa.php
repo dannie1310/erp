@@ -26,4 +26,8 @@ class Empresa extends Model
     {
         return $this->belongsTo(CtgTipoEmpresa::class, 'id_tipo_empresa','id');
     }
+
+    public function archivos(){
+        return $this->hasMany(Archivo::class, 'id_empresa', 'id')->orderBy('id_tipo_archivo', 'ASC');
+    }
 }

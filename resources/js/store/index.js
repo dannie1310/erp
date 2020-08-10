@@ -112,6 +112,7 @@ import rubro from './modules/finanzas/rubro';
 
 //PADRON PROVEEDORES
 import empresaProveedor from './modules/padronProveedores/empresa';
+import ctgSeccion from './modules/padronProveedores/ctg-seccion';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -293,6 +294,7 @@ export default new Vuex.Store({
         'fiscal/no-deducido' : noDeducido,
 
         'padronProveedores/empresa' : empresaProveedor,
+        'padronProveedores/ctg-seccion' : ctgSeccion,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,
