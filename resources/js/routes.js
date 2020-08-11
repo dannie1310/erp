@@ -659,6 +659,70 @@ export const routes = [
         ]
     },
     {
+        path: '/padron-proveedores',
+        components:  {
+            default: require('./components/padron-proveedores/partials/Layout.vue').default,
+            menu: require('./components/padron-proveedores/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'padron-proveedores',
+                component: require('./components/padron-proveedores/Index').default,
+                meta: {
+                    title: 'Padrón de Proveedores',
+                    breadcrumb: {parent:'home', name: 'PADRÓN DE PROVEEDORES'},
+                    middleware: [auth, access],
+                    permission: ['consultar_expediente_proveedor'],
+                    general: true
+                }
+            },
+            {
+                path: 'gestion-proveedores',
+                component: require('./components/padron-proveedores/gestion-proveedores/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'proveedores-index',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Index.vue').default,
+                        meta: {
+                            title: 'Listado de Proveedores',
+                            breadcrumb: {parent: 'padron-proveedores', name: 'PROVEEDORES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_expediente_proveedor',
+                            general: true,
+
+                        }
+                    },
+                    {
+                        path: 'iniciar-expediente',
+                        name: 'proveedores-iniciar-expediente',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Create').default,
+                        meta: {
+                            title: 'Iniciar Expediente de Proveedor',
+                            breadcrumb: {name: 'INICIAR EXPEDIENTE', parent: 'proveedores-index'},
+                            middleware: [auth],
+                            permission: ['iniciar_expediente_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'edit',
+                        name: 'proveedores-edit',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
+                        meta: {
+                            title: 'Modificar Proveedor',
+                            breadcrumb: {name: 'MODIFICAR', parent: 'padron-proveedores'},
+                            middleware: [auth],
+                            permission: ['actualizar_expediente_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {

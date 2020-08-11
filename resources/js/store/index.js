@@ -110,6 +110,11 @@ import tipoMovimiento from './modules/finanzas/tipo-movimiento';
 import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
 
+//PADRON PROVEEDORES
+import empresaProveedor from './modules/padronProveedores/empresa';
+import giro from './modules/padronProveedores/giro';
+import especialidad from './modules/padronProveedores/especialidad';
+
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import incidencia from './modules/seguridad/control-interno/incidencia'
@@ -288,6 +293,10 @@ export default new Vuex.Store({
         'fiscal/cfd-sat': CFDSAT,
         'fiscal/efos' : efos,
         'fiscal/no-deducido' : noDeducido,
+
+        'padronProveedores/empresa' : empresaProveedor,
+        'padronProveedores/giro' : giro,
+        'padronProveedores/especialidad' : especialidad,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,
