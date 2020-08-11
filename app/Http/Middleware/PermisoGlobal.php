@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
-class Permiso
+class PermisoGlobal
 {
     const DELIMITER = '|';
 
@@ -36,13 +36,9 @@ class Permiso
             $permisos = explode(self::DELIMITER, $permisos);
         }
 
-        if ($this->auth->guest() || !$request->user()->can($permisos, $requireAll)) {
+        if ($this->auth->guest() || !$request->user()->can($permisos, $requireAll, true)) {
             abort(403, 'No cuentas con los permisos necesarios para realizar la acción solicitada');
         }
-
-        app( Lectura::class )->handle( $request, function ($request) use ($next) {
-            return $next($request);
-        }, $permisos);
 
         if ($google_auth = \App\Models\SEGURIDAD_ERP\Permiso::query()->whereIn('name', $permisos)->where('requiere_autorizacion', '=', true)->first()) {
             return app(TwoFactorAuth::class)->handle($request, function ($request) use ($next) {

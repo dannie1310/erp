@@ -50,15 +50,14 @@ class Empresa extends Model
         return $this->hasManyThrough(Empresa::class, EmpresaPrestadora::class, 'id_empresa_proveedor', 'id', 'id', 'id_empresa_prestadora');
     }
 
-    public function registrar($data)
-    {
+    public function registrar($data){
         try {
             DB::connection('seguridad')->beginTransaction();
 
             $empresa = $this->create($data);
 
-            foreach ($data["archivos"] as $archivo) {
-                $empresa->archivos()->create(["id_tipo_archivo" => $archivo->id_tipo_archivo]);
+            foreach($data["archivos"] as $archivo){
+                $empresa->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
             }
 
             DB::connection('seguridad')->commit();
