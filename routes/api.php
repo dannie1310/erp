@@ -314,7 +314,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'ctg-seccion'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\CtgSeccionController@index');
         });
-        $api->group(['prefix' => 'gir'], function ($api){
+        $api->group(['prefix' => 'giro'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@store');
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@paginate');
