@@ -67,4 +67,9 @@ class EmpresaRepository extends Repository implements RepositoryInterface
              ->first();
          return $empresa;
      }
+
+    public function update(array $data, $id)
+    {
+        return $this->show($id)->editar($data);
+    }
 }

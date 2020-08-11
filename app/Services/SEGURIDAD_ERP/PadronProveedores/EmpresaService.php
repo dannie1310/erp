@@ -102,4 +102,20 @@ class EmpresaService
             }
         }
     }
+
+    public function update(array $data, $id)
+    {
+        dd($data);
+
+        $this->validaRFC($data["rfc"]);
+        $data["id_tipo_empresa"] = $this->getTipoEmpresa($data["rfc"]);
+        if (!is_numeric($data["id_giro"])) {
+            $data["id_giro"] = $this->getIdGiro($data["giro"]);
+        }
+        if (!is_numeric($data["id_especialidad"])) {
+            $data["id_especialidad"] = $this->getIdEspecialidad($data["especialidad"]);
+        }
+
+        return $this->repository->update($data, $id);
+    }
 }

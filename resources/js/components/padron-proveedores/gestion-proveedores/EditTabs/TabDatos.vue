@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="empresa">
+        <div class="card" v-if="!cargando">
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -10,7 +10,7 @@
                                     name="razon"
                                     data-vv-as="RAZÓN SOCIAL"
                                     v-model="empresa.razon_social"
-                                    v-validate="{ required: true, max_value:234}"
+                                    v-validate="{ required: true}"
                                     id="razon"
                                     :class="{'is-invalid': errors.has('razon')}"
                                     placeholder="RAZÓN SOCIAL" :maxlength="255"/>
@@ -24,13 +24,14 @@
                             <label for="rfc" class="col-form-label">RFC:</label>
                             <input class="form-control"
                                    name="rfc"
+                                   style="text-transform:uppercase;"
                                    data-vv-as="RFC"
                                    v-model="empresa.rfc"
-                                   :class="{'is-invalid':rfcValidate}"
-                                   v-validate="{ required: true, regex: /\.(js|ts)$/ }"
+                                   :class="{'is-invalid': errors.has('rfc')}"
+                                   v-validate="{ required: true, regex: /^([A-ZÑ&]{3,4})(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))([A-Z\d]{2})([A\d])$/ }"
                                    id="rfc"
-                                   placeholder="RFC" :maxlength="16"/>
-                            <span class="text-danger" v-if="rfcValidate">RFC Inválido</span>
+                                   placeholder="RFC sin espacios ni guiones" :maxlength="13"/>
+                            <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -96,10 +97,23 @@
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="giro" class="col-form-label">Giro:</label>
-                            <input class="form-control"
+                            <model-list-select
+                                name="giro"
+                                placeholder="Seleccionar o buscar por descripcion de giro"
+                                data-vv-as="Giro"
+                                v-model="empresa.giro.id"
+                                option-value="id"
+                                v-validate="{required: true}"
+                                :custom-text="giroDescripcion"
+                                :list="giros"
+                                :class="{'is-invalid': errors.has('giro')}">
+                             </model-list-select>
+                            <br>
+                            <input v-if="empresa.giro && empresa.giro.id == 'nuevo'"
+                                   class="form-control"
                                    name="giro"
                                    data-vv-as="GIRO"
-                                   v-model="empresa.giro.descripcion"
+                                   v-model="empresa.giro_nuevo"
                                    v-validate="{ required: true }"
                                    id="giro"
                                    :class="{'is-invalid': errors.has('giro')}"
@@ -112,10 +126,23 @@
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="especialidad" class="col-form-label">Especialidad:</label>
-                            <input class="form-control"
+                             <model-list-select
+                                 name="especialidad"
+                                 placeholder="Seleccionar o buscar por descripcion de especialidad"
+                                 data-vv-as="Especialidad"
+                                 v-model="empresa.especialidad.id"
+                                 option-value="id"
+                                 v-validate="{required: true}"
+                                 :custom-text="especialidadDescripcion"
+                                 :list="especialidades"
+                                 :class="{'is-invalid': errors.has('especialidad')}">
+                             </model-list-select>
+                            <br>
+                            <input v-if="empresa.especialidad && empresa.especialidad.id == 'nuevo'"
+                                   class="form-control"
                                    name="especialidad"
                                    data-vv-as="ESPECIALIDAD"
-                                   v-model="empresa.especialidad.descripcion"
+                                   v-model="empresa.especialidad_nuevo"
                                    v-validate="{ required: true }"
                                    id="especialidad"
                                    :class="{'is-invalid': errors.has('especialidad')}"
@@ -125,7 +152,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-info" :disabled="errors.count() > 0" @click="validate">Guardar</button>
+                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="validate">Guardar</button>
                 </div>
             </div>
         </div>
@@ -133,43 +160,91 @@
 </template>
 
 <script>
-    const rfcRegex =/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
+    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "TabDatos",
         props: ['id'],
+        components: {ModelListSelect},
         data(){
             return{
                 empresa : [],
+                giros : [],
+                especialidades : [],
                 rfcValidate: false,
                 cargando : true
             }
         },
         mounted(){
+            this.getGiros();
             this.find();
         },
         methods: {
-            invalidRFC() {
-                this.rfcValidate = true;
+            especialidadDescripcion (item) {
+                return `${item.descripcion}`
             },
-            validate() {
-                this.invalidRFC();
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        //this.update()
-                    }
-                });
+            giroDescripcion (item) {
+                return `${item.descripcion}`
             },
             find() {
-                this.$store.commit('padronProveedores/empresa/SET_EMPRESA', null);
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
                     params: {include: ['tipo', 'giro', 'especialidad']}
                 }).then(data => {
-                    this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.empresa = data;
-                    this.cargando = false;
                 })
-            }
+            },
+            getGiros() {
+                return this.$store.dispatch('padronProveedores/giro/index', {
+                    params: {sort: 'descripcion', order: 'asc'}
+                })
+                    .then(data => {
+                        data.data.push({
+                            'descripcion': 'Agregar...',
+                            'id': 'nuevo'
+                        });
+                        this.giros = data.data;
+                    }).finally(()=>{
+                        this.getEspecialidades();
+                    })
+            },
+            getEspecialidades() {
+                return this.$store.dispatch('padronProveedores/especialidad/index', {
+                    params: {sort: 'descripcion', order: 'asc'}
+                })
+                    .then(data => {
+                        data.data.push({
+                            'descripcion': 'Agregar...',
+                            'id': 'nuevo'
+                        });
+                        this.especialidades = data.data;
+                    }).finally(()=>{
+                        this.cargando=false;
+                    })
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.update()
+                    }
+                });
+            },
+            update() {
+                /*var datos = {
+                    'fecha_inicial' : this.estimacion.fecha_inicial,
+                    'fecha_final' : this.estimacion.fecha_final,
+                    'observaciones' : this.estimacion.observaciones,
+                    'partidas' : this.partidas
+                }*/
+                console.log(this.data.empresa)
+
+                return this.$store.dispatch('padronProveedores/empresa/update', {
+                    id: this.id,
+                    data: this.data.empresa
+                })
+                    .then((data) => {
+                        this.$router.push({name: 'proveedores-edit'});
+                    })
+            },
         }
     }
 </script>

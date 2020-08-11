@@ -63,4 +63,23 @@ class Empresa extends Model
             abort(400, $e->getMessage());
         }
     }
+
+    public function editar($data){
+        try {
+            DB::connection('seguridad')->beginTransaction();
+
+            $empresa = $this->create($data);
+
+            foreach($data["archivos"] as $archivo){
+                $empresa->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
+            }
+
+            DB::connection('seguridad')->commit();
+            return $empresa;
+
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
 }

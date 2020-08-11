@@ -60,6 +60,9 @@
                 cargando: false,
             }
         },
+        mounted(){
+            this.find();
+        },
         methods: {
             find() {
                 this.$store.commit('padronProveedores/empresa/SET_EMPRESA', null);
