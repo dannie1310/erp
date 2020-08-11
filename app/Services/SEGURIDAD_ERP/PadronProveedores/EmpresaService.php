@@ -4,6 +4,8 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgEstadoExpediente;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
 
@@ -35,6 +37,78 @@ class EmpresaService
 
     public function paginate($data)
     {
+
+        if (isset($data['razon_social'])) {
+            $this->repository->where([['razon_social', 'LIKE', '%' . $data['razon_social'] . '%']]);
+        }
+        if (isset($data['rfc'])) {
+            $this->repository->where([['rfc', 'LIKE', '%' . $data['rfc'] . '%']]);
+        }
+        if (isset($data['estado_expediente'])) {
+            $estados = CtgEstadoExpediente::query()->where([['descripcion', 'LIKE', '%'.$data['estado_expediente'].'%']])->get();
+            if(count($estados)>0){
+                foreach ($estados as $estado){
+                    $this->repository->whereOr([['id_estado_expediente', '=', $estado->id]]);
+                }
+            } else {
+                $this->repository->where([['rfc', '=', '666']]);
+            }
+
+        }
+        if (isset($data['avance_expediente'])) {
+            $avance_expediente = html_entity_decode($data["avance_expediente"]);
+            $empresas = Empresa::all();
+            foreach($empresas as $empresa){
+                if(is_numeric($avance_expediente)){
+                    if($empresa->porcentaje_avance_expediente == $avance_expediente){
+                        $this->repository->whereOr([['id', '=', $empresa->id]]);
+                    }
+                } else{
+                    if(strpos($avance_expediente,"!=")!==false){
+                        $diferente =str_replace("!=","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente != $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        if (isset($data['usuario_inicio'])) {
+            $usuarios = Usuario::query()->where([['usuario', 'LIKE', '%'.$data['usuario_inicio'].'%']])->get();
+            if(count($usuarios)>0){
+                foreach ($usuarios as $usuario){
+                    $this->repository->whereOr([['usuario_registro', '=', $usuario->idusuario]]);
+                }
+            } else {
+                $this->repository->where([['rfc', '=', '666']]);
+            }
+
+        }
+        /*if($data['sort'] == 'usuario_inicio'){
+            if (isset($data['usuario_inicio'])) {
+                $usuarios = Usuario::query()->empresaPadron(Empresa::all())->where([['usuario', 'LIKE', '%'.$data['usuario_inicio'].'%']])->orderBy('usuario',$data['order'])->get();
+            } else{
+                $usuarios = Usuario::query()->empresaPadron(Empresa::all())->orderBy('usuario',$data['order'])->get();
+            }
+
+            foreach ($usuarios as $usuario){
+                $this->repository->whereOr([['usuario_registro', '=', $usuario->idusuario]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }*/
+        /*if($data['sort'] == 'estado_expediente'){
+            $estados = CtgEstadoExpediente::query()->orderBy('descripcion',$data['order'])->get();
+
+            foreach ($estados as $estado){
+                $this->repository->whereOr([['id_estado_expediente', '=', $estado->id]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }*/
         return $this->repository->paginate($data);
     }
 
