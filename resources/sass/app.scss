@@ -59,11 +59,19 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
   min-width: 100px;
 }
 
-.th_money, th.money
+.th_money, th.money, .th_rfc, th.rfc, .th_c100, th.c100
 {
   width: 100px;
   max-width: 100px;
   min-width: 100px;
+  text-align: center;
+}
+
+.th_c150, th.c150
+{
+  width: 150px;
+  max-width: 150px;
+  min-width: 150px;
   text-align: center;
 }
 
@@ -109,6 +117,10 @@ td.no_parte, td_no_parte{
   width: 90px;
   max-width: 90px;
   min-width: 90px;
+}
+
+.center{
+  text-align: center;
 }
 
 th.referencia_input, td.referencia_input, .th_referencia_input, .td_referencia_input

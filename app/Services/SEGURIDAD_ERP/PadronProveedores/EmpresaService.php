@@ -4,6 +4,8 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgEstadoExpediente;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
 
@@ -35,6 +37,34 @@ class EmpresaService
 
     public function paginate($data)
     {
+        if (isset($data['razon_social'])) {
+            $this->repository->where([['razon_social', 'LIKE', '%' . $data['razon_social'] . '%']]);
+        }
+        if (isset($data['rfc'])) {
+            $this->repository->where([['rfc', 'LIKE', '%' . $data['rfc'] . '%']]);
+        }
+        if (isset($data['estado_expediente'])) {
+            $estados = CtgEstadoExpediente::query()->where([['descripcion', 'LIKE', '%'.$data['estado_expediente'].'%']])->get();
+            if(count($estados)>0){
+                foreach ($estados as $estado){
+                    $this->repository->whereOr([['id_estado_expediente', '=', $estado->id]]);
+                }
+            } else {
+                $this->repository->where([['rfc', '=', '666']]);
+            }
+
+        }
+        if (isset($data['usuario_inicio'])) {
+            $usuarios = Usuario::query()->where([['usuario', 'LIKE', '%'.$data['usuario_inicio'].'%']])->get();
+            if(count($usuarios)>0){
+                foreach ($usuarios as $usuario){
+                    $this->repository->whereOr([['usuario_registro', '=', $usuario->idusuario]]);
+                }
+            } else {
+                $this->repository->where([['rfc', '=', '666']]);
+            }
+
+        }
         return $this->repository->paginate($data);
     }
 
