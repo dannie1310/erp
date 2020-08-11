@@ -4,6 +4,7 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
 
@@ -117,5 +118,9 @@ class EmpresaService
         }
 
         return $this->repository->update($data, $id);
+    }
+
+    public function getDoctosGenerales($id){
+        dd('pandita', $this->repository->show($id)->archivos);
     }
 }

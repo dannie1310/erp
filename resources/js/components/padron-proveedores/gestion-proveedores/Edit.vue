@@ -34,7 +34,7 @@
                 <DatosGenerales v-bind:id="id"></DatosGenerales>
             </div>
             <div aria-labelledby="nav-documentacion-tab" class="tab-pane fade" id="nav-documentacion" role="tabpanel">
-                <TabGeneral v-bind:id="id"></TabGeneral>
+                <TabDocumentacion v-bind:id="id"></TabDocumentacion>
             </div>
               <div aria-labelledby="nav-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
                 <DatosPrestadora></DatosPrestadora>
@@ -48,12 +48,12 @@
 
 <script>
     import DatosGenerales from "./EditTabs/TabDatos";
-    import TabGeneral from './EditTabs/TabGeneral';
+    import TabDocumentacion from './EditTabs/TabDocumentacion';
     import DatosPrestadora from './EditTabs/TabDatosPrestadora'
 
     export default {
         name: "proveedores-edit",
-        components: {DatosGenerales, DatosPrestadora,TabGeneral},
+        components: {DatosGenerales, DatosPrestadora,TabDocumentacion},
         props: ['id'],
         data() {
             return {
