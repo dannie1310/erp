@@ -44,6 +44,7 @@ class EmpresaService
         if($empresa){
             return $empresa;
         }else {
+            $this->validaEFO($data["rfc"]);
 
             $this->validaRFC($data["rfc"]);
             $data["id_tipo_empresa"] = $this->getTipoEmpresa($data["rfc"]);
@@ -57,6 +58,21 @@ class EmpresaService
             $data["archivos"] = $this->getTiposArchivos($data["id_tipo_empresa"]);
 
             return $this->repository->store($data);
+        }
+    }
+
+    private function validaEFO($rfc)
+    {
+        $efo = $this->repository->getEFO($rfc);
+        if ($efo) {
+            if ($efo->estado == 0) {
+                abort(403, 'La empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            } else if ($efo->estado == 2) {
+                abort(403, 'La empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            }
+
         }
     }
 

@@ -9,6 +9,7 @@
 namespace App\Repositories\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgEspecialidad;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgGiro;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgTipoArchivo;
@@ -67,4 +68,11 @@ class EmpresaRepository extends Repository implements RepositoryInterface
              ->first();
          return $empresa;
      }
+    public function getEFO($rfc)
+    {
+        $efo = CtgEfos::where("rfc","=",$rfc)
+            ->first();
+        return $efo;
+    }
+
 }
