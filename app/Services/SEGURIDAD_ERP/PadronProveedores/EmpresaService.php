@@ -56,8 +56,18 @@ class EmpresaService
             }
 
             $data["archivos"] = $this->getTiposArchivos($data["id_tipo_empresa"]);
+            $this->generaDirectorios($data["rfc"]);
 
             return $this->repository->store($data);
+        }
+    }
+
+    private function generaDirectorios($rfc)
+    {
+        $dir = " uploads/padron_contratistas/" . $rfc;
+
+        if (!file_exists($dir) && !is_dir($dir)) {
+            mkdir($dir, 777, true);
         }
     }
 
