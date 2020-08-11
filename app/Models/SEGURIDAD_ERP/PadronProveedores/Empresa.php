@@ -45,6 +45,11 @@ class Empresa extends Model
         return $this->hasMany(Archivo::class, "id_empresa", "id");
     }
 
+    public function prestadora()
+    {
+        return $this->hasManyThrough(Empresa::class, EmpresaPrestadora::class, 'id_empresa_proveedor', 'id', 'id', 'id_empresa_prestadora');
+    }
+
     public function registrar($data)
     {
         try {

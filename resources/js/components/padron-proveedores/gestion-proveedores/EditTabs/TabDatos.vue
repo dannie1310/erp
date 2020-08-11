@@ -21,21 +21,6 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group error-content">
-                            <label for="rfc" class="col-form-label">RFC:</label>
-                            <input class="form-control"
-                                   name="rfc"
-                                   style="text-transform:uppercase;"
-                                   data-vv-as="RFC"
-                                   v-model="empresa.rfc"
-                                   :class="{'is-invalid': errors.has('rfc')}"
-                                   v-validate="{ required: true, regex: /^([A-ZÑ&]{3,4})(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))([A-Z\d]{2})([A\d])$/ }"
-                                   id="rfc"
-                                   placeholder="RFC sin espacios ni guiones" :maxlength="13"/>
-                            <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group error-content">
                             <label for="nss" class="col-form-label">NSS:</label>
                             <input class="form-control"
                                    name="nss"
@@ -48,8 +33,6 @@
                             <div class="invalid-feedback" v-show="errors.has('nss')">{{ errors.first('nss') }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="contacto" class="col-form-label">Contacto:</label>
@@ -64,6 +47,8 @@
                             <div class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="telefono" class="col-form-label">Teléfono:</label>
@@ -78,8 +63,6 @@
                             <div class="invalid-feedback" v-show="errors.has('telefono')">{{ errors.first('telefono') }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="correo" class="col-form-label">Correo:</label>
@@ -94,6 +77,8 @@
                             <div class="invalid-feedback" v-show="errors.has('correo')">{{ errors.first('correo') }}</div>
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="giro" class="col-form-label">Giro:</label>
@@ -121,8 +106,6 @@
                             <div class="invalid-feedback" v-show="errors.has('giro')">{{ errors.first('giro') }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="especialidad" class="col-form-label">Especialidad:</label>
@@ -165,11 +148,11 @@
         name: "TabDatos",
         props: ['id'],
         components: {ModelListSelect},
-        data(){
-            return{
-                empresa : [],
-                giros : [],
-                especialidades : [],
+        data() {
+            return {
+                empresa: [],
+                giros: [],
+                especialidades: [],
                 rfcValidate: false,
                 cargando : true
             }
@@ -188,7 +171,7 @@
             find() {
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['tipo', 'giro', 'especialidad']}
+                    params: {include: ['tipo', 'giro', 'especialidad', 'prestadora']}
                 }).then(data => {
                     this.empresa = data;
                 })
@@ -203,12 +186,12 @@
                             'id': 'nuevo'
                         });
                         this.giros = data.data;
-                    }).finally(()=>{
+                    }).finally(() => {
                         this.getEspecialidades();
                     })
             },
             getEspecialidades() {
-                this.cargando=true
+                this.cargando = true
                 return this.$store.dispatch('padronProveedores/especialidad/index', {
                     params: {sort: 'descripcion', order: 'asc'}
                 })
@@ -218,8 +201,8 @@
                             'id': 'nuevo'
                         });
                         this.especialidades = data.data;
-                    }).finally(()=>{
-                        this.cargando=false;
+                    }).finally(() => {
+                        this.cargando = false;
                     })
             },
             validate() {
@@ -235,10 +218,9 @@
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
                     data: this.$data.empresa
+                }).then((data) => {
+                    this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                 })
-                    .then((data) => {
-                        this.$router.push({name: 'proveedores-edit'});
-                    })
             },
         }
     }

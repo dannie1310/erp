@@ -16,7 +16,8 @@ class EmpresaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'giro',
         'especialidad',
-        'tipo'
+        'tipo',
+        'prestadora'
     ];
 
     public function transform(Empresa $model)
@@ -67,6 +68,19 @@ class EmpresaTransformer extends TransformerAbstract
         if($tipo = $model->tipo)
         {
             return $this->item($tipo, new TipoEmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includePrestadora(Empresa $model)
+    {
+        if($prestadora = $model->prestadora)
+        {
+            return $this->collection($prestadora, new EmpresaTransformer);
         }
         return null;
     }
