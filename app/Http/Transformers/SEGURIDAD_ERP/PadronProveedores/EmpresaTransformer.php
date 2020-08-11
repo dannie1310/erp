@@ -4,8 +4,9 @@
 namespace App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores;
 
 
-use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
 use League\Fractal\TransformerAbstract;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
+use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\ArchivoTransformer;
 
 class EmpresaTransformer extends TransformerAbstract
 {
@@ -16,7 +17,8 @@ class EmpresaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'giro',
         'especialidad',
-        'tipo'
+        'tipo',
+        'archivos'
     ];
 
     public function transform(Empresa $model)
@@ -69,5 +71,15 @@ class EmpresaTransformer extends TransformerAbstract
             return $this->item($tipo, new TipoEmpresaTransformer);
         }
         return null;
+    }
+
+    /**
+     *  @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeArchivos(Empresa $model){
+        if($archivos = $model->archivos){
+            return $this->collection($archivos, new ArchivoTransformer);
+        }
     }
 }

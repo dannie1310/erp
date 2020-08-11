@@ -171,7 +171,7 @@
                 this.$store.commit('padronProveedores/empresa/SET_EMPRESA', null);
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['tipo', 'giro', 'especialidad']}
+                    params: {include: ['tipo', 'giro', 'especialidad', 'archivos']}
                 }).then(data => {
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.empresa = data;
