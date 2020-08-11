@@ -37,22 +37,23 @@ class Empresa extends Model
 
     public function tipo()
     {
-        return $this->belongsTo(CtgTipoEmpresa::class, 'id_tipo_empresa','id');
+        return $this->belongsTo(CtgTipoEmpresa::class, 'id_tipo_empresa', 'id');
     }
 
     public function archivos()
     {
-        return $this->hasMany(Archivo::class,"id_empresa", "id");
+        return $this->hasMany(Archivo::class, "id_empresa", "id");
     }
 
-    public function registrar($data){
+    public function registrar($data)
+    {
         try {
             DB::connection('seguridad')->beginTransaction();
 
             $empresa = $this->create($data);
 
-            foreach($data["archivos"] as $archivo){
-                $empresa->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
+            foreach ($data["archivos"] as $archivo) {
+                $empresa->archivos()->create(["id_tipo_archivo" => $archivo->id_tipo_archivo]);
             }
 
             DB::connection('seguridad')->commit();
@@ -64,19 +65,21 @@ class Empresa extends Model
         }
     }
 
-    public function editar($data){
+    public function editar($data)
+    {
         try {
             DB::connection('seguridad')->beginTransaction();
-
-            $empresa = $this->create($data);
-
-            foreach($data["archivos"] as $archivo){
-                $empresa->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
-            }
-
+            $this->update([
+                'razon_social' => $data['razon_social'],
+                'no_imss' => $data['nss'],
+                'id_giro' => $data['id_giro'],
+                'id_especialidad' => $data['id_especialidad'],
+                'nombre_contacto' => $data['contacto'],
+                'telefono' => $data['telefono'],
+                'correo_electronico' => $data['correo']
+            ]);
             DB::connection('seguridad')->commit();
-            return $empresa;
-
+            return $this;
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());

@@ -208,6 +208,7 @@
                     })
             },
             getEspecialidades() {
+                this.cargando=true
                 return this.$store.dispatch('padronProveedores/especialidad/index', {
                     params: {sort: 'descripcion', order: 'asc'}
                 })
@@ -229,17 +230,11 @@
                 });
             },
             update() {
-                /*var datos = {
-                    'fecha_inicial' : this.estimacion.fecha_inicial,
-                    'fecha_final' : this.estimacion.fecha_final,
-                    'observaciones' : this.estimacion.observaciones,
-                    'partidas' : this.partidas
-                }*/
-                console.log(this.data.empresa)
-
+                this.empresa.razon_social = this.empresa.razon_social.toUpperCase();
+                this.empresa.rfc = this.empresa.rfc.toUpperCase();
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
-                    data: this.data.empresa
+                    data: this.$data.empresa
                 })
                     .then((data) => {
                         this.$router.push({name: 'proveedores-edit'});

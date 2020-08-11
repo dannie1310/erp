@@ -106,17 +106,16 @@ class EmpresaService
 
     public function update(array $data, $id)
     {
-        dd($data);
-
-        $this->validaRFC($data["rfc"]);
-        $data["id_tipo_empresa"] = $this->getTipoEmpresa($data["rfc"]);
-        if (!is_numeric($data["id_giro"])) {
-            $data["id_giro"] = $this->getIdGiro($data["giro"]);
+        if (!is_numeric($data['giro']['id'])) {
+            $data['id_giro'] = $this->getIdGiro($data['giro_nuevo']);
+        }else{
+            $data['id_giro'] = $data['giro']['id'];
         }
-        if (!is_numeric($data["id_especialidad"])) {
-            $data["id_especialidad"] = $this->getIdEspecialidad($data["especialidad"]);
+        if (!is_numeric($data['especialidad']['id'])) {
+            $data['id_especialidad'] = $this->getIdEspecialidad($data['especialidad_nuevo']);
+        }else{
+            $data['id_especialidad'] = $data['especialidad']['id'];
         }
-
         return $this->repository->update($data, $id);
     }
 
