@@ -109,4 +109,9 @@ class Cuenta extends Model
                 break;
         }
     }
+
+    public function scopeAfectableNumerico($query)
+    {
+        return $query->where('CtaMayor', 2)->where('Afectable', '!=', 0)->whereRaw('ISNUMERIC(Codigo) <> 0');
+    }
 }

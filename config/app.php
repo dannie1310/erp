@@ -181,6 +181,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Chumper\Zipper\ZipperServiceProvider::class,
+        Webpatser\Uuid\Uuid::class,
 
         /*
          * Package Service Providers...
@@ -200,7 +201,6 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\ContextServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
-
     ],
 
     /*
@@ -248,6 +248,7 @@ return [
         'Schema' => Illuminate\Support\Facades\Schema::class,
         'Session' => Illuminate\Support\Facades\Session::class,
         'Storage' => Illuminate\Support\Facades\Storage::class,
+        'Uuid' => Webpatser\Uuid\Uuid::class,
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
