@@ -69,7 +69,7 @@
                 this.$store.commit('padronProveedores/empresa/SET_EMPRESA', null);
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['prestadora']}
+                    params: {include: ['prestadora', 'archivos']}
                 }).then(data => {
                     if(data.prestadora.data.length > 0)
                     {
