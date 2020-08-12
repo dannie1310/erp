@@ -32,7 +32,12 @@ class EmpresaTransformer extends TransformerAbstract
             'contacto' => $model->nombre_contacto,
             'nss' => $model->no_imss,
             'telefono' => $model->telefono,
-            'correo' => $model->correo_electronico
+            'correo' => $model->correo_electronico,
+            'estado_expediente' => $model->estado_expediente->descripcion,
+            'avance_expediente' => $model->avance_expediente,
+            'archivos_esperados' => $model->no_archivos_esperados,
+            'archivos_cargados' => $model->no_archivos_cargados,
+            'usuario_inicio' => $model->usuario_inicio->usuario,
         ];
     }
 
