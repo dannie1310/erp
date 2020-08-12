@@ -214,6 +214,7 @@ export default {
             formData.append('archivo_nombre',  this.file_interbancario_name);
             formData.append('id_empresa',  this.id);
             formData.append('id_archivo',  this.archivo.id);
+            
         },
     },
     computed: {

@@ -171,7 +171,7 @@
             find() {
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['tipo', 'giro', 'especialidad', 'prestadora', 'archivos']}
+                    params: {include: ['tipo', 'giro', 'especialidad', 'prestadora']}
                 }).then(data => {
                     this.empresa = data;
                 })
