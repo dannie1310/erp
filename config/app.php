@@ -181,7 +181,6 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Chumper\Zipper\ZipperServiceProvider::class,
-        Webpatser\Uuid\Uuid::class,
 
         /*
          * Package Service Providers...

@@ -2,7 +2,7 @@
     <span>
         <div class="row" v-if="!cargando">
             <div class="col-12">
-                <form role="form" @submit.prevent="validate" v-if="poliza" class="detalle_poliza">
+                <form role="form" @submit.prevent="validate" v-if="!cargando && poliza" class="detalle_poliza">
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
@@ -111,9 +111,9 @@
                                 <th class="bg-gray-light">Concepto</th>
                                 <th class="bg-gray-light icono">
                                     <button type="button" class="btn btn-sm btn-outline-success" @click="agregar" :disabled="cargando">
-                                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                                <i class="fa fa-plus" v-else></i>
-                                                            </button>
+                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                        <i class="fa fa-plus" v-else></i>
+                                    </button>
                                 </th>
                             </tr>
                             </thead>
@@ -306,7 +306,6 @@
                     id_empresa: this.id_empresa,
                     params: {include: ['movimientos_poliza', 'tipo'], id_empresa: this.id_empresa}
                 }).then(data => {
-                    this.cargando = false
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
                 })
             },
@@ -346,6 +345,7 @@
                     params: {id_empresa: this.id_empresa}
                 })
                     .then(data => {
+                        this.cargando = false
                         this.tipos = data.data;
                     })
             },
