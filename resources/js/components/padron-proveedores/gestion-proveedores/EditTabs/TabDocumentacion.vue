@@ -214,7 +214,13 @@ export default {
             formData.append('archivo_nombre',  this.file_interbancario_name);
             formData.append('id_empresa',  this.id);
             formData.append('id_archivo',  this.archivo.id);
-            
+            return this.$store.dispatch('padronProveedores/archivo/update', {
+                id: this.archivo.id,
+                data: this.$data.empresa
+            }).then((data) => {
+                console.log(data);
+                // this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
+            })
         },
     },
     computed: {
