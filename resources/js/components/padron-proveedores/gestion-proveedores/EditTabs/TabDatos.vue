@@ -220,7 +220,7 @@
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
                     data: this.$data.empresa,
-                    params: {include: ['prestadora']}
+                    params: {include: ['prestadora', 'archivos']}
                 }).then((data) => {
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                 })
