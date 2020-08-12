@@ -78,7 +78,7 @@
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.cargando = false;
                 })
-            }
+            },
         },
         computed: {
             empresa() {

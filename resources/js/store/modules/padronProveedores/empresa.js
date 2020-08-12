@@ -17,17 +17,23 @@ export default {
             state.currentEmpresa = data;
         },
 
-        SET_CUENTA_EMPRESA(state, data) {
-            state.empresas.forEach(e => {
-                if(e.id == data.empresa.id) {
-                    e.cuentasEmpresa.data.push(data);
-                }
-            });
-        },
-
         SET_META(state, data) {
             state.meta = data;
-        }
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentEmpresa, data.attribute, data.value);
+        },
+
+        UPDATE_EMPRESA(state, data) {
+            state.empresas = state.empresas.map(e => {
+                if (e.id === data.id) {
+                    return Object.assign({}, e, data)
+                }
+                return e
+            })
+            state.currentEmpresa = data;
+        },
     },
 
     actions: {

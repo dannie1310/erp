@@ -9,8 +9,9 @@
                              <input class="form-control"
                                     name="razon"
                                     data-vv-as="RAZÓN SOCIAL"
+                                    style="text-transform:uppercase;"
                                     v-model="empresa.razon_social"
-                                    v-validate="{ required: true}"
+                                    v-validate="{ required: true, min:6, max:255}"
                                     id="razon"
                                     :class="{'is-invalid': errors.has('razon')}"
                                     placeholder="RAZÓN SOCIAL" :maxlength="255"/>
@@ -26,7 +27,7 @@
                                    name="nss"
                                    data-vv-as="NSS"
                                    v-model="empresa.nss"
-                                   v-validate="{ required: true }"
+                                   v-validate="{ required: true, numeric:true, min:11}"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
                                    placeholder="NSS"/>
@@ -71,7 +72,7 @@
                                    name="correo"
                                    data-vv-as="CORREO"
                                    v-model="empresa.correo"
-                                   v-validate="{ required: true }"
+                                   v-validate="{ required: true, email:true}"
                                    id="correo"
                                    :class="{'is-invalid': errors.has('correo')}"
                                    placeholder="CORREO"/>
@@ -218,7 +219,8 @@
                 this.empresa.rfc = this.empresa.rfc.toUpperCase();
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
-                    data: this.$data.empresa
+                    data: this.$data.empresa,
+                    params: {include: ['prestadora']}
                 }).then((data) => {
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                 })

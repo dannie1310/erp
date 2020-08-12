@@ -11,7 +11,7 @@
                                     data-vv-as="RAZÓN SOCIAL"
                                     style="text-transform:uppercase;"
                                     v-model="empresa.razon_social"
-                                    v-validate="{ required: true}"
+                                    v-validate="{ required: true, min:6, max:255}"
                                     id="razon"
                                     :class="{'is-invalid': errors.has('razon')}"
                                     placeholder="RAZÓN SOCIAL" :maxlength="255"/>
@@ -40,7 +40,7 @@
                                    name="nss"
                                    data-vv-as="NSS"
                                    v-model="empresa.nss"
-                                   v-validate="{ required: true }"
+                                   v-validate="{ required: true,numeric:true, min:11}"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
                                    placeholder="NSS"/>
