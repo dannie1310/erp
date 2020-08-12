@@ -175,7 +175,7 @@ class EmpresaService
 
     private function generaDirectorios($rfc)
     {
-        $dir = " uploads/padron_contratistas/" . $rfc;
+        $dir = "./uploads/padron_contratistas/" . $rfc;
 
         if (!file_exists($dir) && !is_dir($dir)) {
             mkdir($dir, 777, true);
