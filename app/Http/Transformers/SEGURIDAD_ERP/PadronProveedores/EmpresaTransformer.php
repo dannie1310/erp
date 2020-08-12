@@ -19,7 +19,7 @@ class EmpresaTransformer extends TransformerAbstract
         'especialidad',
         'tipo',
         'prestadora',
-        'proveedor'
+        'proveedor',
         'archivos'
     ];
 
