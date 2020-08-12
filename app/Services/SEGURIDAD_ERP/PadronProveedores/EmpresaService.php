@@ -205,6 +205,19 @@ class EmpresaService
     public function update(array $data, $id)
     {
         if(array_key_exists('rfc_prestadora', $data)){
+            $empresa = $this->repository->getEmpresaXRFC($data["rfc"]);
+            if($empresa->id_tipo_empresa != 3) {
+                abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+            }
+            if($empresa->id != $data['id'])
+            {
+                abort(500, "prueba");
+                return response()->json([
+                    'message' => 'prueba'], 500);
+
+                dd("a", $data['id']);
+            }
+            dd($data);
             $data['id_giro'] = null;
             $data['id_especialidad'] = null;
             $this->validaEFO($data["rfc"]);
@@ -232,10 +245,10 @@ class EmpresaService
     private function editarNombreDirectorioPrestadora($rfc_proveedor, $rfc_old, $rfc_new)
     {
         $dir = "./uploads/padron_contratistas/".$rfc_proveedor."/";
-        if (file_exists($dir.$rfc_old) && is_dir($dir.$rfc_old)) {
-            rename($dir . $rfc_old, $dir . $rfc_new);
-        }else{
+        if (!file_exists($dir.$rfc_old) && !is_dir($dir.$rfc_old)) {
             mkdir($dir.$rfc_new, 777, true);
+        }else{
+            rename($dir . $rfc_old, $dir . $rfc_new);
         }
     }
 }
