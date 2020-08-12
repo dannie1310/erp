@@ -58,10 +58,12 @@ class EmpresaService
         if (isset($data['avance_expediente'])) {
             $avance_expediente = html_entity_decode($data["avance_expediente"]);
             $empresas = Empresa::all();
+            $sin_coincidencias = true;
             foreach($empresas as $empresa){
                 if(is_numeric($avance_expediente)){
                     if($empresa->porcentaje_avance_expediente == $avance_expediente){
                         $this->repository->whereOr([['id', '=', $empresa->id]]);
+                        $sin_coincidencias = false;
                     }
                 } else{
                     if(strpos($avance_expediente,"!=")!==false){
@@ -69,11 +71,46 @@ class EmpresaService
                         if(is_numeric($diferente)){
                             if($empresa->porcentaje_avance_expediente != $diferente){
                                 $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,">=")!==false){
+                        $diferente =str_replace(">=","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente >= $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,">")!==false){
+                        $diferente =str_replace(">","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente > $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,"<=")!==false){
+                        $diferente =str_replace("<=","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente <= $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,"<")!==false){
+                        $diferente =str_replace("<","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente < $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
                             }
                         }
                     }
                 }
-
+            }
+            if($sin_coincidencias){
+                $this->repository->where([['rfc', '=', '666']]);
             }
         }
         if (isset($data['usuario_inicio'])) {

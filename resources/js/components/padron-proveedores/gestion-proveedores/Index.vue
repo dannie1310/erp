@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-12">
-                <button @click="create" v-if="$root.can('iniciar_expediente_proveedor',true)" class="btn btn-app btn-info float-right" :disabled="cargando">
+                <button @click="create" v-if="$root.can('iniciar_expediente_proveedor',true)" class="btn btn-app float-right" :disabled="cargando">
                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                     <i class="fa fa-folder-plus" v-else></i>
                     Iniciar Expediente
@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: { include: 'empresa', sort: 'razon_social', order: 'desc'},
+                query: { scope:['proveedores'], include: 'empresa', sort: 'razon_social', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -90,7 +90,7 @@
                             razon_social: entrada.razon_social,
                             rfc: entrada.rfc,
                             estado_expediente: entrada.estado_expediente,
-                            avance_expediente: entrada.avance_expediente,
+                            avance_expediente: entrada.porcentaje_avance_expediente +'% ('+ entrada.avance_expediente+')',
                             usuario_inicio: entrada.usuario_inicio,
                             buttons: $.extend({}, {
                                 show: true,

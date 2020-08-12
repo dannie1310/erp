@@ -59,6 +59,11 @@ class Empresa extends Model
         return $this->belongsTo(Usuario::class, "usuario_registro","idusuario" );
     }
 
+    public function scopeProveedores($query)
+    {
+        return $query->whereIn("id_tipo_empresa", [1,2]);
+    }
+
     public function getPorcentajeAvanceExpedienteAttribute()
     {
         return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,2,".","");
