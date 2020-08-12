@@ -111,8 +111,10 @@ import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
 
 //PADRON PROVEEDORES
-import empresaProveedor from './modules/padronProveedores/empresa';
 import ctgSeccion from './modules/padronProveedores/ctg-seccion';
+import empresaProveedor from './modules/padronProveedores/empresa';
+import especialidad from './modules/padronProveedores/especialidad';
+import giro from './modules/padronProveedores/giro';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -293,8 +295,10 @@ export default new Vuex.Store({
         'fiscal/efos' : efos,
         'fiscal/no-deducido' : noDeducido,
 
-        'padronProveedores/empresa' : empresaProveedor,
         'padronProveedores/ctg-seccion' : ctgSeccion,
+        'padronProveedores/empresa' : empresaProveedor,
+        'padronProveedores/especialidad' : especialidad,
+        'padronProveedores/giro' : giro,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

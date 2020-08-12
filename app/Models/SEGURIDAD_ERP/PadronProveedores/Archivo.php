@@ -14,6 +14,8 @@ class Archivo extends Model
     protected $table = 'SEGURIDAD_ERP.PadronProveedores.archivos';
     public $timestamps = false;
 
+    protected $fillable = ["id_tipo_archivo", "id_tipo_empresa"];
+
     public function ctgTipoArchivo(){
         return $this->belongsTo(CtgTipoArchivo::class, 'id_tipo_archivo', 'id');
     }
@@ -38,4 +40,5 @@ class Archivo extends Model
     public function getEstatusAttribute(){
         return $this->hash_file?'Completo':'Pendiente';
     }
+    
 }

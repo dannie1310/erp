@@ -171,11 +171,11 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
      *
      * @return bool
      */
-    public function can($permiso, $requireAll = false)
+    public function can($permiso, $requireAll = false, $global = false)
     {
         if (is_array($permiso)) {
             foreach ($permiso as $permName) {
-                $hasPerm = $this->can($permName);
+                $hasPerm = $this->can($permName, $requireAll, $global);
                 if ($hasPerm && !$requireAll) {
                     return true;
                 } elseif (!$hasPerm && $requireAll) {
@@ -187,14 +187,27 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
             // Return the value of $requireAll;
             return $requireAll;
         } else {
-            foreach ($this->roles as $rol) {
-                // Validate against the Permission table
-                foreach ($rol->permisos as $perm) {
-                    if (str_is($permiso, $perm->name)) {
-                        return true;
+            if($global){
+                foreach ($this->rolesSinContexto as $rol) {
+                    // Validate against the Permission table
+                    foreach ($rol->permisos as $perm) {
+                        if (str_is($permiso, $perm->name)) {
+                            return true;
+                        }
                     }
                 }
             }
+            else {
+                foreach ($this->roles as $rol) {
+                    // Validate against the Permission table
+                    foreach ($rol->permisos as $perm) {
+                        if (str_is($permiso, $perm->name)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
         }
         return false;
     }
