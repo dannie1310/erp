@@ -29,7 +29,7 @@
                    id="nav-documentacion-prestadora-tab" role="tab">Documentación de Prestadora de Servicios</a>
             </div>
         </nav>
-        <div class="tab-content" id="nav-tabContent">
+        <div class="tab-content" id="nav-tabContent" v-if="empresa">
             <div aria-labelledby="nav-datos-tab" class="tab-pane fade show active" id="nav-datos" role="tabpanel">
                 <DatosGenerales v-bind:id="id"></DatosGenerales>
             </div>
