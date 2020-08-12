@@ -56,6 +56,16 @@ class Empresa extends Model
         return $this->hasManyThrough(Empresa::class, EmpresaPrestadora::class, 'id_empresa_prestadora', 'id', 'id', 'id_empresa_proveedor');
     }
 
+    public function estado_expediente()
+    {
+        return $this->hasOne(CtgEstadoExpediente::class, "id","id_estado_expediente" );
+    }
+
+    public function usuario_inicio()
+    {
+        return $this->belongsTo(Usuario::class, "usuario_registro","idusuario" );
+    }
+
     public function registrar($data){
         try {
             DB::connection('seguridad')->beginTransaction();
@@ -97,16 +107,6 @@ class Empresa extends Model
         }
     }
 
-    public function estado_expediente()
-    {
-        return $this->hasOne(CtgEstadoExpediente::class, "id","id_estado_expediente" );
-    }
-
-    public function usuario_inicio()
-    {
-        return $this->belongsTo(Usuario::class, "usuario_registro","idusuario" );
-    }
-
     public function getAvanceExpedienteAttribute()
     {
        /*$cantidad_archivos = $this->archivos->count();
@@ -124,40 +124,10 @@ class Empresa extends Model
     {
         $cantidad_archivos = $this->archivos()->obligatorios()->cargados()->count();
         return $cantidad_archivos;
-    }
-
-    public function estado_expediente()
-    {
-        return $this->hasOne(CtgEstadoExpediente::class, "id","id_estado_expediente" );
-    }
-
-    public function usuario_inicio()
-    {
-        return $this->belongsTo(Usuario::class, "usuario_registro","idusuario" );
     }
 
     public function getPorcentajeAvanceExpedienteAttribute()
     {
         return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,2,".","");
-    }
-
-
-    public function getAvanceExpedienteAttribute()
-    {
-       /*$cantidad_archivos = $this->archivos->count();
-        $cantidad_archivos_cargados = $this->archivos()->cargados()->count();*/
-        return $this->no_archivos_cargados."/". $this->no_archivos_esperados;
-    }
-
-    public function getNoArchivosEsperadosAttribute()
-    {
-        $cantidad_archivos = $this->archivos()->obligatorios()->count();
-        return $cantidad_archivos;
-    }
-
-    public function getNoArchivosCargadosAttribute()
-    {
-        $cantidad_archivos = $this->archivos()->obligatorios()->cargados()->count();
-        return $cantidad_archivos;
     }
 }
