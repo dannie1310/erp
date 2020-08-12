@@ -153,7 +153,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id/editar',
+                        path: ':id',
                         name: 'poliza-contpaq-edit',
                         props: true,
                         component: require('./components/contabilidad-general/poliza/Edit').default,
