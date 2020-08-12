@@ -27,6 +27,7 @@ class ArchivoTransformer extends TransformerAbstract
             'registro' => $model->registro,
             'fecha_registro_format' => $model->fecha_registro_format,
             'nombre_archivo_format' => $model->nombre_archivo_format,
+            'nombre_archivo' => $model->nombre_archivo,
             'estatus' => $model->estatus,
             'seccion' => $model->ctgTipoArchivo->ctgSeccion->descripcion,
         ];

@@ -82,7 +82,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="archivo in empresa.archivos.data">
+                                    <tr v-for="archivo in archivos">
                                         <td :title="archivo.tipo_archivo_descripcion">{{archivo.tipo_archivo_descripcion_corta}}</td>
                                         <td>{{archivo.estatus}}</td>
                                         <td>{{archivo.seccion}}</td>
@@ -92,7 +92,7 @@
                                         <td>
                                             <div class="btn-group">
                                             <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"><i class="fa fa-upload"></i></button>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Ver"><i class="fa fa-eye"></i></button>
+                                            <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
                                             </div>
                                         </td>
                                     </tr>
@@ -135,7 +135,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                        <button @click="upload" type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                        <button @click="upload" type="button" class="btn btn-primary" data-dismiss="modal">Cargar</button>
                     </div>
                 </div>
             </div>
@@ -144,9 +144,11 @@
 </template>
 
 <script>
+import Documento from '../Documento';
 export default {
     name: "proveedor-edit-tab-general",
     props: ['id'],
+    components:{Documento},
     data(){
         return{
             documentos:[],
@@ -202,6 +204,7 @@ export default {
         },
         modalCarga(archivo){
             this.archivo = archivo;
+            this.$refs.cargar_file.value = '';
             this.file = null;
             this.file_name = '';
             $(this.$refs.modal).appendTo('body')
@@ -210,16 +213,19 @@ export default {
         upload(){
             this.cargando = true;
             var formData = new FormData();
-            formData.append('archivo',  this.file_interbancario);
-            formData.append('archivo_nombre',  this.file_interbancario_name);
+            formData.append('archivo',  this.file);
+            formData.append('archivo_nombre',  this.file_name);
             formData.append('id_empresa',  this.id);
+            formData.append('rfc',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
-            return this.$store.dispatch('padronProveedores/archivo/update', {
-                id: this.archivo.id,
-                data: this.$data.empresa
+            return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
+                data: formData,
+                config: {
+                        params: { _method: 'POST'}
+                    }
             }).then((data) => {
-                console.log(data);
-                // this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
+                // console.log(data);
+                this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
             })
         },
     },
@@ -227,6 +233,9 @@ export default {
         empresa(){
             return this.$store.getters['padronProveedores/empresa/currentEmpresa'];
         },
+        archivos(){
+            return this.$store.getters['padronProveedores/archivo/archivos'];
+        }
     }
 
 }

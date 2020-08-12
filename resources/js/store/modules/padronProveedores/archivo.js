@@ -19,11 +19,23 @@ export default {
 
         SET_META(state, data) {
             state.meta = data;
-        }
+        },
+
+        UPDATE_ARCHIVO(state, data) {
+            state.archivos = state.archivos.map(archivo => {
+                if (archivo.id === data.id) {
+                    return Object.assign({}, archivo, data)
+                }
+                return archivo
+            })
+            if (state.currentArchivo) {
+                state.currentArchivo = data
+            }
+        },
     },
 
     actions: {
-        update(context, payload) {
+        cargarArchivo(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
@@ -43,7 +55,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id, payload.data,{ params: payload.params } )
+                                .post(URI + 'cargarArchivo', payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Archivo del expediente actualizado correctamente", {

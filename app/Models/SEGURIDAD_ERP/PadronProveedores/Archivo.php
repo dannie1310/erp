@@ -25,16 +25,19 @@ class Archivo extends Model
     }
 
     public function getRegistroAttribute(){
-        return $this->usuarioRegsitro->nombre_completo;
+        return $this->usuarioRegsitro?$this->usuarioRegsitro->nombre_completo:'';
     }
 
     public function getFechaRegistroFormatAttribute(){
-        $date = date_create($this->fecha_hora_registro);
+        if($this->fecha_hora_registro){
+            $date = date_create($this->fecha_hora_registro);
         return date_format($date,"d/m/Y H:m");
+        }
+        return '';
     }
 
     public function getNombreArchivoFormatAttribute(){
-        return $this->nombre_archivo?$this->nombre_archivo . $this->extencion_archivo:'Pendiente';
+        return $this->nombre_archivo?$this->nombre_archivo:'Pendiente';
     }
 
     public function getEstatusAttribute(){

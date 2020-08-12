@@ -76,6 +76,7 @@
                         this.prestadora = true;
                     }
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
+                    this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', data.archivos.data);
                     this.cargando = false;
                 })
             }
