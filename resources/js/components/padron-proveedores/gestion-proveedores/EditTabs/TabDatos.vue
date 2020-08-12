@@ -53,10 +53,11 @@
                         <div class="form-group error-content">
                             <label for="telefono" class="col-form-label">Teléfono:</label>
                             <input class="form-control"
+                                   type="number"
                                    name="telefono"
                                    data-vv-as="TELÉFONO"
                                    v-model="empresa.telefono"
-                                   v-validate="{ required: true }"
+                                   v-validate="{ required: true, digits: 10}"
                                    id="telefono"
                                    :class="{'is-invalid': errors.has('telefono')}"
                                    placeholder="TELÉFONO"/>

@@ -98,7 +98,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar los datos del proveedor",
+                    text: "Actualizar los datos de la empresa",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -117,7 +117,7 @@ export default {
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("El proveedor actualizado correctamente", {
+                                    swal("Datos actualizados correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

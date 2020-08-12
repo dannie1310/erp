@@ -37,7 +37,7 @@
                 <TabDocumentacion v-bind:id="id"></TabDocumentacion>
             </div>
               <div v-if="prestadora" aria-labelledby="nav-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
-                <DatosPrestadora></DatosPrestadora>
+                <DatosPrestadora v-bind:prestadora="empresa.prestadora.data[0]"></DatosPrestadora>
             </div>
             <div v-if="prestadora" aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-documentacion-prestadora" role="tabpanel">
                 <b>pandita</b>

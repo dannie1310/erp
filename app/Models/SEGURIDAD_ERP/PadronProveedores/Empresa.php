@@ -50,6 +50,11 @@ class Empresa extends Model
         return $this->hasManyThrough(Empresa::class, EmpresaPrestadora::class, 'id_empresa_proveedor', 'id', 'id', 'id_empresa_prestadora');
     }
 
+    public function proveedor()
+    {
+        return $this->hasManyThrough(Empresa::class, EmpresaPrestadora::class, 'id_empresa_prestadora', 'id', 'id', 'id_empresa_proveedor');
+    }
+
     public function registrar($data){
         try {
             DB::connection('seguridad')->beginTransaction();
@@ -80,7 +85,8 @@ class Empresa extends Model
                 'id_especialidad' => $data['id_especialidad'],
                 'nombre_contacto' => $data['contacto'],
                 'telefono' => $data['telefono'],
-                'correo_electronico' => $data['correo']
+                'correo_electronico' => $data['correo'],
+                'rfc' => $data['rfc']
             ]);
             DB::connection('seguridad')->commit();
             return $this;
