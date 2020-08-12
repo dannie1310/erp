@@ -39,9 +39,14 @@ class EmpresaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('permisoGlobal:iniciar_expediente_proveedor')->only('store');
+        $this->middleware('permisoGlobal:editar_expediente_proveedor')->only('update');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function getDoctosGenerales($id){
+        return $this->service->getDoctosGenerales($id);
     }
 }

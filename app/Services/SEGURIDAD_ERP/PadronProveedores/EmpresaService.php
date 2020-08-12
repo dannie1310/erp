@@ -37,7 +37,6 @@ class EmpresaService
 
     public function paginate($data)
     {
-
         if (isset($data['razon_social'])) {
             $this->repository->where([['razon_social', 'LIKE', '%' . $data['razon_social'] . '%']]);
         }
@@ -200,6 +199,43 @@ class EmpresaService
             } catch (\Exception $e){
                 abort(500,"El RFC ingresado no es válido ante el SAT");
             }
+        }
+    }
+
+    public function update(array $data, $id)
+    {
+        if(array_key_exists('rfc_prestadora', $data)){
+            $data['id_giro'] = null;
+            $data['id_especialidad'] = null;
+            $this->validaEFO($data["rfc"]);
+            $this->validaRFC($data["rfc"]);
+            $this->editarNombreDirectorioPrestadora($data['proveedor']['data'][0]['rfc'],$data['rfc_prestadora'],$data["rfc"]);
+        }else {
+            if (!is_numeric($data['giro']['id'])) {
+                $data['id_giro'] = $this->getIdGiro($data['giro_nuevo']);
+            } else {
+                $data['id_giro'] = $data['giro']['id'];
+            }
+            if (!is_numeric($data['especialidad']['id'])) {
+                $data['id_especialidad'] = $this->getIdEspecialidad($data['especialidad_nuevo']);
+            } else {
+                $data['id_especialidad'] = $data['especialidad']['id'];
+            }
+        }
+        return $this->repository->update($data, $id);
+    }
+
+    public function getDoctosGenerales($id){
+        dd('pandita', $this->repository->show($id)->archivos);
+    }
+
+    private function editarNombreDirectorioPrestadora($rfc_proveedor, $rfc_old, $rfc_new)
+    {
+        $dir = "./uploads/padron_contratistas/".$rfc_proveedor."/";
+        if (file_exists($dir.$rfc_old) && is_dir($dir.$rfc_old)) {
+            rename($dir . $rfc_old, $dir . $rfc_new);
+        }else{
+            mkdir($dir.$rfc_new, 777, true);
         }
     }
 }

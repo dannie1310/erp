@@ -672,7 +672,7 @@ export const routes = [
                 meta: {
                     title: 'Padrón de Proveedores',
                     breadcrumb: {parent:'home', name: 'PADRÓN DE PROVEEDORES'},
-                    middleware: [auth, access],
+                    middleware: [auth, permission],
                     permission: ['consultar_expediente_proveedor'],
                     general: true
                 }
@@ -691,7 +691,6 @@ export const routes = [
                             middleware: [auth, permission],
                             permission: 'consultar_expediente_proveedor',
                             general: true,
-
                         }
                     },
                     {
@@ -701,20 +700,21 @@ export const routes = [
                         meta: {
                             title: 'Iniciar Expediente de Proveedor',
                             breadcrumb: {name: 'INICIAR EXPEDIENTE', parent: 'proveedores-index'},
-                            middleware: [auth],
+                            middleware: [auth, permission],
                             permission: ['iniciar_expediente_proveedor'],
                             general: true
                         }
                     },
                     {
-                        path: 'edit',
+                        path: ':id',
                         name: 'proveedores-edit',
                         component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
+                        props: true,
                         meta: {
-                            title: 'Modificar Proveedor',
-                            breadcrumb: {name: 'MODIFICAR', parent: 'padron-proveedores'},
-                            middleware: [auth],
-                            permission: ['actualizar_expediente_proveedor'],
+                            title: 'Editar Expediente Proveedor',
+                            breadcrumb: {name: 'EDITAR', parent: 'proveedores-index'},
+                            middleware: [auth, permission],
+                            permission: ['editar_expediente_proveedor'],
                             general: true
                         }
                     },
