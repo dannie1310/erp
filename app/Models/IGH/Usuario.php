@@ -146,6 +146,16 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $query->whereIn("idusuario",$arreglo_usuarios);
     }
 
+    public function scopeEmpresaPadron($query, $empresas_padron){
+        $arreglo_usuarios = [];
+        foreach($empresas_padron as $empresa)
+        {
+            $arreglo_usuarios[] = $empresa->usuario_registro;
+        }
+        $arreglo_usuarios = array_unique($arreglo_usuarios);
+        return $query->whereIn("idusuario",$arreglo_usuarios);
+    }
+
     public function scopeSuscripcion($query, $suscripciones, $id_usuario=null){
         $arreglo_usuarios = [[$id_usuario]];
         foreach($suscripciones as $suscripcion)

@@ -11,16 +11,15 @@
 <script>
     import PDF from '../FormatoEntradaAlmacen';
     import Show from "../Show";
-    import Edit from "../Edit";
     export default {
         name: "ActionButtons",
-        components: {Edit, PDF, Show},
+        components: {PDF, Show},
         props: ['value'],
         methods: {
             edit() {
                 this.$router.push({name: 'proveedores-edit', params: {id: this.value.id}});
             }
-    }
+        }
     }
 </script>
 

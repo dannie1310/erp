@@ -33,9 +33,9 @@
                     { title: '#', field: 'index', thClass:'th_index', sortable: false },
                     { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'RFC', field: 'rfc', thClass:'th_rfc', tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Usuario Inicio',  field: 'usuario_inicio', thClass:'th_c150', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Estado Expediente',  field: 'estado_expediente', thClass:'th_c150', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Avance Expediente', field: 'avance_expediente', tdClass:'center', thClass:'th_c150', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Usuario Inicio',  field: 'usuario_inicio', thClass:'th_c150', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Estado Expediente',  field: 'estado_expediente', thClass:'th_c150', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Avance Expediente', field: 'avance_expediente', tdClass:'center', thClass:'th_c150', sortable: false, thComp: require('../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons', thClass:'th_c100', tdClass:'center',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],

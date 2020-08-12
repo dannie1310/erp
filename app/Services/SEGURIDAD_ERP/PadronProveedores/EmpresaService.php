@@ -54,6 +54,27 @@ class EmpresaService
             }
 
         }
+        if (isset($data['avance_expediente'])) {
+            $avance_expediente = html_entity_decode($data["avance_expediente"]);
+            $empresas = Empresa::all();
+            foreach($empresas as $empresa){
+                if(is_numeric($avance_expediente)){
+                    if($empresa->porcentaje_avance_expediente == $avance_expediente){
+                        $this->repository->whereOr([['id', '=', $empresa->id]]);
+                    }
+                } else{
+                    if(strpos($avance_expediente,"!=")!==false){
+                        $diferente =str_replace("!=","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente != $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
         if (isset($data['usuario_inicio'])) {
             $usuarios = Usuario::query()->where([['usuario', 'LIKE', '%'.$data['usuario_inicio'].'%']])->get();
             if(count($usuarios)>0){
@@ -65,6 +86,28 @@ class EmpresaService
             }
 
         }
+        /*if($data['sort'] == 'usuario_inicio'){
+            if (isset($data['usuario_inicio'])) {
+                $usuarios = Usuario::query()->empresaPadron(Empresa::all())->where([['usuario', 'LIKE', '%'.$data['usuario_inicio'].'%']])->orderBy('usuario',$data['order'])->get();
+            } else{
+                $usuarios = Usuario::query()->empresaPadron(Empresa::all())->orderBy('usuario',$data['order'])->get();
+            }
+
+            foreach ($usuarios as $usuario){
+                $this->repository->whereOr([['usuario_registro', '=', $usuario->idusuario]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }*/
+        /*if($data['sort'] == 'estado_expediente'){
+            $estados = CtgEstadoExpediente::query()->orderBy('descripcion',$data['order'])->get();
+
+            foreach ($estados as $estado){
+                $this->repository->whereOr([['id_estado_expediente', '=', $estado->id]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }*/
         return $this->repository->paginate($data);
     }
 
