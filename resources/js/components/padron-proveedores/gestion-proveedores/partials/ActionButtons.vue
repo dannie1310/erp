@@ -1,12 +1,12 @@
 <template>
     <div class="btn-group">
-        <button v-if="value.edit" @click="edit" type="button" class="btn btn-sm btn-outline-secondary" title="Show">
+        <button v-if="value.show" @click="entrar_a_expediente" type="button" class="btn btn-sm btn-outline-secondary" title="Entrar a expediente de proveedor">
             <i class="fa fa-folder-open"></i>
         </button>
-        <button v-else @click="show" type="button" class="btn btn-sm btn-outline-secondary" title="Show">
+        <button v-else @click="show" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Informe de Expediente">
             <i class="fa fa-folder-open"></i>
         </button>
-        <PDF v-bind:id="value.id" @click="value.id"  v-if="$root.can('consultar_entrada_almacen')"></PDF>
+        <PDF v-bind:id="value.id" @click="value.id"  v-if="$root.can('consultar_expediente_proveedor_')"></PDF>
     </div>
 </template>
 
@@ -17,8 +17,8 @@
         components: {PDF},
         props: ['value'],
         methods: {
-            edit() {
-                this.$router.push({name: 'proveedores-edit', params: {id: this.value.id}});
+            entrar_a_expediente() {
+                this.$router.push({name: 'entrar-a-expediente', params: {id: this.value.id}});
             },
             show() {
                 //this.$router.push({name: 'proveedores-show', params: {id: this.value.id}});
