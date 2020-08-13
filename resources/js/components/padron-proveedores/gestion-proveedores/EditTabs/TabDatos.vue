@@ -137,7 +137,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate" v-if="$root.can('consultar_expediente_proveedor_')"><i class="fa fa-save"></i> Guardar</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate" v-if="$root.can('editar_expediente_proveedor', true)"><i class="fa fa-save"></i> Guardar</button>
                 </div>
             </div>
         </div>
