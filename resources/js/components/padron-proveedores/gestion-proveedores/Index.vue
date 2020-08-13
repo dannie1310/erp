@@ -48,7 +48,7 @@
                     { title: 'RFC', field: 'rfc', thClass:'th_rfc', tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Usuario Inicio',  field: 'usuario_inicio', thClass:'th_c250', sortable: false, thComp: require('../../globals/th-Filter').default},
                     { title: 'Estado Expediente',  field: 'estado_expediente', thClass:'th_c150', sortable: false, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Avance Expediente', field: 'avance_expediente', tdClass:'center', thClass:'th_c150', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Avance Expediente', field: 'avance_expediente', tdClass:'center', thClass:'th_c150', sortable: false, tdComp: require('../../globals/ProgressBar').default, thComp: require('../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons', thClass:'th_c100', tdClass:'center',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
@@ -124,8 +124,15 @@
                             razon_social: entrada.razon_social,
                             rfc: entrada.rfc,
                             estado_expediente: entrada.estado_expediente,
-                            avance_expediente: entrada.porcentaje_avance_expediente +'% ('+ entrada.avance_expediente+')',
+                            avance_expediente: $.extend({}, {
+                                porcentaje_avance: entrada.porcentaje_avance_expediente,
+                                divisor: entrada.archivos_cargados,
+                                dividendo: entrada.archivos_esperados,
+                                color: entrada.color_barra,
+                                pagina: self.query.offset,
+                            }),
                             usuario_inicio: entrada.usuario_inicio,
+                            porcentaje_avance: entrada.porcentaje_avance_expediente,
                             buttons: $.extend({}, {
                                 show: true,
                                 id: entrada.id,

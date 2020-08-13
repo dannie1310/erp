@@ -29,6 +29,7 @@ class EmpresaTransformer extends TransformerAbstract
             'archivos_cargados' => $model->no_archivos_cargados,
             'porcentaje_avance_expediente' => $model->porcentaje_avance_expediente,
             'usuario_inicio' => $model->usuario_inicio->nombre_completo,
+            'color_barra' => $model->color_barra,
         ];
     }
 }
