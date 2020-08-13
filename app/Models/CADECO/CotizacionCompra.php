@@ -76,7 +76,7 @@ class CotizacionCompra  extends Transaccion
 
     public function asignacionPartida()
     {
-        return $this->hasOne(AsignacionProveedorPartida::class, 'id_transaccion_cotizacion', 'id_transaccion');
+        return $this->hasMany(AsignacionProveedorPartida::class, 'id_transaccion_cotizacion', 'id_transaccion');
     }
 
     public function empresa()

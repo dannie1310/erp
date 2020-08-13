@@ -24,7 +24,7 @@ class BusquedaDiferenciasPolizas
     protected $id_busqueda;
     protected $relaciones_movimientos;
 
-    public function __construct($relaciones, Busqueda $busqueda) {
+    public function __construct($relaciones, Busqueda $busqueda = null) {
 
         $this->relacion = $relaciones["relacion_poliza"];
         if(key_exists("relaciones_movimientos",$relaciones)) {
@@ -32,8 +32,10 @@ class BusquedaDiferenciasPolizas
         } else {
             $this->relaciones_movimientos =[];
         }
+        if($busqueda){
+            $this->id_busqueda = $busqueda->id;
+        }
 
-        $this->id_busqueda = $busqueda->id;
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $this->relacion->base_datos_a);
         $this->poliza_a = Poliza::find($this->relacion->id_poliza_a);
@@ -98,7 +100,7 @@ class BusquedaDiferenciasPolizas
 
     private function buscaDiferenciaSumaImportesPoliza()
     {
-        if($this->poliza_a->Cargos != $this->poliza_b->Abonos)
+        if(abs($this->poliza_a->Cargos - $this->poliza_b->Abonos) > 0.99)
         {
             $datos_diferencia = $this->getInformacionDiferencia();
             $datos_diferencia["id_tipo"] = 3;
@@ -145,46 +147,37 @@ class BusquedaDiferenciasPolizas
             $datos_diferencia["id_tipo"] = 4;
             Diferencia::corregir($datos_diferencia, $this->id_busqueda);
             return false;
-            /*$datos_diferencia = $this->getInformacionDiferencia();
-            $datos_diferencia["id_tipo"] = 4;
-            $diferencia_prexistente = Diferencia::buscarSO($datos_diferencia);
-            if($diferencia_prexistente){
-                $diferencia_prexistente->corregir($this->id_busqueda);
-            }*/
         }
     }
 
     private function buscaDiferenciaOrdenMovimientosPoliza()
     {
-        $arreglo_codigos_a = [];
-        $arreglo_tipos_a = [];
-        $arreglo_importes_a = [];
-
-        $arreglo_codigos_b = [];
-        $arreglo_tipos_b = [];
-        $arreglo_importes_b = [];
-
         $cadena_a = "";
         $cadena_a_ordenada = "";
         $cadena_b = "";
         $cadena_b_ordenada = "";
 
+        $arreglo_registros_a = [];
+        $arreglo_registros_b = [];
 
         $i = 0;
         foreach($this->relaciones_movimientos as $relacion_movimiento){
             $codigos = $this->igualaLongitudCodigos($relacion_movimiento->codigo_cuenta_a, $relacion_movimiento->codigo_cuenta_b);
-            $arreglo_codigos_a[$i] = $codigos["codigo_a"];
-            $arreglo_codigos_b[$i] = $codigos["codigo_b"];
 
-            $arreglo_tipos_a[$i] = $relacion_movimiento->tipo_movto_a;
-            $arreglo_tipos_b[$i] = $relacion_movimiento->tipo_movto_b;
+            $arreglo_registros_a[$i]["codigo"] = $codigos["codigo_a"];
+            $arreglo_registros_a[$i]["tipo"] = $relacion_movimiento->tipo_movto_a;
+            $arreglo_registros_a[$i]["importe"] =  $relacion_movimiento->importe_a;
 
-            $arreglo_importes_a[$i] = $relacion_movimiento->importe_a;
-            $arreglo_importes_b[$i] = $relacion_movimiento->importe_b;
+            $arreglo_registros_b[$i]["codigo"] = $codigos["codigo_b"];
+            $arreglo_registros_b[$i]["tipo"] = $relacion_movimiento->tipo_movto_b;
+            $arreglo_registros_b[$i]["importe"] =  $relacion_movimiento->importe_b;
+
             $cadena_a .= $codigos["codigo_a"] . $relacion_movimiento->tipo_movto_a . $relacion_movimiento->importe_a;
-            $cadena_b .= $codigos["codigo_b"] . $relacion_movimiento->tipo_movto_b. $relacion_movimiento->importe_b;
+            $cadena_b .= $codigos["codigo_b"] . $relacion_movimiento->tipo_movto_b . $relacion_movimiento->importe_b;
+
             $i++;
         }
+
         $md5_a = md5($cadena_a);
         $md5_b = md5($cadena_b);
         if($md5_a == $md5_b){
@@ -194,16 +187,23 @@ class BusquedaDiferenciasPolizas
             return false;
 
         } else {
-            sort($arreglo_codigos_a);
-            sort($arreglo_codigos_b);
-            sort($arreglo_tipos_a);
-            sort($arreglo_tipos_b);
-            sort($arreglo_importes_a);
-            sort($arreglo_importes_b);
+
+            $orden1 = array_column($arreglo_registros_a, 'codigo');
+            $orden2 = array_column($arreglo_registros_a, 'tipo');
+            $orden3 = array_column($arreglo_registros_a, 'importe');
+
+            array_multisort($orden1, SORT_ASC, $orden2, SORT_ASC, $orden3, SORT_ASC, $arreglo_registros_a);
+
+            $orden1 = array_column($arreglo_registros_b, 'codigo');
+            $orden2 = array_column($arreglo_registros_b, 'tipo');
+            $orden3 = array_column($arreglo_registros_b, 'importe');
+
+            array_multisort($orden1, SORT_ASC, $orden2, SORT_ASC, $orden3, SORT_ASC, $arreglo_registros_b);
+
             for($j=0; $j<$i; $j++){
                 try{
-                    $cadena_a_ordenada .= $arreglo_codigos_a[$j] . $arreglo_tipos_a[$j] . $arreglo_importes_a[$j];
-                    $cadena_b_ordenada .= $arreglo_codigos_b[$j] . $arreglo_tipos_b[$j] . $arreglo_importes_b[$j];
+                    $cadena_a_ordenada .= $arreglo_registros_a[$j]["codigo"] . $arreglo_registros_a[$j]["tipo"] . $arreglo_registros_a[$j]["importe"];
+                    $cadena_b_ordenada .= $arreglo_registros_b[$j]["codigo"] . $arreglo_registros_b[$j]["tipo"] . $arreglo_registros_b[$j]["importe"];
                 } catch (\Exception $e)
                 {
                     //dd($i, $arreglo_codigos_a, $arreglo_codigos_b, $arreglo_tipos_a,$arreglo_tipos_b,$arreglo_importes_a,$arreglo_importes_b);

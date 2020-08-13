@@ -302,7 +302,7 @@ class AsignacionFormato extends Rotation
                             ->where('id_asignacion_proveedores', '=', $this->asignacion->id)->first();
 
                         $this->Cell($anchos["pu"], $heigth, number_format($partida_cotizacion->total_precio_moneda, 2, '.', ','), "B L R T", 0, "R", 1);
-                        $this->Cell($anchos["pu"], $heigth, $asignacion_partida ? $asignacion_partida->cantidad_asignada : '-', "B L R T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, $asignacion_partida ? number_format($asignacion_partida->cantidad_asignada,2, '.', ',')  : '-', "B L R T", 0, "R", 1);
                         $this->Cell($anchos["pu"], $heigth, $asignacion_partida ? number_format($asignacion_partida->total_precio_moneda, 2, '.', ',') : '-', "B L R T", 0, "R", 1);
                         if($asignacion_partida) {
                             $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['porMoneda'][$partida_cotizacion->id_moneda][$key] = ($asignacion_partida->total_precio_moneda);
@@ -665,7 +665,7 @@ class AsignacionFormato extends Rotation
             $this->SetFillColor(255, 255, 255);
             $this->SetTextColor(0, 0, 0);
             $this->Cell(($anchos["espacio_detalles_globales"]/2), $heigth, "PESO MXP", 1, 0, 'C', 1);
-            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($this->asignacion->suma_subtotal_partidas, 3, ".", ","), 1, 0, 'R', 1);
+            $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($this->asignacion->suma_total_con_descuento, 3, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($this->asignacion->mejor_asignado, 3, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-0.8, $heigth,  number_format($this->asignacion->diferencia, 3, ".", ","), 1, 0, 'R', 1);
 

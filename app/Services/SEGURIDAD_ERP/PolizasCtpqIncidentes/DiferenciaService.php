@@ -24,6 +24,8 @@ use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
+use App\Utils\BusquedaDiferenciasPolizas;
 
 class DiferenciaService
 {
@@ -82,6 +84,16 @@ class DiferenciaService
         $datos_lote = [];
         /*$lote = LoteBusqueda::find(1);
         $lote->generaSolicitudesCambio();*/
+        /*29097 ok*/
+        /*error 19195*/
+        /*$relaciones["relacion_poliza"] = RelacionPolizas::where("id_poliza_a","=",19195)
+            ->where("base_datos_a","=", 'ctPCO811231EI4_014')->first();
+        $relaciones["relaciones_movimientos"] = RelacionMovimientos::where("id_poliza_a","=",19195)
+            ->where("base_datos_a","=", 'ctPCO811231EI4_014')->get();
+
+        $busqueda = New BusquedaDiferenciasPolizas($relaciones);
+        $impedir_busqueda = $busqueda->buscarDiferenciasPolizas();*/
+
         $lote =LoteBusqueda::getLoteActivo();
         if(!$lote){
             $lote = $this->generaPeticionesBusquedas($parametros);
