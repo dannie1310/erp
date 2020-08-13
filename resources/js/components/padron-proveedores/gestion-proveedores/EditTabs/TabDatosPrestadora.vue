@@ -126,7 +126,7 @@
                 }).then(data => {
                     if(data['mensaje']==false){
                         swal({
-                            title: "¿Desea Remplazarla?",
+                            title: "¿Desea Reemplazar?",
                             text: "El RFC ingresado pertenece a la empresa prestadora ("+data['razon']+").",
                             icon: "warning",
                             buttons: {
@@ -135,7 +135,7 @@
                                     visible: true
                                 },
                                 confirm: {
-                                    text: 'Si, Remplazar',
+                                    text: 'Si, Reemplazar',
                                     closeModal: false,
                                 }
                             }
