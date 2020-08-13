@@ -112,11 +112,6 @@ class Empresa extends Model
         return $this->hasOne(CtgEstadoExpediente::class, "id","id_estado_expediente" );
     }
 
-    public function usuario_inicio()
-    {
-        return $this->belongsTo(Usuario::class, "usuario_registro","idusuario" );
-    }
-
     public function scopeProveedores($query)
     {
         return $query->whereIn("id_tipo_empresa", [1,2]);
@@ -160,11 +155,6 @@ class Empresa extends Model
     {
         $cantidad_archivos = $this->archivos()->obligatorios()->cargados()->count();
         return $cantidad_archivos;
-    }
-
-    public function getPorcentajeAvanceExpedienteAttribute()
-    {
-        return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,2,".","");
     }
 
     private function cambiarPrestadora($id_proveedor, $id_prestadora)
