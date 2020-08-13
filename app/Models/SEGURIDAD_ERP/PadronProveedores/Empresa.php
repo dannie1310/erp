@@ -4,6 +4,7 @@
 namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -50,6 +51,64 @@ class Empresa extends Model
         return $this->hasManyThrough(Empresa::class, EmpresaPrestadora::class, 'id_empresa_proveedor', 'id', 'id', 'id_empresa_prestadora');
     }
 
+    public function proveedor()
+    {
+        return $this->hasManyThrough(Empresa::class, EmpresaPrestadora::class, 'id_empresa_prestadora', 'id', 'id', 'id_empresa_proveedor');
+    }
+
+    public function estado_expediente()
+    {
+        return $this->hasOne(CtgEstadoExpediente::class, "id","id_estado_expediente" );
+    }
+
+    public function usuario_inicio()
+    {
+        return $this->belongsTo(Usuario::class, "usuario_registro","idusuario" );
+    }
+
+    public function scopeProveedores($query)
+    {
+        return $query->whereIn("id_tipo_empresa", [1,2]);
+    }
+
+    public function getPorcentajeAvanceExpedienteAttribute()
+    {
+        return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,0,"","");
+    }
+
+    public function getColorBarraAttribute()
+    {
+        if($this->porcentaje_avance_expediente>=0 && $this->porcentaje_avance_expediente<=50)
+        {
+            return "bg-danger";
+        }
+        else if($this->porcentaje_avance_expediente>50 && $this->porcentaje_avance_expediente<=99)
+        {
+            return "bg-warning";
+        }
+        else if($this->porcentaje_avance_expediente==100)
+        {
+            return "bg-success";
+        }
+    }
+
+    public function getAvanceExpedienteAttribute()
+    {
+        return $this->no_archivos_cargados."/". $this->no_archivos_esperados;
+    }
+
+    public function getNoArchivosEsperadosAttribute()
+    {
+        $cantidad_archivos = $this->archivos()->obligatorios()->count();
+        return $cantidad_archivos;
+    }
+
+    public function getNoArchivosCargadosAttribute()
+    {
+        $cantidad_archivos = $this->archivos()->obligatorios()->cargados()->count();
+        return $cantidad_archivos;
+    }
+
     public function registrar($data){
         try {
             DB::connection('seguridad')->beginTransaction();
@@ -73,20 +132,36 @@ class Empresa extends Model
     {
         try {
             DB::connection('seguridad')->beginTransaction();
-            $this->update([
-                'razon_social' => $data['razon_social'],
-                'no_imss' => $data['nss'],
-                'id_giro' => $data['id_giro'],
-                'id_especialidad' => $data['id_especialidad'],
-                'nombre_contacto' => $data['contacto'],
-                'telefono' => $data['telefono'],
-                'correo_electronico' => $data['correo']
-            ]);
+            if(array_key_exists('cambio_prestadora', $data)){
+                $this->cambiarPrestadora($data['id_proveedor'], $data['id']);
+            }else {
+                $this->update([
+                    'razon_social' => $data['razon_social'],
+                    'no_imss' => $data['nss'],
+                    'id_giro' => $data['id_giro'],
+                    'id_especialidad' => $data['id_especialidad'],
+                    'nombre_contacto' => array_key_exists('contacto',$data) ? $data['contacto'] : null,
+                    'telefono' => array_key_exists('telefono', $data) ? $data['telefono'] : null,
+                    'correo_electronico' => array_key_exists('correo', $data) ? $data['correo'] : null,
+                    'rfc' => $data['rfc']
+                ]);
+            }
             DB::connection('seguridad')->commit();
             return $this;
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
         }
+        return $this->hasOne(CtgEstadoExpediente::class, "id","id_estado_expediente" );
+    }
+
+    private function cambiarPrestadora($id_proveedor, $id_prestadora)
+    {
+        $prestadora = EmpresaPrestadora::where("id_empresa_prestadora","=",$id_prestadora)
+            ->where("id_empresa_proveedor","=",$id_proveedor)
+            ->first();
+        $prestadora->update([
+            'id_empresa_prestadora' => $this->id
+        ]);
     }
 }

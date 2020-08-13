@@ -40,7 +40,7 @@ class EmpresaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('permisoGlobal:iniciar_expediente_proveedor')->only('store');
-       //$this->middleware('permisoGlobal:editar_expediente_proveedor')->only('update');
+        $this->middleware('permisoGlobal:editar_expediente_proveedor')->only('update');
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -49,5 +49,10 @@ class EmpresaController extends Controller
 
     public function registrarPrestadora(Request $request){
         return $this->service->registrarPrestadora($request->all());
+    }
+
+    public function revisarRFC(Request $request, $id)
+    {
+        return $this->service->revisarRFC($request->all()['rfc'], $id);
     }
 }

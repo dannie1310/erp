@@ -9,8 +9,9 @@
                              <input class="form-control"
                                     name="razon"
                                     data-vv-as="RAZÓN SOCIAL"
+                                    style="text-transform:uppercase;"
                                     v-model="empresa.razon_social"
-                                    v-validate="{ required: true}"
+                                    v-validate="{ required: true, min:6, max:255}"
                                     id="razon"
                                     :class="{'is-invalid': errors.has('razon')}"
                                     placeholder="RAZÓN SOCIAL" :maxlength="255"/>
@@ -26,10 +27,10 @@
                                    name="nss"
                                    data-vv-as="NSS"
                                    v-model="empresa.nss"
-                                   v-validate="{ required: true }"
+                                   v-validate="{ required: true, numeric:true, digits:11}"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
-                                   placeholder="NSS"/>
+                                   placeholder="NSS" :maxlength="11"/>
                             <div class="invalid-feedback" v-show="errors.has('nss')">{{ errors.first('nss') }}</div>
                         </div>
                     </div>
@@ -53,13 +54,14 @@
                         <div class="form-group error-content">
                             <label for="telefono" class="col-form-label">Teléfono:</label>
                             <input class="form-control"
+                                   type="number"
                                    name="telefono"
                                    data-vv-as="TELÉFONO"
                                    v-model="empresa.telefono"
-                                   v-validate="{ required: true }"
+                                   v-validate="{ required: true, digits: 10}"
                                    id="telefono"
                                    :class="{'is-invalid': errors.has('telefono')}"
-                                   placeholder="TELÉFONO"/>
+                                   placeholder="TELÉFONO" :maxlength="10"/>
                             <div class="invalid-feedback" v-show="errors.has('telefono')">{{ errors.first('telefono') }}</div>
                         </div>
                     </div>
@@ -70,7 +72,7 @@
                                    name="correo"
                                    data-vv-as="CORREO"
                                    v-model="empresa.correo"
-                                   v-validate="{ required: true }"
+                                   v-validate="{ required: true, email:true}"
                                    id="correo"
                                    :class="{'is-invalid': errors.has('correo')}"
                                    placeholder="CORREO"/>
@@ -135,7 +137,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="validate">Guardar</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate" v-if="$root.can('editar_expediente_proveedor', true)"><i class="fa fa-save"></i> Guardar</button>
                 </div>
             </div>
         </div>
@@ -217,7 +219,8 @@
                 this.empresa.rfc = this.empresa.rfc.toUpperCase();
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
-                    data: this.$data.empresa
+                    data: this.$data.empresa,
+                    params: {include: ['prestadora', 'archivos']}
                 }).then((data) => {
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                 })

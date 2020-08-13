@@ -707,14 +707,14 @@ export const routes = [
                     },
                     {
                         path: ':id',
-                        name: 'proveedores-edit',
+                        name: 'entrar-a-expediente',
                         component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
                         props: true,
                         meta: {
-                            title: 'Editar Expediente Proveedor',
-                            breadcrumb: {name: 'EDITAR', parent: 'proveedores-index'},
+                            title: 'Expediente de Proveedor',
+                            breadcrumb: {name: 'EXPEDIENTE', parent: 'proveedores-index'},
                             middleware: [auth, permission],
-                            permission: ['editar_expediente_proveedor'],
+                            permission: ['consultar_expediente_proveedor'],
                             general: true
                         }
                     },

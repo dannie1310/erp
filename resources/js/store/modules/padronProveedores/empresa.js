@@ -17,20 +17,39 @@ export default {
             state.currentEmpresa = data;
         },
 
-        SET_CUENTA_EMPRESA(state, data) {
-            state.empresas.forEach(e => {
-                if(e.id == data.empresa.id) {
-                    e.cuentasEmpresa.data.push(data);
-                }
-            });
-        },
-
         SET_META(state, data) {
             state.meta = data;
-        }
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentEmpresa, data.attribute, data.value);
+        },
+
+        UPDATE_EMPRESA(state, data) {
+            state.empresas = state.empresas.map(e => {
+                if (e.id === data.id) {
+                    return Object.assign({}, e, data)
+                }
+                return e
+            })
+            state.currentEmpresa = data;
+        },
     },
 
     actions: {
+        paginate(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', {params: payload.params})
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -135,7 +154,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar los datos del proveedor",
+                    text: "Actualizar los datos de la empresa",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -149,12 +168,13 @@ export default {
                     }
                 })
                     .then((value) => {
+                        console.log(value)
                         if (value) {
                             axios
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("El proveedor actualizado correctamente", {
+                                    swal("Datos actualizados correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -168,6 +188,19 @@ export default {
                                 })
                         }
                     });
+            });
+        },
+        revisarRFC (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI + payload.id+'/revisarRFC', payload.data,{ params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
             });
         },
     },

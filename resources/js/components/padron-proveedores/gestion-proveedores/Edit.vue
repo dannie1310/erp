@@ -29,7 +29,7 @@
                    id="nav-documentacion-prestadora-tab" role="tab">Documentación de Prestadora de Servicios</a>
             </div>
         </nav>
-        <div class="tab-content" id="nav-tabContent">
+        <div class="tab-content" id="nav-tabContent" v-if="empresa">
             <div aria-labelledby="nav-datos-tab" class="tab-pane fade show active" id="nav-datos" role="tabpanel">
                 <DatosGenerales v-bind:id="id"></DatosGenerales>
             </div>
@@ -37,7 +37,7 @@
                 <TabDocumentacion v-bind:id="id"></TabDocumentacion>
             </div>
               <div v-if="prestadora" aria-labelledby="nav-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
-                <DatosPrestadora></DatosPrestadora>
+                <DatosPrestadora v-bind:prestadora="empresa.prestadora.data[0]"></DatosPrestadora>
             </div>
             <div v-if="prestadora" aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-documentacion-prestadora" role="tabpanel">
                 <b>pandita</b>
@@ -80,7 +80,7 @@
                     this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', data.archivos.data);
                     this.cargando = false;
                 })
-            }
+            },
         },
         computed: {
             empresa() {

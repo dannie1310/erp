@@ -18,8 +18,9 @@ class EmpresaTransformer extends TransformerAbstract
         'giro',
         'especialidad',
         'tipo',
-        'archivos',
-        'prestadora'
+        'prestadora',
+        'proveedor',
+        'archivos'
     ];
 
     public function transform(Empresa $model)
@@ -31,7 +32,14 @@ class EmpresaTransformer extends TransformerAbstract
             'contacto' => $model->nombre_contacto,
             'nss' => $model->no_imss,
             'telefono' => $model->telefono,
-            'correo' => $model->correo_electronico
+            'correo' => $model->correo_electronico,
+            'estado_expediente' => $model->estado_expediente->descripcion,
+            'avance_expediente' => $model->avance_expediente,
+            'archivos_esperados' => $model->no_archivos_esperados,
+            'archivos_cargados' => $model->no_archivos_cargados,
+            'porcentaje_avance_expediente' => $model->porcentaje_avance_expediente,
+            'usuario_inicio' => $model->usuario_inicio->nombre_completo,
+            'color_barra' => $model->color_barra,
         ];
     }
 
@@ -86,15 +94,28 @@ class EmpresaTransformer extends TransformerAbstract
     }
 
     /**
-    * @param Empresa $model
-    * @return \League\Fractal\Resource\Item|null
-    */
-   public function includePrestadora(Empresa $model)
-   {
-       if($prestadora = $model->prestadora)
-       {
-           return $this->collection($prestadora, new EmpresaTransformer);
-       }
-       return null;
-   }
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePrestadora(Empresa $model)
+    {
+        if($prestadora = $model->prestadora)
+        {
+            return $this->collection($prestadora, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeProveedor(Empresa $model)
+    {
+        if($proveedor = $model->proveedor)
+        {
+            return $this->collection($proveedor, new EmpresaTransformer);
+        }
+        return null;
+    }
 }

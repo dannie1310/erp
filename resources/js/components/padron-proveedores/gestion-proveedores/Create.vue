@@ -59,7 +59,6 @@
                     <label for="rfc" class="col-md-3" ><b>Contacto: </b> </label>
                     <div class="col-md-9">
                         <input class="form-control"
-                               style="text-transform:uppercase;"
                                name="contacto"
                                data-vv-as="'Contacto'"
                                v-model="registro_proveedor.nombre_contacto"
@@ -85,7 +84,7 @@
                                :class="{'is-invalid': errors.has('telefono')}"
                                v-validate="{ required: true, numeric:true }"
                                id="telefono"
-                               :maxlength="20"/>
+                               :maxlength="10"/>
                         <div class="invalid-feedback" v-show="errors.has('telefono')">{{ errors.first('telefono') }}</div>
                     </div>
                 </div>
@@ -136,7 +135,6 @@
                 <div class="form-group row">
                     <div class="col-md-12">
                         <input class="form-control"
-                               style="text-transform:uppercase;"
                                name="otro_giro"
                                data-vv-as="'Giro'"
                                v-model="registro_proveedor.giro"
@@ -155,7 +153,6 @@
                     <label for="rfc" class="col-md-3" ><b>Giro: </b> </label>
                     <div class="col-md-9">
                         <input class="form-control"
-                               style="text-transform:uppercase;"
                                name="giro"
                                data-vv-as="'Giro'"
                                v-model="registro_proveedor.giro"
@@ -196,7 +193,6 @@
                 <div class="form-group row">
                     <div class="col-md-12">
                         <input class="form-control"
-                               style="text-transform:uppercase;"
                                name="otra_especialidad"
                                data-vv-as="'Especialidad'"
                                v-model="registro_proveedor.especialidad"
@@ -215,7 +211,6 @@
                     <label for="rfc" class="col-md-3" ><b>Especialidad: </b> </label>
                     <div class="col-md-9">
                         <input class="form-control"
-                               style="text-transform:uppercase;"
                                name="especialidad"
                                data-vv-as="'Especialidad'"
                                v-model="registro_proveedor.especialidad"
@@ -291,7 +286,7 @@
             store() {
                 return this.$store.dispatch('padronProveedores/empresa/store', this.$data.registro_proveedor)
                     .then(data => {
-                        this.$router.push({name: 'proveedores-edit', params: {id: data.id}});
+                        this.$router.push({name: 'entrar-a-expediente', params: {id: data.id}});
                     }).finally( ()=>{
                         this.cargando = false;
                     });
@@ -313,7 +308,7 @@
                         this.giros = data.data;
                         var otro = {};
                         otro.id="agregar";
-                        otro.descripcion="AGREGAR...";
+                        otro.descripcion="Agregar...";
                         this.giros.push(otro);
                     })
                     .finally(()=>{
@@ -328,7 +323,7 @@
                         this.especialidades = data.data;
                         var otro = {};
                         otro.id="agregar";
-                        otro.descripcion="AGREGAR...";
+                        otro.descripcion="Agregar...";
                         this.especialidades.push(otro);
                     })
                     .finally(()=>{
