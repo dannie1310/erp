@@ -206,23 +206,20 @@ class EmpresaService
     {
         if(array_key_exists('rfc_prestadora', $data)){
             $empresa = $this->repository->getEmpresaXRFC($data["rfc"]);
-            if($empresa->id_tipo_empresa != 3) {
-                abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+            if($empresa) {
+                if ($empresa->id_tipo_empresa != 3) {
+                    abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+                }
+                if ($empresa->id != $id) {
+                    $data['cambio_prestadora'] = true;
+                    $id = $empresa->id;
+                }
             }
-            if($empresa->id != $data['id'])
-            {
-                abort(500, "prueba");
-                return response()->json([
-                    'message' => 'prueba'], 500);
-
-                dd("a", $data['id']);
-            }
-            dd($data);
-            $data['id_giro'] = null;
-            $data['id_especialidad'] = null;
             $this->validaEFO($data["rfc"]);
             $this->validaRFC($data["rfc"]);
-            $this->editarNombreDirectorioPrestadora($data['proveedor']['data'][0]['rfc'],$data['rfc_prestadora'],$data["rfc"]);
+            $this->editarNombreDirectorioPrestadora($data['rfc_proveedor'], $data['rfc_prestadora'], $data["rfc"]);
+            $data['id_giro'] = null;
+            $data['id_especialidad'] = null;
         }else {
             if (!is_numeric($data['giro']['id'])) {
                 $data['id_giro'] = $this->getIdGiro($data['giro_nuevo']);
@@ -245,10 +242,29 @@ class EmpresaService
     private function editarNombreDirectorioPrestadora($rfc_proveedor, $rfc_old, $rfc_new)
     {
         $dir = "./uploads/padron_contratistas/".$rfc_proveedor."/";
-        if (!file_exists($dir.$rfc_old) && !is_dir($dir.$rfc_old)) {
-            mkdir($dir.$rfc_new, 777, true);
-        }else{
+        if (file_exists($dir.$rfc_old) && is_dir($dir.$rfc_old)) {
             rename($dir . $rfc_old, $dir . $rfc_new);
+        }else{
+            mkdir($dir.$rfc_new, 777, true);
         }
+    }
+
+    public function revisarRFC($rfc, $id)
+    {
+        $empresa = $this->repository->getEmpresaXRFC($rfc);
+        if ($empresa) {
+            if ($empresa->id_tipo_empresa != 3) {
+                abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+            }
+            if ($empresa->id != $id) {
+                return [
+                    'mensaje' => false,
+                    'razon' => $empresa->razon_social
+                ];
+            }
+        }
+        return [
+            'mensaje' => true
+        ];
     }
 }

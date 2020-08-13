@@ -156,6 +156,19 @@ export default {
                     });
             });
         },
+        revisarRFC (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI + payload.id+'/revisarRFC', payload.data,{ params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
     },
 
     getters: {

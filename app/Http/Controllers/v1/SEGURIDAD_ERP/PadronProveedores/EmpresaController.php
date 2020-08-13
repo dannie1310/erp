@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\EmpresaTransformer;
 use App\Services\SEGURIDAD_ERP\PadronProveedores\EmpresaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class EmpresaController extends Controller
@@ -48,5 +49,10 @@ class EmpresaController extends Controller
 
     public function getDoctosGenerales($id){
         return $this->service->getDoctosGenerales($id);
+    }
+
+    public function revisarRFC(Request $request, $id)
+    {
+        return $this->service->revisarRFC($request->all()['rfc'], $id);
     }
 }

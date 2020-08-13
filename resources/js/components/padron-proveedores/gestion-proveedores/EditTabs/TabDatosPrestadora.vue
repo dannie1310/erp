@@ -10,7 +10,7 @@
                                     name="razon"
                                     data-vv-as="RAZÓN SOCIAL"
                                     style="text-transform:uppercase;"
-                                    v-model="empresa.razon_social"
+                                    v-model="registrar_empresa.razon_social"
                                     v-validate="{ required: true, min:6, max:255}"
                                     id="razon"
                                     :class="{'is-invalid': errors.has('razon')}"
@@ -26,7 +26,7 @@
                             <input class="form-control"
                                    name="rfc"
                                    data-vv-as="RFC"
-                                   v-model="empresa.rfc"
+                                   v-model="registrar_empresa.rfc"
                                    :class="{'is-invalid': errors.has('rfc')}"
                                    v-validate="{ required: true, regex: /^([A-ZÑ&]{3,4})(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))([A-Z\d]{2})([A\d])$/ }"
                                    id="rfc"/>
@@ -39,7 +39,7 @@
                             <input class="form-control"
                                    name="nss"
                                    data-vv-as="NSS"
-                                   v-model="empresa.nss"
+                                   v-model="registrar_empresa.nss"
                                    v-validate="{ required: true,numeric:true, digits:11}"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
@@ -62,7 +62,15 @@
         props: ['prestadora'],
         data(){
             return{
-                empresa: [],
+                registrar_empresa: {
+                    'id' : '',
+                    'rfc': '',
+                    'razon_social' : '',
+                    'nss' : '',
+                    'rfc_proveedor' : '',
+                    'id_proveedor' : '',
+                    'rfc_prestadora' : ''
+                },
                 rfcValidate: false,
             }
         },
@@ -78,27 +86,70 @@
                     id: this.prestadora.id,
                     params: {include: ['proveedor']}
                 }).then(data => {
-                    this.empresa = data;
+                    console.log("find", data)
+                    this.registrar_empresa.id = data.id;
+                    this.registrar_empresa.rfc = data.rfc;
+                    this.registrar_empresa.razon_social = data.razon_social;
+                    this.registrar_empresa.nss = data.nss;
+                    this.registrar_empresa.rfc_proveedor = data.proveedor.data[0].rfc;
+                    this.registrar_empresa.id_proveedor = data.proveedor.data[0].id;
+                    this.registrar_empresa.rfc_prestadora = data.rfc;
                 })
             },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.update()
+                        this.revisarRFC();
                     }
                 });
             },
             update() {
-                this.empresa.rfc_prestadora = this.prestadora.rfc
-                this.empresa.razon_social = this.empresa.razon_social.toUpperCase();
-                this.empresa.rfc = this.empresa.rfc.toUpperCase();
+                this.registrar_empresa.razon_social = this.registrar_empresa.razon_social.toUpperCase();
+                this.registrar_empresa.rfc =  this.registrar_empresa.rfc.toUpperCase();
                 return this.$store.dispatch('padronProveedores/empresa/update', {
-                    id: this.prestadora.id,
-                    data: this.$data.empresa
+                    id: this.registrar_empresa.id,
+                    data: this.$data.registrar_empresa,
+                    params: {include: ['proveedor']}
                 }).then((data) => {
-
+                    this.registrar_empresa.id = data.id;
+                    this.registrar_empresa.rfc = data.rfc;
+                    this.registrar_empresa.razon_social = data.razon_social;
+                    this.registrar_empresa.nss = data.nss;
+                    this.registrar_empresa.id_proveedor = data.proveedor.data[0].id;
+                    this.registrar_empresa.rfc_proveedor = data.proveedor.data[0].rfc;
+                    this.registrar_empresa.rfc_prestadora = data.rfc;
                 })
             },
+            revisarRFC(){
+                return this.$store.dispatch('padronProveedores/empresa/revisarRFC', {
+                    id: this.prestadora.id,
+                    data: {rfc : this.$data.registrar_empresa.rfc},
+                }).then(data => {
+                    if(data['mensaje']==false){
+                        swal({
+                            title: "¿Desea Remplazarla?",
+                            text: "El RFC ingresado pertenece a la empresa prestadora ("+data['razon']+").",
+                            icon: "warning",
+                            buttons: {
+                                cancel: {
+                                    text: 'Cancelar',
+                                    visible: true
+                                },
+                                confirm: {
+                                    text: 'Si, Remplazar',
+                                    closeModal: false,
+                                }
+                            }
+                        }).then((value) => {
+                            if(value) {
+                                this.update();
+                            }
+                        })
+                    }else{
+                        this.update();
+                    }
+                })
+            }
         }
     }
 </script>
