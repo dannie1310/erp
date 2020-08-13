@@ -148,16 +148,6 @@ class AsignacionProveedor extends Model
         return $suma;
     }
 
-    public function getSumaSubtotalPartidasIvaAttribute()
-    {
-        return $this->suma_subtotal_partidas * 0.16;
-    }
-
-    public function getSumaSubtotalPartidasTotalAttribute()
-    {
-        return $this->suma_subtotal_partidas + $this->suma_subtotal_partidas_iva;
-    }
-
     public function subtotalPorCotizacion($id_cotizacion)
     {
         $suma = 0;
@@ -232,7 +222,7 @@ class AsignacionProveedor extends Model
 
     public function getDiferenciaAttribute()
     {
-        return $this->suma_subtotal_partidas - $this->mejor_asignado;
+        return $this->suma_total_con_descuento - $this->mejor_asignado;
     }
 
     public function getDiferenciaIvaAttribute()
@@ -243,5 +233,35 @@ class AsignacionProveedor extends Model
     public function getDiferenciaTotalAttribute()
     {
         return $this->diferencia + $this->diferencia_iva;
+    }
+
+    public function getSumaTotalConDescuentoAttribute()
+    {
+        $suma_global = 0;
+        $suma = 0;
+        foreach ($this->solicitud->cotizaciones as $cotizacion)
+        {
+            foreach ($cotizacion->asignacionPartida->where('id_asignacion_proveedores', $this->id) as $asignacion)
+            {
+                $suma += $asignacion->total_precio_moneda;
+            }
+
+            if($suma != 0 && $cotizacion->complemento) {
+                $suma -= $suma * $cotizacion->complemento->descuento/100;
+            }
+            $suma_global += $suma;
+            $suma = 0;
+        }
+        return $suma_global;
+    }
+
+    public function getSumaSubtotalPartidasIvaAttribute()
+    {
+        return $this->suma_total_con_descuento * 0.16;
+    }
+
+    public function getSumaSubtotalPartidasTotalAttribute()
+    {
+        return $this->suma_total_con_descuento + $this->suma_subtotal_partidas_iva;
     }
 }
