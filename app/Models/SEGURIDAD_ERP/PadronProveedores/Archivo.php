@@ -21,8 +21,7 @@ class Archivo extends Model
         return $this->belongsTo(CtgTipoArchivo::class, 'id_tipo_archivo', 'id');
     }
 
-    public function usuarioRegsitro()
-    {
+    public function usuarioRegistro(){
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
@@ -38,13 +37,16 @@ class Archivo extends Model
 
     public function getRegistroAttribute()
     {
-        return $this->usuarioRegsitro->nombre_completo;
+        return $this->usuarioRegistro?$this->usuarioRegistro->nombre_completo:'';
     }
 
     public function getFechaRegistroFormatAttribute()
     {
-        $date = date_create($this->fecha_hora_registro);
-        return date_format($date,"d/m/Y H:m");
+        if($this->fecha_hora_registro){
+            $date = date_create($this->fecha_hora_registro);
+            return date_format($date,"d/m/Y H:m");
+        }
+        return '';
     }
 
     public function getNombreArchivoFormatAttribute()
