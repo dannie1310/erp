@@ -39,6 +39,7 @@ class ArchivoController extends Controller
     public function __construct(Manager $fractal, ArchivoService $service, ArchivoTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('permisoGlobal:actualizar_expediente_proveedor')->only('cargarArchivo');
 
         $this->fractal = $fractal;
         $this->service = $service;

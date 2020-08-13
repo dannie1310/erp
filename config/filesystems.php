@@ -120,7 +120,7 @@ return [
         ],
         'padron_contratista' => [
             'driver' => 'local',
-            'root' => storage_path(env('STORAGE_PADRON_CONTRATISTAS')),
+            'root' => public_path(env('STORAGE_PADRON_CONTRATISTAS')),
         ],
         'xml_sat' => [
             'driver' => 'local',

@@ -20,12 +20,12 @@ class Archivo extends Model
         return $this->belongsTo(CtgTipoArchivo::class, 'id_tipo_archivo', 'id');
     }
 
-    public function usuarioRegsitro(){
+    public function usuarioRegistro(){
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
     public function getRegistroAttribute(){
-        return $this->usuarioRegsitro?$this->usuarioRegsitro->nombre_completo:'';
+        return $this->usuarioRegistro?$this->usuarioRegistro->nombre_completo:'';
     }
 
     public function getFechaRegistroFormatAttribute(){

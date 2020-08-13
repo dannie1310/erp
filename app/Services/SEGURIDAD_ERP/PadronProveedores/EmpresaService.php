@@ -5,6 +5,7 @@ namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
 
 class EmpresaService
@@ -144,7 +145,25 @@ class EmpresaService
         return $this->repository->update($data, $id);
     }
 
-    public function getDoctosGenerales($id){
-        dd('pandita', $this->repository->show($id)->archivos);
+    public function registrarPrestadora($data){
+        $this->validaRFC($data['rfc']);
+        // $this->validaEFO($data['rfc']);
+        $empresa = $this->repository->show($data['id_empresa']);
+        $prestadora = $empresa->prestadora()->create([
+            'razon_social' => $data['razon_social'],
+            'rfc' => $data['rfc'],
+            'id_tipo_empresa' => 3,
+        ]);
+        EmpresaPrestadora::create([
+            'id_empresa_proveedor' => $data['id_empresa'],
+            'id_empresa_prestadora' => $prestadora->id,
+        ]);
+
+        foreach($this->getTiposArchivos(3) as $archivo){
+            $prestadora->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
+        }
+
+        $empresa->archivos()->where('id_tipo_archivo', '=', 14)->delete();
+        return $prestadora;
     }
 }

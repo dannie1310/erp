@@ -26,6 +26,13 @@ class ArchivoService
 
     public function cargarArchivo($data){
         $archivo = $this->repository->show($data['id_archivo']);
+        if($archivo->nombre_archivo == $data["archivo_nombre"]){
+            abort(403, 'El archivo ya ha sido registrado previamente.');
+        }
+        if($archivo->usuario_registro != auth()->id()){
+            abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
+        }
+        
         $hash_file = hash_file('md5', $data["archivo"]);
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
         if(Storage::disk('padron_contratista')->put($data['rfc'] . '/' .$data['archivo_nombre'],  fopen($data['archivo'], 'r'))){

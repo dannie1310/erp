@@ -4,11 +4,12 @@
 namespace App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores;
 
 
-use App\Http\Controllers\Controller;
-use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\EmpresaTransformer;
-use App\Services\SEGURIDAD_ERP\PadronProveedores\EmpresaService;
-use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
+use App\Traits\ControllerTrait;
+use App\Http\Controllers\Controller;
+use App\Services\SEGURIDAD_ERP\PadronProveedores\EmpresaService;
+use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\EmpresaTransformer;
 
 class EmpresaController extends Controller
 {
@@ -46,7 +47,7 @@ class EmpresaController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function getDoctosGenerales($id){
-        return $this->service->getDoctosGenerales($id);
+    public function registrarPrestadora(Request $request){
+        return $this->service->registrarPrestadora($request->all());
     }
 }

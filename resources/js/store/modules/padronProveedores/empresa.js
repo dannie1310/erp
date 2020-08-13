@@ -94,6 +94,43 @@ export default {
                 });
             });
         },
+        registrarPrestadora(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Iniciar Expediente de Prestadora de Servicios",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Iniciar Expediente',
+                            closeModal: true,
+                        }
+                    }
+                }).then((value) => {
+                    if (value) {
+                        axios
+                            .post(URI + 'registrarPrestadora' , payload)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Expediente iniciado correctamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            });
+                    }
+                });
+            });
+        },
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
