@@ -13,6 +13,19 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-secondary pull-right" :disabled="cargando" v-on:click="pendientes">
+                                    <span v-if="cargando">
+                                        <i class="fa fa-spin fa-spinner"></i>
+                                    </span>
+                                    <span v-else>
+                                        <i class="fa fa-exclamation-circle"></i> Mis Pendientes
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <br />
                         <div class="table-responsive">
                             <datatable v-bind="$data" />
                         </div>
@@ -33,7 +46,7 @@
                     { title: '#', field: 'index', thClass:'th_index', sortable: false },
                     { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'RFC', field: 'rfc', thClass:'th_rfc', tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Usuario Inicio',  field: 'usuario_inicio', thClass:'th_c150', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Usuario Inicio',  field: 'usuario_inicio', thClass:'th_c250', sortable: false, thComp: require('../../globals/th-Filter').default},
                     { title: 'Estado Expediente',  field: 'estado_expediente', thClass:'th_c150', sortable: false, thComp: require('../../globals/th-Filter').default},
                     { title: 'Avance Expediente', field: 'avance_expediente', tdClass:'center', thClass:'th_c150', sortable: false, thComp: require('../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons', thClass:'th_c100', tdClass:'center',  tdComp: require('./partials/ActionButtons').default}
@@ -62,11 +75,32 @@
                     })
                     .finally(() => {
                         this.cargando = false;
+                        this.$data.query.mis_pendientes = null;
                     })
             },
             create() {
                 this.$router.push({name: 'proveedores-iniciar-expediente'});
             },
+            pendientes() {
+                this.$data.query.mis_pendientes = 1;
+                if(this.$data.query.rfc !== undefined){
+                    this.$data.query.rfc = '';
+                }
+                if(this.$data.query.razon_social !== undefined){
+                    this.$data.query.razon_social = '';
+                }
+                if(this.$data.query.estado_expediente !== undefined){
+                    this.$data.query.estado_expediente = '';
+                }
+                if(this.$data.query.avance_expediente !== undefined){
+                    this.$data.query.avance_expediente = '';
+                }
+                if(this.$data.query.usuario_inicio !== undefined){
+                    this.$data.query.usuario_inicio = '';
+                }
+                this.query.offset = 0;
+                this.paginate();
+            }
         },
         computed: {
             entradas(){

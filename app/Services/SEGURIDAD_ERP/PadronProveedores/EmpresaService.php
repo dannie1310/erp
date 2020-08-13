@@ -114,7 +114,11 @@ class EmpresaService
             }
         }
         if (isset($data['usuario_inicio'])) {
-            $usuarios = Usuario::query()->where([['usuario', 'LIKE', '%'.$data['usuario_inicio'].'%']])->get();
+            $usuarios = Usuario::query()->where('nombre', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->orWhere('apaterno', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->orWhere('amaterno', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->orWhere('usuario', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->get();
             if(count($usuarios)>0){
                 foreach ($usuarios as $usuario){
                     $this->repository->whereOr([['usuario_registro', '=', $usuario->idusuario]]);
@@ -123,6 +127,21 @@ class EmpresaService
                 $this->repository->where([['rfc', '=', '666']]);
             }
 
+        }
+        if (isset($data['mis_pendientes'])) {
+            if($data["mis_pendientes"] ==1){
+                $empresas = Empresa::where("usuario_registro",auth()->id())->get();
+                $sin_coincidencias = true;
+                foreach($empresas as $empresa){
+                    if($empresa->porcentaje_avance_expediente != 100){
+                        $this->repository->whereOr([['id', '=', $empresa->id]]);
+                        $sin_coincidencias = false;
+                    }
+                }
+                if($sin_coincidencias){
+                    $this->repository->where([['rfc', '=', '666']]);
+                }
+            }
         }
         /*if($data['sort'] == 'usuario_inicio'){
             if (isset($data['usuario_inicio'])) {
