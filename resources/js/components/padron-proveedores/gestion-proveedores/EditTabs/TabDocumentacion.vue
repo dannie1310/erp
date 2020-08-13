@@ -8,9 +8,10 @@
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
+                                        <th >Estatus</th>
                                         <th >Documento</th>
                                         <th >Tipo Documento</th>
-                                        <th >Estatus</th>
+                                        
                                         <th >Obligatorio</th>
                                         <th >Sección</th>
                                         <th >Nombre Archivo</th>
@@ -21,20 +22,20 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="archivo in archivos">
-                                        <td :title="archivo.tipo_archivo_descripcion">{{archivo.tipo_archivo_descripcion_corta}}</td>
-                                        <td>{{archivo.tipo_documento}}</td>
-                                        <td>{{archivo.estatus}}</td>
-                                        <td><button  type="button" class="btn btn-sm " :class="{'btn-success': archivo.obligatorio == true}">
-                                            <i class="fa fa-check" v-if="archivo.obligatorio"></i>
+                                        <td><button  type="button" class="btn btn-sm " :class="{'btn-success': archivo.estatus == true}">
+                                            <i class="fa fa-check" v-if="archivo.estatus"></i>
                                             <!-- <i class="fa fa-square-o" v-else></i> -->
                                             </button></td>
+                                        <td :title="archivo.tipo_archivo_descripcion">{{archivo.tipo_archivo_descripcion_corta}}</td>
+                                        <td>{{archivo.tipo_documento}}</td>
+                                        <td>{{archivo.obligatorio}}</td>
                                         <td>{{archivo.seccion}}</td>
                                         <td>{{archivo.nombre_archivo_format}}</td>
                                         <td>{{archivo.registro}}</td>
                                         <td>{{archivo.fecha_registro_format}}</td>
                                         <td>
                                             <div class="btn-group">
-                                            <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor')"><i class="fa fa-upload"></i></button>
+                                            <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
                                             <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
                                             </div>
                                         </td>

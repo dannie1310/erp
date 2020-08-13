@@ -29,7 +29,7 @@ class ArchivoService
         if($archivo->nombre_archivo == $data["archivo_nombre"]){
             abort(403, 'El archivo ya ha sido registrado previamente.');
         }
-        if($archivo->usuario_registro != auth()->id()){
+        if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
         }
         

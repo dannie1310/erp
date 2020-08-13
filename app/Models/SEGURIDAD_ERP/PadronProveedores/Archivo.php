@@ -41,7 +41,7 @@ class Archivo extends Model
     }
 
     public function getEstatusAttribute(){
-        return $this->hash_file?'Completo':'Pendiente';
+        return $this->hash_file?true:false;
     }
     
 }
