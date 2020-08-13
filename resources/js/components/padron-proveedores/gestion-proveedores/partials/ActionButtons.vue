@@ -1,23 +1,27 @@
 <template>
     <div class="btn-group">
-        <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit">
-            <i class="fa fa-pencil"></i>
+        <button v-if="value.edit" @click="edit" type="button" class="btn btn-sm btn-outline-secondary" title="Show">
+            <i class="fa fa-folder-open"></i>
         </button>
-        <Show v-bind:id="value.id" v-if="value.show" v-bind:pagina="value.pagina"/>
+        <button v-else @click="show" type="button" class="btn btn-sm btn-outline-secondary" title="Show">
+            <i class="fa fa-folder-open"></i>
+        </button>
         <PDF v-bind:id="value.id" @click="value.id"  v-if="$root.can('consultar_entrada_almacen')"></PDF>
     </div>
 </template>
 
 <script>
     import PDF from '../FormatoEntradaAlmacen';
-    import Show from "../Show";
     export default {
         name: "ActionButtons",
-        components: {PDF, Show},
+        components: {PDF},
         props: ['value'],
         methods: {
             edit() {
                 this.$router.push({name: 'proveedores-edit', params: {id: this.value.id}});
+            },
+            show() {
+                //this.$router.push({name: 'proveedores-show', params: {id: this.value.id}});
             }
         }
     }
