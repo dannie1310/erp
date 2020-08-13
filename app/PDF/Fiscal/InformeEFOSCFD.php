@@ -14,6 +14,7 @@ use Ghidev\Fpdf\Rotation;
 class InformeEFOSCFD extends Rotation
 {
     protected $informe;
+    protected $etiqueta_titulo;
 
     const DPI = 96;
     const MAX_WIDTH = 180;
@@ -56,10 +57,13 @@ class InformeEFOSCFD extends Rotation
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Helvetica', 'B', 12);
         $this->MultiCell(16, .5, utf8_decode('Informe de Revisión de Listado de EFOS del SAT vs CFDI Recibidos') , '0', 'C', 0);
-        $this->setY(2.5);
+        $this->setXY(7.59, 1.7);
         $this->SetFont('Helvetica', '', 7);
-        $this->Cell(19.7,.3,utf8_decode($this->informe["fechas"]["lista_efos"]).' / '.utf8_decode($this->informe["fechas"]["cfd_recibidos"]),0,1,"L");
-        $this->partidasTitle();
+        $this->Cell(16,.3,utf8_decode($this->informe["fechas"]["lista_efos"]).' / '.utf8_decode($this->informe["fechas"]["cfd_recibidos"]),0,1,"L");
+        $this->titulo();
+        if($this->en_cola != "subtotal" && $this->en_cola != "total"){
+            $this->partidasTitle();
+        }
         if($this->en_cola != ''){
             $this->setEstilos($this->en_cola);
         }
@@ -79,7 +83,7 @@ class InformeEFOSCFD extends Rotation
     {
         $this->SetFont('Arial', '', 8);
 
-        $this->setXY(1, 2.82);
+        $this->setXY(1, 3);
 
         $this->SetFillColor(180,180,180);
         $this->SetWidths([0.8,1.5,2.2,6,1.8,1.8,2.2,1,2.4]);
@@ -92,7 +96,13 @@ class InformeEFOSCFD extends Rotation
         $this->SetDrawColor(117,117,117);
         $this->SetHeights([0.4]);
         $this->SetAligns(['C','C','C','C','C','C','C','C','C']);
-        $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Presunto", "Fecha Definitivo", "Empresa", "# CFD", "Importe"]);
+        if($this->etiqueta_titulo == "DEFINITIVOS" || $this->etiqueta_titulo == "EN ACLARACIÓN" || $this->etiqueta_titulo == "NO DEDUCIDOS" || $this->etiqueta_titulo == "DEFINITIVOS ANTES 2012"){
+            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", "Fecha Definitivo DOF", "Empresa", "# CFD", "Importe Incluyendo IVA"]);
+        } else if($this->etiqueta_titulo == "PRESUNTOS"){
+            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Presuntos SAT", "Fecha Presuntos DOF", "Empresa", "# CFD", "Importe Incluyendo IVA"]);
+        }else if($this->etiqueta_titulo == "CORREGIDOS"){
+            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", utf8_decode("Fecha Corrección"), "Empresa", "# CFD", "Importe Incluyendo IVA"]);
+        }
 
     }
 
@@ -104,15 +114,32 @@ class InformeEFOSCFD extends Rotation
                     $this->en_cola = $partida["tipo"];
                     $this->setEstilos($partida["tipo"]);
                     if($partida["tipo"]== "partida"){
+                        if($this->etiqueta_titulo == "DEFINITIVOS" || $this->etiqueta_titulo == "EN ACLARACIÓN" || $this->etiqueta_titulo == "NO DEDUCIDOS" || $this->etiqueta_titulo == "DEFINITIVOS ANTES 2012"){
+                            $this->Row([$partida["indice"],utf8_decode($partida["estatus"]),$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_definitivo"], $partida["fecha_definitivo_dof"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
+                        } else if($this->etiqueta_titulo == "PRESUNTOS"){
+                            $this->Row([$partida["indice"],utf8_decode($partida["estatus"]),$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_presunto"], $partida["fecha_presunto_dof"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
+                        }
+                        else if($this->etiqueta_titulo == "CORREGIDOS"){
+                            $this->Row([$partida["indice"],utf8_decode($partida["estatus"]),$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_definitivo"], $partida["fecha_autocorreccion"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
+                        }
+                    }    else if($partida["tipo"]== "titulo"){
+                        $this->etiqueta_titulo = $partida["etiqueta"];
+                        $this->AddPage();
+                    } else if($partida["tipo"]== "total"){
+                        $this->Row([$partida["contador"],'','', utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
 
-                        $this->Row([$partida["indice"],utf8_decode($partida["estatus"]),$partida["rfc"], utf8_decode($partida["razon_social"]), $partida["fecha_presunto"], $partida["fecha_definitivo"], utf8_decode($partida["empresa"]), $partida["no_CFDI"], $partida["importe_format"]]);
-                    }    else {
+                    } else {
                         $this->Row([$partida["contador"],'','', utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
                     }
                 }
             }
         }
         $this->Ln();
+    }
+    private function titulo(){
+        $this->setXY(1, 2.32);
+        $this->setEstilos("titulo");
+        $this->Row([utf8_decode($this->etiqueta_titulo)]);
     }
     private function  setEstilos($tipo){
         if($tipo == "partida"){
@@ -152,6 +179,19 @@ class InformeEFOSCFD extends Rotation
             $this->SetHeights([0.4]);
             $this->SetAligns(['C','C','C','L','R','R']);
         }
+        else if( $tipo == "titulo"){
+            $this->SetDrawColor(255,255,255);
+            $this->SetFont('Arial', 'B', 9);
+            $this->SetFillColor(255,255,255);
+            $this->SetWidths([19.7]);
+            $this->SetStyles(['DF']);
+            $this->SetRounds(['']);
+            $this->SetRadius([0]);
+            $this->SetFills(['255,255,255']);
+            $this->SetTextColors(['0,0,0']);
+            $this->SetHeights([0.6]);
+            $this->SetAligns(['L']);
+        }
     }
 
     function create()
@@ -159,7 +199,7 @@ class InformeEFOSCFD extends Rotation
         $this->SetMargins(1, .5, 2);
         $this->SetAutoPageBreak(true, 1);
         $this->AliasNbPages();
-        $this->AddPage();
+        //$this->AddPage();
         $this->partidas();
 
         try {

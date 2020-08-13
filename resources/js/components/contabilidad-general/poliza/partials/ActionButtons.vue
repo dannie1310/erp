@@ -6,13 +6,15 @@
         <button @click="findEdit(value.id)" type="button" class="btn btn-sm btn-outline-primary  " title="Editar" v-if="value.editar">
             <i class="fa fa-pencil" aria-hidden="true"></i>
         </button>
-
+        <PDFPoliza v-bind:id="value.id" v-bind:id_empresa="value.id_empresa"></PDFPoliza>
     </div>
 </template>
 
 <script>
+import PDFPoliza from './PDFPoliza';
     export default {
         name: "action-buttons",
+        components:{PDFPoliza},
         props: ['value'],
         methods: {
             find(id) {

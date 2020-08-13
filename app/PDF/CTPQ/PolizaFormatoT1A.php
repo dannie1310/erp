@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\PDF\ContabilidadGeneral;
+namespace App\PDF\CTPQ;
 
 
 use App\Models\CTPQ\Parametro;
@@ -10,13 +10,12 @@ use DateInterval;
 use DateTime;
 use Ghidev\Fpdf\Rotation;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Param;
 
-class PolizaFormatoOriginalT2 extends Rotation
+class PolizaFormatoT1A extends Rotation
 {
     private $poliza;
     private $empresa;
-    private $folios;
+    private $data;
 
     const DPI = 96;
     const MM_IN_INCH = 25.4;
@@ -35,11 +34,10 @@ class PolizaFormatoOriginalT2 extends Rotation
     private $num = 1;
     private $key_folio = 0;
 
-    public function __construct($folios, $solicitud, $empresa)
+    public function __construct($data, $empresa)
     {
         parent::__construct('P', 'cm', 'Letter');
-        $this->folios = $folios;
-        $this->solicitud = $solicitud;
+        $this->data = $data;
         $this->empresa = $empresa;
         $this->SetAutoPageBreak(true, 5);
         $this->WidthTotal = $this->GetPageWidth() - 2;
@@ -119,10 +117,9 @@ class PolizaFormatoOriginalT2 extends Rotation
         $this->SetFillColor(255, 255, 255);
         $this->Cell(19.65, 0.5, utf8_decode('Póliza de ' . $this->poliza->tipo_poliza->Nombre . ' número ' . $this->poliza->Folio . ' correspondiente al ').$this->poliza->fecha_mes_letra_format, '', 0, 'C', 0);
         $this->Ln(0.4);
-        $this->Cell(19.65, 0.5, utf8_decode($this->poliza->getConceptoOriginalT2($this->solicitud)), '', 0, 'C', 0);
+        $this->Cell(19.65, 0.5, utf8_decode($this->poliza->Concepto), '', 0, 'C', 0);
         $this->Ln(0.48);
         $this->SetX(1);
-        $cuenta_padre = '';
         $this->poliza_encola = $this->poliza;
         $this->suma_abono = 0;
         $this->suma_cargo = 0;
@@ -142,20 +139,20 @@ class PolizaFormatoOriginalT2 extends Rotation
             $this->Cell(2.29, 0.5,$suma_abonos != 0 ? $suma_abonos : '', '', 0, 'R', 180);
             $this->Ln(0.45);
             $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
-            $this->Cell(5.2, 0.3, strlen($movimiento->getConceptoOriginalT2($this->solicitud)) > 23 ? '  ' . utf8_decode(substr($movimiento->getConceptoOriginalT2($this->solicitud), 0, 22)) . '..' : '  ' . utf8_decode($movimiento->getConceptoOriginalT2($this->solicitud)), '', 1, 'L', 180);
+            $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . '..' : '  ' . utf8_decode($movimiento->Concepto), '', 1, 'L', 180);
 
             foreach ($this->poliza->getMovimientos($cuenta_padre) as $k => $movimiento)
             {
                 $this->SetFont('Arial', '', 10);
                 $this->Cell(3.1, 0.5, $movimiento->cuenta->cuenta_format, '', 0, 'L', 180);
                 $this->Cell(5.2, 0.5, strlen($movimiento->cuenta->Nombre) > 25 ? utf8_decode(substr($movimiento->cuenta->Nombre, 0, 25)) . '..' : utf8_decode($movimiento->cuenta->Nombre), '', 0, 'L', 180);
-                $this->Cell(4, 0.5, strlen($movimiento->getReferenciaOriginalT2($this->solicitud)) > 11 ? utf8_decode(substr($movimiento->getReferenciaOriginalT2($this->solicitud), 0, 9)) . ' ..' : utf8_decode($movimiento->getReferenciaOriginalT2($this->solicitud)), '', 0, 'L', 180);
+                $this->Cell(4, 0.5, strlen($movimiento->Referencia) > 11 ? utf8_decode(substr($movimiento->Referencia, 0, 9)) . ' ..' : utf8_decode($movimiento->Referencia), '', 0, 'L', 180);
                 $this->Cell(2.5, 0.5, $movimiento->importe_coma_format, '', 0, 'R', 180);
                 $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
                 $this->Cell(2.29, 0.5, '', '', 0, 'L', 180);
                 $this->Ln(0.4);
                 $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
-                $this->Cell(5.2, 0.3, strlen($movimiento->getConceptoOriginalT2($this->solicitud)) > 23 ? '  ' . utf8_decode(substr($movimiento->getConceptoOriginalT2($this->solicitud), 0, 22)) . ' ..' : utf8_decode($movimiento->getConceptoOriginalT2($this->solicitud)), '', 1, 'L', 180);
+                $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . ' ..' : utf8_decode($movimiento->Concepto), '', 1, 'L', 180);
                 $this->suma_abono += $movimiento->abono;
                 $this->suma_cargo += $movimiento->cargo;
             }
@@ -171,7 +168,7 @@ class PolizaFormatoOriginalT2 extends Rotation
             $this->SetFillColor(255, 255, 255);
 
             $this->setXY(1, 24.5);
-            $this->Cell(12.98, 0.6, strlen($this->poliza_encola->getConceptoPropuesta($this->solicitud)) > 63 ? utf8_decode(substr($this->poliza_encola->getConceptoPropuesta($this->solicitud), 0, 63)) . '..' : utf8_decode($this->poliza_encola->getConceptoPropuesta($this->solicitud)), 'T', 0, 'L', 180);
+            $this->Cell(12.98, 0.6, strlen($this->poliza_encola->Concepto) > 63 ? utf8_decode(substr($this->poliza_encola->Concepto, 0, 63)) . '..' : utf8_decode($this->poliza_encola->Concepto), 'T', 0, 'L', 180);
             $this->setXY(14.15, 24.5);
             $this->Cell(3, 0.6, number_format($this->suma_cargo, 2, ".", ","), 'T', 0, 'R', 180);
             $this->setXY(17.3, 24.5);
@@ -202,27 +199,21 @@ class PolizaFormatoOriginalT2 extends Rotation
     }
 
     function create() {
-        foreach ($this->folios as $k => $folio)
-        {
-            /*DB::purge('cntpq');
-            \Config::set('database.connections.cntpq.database', ($folio->bd_contpaq!="")?($folio->bd_contpaq):($folio->base_datos_revisada));*/
-            $this->poliza = $folio; //Poliza::find($folio->id_poliza);
-            $this->key_folio = $k;
-            $this->mes = substr($this->poliza->fecha_mes_letra_format, 3,3);
-            $this->anio = substr($this->poliza->fecha_mes_letra_format, 7,4);
-            $this->SetMargins(1, 0.9, 1);
-            $this->SetAutoPageBreak(true,5);
-            $this->AliasNbPages();
-
-            $this->AddPage();
-            $this->partidas();
-
-
-
-        }
+        DB::purge('cntpq');
+        \Config::set('database.connections.cntpq.database',$this->empresa->AliasBDD);
+        $this->poliza = Poliza::find($this->data->Id);
+        $this->fecha = date_create($this->poliza->Fecha);
+        $this->mes = substr($this->poliza->fecha_mes_letra_format, 3,3);
+        $this->anio = substr($this->poliza->fecha_mes_letra_format, 7,4);
+        $this->SetMargins(1, 0.9, 1);
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->SetAutoPageBreak(true,5);
+        $this->partidas();
+        
 
         try {
-            $this->Output('I', "Formato - poliza propuesta.pdf", 1);
+            $this->Output('I', "Formato - poliza.pdf", 1);
         } catch (\Exception $ex) {
             dd("error",$ex);
         }
