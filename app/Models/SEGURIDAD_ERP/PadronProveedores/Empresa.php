@@ -109,6 +109,33 @@ class Empresa extends Model
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
         }
+        return $this->hasOne(CtgEstadoExpediente::class, "id","id_estado_expediente" );
+    }
+
+    public function scopeProveedores($query)
+    {
+        return $query->whereIn("id_tipo_empresa", [1,2]);
+    }
+
+    public function getPorcentajeAvanceExpedienteAttribute()
+    {
+        return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,0,"","");
+    }
+
+    public function getColorBarraAttribute()
+    {
+        if($this->porcentaje_avance_expediente>=0 && $this->porcentaje_avance_expediente<=50)
+        {
+            return "bg-danger";
+        }
+        else if($this->porcentaje_avance_expediente>50 && $this->porcentaje_avance_expediente<=99)
+        {
+            return "bg-warning";
+        }
+        else if($this->porcentaje_avance_expediente==100)
+        {
+            return "bg-success";
+        }
     }
 
     public function getAvanceExpedienteAttribute()
@@ -128,11 +155,6 @@ class Empresa extends Model
     {
         $cantidad_archivos = $this->archivos()->obligatorios()->cargados()->count();
         return $cantidad_archivos;
-    }
-
-    public function getPorcentajeAvanceExpedienteAttribute()
-    {
-        return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,2,".","");
     }
 
     private function cambiarPrestadora($id_proveedor, $id_prestadora)

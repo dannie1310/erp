@@ -57,10 +57,12 @@ class EmpresaService
         if (isset($data['avance_expediente'])) {
             $avance_expediente = html_entity_decode($data["avance_expediente"]);
             $empresas = Empresa::all();
+            $sin_coincidencias = true;
             foreach($empresas as $empresa){
                 if(is_numeric($avance_expediente)){
                     if($empresa->porcentaje_avance_expediente == $avance_expediente){
                         $this->repository->whereOr([['id', '=', $empresa->id]]);
+                        $sin_coincidencias = false;
                     }
                 } else{
                     if(strpos($avance_expediente,"!=")!==false){
@@ -68,15 +70,54 @@ class EmpresaService
                         if(is_numeric($diferente)){
                             if($empresa->porcentaje_avance_expediente != $diferente){
                                 $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,">=")!==false){
+                        $diferente =str_replace(">=","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente >= $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,">")!==false){
+                        $diferente =str_replace(">","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente > $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,"<=")!==false){
+                        $diferente =str_replace("<=","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente <= $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,"<")!==false){
+                        $diferente =str_replace("<","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente < $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
                             }
                         }
                     }
                 }
-
+            }
+            if($sin_coincidencias){
+                $this->repository->where([['rfc', '=', '666']]);
             }
         }
         if (isset($data['usuario_inicio'])) {
-            $usuarios = Usuario::query()->where([['usuario', 'LIKE', '%'.$data['usuario_inicio'].'%']])->get();
+            $usuarios = Usuario::query()->where('nombre', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->orWhere('apaterno', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->orWhere('amaterno', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->orWhere('usuario', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->get();
             if(count($usuarios)>0){
                 foreach ($usuarios as $usuario){
                     $this->repository->whereOr([['usuario_registro', '=', $usuario->idusuario]]);
@@ -85,6 +126,21 @@ class EmpresaService
                 $this->repository->where([['rfc', '=', '666']]);
             }
 
+        }
+        if (isset($data['mis_pendientes'])) {
+            if($data["mis_pendientes"] ==1){
+                $empresas = Empresa::where("usuario_registro",auth()->id())->get();
+                $sin_coincidencias = true;
+                foreach($empresas as $empresa){
+                    if($empresa->porcentaje_avance_expediente != 100){
+                        $this->repository->whereOr([['id', '=', $empresa->id]]);
+                        $sin_coincidencias = false;
+                    }
+                }
+                if($sin_coincidencias){
+                    $this->repository->where([['rfc', '=', '666']]);
+                }
+            }
         }
         /*if($data['sort'] == 'usuario_inicio'){
             if (isset($data['usuario_inicio'])) {
@@ -137,7 +193,7 @@ class EmpresaService
 
     private function generaDirectorios($rfc)
     {
-        $dir = " uploads/padron_contratistas/" . $rfc;
+        $dir = "./uploads/padron_contratistas/" . $rfc;
 
         if (!file_exists($dir) && !is_dir($dir)) {
             mkdir($dir, 777, true);
