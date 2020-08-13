@@ -26,6 +26,16 @@ class Archivo extends Model
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
+    public function scopeCargados($query)
+    {
+        return $query->whereNotNull("hash_file");
+    }
+    public function scopeObligatorios($query)
+    {
+        return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
+            ->where('ctg_tipos_archivos.obligatorio', 1);
+    }
+
     public function getRegistroAttribute()
     {
         return $this->usuarioRegsitro->nombre_completo;
@@ -45,15 +55,5 @@ class Archivo extends Model
     public function getEstatusAttribute()
     {
         return $this->hash_file?'Completo':'Pendiente';
-    }
-
-    public function scopeCargados($query)
-    {
-        return $query->whereNotNull("hash_file");
-    }
-    public function scopeObligatorios($query)
-    {
-        return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
-            ->where('ctg_tipos_archivos.obligatorio', 1);
     }
 }
