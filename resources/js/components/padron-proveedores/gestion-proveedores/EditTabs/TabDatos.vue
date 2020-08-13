@@ -30,7 +30,7 @@
                                    v-validate="{ required: true, numeric:true, digits:11}"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
-                                   placeholder="NSS"/>
+                                   placeholder="NSS" :maxlength="11"/>
                             <div class="invalid-feedback" v-show="errors.has('nss')">{{ errors.first('nss') }}</div>
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                                    v-validate="{ required: true, digits: 10}"
                                    id="telefono"
                                    :class="{'is-invalid': errors.has('telefono')}"
-                                   placeholder="TELÉFONO"/>
+                                   placeholder="TELÉFONO" :maxlength="10"/>
                             <div class="invalid-feedback" v-show="errors.has('telefono')">{{ errors.first('telefono') }}</div>
                         </div>
                     </div>

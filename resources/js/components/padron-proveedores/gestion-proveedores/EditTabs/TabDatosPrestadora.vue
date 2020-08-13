@@ -29,7 +29,7 @@
                                    v-model="registrar_empresa.rfc"
                                    :class="{'is-invalid': errors.has('rfc')}"
                                    v-validate="{ required: true, regex: /^([A-ZÑ&]{3,4})(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))([A-Z\d]{2})([A\d])$/ }"
-                                   id="rfc"/>
+                                   id="rfc" :maxlength="13"/>
                             <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                                    v-validate="{ required: true,numeric:true, digits:11}"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
-                                   placeholder="NSS"/>
+                                   placeholder="NSS" :maxlength="11"/>
                             <div class="invalid-feedback" v-show="errors.has('nss')">{{ errors.first('nss') }}</div>
                         </div>
                     </div>
