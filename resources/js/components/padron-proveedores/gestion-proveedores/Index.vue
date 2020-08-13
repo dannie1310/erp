@@ -135,6 +135,7 @@
                             porcentaje_avance: entrada.porcentaje_avance_expediente,
                             buttons: $.extend({}, {
                                 show: true,
+                                edit: self.$root.can('consultar_expediente_proveedor', true) ? true : false,
                                 id: entrada.id,
                                 estado: entrada.estado,
                                 pagina: self.query.offset,

@@ -39,7 +39,7 @@ class EmpresaRepository extends Repository implements RepositoryInterface
             return $giro_obj->id;
         } else {
             $giro_obj = CtgGiro::create(
-                ["descripcion"=>strtoupper($giro)]
+                ["descripcion"=>$giro]
             );
             return $giro_obj->id;
         }
@@ -52,7 +52,7 @@ class EmpresaRepository extends Repository implements RepositoryInterface
             return $especialidad_obj->id;
         } else {
             $especialidad_obj = CtgEspecialidad::create(
-                ["descripcion"=>strtoupper($especialidad)]
+                ["descripcion"=>$especialidad]
             );
             return $especialidad_obj->id;
         }
@@ -62,12 +62,14 @@ class EmpresaRepository extends Repository implements RepositoryInterface
         $tipos_archivos = CtgTipoArchivoTipoEmpresa::where("id_tipo_empresa","=", $id_tipo_empresa)->get();
         return $tipos_archivos;
     }
-     public function getEmpresaXRFC($rfc)
-     {
+
+    public function getEmpresaXRFC($rfc)
+    {
          $empresa = Empresa::where("rfc","=",$rfc)
              ->first();
          return $empresa;
-     }
+    }
+
     public function getEFO($rfc)
     {
         $efo = CtgEfos::where("rfc","=",$rfc)
@@ -75,4 +77,8 @@ class EmpresaRepository extends Repository implements RepositoryInterface
         return $efo;
     }
 
+    public function update(array $data, $id)
+    {
+        return $this->show($id)->editar($data);
+    }
 }

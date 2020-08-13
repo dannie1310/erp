@@ -4,12 +4,12 @@
 namespace App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores;
 
 
-use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgEspecialidad;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgTipoEmpresa;
 use League\Fractal\TransformerAbstract;
 
-class EspecialidadTransformer extends TransformerAbstract
+class TipoEmpresaTransformer extends TransformerAbstract
 {
-    public function transform(CtgEspecialidad $model)
+    public function transform(CtgTipoEmpresa $model)
     {
         return [
             'id' => $model->getKey(),
