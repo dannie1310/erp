@@ -137,7 +137,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="validate">Guardar</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
                 </div>
             </div>
         </div>

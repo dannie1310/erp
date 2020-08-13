@@ -137,7 +137,6 @@ export default {
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    console.log(data)
                                     swal("Datos actualizados correctamente", {
                                         icon: "success",
                                         timer: 1500,
@@ -148,8 +147,6 @@ export default {
                                         })
                                 })
                                 .catch(error => {
-                                    console.log("prueba aqui?");
-                                    console.log(error);
                                     reject(error);
                                 })
                         }

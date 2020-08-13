@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-info" :disabled="errors.count() > 0" @click="validate">Guardar</button>
+                    <button type="button" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
                 </div>
             </div>
         </div>
@@ -86,7 +86,6 @@
                     id: this.prestadora.id,
                     params: {include: ['proveedor']}
                 }).then(data => {
-                    console.log("find", data)
                     this.registrar_empresa.id = data.id;
                     this.registrar_empresa.rfc = data.rfc;
                     this.registrar_empresa.razon_social = data.razon_social;
@@ -127,7 +126,7 @@
                 }).then(data => {
                     if(data['mensaje']==false){
                         swal({
-                            title: "¿Desea Remplazarla?",
+                            title: "¿Desea Reemplazar?",
                             text: "El RFC ingresado pertenece a la empresa prestadora ("+data['razon']+").",
                             icon: "warning",
                             buttons: {
@@ -136,7 +135,7 @@
                                     visible: true
                                 },
                                 confirm: {
-                                    text: 'Si, Remplazar',
+                                    text: 'Si, Reemplazar',
                                     closeModal: false,
                                 }
                             }
