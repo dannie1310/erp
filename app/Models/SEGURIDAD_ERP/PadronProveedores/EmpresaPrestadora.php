@@ -11,4 +11,6 @@ class EmpresaPrestadora extends Model
     protected $connection = 'seguridad';
     protected $table = 'SEGURIDAD_ERP.PadronProveedores.empresas_prestadoras';
     public $timestamps = false;
+
+    protected $fillable = ['id_empresa_prestadora'];
 }

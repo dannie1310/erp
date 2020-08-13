@@ -311,6 +311,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/getDoctosGenerales', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@getDoctosGenerales')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@update')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/revisarRFC', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@revisarRFC')->where(['id' => '[0-9]+']);
         });
         $api->group(['prefix' => 'especialidad'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EspecialidadController@store');

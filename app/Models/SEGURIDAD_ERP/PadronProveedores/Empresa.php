@@ -89,16 +89,20 @@ class Empresa extends Model
     {
         try {
             DB::connection('seguridad')->beginTransaction();
-            $this->update([
-                'razon_social' => $data['razon_social'],
-                'no_imss' => $data['nss'],
-                'id_giro' => $data['id_giro'],
-                'id_especialidad' => $data['id_especialidad'],
-                'nombre_contacto' => $data['contacto'],
-                'telefono' => $data['telefono'],
-                'correo_electronico' => $data['correo'],
-                'rfc' => $data['rfc']
-            ]);
+            if(array_key_exists('cambio_prestadora', $data)){
+                $this->cambiarPrestadora($data['id_proveedor'], $data['id']);
+            }else {
+                $this->update([
+                    'razon_social' => $data['razon_social'],
+                    'no_imss' => $data['nss'],
+                    'id_giro' => $data['id_giro'],
+                    'id_especialidad' => $data['id_especialidad'],
+                    'nombre_contacto' => array_key_exists('contacto',$data) ? $data['contacto'] : null,
+                    'telefono' => array_key_exists('telefono', $data) ? $data['telefono'] : null,
+                    'correo_electronico' => array_key_exists('correo', $data) ? $data['correo'] : null,
+                    'rfc' => $data['rfc']
+                ]);
+            }
             DB::connection('seguridad')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -129,5 +133,15 @@ class Empresa extends Model
     public function getPorcentajeAvanceExpedienteAttribute()
     {
         return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,2,".","");
+    }
+
+    private function cambiarPrestadora($id_proveedor, $id_prestadora)
+    {
+        $prestadora = EmpresaPrestadora::where("id_empresa_prestadora","=",$id_prestadora)
+            ->where("id_empresa_proveedor","=",$id_proveedor)
+            ->first();
+        $prestadora->update([
+            'id_empresa_prestadora' => $this->id
+        ]);
     }
 }

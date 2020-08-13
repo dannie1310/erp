@@ -205,11 +205,21 @@ class EmpresaService
     public function update(array $data, $id)
     {
         if(array_key_exists('rfc_prestadora', $data)){
-            $data['id_giro'] = null;
-            $data['id_especialidad'] = null;
+            $empresa = $this->repository->getEmpresaXRFC($data["rfc"]);
+            if($empresa) {
+                if ($empresa->id_tipo_empresa != 3) {
+                    abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+                }
+                if ($empresa->id != $id) {
+                    $data['cambio_prestadora'] = true;
+                    $id = $empresa->id;
+                }
+            }
             $this->validaEFO($data["rfc"]);
             $this->validaRFC($data["rfc"]);
-            $this->editarNombreDirectorioPrestadora($data['proveedor']['data'][0]['rfc'],$data['rfc_prestadora'],$data["rfc"]);
+            $this->editarNombreDirectorioPrestadora($data['rfc_proveedor'], $data['rfc_prestadora'], $data["rfc"]);
+            $data['id_giro'] = null;
+            $data['id_especialidad'] = null;
         }else {
             if (!is_numeric($data['giro']['id'])) {
                 $data['id_giro'] = $this->getIdGiro($data['giro_nuevo']);
@@ -237,5 +247,24 @@ class EmpresaService
         }else{
             mkdir($dir.$rfc_new, 777, true);
         }
+    }
+
+    public function revisarRFC($rfc, $id)
+    {
+        $empresa = $this->repository->getEmpresaXRFC($rfc);
+        if ($empresa) {
+            if ($empresa->id_tipo_empresa != 3) {
+                abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+            }
+            if ($empresa->id != $id) {
+                return [
+                    'mensaje' => false,
+                    'razon' => $empresa->razon_social
+                ];
+            }
+        }
+        return [
+            'mensaje' => true
+        ];
     }
 }

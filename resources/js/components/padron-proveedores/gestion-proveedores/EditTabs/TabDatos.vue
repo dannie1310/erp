@@ -27,7 +27,7 @@
                                    name="nss"
                                    data-vv-as="NSS"
                                    v-model="empresa.nss"
-                                   v-validate="{ required: true, numeric:true, min:11}"
+                                   v-validate="{ required: true, numeric:true, digits:11}"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
                                    placeholder="NSS"/>
