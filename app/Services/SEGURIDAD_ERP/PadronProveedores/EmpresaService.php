@@ -37,7 +37,6 @@ class EmpresaService
 
     public function paginate($data)
     {
-
         if (isset($data['razon_social'])) {
             $this->repository->where([['razon_social', 'LIKE', '%' . $data['razon_social'] . '%']]);
         }
@@ -201,5 +200,71 @@ class EmpresaService
                 abort(500,"El RFC ingresado no es válido ante el SAT");
             }
         }
+    }
+
+    public function update(array $data, $id)
+    {
+        if(array_key_exists('rfc_prestadora', $data)){
+            $empresa = $this->repository->getEmpresaXRFC($data["rfc"]);
+            if($empresa) {
+                if ($empresa->id_tipo_empresa != 3) {
+                    abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+                }
+                if ($empresa->id != $id) {
+                    $data['cambio_prestadora'] = true;
+                    $id = $empresa->id;
+                }
+            }
+            $this->validaEFO($data["rfc"]);
+            $this->validaRFC($data["rfc"]);
+            $this->editarNombreDirectorioPrestadora($data['rfc_proveedor'], $data['rfc_prestadora'], $data["rfc"]);
+            $data['id_giro'] = null;
+            $data['id_especialidad'] = null;
+        }else {
+            if (!is_numeric($data['giro']['id'])) {
+                $data['id_giro'] = $this->getIdGiro($data['giro_nuevo']);
+            } else {
+                $data['id_giro'] = $data['giro']['id'];
+            }
+            if (!is_numeric($data['especialidad']['id'])) {
+                $data['id_especialidad'] = $this->getIdEspecialidad($data['especialidad_nuevo']);
+            } else {
+                $data['id_especialidad'] = $data['especialidad']['id'];
+            }
+        }
+        return $this->repository->update($data, $id);
+    }
+
+    public function getDoctosGenerales($id){
+        dd('pandita', $this->repository->show($id)->archivos);
+    }
+
+    private function editarNombreDirectorioPrestadora($rfc_proveedor, $rfc_old, $rfc_new)
+    {
+        $dir = "./uploads/padron_contratistas/".$rfc_proveedor."/";
+        if (file_exists($dir.$rfc_old) && is_dir($dir.$rfc_old)) {
+            rename($dir . $rfc_old, $dir . $rfc_new);
+        }else{
+            mkdir($dir.$rfc_new, 777, true);
+        }
+    }
+
+    public function revisarRFC($rfc, $id)
+    {
+        $empresa = $this->repository->getEmpresaXRFC($rfc);
+        if ($empresa) {
+            if ($empresa->id_tipo_empresa != 3) {
+                abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+            }
+            if ($empresa->id != $id) {
+                return [
+                    'mensaje' => false,
+                    'razon' => $empresa->razon_social
+                ];
+            }
+        }
+        return [
+            'mensaje' => true
+        ];
     }
 }
