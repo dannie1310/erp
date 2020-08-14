@@ -88,7 +88,7 @@ class EmpresaTransformer extends TransformerAbstract
      */
     public function includeArchivos(Empresa $model){
         if($archivos = $model->archivos){
-            return $this->collection($archivos, new ArchivoTransformer);
+            return $this->collection($archivos->sortBy('id_tipo_archivo'), new ArchivoTransformer);
         }
         return null;
     }

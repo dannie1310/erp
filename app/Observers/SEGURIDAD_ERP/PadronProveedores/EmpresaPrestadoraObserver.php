@@ -15,4 +15,12 @@ class EmpresaPrestadoraObserver
     {
 
     }
+
+    /**
+     * @param EmpresaPrestadora $empresaPrestadora
+     */
+    public function created(EmpresaPrestadora $empresaPrestadora)
+    {
+        // $empresaPrestadora->generarDocumentacion();
+    }
 }
