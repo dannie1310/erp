@@ -44,7 +44,7 @@ class Archivo extends Model
     {
         if($this->fecha_hora_registro){
             $date = date_create($this->fecha_hora_registro);
-            return date_format($date,"d/m/Y H:m");
+            return date_format($date,"d/m/Y H:i");
         }
         return '';
     }
