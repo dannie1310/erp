@@ -99,9 +99,9 @@ class EmpresaTransformer extends TransformerAbstract
      */
     public function includePrestadora(Empresa $model)
     {
-        if($prestadora = $model->prestadora)
+        if(($prestadora = $model->prestadora) && $model->prestadora->count() > 0)
         {
-            return $this->collection($prestadora, new EmpresaTransformer);
+            return $this->item($prestadora[0], new EmpresaTransformer);
         }
         return null;
     }
@@ -112,9 +112,9 @@ class EmpresaTransformer extends TransformerAbstract
      */
     public function includeProveedor(Empresa $model)
     {
-        if($proveedor = $model->proveedor)
+        if(($proveedor = $model->proveedor) && $model->proveedor->count() > 0)
         {
-            return $this->collection($proveedor, new EmpresaTransformer);
+            return $this->item($proveedor[0], new EmpresaTransformer);
         }
         return null;
     }

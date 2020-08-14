@@ -168,7 +168,6 @@ export default {
                     }
                 })
                     .then((value) => {
-                        console.log(value)
                         if (value) {
                             axios
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )

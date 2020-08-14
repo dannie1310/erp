@@ -90,8 +90,8 @@
                     this.registrar_empresa.rfc = data.rfc;
                     this.registrar_empresa.razon_social = data.razon_social;
                     this.registrar_empresa.nss = data.nss;
-                    this.registrar_empresa.rfc_proveedor = data.proveedor.data[0].rfc;
-                    this.registrar_empresa.id_proveedor = data.proveedor.data[0].id;
+                    this.registrar_empresa.rfc_proveedor = data.proveedor.rfc;
+                    this.registrar_empresa.id_proveedor = data.proveedor.id;
                     this.registrar_empresa.rfc_prestadora = data.rfc;
                 })
             },
@@ -114,8 +114,8 @@
                     this.registrar_empresa.rfc = data.rfc;
                     this.registrar_empresa.razon_social = data.razon_social;
                     this.registrar_empresa.nss = data.nss;
-                    this.registrar_empresa.id_proveedor = data.proveedor.data[0].id;
-                    this.registrar_empresa.rfc_proveedor = data.proveedor.data[0].rfc;
+                    this.registrar_empresa.id_proveedor = data.proveedor.id;
+                    this.registrar_empresa.rfc_proveedor = data.proveedor.rfc;
                     this.registrar_empresa.rfc_prestadora = data.rfc;
                 })
             },
