@@ -269,7 +269,6 @@ export default {
         },
         validate() {
                 this.$validator.validate().then(result => {
-                    console.log(result);
                     if (result) {
                         if(this.archivo.tipo_archivo != 14 || this.id_tipo == 1){
                             this.upload();

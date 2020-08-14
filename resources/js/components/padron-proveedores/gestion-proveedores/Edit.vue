@@ -54,7 +54,7 @@
 
     export default {
         name: "proveedores-edit",
-        components: {DatosGenerales, DatosPrestadora,TabDocumentacion},
+        components: {DatosGenerales, DatosPrestadora,TabDocumentacion, TabDocumentacionPrestadora},
         props: ['id'],
         data() {
             return {
@@ -73,6 +73,10 @@
                     id: this.id,
                     params: {include: ['prestadora.archivos', 'archivos']}
                 }).then(data => {
+                    if(data.prestadora ){
+                        this.prestadora = true;
+                        this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.prestadora.archivos.data);
+                    }
                     this.prestadora = data.prestadora ? true : false;
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', data.archivos.data);
@@ -86,14 +90,14 @@
             }
         },
         watch:{
-            empresa(value){
-                if(value !== null){
-                    if(value.prestadora.data.length > 0)
-                    {
-                        this.prestadora = true;
-                    }
-                }
-            },
+            // empresa(value){
+            //     if(value !== null){
+            //         if(value.prestadora.data.length > 0)
+            //         {
+            //             this.prestadora = true;
+            //         }
+            //     }
+            // },
         }
     }
 </script>
