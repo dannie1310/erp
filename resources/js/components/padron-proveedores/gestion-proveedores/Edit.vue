@@ -37,7 +37,7 @@
                 <TabDocumentacion v-bind:id="id"></TabDocumentacion>
             </div>
               <div v-if="prestadora" aria-labelledby="nav-prestadora-tab" class="tab-pane fade" id="nav-prestadora" role="tabpanel">
-                <DatosPrestadora v-bind:prestadora="empresa.prestadora.data[0]"></DatosPrestadora>
+                <DatosPrestadora v-bind:prestadora="empresa.prestadora"></DatosPrestadora>
             </div>
             <div v-if="prestadora" aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-documentacion-prestadora" role="tabpanel">
                 <b>pandita</b>
@@ -71,10 +71,7 @@
                     id: this.id,
                     params: {include: ['prestadora', 'archivos']}
                 }).then(data => {
-                    if(data.prestadora.data.length > 0)
-                    {
-                        this.prestadora = true;
-                    }
+                    this.prestadora = data.prestadora ? true : false;
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.cargando = false;
                 })
