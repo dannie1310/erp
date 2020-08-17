@@ -65,6 +65,11 @@ class Empresa extends Model
         return $this->belongsTo(Usuario::class, "usuario_registro","idusuario" );
     }
 
+    public function contactos()
+    {
+        return $this->hasMany(Contacto::class,"id_empresa_proveedora", "id");
+    }
+
     public function scopeProveedores($query)
     {
         return $query->whereIn("id_tipo_empresa", [1,2]);
@@ -113,6 +118,13 @@ class Empresa extends Model
             DB::connection('seguridad')->beginTransaction();
 
             $empresa = $this->create($data);
+
+            if(key_exists("contactos",$data)){
+                foreach($data["contactos"] as $contacto)
+                {
+                    $empresa->contactos()->create($contacto);
+                }
+            }
 
             foreach($data["archivos"] as $archivo){
                 $empresa->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);

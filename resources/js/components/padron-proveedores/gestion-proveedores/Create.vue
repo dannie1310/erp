@@ -1,11 +1,14 @@
 <template>
     <span>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group row error-content">
-                    <label for="razon_social" class="col-md-3 col-form-label">Razón Social:</label>
-                    <div class="col-md-9">
-                        <textarea
+        <div class="card">
+            <div class="card-header">
+                <label ><i class="fa fa-th-list icon"></i>Datos Generales del Proveedor</label>
+            </div>
+            <div class="card-body">
+                 <div class="form-row">
+                     <div class="form-group col-md-12 error-content">
+                         <label for="razon_social" class="col-form-label">Razón Social:</label>
+                         <input
                                 style="text-transform:uppercase;"
                                 type="text"
                                 name="razon_social"
@@ -14,33 +17,25 @@
                                 class="form-control"
                                 id="razon_social"
                                 v-model="registro_proveedor.razon_social"
-                                :class="{'is-invalid': errors.has('razon_social')}"></textarea>
-                        <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group row">
-                    <label for="rfc" class="col-md-3" ><b>RFC: </b> </label>
-                    <div class="col-md-9">
-                        <input class="form-control"
-                               name="rfc"
-                               data-vv-as="'RFC'"
-                               v-model="registro_proveedor.rfc"
-                               :class="{'is-invalid': errors.has('rfc')}"
-                               v-validate="{ required: true, regex: /^([A-ZÑ&]{3,4})(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))([A-Z\d]{2})([A\d])$/ }"
-                               id="rfc"
+                                :class="{'is-invalid': errors.has('razon_social')}" />
+                         <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
+                     </div>
+                 </div>
+                <div class="form-row">
+                    <div class="form-group col-md-3 error-content">
+                        <label for="rfc" class="col-form-label" ><b>RFC: </b> </label>
+                         <input class="form-control"
+                                name="rfc"
+                                data-vv-as="'RFC'"
+                                v-model="registro_proveedor.rfc"
+                                :class="{'is-invalid': errors.has('rfc')}"
+                                v-validate="{ required: true, regex: /^([A-ZÑ&]{3,4})(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))([A-Z\d]{2})([A\d])$/ }"
+                                id="rfc"
                                 :maxlength="13"/>
                         <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group row">
-                    <label for="rfc" class="col-md-3" ><b>NSS: </b> </label>
-                    <div class="col-md-9">
+                    <div class="form-group col-md-3 error-content">
+                        <label for="rfc" class="col-form-label" ><b>NSS: </b> </label>
                         <input class="form-control"
                                style="text-transform:uppercase;"
                                name="numero_imss"
@@ -52,66 +47,10 @@
                                :maxlength="11"/>
                         <div class="invalid-feedback" v-show="errors.has('numero_imss')">{{ errors.first('numero_imss') }}</div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group row">
-                    <label for="rfc" class="col-md-3" ><b>Contacto: </b> </label>
-                    <div class="col-md-9">
-                        <input class="form-control"
-                               name="contacto"
-                               data-vv-as="'Contacto'"
-                               v-model="registro_proveedor.nombre_contacto"
-                               :class="{'is-invalid': errors.has('contacto')}"
-                               v-validate="{ required: true, min:10 }"
-                               id="contacto"
-                               :maxlength="250"/>
-                        <div class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group row">
-                    <label for="rfc" class="col-md-3" ><b>Teléfono: </b> </label>
-                    <div class="col-md-9">
-                        <input class="form-control"
-                               style="text-transform:uppercase;"
-                               name="telefono"
-                               data-vv-as="'Teléfono'"
-                               v-model="registro_proveedor.telefono"
-                               :class="{'is-invalid': errors.has('telefono')}"
-                               v-validate="{ required: true, numeric:true }"
-                               id="telefono"
-                               :maxlength="10"/>
-                        <div class="invalid-feedback" v-show="errors.has('telefono')">{{ errors.first('telefono') }}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group row">
-                    <label for="rfc" class="col-md-3" ><b>Correo: </b> </label>
-                    <div class="col-md-9">
-                        <input class="form-control"
-                               name="correo"
-                               data-vv-as="'Correo'"
-                               v-model="registro_proveedor.correo_electronico"
-                               :class="{'is-invalid': errors.has('correo')}"
-                               v-validate="{ required: true, email:true }"
-                               id="correo"
-                               :maxlength="50"/>
-                        <div class="invalid-feedback" v-show="errors.has('correo')">{{ errors.first('correo') }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" v-if="giros.length>0">
-            <div class="col-md-3">
-                <div class="form-group row">
-                    <label for="rfc" class="col-md-3" ><b>Giro: </b> </label>
-                    <div class="col-md-9">
-                        <model-list-select
+                    <div class="form-group col-md-3 error-content">
+                        <label for="rfc" class="col-form-label" ><b>Giro: </b> </label>
+                        <span v-if="giros.length>0">
+                            <model-list-select
                                 ref="lista_giros"
                                 :disabled="cargando"
                                 id="id_giro"
@@ -126,51 +65,37 @@
                                 :onchange="changeSelectGiro()"
                                 :isError="errors.has(`id_giro`)">
                         >
-                        </model-list-select>
-                        <div class="invalid-feedback" v-show="errors.has('id_giro')">{{ errors.first('id_giro') }}</div>
+                            </model-list-select>
+                            <div class="invalid-feedback" v-show="errors.has('id_giro')">{{ errors.first('id_giro') }}</div>
+                            <span v-if="agregar_giro">
+                                <input class="form-control"
+                                       name="otro_giro"
+                                       data-vv-as="'Giro'"
+                                       v-model="registro_proveedor.giro"
+                                       :class="{'is-invalid': errors.has('otro_giro')}"
+                                       v-validate="{ required: true }"
+                                       id="otro_giro"
+                                       placeholder="Ingresar Giro"
+                                       :maxlength="50"/>
+                                <div class="invalid-feedback" v-show="errors.has('otro_giro')">{{ errors.first('otro_giro') }}</div>
+                            </span>
+                        </span>
+                        <span v-else>
+                            <input class="form-control"
+                                   name="giro"
+                                   data-vv-as="'Giro'"
+                                   v-model="registro_proveedor.giro"
+                                   v-validate="{ required: true }"
+                                   :class="{'is-invalid': errors.has('giro')}"
+                                   id="giro"
+                                   :maxlength="50"/>
+                            <div class="invalid-feedback" v-show="errors.has('giro')">{{ errors.first('giro') }}</div>
+                        </span>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3" v-if="agregar_giro">
-                <div class="form-group row">
-                    <div class="col-md-12">
-                        <input class="form-control"
-                               name="otro_giro"
-                               data-vv-as="'Giro'"
-                               v-model="registro_proveedor.giro"
-                               :class="{'is-invalid': errors.has('otro_giro')}"
-                               v-validate="{ required: true }"
-                               id="otro_giro"
-                               :maxlength="50"/>
-                        <div class="invalid-feedback" v-show="errors.has('otro_giro')">{{ errors.first('otro_giro') }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" v-else>
-            <div class="col-md-3">
-                <div class="form-group row">
-                    <label for="rfc" class="col-md-3" ><b>Giro: </b> </label>
-                    <div class="col-md-9">
-                        <input class="form-control"
-                               name="giro"
-                               data-vv-as="'Giro'"
-                               v-model="registro_proveedor.giro"
-                               v-validate="{ required: true }"
-                               :class="{'is-invalid': errors.has('giro')}"
-                               id="giro"
-                               :maxlength="50"/>
-                        <div class="invalid-feedback" v-show="errors.has('giro')">{{ errors.first('giro') }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" v-if="especialidades.length>0">
-            <div class="col-md-3" >
-                <div class="form-group row">
-                    <label for="rfc" class="col-md-3" ><b>Especialidad: </b> </label>
-                    <div class="col-md-9">
-                        <model-list-select
+                    <div class="form-group col-md-3 error-content">
+                        <label for="rfc" class="col-form-label" ><b>Especialidad: </b> </label>
+                        <span v-if="especialidades.length>0">
+                            <model-list-select
                                 :disabled="cargando"
                                 name="id_especialidad"
                                 id="id_especialidad"
@@ -183,48 +108,135 @@
                                 v-validate="{ required: true }"
                                 :onchange="changeSelectEspecialidad()"
                                 :isError="errors.has(`id_especialidad`)"
-                        >
-                        </model-list-select>
-                        <div class="invalid-feedback" v-show="errors.has('id_especialidad')">{{ errors.first('id_especialidad') }}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3" v-if="agregar_especialidad">
-                <div class="form-group row">
-                    <div class="col-md-12">
-                        <input class="form-control"
-                               name="otra_especialidad"
-                               data-vv-as="'Especialidad'"
-                               v-model="registro_proveedor.especialidad"
-                               :class="{'is-invalid': errors.has('otra_especialidad')}"
-                               id="otra_especialidad"
-                               v-validate="{required:true}"
-                               :maxlength="50"/>
-                        <div class="invalid-feedback" v-show="errors.has('otra_especialidad')">{{ errors.first('otra_especialidad') }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" v-else>
-            <div class="col-md-3">
-                <div class="form-group row">
-                    <label for="rfc" class="col-md-3" ><b>Especialidad: </b> </label>
-                    <div class="col-md-9">
-                        <input class="form-control"
-                               name="especialidad"
-                               data-vv-as="'Especialidad'"
-                               v-model="registro_proveedor.especialidad"
-                               :class="{'is-invalid': errors.has('especialidad')}"
-                               v-validate="{ required: true }"
-                               id="especialidad"
-                               :maxlength="50"/>
-                        <div class="invalid-feedback" v-show="errors.has('especialidad')">{{ errors.first('especialidad') }}</div>
+                            >
+                            </model-list-select>
+                            <div class="invalid-feedback" v-show="errors.has('id_especialidad')">{{ errors.first('id_especialidad') }}</div>
+                            <span v-if="agregar_especialidad">
+                                <input class="form-control"
+                                       name="otra_especialidad"
+                                       data-vv-as="'Especialidad'"
+                                       v-model="registro_proveedor.especialidad"
+                                       :class="{'is-invalid': errors.has('otra_especialidad')}"
+                                       id="otra_especialidad"
+                                       v-validate="{required:true}"
+                                       placeholder="Ingresar Especialidad"
+                                       :maxlength="50"/>
+                                <div class="invalid-feedback" v-show="errors.has('otra_especialidad')">{{ errors.first('otra_especialidad') }}</div>
+                            </span>
+                        </span>
+                        <span v-else>
+                            <input class="form-control"
+                                   name="especialidad"
+                                   data-vv-as="'Especialidad'"
+                                   v-model="registro_proveedor.especialidad"
+                                   :class="{'is-invalid': errors.has('especialidad')}"
+                                   v-validate="{ required: true }"
+                                   id="especialidad"
+                                   :maxlength="50"/>
+                            <div class="invalid-feedback" v-show="errors.has('especialidad')">{{ errors.first('especialidad') }}</div>
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card-header">
+                <label ><i class="fa fa-th-list icon"></i>Contactos</label>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="bg-gray-light index_corto">#</th>
+                            <th class="bg-gray-light">Nombre</th>
+                            <th class="bg-gray-light">Puesto</th>
+                            <th class="bg-gray-light">Teléfono</th>
+                            <th class="bg-gray-light">E-mail</th>
+                            <th class="bg-gray-light">Notas</th>
+                            <th class="bg-gray-light icono">
+                                <button type="button" class="btn btn-sm btn-outline-success" @click="agregarContacto" :disabled="cargando">
+                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                    <i class="fa fa-plus" v-else></i>
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(contacto, i) in registro_proveedor.contactos" >
+                            <td class="index_corto">{{ i + 1 }}</td>
+
+                            <td>
+                                <input class="form-control"
+                                       :name="`nombre[${i}]`"
+                                       :data-vv-as="`'Nombre ${i + 1}'`"
+                                       v-model="contacto.nombre"
+                                       :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
+                                       v-validate="{ required: true, min:10 }"
+                                       :id="`nombre[${i}]`"
+                                       :maxlength="250"/>
+                                <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
+                            </td>
+
+                            <td>
+                                <input class="form-control"
+                                       :name="`puesto[${i}]`"
+                                       :data-vv-as="`'Puesto ${i + 1}'`"
+                                       v-model="contacto.puesto"
+                                       :class="{'is-invalid': errors.has(`puesto[${i}]`)}"
+                                       v-validate="{ required: true, min:5 }"
+                                       :id="`puesto[${i}]`"
+                                       :maxlength="50"/>
+                                <div class="invalid-feedback" v-show="errors.has(`puesto[${i}]`)">{{ errors.first(`puesto[${i}]`) }}</div>
+                            </td>
+
+                            <td >
+                                <input class="form-control"
+                                       :name="`telefono[${i}]`"
+                                       :data-vv-as="`'Teléfono ${i + 1}'`"
+                                       v-model="contacto.telefono"
+                                       :class="{'is-invalid': errors.has(`telefono[${i}]`)}"
+                                       v-validate="{ required: true, numeric:true }"
+                                       :id="`telefono[${i}]`"
+                                       :maxlength="10"/>
+                                <div class="invalid-feedback" v-show="errors.has(`telefono[${i}]`)">{{ errors.first(`telefono[${i}]`) }}</div>
+                            </td>
+
+                            <td >
+                                <input class="form-control"
+                                       :name="`email[${i}]`"
+                                       :data-vv-as="`'e-mail ${i + 1}'`"
+                                       v-model="contacto.correo_electronico"
+                                       :class="{'is-invalid': errors.has(`email[${i}]`)}"
+                                       v-validate="{ required: true, email:true }"
+                                       :id="`email[${i}]`"
+                                       :maxlength="50"/>
+                                <div class="invalid-feedback" v-show="errors.has(`email[${i}]`)">{{ errors.first(`email[${i}]`) }}</div>
+                            </td>
+
+                            <td>
+                                <textarea
+                                    :name="`notas[${i}]`"
+                                    :id="`notas[${i}]`"
+                                    class="form-control"
+                                    v-model="contacto.notas"
+                                    :data-vv-as="`'Notas ${i + 1}'`"
+                                ></textarea>
+                            </td>
+
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarContacto(i)" :disabled="registro_proveedor.contactos.length == 1" >
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <button type="button" class="btn btn-primary pull-right" :disabled="errors.count() > 0 || cargando" v-on:click="validate">
                     <span v-if="cargando">
                         <i class="fa fa-spin fa-spinner"></i>
@@ -254,13 +266,19 @@
                     razon_social : '',
                     rfc : '',
                     no_imss: '',
-                    nombre_contacto : '',
-                    telefono : '',
-                    correo_electronico : '',
                     giro : '',
                     especialidad: '',
                     id_giro : '',
                     id_especialidad: '',
+                    contactos : [
+                        {
+                            'nombre' : '',
+                            'puesto' : '',
+                            'telefono' : '',
+                            'email' : '',
+                            'notas' : ''
+                        }
+                    ]
                 },
             }
         },
@@ -269,6 +287,19 @@
             this.getGiros();
         },
         methods:{
+            agregarContacto(){
+                var array = {
+                    'nombre' : '',
+                    'puesto' : '',
+                    'telefono' : '',
+                    'email' : '',
+                    'notas' : ''
+                }
+                this.registro_proveedor.contactos.push(array);
+            },
+            quitarContacto(index){
+                this.registro_proveedor.contactos.splice(index, 1);
+            },
             changeSelectGiro(){
                 if(this.registro_proveedor.id_giro == "agregar"){
                     this.agregar_giro = true;
@@ -306,10 +337,12 @@
                 })
                     .then(data => {
                         this.giros = data.data;
-                        var otro = {};
-                        otro.id="agregar";
-                        otro.descripcion="Agregar...";
-                        this.giros.push(otro);
+                        if(this.giros.length>0){
+                            var otro = {};
+                            otro.id="agregar";
+                            otro.descripcion="Agregar...";
+                            this.giros.push(otro);
+                        }
                     })
                     .finally(()=>{
                         this.getEspecialidades();
@@ -321,10 +354,12 @@
                 })
                     .then(data => {
                         this.especialidades = data.data;
-                        var otro = {};
-                        otro.id="agregar";
-                        otro.descripcion="Agregar...";
-                        this.especialidades.push(otro);
+                        if(this.giros.length>0) {
+                            var otro = {};
+                            otro.id="agregar";
+                            otro.descripcion="Agregar...";
+                            this.especialidades.push(otro);
+                        }
                     })
                     .finally(()=>{
                         this.cargando = false;

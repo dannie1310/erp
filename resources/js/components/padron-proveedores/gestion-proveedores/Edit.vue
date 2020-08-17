@@ -67,12 +67,14 @@
         methods: {
             find() {
                 this.$store.commit('padronProveedores/empresa/SET_EMPRESA', null);
+                this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', null);
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
                     params: {include: ['prestadora', 'archivos']}
                 }).then(data => {
                     this.prestadora = data.prestadora ? true : false;
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
+                    this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', data.archivos.data);
                     this.cargando = false;
                 })
             },
@@ -81,6 +83,16 @@
             empresa() {
                 return this.$store.getters['padronProveedores/empresa/currentEmpresa'];
             }
+        },
+        watch:{
+            empresa(value){
+                if(value !== null){
+                    if(value.prestadora.data.length > 0)
+                    {
+                        this.prestadora = true;
+                    }
+                }
+            },
         }
     }
 </script>

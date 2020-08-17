@@ -25,6 +25,8 @@ class Rol extends Model
     protected $connection = 'seguridad';
     protected $table = 'dbo.roles';
 
+    /*protected $dateFormat = 'Y-m-d H:i:s';*/
+
     protected $fillable = [
         'display_name',
         'description'
