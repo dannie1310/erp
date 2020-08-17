@@ -40,7 +40,7 @@
                 <DatosPrestadora v-bind:prestadora="empresa.prestadora"></DatosPrestadora>
             </div>
             <div v-if="prestadora" aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-documentacion-prestadora" role="tabpanel">
-                <b>pandita</b>
+                <TabDocumentacionPrestadora ></TabDocumentacionPrestadora>
             </div>
         </div>
     </span>
@@ -49,11 +49,12 @@
 <script>
     import DatosGenerales from "./EditTabs/TabDatos";
     import TabDocumentacion from './EditTabs/TabDocumentacion';
-    import DatosPrestadora from './EditTabs/TabDatosPrestadora'
+    import DatosPrestadora from './EditTabs/TabDatosPrestadora';
+    import TabDocumentacionPrestadora from './EditTabs/TabDocumentacionPrestadora';
 
     export default {
         name: "proveedores-edit",
-        components: {DatosGenerales, DatosPrestadora,TabDocumentacion},
+        components: {DatosGenerales, DatosPrestadora,TabDocumentacion, TabDocumentacionPrestadora},
         props: ['id'],
         data() {
             return {
@@ -70,8 +71,12 @@
                 this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', null);
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['prestadora', 'archivos']}
+                    params: {include: ['prestadora.archivos', 'archivos']}
                 }).then(data => {
+                    if(data.prestadora ){
+                        this.prestadora = true;
+                        this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.prestadora.archivos.data);
+                    }
                     this.prestadora = data.prestadora ? true : false;
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', data.archivos.data);
@@ -85,14 +90,14 @@
             }
         },
         watch:{
-            empresa(value){
-                if(value !== null){
-                    if(value.prestadora.data.length > 0)
-                    {
-                        this.prestadora = true;
-                    }
-                }
-            },
+            // empresa(value){
+            //     if(value !== null){
+            //         if(value.prestadora.data.length > 0)
+            //         {
+            //             this.prestadora = true;
+            //         }
+            //     }
+            // },
         }
     }
 </script>

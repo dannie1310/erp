@@ -294,7 +294,7 @@ class EmpresaService
 
     public function registrarPrestadora($data){
         $this->validaRFC($data['rfc']);
-        // $this->validaEFO($data['rfc']);
+        $this->validaEFO($data['rfc']);
         $empresa = $this->repository->show($data['id_empresa']);
         $prestadora = $empresa->prestadora()->create([
             'razon_social' => $data['razon_social'],
@@ -310,6 +310,7 @@ class EmpresaService
             $prestadora->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
         }
 
+        $this->generaDirectorios($data["rfc"]);
         $empresa->archivos()->where('id_tipo_archivo', '=', 14)->delete();
         return $prestadora;
     }

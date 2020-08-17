@@ -111,6 +111,7 @@ import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
 
 //PADRON PROVEEDORES
+import archivoPrestadoraExpediente from './modules/padronProveedores/archivo-prestadora';
 import archivoExpediente from './modules/padronProveedores/archivo';
 import ctgSeccion from './modules/padronProveedores/ctg-seccion';
 import empresaProveedor from './modules/padronProveedores/empresa';
@@ -297,6 +298,7 @@ export default new Vuex.Store({
         'fiscal/no-deducido' : noDeducido,
 
         'padronProveedores/archivo' : archivoExpediente,
+        'padronProveedores/archivo-prestadora' : archivoPrestadoraExpediente,
         'padronProveedores/ctg-seccion' : ctgSeccion,
         'padronProveedores/empresa' : empresaProveedor,
         'padronProveedores/especialidad' : especialidad,
