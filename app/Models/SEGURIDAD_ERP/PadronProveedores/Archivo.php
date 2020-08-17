@@ -38,7 +38,7 @@ class Archivo extends Model
 
     public function getRegistroAttribute()
     {
-        return $this->usuarioRegsitro->nombre_completo;
+        return $this->usuarioRegsitro ? $this->usuarioRegsitro->nombre_completo : '';
     }
 
     public function getFechaRegistroFormatAttribute()

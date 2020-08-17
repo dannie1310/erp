@@ -92,46 +92,60 @@
                                 option-value="id"
                                 v-validate="{required: true}"
                                 :custom-text="giroDescripcion"
+                                size="4"
                                 :list="giros"
                                 :class="{'is-invalid': errors.has('giro')}">
                              </model-list-select>
-                            <br>
-                            <input v-if="empresa.giro && empresa.giro.id == 'nuevo'"
-                                   class="form-control"
-                                   name="giro"
-                                   data-vv-as="GIRO"
-                                   v-model="empresa.giro_nuevo"
-                                   v-validate="{ required: true }"
-                                   id="giro"
-                                   :class="{'is-invalid': errors.has('giro')}"
-                                   placeholder="GIRO"/>
-                            <div class="invalid-feedback" v-show="errors.has('giro')">{{ errors.first('giro') }}</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group error-content">
-                            <label for="especialidad" class="col-form-label">Especialidad:</label>
-                             <model-list-select
-                                 name="especialidad"
-                                 placeholder="Seleccionar o buscar por descripcion de especialidad"
-                                 data-vv-as="Especialidad"
-                                 v-model="empresa.especialidad.id"
-                                 option-value="id"
-                                 v-validate="{required: true}"
-                                 :custom-text="especialidadDescripcion"
-                                 :list="especialidades"
-                                 :class="{'is-invalid': errors.has('especialidad')}">
-                             </model-list-select>
-                            <br>
-                            <input v-if="empresa.especialidad && empresa.especialidad.id == 'nuevo'"
+                            <br><br>
+                            <input v-if="empresa.giro && empresa.giro.id == 'nuevo'"
                                    class="form-control"
+                                   name="giro"
+                                   data-vv-as="NUEVO GIRO"
+                                   v-model="empresa.giro_nuevo"
+                                   v-validate="{ required: true }"
+                                   id="giro"
+                                    :class="{'is-invalid': errors.has('giro')}"
+                                   placeholder="AGREGAR UN GIRO NUEVO"/>
+                            <div class="invalid-feedback" v-show="errors.has('giro')">{{ errors.first('giro') }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group error-content">
+                            <label for="especialidad" class="col-form-label">Especialidad:</label>
+                            <treeselect v-model="especialidades_seleccionadas"
+                                        :multiple="true"
+                                        :options="especialidades"
+                                        data-vv-as="ESPECIALIDADES"
+                                        :flatten-search-results="true"
+                                        placeholder="Selecciona la(s) especialidad(es)">
+                                 <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                            </treeselect>
+                            <div class="invalid-feedback" v-show="errors.has('especialidades_seleccionadas')">{{ errors.first('especialidades_seleccionadas') }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="autoSizingCheck" v-model="nueva_especialidad">
+                                <label class="form-check-label" for="autoSizingCheck">Agregar una Especialidad Nueva...</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" v-if="nueva_especialidad">
+                        <div class="form-group error-content">
+                            <br><br>
+                            <input class="form-control"
                                    name="especialidad"
-                                   data-vv-as="ESPECIALIDAD"
+                                   data-vv-as="NUEVA ESPECIALIDAD"
                                    v-model="empresa.especialidad_nuevo"
                                    v-validate="{ required: true }"
                                    id="especialidad"
                                    :class="{'is-invalid': errors.has('especialidad')}"
-                                   placeholder="ESPECIALIDAD"/>
+                                   placeholder="AGREGAR UNA ESPECIALIDAD NUEVA"/>
                             <div class="invalid-feedback" v-show="errors.has('especialidad')">{{ errors.first('especialidad') }}</div>
                         </div>
                     </div>
@@ -145,16 +159,19 @@
 </template>
 
 <script>
+    import Treeselect from '@riophae/vue-treeselect';
     import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "TabDatos",
         props: ['id'],
-        components: {ModelListSelect},
+        components: {ModelListSelect, Treeselect},
         data() {
             return {
+                especialidades_seleccionadas:[],
                 empresa: [],
                 giros: [],
                 especialidades: [],
+                nueva_especialidad : false,
                 rfcValidate: false,
                 cargando : true
             }
@@ -164,8 +181,18 @@
             this.find();
         },
         methods: {
-            especialidadDescripcion (item) {
-                return `${item.descripcion}`
+            especialidadesAcomodar () {
+               this.especialidades = this.especialidades.map(i => ({
+                    id: i.id,
+                    label: `${i.descripcion}`,
+                    customLabel: `${i.descripcion}`,
+               }));
+
+               if(this.empresa.especialidades) {
+                    this.empresa.especialidades.data.forEach(e => {
+                        this.especialidades_seleccionadas.push(e.id);
+                    });
+                }
             },
             giroDescripcion (item) {
                 return `${item.descripcion}`
@@ -173,7 +200,7 @@
             find() {
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['tipo', 'giro', 'especialidad', 'prestadora']}
+                    params: {include: ['tipo', 'giro', 'especialidades', 'prestadora']}
                 }).then(data => {
                     this.empresa = data;
                 })
@@ -198,11 +225,8 @@
                     params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
-                        data.data.push({
-                            'descripcion': 'Agregar...',
-                            'id': 'nuevo'
-                        });
                         this.especialidades = data.data;
+                        this.especialidadesAcomodar();
                     }).finally(() => {
                         this.cargando = false;
                     })
@@ -210,18 +234,26 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.update()
+                        if(this.especialidades_seleccionadas.length == 0 && this.nueva_especialidad == false)
+                        {
+                            swal('¡Error!', 'Debe existir al menos una especialidad seleccionada.', 'error')
+                        }else {
+                            this.update()
+                        }
                     }
                 });
             },
             update() {
                 this.empresa.razon_social = this.empresa.razon_social.toUpperCase();
                 this.empresa.rfc = this.empresa.rfc.toUpperCase();
+                this.empresa.especialidades_nuevas = this.especialidades_seleccionadas;
+                this.empresa.nueva_especialidad = this.empresa.nueva_especialidad;
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
                     data: this.$data.empresa,
-                    params: {include: ['prestadora', 'archivos']}
+                    params: {include: ['prestadora', 'archivos', 'giro', 'especialidades']}
                 }).then((data) => {
+                    this.empresa = data;
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                 })
             },
