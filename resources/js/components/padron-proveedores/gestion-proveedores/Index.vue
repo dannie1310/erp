@@ -103,7 +103,7 @@
             }
         },
         computed: {
-            entradas(){
+            empresas(){
                 return this.$store.getters['padronProveedores/empresa/empresas'];
             },
             meta(){
@@ -114,30 +114,30 @@
             }
         },
         watch: {
-            entradas: {
-                handler(entradas) {
+            empresas: {
+                handler(empresas) {
                     let self = this;
                     self.$data.data = [];
-                    entradas.forEach(function (entrada, i) {
+                    empresas.forEach(function (empresa, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            razon_social: entrada.razon_social,
-                            rfc: entrada.rfc,
-                            estado_expediente: entrada.estado_expediente,
+                            razon_social: empresa.razon_social,
+                            rfc: empresa.rfc,
+                            estado_expediente: empresa.estado_expediente,
                             avance_expediente: $.extend({}, {
-                                porcentaje_avance: entrada.porcentaje_avance_expediente,
-                                divisor: entrada.archivos_cargados,
-                                dividendo: entrada.archivos_esperados,
-                                color: entrada.color_barra,
+                                porcentaje_avance: empresa.porcentaje_avance_expediente,
+                                divisor: empresa.archivos_cargados,
+                                dividendo: empresa.archivos_esperados,
+                                color: empresa.color_barra,
                                 pagina: self.query.offset,
                             }),
-                            usuario_inicio: entrada.usuario_inicio,
-                            porcentaje_avance: entrada.porcentaje_avance_expediente,
+                            usuario_inicio: empresa.usuario_inicio,
+                            porcentaje_avance: empresa.porcentaje_avance_expediente,
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: self.$root.can('consultar_expediente_proveedor', true) ? true : false,
-                                id: entrada.id,
-                                estado: entrada.estado,
+                                id: empresa.id,
+                                estado: empresa.estado,
                                 pagina: self.query.offset,
                             })
                         })
