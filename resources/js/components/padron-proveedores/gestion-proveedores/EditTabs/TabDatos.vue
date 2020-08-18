@@ -10,7 +10,7 @@
                                     name="razon"
                                     data-vv-as="RAZÓN SOCIAL"
                                     style="text-transform:uppercase;"
-                                    v-model="empresa.razon_social"
+                                    v-model="empresa_registrar.razon_social"
                                     v-validate="{ required: true, min:6, max:255}"
                                     id="razon"
                                     :class="{'is-invalid': errors.has('razon')}"
@@ -24,7 +24,7 @@
                             <input class="form-control"
                                    name="nss"
                                    data-vv-as="NSS"
-                                   v-model="empresa.nss"
+                                   v-model="empresa_registrar.nss"
                                    v-validate="{ required: true, numeric:true, digits:11}"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
@@ -41,7 +41,7 @@
                                 name="giro"
                                 placeholder="Seleccionar o buscar por descripcion de giro"
                                 data-vv-as="Giro"
-                                v-model="empresa.giro.id"
+                                v-model="empresa_registrar.giro.id"
                                 option-value="id"
                                 v-validate="{required: true}"
                                 :custom-text="giroDescripcion"
@@ -54,11 +54,11 @@
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <br><br>
-                            <input v-if="empresa.giro && empresa.giro.id == 'nuevo'"
+                            <input v-if="empresa_registrar.giro && empresa_registrar.giro.id == 'nuevo'"
                                    class="form-control"
                                    name="giro"
                                    data-vv-as="NUEVO GIRO"
-                                   v-model="empresa.giro_nuevo"
+                                   v-model="empresa_registrar.giro_nuevo"
                                    v-validate="{ required: true }"
                                    id="giro"
                                    :class="{'is-invalid': errors.has('giro')}"
@@ -95,7 +95,7 @@
                             <input class="form-control"
                                    name="especialidad"
                                    data-vv-as="NUEVA ESPECIALIDAD"
-                                   v-model="empresa.especialidad_nuevo"
+                                   v-model="empresa_registrar.especialidad_nuevo"
                                    v-validate="{ required: true, min: 5}"
                                    id="especialidad"
                                    :class="{'is-invalid': errors.has('especialidad')}"
@@ -216,7 +216,7 @@
         data() {
             return {
                 especialidades_seleccionadas:[],
-                empresa: [],
+                empresa_registrar: [],
                 giros: [],
                 especialidades: [],
                 nueva_especialidad : false,
@@ -251,8 +251,8 @@
             },
             agregarEspecialidades()
             {
-                if(this.empresa.especialidades) {
-                    this.empresa.especialidades.data.forEach(e => {
+                if(this.empresa_registrar.especialidades) {
+                    this.empresa_registrar.especialidades.data.forEach(e => {
                         this.especialidades_seleccionadas.push(e.id);
                     });
                 }
@@ -265,7 +265,7 @@
                     id: this.id,
                     params: {include: ['tipo', 'giro', 'especialidades', 'prestadora', 'contactos']}
                 }).then(data => {
-                    this.empresa = data;
+                    this.empresa_registrar = data;
                     this.agregarEspecialidades();
                     if(data.contactos.data.length == 0) {
                         this.agregarContacto()
@@ -311,18 +311,18 @@
                 });
             },
             update() {
-                this.empresa.razon_social = this.empresa.razon_social.toUpperCase();
-                this.empresa.rfc = this.empresa.rfc.toUpperCase();
-                this.empresa.especialidades_nuevas = this.especialidades_seleccionadas;
-                this.empresa.nueva_especialidad = this.empresa.nueva_especialidad;
+                this.empresa_registrar.razon_social = this.empresa_registrar.razon_social.toUpperCase();
+                this.empresa_registrar.rfc = this.empresa_registrar.rfc.toUpperCase();
+                this.empresa_registrar.especialidades_nuevas = this.especialidades_seleccionadas;
+                this.empresa_registrar.nueva_especialidad = this.empresa_registrar.nueva_especialidad;
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
-                    data: this.$data.empresa,
+                    data: this.$data.empresa_registrar,
                     params: {include: ['prestadora', 'archivos', 'giro', 'especialidades', 'contactos']}
                 }).then((data) => {
                     this.nueva_especialidad = false
                     this.especialidades_seleccionadas = [];
-                    this.empresa = data
+                    this.empresa_registrar = data
                     this.getEspecialidades();
                     this.agregarEspecialidades();
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
