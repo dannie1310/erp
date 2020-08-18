@@ -58,7 +58,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                         <div class="col-md-12" v-if="archivo.tipo_archivo == 14">
+                         <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua">
                             <label for="id_tipo" class="col-sm-12 col-form-label">Seleccione si cuenta con listado de personal dado de alta ante el IMSS a través de SUA o si cuenta con empresa prestadora de servicios: </label>
                             <div class="col-sm-4 offset-4">
                                 <div class="btn-group btn-group-toggle">
@@ -76,10 +76,10 @@
                             </div>
                         </div>
                         <div class="row">
-                         <div class="col-md-12" v-if="archivo.tipo_archivo == 14 && id_tipo == 2">
+                         <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
                                 <b>Registrar empresa prestadora de servicios</b>
                         </div>
-                        <div class="col-md-9" v-if="archivo.tipo_archivo == 14 && id_tipo == 2">
+                        <div class="col-md-9" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
                             <label for="razon_social" class="col-lg-12 col-form-label">Razón Social</label>
                             <div class="col-lg-12">
                                     <input type="text" class="form-control"
@@ -93,7 +93,7 @@
                                             <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
                             </div>
                         </div>
-                        <div class="col-md-3" v-if="archivo.tipo_archivo == 14 && id_tipo == 2">
+                        <div class="col-md-3" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
                             <label for="rfc" class="col-lg-12 col-form-label">RFC</label>
                             <div class="col-lg-12">
                                     <input type="text" class="form-control"
@@ -108,7 +108,7 @@
                             </div>
                         </div>
                         </div>
-                        <div class="row justify-content-between" v-if="archivo.tipo_archivo != 14 || id_tipo == 1">
+                        <div class="row justify-content-between" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1">
                             <div class="col-md-12">
                                 <label for="cargar_file" class="col-lg-12 col-form-label">Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
@@ -129,8 +129,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo != 14 || id_tipo == 1" type="button" class="btn btn-primary" >Cargar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo == 14 && id_tipo == 2" type="button" class="btn btn-primary" >Registrar</button>
+                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary" >Cargar</button>
+                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary" >Registrar</button>
                     </div>
                 </div>
             </div>
@@ -157,6 +157,7 @@ export default {
             },
             razon_social:'',
             rfc:'',
+            id_archivo_sua:15,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Listado de personal dado de alta ante el IMSS a través de SUA" EN LA BBDD
         }
     },
     mounted() {
@@ -270,10 +271,10 @@ export default {
         validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.archivo.tipo_archivo != 14 || this.id_tipo == 1){
+                        if(this.archivo.tipo_archivo != this.id_archivo_sua || this.id_tipo == 1){
                             this.upload();
                         }
-                        if(this.archivo.tipo_archivo == 14 && this.id_tipo == 2){
+                        if(this.archivo.tipo_archivo == this.id_archivo_sua && this.id_tipo == 2){
                             this.registrarPrestadora();
                         }
                        
