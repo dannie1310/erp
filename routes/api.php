@@ -319,6 +319,11 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\CtgSeccionController@index');
         });
 
+        // Catalogo de Areas
+        $api->group(['prefix' => 'ctg-area'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\CtgAreaController@index');
+        });
+
         // Archivos de expediente de contratistas
          $api->group(['prefix' => 'archivo'], function ($api){
             $api->post('cargarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@cargarArchivo');
