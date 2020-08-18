@@ -283,10 +283,9 @@ class EmpresaService
             } else {
                 $data['id_giro'] = $data['giro']['id'];
             }
-            if (!is_numeric($data['especialidad']['id'])) {
-                $data['id_especialidad'] = $this->getIdEspecialidad($data['especialidad_nuevo']);
-            } else {
-                $data['id_especialidad'] = $data['especialidad']['id'];
+            if(array_key_exists('especialidad_nuevo', $data))
+            {
+                array_push($data['especialidades_nuevas'], $this->getIdEspecialidad($data['especialidad_nuevo']));
             }
         }
         return $this->repository->update($data, $id);
@@ -294,7 +293,7 @@ class EmpresaService
 
     public function registrarPrestadora($data){
         $this->validaRFC($data['rfc']);
-        // $this->validaEFO($data['rfc']);
+        $this->validaEFO($data['rfc']);
         $empresa = $this->repository->show($data['id_empresa']);
         $prestadora = $empresa->prestadora()->create([
             'razon_social' => $data['razon_social'],
