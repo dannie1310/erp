@@ -45,14 +45,13 @@ class EmpresaRepository extends Repository implements RepositoryInterface
         }
     }
 
-    public function getIdEspecialidad($especialidad){
-        $especialidad_obj = CtgEspecialidad::where("descripcion","=",$especialidad)
-            ->first();
+    public function getIdEspecialidad($descripcion){
+        $especialidad_obj = CtgEspecialidad::where("descripcion","=",$descripcion)->first();
         if($especialidad_obj){
             return $especialidad_obj->id;
         } else {
             $especialidad_obj = CtgEspecialidad::create(
-                ["descripcion"=>$especialidad]
+                ["descripcion"=> $descripcion]
             );
             return $especialidad_obj->id;
         }
