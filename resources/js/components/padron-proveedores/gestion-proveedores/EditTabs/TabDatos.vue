@@ -153,7 +153,7 @@
                             <div class="invalid-feedback" v-show="errors.has('especialidad')">{{ errors.first('especialidad') }}</div>
                         </div>
                     </div>
-                </div>git
+                </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate" v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-save"></i> Guardar</button>
                 </div>
