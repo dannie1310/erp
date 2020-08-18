@@ -36,7 +36,7 @@
                                         <td>
                                             <div class="btn-group">
                                             <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                            <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.prestadora.rfc" v-if="archivo.nombre_archivo"></Documento>
+                                            <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.prestadora.rfc" v-bind:rfc_empresa="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
                                             </div>
                                         </td>
                                     </tr>
@@ -205,6 +205,7 @@ export default {
             formData.append('archivo_nombre',  this.file_name);
             formData.append('id_empresa',  this.empresa.prestadora.id);
             formData.append('rfc',  this.empresa.prestadora.rfc);
+            formData.append('rfc_empresa',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
             return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
                 data: formData,

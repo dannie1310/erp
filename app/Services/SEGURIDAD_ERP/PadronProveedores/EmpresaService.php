@@ -174,7 +174,7 @@ class EmpresaService
         if($empresa){
             return $empresa;
         }else {
-            $this->validaEFO($data["rfc"]);
+            // $this->validaEFO($data["rfc"]);
 
             $this->validaRFC($data["rfc"]);
             $data["id_tipo_empresa"] = $this->getTipoEmpresa($data["rfc"]);
@@ -293,9 +293,16 @@ class EmpresaService
     }
 
     public function registrarPrestadora($data){
-        $this->validaRFC($data['rfc']);
-        $this->validaEFO($data['rfc']);
         $empresa = $this->repository->show($data['id_empresa']);
+        if($data['asociacion']){
+            $prestadora = $this->repository->getEmpresaXRFC($data['rfc']);
+            EmpresaPrestadora::create([
+                'id_empresa_proveedor' => $data['id_empresa'],
+                'id_empresa_prestadora' => $prestadora->id,
+            ]);
+            return $empresa;
+        }
+        
         $prestadora = $empresa->prestadora()->create([
             'razon_social' => $data['razon_social'],
             'rfc' => $data['rfc'],
@@ -310,8 +317,8 @@ class EmpresaService
             $prestadora->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
         }
 
-        $this->generaDirectorios($data["rfc"]);
-        $empresa->archivos()->where('id_tipo_archivo', '=', 14)->delete();
+        $this->generaDirectorios($empresa->rfc . '/'.$data["rfc"]);
+        $empresa->archivos()->where('id_tipo_archivo', '=', $data['id_archivo_sua'])->delete();
         return $prestadora;
     }
 
@@ -341,6 +348,27 @@ class EmpresaService
         }
         return [
             'mensaje' => true
+        ];
+    }
+
+    public function revisarRfcPrestadora($data){
+        // $this->validaRFC($data['rfc']);
+        // $this->validaEFO($data['rfc']);
+        $empresa = $this->repository->getEmpresaXRFC($data['rfc']);
+        
+        if($empresa->count() > 0){
+            if($empresa->id_tipo_empresa == 1){
+                abort(500, "El RFC ingresado pertenece a una empresa proveedora, la asociación con la prestadora de servicios no puede realizarse.");
+            }
+            if($empresa->id_tipo_empresa == 3){
+                return [
+                    'asociacion' => true,
+                    'razon_social' => $empresa->razon_social
+                ];
+            }
+        }
+        return [
+            'asociacion' => false
         ];
     }
 }

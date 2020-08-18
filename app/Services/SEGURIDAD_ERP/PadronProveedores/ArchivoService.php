@@ -25,8 +25,9 @@ class ArchivoService
     }
 
     public function cargarArchivo($data){
+        $directorio = $data['rfc'];
         $archivo = $this->repository->show($data['id_archivo']);
-        $repetidos = $this->repository->where([['nombre_archivo', '=', $data['archivo_nombre']]])->where([['id_empresa', '=', $data['id_empresa']]])->all();
+        $repetidos = $this->repository->where([['nombre_archivo', '=', $data['archivo_nombre']]])->all();
 
         if($repetidos->count() > 0){
             abort(403, 'El archivo ya ha sido registrado previamente.');
@@ -36,9 +37,13 @@ class ArchivoService
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
         }
 
+        if(array_key_exists('rfc_empresa', $data)){
+            $directorio = $data['rfc_empresa'] . '/' . $directorio;
+        }
+        
         $hash_file = hash_file('md5', $data["archivo"]);
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
-        if(Storage::disk('padron_contratista')->put($data['rfc'] . '/' .$data['archivo_nombre'],  fopen($data['archivo'], 'r'))){
+        if(Storage::disk('padron_contratista')->put($directorio . '/' .$data['archivo_nombre'],  fopen($data['archivo'], 'r'))){
             $archivo->hash_file = $hash_file;
             $archivo->nombre_archivo = $data["archivo_nombre"];
             $archivo->extension_archivo = $nombre_archivo[count($nombre_archivo)-1];
@@ -51,8 +56,10 @@ class ArchivoService
     }
 
     public function documento($data, $id){
+        $directorio = $data->rfc;
         $archivo = $this->repository->show($id);
+        if($data['rfc_empresa'] != 'undefined') $directorio = $data['rfc_empresa'] . '/' . $directorio;
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
-        return response()->file($storagePath .$data->rfc . '/' . $archivo->nombre_archivo);  
+        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo);  
     }
 }
