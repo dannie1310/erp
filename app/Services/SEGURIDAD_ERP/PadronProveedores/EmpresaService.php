@@ -293,7 +293,7 @@ class EmpresaService
 
     public function registrarPrestadora($data){
         $this->validaRFC($data['rfc']);
-        // $this->validaEFO($data['rfc']);
+        $this->validaEFO($data['rfc']);
         $empresa = $this->repository->show($data['id_empresa']);
         $prestadora = $empresa->prestadora()->create([
             'razon_social' => $data['razon_social'],

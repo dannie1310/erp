@@ -41,10 +41,11 @@
                                    name="contacto"
                                    data-vv-as="CONTACTO"
                                    v-model="empresa.contacto"
-                                   v-validate="{ required: true }"
+                                   v-validate="{ required: true,min:10}"
                                    id="contacto"
                                    :class="{'is-invalid': errors.has('contacto')}"
-                                   placeholder="CONTACTO"/>
+                                   placeholder="CONTACTO"
+                                   :maxlength="250"/>
                             <div class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
                         </div>
                     </div>
@@ -75,7 +76,8 @@
                                    v-validate="{ required: true, email:true}"
                                    id="correo"
                                    :class="{'is-invalid': errors.has('correo')}"
-                                   placeholder="CORREO"/>
+                                   placeholder="CORREO"
+                                   :maxlength="50"/>
                             <div class="invalid-feedback" v-show="errors.has('correo')">{{ errors.first('correo') }}</div>
                         </div>
                     </div>
@@ -108,8 +110,9 @@
                                    v-model="empresa.giro_nuevo"
                                    v-validate="{ required: true }"
                                    id="giro"
-                                    :class="{'is-invalid': errors.has('giro')}"
-                                   placeholder="AGREGAR UN GIRO NUEVO"/>
+                                   :class="{'is-invalid': errors.has('giro')}"
+                                   placeholder="AGREGAR UN GIRO NUEVO"
+                                   :maxlength="50"/>
                             <div class="invalid-feedback" v-show="errors.has('giro')">{{ errors.first('giro') }}</div>
                         </div>
                     </div>
@@ -142,10 +145,11 @@
                                    name="especialidad"
                                    data-vv-as="NUEVA ESPECIALIDAD"
                                    v-model="empresa.especialidad_nuevo"
-                                   v-validate="{ required: true }"
+                                   v-validate="{ required: true, min: 5}"
                                    id="especialidad"
                                    :class="{'is-invalid': errors.has('especialidad')}"
-                                   placeholder="AGREGAR UNA ESPECIALIDAD NUEVA"/>
+                                   placeholder="AGREGAR UNA ESPECIALIDAD NUEVA"
+                                   :maxlength="50"/>
                             <div class="invalid-feedback" v-show="errors.has('especialidad')">{{ errors.first('especialidad') }}</div>
                         </div>
                     </div>
@@ -187,8 +191,10 @@
                     label: `${i.descripcion}`,
                     customLabel: `${i.descripcion}`,
                }));
-
-               if(this.empresa.especialidades) {
+            },
+            agregarEspecialidades()
+            {
+                if(this.empresa.especialidades) {
                     this.empresa.especialidades.data.forEach(e => {
                         this.especialidades_seleccionadas.push(e.id);
                     });
@@ -203,6 +209,7 @@
                     params: {include: ['tipo', 'giro', 'especialidades', 'prestadora']}
                 }).then(data => {
                     this.empresa = data;
+                    this.agregarEspecialidades();
                 })
             },
             getGiros() {
@@ -253,7 +260,11 @@
                     data: this.$data.empresa,
                     params: {include: ['prestadora', 'archivos', 'giro', 'especialidades']}
                 }).then((data) => {
-                    this.empresa = data;
+                    this.nueva_especialidad = false
+                    this.especialidades_seleccionadas = [];
+                    this.empresa = data
+                    this.getEspecialidades();
+                    this.agregarEspecialidades();
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                 })
             },
