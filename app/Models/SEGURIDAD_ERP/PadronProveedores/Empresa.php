@@ -126,8 +126,21 @@ class Empresa extends Model
                 }
             }
 
+            if(key_exists("id_especialidad", $data)){
+                array_push($data["id_especialidades"], $data["id_especialidad"]);
+            }
+
+
             foreach($data["archivos"] as $archivo){
                 $empresa->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
+            }
+
+            if(count($data["id_especialidades"] )>0){
+                foreach($data["id_especialidades"] as $id_especialidad){
+                    EmpresaEspecialidad::create(["id_especialidad"=>$id_especialidad, "id_empresa_proveedora"=>$empresa->id]);
+                }
+            } else {
+                abort(500, "Debe existir al menos una especialidad para la empresa.");
             }
 
             DB::connection('seguridad')->commit();

@@ -95,22 +95,24 @@
                     <div class="form-group col-md-3 error-content">
                         <label for="rfc" class="col-form-label" ><b>Especialidad: </b> </label>
                         <span v-if="especialidades.length>0">
-                            <model-list-select
-                                :disabled="cargando"
-                                name="id_especialidad"
-                                id="id_especialidad"
-                                data-vv-as="'Especialidad'"
-                                v-model="registro_proveedor.id_especialidad"
-                                placeholder="Seleccionar o buscar especialidad"
-                                option-value="id"
-                                option-text="descripcion"
-                                :list="especialidades"
-                                v-validate="{ required: true }"
-                                :onchange="changeSelectEspecialidad()"
-                                :isError="errors.has(`id_especialidad`)"
-                            >
-                            </model-list-select>
-                            <div class="invalid-feedback" v-show="errors.has('id_especialidad')">{{ errors.first('id_especialidad') }}</div>
+                            <treeselect v-model="registro_proveedor.id_especialidades"
+                                        :multiple="true"
+                                        :options="especialidades"
+                                        data-vv-as="Especialidades"
+                                        :flatten-search-results="true"
+                                        placeholder="Seleccione la(s) especialidad(es)">
+                                 <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                            </treeselect>
+                            <div class="invalid-feedback" v-show="errors.has('registro_proveedor.id_especialidades')">{{ errors.first('registro_proveedor.id_especialidades') }}</div>
+
+                            <div class="col-auto">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="autoSizingCheck" v-model="agregar_especialidad">
+                                    <label class="form-check-label" for="autoSizingCheck">Agregar una especialidad nueva...</label>
+                                </div>
+                            </div>
+
+
                             <span v-if="agregar_especialidad">
                                 <input class="form-control"
                                        name="otra_especialidad"
@@ -252,9 +254,10 @@
 
 <script>
     import {ModelListSelect} from 'vue-search-select';
+    import Treeselect from '@riophae/vue-treeselect';
     export default {
         name: "Create",
-        components: {ModelListSelect},
+        components: {ModelListSelect, Treeselect},
         data() {
             return {
                 cargando: false,
@@ -263,6 +266,7 @@
                 agregar_giro : false,
                 agregar_especialidad : false,
                 registro_proveedor : {
+                    id_especialidades:[],
                     razon_social : '',
                     rfc : '',
                     no_imss: '',
@@ -287,6 +291,21 @@
             this.getGiros();
         },
         methods:{
+            especialidadesAcomodar () {
+                this.especialidades = this.especialidades.map(i => ({
+                    id: i.id,
+                    label: `${i.descripcion}`,
+                    customLabel: `${i.descripcion}`,
+                }));
+            },
+            agregarEspecialidades()
+            {
+                if(this.empresa.especialidades) {
+                    this.empresa.especialidades.data.forEach(e => {
+                        this.registro_proveedor.id_especialidades.push(e.id);
+                    });
+                }
+            },
             agregarContacto(){
                 var array = {
                     'nombre' : '',
@@ -335,35 +354,30 @@
                 return this.$store.dispatch('padronProveedores/giro/index', {
                     params: {sort: 'descripcion', order: 'asc'}
                 })
-                    .then(data => {
-                        this.giros = data.data;
-                        if(this.giros.length>0){
-                            var otro = {};
-                            otro.id="agregar";
-                            otro.descripcion="Agregar...";
-                            this.giros.push(otro);
-                        }
-                    })
-                    .finally(()=>{
-                        this.getEspecialidades();
-                    })
+                .then(data => {
+                    this.giros = data.data;
+                    if(this.giros.length>0){
+                        var otro = {};
+                        otro.id="agregar";
+                        otro.descripcion="Agregar...";
+                        this.giros.push(otro);
+                    }
+                })
+                .finally(()=>{
+                    this.getEspecialidades();
+                })
             },
             getEspecialidades() {
                 return this.$store.dispatch('padronProveedores/especialidad/index', {
                     params: {sort: 'descripcion', order: 'asc'}
                 })
-                    .then(data => {
-                        this.especialidades = data.data;
-                        if(this.giros.length>0) {
-                            var otro = {};
-                            otro.id="agregar";
-                            otro.descripcion="Agregar...";
-                            this.especialidades.push(otro);
-                        }
-                    })
-                    .finally(()=>{
-                        this.cargando = false;
-                    })
+                .then(data => {
+                    this.especialidades = data.data;
+                    this.especialidadesAcomodar();
+                })
+                .finally(()=>{
+                    this.cargando = false;
+                })
             },
         },
     }
