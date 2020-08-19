@@ -16,7 +16,7 @@ class EmpresaTransformer extends TransformerAbstract
 
     protected $availableIncludes = [
         'giro',
-        'especialidad',
+        'especialidades',
         'tipo',
         'prestadora',
         'proveedor',
@@ -61,11 +61,11 @@ class EmpresaTransformer extends TransformerAbstract
      * @param Empresa $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeEspecialidad(Empresa $model)
+    public function includeEspecialidades(Empresa $model)
     {
-        if($especialidad = $model->especialidad)
+        if($especialidades = $model->especialidades)
         {
-            return $this->item($especialidad, new EspecialidadTransformer);
+            return $this->collection($especialidades, new EspecialidadTransformer);
         }
         return null;
     }

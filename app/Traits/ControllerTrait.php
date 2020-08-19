@@ -37,7 +37,6 @@ trait ControllerTrait
 
     public function update(Request $request, $id)
     {
-        dd('aqui', $request);
         $item = $this->service->update($request->all(), $id);
         return $this->respondWithItem($item);
     }

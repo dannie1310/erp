@@ -89,16 +89,6 @@
                 return this.$store.getters['padronProveedores/empresa/currentEmpresa'];
             }
         },
-        watch:{
-            // empresa(value){
-            //     if(value !== null){
-            //         if(value.prestadora.data.length > 0)
-            //         {
-            //             this.prestadora = true;
-            //         }
-            //     }
-            // },
-        }
     }
 </script>
 
