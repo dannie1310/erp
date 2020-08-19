@@ -160,52 +160,15 @@ class FacturaService
         $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("Y-m-d");
         $arreglo["version"] = $arreglo_cfd["version"];
         $arreglo["moneda"] = $arreglo_cfd["moneda"];
-        /*
 
-        try{
+        $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
+        $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
 
-            $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];*/
-            $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
-            $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
+        $arreglo["receptor"]["rfc"] = $arreglo_cfd["receptor"]["rfc"];
+        $arreglo["receptor"]["nombre"] = $arreglo_cfd["receptor"]["nombre"];
 
-            $arreglo["receptor"]["rfc"] = $arreglo_cfd["receptor"]["rfc"];
-            $arreglo["receptor"]["nombre"] = $arreglo_cfd["receptor"]["nombre"];
-
-            $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
-            $arreglo["folio"] = $arreglo_cfd["folio"];
-
-            /*
-
-        }catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el emisor: " . $e->getMessage());
-        }
-        try{
-
-            $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
-            $arreglo["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
-            $arreglo["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
-        }catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el receptor: " . $e->getMessage());
-        }
-
-        try {
-            $ns = $factura_xml->getNamespaces(true);
-            $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
-            $factura_xml->registerXPathNamespace('t', $ns['tfd']);
-            $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
-            $arreglo["complemento"]["uuid"] = (string)$complemento["UUID"][0];
-            if (!$arreglo["folio"]) {
-                try {
-                    $factura_xml->registerXPathNamespace('rf', $ns['registrofiscal']);
-                    $CFDI_RF = $factura_xml->xpath('//rf:CFDIRegistroFiscal')[0];
-                    $arreglo["folio"] = $CFDI_RF["Folio"];
-                } catch (\Exception $e) {
-                    $arreglo["folio"] = "";
-                }
-            }
-        } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
-        }*/
+        $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
+        $arreglo["folio"] = $arreglo_cfd["folio"];
 
         $arreglo["empresa_bd"] = $this->repository->getEmpresa(
             [
