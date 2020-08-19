@@ -53,7 +53,7 @@
     import TabDocumentacionPrestadora from './EditTabs/TabDocumentacionPrestadora';
 
     export default {
-        name: "proveedores-edit",
+        name: "entrar-a-expediente",
         components: {DatosGenerales, DatosPrestadora,TabDocumentacion, TabDocumentacionPrestadora},
         props: ['id'],
         data() {
