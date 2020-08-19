@@ -21,25 +21,30 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="archivo in archivos">
-                                        <td><button  type="button" class="btn btn-sm " :class="{'btn-success': archivo.estatus == true}">
-                                            <i class="fa fa-check" v-if="archivo.estatus"></i>
-                                            <!-- <i class="fa fa-square-o" v-else></i> -->
-                                            </button></td>
-                                        <td :title="archivo.tipo_archivo_descripcion">{{archivo.tipo_archivo_descripcion_corta}}</td>
-                                        <td>{{archivo.tipo_documento}}</td>
-                                        <td>{{archivo.obligatorio}}</td>
-                                        <td>{{archivo.seccion}}</td>
-                                        <td>{{archivo.nombre_archivo_format}}</td>
-                                        <td>{{archivo.registro}}</td>
-                                        <td>{{archivo.fecha_registro_format}}</td>
-                                        <td>
-                                            <div class="btn-group">
-                                            <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                            <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.prestadora.rfc" v-bind:rfc_empresa="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <template v-for="area in areas" v-if="validaArea(area.id)">
+                                        <tr style="background-color:rgba(0, 0, 0, 0.3)">
+                                            <td style="font-weight: bold" colspan="9">{{area.descripcion}}</td>
+                                        </tr>
+                                        <tr v-for="archivo in archivos" v-if="area.id == archivo.id_area">
+                                            <td><button  type="button" class="btn btn-sm " :class="{'btn-success': archivo.estatus == true}">
+                                                <i class="fa fa-check" v-if="archivo.estatus"></i>
+                                                <!-- <i class="fa fa-square-o" v-else></i> -->
+                                                </button></td>
+                                            <td :title="archivo.tipo_archivo_descripcion">{{archivo.tipo_archivo_descripcion_corta}}</td>
+                                            <td>{{archivo.tipo_documento}}</td>
+                                            <td>{{archivo.obligatorio}}</td>
+                                            <td>{{archivo.seccion}}</td>
+                                            <td>{{archivo.nombre_archivo_format}}</td>
+                                            <td>{{archivo.registro}}</td>
+                                            <td>{{archivo.fecha_registro_format}}</td>
+                                            <td>
+                                                <div class="btn-group">
+                                                <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
+                                                <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </tbody>
                             </table>
                         </div>
@@ -221,12 +226,18 @@ export default {
             })
         },
         validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        this.upload();
-                    }
-                });
-            },
+            this.$validator.validate().then(result => {
+                if (result) {
+                    this.upload();
+                }
+            });
+        },
+        validaArea(tipo){
+            if(this.archivos){
+                return this.archivos.some(el => el.id_area === tipo);
+            }
+            
+        },
     },
     computed: {
         empresa(){
@@ -234,6 +245,9 @@ export default {
         },
         archivos(){
             return this.$store.getters['padronProveedores/archivo-prestadora/archivos'];
+        },
+        areas(){
+            return this.$store.getters['padronProveedores/ctg-area/areas'];
         }
     }
 

@@ -114,6 +114,7 @@ import rubro from './modules/finanzas/rubro';
 import archivoPrestadoraExpediente from './modules/padronProveedores/archivo-prestadora';
 import archivoExpediente from './modules/padronProveedores/archivo';
 import ctgSeccion from './modules/padronProveedores/ctg-seccion';
+import ctgArea from './modules/padronProveedores/ctg-area';
 import empresaProveedor from './modules/padronProveedores/empresa';
 import especialidad from './modules/padronProveedores/especialidad';
 import giro from './modules/padronProveedores/giro';
@@ -299,6 +300,7 @@ export default new Vuex.Store({
 
         'padronProveedores/archivo' : archivoExpediente,
         'padronProveedores/archivo-prestadora' : archivoPrestadoraExpediente,
+        'padronProveedores/ctg-area' : ctgArea,
         'padronProveedores/ctg-seccion' : ctgSeccion,
         'padronProveedores/empresa' : empresaProveedor,
         'padronProveedores/especialidad' : especialidad,
