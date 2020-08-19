@@ -8,6 +8,7 @@ use App\Events\IncidenciaCI;
 use App\Models\CADECO\ContraRecibo;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
+use App\Utils\CFD;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Finanzas\ContrareciboPDF;
 use Illuminate\Support\Facades\Storage;
@@ -139,8 +140,10 @@ class FacturaService
     private function getArregloCFD($archivo_xml)
     {
         $arreglo = [];
-        try {
-            //dd($archivo_xml);
+        $cfd = new CFD($archivo_xml);
+        $arreglo_cfd = $cfd->getArregloFactura();
+
+        /*try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
             if(!$factura_xml){
@@ -148,21 +151,30 @@ class FacturaService
             }
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
-        }
+        }*/
 
-        $arreglo["total"] = (float)$factura_xml["Total"];
-        $arreglo["tipo_comprobante"]  = (string)$factura_xml["TipoDeComprobante"];
-        $arreglo["serie"] = (string)$factura_xml["Serie"];
-        $arreglo["folio"] = (string)$factura_xml["Folio"];
-        $arreglo["fecha"] = (string)$factura_xml["Fecha"];
-        $arreglo["version"] = (string)$factura_xml["Version"];
-        $arreglo["moneda"] = (string)$factura_xml["Moneda"];
+        $arreglo["total"] = $arreglo_cfd["total"];
+        $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
+        $arreglo["serie"] = $arreglo_cfd["serie"];
+        $arreglo["folio"] = $arreglo_cfd["folio"];
+        $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("Y-m-d");
+        $arreglo["version"] = $arreglo_cfd["version"];
+        $arreglo["moneda"] = $arreglo_cfd["moneda"];
+        /*
 
         try{
 
-            $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
-            $arreglo["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
-            $arreglo["emisor"]["nombre"] = (string)$emisor["Nombre"][0];
+            $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];*/
+            $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
+            $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
+
+            $arreglo["receptor"]["rfc"] = $arreglo_cfd["receptor"]["rfc"];
+            $arreglo["receptor"]["nombre"] = $arreglo_cfd["receptor"]["nombre"];
+
+            $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
+            $arreglo["folio"] = $arreglo_cfd["folio"];
+
+            /*
 
         }catch (\Exception $e) {
             abort(500, "Hubo un error al leer el emisor: " . $e->getMessage());
@@ -193,7 +205,7 @@ class FacturaService
             }
         } catch (\Exception $e) {
             abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
-        }
+        }*/
 
         $arreglo["empresa_bd"] = $this->repository->getEmpresa(
             [
@@ -214,84 +226,6 @@ class FacturaService
         }
         $arreglo["moneda_bd"]["id_moneda"] = $this->repository->getIdMoneda($arreglo["moneda"]);
         return $arreglo;
-    }
-
-    private function setArregloFactura($archivo_xml)
-    {
-        try {
-            //dd($archivo_xml);
-            libxml_use_internal_errors(true);
-            $factura_xml = simplexml_load_file($archivo_xml);
-            if(!$factura_xml){
-                $factura_xml = new \SimpleXMLElement(file_get_contents($archivo_xml));
-            }
-        } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
-        }
-
-        $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
-        $this->arreglo_factura["tipo_comprobante"]  = (string)$factura_xml["TipoDeComprobante"];
-        $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
-        $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
-        $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
-        $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
-        $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
-
-        try{
-
-            $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
-            $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
-            $this->arreglo_factura["emisor"]["nombre"] = (string)$emisor["Nombre"][0];
-
-        }catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el emisor: " . $e->getMessage());
-        }
-        try{
-
-            $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
-            $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
-            $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
-        }catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el receptor: " . $e->getMessage());
-        }
-
-        try {
-            $ns = $factura_xml->getNamespaces(true);
-            $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
-            $factura_xml->registerXPathNamespace('t', $ns['tfd']);
-            $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
-            $this->arreglo_factura["complemento"]["uuid"] = (string)$complemento["UUID"][0];
-            if (!$this->arreglo_factura["folio"]) {
-                try {
-                    $factura_xml->registerXPathNamespace('rf', $ns['registrofiscal']);
-                    $CFDI_RF = $factura_xml->xpath('//rf:CFDIRegistroFiscal')[0];
-                    $this->arreglo_factura["folio"] = $CFDI_RF["Folio"];
-                } catch (\Exception $e) {
-                    $this->arreglo_factura["folio"] = "";
-                }
-            }
-        } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
-        }
-
-        $this->arreglo_factura["empresa_bd"] = $this->repository->getEmpresa(
-            [
-                "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                "razon_social" => $this->arreglo_factura["emisor"]["nombre"]
-            ]
-        );
-        $this->validaEFO($this->arreglo_factura);
-        $this->validaReceptor($this->arreglo_factura);
-        if (!$this->arreglo_factura["empresa_bd"]) {
-            event(new IncidenciaCI(
-                ["id_tipo_incidencia" => 16,
-                    "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                    "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                ]
-            ));
-            abort(500, "El emisor del comprobante no esta dado de alta en el catálogo de proveedores / contratistas; la factura no puede ser registrada.");
-        }
-        $this->arreglo_factura["moneda_bd"]["id_moneda"] = $this->repository->getIdMoneda($this->arreglo_factura["moneda"]);
     }
 
     private function getValidacionCFDI33($xml)
@@ -394,7 +328,9 @@ class FacturaService
             $this->validaReceptor($arreglo_cfd);
 
             $this->validaFolio($data["referencia"], $arreglo_cfd);
-            $this->validaCFDI33($data["archivo"]);
+            if($arreglo_cfd["version"] == 3.3){
+                $this->validaCFDI33($data["archivo"]);
+            }
 
             $datos_rfactura = [
                 "xml_file" => $this->repository->getArchivoSQL($data["archivo"]),
