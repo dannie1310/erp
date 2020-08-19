@@ -1,0 +1,91 @@
+const URI = '/api/padron-proveedores/archivo/';
+
+export default {
+    namespaced: true,
+    state: {
+        archivos: [],
+        currentArchivo: null,
+        meta: {}
+    },
+
+    mutations: {
+        SET_ARCHIVOS(state, data) {
+            state.archivos = data;
+        },
+
+        SET_ARCHIVO(state, data) {
+            state.currentArchivo = data;
+        },
+
+        SET_META(state, data) {
+            state.meta = data;
+        },
+
+        UPDATE_ARCHIVO(state, data) {
+            state.archivos = state.archivos.map(archivo => {
+                if (archivo.id === data.id) {
+                    return Object.assign({}, archivo, data)
+                }
+                return archivo
+            })
+            if (state.currentArchivo) {
+                state.currentArchivo = data
+            }
+        },
+    },
+
+    actions: {
+        cargarArchivo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar archivo de expediente.",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'cargarArchivo', payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo del expediente actualizado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+    },
+    getters: {
+        archivos(state) {
+            return state.archivos;
+        },
+
+        meta(state) {
+            return state.meta;
+        },
+
+        currentArchivo(state) {
+            return state.currentArchivo;
+        }
+    }
+}

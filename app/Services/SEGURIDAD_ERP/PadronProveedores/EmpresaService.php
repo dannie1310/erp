@@ -1,0 +1,344 @@
+<?php
+
+
+namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
+
+
+use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgEstadoExpediente;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
+use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
+
+class EmpresaService
+{
+    /**
+     * @var Repository
+     */
+    protected $repository;
+
+    /**
+     * EmpresaService constructor.
+     * @param Empresa $model
+     */
+    public function __construct(Empresa $model)
+    {
+        $this->repository = new Repository($model);
+    }
+
+    public function index($data)
+    {
+        return $this->repository->all($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function paginate($data)
+    {
+        if (isset($data['razon_social'])) {
+            $this->repository->where([['razon_social', 'LIKE', '%' . $data['razon_social'] . '%']]);
+        }
+        if (isset($data['rfc'])) {
+            $this->repository->where([['rfc', 'LIKE', '%' . $data['rfc'] . '%']]);
+        }
+        if (isset($data['estado_expediente'])) {
+            $estados = CtgEstadoExpediente::query()->where([['descripcion', 'LIKE', '%'.$data['estado_expediente'].'%']])->get();
+            if(count($estados)>0){
+                foreach ($estados as $estado){
+                    $this->repository->whereOr([['id_estado_expediente', '=', $estado->id]]);
+                }
+            } else {
+                $this->repository->where([['rfc', '=', '666']]);
+            }
+
+        }
+        if (isset($data['avance_expediente'])) {
+            $avance_expediente = html_entity_decode($data["avance_expediente"]);
+            $empresas = Empresa::all();
+            $sin_coincidencias = true;
+            foreach($empresas as $empresa){
+                if(is_numeric($avance_expediente)){
+                    if($empresa->porcentaje_avance_expediente == $avance_expediente){
+                        $this->repository->whereOr([['id', '=', $empresa->id]]);
+                        $sin_coincidencias = false;
+                    }
+                } else{
+                    if(strpos($avance_expediente,"!=")!==false){
+                        $diferente =str_replace("!=","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente != $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,">=")!==false){
+                        $diferente =str_replace(">=","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente >= $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,">")!==false){
+                        $diferente =str_replace(">","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente > $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,"<=")!==false){
+                        $diferente =str_replace("<=","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente <= $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    } else if(strpos($avance_expediente,"<")!==false){
+                        $diferente =str_replace("<","",$avance_expediente);
+                        if(is_numeric($diferente)){
+                            if($empresa->porcentaje_avance_expediente < $diferente){
+                                $this->repository->whereOr([['id', '=', $empresa->id]]);
+                                $sin_coincidencias = false;
+                            }
+                        }
+                    }
+                }
+            }
+            if($sin_coincidencias){
+                $this->repository->where([['rfc', '=', '666']]);
+            }
+        }
+        if (isset($data['usuario_inicio'])) {
+            $usuarios = Usuario::query()->where('nombre', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->orWhere('apaterno', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->orWhere('amaterno', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->orWhere('usuario', 'LIKE', '%'.$data['usuario_inicio'].'%')
+                ->get();
+            if(count($usuarios)>0){
+                foreach ($usuarios as $usuario){
+                    $this->repository->whereOr([['usuario_registro', '=', $usuario->idusuario]]);
+                }
+            } else {
+                $this->repository->where([['rfc', '=', '666']]);
+            }
+
+        }
+        if (isset($data['mis_pendientes'])) {
+            if($data["mis_pendientes"] ==1){
+                $empresas = Empresa::where("usuario_registro",auth()->id())->get();
+                $sin_coincidencias = true;
+                foreach($empresas as $empresa){
+                    if($empresa->porcentaje_avance_expediente != 100){
+                        $this->repository->whereOr([['id', '=', $empresa->id]]);
+                        $sin_coincidencias = false;
+                    }
+                }
+                if($sin_coincidencias){
+                    $this->repository->where([['rfc', '=', '666']]);
+                }
+            }
+        }
+        /*if($data['sort'] == 'usuario_inicio'){
+            if (isset($data['usuario_inicio'])) {
+                $usuarios = Usuario::query()->empresaPadron(Empresa::all())->where([['usuario', 'LIKE', '%'.$data['usuario_inicio'].'%']])->orderBy('usuario',$data['order'])->get();
+            } else{
+                $usuarios = Usuario::query()->empresaPadron(Empresa::all())->orderBy('usuario',$data['order'])->get();
+            }
+
+            foreach ($usuarios as $usuario){
+                $this->repository->whereOr([['usuario_registro', '=', $usuario->idusuario]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }*/
+        /*if($data['sort'] == 'estado_expediente'){
+            $estados = CtgEstadoExpediente::query()->orderBy('descripcion',$data['order'])->get();
+
+            foreach ($estados as $estado){
+                $this->repository->whereOr([['id_estado_expediente', '=', $estado->id]]);
+            }
+            request()->request->remove("sort");
+            request()->query->remove("sort");
+        }*/
+        return $this->repository->paginate($data);
+    }
+
+    public function store($data)
+    {
+        $empresa = $this->repository->getEmpresaXRFC($data["rfc"]);
+        if($empresa){
+            return $empresa;
+        }else {
+            $this->validaEFO($data["rfc"]);
+
+            $this->validaRFC($data["rfc"]);
+            $data["id_tipo_empresa"] = $this->getTipoEmpresa($data["rfc"]);
+            if (!is_numeric($data["id_giro"])) {
+                $data["id_giro"] = $this->getIdGiro($data["giro"]);
+            }
+            if (!is_numeric($data["id_especialidad"])) {
+                $data["id_especialidad"] = $this->getIdEspecialidad($data["especialidad"]);
+            }
+
+            $data["archivos"] = $this->getTiposArchivos($data["id_tipo_empresa"]);
+            $this->generaDirectorios($data["rfc"]);
+
+            return $this->repository->store($data);
+        }
+    }
+
+    private function generaDirectorios($rfc)
+    {
+        $dir = "./uploads/padron_contratistas/" . $rfc;
+
+        if (!file_exists($dir) && !is_dir($dir)) {
+            mkdir($dir, 777, true);
+        }
+    }
+
+    private function validaEFO($rfc)
+    {
+        $efo = $this->repository->getEFO($rfc);
+        if ($efo) {
+            if ($efo->estado == 0) {
+                abort(403, 'La empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            } else if ($efo->estado == 2) {
+                abort(403, 'La empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            }
+
+        }
+    }
+
+    private function getTiposArchivos($id_tipo_empresa)
+    {
+        return $this->repository->getTiposArchivos($id_tipo_empresa);
+    }
+
+    private function getIdGiro($giro){
+        return $this->repository->getIdGiro($giro);
+    }
+    private function getIdEspecialidad($especialidad){
+        return $this->repository->getIdEspecialidad($especialidad);
+    }
+
+    private function getTipoEmpresa($rfc){
+        $caracter = substr($rfc,3,1);
+        if(is_numeric($caracter)){
+            return  1;
+        } else {
+            return  2;
+        }
+    }
+
+    private function validaRFC($rfc)
+    {
+        $usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
+        if ($usa_servicio == 1) {
+            $client = new \GuzzleHttp\Client();
+            $url = config('app.env_variables.SERVICIO_RFC_URL');
+            $token = config('app.env_variables.SERVICIO_CFDI_TOKEN');
+
+            $headers = [
+                'Authorization' => 'Bearer ' . $token,
+                'Accept'        => 'application/json',
+            ];
+            try{
+                $client->request('GET', $url."".$rfc, [
+                    'headers' => $headers,
+                ]);
+            } catch (\Exception $e){
+                abort(500,"El RFC ingresado no es válido ante el SAT");
+            }
+        }
+    }
+
+    public function update(array $data, $id)
+    {
+        if(array_key_exists('rfc_prestadora', $data)){
+            $empresa = $this->repository->getEmpresaXRFC($data["rfc"]);
+            if($empresa) {
+                if ($empresa->id_tipo_empresa != 3) {
+                    abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+                }
+                if ($empresa->id != $id) {
+                    $data['cambio_prestadora'] = true;
+                    $id = $empresa->id;
+                }
+            }
+            $this->validaEFO($data["rfc"]);
+            $this->validaRFC($data["rfc"]);
+            $this->editarNombreDirectorioPrestadora($data['rfc_proveedor'], $data['rfc_prestadora'], $data["rfc"]);
+            $data['id_giro'] = null;
+            $data['id_especialidad'] = null;
+        }else {
+            if (!is_numeric($data['giro']['id'])) {
+                $data['id_giro'] = $this->getIdGiro($data['giro_nuevo']);
+            } else {
+                $data['id_giro'] = $data['giro']['id'];
+            }
+            if(array_key_exists('especialidad_nuevo', $data))
+            {
+                array_push($data['especialidades_nuevas'], $this->getIdEspecialidad($data['especialidad_nuevo']));
+            }
+        }
+        return $this->repository->update($data, $id);
+    }
+
+    public function registrarPrestadora($data){
+        $this->validaRFC($data['rfc']);
+        $this->validaEFO($data['rfc']);
+        $empresa = $this->repository->show($data['id_empresa']);
+        $prestadora = $empresa->prestadora()->create([
+            'razon_social' => $data['razon_social'],
+            'rfc' => $data['rfc'],
+            'id_tipo_empresa' => 3,
+        ]);
+        EmpresaPrestadora::create([
+            'id_empresa_proveedor' => $data['id_empresa'],
+            'id_empresa_prestadora' => $prestadora->id,
+        ]);
+
+        foreach($this->getTiposArchivos(3) as $archivo){
+            $prestadora->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
+        }
+
+        $empresa->archivos()->where('id_tipo_archivo', '=', 14)->delete();
+        return $prestadora;
+    }
+
+    private function editarNombreDirectorioPrestadora($rfc_proveedor, $rfc_old, $rfc_new)
+    {
+        $dir = "./uploads/padron_contratistas/".$rfc_proveedor."/";
+        if (file_exists($dir.$rfc_old) && is_dir($dir.$rfc_old)) {
+            rename($dir . $rfc_old, $dir . $rfc_new);
+        }else{
+            mkdir($dir.$rfc_new, 777, true);
+        }
+    }
+
+    public function revisarRFC($rfc, $id)
+    {
+        $empresa = $this->repository->getEmpresaXRFC($rfc);
+        if ($empresa) {
+            if ($empresa->id_tipo_empresa != 3) {
+                abort(500, "El RFC ingresado pertenece a una empresa proveedora, el cambio no puede realizarse.");
+            }
+            if ($empresa->id != $id) {
+                return [
+                    'mensaje' => false,
+                    'razon' => $empresa->razon_social
+                ];
+            }
+        }
+        return [
+            'mensaje' => true
+        ];
+    }
+}

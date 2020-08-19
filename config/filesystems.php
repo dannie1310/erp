@@ -118,6 +118,10 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_CONTROL_INTERNO')),
         ],
+        'padron_contratista' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_PADRON_CONTRATISTAS')),
+        ],
         'xml_sat' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_SAT')),
