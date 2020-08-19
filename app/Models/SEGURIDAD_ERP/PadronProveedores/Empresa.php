@@ -20,9 +20,6 @@ class Empresa extends Model
         'no_imss',
         'id_giro',
         'id_tipo_empresa',
-        'nombre_contacto',
-        'telefono',
-        'correo_electronico'
     ];
 
     public function giro()
@@ -164,6 +161,13 @@ class Empresa extends Model
                     foreach ($data['contactos']['data'] as $contacto) {
                         if (array_key_exists('id', $contacto)) {
                             array_push($ids, $contacto['id']);
+                            $this->contactos->find($contacto['id'])->update([
+                                'nombre' => $contacto['nombre'],
+                                'correo_electronico' => $contacto['correo_electronico'],
+                                'telefono' => $contacto['telefono'],
+                                'puesto' => $contacto['puesto'],
+                                'notas' => $contacto['notas'],
+                            ]);
                         }else{
                             $nuevo = $this->contactos()->create($contacto);
                             array_push($ids, $nuevo->id);
@@ -176,6 +180,8 @@ class Empresa extends Model
                             $this->contactos->find($id)->delete();
                         }
                     }
+                }else{
+                    abort(500, "Debe existir al menos un contacto para la empresa.");
                 }
                 if(array_key_exists('especialidades_nuevas',$data))
                 {
