@@ -356,8 +356,8 @@ class EmpresaService
     }
 
     public function revisarRfcPrestadora($data){
-        // $this->validaRFC($data['rfc']);
-        // $this->validaEFO($data['rfc']);
+        $this->validaRFC($data['rfc']);
+        $this->validaEFO($data['rfc']);
         $empresa = $this->repository->getEmpresaXRFC($data['rfc']);
         
         if($empresa && $empresa->count() > 0){
