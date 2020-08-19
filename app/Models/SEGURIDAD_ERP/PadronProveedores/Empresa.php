@@ -159,6 +159,24 @@ class Empresa extends Model
             if(array_key_exists('cambio_prestadora', $data)){
                 $this->cambiarPrestadora($data['id_proveedor'], $data['id']);
             }else {
+                if(key_exists('contactos',$data)){
+                    $ids = array();
+                    foreach ($data['contactos']['data'] as $contacto) {
+                        if (array_key_exists('id', $contacto)) {
+                            array_push($ids, $contacto['id']);
+                        }else{
+                            $nuevo = $this->contactos()->create($contacto);
+                            array_push($ids, $nuevo->id);
+                        }
+                    }
+                    $contactos = $this->contactos()->pluck('id');
+                    $borradas = $contactos->count() ? array_diff($contactos->toArray(), $ids) : [];
+                    if($borradas != []){
+                        foreach ($borradas as $id) {
+                            $this->contactos->find($id)->delete();
+                        }
+                    }
+                }
                 if(array_key_exists('especialidades_nuevas',$data))
                 {
                     $especialidades = EmpresaEspecialidad::where('id_empresa_proveedora', $this->id)->pluck('id_especialidad');
@@ -194,6 +212,7 @@ class Empresa extends Model
                 ]);
             }
             DB::connection('seguridad')->commit();
+            $this->refresh();
             return $this;
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
