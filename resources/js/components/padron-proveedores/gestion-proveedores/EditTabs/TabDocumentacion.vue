@@ -21,7 +21,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template v-for="area in areas">
+                                    <template v-for="area in areas" v-if="validaArea(area.id)">
                                         <tr style="background-color:rgba(0, 0, 0, 0.3)">
                                             <td style="font-weight: bold" colspan="9">{{area.descripcion}}</td>
                                         </tr>
@@ -308,18 +308,24 @@ export default {
             })
         },
         validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        if(this.archivo.tipo_archivo != this.id_archivo_sua || this.id_tipo == 1){
-                            this.upload();
-                        }
-                        if(this.archivo.tipo_archivo == this.id_archivo_sua && this.id_tipo == 2){
-                            this.validarPrestadora();
-                        }
-                       
+            this.$validator.validate().then(result => {
+                if (result) {
+                    if(this.archivo.tipo_archivo != this.id_archivo_sua || this.id_tipo == 1){
+                        this.upload();
                     }
-                });
-            },
+                    if(this.archivo.tipo_archivo == this.id_archivo_sua && this.id_tipo == 2){
+                        this.validarPrestadora();
+                    }
+                    
+                }
+            });
+        },
+        validaArea(tipo){
+            if(this.archivos){
+                return this.archivos.some(el => el.id_area === tipo);
+            }
+            
+        },
     },
     computed: {
         empresa(){
