@@ -283,7 +283,7 @@ class EmpresaService
             } else {
                 $data['id_giro'] = $data['giro']['id'];
             }
-            if(array_key_exists('especialidad_nuevo', $data))
+            if($data['nueva_especialidad'])
             {
                 array_push($data['especialidades_nuevas'], $this->getIdEspecialidad($data['especialidad_nuevo']));
             }

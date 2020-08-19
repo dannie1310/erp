@@ -199,6 +199,7 @@ class Empresa extends Model
                 ]);
             }
             DB::connection('seguridad')->commit();
+            $this->refresh();
             return $this;
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();

@@ -72,7 +72,7 @@
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="especialidad" class="col-form-label">Especialidad:</label>
-                            <treeselect v-model="especialidades_seleccionadas"
+                            <treeselect v-model="empresa_registrar.especialidades_nuevas"
                                         :multiple="true"
                                         :options="especialidades"
                                         data-vv-as="ESPECIALIDADES"
@@ -80,16 +80,16 @@
                                         placeholder="Selecciona la(s) especialidad(es)">
                                  <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
                             </treeselect>
-                            <div class="invalid-feedback" v-show="errors.has('especialidades_seleccionadas')">{{ errors.first('especialidades_seleccionadas') }}</div>
+                            <div class="invalid-feedback" v-show="errors.has('especialidad')">{{ errors.first('especialidad') }}</div>
                         </div>
                         <div class="col-auto">
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="autoSizingCheck" v-model="nueva_especialidad">
+                                <input class="form-check-input" type="checkbox" id="autoSizingCheck" v-model="empresa_registrar.nueva_especialidad">
                                 <label class="form-check-label" for="autoSizingCheck">Agregar una Especialidad Nueva...</label>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6" v-if="nueva_especialidad">
+                    <div class="col-md-6" v-if="empresa_registrar.nueva_especialidad">
                         <div class="form-group error-content">
                             <br><br>
                             <input class="form-control"
@@ -106,95 +106,93 @@
                     </div>
                 </div>
                 <br>
-                <div class="row col-md-12">
-                    <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
                         <label ><i class="fa fa-th-list icon"></i>Contactos</label>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="table table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th class="bg-gray-light index_corto">#</th>
-                                            <th class="bg-gray-light">Nombre</th>
-                                            <th class="bg-gray-light">Puesto</th>
-                                            <th class="bg-gray-light">Teléfono</th>
-                                            <th class="bg-gray-light">E-mail</th>
-                                            <th class="bg-gray-light">Notas</th>
-                                            <th class="bg-gray-light icono">
-                                                <button type="button" class="btn btn-sm btn-outline-success" @click="agregarContacto" :disabled="cargando">
-                                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                    <i class="fa fa-plus" v-else></i>
-                                                </button>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(contacto, i) in empresa.contactos.data" >
-                                            <td class="index_corto">{{ i + 1 }}</td>
-                                            <td>
-                                                <input class="form-control"
-                                                       :name="`nombre[${i}]`"
-                                                       :data-vv-as="`'Nombre ${i + 1}'`"
-                                                       v-model="contacto.nombre"
-                                                       :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
-                                                       v-validate="{ required: true, min:10 }"
-                                                       :id="`nombre[${i}]`"
-                                                       :maxlength="250"/>
-                                                <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
-                                            </td>
-                                            <td>
-                                                <input class="form-control"
-                                                       :name="`puesto[${i}]`"
-                                                       :data-vv-as="`'Puesto ${i + 1}'`"
-                                                       v-model="contacto.puesto"
-                                                       :class="{'is-invalid': errors.has(`puesto[${i}]`)}"
-                                                       v-validate="{ required: true, min:5 }"
-                                                       :id="`puesto[${i}]`"
-                                                       :maxlength="50"/>
-                                                <div class="invalid-feedback" v-show="errors.has(`puesto[${i}]`)">{{ errors.first(`puesto[${i}]`) }}</div>
-                                            </td>
-                                            <td>
-                                                <input class="form-control"
-                                                       :name="`telefono[${i}]`"
-                                                       :data-vv-as="`'Teléfono ${i + 1}'`"
-                                                       v-model="contacto.telefono"
-                                                       :class="{'is-invalid': errors.has(`telefono[${i}]`)}"
-                                                       v-validate="{ required: true, numeric:true }"
-                                                       :id="`telefono[${i}]`"
-                                                       :maxlength="10"/>
-                                                <div class="invalid-feedback" v-show="errors.has(`telefono[${i}]`)">{{ errors.first(`telefono[${i}]`) }}</div>
-                                            </td>
-                                            <td>
-                                                <input class="form-control"
-                                                       :name="`email[${i}]`"
-                                                       :data-vv-as="`'e-mail ${i + 1}'`"
-                                                       v-model="contacto.correo_electronico"
-                                                       :class="{'is-invalid': errors.has(`email[${i}]`)}"
-                                                       v-validate="{ required: true, email:true }"
-                                                       :id="`email[${i}]`"
-                                                       :maxlength="50"/>
-                                                <div class="invalid-feedback" v-show="errors.has(`email[${i}]`)">{{ errors.first(`email[${i}]`) }}</div>
-                                            </td>
-                                            <td>
-                                                <textarea
-                                                    :name="`notas[${i}]`"
-                                                    :id="`notas[${i}]`"
-                                                    class="form-control"
-                                                    v-model="contacto.notas"
-                                                    :data-vv-as="`'Notas ${i + 1}'`"
-                                                ></textarea>
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarContacto(i)" :disabled="empresa.contactos.data.length == 1" >
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th class="bg-gray-light index_corto">#</th>
+                                    <th class="bg-gray-light">Nombre</th>
+                                    <th class="bg-gray-light">Puesto</th>
+                                    <th class="bg-gray-light">Teléfono</th>
+                                    <th class="bg-gray-light">E-mail</th>
+                                    <th class="bg-gray-light">Notas</th>
+                                    <th class="bg-gray-light icono">
+                                        <button type="button" class="btn btn-sm btn-outline-success" @click="agregarContacto" :disabled="cargando">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(contacto, i) in contactos.data" >
+                                    <td class="index_corto">{{ i + 1 }}</td>
+                                    <td>
+                                        <input class="form-control"
+                                               :name="`nombre[${i}]`"
+                                               :data-vv-as="`'Nombre ${i + 1}'`"
+                                               v-model="contacto.nombre"
+                                               :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
+                                               v-validate="{ required: true, min:10 }"
+                                               :id="`nombre[${i}]`"
+                                               :maxlength="250"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
+                                    </td>
+                                    <td>
+                                        <input class="form-control"
+                                               :name="`puesto[${i}]`"
+                                               :data-vv-as="`'Puesto ${i + 1}'`"
+                                               v-model="contacto.puesto"
+                                               :class="{'is-invalid': errors.has(`puesto[${i}]`)}"
+                                               v-validate="{ required: true, min:5 }"
+                                               :id="`puesto[${i}]`"
+                                               :maxlength="50"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`puesto[${i}]`)">{{ errors.first(`puesto[${i}]`) }}</div>
+                                    </td>
+                                    <td>
+                                        <input class="form-control"
+                                               :name="`telefono[${i}]`"
+                                               :data-vv-as="`'Teléfono ${i + 1}'`"
+                                               v-model="contacto.telefono"
+                                               :class="{'is-invalid': errors.has(`telefono[${i}]`)}"
+                                               v-validate="{ required: true, numeric:true }"
+                                               :id="`telefono[${i}]`"
+                                               :maxlength="10"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`telefono[${i}]`)">{{ errors.first(`telefono[${i}]`) }}</div>
+                                    </td>
+                                    <td>
+                                        <input class="form-control"
+                                               :name="`email[${i}]`"
+                                               :data-vv-as="`'e-mail ${i + 1}'`"
+                                               v-model="contacto.correo_electronico"
+                                               :class="{'is-invalid': errors.has(`email[${i}]`)}"
+                                               v-validate="{ required: true, email:true }"
+                                               :id="`email[${i}]`"
+                                               :maxlength="50"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`email[${i}]`)">{{ errors.first(`email[${i}]`) }}</div>
+                                    </td>
+                                    <td>
+                                        <textarea
+                                            :name="`notas[${i}]`"
+                                            :id="`notas[${i}]`"
+                                            class="form-control"
+                                            v-model="contacto.notas"
+                                            :data-vv-as="`'Notas ${i + 1}'`"
+                                        ></textarea>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarContacto(i)" :disabled="contactos.data.length == 1" >
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -215,12 +213,19 @@
         components: {ModelListSelect, Treeselect},
         data() {
             return {
-                especialidades_seleccionadas:[],
-                empresa_registrar: [],
+                empresa_registrar: {
+                    'id': '',
+                    'rfc': '',
+                    'razon_social': '',
+                    'nss': '',
+                    'giro': [],
+                    'especialidades': [],
+                    'nueva_especialidad' : false,
+                    'especialidades_nuevas':[],
+                },
+                contactos : [],
                 giros: [],
                 especialidades: [],
-                nueva_especialidad : false,
-                rfcValidate: false,
                 cargando : true
             }
         },
@@ -237,10 +242,10 @@
                     'email' : '',
                     'notas' : ''
                 }
-                this.empresa.contactos.data.push(array);
+                this.contactos.data.push(array);
             },
             quitarContacto(index){
-                this.empresa.contactos.data.splice(index, 1);
+                this.contactos.data.splice(index, 1);
             },
             especialidadesAcomodar () {
                this.especialidades = this.especialidades.map(i => ({
@@ -253,7 +258,7 @@
             {
                 if(this.empresa_registrar.especialidades) {
                     this.empresa_registrar.especialidades.data.forEach(e => {
-                        this.especialidades_seleccionadas.push(e.id);
+                        this.empresa_registrar.especialidades_nuevas.push(e.id);
                     });
                 }
             },
@@ -261,15 +266,23 @@
                 return `${item.descripcion}`
             },
             find() {
+                this.empresa_registrar.nueva_especialidad = false;
+                this.empresa_registrar.especialidades_nuevas = [];
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['tipo', 'giro', 'especialidades', 'prestadora', 'contactos']}
+                    params: {include: ['giro', 'especialidades', 'contactos']}
                 }).then(data => {
-                    this.empresa_registrar = data;
+                    this.empresa_registrar.id = data.id;
+                    this.empresa_registrar.rfc = data.rfc;
+                    this.empresa_registrar.razon_social = data.razon_social;
+                    this.empresa_registrar.nss = data.nss;
+                    this.empresa_registrar.giro = data.giro;
+                    this.empresa_registrar.especialidades = data.especialidades ? data.especialidades : [];
+                    this.contactos = data.contactos ? data.contactos : [];
                     this.agregarEspecialidades();
-                    if(data.contactos.data.length == 0) {
+                    /*if(data.contactos.data.length == 0) {
                         this.agregarContacto()
-                    }
+                    }*/
                 })
             },
             getGiros() {
@@ -301,7 +314,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.especialidades_seleccionadas.length == 0 && this.nueva_especialidad == false)
+                        if(this.empresa_registrar.especialidades_nuevas.length == 0 && this.empresa_registrar.nueva_especialidad == false)
                         {
                             swal('¡Error!', 'Debe existir al menos una especialidad seleccionada.', 'error')
                         }else {
@@ -312,20 +325,15 @@
             },
             update() {
                 this.empresa_registrar.razon_social = this.empresa_registrar.razon_social.toUpperCase();
-                this.empresa_registrar.rfc = this.empresa_registrar.rfc.toUpperCase();
-                this.empresa_registrar.especialidades_nuevas = this.especialidades_seleccionadas;
-                this.empresa_registrar.nueva_especialidad = this.empresa_registrar.nueva_especialidad;
+                this.empresa_registrar.contactos = this.contactos;
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
                     data: this.$data.empresa_registrar,
-                    params: {include: ['prestadora', 'archivos', 'giro', 'especialidades', 'contactos']}
+                    params: {include: ['prestadora', 'archivos']}
                 }).then((data) => {
-                    this.nueva_especialidad = false
-                    this.especialidades_seleccionadas = [];
-                    this.empresa_registrar = data
                     this.getEspecialidades();
-                    this.agregarEspecialidades();
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
+                    this.find();
                 })
             },
         }
