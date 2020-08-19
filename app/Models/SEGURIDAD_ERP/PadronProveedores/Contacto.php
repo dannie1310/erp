@@ -24,5 +24,4 @@ class Contacto extends Model
     public function empresa(){
         return $this->belongsTo(Empresa::class,"id_empresa_proveedora", "id");
     }
-
 }

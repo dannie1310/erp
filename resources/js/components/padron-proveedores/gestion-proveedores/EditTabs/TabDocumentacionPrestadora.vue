@@ -36,7 +36,7 @@
                                         <td>
                                             <div class="btn-group">
                                             <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                            <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.prestadora.rfc" v-if="archivo.nombre_archivo"></Documento>
+                                            <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.prestadora.rfc" v-bind:rfc_empresa="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
                                             </div>
                                         </td>
                                     </tr>
@@ -91,7 +91,7 @@
 import Documento from '../Documento';
 export default {
     name: "tab-documentacion-prestadora",
-    props: ['id'],
+    props: ['id_empresa', 'id_prestadora'],
     components:{Documento},
     data(){
         return{
@@ -109,7 +109,7 @@ export default {
         }
     },
     mounted() {
-        // this.getSecciones();
+        this.getArchivos();
     },
     methods: {
         createImage(file, tipo) {
@@ -140,14 +140,17 @@ export default {
                 this.cargando = false;
             })
         },
-        getSecciones(){
+        getArchivos(){
             this.cargando = true;
-            this.$store.commit('padronProveedores/ctg-seccion/SET_SECCIONES', null);
-            return this.$store.dispatch('padronProveedores/ctg-seccion/index', {
-                id: this.id,
-                params: {include: [], sort: 'id', order: 'asc'}
+            this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', null);
+            return this.$store.dispatch('padronProveedores/archivo/getArchivos', {
+                params: {
+                    include: [], sort: 'id_tipo_archivo', order: 'asc',
+                    id_empresa: this.id_empresa,
+                    id_prestadora: this.id_prestadora,                   
+                    }
             }).then(data => {
-                this.$store.commit('padronProveedores/ctg-seccion/SET_SECCIONES', data.data);
+                this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.data);
             })
         },
         modalCarga(archivo){
@@ -205,6 +208,7 @@ export default {
             formData.append('archivo_nombre',  this.file_name);
             formData.append('id_empresa',  this.empresa.prestadora.id);
             formData.append('rfc',  this.empresa.prestadora.rfc);
+            formData.append('rfc_empresa',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
             return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
                 data: formData,
