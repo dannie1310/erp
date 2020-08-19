@@ -198,7 +198,7 @@
                                        :data-vv-as="`'Teléfono ${i + 1}'`"
                                        v-model="contacto.telefono"
                                        :class="{'is-invalid': errors.has(`telefono[${i}]`)}"
-                                       v-validate="{ required: true, numeric:true }"
+                                       v-validate="{ required: true, numeric:true , min:10 }"
                                        :id="`telefono[${i}]`"
                                        :maxlength="10"/>
                                 <div class="invalid-feedback" v-show="errors.has(`telefono[${i}]`)">{{ errors.first(`telefono[${i}]`) }}</div>
