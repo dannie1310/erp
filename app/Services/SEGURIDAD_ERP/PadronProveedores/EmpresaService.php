@@ -283,16 +283,17 @@ class EmpresaService
             } else {
                 $data['id_giro'] = $data['giro']['id'];
             }
-            if (!is_numeric($data['especialidad']['id'])) {
-                $data['id_especialidad'] = $this->getIdEspecialidad($data['especialidad_nuevo']);
-            } else {
-                $data['id_especialidad'] = $data['especialidad']['id'];
+            if($data['nueva_especialidad'])
+            {
+                array_push($data['especialidades_nuevas'], $this->getIdEspecialidad($data['especialidad_nuevo']));
             }
         }
         return $this->repository->update($data, $id);
     }
 
     public function registrarPrestadora($data){
+        $this->validaRFC($data['rfc']);
+        $this->validaEFO($data['rfc']);
         $empresa = $this->repository->show($data['id_empresa']);
         if($data['asociacion']){
             $prestadora = $this->repository->getEmpresaXRFC($data['rfc']);

@@ -16,12 +16,12 @@ class EmpresaTransformer extends TransformerAbstract
 
     protected $availableIncludes = [
         'giro',
-        'especialidad',
+        'especialidades',
         'tipo',
         'prestadora',
         'proveedor',
         'archivos',
-        'archivosPrestadora',
+        'contactos'
     ];
 
     public function transform(Empresa $model)
@@ -30,7 +30,6 @@ class EmpresaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'razon_social' => $model->razon_social,
             'rfc' => $model->rfc,
-            'contacto' => $model->nombre_contacto,
             'nss' => $model->no_imss,
             'telefono' => $model->telefono,
             'correo' => $model->correo_electronico,
@@ -61,11 +60,11 @@ class EmpresaTransformer extends TransformerAbstract
      * @param Empresa $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeEspecialidad(Empresa $model)
+    public function includeEspecialidades(Empresa $model)
     {
-        if($especialidad = $model->especialidad)
+        if($especialidades = $model->especialidades)
         {
-            return $this->item($especialidad, new EspecialidadTransformer);
+            return $this->collection($especialidades, new EspecialidadTransformer);
         }
         return null;
     }
@@ -95,14 +94,6 @@ class EmpresaTransformer extends TransformerAbstract
     }
 
     /**
-     *  @param Empresa $model
-     * @return \League\Fractal\Resource\Collection|null
-     */
-    public function includeArchivosPrestadora(Empresa $model){
-        dd('polar', $model->archivosPrestadora());
-    }
-
-    /**
      * @param Empresa $model
      * @return \League\Fractal\Resource\Collection|null
      */
@@ -124,6 +115,19 @@ class EmpresaTransformer extends TransformerAbstract
         if(($proveedor = $model->proveedor) && $model->proveedor->count() > 0)
         {
             return $this->item($proveedor[0], new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeContactos(Empresa $model)
+    {
+        if($contactos = $model->contactos)
+        {
+            return $this->collection($contactos, new ContactoTransformer);
         }
         return null;
     }
