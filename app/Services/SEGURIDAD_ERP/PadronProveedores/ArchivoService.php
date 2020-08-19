@@ -29,7 +29,7 @@ class ArchivoService
         $archivo = $this->repository->show($data['id_archivo']);
         $repetidos = $this->repository->where([['nombre_archivo', '=', $data['archivo_nombre']]])->all();
 
-        if($repetidos->count() > 0){
+        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
             abort(403, 'El archivo ya ha sido registrado previamente.');
         }
 
