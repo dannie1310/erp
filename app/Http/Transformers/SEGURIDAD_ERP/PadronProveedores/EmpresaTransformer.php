@@ -20,7 +20,8 @@ class EmpresaTransformer extends TransformerAbstract
         'tipo',
         'prestadora',
         'proveedor',
-        'archivos'
+        'archivos',
+        'contactos'
     ];
 
     public function transform(Empresa $model)
@@ -29,7 +30,6 @@ class EmpresaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'razon_social' => $model->razon_social,
             'rfc' => $model->rfc,
-            'contacto' => $model->nombre_contacto,
             'nss' => $model->no_imss,
             'telefono' => $model->telefono,
             'correo' => $model->correo_electronico,
@@ -115,6 +115,19 @@ class EmpresaTransformer extends TransformerAbstract
         if(($proveedor = $model->proveedor) && $model->proveedor->count() > 0)
         {
             return $this->item($proveedor[0], new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeContactos(Empresa $model)
+    {
+        if($contactos = $model->contactos)
+        {
+            return $this->collection($contactos, new ContactoTransformer);
         }
         return null;
     }
