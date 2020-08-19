@@ -20,7 +20,8 @@ class EmpresaTransformer extends TransformerAbstract
         'tipo',
         'prestadora',
         'proveedor',
-        'archivos'
+        'archivos',
+        'archivosPrestadora',
     ];
 
     public function transform(Empresa $model)
@@ -91,6 +92,14 @@ class EmpresaTransformer extends TransformerAbstract
             return $this->collection($archivos->sortBy('id_tipo_archivo'), new ArchivoTransformer);
         }
         return null;
+    }
+
+    /**
+     *  @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeArchivosPrestadora(Empresa $model){
+        dd('polar', $model->archivosPrestadora());
     }
 
     /**

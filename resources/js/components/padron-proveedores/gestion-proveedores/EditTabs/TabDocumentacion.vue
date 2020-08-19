@@ -236,12 +236,45 @@ export default {
            
             
         },
-        registrarPrestadora(){
+        validarPrestadora(){
+            this.cargando = true;
+            return this.$store.dispatch('padronProveedores/empresa/validarPrestadora', {
+                rfc:this.rfc,
+            })
+                .then(data => {
+                   if(data.asociacion){
+                        swal("El RFC ingresado pertenece a la empresa prestadora (" + data.razon_social +")¿Desea asociarla?", {
+                        icon: "warning",
+                        buttons: {
+                            cancel: {
+                            text: 'No',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Asociar',
+                            closeModal: true,
+                            }
+                            }
+                        }) .then((value) => {
+                            if (value) {
+                                this.registrarPrestadora(data.asociacion);
+                            }
+                        });
+                   }else{
+                       this.registrarPrestadora(data.asociacion);
+                   }
+                }).finally( ()=>{
+
+                });
+        },
+        registrarPrestadora(asociacion){
             this.cargando = true;
             return this.$store.dispatch('padronProveedores/empresa/registrarPrestadora', {
                 razon_social:this.razon_social,
                 rfc:this.rfc,
                 id_empresa:this.id,
+                id_archivo_sua:this.id_archivo_sua,
+                asociacion:asociacion,
             })
                 .then(data => {
                     $(this.$refs.modal).modal('hide');
@@ -275,7 +308,7 @@ export default {
                             this.upload();
                         }
                         if(this.archivo.tipo_archivo == this.id_archivo_sua && this.id_tipo == 2){
-                            this.registrarPrestadora();
+                            this.validarPrestadora();
                         }
                        
                     }

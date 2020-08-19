@@ -54,4 +54,9 @@ class ArchivoController extends Controller
     public function documento(Request $request,$id){
         return $this->service->documento($request,$id);
     }
+
+    public function getArchivosPrestadora(Request $request){
+        $archivos_prestadora = $this->service->getArchivosPrestadora($request);
+        return $this->respondWithCollection($archivos_prestadora);
+    }
 }
