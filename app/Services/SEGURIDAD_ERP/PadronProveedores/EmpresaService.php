@@ -361,7 +361,7 @@ class EmpresaService
         $empresa = $this->repository->getEmpresaXRFC($data['rfc']);
         
         if($empresa && $empresa->count() > 0){
-            if($empresa->id_tipo_empresa == 1){
+            if($empresa->id_tipo_empresa != 3){
                 abort(500, "El RFC ingresado pertenece a una empresa proveedora, la asociación con la prestadora de servicios no puede realizarse.");
             }
             if($empresa->id_tipo_empresa == 3){
