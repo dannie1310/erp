@@ -174,7 +174,7 @@ class EmpresaService
         if($empresa){
             return $empresa;
         }else {
-            // $this->validaEFO($data["rfc"]);
+            $this->validaEFO($data["rfc"]);
 
             $this->validaRFC($data["rfc"]);
             $data["id_tipo_empresa"] = $this->getTipoEmpresa($data["rfc"]);
