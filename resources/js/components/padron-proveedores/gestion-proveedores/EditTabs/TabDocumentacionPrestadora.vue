@@ -36,7 +36,7 @@
                                         <td>
                                             <div class="btn-group">
                                             <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                            <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
+                                            <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.prestadora.rfc" v-bind:rfc_empresa="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
                                             </div>
                                         </td>
                                     </tr>
@@ -58,57 +58,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                         <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua">
-                            <label for="id_tipo" class="col-sm-12 col-form-label">Seleccione si cuenta con listado de personal dado de alta ante el IMSS a través de SUA o si cuenta con empresa prestadora de servicios: </label>
-                            <div class="col-sm-4 offset-4">
-                                <div class="btn-group btn-group-toggle">
-                                    <label class="btn btn-outline-secondary" :class="id_tipo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos" :key="llave">
-                                        <input type="radio"
-                                                class="btn-group-toggle"
-                                                name="id_tipo"
-                                                :id="'tipo' + llave"
-                                                :value="llave"
-                                                autocomplete="on"
-                                                v-model.number="id_tipo">
-                                                {{ tipo}}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                         <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                                <b>Registrar empresa prestadora de servicios</b>
-                        </div>
-                        <div class="col-md-9" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                            <label for="razon_social" class="col-lg-12 col-form-label">Razón Social</label>
-                            <div class="col-lg-12">
-                                    <input type="text" class="form-control"
-                                            name="razon_social"
-                                            v-model="razon_social"
-                                            id="razon_social"
-                                            placeholder="Razón Social"
-                                            data-vv-as="Razón Social"
-                                            v-validate="{required:id_tipo === 2?true:false}"
-                                            :class="{'is-invalid': errors.has('razon_social')}" >
-                                            <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                            <label for="rfc" class="col-lg-12 col-form-label">RFC</label>
-                            <div class="col-lg-12">
-                                    <input type="text" class="form-control"
-                                            name="rfc"
-                                            v-model="rfc"
-                                            id="rfc"
-                                            placeholder="RFC"
-                                            data-vv-as="RFC"
-                                            v-validate="{required:id_tipo === 2?true:false}"
-                                            :class="{'is-invalid': errors.has('rfc')}" >
-                                            <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
-                            </div>
-                        </div>
-                        </div>
-                        <div class="row justify-content-between" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1">
+                        <div class="row justify-content-between">
                             <div class="col-md-12">
                                 <label for="cargar_file" class="col-lg-12 col-form-label">Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
@@ -129,8 +79,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary" >Cargar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary" >Registrar</button>
+                        <button @click="validate" type="button" class="btn btn-primary" >Cargar</button>
                     </div>
                 </div>
             </div>
@@ -141,8 +90,8 @@
 <script>
 import Documento from '../Documento';
 export default {
-    name: "tab-documentacion",
-    props: ['id'],
+    name: "tab-documentacion-prestadora",
+    props: ['id_empresa', 'id_prestadora'],
     components:{Documento},
     data(){
         return{
@@ -157,11 +106,10 @@ export default {
             },
             razon_social:'',
             rfc:'',
-            id_archivo_sua:15,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Listado de personal dado de alta ante el IMSS a través de SUA" EN LA BBDD
         }
     },
     mounted() {
-        // this.getSecciones();
+        this.getArchivos();
     },
     methods: {
         createImage(file, tipo) {
@@ -192,14 +140,17 @@ export default {
                 this.cargando = false;
             })
         },
-        getSecciones(){
+        getArchivos(){
             this.cargando = true;
-            this.$store.commit('padronProveedores/ctg-seccion/SET_SECCIONES', null);
-            return this.$store.dispatch('padronProveedores/ctg-seccion/index', {
-                id: this.id,
-                params: {include: [], sort: 'id', order: 'asc'}
+            this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', null);
+            return this.$store.dispatch('padronProveedores/archivo/getArchivos', {
+                params: {
+                    include: [], sort: 'id_tipo_archivo', order: 'asc',
+                    id_empresa: this.id_empresa,
+                    id_prestadora: this.id_prestadora,                   
+                    }
             }).then(data => {
-                this.$store.commit('padronProveedores/ctg-seccion/SET_SECCIONES', data.data);
+                this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.data);
             })
         },
         modalCarga(archivo){
@@ -236,45 +187,12 @@ export default {
            
             
         },
-        validarPrestadora(){
-            this.cargando = true;
-            return this.$store.dispatch('padronProveedores/empresa/validarPrestadora', {
-                rfc:this.rfc,
-            })
-                .then(data => {
-                   if(data.asociacion){
-                        swal("El RFC ingresado pertenece a la empresa prestadora (" + data.razon_social +")¿Desea asociarla?", {
-                        icon: "warning",
-                        buttons: {
-                            cancel: {
-                            text: 'No',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Asociar',
-                            closeModal: true,
-                            }
-                            }
-                        }) .then((value) => {
-                            if (value) {
-                                this.registrarPrestadora(data.asociacion);
-                            }
-                        });
-                   }else{
-                       this.registrarPrestadora(data.asociacion);
-                   }
-                }).finally( ()=>{
-
-                });
-        },
-        registrarPrestadora(asociacion){
+        registrarPrestadora(){
             this.cargando = true;
             return this.$store.dispatch('padronProveedores/empresa/registrarPrestadora', {
                 razon_social:this.razon_social,
                 rfc:this.rfc,
                 id_empresa:this.id,
-                id_archivo_sua:this.id_archivo_sua,
-                asociacion:asociacion,
             })
                 .then(data => {
                     $(this.$refs.modal).modal('hide');
@@ -288,8 +206,9 @@ export default {
             var formData = new FormData();
             formData.append('archivo',  this.file);
             formData.append('archivo_nombre',  this.file_name);
-            formData.append('id_empresa',  this.id);
-            formData.append('rfc',  this.empresa.rfc);
+            formData.append('id_empresa',  this.empresa.prestadora.id);
+            formData.append('rfc',  this.empresa.prestadora.rfc);
+            formData.append('rfc_empresa',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
             return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
                 data: formData,
@@ -297,20 +216,14 @@ export default {
                         params: { _method: 'POST'}
                     }
             }).then((data) => {
-                this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
+                this.$store.commit('padronProveedores/archivo-prestadora/UPDATE_ARCHIVO', data);
                 $(this.$refs.modal).modal('hide');
             })
         },
         validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.archivo.tipo_archivo != this.id_archivo_sua || this.id_tipo == 1){
-                            this.upload();
-                        }
-                        if(this.archivo.tipo_archivo == this.id_archivo_sua && this.id_tipo == 2){
-                            this.validarPrestadora();
-                        }
-                       
+                        this.upload();
                     }
                 });
             },
@@ -320,7 +233,7 @@ export default {
             return this.$store.getters['padronProveedores/empresa/currentEmpresa'];
         },
         archivos(){
-            return this.$store.getters['padronProveedores/archivo/archivos'];
+            return this.$store.getters['padronProveedores/archivo-prestadora/archivos'];
         }
     }
 

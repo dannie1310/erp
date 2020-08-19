@@ -14,7 +14,12 @@ class Archivo extends Model
     protected $table = 'SEGURIDAD_ERP.PadronProveedores.archivos';
     public $timestamps = false;
 
-    protected $fillable = ["id_tipo_archivo", "id_tipo_empresa"];
+    protected $fillable = [
+        "id_tipo_archivo", 
+        "id_tipo_empresa",
+        "id_empresa_proveedor",
+        "id_empresa_prestadora",
+        ];
 
     public function ctgTipoArchivo()
     {
@@ -29,6 +34,7 @@ class Archivo extends Model
     {
         return $query->whereNotNull("hash_file");
     }
+
     public function scopeObligatorios($query)
     {
         return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
