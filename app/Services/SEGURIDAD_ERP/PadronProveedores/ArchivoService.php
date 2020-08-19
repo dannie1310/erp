@@ -62,4 +62,8 @@ class ArchivoService
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
         return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo);  
     }
+
+    public function getArchivosPrestadora($data){
+        return $this->repository->where([['id_empresa_proveedor', '=', $data->id_empresa]])->where([['id_empresa_prestadora', '=', $data->id_prestadora]])->all();
+    }
 }

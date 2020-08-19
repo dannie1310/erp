@@ -300,23 +300,27 @@ class EmpresaService
                 'id_empresa_proveedor' => $data['id_empresa'],
                 'id_empresa_prestadora' => $prestadora->id,
             ]);
-            return $empresa;
+
+        }else{
+            $prestadora = $empresa->prestadora()->create([
+                'razon_social' => $data['razon_social'],
+                'rfc' => $data['rfc'],
+                'id_tipo_empresa' => 3,
+            ]);
+            EmpresaPrestadora::create([
+                'id_empresa_proveedor' => $data['id_empresa'],
+                'id_empresa_prestadora' => $prestadora->id,
+            ]);
         }
         
-        $prestadora = $empresa->prestadora()->create([
-            'razon_social' => $data['razon_social'],
-            'rfc' => $data['rfc'],
-            'id_tipo_empresa' => 3,
-        ]);
-        EmpresaPrestadora::create([
-            'id_empresa_proveedor' => $data['id_empresa'],
-            'id_empresa_prestadora' => $prestadora->id,
-        ]);
-
         foreach($this->getTiposArchivos(3) as $archivo){
-            $prestadora->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
+            $prestadora->archivos()->create([
+                "id_tipo_archivo"=>$archivo->id_tipo_archivo,
+                "id_empresa_proveedor"=>$data['id_empresa'],
+                "id_empresa_prestadora"=>$prestadora->id,
+                ]);
         }
-
+        
         $this->generaDirectorios($empresa->rfc . '/'.$data["rfc"]);
         $empresa->archivos()->where('id_tipo_archivo', '=', $data['id_archivo_sua'])->delete();
         return $prestadora;
@@ -356,7 +360,7 @@ class EmpresaService
         // $this->validaEFO($data['rfc']);
         $empresa = $this->repository->getEmpresaXRFC($data['rfc']);
         
-        if($empresa->count() > 0){
+        if($empresa && $empresa->count() > 0){
             if($empresa->id_tipo_empresa == 1){
                 abort(500, "El RFC ingresado pertenece a una empresa proveedora, la asociación con la prestadora de servicios no puede realizarse.");
             }

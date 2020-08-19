@@ -40,7 +40,7 @@
                 <DatosPrestadora v-bind:prestadora="empresa.prestadora"></DatosPrestadora>
             </div>
             <div v-if="prestadora" aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-documentacion-prestadora" role="tabpanel">
-                <TabDocumentacionPrestadora ></TabDocumentacionPrestadora>
+                <TabDocumentacionPrestadora v-bind:id_empresa="empresa.id" v-bind:id_prestadora="empresa.prestadora.id"></TabDocumentacionPrestadora>
             </div>
         </div>
     </span>
@@ -71,12 +71,12 @@
                 this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', null);
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['prestadora.archivos', 'archivos']}
+                    params: {include: ['prestadora', 'archivos']}
                 }).then(data => {
-                    if(data.prestadora ){
-                        this.prestadora = true;
-                        this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.prestadora.archivos.data);
-                    }
+                    // if(data.prestadora ){
+                    //     this.prestadora = true;
+                    //     this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.prestadora.archivos.data);
+                    // }
                     this.prestadora = data.prestadora ? true : false;
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', data.archivos.data);
