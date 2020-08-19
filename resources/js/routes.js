@@ -561,7 +561,20 @@ export const routes = [
                             permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
                             general: true
                         }
+                    },
+                    {
+                        path: 'informe-desglosado',
+                        name: 'informe-efos-vs-cfd-5a',
+                        component: require('./components/fiscal/efos/InformeEFOSCFD5A').default,
+                        meta: {
+                            title: 'Informe Listado EFOS vs CFD Recibidos (Desglosado 5 años)',
+                            breadcrumb: {name: 'INFORME DESGLOSADO', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
                     }
+
                 ]
             },
             {
