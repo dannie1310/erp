@@ -14,8 +14,8 @@ class EFOSEmpresaInformeDesglosado
     public static function  getInforme()
     {
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeDefinitivos();
-        /*$informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformePresuntos();
-        $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeEnAclaracion();
+        $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformePresuntos();
+        /*$informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeEnAclaracion();
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeAutocorregidos();
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeNoDeducidos();
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeDefinitivos2012();*/
@@ -39,6 +39,8 @@ class EFOSEmpresaInformeDesglosado
        CONVERT(varchar,ctg_efos.fecha_presunto_dof,103) as fecha_presunto_dof,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       year(cfd_sat.fecha) as anio,
+       ListaEmpresasSAT.razon_social AS empresa_larga,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
           sum (
@@ -86,11 +88,14 @@ GROUP BY ctg_estados_efos.descripcion,
          efos.razon_social,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
+         ListaEmpresasSAT.razon_social,
+         year(cfd_sat.fecha),
          ctg_efos.fecha_presunto,
          ctg_efos.fecha_presunto_dof,
          Subquery.fecha_presunto_maxima
 ORDER BY Subquery.fecha_presunto_maxima DESC,
          empresa ASC,
+         year(cfd_sat.fecha) DESC,
          ctg_efos.fecha_presunto DESC")
         ;
         $informe = array_map(function ($value) {
