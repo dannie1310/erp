@@ -16,9 +16,9 @@ class EFOSEmpresaInformeDesglosado
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeDefinitivos();
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformePresuntos();
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeEnAclaracion();
-        /*$informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeAutocorregidos();
+        $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeAutocorregidos();
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeNoDeducidos();
-        $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeDefinitivos2012();*/
+        /*$informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeDefinitivos2012();*/
 
         $informe["fechas"] = EFOSEmpresaInformeDesglosado::getFechasInforme();
         return $informe;
@@ -114,6 +114,8 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        CONVERT(varchar,Subquery.fecha_autocorreccion,103)  as fecha_autocorreccion,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       year(cfd_sat.fecha) as anio,
+       ListaEmpresasSAT.razon_social AS empresa_larga,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
           sum (
@@ -152,9 +154,11 @@ GROUP BY ctg_estados_efos.descripcion,
          efos.razon_social,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
+         year(cfd_sat.fecha),
+         ListaEmpresasSAT.razon_social,
          Subquery.fecha_autocorreccion,
          ctg_efos.fecha_presunto
-ORDER BY 7 DESC
+ORDER BY 7 DESC, 8 DESC
         ")
         ;
         $informe = array_map(function ($value) {
@@ -236,6 +240,8 @@ ORDER BY 7 DESC,8 DESC
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       year(cfd_sat.fecha) as anio,
+       ListaEmpresasSAT.razon_social AS empresa_larga,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
           sum (
@@ -275,8 +281,10 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ctg_efos.fecha_definitivo_dof,
          ListaEmpresasSAT.nombre_corto,
-         ctg_efos.fecha_presunto
-ORDER BY 7 DESC
+         ctg_efos.fecha_presunto,
+         year(cfd_sat.fecha),
+         ListaEmpresasSAT.razon_social
+ORDER BY 7 DESC, 8 DESC
         ")
         ;
         $informe = array_map(function ($value) {
