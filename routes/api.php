@@ -304,6 +304,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'archivo'], function ($api){
             $api->post('cargarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@cargarArchivo');
             $api->get('{id}/documento', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@destroy')->where(['id' => '[0-9]+']);
         });
         $api->group(['prefix' => 'ctg-seccion'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\CtgSeccionController@index');

@@ -11,7 +11,7 @@
                                         <th >Estatus</th>
                                         <th >Documento</th>
                                         <th >Tipo Documento</th>
-                                        
+
                                         <th >Obligatorio</th>
                                         <th >Sección</th>
                                         <th >Nombre Archivo</th>
@@ -35,8 +35,11 @@
                                         <td>{{archivo.fecha_registro_format}}</td>
                                         <td>
                                             <div class="btn-group">
-                                            <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                            <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
+                                                <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
+                                                <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
+                                                <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre_archivo">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -223,7 +226,7 @@ export default {
             }else{
                 this.openModal(archivo);
             }
-            
+
         },
         openModal(archivo){
             this.archivo = archivo;
@@ -232,8 +235,8 @@ export default {
             this.file_name = '';
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
-           
-            
+
+
         },
         registrarPrestadora(){
             this.cargando = true;
@@ -268,19 +271,30 @@ export default {
             })
         },
         validate() {
-                this.$validator.validate().then(result => {
-                    console.log(result);
-                    if (result) {
-                        if(this.archivo.tipo_archivo != 14 || this.id_tipo == 1){
-                            this.upload();
-                        }
-                        if(this.archivo.tipo_archivo == 14 && this.id_tipo == 2){
-                            this.registrarPrestadora();
-                        }
-                       
+            this.$validator.validate().then(result => {
+                console.log(result);
+                if (result) {
+                    if (this.archivo.tipo_archivo != 14 || this.id_tipo == 1) {
+                        this.upload();
                     }
-                });
-            },
+                    if (this.archivo.tipo_archivo == 14 && this.id_tipo == 2) {
+                        this.registrarPrestadora();
+                    }
+
+                }
+            });
+        },
+        eliminar(archivo){
+            console.log(archivo)
+            if(archivo.nombre_archivo != null) {
+                return this.$store.dispatch('padronProveedores/archivo/eliminar', {
+                    id: archivo.id,
+                    params: {}
+                }).then(data => {
+                    console.log(data)
+                })
+            }
+        },
     },
     computed: {
         empresa(){

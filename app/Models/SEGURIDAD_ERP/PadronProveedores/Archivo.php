@@ -7,6 +7,7 @@ namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgTipoArchivo;
+use Illuminate\Support\Facades\DB;
 
 class Archivo extends Model
 {
@@ -57,5 +58,29 @@ class Archivo extends Model
     public function getEstatusAttribute()
     {
         return $this->hash_file?true:false;
+    }
+
+    public function eliminar()
+    {
+        try {
+            DB::connection('seguridad')->beginTransaction();
+            if(auth()->id() == $this->usuario_registro) {
+               /* $this->update([
+                    'hash_file' => null,
+                    'usuario_registro' => null,
+                    'fecha_hora_registro' => null,
+                    'nombre_archivo' => null,
+                    'extension_archivo' => null
+                ]);*/
+            }else{
+
+            }
+            DB::connection('seguridad')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 }

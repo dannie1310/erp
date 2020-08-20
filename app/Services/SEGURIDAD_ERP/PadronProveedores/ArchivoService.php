@@ -47,12 +47,26 @@ class ArchivoService
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
         return $archivo;
-        
     }
 
     public function documento($data, $id){
         $archivo = $this->repository->show($id);
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
-        return response()->file($storagePath .$data->rfc . '/' . $archivo->nombre_archivo);  
+        return response()->file($storagePath .$data->rfc . '/' . $archivo->nombre_archivo);
+    }
+
+    public function delete($data, $id)
+    {
+        $archivo = $this->repository->show($id);
+        if($archivo->usuario_registro && auth()->id() != $archivo->usuario_registro){
+            abort(403, 'No puede eliminar un archivo cargado por otro usuario.');
+        }
+   //     dd($archivo->eliminar());
+dd($archivo->)
+        dd(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix());
+        if(is_file($file)) {
+            // 1. possibility
+            Storage::delete($file);
+        }
     }
 }
