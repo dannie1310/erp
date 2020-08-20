@@ -115,22 +115,7 @@ export default {
         },
         registrarPrestadora(context, payload) {
             return new Promise((resolve, reject) => {
-                swal({
-                    title: "Iniciar Expediente de Prestadora de Servicios",
-                    text: "¿Está seguro de que la información es correcta?",
-                    icon: "info",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Iniciar Expediente',
-                            closeModal: true,
-                        }
-                    }
-                }).then((value) => {
-                    if (value) {
+                
                         axios
                             .post(URI + 'registrarPrestadora' , payload)
                             .then(r => r.data)
@@ -146,8 +131,7 @@ export default {
                             .catch(error => {
                                 reject(error);
                             });
-                    }
-                });
+                 
             });
         },
         update(context, payload) {
@@ -187,6 +171,37 @@ export default {
                                 })
                         }
                     });
+            });
+        },
+        validarPrestadora(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Iniciar Expediente de Prestadora de Servicios",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Iniciar Expediente',
+                            closeModal: true,
+                        }
+                    }
+                }).then((value) => {
+                    if (value) {
+                        axios
+                        .post(URI + 'revisarRfcPrestadora', payload)
+                        .then(r => r.data)
+                        .then(data => {
+                            resolve(data);
+                        })
+                        .catch(error => {
+                            reject(error);
+                        });
+                    }
+                });
             });
         },
         revisarRFC (context, payload) {

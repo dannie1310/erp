@@ -22,7 +22,9 @@ class Archivo extends Model
         'usuario_registro',
         'fecha_hora_registro',
         'nombre_archivo',
-        'extension_archivo'
+        'extension_archivo',
+        'id_empresa_proveedor',
+        'id_empresa_prestadora',
     ];
 
     public function ctgTipoArchivo()
@@ -43,6 +45,7 @@ class Archivo extends Model
     {
         return $query->whereNotNull("hash_file");
     }
+
     public function scopeObligatorios($query)
     {
         return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")

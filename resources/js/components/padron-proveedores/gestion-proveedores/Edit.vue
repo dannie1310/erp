@@ -40,7 +40,7 @@
                 <DatosPrestadora v-bind:prestadora="empresa.prestadora"></DatosPrestadora>
             </div>
             <div v-if="prestadora" aria-labelledby="nav-documentacion-prestadora-tab" class="tab-pane fade" id="nav-documentacion-prestadora" role="tabpanel">
-                <b>pandita</b>
+                <TabDocumentacionPrestadora v-bind:id_empresa="empresa.id" v-bind:id_prestadora="empresa.prestadora.id"></TabDocumentacionPrestadora>
             </div>
         </div>
     </span>
@@ -49,11 +49,12 @@
 <script>
     import DatosGenerales from "./EditTabs/TabDatos";
     import TabDocumentacion from './EditTabs/TabDocumentacion';
-    import DatosPrestadora from './EditTabs/TabDatosPrestadora'
+    import DatosPrestadora from './EditTabs/TabDatosPrestadora';
+    import TabDocumentacionPrestadora from './EditTabs/TabDocumentacionPrestadora';
 
     export default {
         name: "entrar-a-expediente",
-        components: {DatosGenerales, DatosPrestadora,TabDocumentacion},
+        components: {DatosGenerales, DatosPrestadora,TabDocumentacion, TabDocumentacionPrestadora},
         props: ['id'],
         data() {
             return {
@@ -72,6 +73,10 @@
                     id: this.id,
                     params: {include: ['prestadora', 'archivos']}
                 }).then(data => {
+                    // if(data.prestadora ){
+                    //     this.prestadora = true;
+                    //     this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.prestadora.archivos.data);
+                    // }
                     this.prestadora = data.prestadora ? true : false;
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', data.archivos.data);

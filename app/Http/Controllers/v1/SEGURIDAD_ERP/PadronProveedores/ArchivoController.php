@@ -55,6 +55,12 @@ class ArchivoController extends Controller
         return $this->service->documento($request,$id);
     }
 
+    public function getArchivosPrestadora(Request $request)
+    {
+        $archivos_prestadora = $this->service->getArchivosPrestadora($request);
+        return $this->respondWithCollection($archivos_prestadora);
+    }
+
     public function destroy(Request $request, $id)
     {
         $item = $this->service->delete($request->all(), $id);

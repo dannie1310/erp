@@ -46,15 +46,18 @@ class EmpresaRepository extends Repository implements RepositoryInterface
     }
 
     public function getIdEspecialidad($descripcion){
-        $especialidad_obj = CtgEspecialidad::where("descripcion","=",$descripcion)->first();
-        if($especialidad_obj){
-            return $especialidad_obj->id;
-        } else {
-            $especialidad_obj = CtgEspecialidad::create(
-                ["descripcion"=> $descripcion]
-            );
-            return $especialidad_obj->id;
+        if($descripcion){
+            $especialidad_obj = CtgEspecialidad::where("descripcion","=",$descripcion)->first();
+            if($especialidad_obj){
+                return $especialidad_obj->id;
+            } else {
+                $especialidad_obj = CtgEspecialidad::create(
+                    ["descripcion"=> $descripcion]
+                );
+                return $especialidad_obj->id;
+            }
         }
+        return null;
     }
 
     public function getTiposArchivos($id_tipo_empresa){

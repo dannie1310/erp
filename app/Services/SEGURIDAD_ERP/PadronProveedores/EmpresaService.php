@@ -182,7 +182,10 @@ class EmpresaService
                 $data["id_giro"] = $this->getIdGiro($data["giro"]);
             }
             if (!is_numeric($data["id_especialidad"])) {
-                $data["id_especialidad"] = $this->getIdEspecialidad($data["especialidad"]);
+                $id_especialidad = $this->getIdEspecialidad($data["especialidad"]);
+                if($id_especialidad>0){
+                    $data["id_especialidad"] = $id_especialidad;
+                }
             }
 
             $data["archivos"] = $this->getTiposArchivos($data["id_tipo_empresa"]);
@@ -206,10 +209,10 @@ class EmpresaService
         $efo = $this->repository->getEFO($rfc);
         if ($efo) {
             if ($efo->estado == 0) {
-                abort(403, 'La empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+                abort(403, 'La empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
             } else if ($efo->estado == 2) {
-                abort(403, 'La empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+                abort(403, 'La empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
             }
 
@@ -295,21 +298,35 @@ class EmpresaService
         $this->validaRFC($data['rfc']);
         $this->validaEFO($data['rfc']);
         $empresa = $this->repository->show($data['id_empresa']);
-        $prestadora = $empresa->prestadora()->create([
-            'razon_social' => $data['razon_social'],
-            'rfc' => $data['rfc'],
-            'id_tipo_empresa' => 3,
-        ]);
-        EmpresaPrestadora::create([
-            'id_empresa_proveedor' => $data['id_empresa'],
-            'id_empresa_prestadora' => $prestadora->id,
-        ]);
+        if($data['asociacion']){
+            $prestadora = $this->repository->getEmpresaXRFC($data['rfc']);
+            EmpresaPrestadora::create([
+                'id_empresa_proveedor' => $data['id_empresa'],
+                'id_empresa_prestadora' => $prestadora->id,
+            ]);
 
-        foreach($this->getTiposArchivos(3) as $archivo){
-            $prestadora->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
+        }else{
+            $prestadora = $empresa->prestadora()->create([
+                'razon_social' => $data['razon_social'],
+                'rfc' => $data['rfc'],
+                'id_tipo_empresa' => 3,
+            ]);
+            EmpresaPrestadora::create([
+                'id_empresa_proveedor' => $data['id_empresa'],
+                'id_empresa_prestadora' => $prestadora->id,
+            ]);
         }
 
-        $empresa->archivos()->where('id_tipo_archivo', '=', 14)->delete();
+        foreach($this->getTiposArchivos(3) as $archivo){
+            $prestadora->archivos()->create([
+                "id_tipo_archivo"=>$archivo->id_tipo_archivo,
+                "id_empresa_proveedor"=>$data['id_empresa'],
+                "id_empresa_prestadora"=>$prestadora->id,
+                ]);
+        }
+
+        $this->generaDirectorios($empresa->rfc . '/'.$data["rfc"]);
+        $empresa->archivos()->where('id_tipo_archivo', '=', $data['id_archivo_sua'])->delete();
         return $prestadora;
     }
 
@@ -339,6 +356,27 @@ class EmpresaService
         }
         return [
             'mensaje' => true
+        ];
+    }
+
+    public function revisarRfcPrestadora($data){
+        $this->validaRFC($data['rfc']);
+        $this->validaEFO($data['rfc']);
+        $empresa = $this->repository->getEmpresaXRFC($data['rfc']);
+
+        if($empresa && $empresa->count() > 0){
+            if($empresa->id_tipo_empresa != 3){
+                abort(500, "El RFC ingresado pertenece a una empresa proveedora, la asociación con la prestadora de servicios no puede realizarse.");
+            }
+            if($empresa->id_tipo_empresa == 3){
+                return [
+                    'asociacion' => true,
+                    'razon_social' => $empresa->razon_social
+                ];
+            }
+        }
+        return [
+            'asociacion' => false
         ];
     }
 }

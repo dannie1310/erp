@@ -25,14 +25,14 @@
 
 <script>
     export default {
-        props: ['id', 'rfc'],
+        props: ['id', 'rfc', 'rfc_empresa'],
         methods: {
             init() {
                 this.pdf()
             },
             pdf(){
                 // var url = '/api/contabilidad-general/incidente-poliza/' + this.id +'/impresion-polizas?'+'&access_token='+this.$session.get('jwt');
-                var url = '/api/padron-proveedores/archivo/' + this.id +'/documento?&rfc='+this.rfc+'&access_token='+this.$session.get('jwt');
+                var url = '/api/padron-proveedores/archivo/' + this.id +'/documento?&rfc='+this.rfc+'&rfc_empresa='+ this.rfc_empresa+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Polizas</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
