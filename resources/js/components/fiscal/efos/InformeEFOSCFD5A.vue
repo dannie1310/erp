@@ -22,7 +22,6 @@
                 <div class="col-md-12">
                     <table class="table">
                         <tbody>
-
                             <template v-for="(tipo,i) in informe">
                                 <template v-for="(partidas, j) in tipo">
                                      <template v-if="partidas.tipo == 'titulo'">
@@ -35,48 +34,19 @@
                                             </td>
                                         </tr>
                                         <tr style="background-color: #757575; color:#FFF; text-align:center" >
-                                            <td class="index_corto" rowspan="2">#</td>
-                                            <td rowspan="2">Estatus</td>
-                                            <td rowspan="2">RFC</td>
-                                            <td rowspan="2">Razón Social</td>
-                                            <td rowspan="2">Fecha Presunto</td>
-                                            <td rowspan="2">Fecha Presunto DOF</td>
-                                            <td rowspan="2">Fecha Definitivo</td>
-                                            <td rowspan="2">Fecha Definitivo DOF</td>
-                                            <td rowspan="2">Fecha Corrección</td>
-                                            <td rowspan="2">Empresa</td>
-                                            <td colspan="2">Antes</td>
-                                            <td colspan="2">2016</td>
-                                            <td colspan="2">2017</td>
-                                            <td colspan="2">2018</td>
-                                            <td colspan="2">2019</td>
-                                            <td colspan="2">2020</td>
-                                            <td colspan="2">Total</td>
+                                            <td class="index_corto">#</td>
+                                            <td>Estatus</td>
+                                            <td>RFC</td>
+                                            <td>Razón Social</td>
+                                            <td>Fecha Presunto</td>
+                                            <td>Fecha Presunto DOF</td>
+                                            <td>Fecha Definitivo</td>
+                                            <td>Fecha Definitivo DOF</td>
+                                            <td>Fecha Corrección</td>
+                                            <td>Empresa</td>
+                                            <td># CFD</td>
+                                            <td>Importe incluyendo IVA</td>
                                         </tr>
-                                         <tr style="background-color: #757575; color:#FFF; text-align:center">
-                                             <td># CFD</td>
-                                            <td>Importe incluyendo IVA</td>
-
-                                             <td># CFD</td>
-                                            <td>Importe incluyendo IVA</td>
-
-                                             <td># CFD</td>
-                                            <td>Importe incluyendo IVA</td>
-
-                                             <td># CFD</td>
-                                            <td>Importe incluyendo IVA</td>
-
-                                             <td># CFD</td>
-                                            <td>Importe incluyendo IVA</td>
-
-                                             <td># CFD</td>
-                                            <td>Importe incluyendo IVA</td>
-
-                                             <td># CFD</td>
-                                            <td>Importe incluyendo IVA</td>
-
-
-                                         </tr>
                                     </template>
                                     <tr v-else-if="partidas.tipo == 'partida'" >
                                         <td class="index_corto">{{partidas.indice}}</td>
@@ -119,7 +89,7 @@
 </template>
 
 <script>
-    import ImpresionInforme from './partials/ImpresionInforme';
+    import ImpresionInforme from './partials/ImpresionInformeDesglosado';
     export default {
         name: "InformeEFOSCFD",
         components:{ImpresionInforme},
@@ -136,7 +106,7 @@
         methods :{
             getInforme() {
                 this.cargando = true;
-                return this.$store.dispatch('seguridad/finanzas/ctg-efos/obtenerInformeCFD', {
+                return this.$store.dispatch('seguridad/finanzas/ctg-efos/obtenerInformeCFDDesglosado', {
 
                 })
                     .then(data => {

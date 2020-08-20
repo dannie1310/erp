@@ -56,9 +56,20 @@ class CtgEfosService
         return $this->repository->getInformeCFD();
     }
 
+    public function obtenerInformeDesglosado(){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        return $this->repository->getInformeCFDDesglosado();
+    }
+
     public function obtenerInformePDF(){
         $informe = $this->obtenerInforme();
-        //$informe = [];
+        $pdf = new InformeEFOSCFD($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeDesglosadoPDF(){
+        $informe = $this->obtenerInformeDesglosado();
         $pdf = new InformeEFOSCFD($informe);
         return $pdf->create();
     }
