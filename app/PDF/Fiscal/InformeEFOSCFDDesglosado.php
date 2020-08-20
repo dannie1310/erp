@@ -134,6 +134,7 @@ class InformeEFOSCFDDesglosado extends Rotation
                     } else if ($partida["tipo"] == "titulo") {
                         $this->etiqueta_titulo = $partida["etiqueta"];
                         $this->AddPage();
+                        $this->omitir_encabezado_tabla = true;
                     } else if ($partida["tipo"] == "subtitulo") {
                         $this->etiqueta_subtitulo = $partida["etiqueta"];
                         if($this->omitir_encabezado_tabla){
