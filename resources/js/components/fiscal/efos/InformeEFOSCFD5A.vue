@@ -33,7 +33,24 @@
                                                 {{partidas.etiqueta}}
                                             </td>
                                         </tr>
-                                        <tr style="background-color: #757575; color:#FFF; text-align:center" >
+                                    </template>
+                                    <template v-else-if="partidas.tipo == 'subtitulo'">
+                                        <tr>
+                                            <td colspan="12" style="background-color: #fff" ></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="12" :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}" >
+                                                {{partidas.etiqueta}}
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <template v-else-if="partidas.tipo == 'subtitulo_final'">
+                                        <tr>
+                                            <td colspan="12" :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}" >
+                                                {{partidas.etiqueta}}
+                                            </td>
+                                        </tr>
+                                        <tr style="background-color: #D5D5D5; color:#000; text-align:center" >
                                             <td class="index_corto">#</td>
                                             <td>Estatus</td>
                                             <td>RFC</td>
@@ -67,10 +84,7 @@
                                         <td class="index_corto">{{partidas.contador}}</td>
                                         <td></td>
                                         <td></td>
-                                        <td>{{partidas.etiqueta}}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td colspan="4">{{partidas.etiqueta}}</td>
                                         <td></td>
                                         <td></td>
                                         <td></td>

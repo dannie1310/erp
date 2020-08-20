@@ -449,8 +449,11 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
         if(count($partidas)>0){
             $i = 0;
             $contador_partidas_empresa = 1;
+            $contador_partidas_anio = 1;
             $contador_cfdi = 0;
             $importe_cfdi=0;
+            $contador_cfdi_anio = 0;
+            $importe_cfdi_anio =0;
             $contador_cfdi_global = 0;
             $importe_cfdi_global=0;
             $i_bis = 1;
@@ -459,54 +462,65 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
 
             $partidas_completas[$i]["etiqueta"] = $tipo;
             $partidas_completas[$i]["tipo"] = "titulo";
+            $partidas_completas[$i]["bg_color_hex"] = "#FFF";
+            $partidas_completas[$i]["bg_color_rgb"] = [255,255,255];
+            $partidas_completas[$i]["color_hex"] = "#000";
+            $partidas_completas[$i]["color_rgb"] = [0,0,0];
+            $i++;
+
+            $partidas_completas[$i]["etiqueta"] = $partidas[0]["empresa"];
+            $partidas_completas[$i]["tipo"] = "subtitulo";
             $partidas_completas[$i]["bg_color_hex"] = "#757575";
-            $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
+            $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
             $partidas_completas[$i]["color_hex"] = "#FFF";
             $partidas_completas[$i]["color_rgb"] = [255,255,255];
             $i++;
 
-            $partidas_completas[$i]["etiqueta"] = $partidas[0]["empresa"];
-            $partidas_completas[$i]["tipo"] = "titulo";
-            $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
-            $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
-            $partidas_completas[$i]["color_hex"] = "#000";
-            $partidas_completas[$i]["color_rgb"] = [0,0,0];
-            $i++;
-
             $partidas_completas[$i]["etiqueta"] = $partidas[0]["anio"];
-            $partidas_completas[$i]["tipo"] = "titulo";
-            $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
+            $partidas_completas[$i]["tipo"] = "subtitulo_final";
+            $partidas_completas[$i]["bg_color_hex"] = "#757575";
             $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
-            $partidas_completas[$i]["color_hex"] = "#000";
-            $partidas_completas[$i]["color_rgb"] = [0,0,0];
+            $partidas_completas[$i]["color_hex"] = "#FFF";
+            $partidas_completas[$i]["color_rgb"] = [255,255,255];
             $i++;
 
             foreach($partidas as $partida)
             {
                 if($i_p>0){
 
-                    if($partida["anio"]!=$partidas[$i_p-1]["anio"] ){
+                    if($partida["anio"]!=$partidas[$i_p-1]["anio"] || $partida["empresa"]!=$partidas[$i_p-1]["empresa"]) {
 
-                        $partidas_completas[$i]["contador"] = $contador_partidas_empresa-1;
-                        $partidas_completas[$i]["acumulador"] = $acumulador_partidas_empresa;
-                        $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$tipo." ".$partidas[$i_p-1]["anio"];
-                        $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi;
-                        $partidas_completas[$i]["importe"] = $importe_cfdi;
-                        $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi,2,".",",");
+                        $partidas_completas[$i]["contador"] = $contador_partidas_anio - 1;
+                        //$partidas_completas[$i]["acumulador"] = $acumulador_partidas_empresa;
+                        $partidas_completas[$i]["etiqueta"] = "SUBTOTAL " . $tipo . " " . $partidas[$i_p - 1]["empresa"] . " " . $partidas[$i_p - 1]["anio"];
+                        $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi_anio;
+                        $partidas_completas[$i]["importe"] = $importe_cfdi_anio;
+                        $partidas_completas[$i]["importe_format"] = '$ ' . number_format($importe_cfdi_anio, 2, ".", ",");
                         $partidas_completas[$i]["tipo"] = "subtotal";
-                        $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
-                        $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
+                        /*$partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
+                        $partidas_completas[$i]["bg_color_rgb"] = [213, 213, 213];
                         $partidas_completas[$i]["color_hex"] = "#000";
-                        $partidas_completas[$i]["color_rgb"] = [0,0,0];
+                        $partidas_completas[$i]["color_rgb"] = [0, 0, 0];*/
+
+                        $partidas_completas[$i]["bg_color_hex"] = "#757575";
+                        $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
+                        $partidas_completas[$i]["color_hex"] = "#FFF";
+                        $partidas_completas[$i]["color_rgb"] = [255,255,255];
+
                         $i++;
 
-                        $partidas_completas[$i]["etiqueta"] = $partidas[$i_p]["anio"];
-                        $partidas_completas[$i]["tipo"] = "titulo";
-                        $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
-                        $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
-                        $partidas_completas[$i]["color_hex"] = "#000";
-                        $partidas_completas[$i]["color_rgb"] = [0,0,0];
-                        $i++;
+                        if ($partida["empresa"] == $partidas[$i_p - 1]["empresa"]){
+                            $partidas_completas[$i]["etiqueta"] = $partidas[$i_p]["anio"];
+                            $partidas_completas[$i]["tipo"] = "subtitulo_final";
+                            $partidas_completas[$i]["bg_color_hex"] = "#757575";
+                            $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
+                            $partidas_completas[$i]["color_hex"] = "#FFF";
+                            $partidas_completas[$i]["color_rgb"] = [255,255,255];
+                            $i++;
+                            $contador_partidas_anio = 1;
+                            $contador_cfdi_anio=0;
+                            $importe_cfdi_anio=0;
+                        }
                     }
 
 
@@ -519,33 +533,36 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
                         $partidas_completas[$i]["importe"] = $importe_cfdi;
                         $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi,2,".",",");
                         $partidas_completas[$i]["tipo"] = "subtotal";
-                        $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
-                        $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
-                        $partidas_completas[$i]["color_hex"] = "#000";
-                        $partidas_completas[$i]["color_rgb"] = [0,0,0];
+                        $partidas_completas[$i]["bg_color_hex"] = "#757575";
+                        $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
+                        $partidas_completas[$i]["color_hex"] = "#FFF";
+                        $partidas_completas[$i]["color_rgb"] = [255,255,255];
                         $i++;
 
 
 
                         $partidas_completas[$i]["etiqueta"] = $partidas[$i_p]["empresa"];
-                        $partidas_completas[$i]["tipo"] = "titulo";
-                        $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
-                        $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
-                        $partidas_completas[$i]["color_hex"] = "#000";
-                        $partidas_completas[$i]["color_rgb"] = [0,0,0];
+                        $partidas_completas[$i]["tipo"] = "subtitulo";
+                        $partidas_completas[$i]["bg_color_hex"] = "#757575";
+                        $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
+                        $partidas_completas[$i]["color_hex"] = "#FFF";
+                        $partidas_completas[$i]["color_rgb"] = [255,255,255];
                         $i++;
 
                         $partidas_completas[$i]["etiqueta"] = $partidas[$i_p]["anio"];
-                        $partidas_completas[$i]["tipo"] = "titulo";
-                        $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
-                        $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
-                        $partidas_completas[$i]["color_hex"] = "#000";
-                        $partidas_completas[$i]["color_rgb"] = [0,0,0];
+                        $partidas_completas[$i]["tipo"] = "subtitulo_final";
+                        $partidas_completas[$i]["bg_color_hex"] = "#757575";
+                        $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
+                        $partidas_completas[$i]["color_hex"] = "#FFF";
+                        $partidas_completas[$i]["color_rgb"] = [255,255,255];
                         $i++;
 
                         $contador_partidas_empresa = 1;
+                        $contador_partidas_anio = 1;
                         $contador_cfdi=0;
                         $importe_cfdi=0;
+                        $contador_cfdi_anio=0;
+                        $importe_cfdi_anio=0;
                         $acumulador_partidas_empresa=0;
                     }
                 }
@@ -555,9 +572,12 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
                 $partidas_completas[$i]["tipo"] = "partida";
                 $contador_cfdi+=$partidas_completas[$i]["no_CFDI"];
                 $importe_cfdi+=$partidas_completas[$i]["importe"];
+                $contador_cfdi_anio+=$partidas_completas[$i]["no_CFDI"];
+                $importe_cfdi_anio+=$partidas_completas[$i]["importe"];
                 $contador_cfdi_global+=$partidas_completas[$i]["no_CFDI"];;
                 $importe_cfdi_global+=$partidas_completas[$i]["importe"];
                 $contador_partidas_empresa++;
+                $contador_partidas_anio++;
                 $i++;
                 $i_bis++;
                 $i_p++;
@@ -571,10 +591,10 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
             $partidas_completas[$i]["importe"] = $importe_cfdi;
             $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi,2,".",",");
             $partidas_completas[$i]["tipo"] = "subtotal";
-            $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
-            $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
-            $partidas_completas[$i]["color_hex"] = "#000";
-            $partidas_completas[$i]["color_rgb"] = [0,0,0];
+            $partidas_completas[$i]["bg_color_hex"] = "#757575";
+            $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
+            $partidas_completas[$i]["color_hex"] = "#FFF";
+            $partidas_completas[$i]["color_rgb"] = [255,255,255];
             $i++;
 
 
