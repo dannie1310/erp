@@ -22,7 +22,10 @@ class ProcesamientoListaEfos extends Model
 
     public static function getFechaActualizacion(){
         $proceso = ProcesamientoListaEfos::orderBy("id","desc")->first();
-        return $proceso->fecha_actualizacion_sat_txt;
+        $texto = $proceso->fecha_actualizacion_sat_txt;
+        $texto_ex = explode(" al ",$texto);
+        $fecha_actualizacion_txt = "Lista de EFOS actualizada al ".$texto_ex[1];
+        return $fecha_actualizacion_txt;
     }
 
     public function cambios()

@@ -287,6 +287,8 @@ ORDER BY 7 DESC
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       ListaEmpresasSAT.razon_social AS empresa_larga,
+
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
           sum (
@@ -345,6 +347,7 @@ GROUP BY ctg_estados_efos.descripcion,
          efos.razon_social,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
+         ListaEmpresasSAT.razon_social,
          ctg_efos.fecha_presunto,
          ctg_efos.fecha_definitivo_dof,
          Subquery.fecha_devinitivo_maxima,
@@ -468,7 +471,7 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
             $partidas_completas[$i]["color_rgb"] = [0,0,0];
             $i++;
 
-            $partidas_completas[$i]["etiqueta"] = $partidas[0]["empresa"];
+            $partidas_completas[$i]["etiqueta"] = $partidas[0]["empresa_larga"];
             $partidas_completas[$i]["tipo"] = "subtitulo";
             $partidas_completas[$i]["bg_color_hex"] = "#757575";
             $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
@@ -541,7 +544,7 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
 
 
 
-                        $partidas_completas[$i]["etiqueta"] = $partidas[$i_p]["empresa"];
+                        $partidas_completas[$i]["etiqueta"] = $partidas[$i_p]["empresa_larga"];
                         $partidas_completas[$i]["tipo"] = "subtitulo";
                         $partidas_completas[$i]["bg_color_hex"] = "#757575";
                         $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
