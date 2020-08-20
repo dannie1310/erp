@@ -97,11 +97,11 @@ class InformeEFOSCFD extends Rotation
         $this->SetHeights([0.4]);
         $this->SetAligns(['C','C','C','C','C','C','C','C','C']);
         if($this->etiqueta_titulo == "DEFINITIVOS" || $this->etiqueta_titulo == "EN ACLARACIÓN" || $this->etiqueta_titulo == "NO DEDUCIDOS" || $this->etiqueta_titulo == "DEFINITIVOS ANTES 2012"){
-            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", "Fecha Definitivo DOF", "Empresa", "# CFD", "Importe Incluyendo IVA"]);
+            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", "Fecha Definitivo DOF", "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
         } else if($this->etiqueta_titulo == "PRESUNTOS"){
-            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Presuntos SAT", "Fecha Presuntos DOF", "Empresa", "# CFD", "Importe Incluyendo IVA"]);
+            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Presuntos SAT", "Fecha Presuntos DOF", "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
         }else if($this->etiqueta_titulo == "CORREGIDOS"){
-            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", utf8_decode("Fecha Corrección"), "Empresa", "# CFD", "Importe Incluyendo IVA"]);
+            $this->Row(["#","Estatus","RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", utf8_decode("Fecha Corrección"), "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
         }
 
     }
