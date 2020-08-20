@@ -62,16 +62,19 @@ class InformeEFOSCFDDesglosado extends Rotation
         $this->setXY(4.59, 1.2);
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Helvetica', 'B', 12);
-        $this->MultiCell(16, .5, utf8_decode('Informe de Revisión de Listado de EFOS del SAT vs CFDI Recibidos'), '0', 'C', 0);
-        $this->setXY(7.59, 1.7);
+        $this->MultiCell(16, .5, utf8_decode('Informe de Revisión de Listado de EFOS del SAT vs CFDI Recibidos'), '1', 'C', 0);
+        $this->setX(4.59);
+        $this->SetFont('Helvetica', '', 9);
+        $this->MultiCell(16, .3, utf8_decode('Desglosado por años'), '1', 'C', 0);
+        $this->setXY(4.59, 2.0);
         $this->SetFont('Helvetica', '', 7);
-        $this->Cell(16, .3, utf8_decode($this->informe["fechas"]["lista_efos"]) . ' / ' . utf8_decode($this->informe["fechas"]["cfd_recibidos"]), 0, 1, "L");
+        $this->Cell(16, .3, utf8_decode($this->informe["fechas"]["lista_efos"]) . ' / ' . utf8_decode($this->informe["fechas"]["cfd_recibidos"]), 0, 1, "C");
         $this->titulo();
         $this->subtitulo();
-        $this->subtitulo_final();
-        if ($this->en_cola != "subtotal" && $this->en_cola != "total" && $this->omitir_encabezado_tabla == false /*&&  $this->en_cola != "subtitulo" && $this->en_cola != "subtitulo_final"*/) {
+        if ($this->en_cola != "subtotal" && $this->en_cola != "total" && $this->omitir_encabezado_tabla == false) {
             $this->partidasTitle();
         }
+        $this->subtitulo_final();
         if ($this->en_cola != '') {
             $this->setEstilos($this->en_cola);
         }
@@ -86,33 +89,6 @@ class InformeEFOSCFDDesglosado extends Rotation
         $this->SetFont('Arial', 'B', 6);
         $this->Cell(6.5, .4, '', 0, 0, 'C');
         $this->Cell(6.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
-    }
-
-    public function partidasTitle()
-    {
-        $this->SetFont('Arial', '', 8);
-
-        $this->setXY(1, 3.7);
-
-        $this->SetFillColor(180, 180, 180);
-        $this->SetWidths([0.8, 1.5, 2.2, 6, 1.8, 1.8, 2.2, 1, 2.4]);
-        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
-        $this->SetRounds(['', '', '', '', '', '', '', '', '']);
-        $this->SetRadius([0.2, 0, 0, 0, 0, 0, 0, 0, 0.2]);
-
-        $this->SetFills(['117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117']);
-        $this->SetTextColors(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-        $this->SetDrawColor(117, 117, 117);
-        $this->SetHeights([0.4]);
-        $this->SetAligns(['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C']);
-        if ($this->etiqueta_titulo == "DEFINITIVOS" || $this->etiqueta_titulo == "EN ACLARACIÓN" || $this->etiqueta_titulo == "NO DEDUCIDOS" || $this->etiqueta_titulo == "DEFINITIVOS ANTES 2012") {
-            $this->Row(["#", "Estatus", "RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", "Fecha Definitivo DOF", "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
-        } else if ($this->etiqueta_titulo == "PRESUNTOS") {
-            $this->Row(["#", "Estatus", "RFC", utf8_decode("Razón Social"), "Fecha Presuntos SAT", "Fecha Presuntos DOF", "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
-        } else if ($this->etiqueta_titulo == "CORREGIDOS") {
-            $this->Row(["#", "Estatus", "RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", utf8_decode("Fecha Corrección"), "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
-        }
-
     }
 
 
@@ -146,8 +122,8 @@ class InformeEFOSCFDDesglosado extends Rotation
                     } else if ($partida["tipo"] == "subtitulo_final") {
                         $this->etiqueta_subtitulo_final = $partida["etiqueta"];
                         if($this->omitir_encabezado_tabla){
-                            $this->subtitulo_final();
                             $this->partidasTitle();
+                            $this->subtitulo_final();
                             $this->omitir_encabezado_tabla = false;
                         } else {
                             $this->Row([utf8_decode($partida["etiqueta"])]);
@@ -179,9 +155,37 @@ class InformeEFOSCFDDesglosado extends Rotation
 
     private function subtitulo_final()
     {
-        $this->setXY(1, 3.25);
+        /*$y = $this->getY()+1;
+        $this->setXY(1, 5);*/
         $this->setEstilos("subtitulo_final");
         $this->Row([utf8_decode($this->etiqueta_subtitulo_final)]);
+    }
+
+    public function partidasTitle()
+    {
+        $this->SetFont('Arial', '', 8);
+
+        /*$this->setXY(1, 3.25);*/
+
+        $this->SetFillColor(180, 180, 180);
+        $this->SetWidths([0.8, 1.5, 2.2, 6, 1.8, 1.8, 2.2, 1, 2.4]);
+        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
+        $this->SetRounds(['', '', '', '', '', '', '', '', '']);
+        $this->SetRadius([0.2, 0, 0, 0, 0, 0, 0, 0, 0.2]);
+
+        $this->SetFills(['117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117']);
+        $this->SetTextColors(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetDrawColor(117, 117, 117);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C']);
+        if ($this->etiqueta_titulo == "DEFINITIVOS" || $this->etiqueta_titulo == "EN ACLARACIÓN" || $this->etiqueta_titulo == "NO DEDUCIDOS" || $this->etiqueta_titulo == "DEFINITIVOS ANTES 2012") {
+            $this->Row(["#", "Estatus", "RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", "Fecha Definitivo DOF", "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
+        } else if ($this->etiqueta_titulo == "PRESUNTOS") {
+            $this->Row(["#", "Estatus", "RFC", utf8_decode("Razón Social"), "Fecha Presuntos SAT", "Fecha Presuntos DOF", "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
+        } else if ($this->etiqueta_titulo == "CORREGIDOS") {
+            $this->Row(["#", "Estatus", "RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", utf8_decode("Fecha Corrección"), "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
+        }
+
     }
 
     private function setEstilos($tipo)
