@@ -62,19 +62,25 @@ class InformeEFOSCFDDesglosado extends Rotation
         $this->setXY(4.59, 1.2);
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Helvetica', 'B', 12);
-        $this->MultiCell(16, .5, utf8_decode('Informe de Revisión de Listado de EFOS del SAT vs CFDI Recibidos'), '1', 'C', 0);
+        $this->MultiCell(16, .5, utf8_decode('Informe de Revisión de Listado de EFOS del SAT vs CFDI Recibidos'), 0, 'C', 0);
         $this->setX(4.59);
         $this->SetFont('Helvetica', '', 9);
-        $this->MultiCell(16, .3, utf8_decode('Desglosado por años'), '1', 'C', 0);
+        $this->MultiCell(16, .3, utf8_decode('Desglosado por años'), 0, 'C', 0);
         $this->setXY(4.59, 2.0);
         $this->SetFont('Helvetica', '', 7);
         $this->Cell(16, .3, utf8_decode($this->informe["fechas"]["lista_efos"]) . ' / ' . utf8_decode($this->informe["fechas"]["cfd_recibidos"]), 0, 1, "C");
         $this->titulo();
-        $this->subtitulo();
-        if ($this->en_cola != "subtotal" && $this->en_cola != "total" && $this->omitir_encabezado_tabla == false) {
-            $this->partidasTitle();
+
+        if($this->en_cola != "subtitulo"){
+            $this->subtitulo();
+            if ($this->en_cola != "subtotal" && $this->en_cola != "total" && $this->omitir_encabezado_tabla == false) {
+                $this->partidasTitle();
+            }
+            $this->subtitulo_final();
+        } else{
+            $this->omitir_encabezado_tabla = true;
         }
-        $this->subtitulo_final();
+
         if ($this->en_cola != '') {
             $this->setEstilos($this->en_cola);
         }
@@ -146,19 +152,19 @@ class InformeEFOSCFDDesglosado extends Rotation
         $this->Row([utf8_decode($this->etiqueta_titulo)]);
     }
 
-    private function subtitulo()
+    private function subtitulo($v="")
     {
         $this->setXY(1, 2.82);
         $this->setEstilos("subtitulo");
-        $this->Row([utf8_decode($this->etiqueta_subtitulo)]);
+        $this->Row([utf8_decode($this->etiqueta_subtitulo).$v]);
     }
 
-    private function subtitulo_final()
+    private function subtitulo_final($v="")
     {
         /*$y = $this->getY()+1;
         $this->setXY(1, 5);*/
         $this->setEstilos("subtitulo_final");
-        $this->Row([utf8_decode($this->etiqueta_subtitulo_final)]);
+        $this->Row([utf8_decode($this->etiqueta_subtitulo_final).$v]);
     }
 
     public function partidasTitle()
