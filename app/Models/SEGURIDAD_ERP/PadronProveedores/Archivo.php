@@ -15,7 +15,15 @@ class Archivo extends Model
     protected $table = 'SEGURIDAD_ERP.PadronProveedores.archivos';
     public $timestamps = false;
 
-    protected $fillable = ["id_tipo_archivo", "id_tipo_empresa"];
+    protected $fillable = [
+        'id_tipo_archivo',
+        'id_tipo_empresa',
+        'hash_file',
+        'usuario_registro',
+        'fecha_hora_registro',
+        'nombre_archivo',
+        'extension_archivo'
+    ];
 
     public function ctgTipoArchivo()
     {
@@ -24,6 +32,11 @@ class Archivo extends Model
 
     public function usuarioRegistro(){
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
+    }
+
+    public function proveedora()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa_proveedor','id');
     }
 
     public function scopeCargados($query)
@@ -64,17 +77,11 @@ class Archivo extends Model
     {
         try {
             DB::connection('seguridad')->beginTransaction();
-            if(auth()->id() == $this->usuario_registro) {
-               /* $this->update([
-                    'hash_file' => null,
-                    'usuario_registro' => null,
-                    'fecha_hora_registro' => null,
-                    'nombre_archivo' => null,
-                    'extension_archivo' => null
-                ]);*/
-            }else{
-
-            }
+            $this->update([
+                'hash_file' => null,
+                'nombre_archivo' => null,
+                'extension_archivo' => null
+            ]);
             DB::connection('seguridad')->commit();
             return $this;
         } catch (\Exception $e) {

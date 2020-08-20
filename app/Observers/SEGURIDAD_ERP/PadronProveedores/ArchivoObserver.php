@@ -20,7 +20,12 @@ class ArchivoObserver
      * @param Archivo $archivo
      */
     public function updating(Archivo $archivo){
-        $archivo->usuario_registro = auth()->id();
-        $archivo->fecha_hora_registro = date('Y-m-d H:i:s');
+        if(is_null($archivo->hash_file)){
+            $archivo->usuario_registro = null;
+            $archivo->fecha_hora_registro = null;
+        }else {
+            $archivo->usuario_registro = auth()->id();
+            $archivo->fecha_hora_registro = date('Y-m-d H:i:s');
+        }
     }
 }

@@ -272,7 +272,6 @@ export default {
         },
         validate() {
             this.$validator.validate().then(result => {
-                console.log(result);
                 if (result) {
                     if (this.archivo.tipo_archivo != 14 || this.id_tipo == 1) {
                         this.upload();
@@ -285,13 +284,12 @@ export default {
             });
         },
         eliminar(archivo){
-            console.log(archivo)
             if(archivo.nombre_archivo != null) {
                 return this.$store.dispatch('padronProveedores/archivo/eliminar', {
                     id: archivo.id,
                     params: {}
                 }).then(data => {
-                    console.log(data)
+                    this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
                 })
             }
         },

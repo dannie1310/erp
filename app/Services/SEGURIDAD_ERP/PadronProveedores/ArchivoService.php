@@ -58,15 +58,18 @@ class ArchivoService
     public function delete($data, $id)
     {
         $archivo = $this->repository->show($id);
+        $rfc_proveedora = $archivo->proveedora->rfc;
+        $nombre_archivo = $archivo->nombre_archivo;
         if($archivo->usuario_registro && auth()->id() != $archivo->usuario_registro){
             abort(403, 'No puede eliminar un archivo cargado por otro usuario.');
         }
-   //     dd($archivo->eliminar());
-dd($archivo->)
-        dd(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix());
-        if(is_file($file)) {
-            // 1. possibility
-            Storage::delete($file);
+
+        if(is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix().$rfc_proveedora.'/'.$nombre_archivo)) {
+            $datos_arch = $archivo->eliminar();
+            Storage::disk('padron_contratista')->delete($rfc_proveedora.'/'.$nombre_archivo);
+            return $datos_arch;
+        }else{
+            abort(403, 'No se encontro el archivo: "'.$nombre_archivo.'" para eliminarlo.');
         }
     }
 }

@@ -54,4 +54,10 @@ class ArchivoController extends Controller
     public function documento(Request $request,$id){
         return $this->service->documento($request,$id);
     }
+
+    public function destroy(Request $request, $id)
+    {
+        $item = $this->service->delete($request->all(), $id);
+        return $this->respondWithItem($item);
+    }
 }
