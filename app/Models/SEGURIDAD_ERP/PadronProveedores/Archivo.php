@@ -15,7 +15,7 @@ class Archivo extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        "id_tipo_archivo", 
+        "id_tipo_archivo",
         "id_tipo_empresa",
         "id_empresa_proveedor",
         "id_empresa_prestadora",
@@ -35,10 +35,17 @@ class Archivo extends Model
         return $query->whereNotNull("hash_file");
     }
 
-    public function scopeObligatorios($query)
+    public function scopeObligatorios($query, $id_proveedor = null)
     {
-        return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
-            ->where('ctg_tipos_archivos.obligatorio', 1);
+        if($id_proveedor){
+            return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
+                ->where("archivos.id_empresa_proveedor", $id_proveedor)
+                ->where('ctg_tipos_archivos.obligatorio', 1);
+        } else {
+            return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
+                ->where('ctg_tipos_archivos.obligatorio', 1);
+        }
+
     }
 
     public function getRegistroAttribute()
