@@ -35,6 +35,8 @@ class Rol extends Model
         'display_name',
     ];
 
+    protected $dateFormat = 'Y-m-d H:i:s';
+
     public function permisos()
     {
         return $this->belongsToMany(Permiso::class, 'dbo.permission_role', 'role_id', 'permission_id');

@@ -19,6 +19,7 @@ class Permiso extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'permissions';
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
