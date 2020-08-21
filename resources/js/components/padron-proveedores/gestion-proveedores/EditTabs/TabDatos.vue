@@ -167,14 +167,14 @@
                                     </td>
                                     <td>
                                         <input class="form-control"
-                                               :name="`email[${i}]`"
-                                               :data-vv-as="`'e-mail ${i + 1}'`"
+                                               :name="`correo_electronico[${i}]`"
+                                               :data-vv-as="`'correo_electronico ${i + 1}'`"
                                                v-model="contacto.correo_electronico"
-                                               :class="{'is-invalid': errors.has(`email[${i}]`)}"
+                                               :class="{'is-invalid': errors.has(`correo_electronico[${i}]`)}"
                                                v-validate="{ required: true, email:true }"
-                                               :id="`email[${i}]`"
+                                               :id="`correo_electronico[${i}]`"
                                                :maxlength="50"/>
-                                        <div class="invalid-feedback" v-show="errors.has(`email[${i}]`)">{{ errors.first(`email[${i}]`) }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has(`correo_electronico[${i}]`)">{{ errors.first(`correo_electronico[${i}]`) }}</div>
                                     </td>
                                     <td>
                                         <textarea
@@ -239,7 +239,7 @@
                     'nombre' : '',
                     'puesto' : '',
                     'telefono' : '',
-                    'email' : '',
+                    'correo_electronico' : '',
                     'notas' : ''
                 }
                 this.contactos.data.push(array);
@@ -317,7 +317,12 @@
                         if(this.empresa_registrar.especialidades_nuevas.length == 0 && this.empresa_registrar.nueva_especialidad == false)
                         {
                             swal('¡Error!', 'Debe existir al menos una especialidad seleccionada.', 'error')
-                        }else {
+                        }
+                        else if (this.contactos.data.length == 0)
+                        {
+                            swal('¡Error!', 'Debe existir al menos un contacto.', 'error')
+                        }
+                        else {
                             this.update()
                         }
                     }
