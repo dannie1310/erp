@@ -65,4 +65,9 @@ class EmpresaController extends Controller
     {
         return $this->service->revisarRFCPreexistente($request->all()['rfc']);
     }
+
+    public function descargaExpediente(Request $request, $id)
+    {
+        return $this->service->descargaExpediente($id);
+    }
 }

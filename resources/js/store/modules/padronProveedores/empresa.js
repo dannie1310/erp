@@ -230,6 +230,20 @@ export default {
                     })
             });
         },
+        descargaExpediente(context, payload) {
+            return new Promise((resolve, reject) => {
+                var URL = URI + payload.id +'/descargaExpediente?' +  '&access_token=' + this._vm.$session.get('jwt');
+                var win = window.open(URL, "_blank");
+
+                win.onbeforeunload = () => {
+                    swal("Expediente descargado correctamente.", {
+                        icon: "success",
+                        timer: 2000,
+                        buttons: false
+                    })
+                }
+            });
+        },
     },
 
     getters: {

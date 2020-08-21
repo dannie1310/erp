@@ -9,6 +9,8 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgEstadoExpediente;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
+use App\Utils\Files;
+use Chumper\Zipper\Zipper;
 
 class EmpresaService
 {
@@ -385,5 +387,24 @@ class EmpresaService
         return [
             'asociacion' => false
         ];
+    }
+
+    public function descargaExpediente($id){
+        $empresa = $this->repository->show($id);
+        $path = "downloads/padron_contratistas/" .$empresa->rfc ;
+        $nombre_zip = $path."/".$empresa->rfc."_".date("Ymd_his").".zip";
+        Files::eliminaDirectorio($path);
+
+        $zipper = new Zipper;
+        $zipper->make(public_path($nombre_zip))
+            ->add(public_path("uploads/padron_contratistas/".$empresa->rfc));
+        $zipper->close();
+
+        if(file_exists(public_path($nombre_zip))){
+            return response()->download(public_path($nombre_zip));
+        } else {
+            return response()->json(["mensaje"=>"El expediente no cuenta con archivos"]);
+        }
+
     }
 }
