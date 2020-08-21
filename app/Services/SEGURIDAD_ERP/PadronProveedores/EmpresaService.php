@@ -302,6 +302,7 @@ class EmpresaService
                 'razon_social' => $data['razon_social'],
                 'rfc' => $data['rfc'],
                 'id_tipo_empresa' => 3,
+                'no_imss' => $data['nss']
             ]);
             EmpresaPrestadora::create([
                 'id_empresa_proveedor' => $data['id_empresa'],
