@@ -334,11 +334,37 @@
                 }
             },
             store() {
-                return this.$store.dispatch('padronProveedores/empresa/store', this.$data.registro_proveedor)
+                return this.$store.dispatch('padronProveedores/empresa/revisarRFCPreexistente', this.$data.registro_proveedor)
                     .then(data => {
-                        this.$router.push({name: 'entrar-a-expediente', params: {id: data.id}});
-                    }).finally( ()=>{
-                        this.cargando = false;
+                        if(data['id_previo']!== undefined){
+                            swal({
+                                title: "Ir a expediente existente",
+                                text: "El RFC ingresado pertenece a: "+data['razon_social']+".",
+                                icon: "warning",
+                                buttons: {
+                                    cancel: {
+                                        text: 'Cancelar',
+                                        visible: true
+                                    },
+                                    confirm: {
+                                        text: 'Si, Ir a Expediente',
+                                        closeModal: false,
+                                    }
+                                }
+                            }).then((value) => {
+                                if(value) {
+                                    this.$router.push({name: 'entrar-a-expediente', params: {id: data.id_previo}});
+                                    swal.close();
+                                }
+                            })
+                        }else{
+                            return this.$store.dispatch('padronProveedores/empresa/store', this.$data.registro_proveedor)
+                                .then(data => {
+                                    this.$router.push({name: 'entrar-a-expediente', params: {id: data.id}});
+                                }).finally( ()=>{
+                                    this.cargando = false;
+                                });
+                        }
                     });
             },
             validate() {

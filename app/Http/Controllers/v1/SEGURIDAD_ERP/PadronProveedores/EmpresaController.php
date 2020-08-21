@@ -60,4 +60,9 @@ class EmpresaController extends Controller
     {
         return $this->service->revisarRfcPrestadora($request->all());
     }
+
+    public function revisarRFCPreexistente(Request $request)
+    {
+        return $this->service->revisarRFCPreexistente($request->all()['rfc']);
+    }
 }

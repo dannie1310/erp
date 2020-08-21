@@ -115,7 +115,7 @@ export default {
         },
         registrarPrestadora(context, payload) {
             return new Promise((resolve, reject) => {
-                
+
                         axios
                             .post(URI + 'registrarPrestadora' , payload)
                             .then(r => r.data)
@@ -131,7 +131,7 @@ export default {
                             .catch(error => {
                                 reject(error);
                             });
-                 
+
             });
         },
         update(context, payload) {
@@ -202,6 +202,19 @@ export default {
                         });
                     }
                 });
+            });
+        },
+        revisarRFCPreexistente (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI + 'revisarRFCPreexistente', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
             });
         },
         revisarRFC (context, payload) {
