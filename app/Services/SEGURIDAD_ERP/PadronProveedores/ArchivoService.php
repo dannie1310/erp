@@ -40,7 +40,7 @@ class ArchivoService
         if(array_key_exists('rfc_empresa', $data)){
             $directorio = $data['rfc_empresa'] . '/' . $directorio;
         }
-        
+
         $hash_file = hash_file('md5', $data["archivo"]);
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
         if(Storage::disk('padron_contratista')->put($directorio . '/' .$data['archivo_nombre'],  fopen($data['archivo'], 'r'))){
@@ -52,7 +52,6 @@ class ArchivoService
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
         return $archivo;
-        
     }
 
     public function documento($data, $id){
@@ -60,10 +59,31 @@ class ArchivoService
         $archivo = $this->repository->show($id);
         if($data['rfc_empresa'] != 'undefined') $directorio = $data['rfc_empresa'] . '/' . $directorio;
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
-        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo);  
+        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo);
     }
 
     public function getArchivosPrestadora($data){
         return $this->repository->where([['id_empresa_proveedor', '=', $data->id_empresa]])->where([['id_empresa_prestadora', '=', $data->id_prestadora]])->all();
+    }
+
+    public function delete($data, $id)
+    {
+        $archivo = $this->repository->show($id);
+        if($archivo->usuario_registro && auth()->id() != $archivo->usuario_registro){
+            abort(403, 'No puede eliminar un archivo cargado por otro usuario.');
+        }
+        if($archivo->empresa->id_tipo_empresa == 3){
+            $rfc_proveedora = $archivo->empresa->proveedor[0]->rfc.'/'.$archivo->empresa->rfc;
+        }else {
+            $rfc_proveedora = $archivo->empresa->rfc;
+        }
+        $nombre_archivo = $archivo->nombre_archivo;
+        if(is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix().$rfc_proveedora.'/'.$nombre_archivo)) {
+            $datos_arch = $archivo->eliminar();
+            Storage::disk('padron_contratista')->delete($rfc_proveedora.'/'.$nombre_archivo);
+            return $datos_arch;
+        }else{
+            abort(403, 'No se encontro el archivo: "'.$nombre_archivo.'" para eliminarlo.');
+        }
     }
 }
