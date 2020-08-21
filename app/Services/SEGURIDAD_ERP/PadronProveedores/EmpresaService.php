@@ -271,9 +271,14 @@ class EmpresaService
             } else {
                 $data['id_giro'] = $data['giro']['id'];
             }
-            if($data['nueva_especialidad'])
-            {
+            if (!array_key_exists('especialidades_nuevas', $data) && !array_key_exists('nueva_especialidad', $data)) {
+                abort(500, "Debe existir al menos una especialidad para la empresa.");
+            }
+            if($data['nueva_especialidad']) {
                 array_push($data['especialidades_nuevas'], $this->getIdEspecialidad($data['especialidad_nuevo']));
+            }
+            if(count($data['contactos']['data']) == 0){
+                abort(500, "Debe existir al menos un contacto para la empresa.");
             }
         }
         return $this->repository->update($data, $id);

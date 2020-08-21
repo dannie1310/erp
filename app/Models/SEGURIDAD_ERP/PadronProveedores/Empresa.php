@@ -163,67 +163,21 @@ class Empresa extends Model
             DB::connection('seguridad')->beginTransaction();
             if(array_key_exists('cambio_prestadora', $data)){
                 $this->cambiarPrestadora($data['id_proveedor'], $data['id']);
-            }else {
-                if(key_exists('contactos',$data)){
-                    $ids = array();
-                    foreach ($data['contactos']['data'] as $contacto) {
-                        if (array_key_exists('id', $contacto)) {
-                            array_push($ids, $contacto['id']);
-                            $this->contactos->find($contacto['id'])->update([
-                                'nombre' => $contacto['nombre'],
-                                'correo_electronico' => $contacto['correo_electronico'],
-                                'telefono' => $contacto['telefono'],
-                                'puesto' => $contacto['puesto'],
-                                'notas' => $contacto['notas'],
-                            ]);
-                        }else{
-                            $nuevo = $this->contactos()->create($contacto);
-                            array_push($ids, $nuevo->id);
-                        }
-                    }
-                    $contactos = $this->contactos()->pluck('id');
-                    $borradas = $contactos->count() ? array_diff($contactos->toArray(), $ids) : [];
-                    if($borradas != []){
-                        foreach ($borradas as $id) {
-                            $this->contactos->find($id)->delete();
-                        }
-                    }
+            }
+            else{
+                if($this->id_tipo_empresa != 3){
+                    $this->agregarDatosProveedora($data);
+                    $this->update([
+                        'razon_social' => $data['razon_social'],
+                        'no_imss' => $data['nss'],
+                    ]);
                 }else{
-                    abort(500, "Debe existir al menos un contacto para la empresa.");
+                    $this->update([
+                        'razon_social' => $data['razon_social'],
+                        'no_imss' => $data['nss'],
+                        'rfc' => $data['rfc']
+                    ]);
                 }
-                if(array_key_exists('especialidades_nuevas',$data))
-                {
-                    $especialidades = EmpresaEspecialidad::where('id_empresa_proveedora', $this->id)->pluck('id_especialidad');
-                    $borradas = array_diff($especialidades->toArray(), $data['especialidades_nuevas']);
-                    $nuevas = array_diff($data['especialidades_nuevas'],$especialidades->toArray());
-                    if($especialidades->count() != count($borradas) || count($nuevas)> 0) {
-                        if ($nuevas) {
-                            foreach ($nuevas as $id) {
-                                EmpresaEspecialidad::create([
-                                    'id_especialidad' => $id,
-                                    'id_empresa_proveedora' => $this->id
-                                ]);
-                            }
-                        }
-                        if ($borradas) {
-                            foreach ($borradas as $id) {
-                                EmpresaEspecialidad::where('id_especialidad',$id)->where('id_empresa_proveedora',$this->id)->delete();
-                            }
-                        }
-                    }else{
-                        abort(500, "Debe existir al menos una especialidad para la empresa.");
-                    }
-                }
-
-                $this->update([
-                    'razon_social' => $data['razon_social'],
-                    'no_imss' => $data['nss'],
-                    'id_giro' => $data['id_giro'],
-                    'nombre_contacto' => array_key_exists('contacto',$data) ? $data['contacto'] : null,
-                    'telefono' => array_key_exists('telefono', $data) ? $data['telefono'] : null,
-                    'correo_electronico' => array_key_exists('correo', $data) ? $data['correo'] : null,
-                    'rfc' => $data['rfc']
-                ]);
             }
             DB::connection('seguridad')->commit();
             $this->refresh();
@@ -243,5 +197,51 @@ class Empresa extends Model
         $prestadora->update([
             'id_empresa_prestadora' => $this->id
         ]);
+    }
+
+    private function agregarDatosProveedora($data)
+    {
+        $ids = array();
+        foreach ($data['contactos']['data'] as $contacto) {
+            if (array_key_exists('id', $contacto)) {
+                array_push($ids, $contacto['id']);
+                $this->contactos->find($contacto['id'])->update([
+                    'nombre' => $contacto['nombre'],
+                    'correo_electronico' => $contacto['correo_electronico'],
+                    'telefono' => $contacto['telefono'],
+                    'puesto' => $contacto['puesto'],
+                    'notas' => $contacto['notas'],
+                ]);
+            } else {
+                $nuevo = $this->contactos()->create($contacto);
+                array_push($ids, $nuevo->id);
+            }
+        }
+        $contactos = $this->contactos()->pluck('id');
+        $borradas = $contactos->count() > 0 ? array_diff($contactos->toArray(), $ids) : [];
+        if ($borradas != []) {
+            foreach ($borradas as $id) {
+                $this->contactos->find($id)->delete();
+            }
+        }
+
+        $especialidades = EmpresaEspecialidad::where('id_empresa_proveedora', $this->id)->pluck('id_especialidad');
+        $borradas = array_diff($especialidades->toArray(), $data['especialidades_nuevas']);
+        $nuevas = array_diff($data['especialidades_nuevas'], $especialidades->toArray());
+        if ($especialidades->count() != count($borradas) || count($nuevas) > 0) {
+            if ($nuevas) {
+                foreach ($nuevas as $id) {
+                    EmpresaEspecialidad::create([
+                        'id_especialidad' => $id,
+                        'id_empresa_proveedora' => $this->id
+                    ]);
+                }
+            }
+            if ($borradas) {
+                foreach ($borradas as $id) {
+                    EmpresaEspecialidad::where('id_especialidad', $id)->where('id_empresa_proveedora', $this->id)->delete();
+                }
+            }
+        }
     }
 }
