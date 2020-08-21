@@ -32,6 +32,12 @@ export default {
                 state.currentArchivo = data
             }
         },
+        INSERT_ARCHIVO(state, data){
+            state.archivos.splice(data.index, 0, {info:true, especificacion:data.text, id_area:data.id_area});
+        },
+        DELETE_ARCHIVO(state, data){
+            state.archivos.splice(data.index, 1);
+        },
     },
 
     actions: {
