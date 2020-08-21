@@ -18,7 +18,7 @@ class EFOSEmpresaInformeDesglosado
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeEnAclaracion();
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeAutocorregidos();
         $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeNoDeducidos();
-        /*$informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeDefinitivos2012();*/
+        $informe["informe"][] = EFOSEmpresaInformeDesglosado::getPartidasInformeDefinitivos2012();
 
         $informe["fechas"] = EFOSEmpresaInformeDesglosado::getFechasInforme();
         return $informe;
@@ -391,6 +391,8 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       year(cfd_sat.fecha) as anio,
+       ListaEmpresasSAT.razon_social AS empresa_larga,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
           sum (
@@ -451,10 +453,13 @@ GROUP BY ctg_estados_efos.descripcion,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto,
          ctg_efos.fecha_definitivo_dof,
-         Subquery.fecha_devinitivo_maxima
+         Subquery.fecha_devinitivo_maxima,
+         year(cfd_sat.fecha),
+       ListaEmpresasSAT.razon_social
 ORDER BY Subquery.fecha_devinitivo_maxima DESC,
          empresa ASC,
-         ctg_efos.fecha_definitivo DESC
+         ctg_efos.fecha_definitivo DESC,
+         year(cfd_sat.fecha) DESC
         ")
         ;
         $informe = array_map(function ($value) {
