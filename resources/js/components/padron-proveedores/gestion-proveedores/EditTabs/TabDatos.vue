@@ -280,9 +280,6 @@
                     this.empresa_registrar.especialidades = data.especialidades ? data.especialidades : [];
                     this.contactos = data.contactos ? data.contactos : [];
                     this.agregarEspecialidades();
-                    /*if(data.contactos.data.length == 0) {
-                        this.agregarContacto()
-                    }*/
                 })
             },
             getGiros() {

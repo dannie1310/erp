@@ -40,6 +40,7 @@ class ArchivoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('permisoGlobal:actualizar_expediente_proveedor')->only('cargarArchivo');
+        $this->middleware('permisoGlobal:eliminar_archivo_expediente')->only('destroy');
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -55,8 +56,15 @@ class ArchivoController extends Controller
         return $this->service->documento($request,$id);
     }
 
-    public function getArchivosPrestadora(Request $request){
+    public function getArchivosPrestadora(Request $request)
+    {
         $archivos_prestadora = $this->service->getArchivosPrestadora($request);
         return $this->respondWithCollection($archivos_prestadora);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $item = $this->service->delete($request->all(), $id);
+        return $this->respondWithItem($item);
     }
 }

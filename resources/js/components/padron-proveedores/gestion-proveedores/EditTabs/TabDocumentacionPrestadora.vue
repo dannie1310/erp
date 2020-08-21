@@ -12,7 +12,7 @@
                                         <th >Estatus</th>
                                         <th >Documento</th>
                                         <th >Tipo Documento</th>
-                                        
+
                                         <th >Obligatorio</th>
                                         <th >Sección</th>
                                         <th >Nombre Archivo</th>
@@ -39,7 +39,7 @@
                                                 </button></td>
                                                 <td :title="archivo.tipo_archivo_descripcion_larga">
                                                     <i @click="verEspecificaciones(archivo, i)" v-if="archivo.especificacion" title="Ver Especificaciones" class="fa fa-info-circle"></i>
-                                                    
+
                                                     {{archivo.tipo_archivo_descripcion}}
                                                 </td>
                                                 <td>{{archivo.tipo_documento}}</td>
@@ -50,8 +50,11 @@
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                                    <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                                    <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
+                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Ver"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
+                                                        <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
+                                                        <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </template>
@@ -165,7 +168,7 @@ export default {
                 params: {
                     include: [], sort: 'id_tipo_archivo', order: 'asc',
                     id_empresa: this.id_empresa,
-                    id_prestadora: this.id_prestadora,                   
+                    id_prestadora: this.id_prestadora,
                     }
             }).then(data => {
                 this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.data);
@@ -194,7 +197,6 @@ export default {
             }else{
                 this.openModal(archivo);
             }
-            
         },
         openModal(archivo){
             this.archivo = archivo;
@@ -203,8 +205,6 @@ export default {
             this.file_name = '';
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
-           
-            
         },
         registrarPrestadora(){
             this.cargando = true;
@@ -231,7 +231,7 @@ export default {
                                 self.orden[i] = nom;
                             }
                         });
-                     
+
                  });
              }
         },
@@ -265,7 +265,16 @@ export default {
             if(this.archivos){
                 return this.archivos.some(el => el.id_area === tipo);
             }
-            
+        },
+        eliminar(archivo){
+            if(archivo.nombre_archivo != null) {
+                return this.$store.dispatch('padronProveedores/archivo/eliminar', {
+                    id: archivo.id,
+                    params: {}
+                }).then(data => {
+                    this.$store.commit('padronProveedores/archivo-prestadora/UPDATE_ARCHIVO', data);
+                })
+            }
         },
         verEspecificaciones(archivo, index){
             let data = {
@@ -281,7 +290,6 @@ export default {
                 this.$store.commit('padronProveedores/archivo-prestadora/INSERT_ARCHIVO', data);
             }
         },
-    
     },
     computed: {
         empresa(){
