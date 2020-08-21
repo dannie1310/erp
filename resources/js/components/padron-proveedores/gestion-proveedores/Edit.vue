@@ -1,8 +1,8 @@
 <template>
     <span>
-        <div class="row">
+        <div class="row" v-if="empresa">
             <div class="col-md-12">
-                <button type="button" class="btn btn-secondary pull-right" :disabled="cargando" v-on:click="descargarZip">
+                <button v-if="empresa.archivos_cargados>0" type="button" class="btn btn-secondary pull-right" :disabled="cargando" v-on:click="descargarZip">
                     <span v-if="cargando">
                         <i class="fa fa-spin fa-spinner"></i>
                     </span>

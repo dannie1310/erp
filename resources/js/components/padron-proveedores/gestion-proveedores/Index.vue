@@ -136,6 +136,7 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: self.$root.can('consultar_expediente_proveedor', true) ? true : false,
+                                descarga: empresa.archivos_cargados>0 && self.$root.can('consultar_expediente_proveedor', true)?  true : false,
                                 id: empresa.id,
                                 estado: empresa.estado,
                                 pagina: self.query.offset,
