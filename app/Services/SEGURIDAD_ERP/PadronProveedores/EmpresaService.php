@@ -381,8 +381,8 @@ class EmpresaService
     }
 
     public function getExpedienteEmpresa($id){
-        $path = config('app.env_variables.SANTANDER_PORTAL_STORAGE_ZIP');
-        $zip_file_path = config('app.env_variables.SANTANDER_PORTAL_STORAGE_DESCARGA');
+        $path = config('app.env_variables.EMPRESA_EXPEDIENTE_STORAGE_ZIP');
+        $zip_file_path = config('app.env_variables.EMPRESA_EXPEDIENTE_STORAGE_DESCARGA');
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
         $archivos_prestadora = [];
         $empresa = $this->repository->show($id);
