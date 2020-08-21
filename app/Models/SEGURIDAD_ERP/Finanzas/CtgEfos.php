@@ -297,7 +297,7 @@ class CtgEfos extends Model
                             'fecha_definitivo' => ($fecha_definitivo_f != '') ? $fecha_definitivo_f : NULL,
                             'fecha_desvirtuado' => ($fecha_desvirtuado_f != '') ? $fecha_desvirtuado_f : NULL,
                             'fecha_sentencia_favorable' => ($fecha_favorable_f != '') ? $fecha_favorable_f : NULL,
-                            'fecha_presunto_dof' => $fecha_presunto_dof_f,
+                            'fecha_presunto_dof' => ($fecha_presunto_dof_f != '') ? $fecha_presunto_dof_f : NULL,
                             'fecha_definitivo_dof' => ($fecha_definitivo_dof_f != '') ? $fecha_definitivo_dof_f : NULL,
                             'fecha_desvirtuado_dof' => ($fecha_desvirtuado_dof_f != '') ? $fecha_desvirtuado_dof_f : NULL,
                             'fecha_sentencia_favorable_dof' => ($fecha_favorable_dof_f != '') ? $fecha_favorable_dof_f : NULL,
