@@ -131,6 +131,19 @@ export default {
                     })
             });
         },
+        obtenerInformeCFDDesglosado(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'obtener-informe-desglosado', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
     },
 
     getters: {
