@@ -101,12 +101,20 @@ class Empresa extends Model
     public function getNoArchivosEsperadosAttribute()
     {
         $cantidad_archivos = $this->archivos()->obligatorios()->count();
+        if ($this->prestadora->count() == 1){
+            $cantidad_archivos_prestadora = $this->prestadora[0]->archivos()->obligatorios($this->id)->count();
+            $cantidad_archivos += $cantidad_archivos_prestadora;
+        }
         return $cantidad_archivos;
     }
 
     public function getNoArchivosCargadosAttribute()
     {
         $cantidad_archivos = $this->archivos()->obligatorios()->cargados()->count();
+        if ($this->prestadora->count() == 1){
+            $cantidad_archivos_prestadora = $this->prestadora[0]->archivos()->obligatorios($this->id)->cargados()->count();
+            $cantidad_archivos += $cantidad_archivos_prestadora;
+        }
         return $cantidad_archivos;
     }
 
