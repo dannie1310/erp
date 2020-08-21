@@ -174,7 +174,7 @@
                                        :data-vv-as="`'Nombre ${i + 1}'`"
                                        v-model="contacto.nombre"
                                        :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
-                                       v-validate="{ required: true, min:5 }"
+                                       v-validate="{ required: true, min:10 }"
                                        :id="`nombre[${i}]`"
                                        :maxlength="250"/>
                                 <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
