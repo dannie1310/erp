@@ -16,4 +16,9 @@ class EmpresaPrestadora extends Model
         'id_empresa_proveedor',
         'id_empresa_prestadora',
     ];
+
+    public function archivos()
+    {
+        return $this->hasMany(Archivo::class, "id_empresa_prestadora", "id");
+    }
 }
