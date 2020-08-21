@@ -40,6 +40,7 @@ class ArchivoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('permisoGlobal:actualizar_expediente_proveedor')->only('cargarArchivo');
+        $this->middleware('permisoGlobal:eliminar_archivo_expediente')->only('destroy');
 
         $this->fractal = $fractal;
         $this->service = $service;
