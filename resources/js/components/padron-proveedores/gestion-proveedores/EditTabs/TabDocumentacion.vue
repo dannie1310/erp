@@ -165,8 +165,17 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</button>
+                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary">
+                            <i class="fa fa-save"></i> Guardar
+                        </button>
+                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary">
+                            <span v-if="cargando==true">
+                                <i class="fa fa-spin fa-spinner"></i>
+                            </span>
+                            <span v-else>
+                                <i class="fa fa-save"></i>
+                            </span> Guardar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -196,6 +205,7 @@ export default {
             nss: '',
             orden:[],
             id_archivo_sua:15,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Listado de personal dado de alta ante el IMSS a través de SUA" EN LA BBDD
+            cargando: false
         }
     },
     mounted() {
@@ -231,7 +241,6 @@ export default {
             })
         },
         getAreas(){
-            this.cargando = true;
             this.$store.commit('padronProveedores/ctg-area/SET_AREAS', null);
             return this.$store.dispatch('padronProveedores/ctg-area/index', {
                 id: this.id,
@@ -239,6 +248,7 @@ export default {
             }).then(data => {
                 this.$store.commit('padronProveedores/ctg-area/SET_AREAS', data);
                 this.setNumero();
+                this.cargando = false;
             })
         },
         setNumero(){
@@ -288,7 +298,6 @@ export default {
             $(this.$refs.modal).modal('show');
         },
         validarPrestadora(){
-            this.cargando = true;
             return this.$store.dispatch('padronProveedores/empresa/validarPrestadora', {
                 rfc:this.rfc,
             })
@@ -317,6 +326,7 @@ export default {
                 }).finally( ()=>{
 
                 });
+
         },
         registrarPrestadora(asociacion){
             this.cargando = true;
@@ -331,14 +341,14 @@ export default {
                 asociacion:asociacion,
             })
                 .then(data => {
+                    this.cargando = false;
                     $(this.$refs.modal).modal('hide');
                     location.reload();
                 }).finally( ()=>{
-
+                    this.cargando = false;
                 });
         },
         upload(){
-            this.cargando = true;
             var formData = new FormData();
             formData.append('archivo',  this.file);
             formData.append('archivo_nombre',  this.file_name);
