@@ -379,4 +379,40 @@ class EmpresaService
             'asociacion' => false
         ];
     }
+
+    public function getExpedienteEmpresa($id){
+        $path = config('app.env_variables.SANTANDER_PORTAL_STORAGE_ZIP');
+        $zip_file_path = config('app.env_variables.SANTANDER_PORTAL_STORAGE_DESCARGA');
+        $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
+        $archivos_prestadora = [];
+        $empresa = $this->repository->show($id);
+
+        if($empresa_prestadora = $empresa->prestadora){
+            $archivos_prestadora = Archivo::where('id_empresa_proveedor', '=', $empresa->id)->where('id_empresa_prestadora', '=', $empresa_prestadora->id)->get();
+        }
+
+        Storage::disk('expediente_zip')->delete(Storage::disk('expediente_zip')->allFiles());
+
+        foreach($empresa->archivos as $archivo){
+            $file = $storagePath . $empresa->rfc . '/' . $archivo->nombre_archivo;
+            Storage::disk('expediente_zip')->put($archivo->nombre_archivo, $file);
+        }
+
+        foreach($archivos_prestadora as $prestadora){
+            $file = $storagePath . $empresa->rfc . '/' . $empresa->prestadora->rfc . '/' . $archivo->nombre_archivo;
+            Storage::disk('expediente_zip')->put($empresa->prestadora->rfc . '/' . $archivo->nombre_archivo, $file);
+        }
+
+        $zip_name = $empresa->rfc . '_' . date('Y-m-d_H:i:s');
+        $files_global = storage_path($path . '/*');
+        $zip_file_path = storage_path($zip_file_path);
+        $zipper = new Zipper;
+        $files = glob($files_global);
+        $zipper->make($zip_file_path . '/' . $file_zip . '.zip')->add($files)->close();
+
+        Storage::disk('expediente_zip')->delete(Storage::disk('portal_zip')->allFiles());
+        
+        return Storage::disk('expediente_zip')->download($file_zip . '.zip');
+
+    }
 }
