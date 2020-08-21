@@ -36,14 +36,9 @@ class Archivo extends Model
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
-    public function proveedora()
+    public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa_proveedor','id');
-    }
-
-    public function prestadora()
-    {
-        return $this->belongsTo(Empresa::class, 'id_empresa_prestadora', 'id');
+        return $this->belongsTo(Empresa::class, 'id_empresa','id');
     }
 
     public function scopeCargados($query)

@@ -72,10 +72,12 @@ class ArchivoService
         if($archivo->usuario_registro && auth()->id() != $archivo->usuario_registro){
             abort(403, 'No puede eliminar un archivo cargado por otro usuario.');
         }
-        $rfc_proveedora = $archivo->proveedora->rfc;
-        $rfc_prestadora = $archivo->prestadora ? $archivo->prestadora->rfc : '';
+        if($archivo->empresa->id_tipo_empresa == 3){
+            $rfc_proveedora = $archivo->empresa->proveedor[0]->rfc.'/'.$archivo->empresa->rfc;
+        }else {
+            $rfc_proveedora = $archivo->empresa->rfc;
+        }
         $nombre_archivo = $archivo->nombre_archivo;
-        dd($rfc_proveedora, $rfc_prestadora);
         if(is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix().$rfc_proveedora.'/'.$nombre_archivo)) {
             $datos_arch = $archivo->eliminar();
             Storage::disk('padron_contratista')->delete($rfc_proveedora.'/'.$nombre_archivo);
