@@ -1,5 +1,18 @@
 <template>
     <span>
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-secondary pull-right" :disabled="cargando" v-on:click="descargarZip">
+                    <span v-if="cargando">
+                        <i class="fa fa-spin fa-spinner"></i>
+                    </span>
+                    <span v-else>
+                        <i class="fa fa-chevron-circle-down"></i> Descargar Expediente
+                    </span>
+                </button>
+            </div>
+        </div>
+        <br />
         <nav>
             <div class="card" v-if="empresa">
                 <div class="card-body">
@@ -67,6 +80,7 @@
         },
         methods: {
             find() {
+                this.cargando = true;
                 this.$store.commit('padronProveedores/empresa/SET_EMPRESA', null);
                 this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', null);
                 return this.$store.dispatch('padronProveedores/empresa/find', {
@@ -83,6 +97,13 @@
                     this.cargando = false;
                 })
             },
+            descargarZip() {
+                return this.$store.dispatch('padronProveedores/empresa/descargaExpediente', {id: this.id})
+                    .then(() => {
+                        this.$emit('success')
+                    })
+
+            }
         },
         computed: {
             empresa() {

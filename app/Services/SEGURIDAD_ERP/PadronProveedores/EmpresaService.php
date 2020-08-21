@@ -9,6 +9,7 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgEstadoExpediente;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
+use Chumper\Zipper\Zipper;
 
 class EmpresaService
 {
@@ -387,39 +388,15 @@ class EmpresaService
         ];
     }
 
-    public function getExpedienteEmpresa($id){
-        $path = config('app.env_variables.EMPRESA_EXPEDIENTE_STORAGE_ZIP');
-        $zip_file_path = config('app.env_variables.EMPRESA_EXPEDIENTE_STORAGE_DESCARGA');
-        $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
-        $archivos_prestadora = [];
+    public function descargaExpediente($id){
+
         $empresa = $this->repository->show($id);
-
-        if($empresa_prestadora = $empresa->prestadora){
-            $archivos_prestadora = Archivo::where('id_empresa_proveedor', '=', $empresa->id)->where('id_empresa_prestadora', '=', $empresa_prestadora->id)->get();
-        }
-
-        Storage::disk('expediente_zip')->delete(Storage::disk('expediente_zip')->allFiles());
-
-        foreach($empresa->archivos as $archivo){
-            $file = $storagePath . $empresa->rfc . '/' . $archivo->nombre_archivo;
-            Storage::disk('expediente_zip')->put($archivo->nombre_archivo, $file);
-        }
-
-        foreach($archivos_prestadora as $prestadora){
-            $file = $storagePath . $empresa->rfc . '/' . $empresa->prestadora->rfc . '/' . $archivo->nombre_archivo;
-            Storage::disk('expediente_zip')->put($empresa->prestadora->rfc . '/' . $archivo->nombre_archivo, $file);
-        }
-
-        $zip_name = $empresa->rfc . '_' . date('Y-m-d_H:i:s');
-        $files_global = storage_path($path . '/*');
-        $zip_file_path = storage_path($zip_file_path);
+        $nombre_zip = $empresa->rfc."_".date("Ymd_his").".zip";
         $zipper = new Zipper;
-        $files = glob($files_global);
-        $zipper->make($zip_file_path . '/' . $file_zip . '.zip')->add($files)->close();
-
-        Storage::disk('expediente_zip')->delete(Storage::disk('portal_zip')->allFiles());
-        
-        return Storage::disk('expediente_zip')->download($file_zip . '.zip');
+        $zipper->make(public_path("uploads/padron_contratistas/" . $nombre_zip))
+            ->add(public_path("uploads/padron_contratistas/".$empresa->rfc));
+        $zipper->close();
+        return response()->download(public_path("uploads/padron_contratistas/" . $nombre_zip));
 
     }
 }
