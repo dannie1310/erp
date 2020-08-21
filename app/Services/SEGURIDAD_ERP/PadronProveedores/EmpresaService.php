@@ -143,28 +143,7 @@ class EmpresaService
                 }
             }
         }
-        /*if($data['sort'] == 'usuario_inicio'){
-            if (isset($data['usuario_inicio'])) {
-                $usuarios = Usuario::query()->empresaPadron(Empresa::all())->where([['usuario', 'LIKE', '%'.$data['usuario_inicio'].'%']])->orderBy('usuario',$data['order'])->get();
-            } else{
-                $usuarios = Usuario::query()->empresaPadron(Empresa::all())->orderBy('usuario',$data['order'])->get();
-            }
 
-            foreach ($usuarios as $usuario){
-                $this->repository->whereOr([['usuario_registro', '=', $usuario->idusuario]]);
-            }
-            request()->request->remove("sort");
-            request()->query->remove("sort");
-        }*/
-        /*if($data['sort'] == 'estado_expediente'){
-            $estados = CtgEstadoExpediente::query()->orderBy('descripcion',$data['order'])->get();
-
-            foreach ($estados as $estado){
-                $this->repository->whereOr([['id_estado_expediente', '=', $estado->id]]);
-            }
-            request()->request->remove("sort");
-            request()->query->remove("sort");
-        }*/
         return $this->repository->paginate($data);
     }
 
@@ -172,10 +151,16 @@ class EmpresaService
     {
         $empresa = $this->repository->getEmpresaXRFC($data["rfc"]);
         if($empresa){
-            return $empresa;
+            if(in_array($empresa->id_tipo_empresa,[1,2])){
+                $empresa;
+            } else if($empresa->id_tipo_empresa == 3) {
+                abort(403, 'el RFC ingresado corresponde a la empresa prestadora de servicios: '.$empresa->razon_social."; no se puede iniciar el expediente");
+            } else if($empresa->id_tipo_empresa == 4)  {
+                abort(403, 'el RFC ingresado corresponde a la empresa: '.$empresa->razon_social.", y está excluida del proceso de documentación y evaluación, no se puede iniciar el expediente");
+            }
+
         }else {
             $this->validaEFO($data["rfc"]);
-
             $this->validaRFC($data["rfc"]);
             $data["id_tipo_empresa"] = $this->getTipoEmpresa($data["rfc"]);
             if (!is_numeric($data["id_giro"])) {
@@ -286,9 +271,14 @@ class EmpresaService
             } else {
                 $data['id_giro'] = $data['giro']['id'];
             }
-            if($data['nueva_especialidad'])
-            {
+            if (!array_key_exists('especialidades_nuevas', $data) && !array_key_exists('nueva_especialidad', $data)) {
+                abort(500, "Debe existir al menos una especialidad para la empresa.");
+            }
+            if($data['nueva_especialidad']) {
                 array_push($data['especialidades_nuevas'], $this->getIdEspecialidad($data['especialidad_nuevo']));
+            }
+            if(count($data['contactos']['data']) == 0){
+                abort(500, "Debe existir al menos un contacto para la empresa.");
             }
         }
         return $this->repository->update($data, $id);
@@ -357,6 +347,23 @@ class EmpresaService
         return [
             'mensaje' => true
         ];
+    }
+
+    public function revisarRFCPreexistente($rfc)
+    {
+        $empresa = $this->repository->getEmpresaXRFC($rfc);
+        if($empresa){
+            if(in_array($empresa->id_tipo_empresa,[1,2])){
+                return [
+                    "id_previo"=>$empresa->id,
+                    "razon_social"=>$empresa->razon_social
+                ];
+            } else if($empresa->id_tipo_empresa == 3) {
+                abort(403, 'el RFC ingresado corresponde a la empresa prestadora de servicios: '.$empresa->razon_social."; no se puede iniciar el expediente");
+            } else if($empresa->id_tipo_empresa == 4)  {
+                abort(403, 'el RFC ingresado corresponde a la empresa: '.$empresa->razon_social.", y está excluida del proceso de documentación y evaluación, no se puede iniciar el expediente");
+            }
+        }
     }
 
     public function revisarRfcPrestadora($data){
