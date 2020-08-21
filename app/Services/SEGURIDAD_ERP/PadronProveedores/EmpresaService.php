@@ -389,14 +389,12 @@ class EmpresaService
     }
 
     public function descargaExpediente($id){
-
         $empresa = $this->repository->show($id);
         $nombre_zip = $empresa->rfc."_".date("Ymd_his").".zip";
         $zipper = new Zipper;
-        $zipper->make(public_path("uploads/padron_contratistas/" . $nombre_zip))
+        $zipper->make(public_path("downloads/padron_contratistas/" .$empresa->rfc ."/". $nombre_zip))
             ->add(public_path("uploads/padron_contratistas/".$empresa->rfc));
         $zipper->close();
-        return response()->download(public_path("uploads/padron_contratistas/" . $nombre_zip));
-
+        return response()->download(public_path("downloads/padron_contratistas/" .$empresa->rfc ."/". $nombre_zip));
     }
 }
