@@ -399,6 +399,12 @@ class EmpresaService
         $zipper->make(public_path($nombre_zip))
             ->add(public_path("uploads/padron_contratistas/".$empresa->rfc));
         $zipper->close();
-        return response()->download(public_path($nombre_zip));
+
+        if(file_exists(public_path($nombre_zip))){
+            return response()->download(public_path($nombre_zip));
+        } else {
+            return response()->json(["mensaje"=>"El expediente no cuenta con archivos"]);
+        }
+
     }
 }

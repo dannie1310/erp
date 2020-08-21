@@ -235,8 +235,6 @@ export default {
                 var URL = URI + payload.id +'/descargaExpediente?' +  '&access_token=' + this._vm.$session.get('jwt');
                 var win = window.open(URL, "_blank");
 
-
-
                 win.onbeforeunload = () => {
                     swal("Expediente descargado correctamente.", {
                         icon: "success",
@@ -244,9 +242,6 @@ export default {
                         buttons: false
                     })
                 }
-
-
-
             });
         },
     },
