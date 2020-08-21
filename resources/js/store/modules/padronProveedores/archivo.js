@@ -86,7 +86,7 @@ export default {
                         reject(error);
                     });
             });
-        }
+        },
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
