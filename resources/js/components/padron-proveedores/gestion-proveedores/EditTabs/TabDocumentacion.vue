@@ -38,7 +38,7 @@
                                                     <small class="label bg-success" v-if="archivo.estatus" style="padding: 3px 2px 3px 5px">
                                                         <i class="fa fa-check"></i>
                                                     </small>
-                                                    <small class="label bg-danger" v-else style="padding: 2px 2px 2px 5px">
+                                                    <small class="label bg-danger" v-else-if="archivo.obligatorio == 'Si'" style="padding: 2px 2px 2px 5px">
                                                         <i class="fa fa-times"></i>
                                                     </small>
                                                 </td>
