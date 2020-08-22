@@ -121,7 +121,7 @@
                                        :class="{'is-invalid': errors.has('otra_especialidad')}"
                                        id="otra_especialidad"
                                        v-validate="{required:true}"
-                                       placeholder="Ingresar Especialidad"
+                                       placeholder="Ingresar nueva especialidad"
                                        :maxlength="50"/>
                                 <div class="invalid-feedback" v-show="errors.has('otra_especialidad')">{{ errors.first('otra_especialidad') }}</div>
                             </span>
@@ -134,6 +134,7 @@
                                    :class="{'is-invalid': errors.has('especialidad')}"
                                    v-validate="{ required: true }"
                                    id="especialidad"
+                                   placeholder="Ingresar especialidad"
                                    :maxlength="50"/>
                             <div class="invalid-feedback" v-show="errors.has('especialidad')">{{ errors.first('especialidad') }}</div>
                         </span>

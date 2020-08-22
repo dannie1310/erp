@@ -38,7 +38,8 @@
                         <div class="form-group error-content">
                             <label for="giro" class="col-form-label">Giro:</label>
                             <model-list-select
-                                name="giro"
+                                id="id_giro"
+                                name="id_giro"
                                 placeholder="Seleccionar o buscar por descripcion de giro"
                                 data-vv-as="Giro"
                                 v-model="empresa_registrar.giro.id"
@@ -49,33 +50,27 @@
                                 :list="giros"
                                 :class="{'is-invalid': errors.has('giro')}">
                              </model-list-select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group error-content">
-                            <br><br>
+                            <div class="invalid-feedback" v-show="errors.has('id_giro')">{{ errors.first('id_giro') }}</div>
                             <input v-if="empresa_registrar.giro && empresa_registrar.giro.id == 'nuevo'"
                                    class="form-control"
                                    name="giro"
-                                   data-vv-as="NUEVO GIRO"
+                                   data-vv-as="'Nuevo Giro'"
                                    v-model="empresa_registrar.giro_nuevo"
                                    v-validate="{ required: true }"
                                    id="giro"
                                    :class="{'is-invalid': errors.has('giro')}"
-                                   placeholder="AGREGAR UN GIRO NUEVO"
+                                   placeholder="Ingresar Giro"
                                    :maxlength="50"/>
                             <div class="invalid-feedback" v-show="errors.has('giro')">{{ errors.first('giro') }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="especialidad" class="col-form-label">Especialidad:</label>
                             <treeselect v-model="empresa_registrar.especialidades_nuevas"
                                         :multiple="true"
                                         :options="especialidades"
-                                        data-vv-as="ESPECIALIDADES"
+                                        data-vv-as="Especialidades"
                                         :flatten-search-results="true"
                                         placeholder="Selecciona la(s) especialidad(es)">
                                  <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
@@ -85,26 +80,25 @@
                         <div class="col-auto">
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="checkbox" id="autoSizingCheck" v-model="empresa_registrar.nueva_especialidad">
-                                <label class="form-check-label" for="autoSizingCheck">Agregar una Especialidad Nueva...</label>
+                                <label class="form-check-label" for="autoSizingCheck">Ingresar Especialidad</label>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6" v-if="empresa_registrar.nueva_especialidad">
-                        <div class="form-group error-content">
-                            <br><br>
+
+                        <span v-if="empresa_registrar.nueva_especialidad">
                             <input class="form-control"
                                    name="especialidad"
-                                   data-vv-as="NUEVA ESPECIALIDAD"
+                                   data-vv-as="'Nueva Especialidad'"
                                    v-model="empresa_registrar.especialidad_nuevo"
                                    v-validate="{ required: true, min: 5}"
                                    id="especialidad"
                                    :class="{'is-invalid': errors.has('especialidad')}"
-                                   placeholder="AGREGAR UNA ESPECIALIDAD NUEVA"
+                                   placeholder="Ingresar nueva especialidad"
                                    :maxlength="50"/>
                             <div class="invalid-feedback" v-show="errors.has('especialidad')">{{ errors.first('especialidad') }}</div>
-                        </div>
+                        </span>
                     </div>
                 </div>
+
                 <br>
                 <div class="card">
                     <div class="card-header">
