@@ -8,8 +8,8 @@
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th >#</th>
-                                        <th >Estatus</th>
+                                        <th class="index_corto">#</th>
+                                        <th class="icono" ></th>
                                         <th >Documento</th>
                                         <th >Tipo Documento</th>
 
@@ -34,16 +34,21 @@
                                             </template>
                                             <template v-else>
                                                 <td>{{orden[i]}}</td>
-                                                <td><button  type="button" class="btn btn-sm " :class="{'btn-success': archivo.estatus == true}">
-                                                    <i class="fa fa-check" v-if="archivo.estatus"></i>
-                                                </button></td>
+                                                <td>
+                                                    <small class="label bg-success" v-if="archivo.estatus" style="padding: 3px 2px 3px 5px">
+                                                        <i class="fa fa-check"></i>
+                                                    </small>
+                                                    <small class="label bg-danger" v-else style="padding: 2px 2px 2px 5px">
+                                                        <i class="fa fa-times"></i>
+                                                    </small>
+                                                </td>
                                                 <td :title="archivo.tipo_archivo_descripcion_larga">
                                                     <i @click="verEspecificaciones(archivo, i)" v-if="archivo.especificacion" title="Ver Especificaciones" class="fa fa-info-circle"></i>
 
                                                     {{archivo.tipo_archivo_descripcion}}
                                                 </td>
                                                 <td>{{archivo.tipo_documento}}</td>
-                                                <td>{{archivo.obligatorio}}</td>
+                                                <td><i class="fa fa-check" v-if="archivo.obligatorio == 'Si'"></i></td>
                                                 <td>{{archivo.seccion}}</td>
                                                 <td>{{archivo.nombre_archivo_format}}</td>
                                                 <td>{{archivo.registro}}</td>

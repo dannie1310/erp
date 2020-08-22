@@ -671,7 +671,6 @@ export const routes = [
                 component: require('./components/padron-proveedores/Index').default,
                 meta: {
                     title: 'Padrón de Proveedores',
-                    breadcrumb: {parent:'home', name: 'PADRÓN DE PROVEEDORES'},
                     middleware: [auth, permission],
                     permission: ['consultar_expediente_proveedor'],
                     general: true
