@@ -266,7 +266,6 @@ class EmpresaService
             $this->validaRFC($data["rfc"]);
             $this->editarNombreDirectorioPrestadora($data['rfc_proveedor'], $data['rfc_prestadora'], $data["rfc"]);
             $data['id_giro'] = null;
-            $data['id_especialidad'] = null;
         }else {
             if (!is_numeric($data['giro']['id'])) {
                 $data['id_giro'] = $this->getIdGiro($data['giro_nuevo']);
