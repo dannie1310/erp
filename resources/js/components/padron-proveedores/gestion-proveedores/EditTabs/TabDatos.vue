@@ -42,8 +42,9 @@
                                 name="id_giro"
                                 placeholder="Seleccionar o buscar por descripcion de giro"
                                 data-vv-as="Giro"
-                                v-model="empresa_registrar.giro.id"
+                                v-model="empresa_registrar.giro"
                                 option-value="id"
+                                option-text="descripcion"
                                 v-validate="{required: true}"
                                 :custom-text="giroDescripcion"
                                 size="4"
@@ -213,9 +214,11 @@
                     'razon_social': '',
                     'nss': '',
                     'giro': [],
+                    'giro_nuevo':'',
                     'especialidades': [],
                     'nueva_especialidad' : false,
                     'especialidades_nuevas':[],
+                    'especialidad_nuevo' : ''
                 },
                 contactos : [],
                 giros: [],
@@ -255,9 +258,6 @@
                         this.empresa_registrar.especialidades_nuevas.push(e.id);
                     });
                 }
-            },
-            giroDescripcion (item) {
-                return `${item.descripcion}`
             },
             find() {
                 this.empresa_registrar.nueva_especialidad = false;
@@ -328,6 +328,7 @@
                     params: {include: ['prestadora', 'archivos']}
                 }).then((data) => {
                     this.getEspecialidades();
+                    this.getGiros();
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.find();
                 })

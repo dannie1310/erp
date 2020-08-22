@@ -112,7 +112,6 @@
                                 </div>
                             </div>
 
-
                             <span v-if="agregar_especialidad">
                                 <input class="form-control"
                                        name="otra_especialidad"

@@ -170,6 +170,7 @@ class Empresa extends Model
                     $this->update([
                         'razon_social' => $data['razon_social'],
                         'no_imss' => $data['nss'],
+                        'id_giro' => $data['id_giro'],
                     ]);
                 }else{
                     $this->update([
