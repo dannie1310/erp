@@ -7,7 +7,7 @@
                         <i class="fa fa-spin fa-spinner"></i>
                     </span>
                     <span v-else>
-                        <i class="fa fa-chevron-circle-down"></i> Descargar Expediente
+                        <i class="fa fa-download"></i> Descargar Expediente
                     </span>
                 </button>
             </div>
