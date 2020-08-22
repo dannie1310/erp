@@ -80,7 +80,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                         <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua">
+                        <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua">
                             <label for="id_tipo" class="col-sm-12 col-form-label">Seleccione si cuenta con listado de personal dado de alta ante el IMSS a través de SUA o si cuenta con empresa prestadora de servicios: </label>
                             <div class="col-sm-4 offset-4">
                                 <div class="btn-group btn-group-toggle">
@@ -98,37 +98,52 @@
                             </div>
                         </div>
                         <div class="row">
-                         <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
+                            <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
                                 <b>Registrar empresa prestadora de servicios</b>
-                        </div>
-                        <div class="col-md-9" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                            <label for="razon_social" class="col-lg-12 col-form-label">Razón Social</label>
-                            <div class="col-lg-12">
-                                    <input type="text" class="form-control"
-                                            name="razon_social"
-                                            v-model="razon_social"
-                                            id="razon_social"
-                                            placeholder="Razón Social"
-                                            data-vv-as="Razón Social"
-                                            v-validate="{required:id_tipo === 2?true:false}"
-                                            :class="{'is-invalid': errors.has('razon_social')}" >
-                                            <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
                             </div>
-                        </div>
-                        <div class="col-md-3" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                            <label for="rfc" class="col-lg-12 col-form-label">RFC</label>
-                            <div class="col-lg-12">
+                            <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
+                                <label for="razon_social" class="col-lg-12 col-form-label">Razón Social</label>
+                                <div class="col-lg-12">
                                     <input type="text" class="form-control"
-                                            name="rfc"
-                                            v-model="rfc"
-                                            id="rfc"
-                                            placeholder="RFC"
-                                            data-vv-as="RFC"
-                                            v-validate="{required:id_tipo === 2?true:false}"
-                                            :class="{'is-invalid': errors.has('rfc')}" >
-                                            <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
+                                           style="text-transform:uppercase;"
+                                           name="razon_social"
+                                           v-model="razon_social"
+                                           id="razon_social"
+                                           placeholder="Razón Social"
+                                           data-vv-as="Razón Social"
+                                           v-validate="{required:id_tipo === 2?true:false, min:6}"
+                                           :class="{'is-invalid': errors.has('razon_social')}" >
+                                <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
+                                </div>
                             </div>
-                        </div>
+                            <div class="col-md-8" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
+                                <label for="rfc" class="col-lg-12 col-form-label">RFC</label>
+                                <div class="col-lg-12">
+                                    <input type="text" class="form-control"
+                                           name="rfc"
+                                           v-model="rfc"
+                                           id="rfc"
+                                           placeholder="RFC"
+                                           data-vv-as="RFC"
+                                           v-validate="{required:id_tipo === 2?true:false, min:6}"
+                                           :class="{'is-invalid': errors.has('rfc')}" >
+                                    <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
+                                <label for="nss" class="col-form-label">NSS:</label>
+                                <div class="col-lg-12">
+                                    <input class="form-control"
+                                           name="nss"
+                                           data-vv-as="NSS"
+                                           v-model="nss"
+                                           v-validate="{ required:id_tipo === 2?true:false, numeric:true, digits:11}"
+                                           id="nss"
+                                           :class="{'is-invalid': errors.has('nss')}"
+                                           placeholder="NSS" :maxlength="11"/>
+                                    <div class="invalid-feedback" v-show="errors.has('nss')">{{ errors.first('nss') }}</div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row justify-content-between" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1">
                             <div class="col-md-12">
@@ -147,12 +162,20 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary" >Cargar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary" >Registrar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
+                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary">
+                            <i class="fa fa-save"></i> Guardar
+                        </button>
+                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary">
+                            <span v-if="cargando==true">
+                                <i class="fa fa-spin fa-spinner"></i>
+                            </span>
+                            <span v-else>
+                                <i class="fa fa-save"></i>
+                            </span> Guardar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -179,8 +202,10 @@ export default {
             },
             razon_social:'',
             rfc:'',
+            nss: '',
             orden:[],
             id_archivo_sua:15,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Listado de personal dado de alta ante el IMSS a través de SUA" EN LA BBDD
+            cargando: false
         }
     },
     mounted() {
@@ -216,7 +241,6 @@ export default {
             })
         },
         getAreas(){
-            this.cargando = true;
             this.$store.commit('padronProveedores/ctg-area/SET_AREAS', null);
             return this.$store.dispatch('padronProveedores/ctg-area/index', {
                 id: this.id,
@@ -224,6 +248,7 @@ export default {
             }).then(data => {
                 this.$store.commit('padronProveedores/ctg-area/SET_AREAS', data);
                 this.setNumero();
+                this.cargando = false;
             })
         },
         setNumero(){
@@ -273,7 +298,6 @@ export default {
             $(this.$refs.modal).modal('show');
         },
         validarPrestadora(){
-            this.cargando = true;
             return this.$store.dispatch('padronProveedores/empresa/validarPrestadora', {
                 rfc:this.rfc,
             })
@@ -302,25 +326,29 @@ export default {
                 }).finally( ()=>{
 
                 });
+
         },
         registrarPrestadora(asociacion){
             this.cargando = true;
+            this.rfc = this.rfc.toUpperCase();
+            this.razon_social = this.razon_social.toUpperCase();
             return this.$store.dispatch('padronProveedores/empresa/registrarPrestadora', {
                 razon_social:this.razon_social,
                 rfc:this.rfc,
+                nss:this.nss,
                 id_empresa:this.id,
                 id_archivo_sua:this.id_archivo_sua,
                 asociacion:asociacion,
             })
                 .then(data => {
+                    this.cargando = false;
                     $(this.$refs.modal).modal('hide');
                     location.reload();
                 }).finally( ()=>{
-
+                    this.cargando = false;
                 });
         },
         upload(){
-            this.cargando = true;
             var formData = new FormData();
             formData.append('archivo',  this.file);
             formData.append('archivo_nombre',  this.file_name);
