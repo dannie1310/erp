@@ -47,7 +47,7 @@
                                                     {{archivo.tipo_archivo_descripcion}}
                                                 </td>
                                                 <td>{{archivo.tipo_documento}}</td>
-                                                <td>{{archivo.obligatorio}}</td>
+                                                <td><i class="fa fa-check" v-if="archivo.obligatorio == 'Si'"></i></td>
                                                 <td>{{archivo.seccion}}</td>
                                                 <td>{{archivo.nombre_archivo_format}}</td>
                                                 <td>{{archivo.registro}}</td>
