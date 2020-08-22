@@ -81,10 +81,13 @@
                     </div>
                     <div class="modal-body">
                         <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua">
-                            <label for="id_tipo" class="col-sm-12 col-form-label">Seleccione si cuenta con listado de personal dado de alta ante el IMSS a través de SUA o si cuenta con empresa prestadora de servicios: </label>
-                            <div class="col-sm-4 offset-4">
+                            <label class="col-sm-12 col-form-label">
+                                <i class="fa fa-info-circle"></i>
+                                Indique si cuenta con personal propio o si cuenta con una empresa prestadora de servicios: </label>
+                            <div class="col-sm-6 offset-3">
                                 <div class="btn-group btn-group-toggle">
                                     <label class="btn btn-outline-secondary" :class="id_tipo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos" :key="llave">
+                                        <i :class="llave==1 ?'fa fa-users':'fa fa-building'"></i>
                                         <input type="radio"
                                                 class="btn-group-toggle"
                                                 name="id_tipo"
@@ -99,7 +102,9 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                                <b>Registrar empresa prestadora de servicios</b>
+                                <br>
+                                <hr>
+                                <b><i class="fa fa-building"></i> Registrar empresa prestadora de servicios</b>
                             </div>
                             <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
                                 <label for="razon_social" class="col-lg-12 col-form-label">Razón Social</label>
@@ -145,9 +150,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row justify-content-between" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1">
+                        <div class="row justify-content-between" v-if="id_tipo == 1">
                             <div class="col-md-12">
-                                <label for="cargar_file" class="col-lg-12 col-form-label">Cargar {{archivo.tipo_archivo_descripcion}}</label>
+                                <br>
+                                <hr>
+                                <label for="cargar_file" class="col-lg-12 col-form-label">
+                                    <i class="fa fa-users"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
                                     <input type="file" class="form-control" id="cargar_file"
                                             @change="onFileChange"
@@ -157,6 +165,24 @@
                                             data-vv-as="Cargar"
                                             ref="cargar_file"
                                             :class="{'is-invalid': errors.has('cargar_file')}"
+                                    >
+                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} (PDF)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-between" v-if="archivo.tipo_archivo != id_archivo_sua">
+                            <div class="col-md-12">
+                                <label for="cargar_file" class="col-lg-12 col-form-label">
+                                    <i class="fa fa-file-pdf"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
+                                <div class="col-lg-12">
+                                    <input type="file" class="form-control" id="cargar_file"
+                                           @change="onFileChange"
+                                           row="3"
+                                           v-validate="{required:true, ext: ['pdf'],  size: 5120}"
+                                           name="cargar_file"
+                                           data-vv-as="Cargar"
+                                           ref="cargar_file"
+                                           :class="{'is-invalid': errors.has('cargar_file')}"
                                     >
                                     <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} (PDF)</div>
                                 </div>
@@ -198,7 +224,7 @@ export default {
             id_tipo: '',
             tipos: {
                 2: "Prestadora de Servicios",
-                1: "SUA"
+                1: "Personal Propio"
             },
             razon_social:'',
             rfc:'',
