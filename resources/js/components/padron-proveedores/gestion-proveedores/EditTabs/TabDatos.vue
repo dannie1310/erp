@@ -20,15 +20,15 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group error-content">
-                            <label for="nss" class="col-form-label">NSS:</label>
+                            <label for="nss" class="col-form-label">Registro Patronal:</label>
                             <input class="form-control"
                                    name="nss"
-                                   data-vv-as="NSS"
+                                   data-vv-as="'Registro Patronal'"
                                    v-model="empresa_registrar.nss"
-                                   v-validate="{ required: true, numeric:true, digits:11}"
+                                   v-validate="{ length:11, min:11 }"
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
-                                   placeholder="NSS" :maxlength="11"/>
+                                   placeholder="Registro Patronal" :maxlength="11"/>
                             <div class="invalid-feedback" v-show="errors.has('nss')">{{ errors.first('nss') }}</div>
                         </div>
                     </div>
