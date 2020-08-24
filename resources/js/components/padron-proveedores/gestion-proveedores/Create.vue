@@ -35,14 +35,14 @@
                         <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                     </div>
                     <div class="form-group col-md-3 error-content">
-                        <label for="rfc" class="col-form-label" ><b>NSS: </b> </label>
+                        <label for="rfc" class="col-form-label" ><b>Registro Patronal: </b> </label>
                         <input class="form-control"
                                style="text-transform:uppercase;"
                                name="numero_imss"
-                               data-vv-as="'NSS'"
+                               data-vv-as="'Registro Patronal'"
                                v-model="registro_proveedor.no_imss"
                                :class="{'is-invalid': errors.has('numero_imss')}"
-                               v-validate="{ required: true, numeric:true, min:11 }"
+                               v-validate="{ length:11, min:11 }"
                                id="numero_imss"
                                :maxlength="11"/>
                         <div class="invalid-feedback" v-show="errors.has('numero_imss')">{{ errors.first('numero_imss') }}</div>
