@@ -47,6 +47,12 @@
                             <p>Informe EFOS vs CFD</p>
                         </router-link>
                     </li>
+                    <li class="nav-item"  v-if="$root.can('consultar_informe_listado_efos_vs_cfdi_recibidos',true)">
+                        <router-link :to="{name: 'informe-efos-vs-cfd-5a'}" class="nav-link" :class="{active: this.$route.name == 'informe-efos-vs-cfd-5a'}">
+                            <i class="fa fa-file-alt nav-icon"></i>
+                            <p>Informe EFOS vs CFD (Desglosado)</p>
+                        </router-link>
+                    </li>
                 </ul>
             </li>
         </ul>
