@@ -26,11 +26,13 @@ class ArchivoService
 
     public function cargarArchivo($data){
         $directorio = $data['rfc'];
+        $hash_file = hash_file('md5', $data["archivo"]);
         $archivo = $this->repository->show($data['id_archivo']);
-        $repetidos = $this->repository->where([['nombre_archivo', '=', $data['archivo_nombre']]])->all();
+        $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
 
         if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
-            abort(403, 'El archivo ya ha sido registrado previamente.');
+            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
+            ;
         }
 
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
@@ -41,7 +43,6 @@ class ArchivoService
             $directorio = $data['rfc_empresa'] . '/' . $directorio;
         }
 
-        $hash_file = hash_file('md5', $data["archivo"]);
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
         if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->ctgTipoArchivo->nombre.$archivo->complemento_nombre.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'))){
             $archivo->hash_file = $hash_file;
