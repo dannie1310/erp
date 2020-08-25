@@ -304,6 +304,46 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * PADRON PROVEEDORES
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'padron-proveedores'], function ($api) {
+        $api->group(['prefix' => 'archivo'], function ($api){
+            $api->post('cargarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@cargarArchivo');
+            $api->get('{id}/documento', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->get('getArchivosPrestadora', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@getArchivosPrestadora')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@destroy')->where(['id' => '[0-9]+']);
+        });
+        $api->group(['prefix' => 'ctg-area'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\CtgAreaController@index');
+        });
+        $api->group(['prefix' => 'ctg-seccion'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\CtgSeccionController@index');
+        });
+        $api->group(['prefix' => 'empresa'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@store');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@update')->where(['id' => '[0-9]+']);
+            $api->post('registrarPrestadora', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@registrarPrestadora');
+            $api->patch('{id}/revisarRFC', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@revisarRFC')->where(['id' => '[0-9]+']);
+            $api->patch('revisarRFCPreexistente', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@revisarRFCPreexistente')->where(['id' => '[0-9]+']);
+            $api->post('revisarRfcPrestadora', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@revisarRfcPrestadora')->where(['id' => '[0-9]+']);
+            $api->get('{id}/descargaExpediente', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@descargaExpediente')->where(['id' => '[0-9]+']);
+        });
+        $api->group(['prefix' => 'especialidad'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EspecialidadController@store');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EspecialidadController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EspecialidadController@paginate');
+        });
+        $api->group(['prefix' => 'giro'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@store');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@paginate');
+        });
+    });
+
+    /**
      * CONFIGURACION
      */
     $api->group(['middleware' => 'api', 'prefix' => 'configuracion'], function ($api) {
@@ -962,7 +1002,9 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@paginate');
             $api->post('rfc', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@rfc');
             $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInforme');
+            $api->post('obtener-informe-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosado');
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformePDF');
+            $api->get('obtener-informe-desglosado/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosadoPDF');
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');

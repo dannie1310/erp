@@ -574,7 +574,20 @@ export const routes = [
                             permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
                             general: true
                         }
+                    },
+                    {
+                        path: 'informe-desglosado',
+                        name: 'informe-efos-vs-cfd-5a',
+                        component: require('./components/fiscal/efos/InformeEFOSCFD5A').default,
+                        meta: {
+                            title: 'Informe Listado EFOS vs CFD Recibidos (Desglosado)',
+                            breadcrumb: {name: 'INFORME DESGLOSADO', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
                     }
+
                 ]
             },
             {
@@ -664,6 +677,69 @@ export const routes = [
                             breadcrumb: {name: 'INFORME', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        path: '/padron-proveedores',
+        components:  {
+            default: require('./components/padron-proveedores/partials/Layout.vue').default,
+            menu: require('./components/padron-proveedores/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'padron-proveedores',
+                component: require('./components/padron-proveedores/Index').default,
+                meta: {
+                    title: 'Padrón de Proveedores',
+                    middleware: [auth, permission],
+                    permission: ['consultar_expediente_proveedor'],
+                    general: true
+                }
+            },
+            {
+                path: 'gestion-proveedores',
+                component: require('./components/padron-proveedores/gestion-proveedores/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'proveedores-index',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Index.vue').default,
+                        meta: {
+                            title: 'Listado de Proveedores',
+                            breadcrumb: {parent: 'padron-proveedores', name: 'PROVEEDORES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_expediente_proveedor',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'iniciar-expediente',
+                        name: 'proveedores-iniciar-expediente',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Create').default,
+                        meta: {
+                            title: 'Iniciar Expediente de Proveedor',
+                            breadcrumb: {name: 'INICIAR EXPEDIENTE', parent: 'proveedores-index'},
+                            middleware: [auth, permission],
+                            permission: ['iniciar_expediente_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'entrar-a-expediente',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Expediente de Proveedor',
+                            breadcrumb: {name: 'EXPEDIENTE', parent: 'proveedores-index'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_expediente_proveedor'],
                             general: true
                         }
                     },
