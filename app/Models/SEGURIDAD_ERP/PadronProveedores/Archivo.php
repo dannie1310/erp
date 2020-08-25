@@ -25,6 +25,8 @@ class Archivo extends Model
         'extension_archivo',
         'id_empresa_proveedor',
         'id_empresa_prestadora',
+        'obligatorio',
+        'complemento_nombre'
     ];
 
     public function ctgTipoArchivo()
@@ -74,12 +76,17 @@ class Archivo extends Model
 
     public function getNombreArchivoFormatAttribute()
     {
-        return $this->nombre_archivo?$this->nombre_archivo . $this->extencion_archivo:'Pendiente';
+        return $this->nombre_archivo?$this->nombre_archivo .'.'. $this->extension_archivo:'Pendiente';
     }
 
     public function getEstatusAttribute()
     {
         return $this->hash_file?true:false;
+    }
+
+    public function getDescripcionComplementadaAttribute()
+    {
+        return $this->ctgTipoArchivo->descripcion . " " . $this->complemento_nombre;
     }
 
     public function eliminar()

@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-sm btn-outline-success" title="Ver Pólizas">
+        <button @click="init" type="button" class="btn btn-sm btn-outline-success" title="Ver Archivo">
             <i class="fa fa-file-pdf-o"></i>
         </button>
 

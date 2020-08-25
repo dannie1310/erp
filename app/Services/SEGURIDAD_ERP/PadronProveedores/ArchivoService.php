@@ -45,7 +45,7 @@ class ArchivoService
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
         if(Storage::disk('padron_contratista')->put($directorio . '/' .$data['archivo_nombre'],  fopen($data['archivo'], 'r'))){
             $archivo->hash_file = $hash_file;
-            $archivo->nombre_archivo = $data["archivo_nombre"];
+            $archivo->nombre_archivo = $nombre_archivo[0];
             $archivo->extension_archivo = $nombre_archivo[count($nombre_archivo)-1];
             $archivo->save();
         }else{
@@ -59,7 +59,7 @@ class ArchivoService
         $archivo = $this->repository->show($id);
         if($data['rfc_empresa'] != 'undefined') $directorio = $data['rfc_empresa'] . '/' . $directorio;
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
-        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo);
+        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo .'.'. $archivo->extension_archivo);
     }
 
     public function getArchivosPrestadora($data){
