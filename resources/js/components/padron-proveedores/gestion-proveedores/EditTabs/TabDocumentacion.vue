@@ -322,7 +322,7 @@ export default {
         },
         openModal(archivo){
             this.archivo = archivo;
-            if(this.$refs.carfar_file !== undefined){
+            if(this.$refs.cargar_file !== undefined){
                 this.$refs.cargar_file.value = '';
             }
             this.file = null;
