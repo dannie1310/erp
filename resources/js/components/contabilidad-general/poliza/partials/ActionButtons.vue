@@ -1,9 +1,7 @@
 <template>
     <div class="btn-group">
-        <button @click="find(value.id)" type="button" class="btn btn-sm btn-outline-secondary  " title="Ver" >
-            <i class="fa fa-eye" aria-hidden="true"></i>
-        </button>
-        <button @click="findEdit(value.id)" type="button" class="btn btn-sm btn-outline-primary  " title="Editar" v-if="value.editar">
+        <Show  v-bind:id="value.id" v-bind:id_empresa="value.id_empresa" />
+        <button @click="edit" type="button" class="btn btn-sm btn-outline-primary  " title="Editar" v-if="value.editar">
             <i class="fa fa-pencil" aria-hidden="true"></i>
         </button>
         <PDFPoliza v-bind:id="value.id" v-bind:id_empresa="value.id_empresa"></PDFPoliza>
@@ -11,31 +9,15 @@
 </template>
 
 <script>
-import PDFPoliza from './PDFPoliza';
+    import PDFPoliza from './PDFPoliza';
+    import Show from '../Show'
     export default {
         name: "action-buttons",
-        components:{PDFPoliza},
+        components:{Show, PDFPoliza},
         props: ['value'],
         methods: {
-            find(id) {
-                this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
-                return this.$store.dispatch('contabilidadGeneral/poliza/find', {
-                    id: id,
-                    params: {include: ['movimientos_poliza'], id_empresa : this.value.id_empresa}
-                }).then(data => {
-                    data.tipo_modal = 1;
-                    this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
-                })
-            },
-            findEdit(id) {
-                this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
-                return this.$store.dispatch('contabilidadGeneral/poliza/find', {
-                    id: id,
-                    params: {include: ['movimientos_poliza'], id_empresa : this.value.id_empresa}
-                }).then(data => {
-                    data.tipo_modal = 2;
-                    this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
-                })
+            edit() {
+                this.$router.push({ name:'poliza-contpaq-edit', params: {id: this.value.id, id_empresa: this.value.id_empresa}});
             },
         },
     }

@@ -22,7 +22,8 @@ class PolizaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'movimientos_poliza',
-        'incidentes_activos'
+        'incidentes_activos',
+        'tipo'
     ];
 
     public function transform(Poliza $model) {
@@ -33,30 +34,46 @@ class PolizaTransformer extends TransformerAbstract
             'ejercicio' => (string) $model->Ejercicio,
             'periodo' => (string) $model->Periodo,
             'fecha' => (string) $model->fecha_format,
+            'fecha_completa' => $model->Fecha,
             'cargos' => (string) $model->cargos_format,
             'abonos' => (float) $model->Abonos,
             'tipo' => (string) $model->tipo_poliza->Nombre,
             'monto' => (string) $model->Cargos,
-            'monto_format' => (string) $model->cargos_format,
-
+            'monto_format' => (string) $model->cargos_format
         ];
     }
 
     /**
-     * Include Movimienos
      * @param Poliza $model
-     * @return \League\Fractal\Resource\Collection
+     * @return \League\Fractal\Resource\Collection|null
      */
     public function includeMovimientosPoliza(Poliza $model){
         if ($movimientos = $model->movimientos()->orderBy("Id")->get()) {
-            return $this->collection($movimientos, new PolizaMovimientoTransformer());
+            return $this->collection($movimientos, new PolizaMovimientoTransformer);
         }
         return null;
     }
 
+    /**
+     * @param Poliza $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeIncidentesActivos(Poliza $model){
         if ($incidentes = $model->incidentes->activos()->get()) {
-            return $this->collection($incidentes, new IncidenteIndividualConsolidadaTransformer());
+            return $this->collection($incidentes, new IncidenteIndividualConsolidadaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Poliza $poliza
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipo(Poliza $poliza)
+    {
+        if($tipo = $poliza->tipo_poliza)
+        {
+            return $this->item($tipo, new TipoPolizaTransformer);
         }
         return null;
     }

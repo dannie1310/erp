@@ -9,6 +9,7 @@
 namespace App\Services\CTPQ;
 use App\Models\CTPQ\Poliza;
 use App\Models\CTPQ\Empresa;
+use App\Models\CTPQ\TipoPoliza;
 use App\PDF\CTPQ\PolizaFormatoT1;
 use App\PDF\CTPQ\PolizaFormatoT1A;
 
@@ -65,42 +66,52 @@ class PolizaService
 
     public function paginate($data)
     {
-        $empresa = Empresa::find($data["id_empresa"]);
-        DB::purge('cntpq');
-        \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
-        $poliza = $this->repository;
+        try {
+            $empresa = Empresa::find($data["id_empresa"]);
+            DB::purge('cntpq');
+            \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+            $poliza = $this->repository;
 
-        if (isset($data['ejercicio'])) {
-            if($data['ejercicio'] != ""){
-                $poliza->where([['Ejercicio', '=', $data['ejercicio']]]);
+            if (isset($data['ejercicio'])) {
+                if ($data['ejercicio'] != "") {
+                    $poliza->where([['Ejercicio', '=', $data['ejercicio']]]);
+                }
             }
-        }
 
-        if (isset($data['periodo'])) {
-            if($data['periodo'] != ""){
-                $poliza->where([['Periodo', '=', $data['periodo']]]);
+            if (isset($data['periodo'])) {
+                if ($data['periodo'] != "") {
+                    $poliza->where([['Periodo', '=', $data['periodo']]]);
+                }
             }
-        }
 
-        if (isset($data['numero_poliza'])) {
-            if($data['numero_poliza'] != ""){
-                $poliza->where([['Folio', '=', $data['numero_poliza']]]);
+            if (isset($data['folio'])) {
+                if($data['folio'] != '') {
+                    $poliza = $poliza->where([['Folio', '=', request('folio')]]);
+                }
             }
-        }
 
-        if (isset($data['tipo_poliza'])) {
-            if($data['tipo_poliza'] != ""){
-                $poliza->where([['TipoPol', '=', $data['tipo_poliza']]]);
+            if (isset($data['concepto']))
+            {
+                if ($data['concepto'] != "") {
+                    $poliza = $poliza->where([['Concepto','like', '%'.$data['concepto'].'%']]);
+                }
             }
-        }
 
-        if (isset($data['texto'])) {
-            if($data['texto'] != ""){
-                $poliza->where([['Concepto', 'LIKE', '%' . $data['texto'] . '%']]);
+            if (isset($data['tipo'])) {
+                if($data['tipo'] != '') {
+                    $tipo = TipoPoliza::where('Nombre', 'like', '%'.ucfirst(request('tipo')).'%')->first();
+                    if($tipo) {
+                        $poliza = $poliza->where([['TipoPol', '=', $tipo->Id]]);
+                    }else{
+                        $poliza = $poliza->where([['TipoPol', '=', 0]]);
+                    }
+                }
             }
+           return $poliza->paginate($data);
+        }catch (\Exception $e) {
+            abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
+            throw $e;
         }
-
-        return $poliza->paginate($data);
     }
 
     public function pdf($data, $id)
