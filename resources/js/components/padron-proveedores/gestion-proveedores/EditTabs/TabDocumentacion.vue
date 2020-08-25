@@ -49,7 +49,7 @@
                                                 <td>{{archivo.tipo_documento}}</td>
                                                 <td><i class="fa fa-check" v-if="archivo.obligatorio == 1"></i></td>
                                                 <td>{{archivo.seccion}}</td>
-                                                <td>{{archivo.nombre_archivo_format}}</td>
+                                                <td>{{archivo.nombre_archivo}}</td>
                                                 <td>{{archivo.registro}}</td>
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>

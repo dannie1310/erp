@@ -26,7 +26,8 @@ class Archivo extends Model
         'id_empresa_proveedor',
         'id_empresa_prestadora',
         'obligatorio',
-        'complemento_nombre'
+        'complemento_nombre',
+        'nombre_archivo_usuario'
     ];
 
     public function ctgTipoArchivo()
@@ -73,9 +74,14 @@ class Archivo extends Model
         return '';
     }
 
-    public function getNombreArchivoFormatAttribute()
+    public function getNombreArchivoCompletoAttribute()
     {
-        return $this->nombre_archivo?$this->nombre_archivo .'.'. $this->extension_archivo:'Pendiente';
+        if($this->nombre_archivo != ""){
+            return $this->nombre_archivo?$this->nombre_archivo .'.'. $this->extension_archivo:'Pendiente';
+        } else {
+            return null;
+        }
+
     }
 
     public function getEstatusAttribute()
@@ -95,7 +101,8 @@ class Archivo extends Model
             $this->update([
                 'hash_file' => null,
                 'nombre_archivo' => null,
-                'extension_archivo' => null
+                'extension_archivo' => null,
+                'nombre_archivo_usuario' => null
             ]);
             DB::connection('seguridad')->commit();
             return $this;

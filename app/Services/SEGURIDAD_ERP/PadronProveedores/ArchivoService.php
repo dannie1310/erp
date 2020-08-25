@@ -43,9 +43,10 @@ class ArchivoService
 
         $hash_file = hash_file('md5', $data["archivo"]);
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
-        if(Storage::disk('padron_contratista')->put($directorio . '/' .$data['archivo_nombre'],  fopen($data['archivo'], 'r'))){
+        if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->ctgTipoArchivo->nombre.$archivo->complemento_nombre.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'))){
             $archivo->hash_file = $hash_file;
-            $archivo->nombre_archivo = $nombre_archivo[0];
+            $archivo->nombre_archivo = $archivo->ctgTipoArchivo->nombre.$archivo->complemento_nombre;
+            $archivo->nombre_archivo_usuario = $data["archivo_nombre"];
             $archivo->extension_archivo = $nombre_archivo[count($nombre_archivo)-1];
             $archivo->save();
         }else{
@@ -77,7 +78,7 @@ class ArchivoService
         }else {
             $rfc_proveedora = $archivo->empresa->rfc;
         }
-        $nombre_archivo = $archivo->nombre_archivo;
+        $nombre_archivo = $archivo->nombre_archivo.".". $archivo->extension_archivo;
         if(is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix().$rfc_proveedora.'/'.$nombre_archivo)) {
             $datos_arch = $archivo->eliminar();
             Storage::disk('padron_contratista')->delete($rfc_proveedora.'/'.$nombre_archivo);
