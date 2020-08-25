@@ -84,6 +84,11 @@ class Archivo extends Model
         return $this->hash_file?true:false;
     }
 
+    public function getDescripcionComplementadaAttribute()
+    {
+        return $this->ctgTipoArchivo->descripcion . " " . $this->complemento_nombre;
+    }
+
     public function eliminar()
     {
         try {

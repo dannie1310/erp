@@ -62,7 +62,30 @@ class EmpresaRepository extends Repository implements RepositoryInterface
 
     public function getTiposArchivos($id_tipo_empresa){
         $tipos_archivos = CtgTipoArchivoTipoEmpresa::where("id_tipo_empresa","=", $id_tipo_empresa)->get();
-        return $tipos_archivos;
+        $tipos_archivos_arr = [];
+        $ultimos_anios =[];
+        for($i = 1; $i<=3;$i++){
+            $ultimos_anios[] = date("Y")-$i;
+        }
+        foreach ($tipos_archivos as $tipo_archivo){
+            if($tipo_archivo->id_tipo_archivo != 13 && $tipo_archivo->id_tipo_archivo !=14)
+            {
+                $tipos_archivos_arr[] = [
+                    "id_tipo_archivo" => $tipo_archivo->id_tipo_archivo,
+                    "complemento_nombre" => null,
+                    "obligatorio" => $tipo_archivo->tipoArchivo->obligatorio,
+                ];
+            } else{
+                foreach ($ultimos_anios as $ultimo_anio){
+                    $tipos_archivos_arr[] = [
+                        "id_tipo_archivo" => $tipo_archivo->id_tipo_archivo,
+                        "complemento_nombre" => $ultimo_anio,
+                        "obligatorio" => $tipo_archivo->tipoArchivo->obligatorio,
+                    ];
+                }
+            }
+        }
+        return $tipos_archivos_arr;
     }
 
     public function getEmpresaXRFC($rfc)

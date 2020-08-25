@@ -22,10 +22,10 @@ class ArchivoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'tipo_archivo' => $model->id_tipo_archivo,
-            'obligatorio' => (bool)$model->ctgTipoArchivo->obligatorio?'Si':'No',
+            'obligatorio' => (bool)$model->obligatorio?'Si':'No',
             'tipo_documento' => $model->ctgTipoArchivo->tipo_documento,
             'especificacion' => $model->ctgTipoArchivo->especificaciones,
-            'tipo_archivo_descripcion' => $model->ctgTipoArchivo->descripcion,
+            'tipo_archivo_descripcion' => $model->descripcion_complementada,
             'tipo_archivo_descripcion_larga' => $model->ctgTipoArchivo->descripcion_larga,
             'registro' => $model->registro,
             'fecha_registro_format' => $model->fecha_registro_format,
