@@ -46,7 +46,6 @@
                                 option-value="id"
                                 option-text="descripcion"
                                 v-validate="{required: true}"
-                                :custom-text="giroDescripcion"
                                 size="4"
                                 :list="giros"
                                 :class="{'is-invalid': errors.has('giro')}">
