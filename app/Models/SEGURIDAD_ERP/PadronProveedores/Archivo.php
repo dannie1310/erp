@@ -26,7 +26,8 @@ class Archivo extends Model
         'id_empresa_proveedor',
         'id_empresa_prestadora',
         'obligatorio',
-        'complemento_nombre'
+        'complemento_nombre',
+        'nombre_archivo_usuario'
     ];
 
     public function ctgTipoArchivo()
@@ -43,6 +44,16 @@ class Archivo extends Model
         return $this->belongsTo(Empresa::class, 'id_empresa','id');
     }
 
+    public function prestadora()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa_prestadora','id');
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa_proveedor','id');
+    }
+
     public function scopeCargados($query)
     {
         return $query->whereNotNull("hash_file");
@@ -53,10 +64,9 @@ class Archivo extends Model
         if($id_proveedor){
             return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
                 ->where("archivos.id_empresa_proveedor", $id_proveedor)
-                ->where('ctg_tipos_archivos.obligatorio', 1);
+                ->where('archivos.obligatorio', 1);
         } else {
-            return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
-                ->where('ctg_tipos_archivos.obligatorio', 1);
+            return $query->where("obligatorio",1);
         }
     }
 
@@ -74,9 +84,14 @@ class Archivo extends Model
         return '';
     }
 
-    public function getNombreArchivoFormatAttribute()
+    public function getNombreArchivoCompletoAttribute()
     {
-        return $this->nombre_archivo?$this->nombre_archivo .'.'. $this->extension_archivo:'Pendiente';
+        if($this->nombre_archivo != ""){
+            return $this->nombre_archivo?$this->nombre_archivo .'.'. $this->extension_archivo:'Pendiente';
+        } else {
+            return null;
+        }
+
     }
 
     public function getEstatusAttribute()
@@ -96,7 +111,8 @@ class Archivo extends Model
             $this->update([
                 'hash_file' => null,
                 'nombre_archivo' => null,
-                'extension_archivo' => null
+                'extension_archivo' => null,
+                'nombre_archivo_usuario' => null
             ]);
             DB::connection('seguridad')->commit();
             return $this;

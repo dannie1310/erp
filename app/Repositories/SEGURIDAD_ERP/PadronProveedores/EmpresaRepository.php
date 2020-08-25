@@ -15,6 +15,7 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgGiro;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgTipoArchivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgTipoArchivoTipoEmpresa;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa as Model;
@@ -105,5 +106,44 @@ class EmpresaRepository extends Repository implements RepositoryInterface
     public function update(array $data, $id)
     {
         return $this->show($id)->editar($data);
+    }
+
+    public function registrarPrestadora($data){
+        $empresa = $this->show($data['id_empresa']);
+        if($data['asociacion']){
+            $prestadora = $this->getEmpresaXRFC($data['rfc']);
+            EmpresaPrestadora::create([
+                'id_empresa_proveedor' => $data['id_empresa'],
+                'id_empresa_prestadora' => $prestadora->id,
+            ]);
+
+        }else{
+            $prestadora = $empresa->prestadora()->create([
+                'razon_social' => $data['razon_social'],
+                'rfc' => $data['rfc'],
+                'id_tipo_empresa' => 3,
+                'no_imss' => $data['nss']
+            ]);
+            EmpresaPrestadora::create([
+                'id_empresa_proveedor' => $data['id_empresa'],
+                'id_empresa_prestadora' => $prestadora->id,
+            ]);
+        }
+
+        foreach($this->getTiposArchivos(3) as $archivo){
+            $prestadora->archivos()->create([
+                "id_tipo_archivo"=>$archivo["id_tipo_archivo"],
+                "id_empresa_proveedor"=>$data['id_empresa'],
+                "id_empresa_prestadora"=>$prestadora->id,
+                "obligatorio"=>$archivo["obligatorio"],
+                "complemento_nombre"=>$archivo["complemento_nombre"],
+            ]);
+        }
+
+        $archivo = $empresa->archivos()->where('id_tipo_archivo', '=', $data['id_archivo_sua'])->first();
+        $archivo->obligatorio = 0;
+        $archivo->save();
+        return $prestadora;
+
     }
 }

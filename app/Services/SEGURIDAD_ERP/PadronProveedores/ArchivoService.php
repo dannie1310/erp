@@ -26,11 +26,13 @@ class ArchivoService
 
     public function cargarArchivo($data){
         $directorio = $data['rfc'];
+        $hash_file = hash_file('md5', $data["archivo"]);
         $archivo = $this->repository->show($data['id_archivo']);
-        $repetidos = $this->repository->where([['nombre_archivo', '=', $data['archivo_nombre']]])->all();
+        $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
 
         if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
-            abort(403, 'El archivo ya ha sido registrado previamente.');
+            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
+            ;
         }
 
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
@@ -41,13 +43,14 @@ class ArchivoService
             $directorio = $data['rfc_empresa'] . '/' . $directorio;
         }
 
-        $hash_file = hash_file('md5', $data["archivo"]);
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
-        if(Storage::disk('padron_contratista')->put($directorio . '/' .$data['archivo_nombre'],  fopen($data['archivo'], 'r'))){
+        if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->ctgTipoArchivo->nombre.$archivo->complemento_nombre.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'))){
             $archivo->hash_file = $hash_file;
-            $archivo->nombre_archivo = $nombre_archivo[0];
+            $archivo->nombre_archivo = $archivo->ctgTipoArchivo->nombre.$archivo->complemento_nombre;
+            $archivo->nombre_archivo_usuario = $data["archivo_nombre"];
             $archivo->extension_archivo = $nombre_archivo[count($nombre_archivo)-1];
             $archivo->save();
+            Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'));
         }else{
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
@@ -55,9 +58,14 @@ class ArchivoService
     }
 
     public function documento($data, $id){
-        $directorio = $data->rfc;
         $archivo = $this->repository->show($id);
-        if($data['rfc_empresa'] != 'undefined') $directorio = $data['rfc_empresa'] . '/' . $directorio;
+        /*if($data['rfc_empresa'] != 'undefined') $directorio = $data['rfc_empresa'] . '/' . $directorio;*/
+        if($archivo->prestadora)
+        {
+            $directorio = $archivo->proveedor->rfc .'/'. $archivo->prestadora->rfc;
+        } else {
+            $directorio = $archivo->empresa->rfc;
+        }
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
         return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo .'.'. $archivo->extension_archivo);
     }
@@ -77,7 +85,7 @@ class ArchivoService
         }else {
             $rfc_proveedora = $archivo->empresa->rfc;
         }
-        $nombre_archivo = $archivo->nombre_archivo;
+        $nombre_archivo = $archivo->nombre_archivo.".". $archivo->extension_archivo;
         if(is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix().$rfc_proveedora.'/'.$nombre_archivo)) {
             $datos_arch = $archivo->eliminar();
             Storage::disk('padron_contratista')->delete($rfc_proveedora.'/'.$nombre_archivo);

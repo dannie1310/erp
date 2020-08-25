@@ -105,6 +105,7 @@ class Empresa extends Model
             $cantidad_archivos_prestadora = $this->prestadora[0]->archivos()->obligatorios($this->id)->count();
             $cantidad_archivos += $cantidad_archivos_prestadora;
         }
+
         return $cantidad_archivos;
     }
 
