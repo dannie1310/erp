@@ -50,6 +50,7 @@ class ArchivoService
             $archivo->nombre_archivo_usuario = $data["archivo_nombre"];
             $archivo->extension_archivo = $nombre_archivo[count($nombre_archivo)-1];
             $archivo->save();
+            Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'));
         }else{
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
