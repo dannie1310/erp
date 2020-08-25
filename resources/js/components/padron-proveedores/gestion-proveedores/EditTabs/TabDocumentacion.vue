@@ -84,77 +84,78 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua">
-                            <label class="col-sm-12 col-form-label">
-                                <i class="fa fa-info-circle"></i>
-                                Indique si cuenta con personal propio o si cuenta con una empresa prestadora de servicios: </label>
-                            <div class="col-sm-6 offset-3">
-                                <div class="btn-group btn-group-toggle">
-                                    <label class="btn btn-outline-secondary" :class="id_tipo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos" :key="llave">
-                                        <i :class="llave==1 ?'fa fa-users':'fa fa-building'"></i>
-                                        <input type="radio"
-                                                class="btn-group-toggle"
-                                                name="id_tipo"
-                                                :id="'tipo' + llave"
-                                                :value="llave"
-                                                autocomplete="on"
-                                                v-model.number="id_tipo">
-                                                {{ tipo}}
-                                    </label>
+                        <div class="row" v-if="archivo.tipo_archivo == id_archivo_sua">
+                            <div class="col-md-12" >
+                                <label class="col-sm-12 col-form-label">
+                                    <i class="fa fa-info-circle"></i>
+                                    Indique si cuenta con personal propio o si cuenta con una empresa prestadora de servicios: </label>
+                                <div class="col-sm-6 offset-3">
+                                    <div class="btn-group btn-group-toggle">
+                                        <label class="btn btn-outline-secondary" :class="id_tipo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos" :key="llave">
+                                            <i :class="llave==1 ?'fa fa-users':'fa fa-building'"></i>
+                                            <input type="radio"
+                                                   class="btn-group-toggle"
+                                                   name="id_tipo"
+                                                   :id="'tipo' + llave"
+                                                   :value="llave"
+                                                   autocomplete="on"
+                                                   v-model.number="id_tipo">
+                                                    {{ tipo}}
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
+
+                        <div class="row" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
+                            <div class="col-md-12" >
                                 <br>
                                 <hr>
                                 <b><i class="fa fa-building"></i> Registrar empresa prestadora de servicios</b>
                             </div>
-                            <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                                <label for="razon_social" class="col-lg-12 col-form-label">Razón Social</label>
+                            <div class="col-md-12">
+                                <label for="razon_social" class="col-lg-12 col-form-label">Razón Social:</label>
                                 <div class="col-lg-12">
                                     <input type="text" class="form-control"
                                            style="text-transform:uppercase;"
                                            name="razon_social"
                                            v-model="razon_social"
                                            id="razon_social"
-                                           placeholder="Razón Social"
-                                           data-vv-as="Razón Social"
+                                           data-vv-as="'Razón Social'"
                                            v-validate="{required:id_tipo === 2?true:false, min:6}"
                                            :class="{'is-invalid': errors.has('razon_social')}" >
                                 <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
                                 </div>
                             </div>
-                            <div class="col-md-8" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                                <label for="rfc" class="col-lg-12 col-form-label">RFC</label>
+                            <div class="col-md-8">
+                                <label for="rfc" class="col-lg-12 col-form-label">RFC:</label>
                                 <div class="col-lg-12">
                                     <input type="text" class="form-control"
                                            name="rfc"
                                            v-model="rfc"
                                            id="rfc"
-                                           placeholder="RFC"
-                                           data-vv-as="RFC"
+                                           data-vv-as="'RFC'"
                                            v-validate="{required:id_tipo === 2?true:false, min:6}"
                                            :class="{'is-invalid': errors.has('rfc')}" >
                                     <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                                 </div>
                             </div>
-                            <div class="col-md-4" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                                <label for="nss" class="col-form-label">NSS:</label>
+                            <div class="col-md-4">
+                                <label for="nss" class="col-form-label">Registro Patronal:</label>
                                 <div class="col-lg-12">
                                     <input class="form-control"
                                            name="nss"
-                                           data-vv-as="NSS"
+                                           data-vv-as="'Registro Patronal'"
                                            v-model="nss"
-                                           v-validate="{ required:id_tipo === 2?true:false, numeric:true, digits:11}"
+                                           v-validate="{ required:id_tipo === 2?true:false, min:11, length:11}"
                                            id="nss"
                                            :class="{'is-invalid': errors.has('nss')}"
-                                           placeholder="NSS" :maxlength="11"/>
+                                           :maxlength="11"/>
                                     <div class="invalid-feedback" v-show="errors.has('nss')">{{ errors.first('nss') }}</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row justify-content-between" v-if="id_tipo == 1">
+                        <div class="row justify-content-between" v-else-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 1">
                             <div class="col-md-12">
                                 <br>
                                 <hr>
@@ -174,7 +175,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row justify-content-between" v-if="archivo.tipo_archivo != id_archivo_sua">
+                        <div class="row justify-content-between" v-else-if="archivo.tipo_archivo != id_archivo_sua">
                             <div class="col-md-12">
                                 <label for="cargar_file" class="col-lg-12 col-form-label">
                                     <i class="fa fa-file-pdf"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
@@ -321,7 +322,9 @@ export default {
         },
         openModal(archivo){
             this.archivo = archivo;
-            this.$refs.cargar_file.value = '';
+            if(this.$refs.carfar_file !== undefined){
+                this.$refs.cargar_file.value = '';
+            }
             this.file = null;
             this.file_name = '';
             $(this.$refs.modal).appendTo('body')
