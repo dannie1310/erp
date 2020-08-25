@@ -111,7 +111,7 @@
                                 <b><i class="fa fa-building"></i> Registrar empresa prestadora de servicios</b>
                             </div>
                             <div class="col-md-12" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                                <label for="razon_social" class="col-lg-12 col-form-label">Razón Social</label>
+                                <label for="razon_social" class="col-lg-12 col-form-label">Razón Social:</label>
                                 <div class="col-lg-12">
                                     <input type="text" class="form-control"
                                            style="text-transform:uppercase;"
@@ -125,7 +125,7 @@
                                 </div>
                             </div>
                             <div class="col-md-8" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                                <label for="rfc" class="col-lg-12 col-form-label">RFC</label>
+                                <label for="rfc" class="col-lg-12 col-form-label">RFC:</label>
                                 <div class="col-lg-12">
                                     <input type="text" class="form-control"
                                            name="rfc"
