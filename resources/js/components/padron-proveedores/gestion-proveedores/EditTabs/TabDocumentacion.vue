@@ -118,8 +118,7 @@
                                            name="razon_social"
                                            v-model="razon_social"
                                            id="razon_social"
-                                           placeholder="Razón Social"
-                                           data-vv-as="Razón Social"
+                                           data-vv-as="'Razón Social'"
                                            v-validate="{required:id_tipo === 2?true:false, min:6}"
                                            :class="{'is-invalid': errors.has('razon_social')}" >
                                 <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
@@ -132,24 +131,23 @@
                                            name="rfc"
                                            v-model="rfc"
                                            id="rfc"
-                                           placeholder="RFC"
-                                           data-vv-as="RFC"
+                                           data-vv-as="'RFC'"
                                            v-validate="{required:id_tipo === 2?true:false, min:6}"
                                            :class="{'is-invalid': errors.has('rfc')}" >
                                     <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                                 </div>
                             </div>
                             <div class="col-md-4" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2">
-                                <label for="nss" class="col-form-label">NSS:</label>
+                                <label for="nss" class="col-form-label">Registro Patronal:</label>
                                 <div class="col-lg-12">
                                     <input class="form-control"
                                            name="nss"
-                                           data-vv-as="NSS"
+                                           data-vv-as="'Registro Patronal'"
                                            v-model="nss"
-                                           v-validate="{ required:id_tipo === 2?true:false, numeric:true, digits:11}"
+                                           v-validate="{ required:id_tipo === 2?true:false, min:11, length:11}"
                                            id="nss"
                                            :class="{'is-invalid': errors.has('nss')}"
-                                           placeholder="NSS" :maxlength="11"/>
+                                           :maxlength="11"/>
                                     <div class="invalid-feedback" v-show="errors.has('nss')">{{ errors.first('nss') }}</div>
                                 </div>
                             </div>
