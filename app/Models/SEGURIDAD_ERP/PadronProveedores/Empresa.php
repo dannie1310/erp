@@ -137,7 +137,13 @@ class Empresa extends Model
 
 
             foreach($data["archivos"] as $archivo){
-                $empresa->archivos()->create(["id_tipo_archivo"=>$archivo->id_tipo_archivo]);
+                $empresa->archivos()->create(
+                    [
+                        "id_tipo_archivo"=>$archivo["id_tipo_archivo"],
+                        "obligatorio"=>$archivo["obligatorio"],
+                        "complemento_nombre"=>$archivo["complemento_nombre"],
+                    ]
+                );
             }
 
             if(count($data["id_especialidades"] )>0){
