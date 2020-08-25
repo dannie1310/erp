@@ -144,6 +144,90 @@
 
         <div class="card">
             <div class="card-header">
+                <label ><i class="fa fa-th-list icon"></i>Representantes Legales</label>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="bg-gray-light index_corto">#</th>
+                            <th class="bg-gray-light">Nombre(s)</th>
+                            <th class="bg-gray-light">Apellido Paterno</th>
+                            <th class="bg-gray-light">Apellido Materno</th>
+                            <th class="bg-gray-light">CURP</th>
+                            <th class="bg-gray-light icono">
+                                <button type="button" class="btn btn-sm btn-outline-success" @click="agregarRepresentanteLegal" :disabled="cargando">
+                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                    <i class="fa fa-plus" v-else></i>
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(representante_legal, i) in registro_proveedor.representantes_legales" >
+                            <td class="index_corto">{{ i + 1 }}</td>
+
+                            <td>
+                                <input class="form-control"
+                                       :name="`nombre[${i}]`"
+                                       :data-vv-as="`'Nombre ${i + 1}'`"
+                                       v-model="representante_legal.nombre"
+                                       :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
+                                       v-validate="{ required: true, min:3 }"
+                                       :id="`nombre[${i}]`"
+                                       :maxlength="50"/>
+                                <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
+                            </td>
+
+                            <td>
+                                <input class="form-control"
+                                       :name="`apellido_paterno[${i}]`"
+                                       :data-vv-as="`'Apellido Paterno ${i + 1}'`"
+                                       v-model="representante_legal.apellido_paterno"
+                                       :class="{'is-invalid': errors.has(`apellido_paterno[${i}]`)}"
+                                       v-validate="{ required: true, min:2 }"
+                                       :id="`apellido_paterno[${i}]`"
+                                       :maxlength="50"/>
+                                <div class="invalid-feedback" v-show="errors.has(`apellido_paterno[${i}]`)">{{ errors.first(`apellido_paterno[${i}]`) }}</div>
+                            </td>
+
+                            <td >
+                                <input class="form-control"
+                                       :name="`apellido_materno[${i}]`"
+                                       :data-vv-as="`'Apellido Materno ${i + 1}'`"
+                                       v-model="representante_legal.apellido_materno"
+                                       :class="{'is-invalid': errors.has(`apellido_materno[${i}]`)}"
+                                       v-validate="{ required: true, min:2 }"
+                                       :id="`apellido_materno[${i}]`"
+                                       :maxlength="50"/>
+                                <div class="invalid-feedback" v-show="errors.has(`apellido_materno[${i}]`)">{{ errors.first(`apellido_materno[${i}]`) }}</div>
+                            </td>
+
+                            <td >
+                                <input class="form-control"
+                                       :name="`curp[${i}]`"
+                                       :data-vv-as="`'CURP ${i + 1}'`"
+                                       v-model="representante_legal.curp"
+                                       :class="{'is-invalid': errors.has(`curp[${i}]`)}"
+                                       v-validate="{ required: true, min: 18, regex: /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/}"
+                                       :id="`curp[${i}]`"
+                                       :maxlength="18"/>
+                                <div class="invalid-feedback" v-show="errors.has(`curp[${i}]`)">{{ errors.first(`curp[${i}]`) }}</div>
+                            </td>
+
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarRepresentanteLegal(i)" :disabled="registro_proveedor.representantes_legales.length == 1" >
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
                 <label ><i class="fa fa-th-list icon"></i>Contactos</label>
             </div>
             <div class="card-body table-responsive">
@@ -274,6 +358,14 @@
                     especialidad: '',
                     id_giro : '',
                     id_especialidad: '',
+                    representantes_legales : [
+                        {
+                            'nombre' : '',
+                            'apellido_paterno' : '',
+                            'apellido_materno' : '',
+                            'curp' : ''
+                        }
+                    ],
                     contactos : [
                         {
                             'nombre' : '',
@@ -318,6 +410,19 @@
             },
             quitarContacto(index){
                 this.registro_proveedor.contactos.splice(index, 1);
+            },
+            agregarRepresentanteLegal(){
+                var array = {
+                    'nombre' : '',
+                    'puesto' : '',
+                    'telefono' : '',
+                    'email' : '',
+                    'notas' : ''
+                }
+                this.registro_proveedor.representantes_legales.push(array);
+            },
+            quitarRepresentanteLegal(index){
+                this.registro_proveedor.representantes_legales.splice(index, 1);
             },
             changeSelectGiro(){
                 if(this.registro_proveedor.id_giro == "agregar"){
@@ -372,7 +477,17 @@
                     this.registro_proveedor.razon_social = this.registro_proveedor.razon_social.toUpperCase();
                     this.registro_proveedor.rfc = this.registro_proveedor.rfc.toUpperCase();
                     if (result) {
-                        this.store()
+                        this.registro_proveedor.representantes_legales.forEach(e => {
+                            if(!this.validaCurp(e.curp)){
+                                swal(
+                                    'CURP inválido',
+                                    e.curp,
+                                    'error'
+                                );
+                            } else {
+                                this.store();
+                            }
+                        });
                     }
                 });
             },
@@ -405,6 +520,32 @@
                     this.cargando = false;
                 })
             },
+
+            validaCurp(curp){
+                var re = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/,
+                    validado = curp.match(re);
+
+                if (!validado)
+                    return false;
+
+                if(curp.substr(17,1) != this.digitoVerificador(curp))
+                    return false;
+
+                return true;
+
+            },
+
+            digitoVerificador(curp17) {
+                //Fuente https://consultas.curp.gob.mx/CurpSP/
+                var diccionario  = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
+                    lngSuma      = 0.0,
+                    lngDigito    = 0.0;
+                for(var i=0; i<17; i++)
+                    lngSuma = lngSuma + diccionario.indexOf(curp17.charAt(i)) * (18 - i);
+                lngDigito = 10 - lngSuma % 10;
+                if (lngDigito == 10) return 0;
+                return lngDigito;
+            }
         },
     }
 </script>
