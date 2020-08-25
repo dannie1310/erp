@@ -8,7 +8,7 @@
                     <i class="right fa fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
+                    <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
                         <router-link :to="{name: 'poliza-contpaq'}" class="nav-link" :class="{active: this.$route.name == 'poliza-contpaq'}">
                             <i class="fa fa-file-powerpoint nav-icon"></i>
                             <p>Pólizas</p>
@@ -18,12 +18,6 @@
                         <router-link :to="{name: 'solicitud-edicion-poliza'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-edicion-poliza'}">
                             <i class="fa fa-file-contract nav-icon"></i>
                             <p>Solicitud de Edición</p>
-                        </router-link>
-                    </li>
-                    <li class="nav-item"  >
-                        <router-link :to="{name: 'diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'diferencia-poliza'}">
-                            <i class="fa fa-not-equal nav-icon"></i>
-                            <p>Diferencias</p>
                         </router-link>
                     </li>
                 </ul>
@@ -52,12 +46,6 @@
                         <router-link :to="{name: 'diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'diferencia-poliza'}">
                             <i class="fa fa-not-equal nav-icon"></i>
                             <p>Diferencias</p>
-                        </router-link>
-                    </li>
-                    <li class="nav-item"  v-if="$root.can('consultar_solicitud_edicion_poliza_ctpq',true)">
-                        <router-link :to="{name: 'solicitud-edicion-poliza'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-edicion-poliza'}">
-                            <i class="fa fa-file-contract nav-icon"></i>
-                            <p>Solicitudes de Edición</p>
                         </router-link>
                     </li>
                 </ul>
