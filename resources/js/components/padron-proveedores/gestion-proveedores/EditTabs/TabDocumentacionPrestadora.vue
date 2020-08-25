@@ -50,13 +50,13 @@
                                                 <td>{{archivo.tipo_documento}}</td>
                                                 <td><i class="fa fa-check" v-if="archivo.obligatorio == 1"></i></td>
                                                 <td>{{archivo.seccion}}</td>
-                                                <td>{{archivo.nombre_archivo_format}}</td>
+                                                <td>{{archivo.nombre_archivo}}</td>
                                                 <td>{{archivo.registro}}</td>
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar Archivo"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                                        <Documento v-bind:id="archivo.id" v-bind:rfc="empresa.rfc" v-if="archivo.nombre_archivo"></Documento>
+                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
+                                                        <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo"></Documento>
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
