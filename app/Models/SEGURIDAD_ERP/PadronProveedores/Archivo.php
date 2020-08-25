@@ -53,10 +53,9 @@ class Archivo extends Model
         if($id_proveedor){
             return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
                 ->where("archivos.id_empresa_proveedor", $id_proveedor)
-                ->where('ctg_tipos_archivos.obligatorio', 1);
+                ->where('archivos.obligatorio', 1);
         } else {
-            return $query->join("PadronProveedores.ctg_tipos_archivos", "ctg_tipos_archivos.id","archivos.id_tipo_archivo")
-                ->where('ctg_tipos_archivos.obligatorio', 1);
+            return $query->where("obligatorio",1);
         }
     }
 
