@@ -56,9 +56,14 @@ class ArchivoService
     }
 
     public function documento($data, $id){
-        $directorio = $data->rfc;
         $archivo = $this->repository->show($id);
-        if($data['rfc_empresa'] != 'undefined') $directorio = $data['rfc_empresa'] . '/' . $directorio;
+        /*if($data['rfc_empresa'] != 'undefined') $directorio = $data['rfc_empresa'] . '/' . $directorio;*/
+        if($archivo->prestadora)
+        {
+            $directorio = $archivo->proveedor->rfc .'/'. $archivo->prestadora->rfc;
+        } else {
+            $directorio = $archivo->empresa->rfc;
+        }
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
         return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo .'.'. $archivo->extension_archivo);
     }

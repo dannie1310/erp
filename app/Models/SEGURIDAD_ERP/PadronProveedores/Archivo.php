@@ -44,6 +44,16 @@ class Archivo extends Model
         return $this->belongsTo(Empresa::class, 'id_empresa','id');
     }
 
+    public function prestadora()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa_prestadora','id');
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa_proveedor','id');
+    }
+
     public function scopeCargados($query)
     {
         return $query->whereNotNull("hash_file");
