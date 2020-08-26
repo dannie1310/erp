@@ -27,7 +27,8 @@ class Archivo extends Model
         'id_empresa_prestadora',
         'obligatorio',
         'complemento_nombre',
-        'nombre_archivo_usuario'
+        'nombre_archivo_usuario',
+        'id_representante_legal'
     ];
 
     public function ctgTipoArchivo()
@@ -52,6 +53,11 @@ class Archivo extends Model
     public function proveedor()
     {
         return $this->belongsTo(Empresa::class, 'id_empresa_proveedor','id');
+    }
+
+    public function representanteLegal()
+    {
+        return $this->belongsTo(RepresentanteLegal::class, 'id_representante_legal','id');
     }
 
     public function scopeCargados($query)
@@ -121,5 +127,10 @@ class Archivo extends Model
             abort(400, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function getNombreDescargaAttribute()
+    {
+        return $this->ctgTipoArchivo->nombre."_".strtolower(str_replace(" ","_",$this->complemento_nombre));
     }
 }
