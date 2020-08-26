@@ -4,9 +4,10 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 
+use Chumper\Zipper\Zipper;
+use Illuminate\Support\Facades\Storage;
 use App\Repositories\Repository as Repository;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
-use Illuminate\Support\Facades\Storage;
 
 class ArchivoService
 {
@@ -24,7 +25,7 @@ class ArchivoService
         $this->repository = new Repository($model);
     }
 
-    public function cargarArchivo($data){
+    public function cargarArchivo_bis($data){
         $directorio = $data['rfc'];
         $hash_file = hash_file('md5', $data["archivo"]);
         $archivo = $this->repository->show($data['id_archivo']);
@@ -57,6 +58,61 @@ class ArchivoService
         return $archivo;
     }
 
+    public function cargarArchivo($data){
+        // require('fpdf_merge.php');
+        // dd('panda', $data['archivo']);
+        $paths = $this->generaDirectorios();
+        $exp = explode("base64,", $data['archivo']);
+        $data = base64_decode($exp[1]);
+        $file = public_path($paths["path_zip"]);
+        file_put_contents($file, $data);
+        $zipper = new Zipper;
+        $zipper->make(public_path($paths["path_zip"]))->extractTo(public_path($paths["path_pdf"]));
+        $zipper->delete();
+
+        $files = array_diff(scandir($paths["path_pdf"]), array('.', '..'));
+
+        $pdf = new \Clegginabox\PDFMerger\PDFMerger;
+        foreach($files as $file) {
+            // dd($paths["path_pdf"]. $file);
+            $pdf->addPDF($paths["path_pdf"]. $file, 'all');
+        }
+        $pdf->merge('file', $paths["path_pdf"].'TEST2.pdf', 'P');
+
+
+
+        // $outputName = $paths["path_pdf"]."merged.pdf";
+        // // dd($outputName);
+        // $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputName ";
+        // foreach($files as $file) {
+        //     $cmd .= $paths["path_pdf"]. $file." ";
+        // }
+        // $result = shell_exec($cmd);
+
+        // Storage::disk('padron_contratista')->put('PAT010101ABC/' .$archivo->ctgTipoArchivo->nombre.$archivo->complemento_nombre.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'))
+        
+        dd($files);
+        dd('stop');
+        
+    }
+
+    private function generaDirectorios()
+    {
+        $nombre = date("Ymdhis");
+        $nombre_zip = $nombre . ".zip";
+        $dir_zip = "uploads/padron-zip/zip/";
+        $dir_pdf = "uploads/padron-zip/pdf/";
+        $path_pdf = $dir_pdf . $nombre . "/";
+        $path_zip = $dir_zip . $nombre_zip;
+        if (!file_exists($dir_zip) && !is_dir($dir_zip)) {
+            mkdir($dir_zip, 777, true);
+        }
+        if (!file_exists($dir_pdf) && !is_dir($dir_pdf)) {
+            mkdir($dir_pdf, 777, true);
+        }
+        return ["path_zip" => $path_zip, "path_pdf" => $path_pdf, "dir_pdf" => $dir_pdf];
+    }
+
     public function documento($data, $id){
         $archivo = $this->repository->show($id);
         if($archivo->prestadora)
@@ -66,7 +122,8 @@ class ArchivoService
             $directorio = $archivo->empresa->rfc;
         }
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
-        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo .'.'. $archivo->extension_archivo);
+        // dd($storagePath . $directorio . '/' . $archivo->nombre_archivo);
+        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo );
     }
 
     public function getArchivosPrestadora($data){
