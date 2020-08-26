@@ -67,7 +67,7 @@ class Empresa extends Model
         return $this->hasMany(Contacto::class,"id_empresa_proveedora", "id");
     }
 
-    public function representatesLegales()
+    public function representantesLegales()
     {
         return $this->hasManyThrough(RepresentanteLegal::class, EmpresaRepresentanteLegal::class, 'id_empresa', 'id', 'id', 'id_representante_legal');
     }
@@ -124,6 +124,15 @@ class Empresa extends Model
         return $cantidad_archivos;
     }
 
+    public function getTipoEmpresaAttribute($rfc){
+        $caracter = substr($rfc,3,1);
+        if(is_numeric($caracter)){
+            return  1;
+        } else {
+            return  2;
+        }
+    }
+
     public function registrar($data){
         try {
             DB::connection('seguridad')->beginTransaction();
@@ -137,21 +146,17 @@ class Empresa extends Model
                 }
             }
 
-            if(key_exists("representantes_legales",$data)){
-                foreach($data["representantes_legales"] as $representante_legal_data)
-                {
-                    $representante_legal = RepresentanteLegal::where("curp",$representante_legal_data["curp"])->first();
-                    if(!$representante_legal){
-                        $representante_legal = RepresentanteLegal::create($representante_legal_data);
-                    }
-                    EmpresaRepresentanteLegal::create(["id_representante_legal"=>$representante_legal->id, "id_empresa"=>$empresa->id]);
-                }
-            }
-
             if(key_exists("id_especialidad", $data)){
                 array_push($data["id_especialidades"], $data["id_especialidad"]);
             }
 
+            if(count($data["id_especialidades"] )>0){
+                foreach($data["id_especialidades"] as $id_especialidad){
+                    EmpresaEspecialidad::create(["id_especialidad"=>$id_especialidad, "id_empresa_proveedora"=>$empresa->id]);
+                }
+            } else {
+                abort(500, "Debe existir al menos una especialidad para la empresa.");
+            }
 
             foreach($data["archivos"] as $archivo){
                 $empresa->archivos()->create(
@@ -163,12 +168,41 @@ class Empresa extends Model
                 );
             }
 
-            if(count($data["id_especialidades"] )>0){
-                foreach($data["id_especialidades"] as $id_especialidad){
-                    EmpresaEspecialidad::create(["id_especialidad"=>$id_especialidad, "id_empresa_proveedora"=>$empresa->id]);
+            if($empresa->tipo_empresa == 1){
+                if(key_exists("representantes_legales",$data)){
+                    foreach($data["representantes_legales"] as $representante_legal_data)
+                    {
+                        $representante_legal = RepresentanteLegal::where("curp",$representante_legal_data["curp"])->first();
+                        if(!$representante_legal){
+                            $representante_legal = RepresentanteLegal::create($representante_legal_data);
+                        }
+                        EmpresaRepresentanteLegal::create(["id_representante_legal"=>$representante_legal->id, "id_empresa"=>$empresa->id]);
+                    }
+                    $empresa->load("representantesLegales");
+                    $i=0;
+                    foreach($empresa->representantesLegales as $representante_legal){
+                        if($i==0){
+                            $archivo = $empresa->archivos->where("id_tipo_archivo",3)->first();
+                            $archivo->complemento_nombre = $representante_legal->nombre_completo;
+                            $archivo->id_representante_legal = $representante_legal->id;
+                            $archivo->save();
+                        } else {
+                            $empresa->archivos()->create(
+                                [
+                                    "id_tipo_archivo"=>3,
+                                    "obligatorio"=>1,
+                                    "complemento_nombre"=>$representante_legal->nombre_completo,
+                                    "id_representante_legal"=>$representante_legal->id,
+                                ]
+                            );
+                        }
+                        $i++;
+                    }
                 }
-            } else {
-                abort(500, "Debe existir al menos una especialidad para la empresa.");
+                if(!$empresa->representantesLegales()->count()>0)
+                {
+                    abort(500, "Debe existir al menos un representante legal para la empresa.");
+                }
             }
 
             DB::connection('seguridad')->commit();
