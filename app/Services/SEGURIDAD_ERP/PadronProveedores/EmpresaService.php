@@ -164,7 +164,7 @@ class EmpresaService
         }else {
             $this->validaEFO($data["rfc"]);
             $this->validaRFC($data["rfc"]);
-            $data["id_tipo_empresa"] = $this->getTipoEmpresa($data["rfc"]);
+            $data["id_tipo_personalidad"] = $this->getTipoPersonalidad($data["rfc"]);
             if (!is_numeric($data["id_giro"])) {
                 $data["id_giro"] = $this->getIdGiro($data["giro"]);
             }
@@ -175,7 +175,7 @@ class EmpresaService
                 }
             }
 
-            $data["archivos"] = $this->getTiposArchivos($data["id_tipo_empresa"]);
+            $data["archivos"] = $this->getTiposArchivos($data["id_tipo_empresa"], $data["id_tipo_personalidad"]);
             $this->generaDirectorios($data["rfc"]);
 
             return $this->repository->store($data);
@@ -206,9 +206,9 @@ class EmpresaService
         }
     }
 
-    private function getTiposArchivos($id_tipo_empresa)
+    private function getTiposArchivos($id_tipo_empresa, $id_tipo_personalidad)
     {
-        return $this->repository->getTiposArchivos($id_tipo_empresa);
+        return $this->repository->getTiposArchivos($id_tipo_empresa, $id_tipo_personalidad);
     }
 
     private function getIdGiro($giro){
@@ -218,7 +218,7 @@ class EmpresaService
         return $this->repository->getIdEspecialidad($especialidad);
     }
 
-    private function getTipoEmpresa($rfc){
+    private function getTipoPersonalidad($rfc){
         $caracter = substr($rfc,3,1);
         if(is_numeric($caracter)){
             return  1;
@@ -289,6 +289,7 @@ class EmpresaService
         $this->validaRFC($data['rfc']);
         $this->validaEFO($data['rfc']);
         $empresa = $this->repository->show($data['id_empresa']);
+        $data["id_tipo_personalidad"] = $this->getTipoPersonalidad($data["rfc"]);
         $prestadora = $this->repository->registrarPrestadora($data);
         $this->generaDirectorios($empresa->rfc . '/'.$prestadora->rfc);
 
