@@ -87,8 +87,8 @@ class EmpresaTransformer extends TransformerAbstract
      * @return \League\Fractal\Resource\Collection|null
      */
     public function includeArchivos(Empresa $model){
-        if($archivos = $model->archivos){
-            return $this->collection($archivos->sortBy('id_tipo_archivo'), new ArchivoTransformer);
+        if($archivos = $model->archivos()->orderBy("obligatorio","desc")->get()){
+            return $this->collection($archivos, new ArchivoTransformer);
         }
         return null;
     }
