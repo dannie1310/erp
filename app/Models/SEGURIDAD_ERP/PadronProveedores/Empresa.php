@@ -67,6 +67,11 @@ class Empresa extends Model
         return $this->hasMany(Contacto::class,"id_empresa_proveedora", "id");
     }
 
+    public function representatesLegales()
+    {
+        return $this->hasManyThrough(RepresentanteLegal::class, EmpresaRepresentanteLegal::class, 'id_empresa', 'id', 'id', 'id_representante_legal');
+    }
+
     public function scopeProveedores($query)
     {
         return $query->whereIn("id_tipo_empresa", [1,2]);
@@ -129,6 +134,17 @@ class Empresa extends Model
                 foreach($data["contactos"] as $contacto)
                 {
                     $empresa->contactos()->create($contacto);
+                }
+            }
+
+            if(key_exists("representantes_legales",$data)){
+                foreach($data["representantes_legales"] as $representante_legal_data)
+                {
+                    $representante_legal = RepresentanteLegal::where("curp",$representante_legal_data["curp"])->first();
+                    if(!$representante_legal){
+                        $representante_legal = RepresentanteLegal::create($representante_legal_data);
+                    }
+                    EmpresaRepresentanteLegal::create(["id_representante_legal"=>$representante_legal->id, "id_empresa"=>$empresa->id]);
                 }
             }
 
