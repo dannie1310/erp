@@ -35,7 +35,7 @@
                                             <div class="form-group error-content">
                                                 <model-list-select
                                                         name="id_subcontrato"
-                                                        placeholder="Seleccionar o buscar por número de folio o por referencia"
+                                                        :placeholder="cargando?'Cargando...':'Seleccionar o buscar por número de folio o por referencia'"
                                                         data-vv-as="Subcontrato"
                                                         v-model="id_subcontrato"
                                                         option-value="id"
@@ -119,6 +119,7 @@
             },
 
             getSubcontratosSinFondo() {
+                this.cargando = true;
                  return this.$store.dispatch('contratos/subcontrato/index', {
                     config: {
                         params: {
@@ -128,6 +129,7 @@
                 })
                     .then(data => {
                         this.subcontratos = data;
+                        this.cargando = false;
                     })
             },
             numeroFolioAndReferencia (item) {
