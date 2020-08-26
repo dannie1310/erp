@@ -169,14 +169,14 @@
 
                             <td>
                                 <input class="form-control"
-                                       :name="`nombre[${i}]`"
+                                       :name="`nombre_rl[${i}]`"
                                        :data-vv-as="`'Nombre ${i + 1}'`"
                                        v-model="representante_legal.nombre"
-                                       :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
+                                       :class="{'is-invalid': errors.has(`nombre_rl[${i}]`)}"
                                        v-validate="{ required: true, min:3 }"
-                                       :id="`nombre[${i}]`"
+                                       :id="`nombre_rl[${i}]`"
                                        :maxlength="50"/>
-                                <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
+                                <div class="invalid-feedback" v-show="errors.has(`nombre_rl[${i}]`)">{{ errors.first(`nombre_rl[${i}]`) }}</div>
                             </td>
 
                             <td>
@@ -477,17 +477,28 @@
                     this.registro_proveedor.razon_social = this.registro_proveedor.razon_social.toUpperCase();
                     this.registro_proveedor.rfc = this.registro_proveedor.rfc.toUpperCase();
                     if (result) {
-                        this.registro_proveedor.representantes_legales.forEach(e => {
-                            if(!this.validaCurp(e.curp)){
-                                swal(
-                                    'CURP inválido',
-                                    e.curp,
-                                    'error'
-                                );
-                            } else {
-                                this.store();
-                            }
-                        });
+                        var error_curp = 0;
+                        var BreakException = {};
+                        try{
+                            this.registro_proveedor.representantes_legales.forEach(e => {
+                                if(!this.validaCurp(e.curp)){
+                                    swal(
+                                        'CURP inválido',
+                                        e.curp,
+                                        'error'
+                                    );
+                                    error_curp = 1;
+                                    throw BreakException;
+                                }
+                            });
+                        } catch (e){
+                            if (e !== BreakException) throw e;
+                        }
+
+                        if(error_curp == 0)
+                        {
+                            this.store();
+                        }
                     }
                 });
             },
