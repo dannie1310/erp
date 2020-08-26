@@ -142,7 +142,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" v-if="tipo_empresa == 1">
             <div class="card-header">
                 <label ><i class="fa fa-th-list icon"></i>Representantes Legales</label>
             </div>
@@ -382,6 +382,17 @@
             this.cargando = true;
             this.getGiros();
         },
+        computed: {
+            tipo_empresa : function () {
+                var digito_validacion;
+                digito_validacion = this.registro_proveedor.rfc.substr(3,1);
+                if(!isNaN(parseInt(digito_validacion))){
+                    return 1;
+                } else {
+                    return 2;
+                }
+            }
+        },
         methods:{
             especialidadesAcomodar () {
                 this.especialidades = this.especialidades.map(i => ({
@@ -478,21 +489,23 @@
                     this.registro_proveedor.rfc = this.registro_proveedor.rfc.toUpperCase();
                     if (result) {
                         var error_curp = 0;
-                        var BreakException = {};
-                        try{
-                            this.registro_proveedor.representantes_legales.forEach(e => {
-                                if(!this.validaCurp(e.curp)){
-                                    swal(
-                                        'CURP inválido',
-                                        e.curp,
-                                        'error'
-                                    );
-                                    error_curp = 1;
-                                    throw BreakException;
-                                }
-                            });
-                        } catch (e){
-                            if (e !== BreakException) throw e;
+                        if(this.tipo_empresa==1){
+                            var BreakException = {};
+                            try{
+                                this.registro_proveedor.representantes_legales.forEach(e => {
+                                    if(!this.validaCurp(e.curp)){
+                                        swal(
+                                            'CURP inválido',
+                                            e.curp,
+                                            'error'
+                                        );
+                                        error_curp = 1;
+                                        throw BreakException;
+                                    }
+                                });
+                            } catch (e){
+                                if (e !== BreakException) throw e;
+                            }
                         }
 
                         if(error_curp == 0)
