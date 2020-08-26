@@ -15,7 +15,6 @@
 
                                         <th >Obligatorio</th>
                                         <th >Sección</th>
-                                        <th >Nombre Archivo</th>
                                         <th >Usuario Cargo</th>
                                         <th >Fecha Hora Carga</th>
                                         <th >Acciones</th>
@@ -50,7 +49,6 @@
                                                 <td>{{archivo.tipo_documento}}</td>
                                                 <td><i class="fa fa-check" v-if="archivo.obligatorio == 1"></i></td>
                                                 <td>{{archivo.seccion}}</td>
-                                                <td>{{archivo.nombre_archivo}}</td>
                                                 <td>{{archivo.registro}}</td>
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
