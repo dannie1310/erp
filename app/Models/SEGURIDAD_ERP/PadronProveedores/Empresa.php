@@ -124,8 +124,8 @@ class Empresa extends Model
         return $cantidad_archivos;
     }
 
-    public function getTipoEmpresaAttribute($rfc){
-        $caracter = substr($rfc,3,1);
+    public function getTipoEmpresaAttribute(){
+        $caracter = substr($this->rfc,3,1);
         if(is_numeric($caracter)){
             return  1;
         } else {
