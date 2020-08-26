@@ -128,4 +128,9 @@ class Archivo extends Model
             throw $e;
         }
     }
+
+    public function getNombreDescargaAttribute()
+    {
+        return $this->ctgTipoArchivo->nombre."_".strtolower(str_replace(" ","_",$this->complemento_nombre));
+    }
 }

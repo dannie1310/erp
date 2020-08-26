@@ -44,9 +44,9 @@ class ArchivoService
         }
 
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
-        if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->ctgTipoArchivo->nombre.$archivo->complemento_nombre.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'))){
+        if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'))){
             $archivo->hash_file = $hash_file;
-            $archivo->nombre_archivo = $archivo->ctgTipoArchivo->nombre.$archivo->complemento_nombre;
+            $archivo->nombre_archivo = $archivo->nombre_descarga;
             $archivo->nombre_archivo_usuario = $data["archivo_nombre"];
             $archivo->extension_archivo = $nombre_archivo[count($nombre_archivo)-1];
             $archivo->save();
@@ -59,7 +59,6 @@ class ArchivoService
 
     public function documento($data, $id){
         $archivo = $this->repository->show($id);
-        /*if($data['rfc_empresa'] != 'undefined') $directorio = $data['rfc_empresa'] . '/' . $directorio;*/
         if($archivo->prestadora)
         {
             $directorio = $archivo->proveedor->rfc .'/'. $archivo->prestadora->rfc;
