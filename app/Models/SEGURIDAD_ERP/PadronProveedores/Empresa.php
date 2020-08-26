@@ -20,6 +20,7 @@ class Empresa extends Model
         'no_imss',
         'id_giro',
         'id_tipo_empresa',
+        'id_tipo_personalidad'
     ];
 
     public function giro()
@@ -70,6 +71,11 @@ class Empresa extends Model
     public function representantesLegales()
     {
         return $this->hasManyThrough(RepresentanteLegal::class, EmpresaRepresentanteLegal::class, 'id_empresa', 'id', 'id', 'id_representante_legal');
+    }
+
+    public function tipoPersonalidad()
+    {
+        return $this->belongsTo(CtgTipoPersonalidad::class, "id_tipo_personalidad","id" );
     }
 
     public function scopeProveedores($query)

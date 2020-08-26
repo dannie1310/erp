@@ -61,8 +61,14 @@ class EmpresaRepository extends Repository implements RepositoryInterface
         return null;
     }
 
-    public function getTiposArchivos($id_tipo_empresa){
-        $tipos_archivos = CtgTipoArchivoTipoEmpresa::where("id_tipo_empresa","=", $id_tipo_empresa)->get();
+    public function getTiposArchivos($id_tipo_empresa, $id_tipo_personalidad = null){
+        if($id_tipo_personalidad){
+            $tipos_archivos = CtgTipoArchivoTipoEmpresa::where("id_tipo_empresa","=", $id_tipo_empresa)
+                ->where("id_tipo_personalidad", $id_tipo_personalidad)->get();
+        } else {
+            $tipos_archivos = CtgTipoArchivoTipoEmpresa::where("id_tipo_empresa","=", $id_tipo_empresa)->get();
+        }
+
         $tipos_archivos_arr = [];
         $ultimos_anios =[];
         for($i = 1; $i<=3;$i++){
@@ -74,14 +80,14 @@ class EmpresaRepository extends Repository implements RepositoryInterface
                 $tipos_archivos_arr[] = [
                     "id_tipo_archivo" => $tipo_archivo->id_tipo_archivo,
                     "complemento_nombre" => null,
-                    "obligatorio" => $tipo_archivo->tipoArchivo->obligatorio,
+                    "obligatorio" => $tipo_archivo->obligatorio,
                 ];
             } else{
                 foreach ($ultimos_anios as $ultimo_anio){
                     $tipos_archivos_arr[] = [
                         "id_tipo_archivo" => $tipo_archivo->id_tipo_archivo,
                         "complemento_nombre" => $ultimo_anio,
-                        "obligatorio" => $tipo_archivo->tipoArchivo->obligatorio,
+                        "obligatorio" => $tipo_archivo->obligatorio,
                     ];
                 }
             }
@@ -122,7 +128,8 @@ class EmpresaRepository extends Repository implements RepositoryInterface
                 'razon_social' => $data['razon_social'],
                 'rfc' => $data['rfc'],
                 'id_tipo_empresa' => 3,
-                'no_imss' => $data['nss']
+                'no_imss' => $data['nss'],
+                'id_tipo_personalidad' =>$data["id_tipo_personalidad"]
             ]);
             EmpresaPrestadora::create([
                 'id_empresa_proveedor' => $data['id_empresa'],
