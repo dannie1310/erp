@@ -402,7 +402,7 @@ export default {
         },
         uploadPDF(data){
             return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
-                data: formData,
+                data: data,
                 config: {
                         params: { _method: 'POST'}
                     }
@@ -413,7 +413,7 @@ export default {
         },
         uploadZIP(data){
             return this.$store.dispatch('padronProveedores/archivo/cargarArchivoZIP', {
-                data: formData,
+                data: data,
                 config: {
                         params: { _method: 'POST'}
                     }
