@@ -68,6 +68,13 @@ class ArchivoService
         }
         
         $archivo = $this->repository->show($data['id_archivo']);
+        $hash_file = hash_file('md5', $data["archivo"]);
+        $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
+
+        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
+            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
+            ;
+        }
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
         }
@@ -85,22 +92,16 @@ class ArchivoService
 
         $pdf = new \Clegginabox\PDFMerger\PDFMerger;
         foreach($files as $file) {
-            // dd($paths["path_pdf"]. $file);
+            $file_explode = \explode('.', $file);
+            if(strtolower ( $file_explode[count($file_explode)-1]) != 'pdf'){
+                $this->removerCarpetas($paths["dir_pdf"]);
+                abort(403, 'El archivo contiene documentos que no son del tipo PDF.');
+            }
             $pdf->addPDF($paths["path_pdf"]. $file, 'all');
         }
         $pdf->merge('file', $paths["path_pdf"].'temp_pdf.pdf', 'P');
 
         $pdf_file = fopen($paths["path_pdf"].'temp_pdf.pdf', 'r');
-
-        $hash_file = hash_file('md5', $paths["path_pdf"].'temp_pdf.pdf');
-        $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
-
-        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
-            array_map( 'unlink', array_filter((array) glob($paths["path_pdf"] . '*') ) );
-            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")");
-        }
-
-        
 
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
         if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'.pdf', $pdf_file )){
@@ -109,8 +110,9 @@ class ArchivoService
             $archivo->nombre_archivo_usuario = $data["archivo_nombre"];
             $archivo->extension_archivo = 'pdf';
             $archivo->save();
-            Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.pdf',  $paths["path_pdf"].'temp_pdf.pdf');
+            Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.pdf',  $pdf_file);
         }else{
+            $this->removerCarpetas($paths["dir_pdf"]);
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
         
