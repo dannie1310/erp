@@ -263,7 +263,7 @@
                 this.empresa_registrar.especialidades_nuevas = [];
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['giro', 'especialidades', 'contactos']}
+                    params: {include: ['giro', 'especialidades', 'contactos','tipo']}
                 }).then(data => {
                     this.empresa_registrar.id = data.id;
                     this.empresa_registrar.rfc = data.rfc;
