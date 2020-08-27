@@ -299,11 +299,18 @@ class EmpresaService
                 foreach ($borradas as $borrar)
                 {
                     $representante_legal = RepresentanteLegal::where('id','=',$borrar)->first();
+                    $empresas_relacionadas = $representante_legal->empresas()->where("id_empresa","!=",$id)->get();
+                    if(count($empresas_relacionadas)>0){
+                        $data['representantes_desasociados'] = $borradas;
+
+                    } else {
+                        $data['representantes_borrados'] = $borradas;
+                    }
                     if($representante_legal->archivo != null) {
                         $this->eliminarArchivo($empresa->rfc, $representante_legal->archivo->nombre_archivo . "." . $representante_legal->archivo->extension_archivo);
                     }
                 }
-                $data['representantes_borrados'] = $borradas;
+
             }
             if(count($data['contactos']['data']) == 0){
                 abort(500, "Debe existir al menos un contacto para la empresa.");

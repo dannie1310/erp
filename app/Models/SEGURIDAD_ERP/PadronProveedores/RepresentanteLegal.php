@@ -24,6 +24,11 @@ class RepresentanteLegal extends Model
         return $this->belongsTo(Archivo::class,'id','id_representante_legal');
     }
 
+    public function empresas()
+    {
+        return $this->hasManyThrough(Empresa::class, EmpresaRepresentanteLegal::class, 'id_representante_legal', 'id', 'id', 'id_empresa');
+    }
+
     public function getNombreCompletoAttribute()
     {
         return $this->nombre.' '.$this->apellido_paterno.' '.$this->apellido_materno;
