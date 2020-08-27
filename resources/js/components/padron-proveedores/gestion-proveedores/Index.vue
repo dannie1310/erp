@@ -43,17 +43,19 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', thClass:'th_index', sortable: false },
+                    { title: '#', field: 'index', thClass:'th_index_corto', sortable: false },
+                    { title: 'Id', field: 'id', thClass:'th_index', sortable: true },
+                    { title: 'Tipo', field: 'tipo', thClass:'th_rfc', sortable: false },
                     { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'RFC', field: 'rfc', thClass:'th_rfc', tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Usuario Inicio',  field: 'usuario_inicio', thClass:'th_c250', sortable: false, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Estado Expediente',  field: 'estado_expediente', thClass:'th_c150', sortable: false, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Avance Expediente', field: 'avance_expediente', tdClass:'center', thClass:'th_c150', sortable: false, tdComp: require('../../globals/ProgressBar').default, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Usuario Inicio',  field: 'usuario_inicio', thClass:'th_c200', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Estado Expediente',  field: 'estado_expediente', thClass:'th_c100', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Avance Expediente', field: 'avance_expediente', tdClass:'center', thClass:'th_c100', sortable: false, tdComp: require('../../globals/ProgressBar').default, thComp: require('../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons', thClass:'th_c100', tdClass:'center',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: { scope:['proveedores'], include: 'empresa', sort: 'razon_social', order: 'desc'},
+                query: { scope:['proveedores'], include: ['empresa','tipo'], sort: 'razon_social', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -122,6 +124,8 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             razon_social: empresa.razon_social,
+                            tipo: empresa.tipo.descripcion,
+                            id: empresa.id,
                             rfc: empresa.rfc,
                             estado_expediente: empresa.estado_expediente,
                             avance_expediente: $.extend({}, {
