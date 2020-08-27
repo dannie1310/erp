@@ -110,7 +110,7 @@
                     </div>
                 </div>
                 <br>
-                <div class="card" v-if="empresa_registrar.tipo_empresa == 1">
+                <div class="card" v-if="empresa_registrar.tipo_personalidad == 1">
                     <div class="card-header">
                         <label ><i class="fa fa-th-list icon"></i>Representantes Legales</label>
                     </div>
@@ -308,7 +308,7 @@
                     'nueva_especialidad' : false,
                     'especialidades_nuevas':[],
                     'especialidad_nuevo' : '',
-                    'tipo_empresa' : ''
+                    'tipo_personalidad' : ''
                 },
                 contactos : [],
                 representantes_legales : [],
@@ -367,7 +367,7 @@
                 this.empresa_registrar.especialidades_nuevas = [];
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['giro', 'especialidades', 'contactos', 'tipo', 'representantesLegales']}
+                    params: {include: ['giro', 'especialidades', 'contactos', 'tipo', 'representantesLegales','personalidad']}
                 }).then(data => {
                     this.empresa_registrar.id = data.id;
                     this.empresa_registrar.rfc = data.rfc;
@@ -375,7 +375,7 @@
                     this.empresa_registrar.nss = data.nss;
                     this.empresa_registrar.giro = data.giro;
                     this.empresa_registrar.especialidades = data.especialidades ? data.especialidades : [];
-                    this.empresa_registrar.tipo_empresa = data.tipo.id;
+                    this.empresa_registrar.tipo_personalidad = data.personalidad.id;
                     this.contactos = data.contactos ? data.contactos : [];
                     this.representantes_legales = data.representantesLegales ? data.representantesLegales : [];
                     this.agregarEspecialidades();

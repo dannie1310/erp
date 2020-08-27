@@ -281,7 +281,7 @@ class EmpresaService
             if($data['nueva_especialidad']) {
                 array_push($data['especialidades_nuevas'], $this->getIdEspecialidad($data['especialidad_nuevo']));
             }
-            if($data['tipo_empresa'] == 1)
+            if($data['tipo_personalidad'] == 1)
             {
                 if(count($data['representantes_legales']['data']) == 0) {
                     abort(500, "Debe existir al menos un representante legal para la empresa.");

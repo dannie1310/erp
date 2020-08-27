@@ -22,7 +22,8 @@ class EmpresaTransformer extends TransformerAbstract
         'proveedor',
         'archivos',
         'contactos',
-        'representantesLegales'
+        'representantesLegales',
+        'personalidad'
     ];
 
     public function transform(Empresa $model)
@@ -140,6 +141,19 @@ class EmpresaTransformer extends TransformerAbstract
         if($representantes = $model->representantesLegales)
         {
             return $this->collection($representantes, new RepresentanteLegalTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includePersonalidad(Empresa $model)
+    {
+        if($personalidad = $model->tipoPersonalidad)
+        {
+            return $this->item($personalidad, new CtgTipoPersonalidadTransformer);
         }
         return null;
     }
