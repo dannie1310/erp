@@ -131,7 +131,7 @@
         },
     }
 </script>
-<style>
+<style scoped>
     .money
     {
        text-align: right;
