@@ -162,8 +162,8 @@ class EmpresaService
             }
 
         }else {
-            $this->validaEFO($data["rfc"]);
-            $this->validaRFC($data["rfc"]);
+            // $this->validaEFO($data["rfc"]);
+            // $this->validaRFC($data["rfc"]);
             $data["id_tipo_empresa"] = $this->getTipoEmpresa($data["rfc"]);
             if (!is_numeric($data["id_giro"])) {
                 $data["id_giro"] = $this->getIdGiro($data["giro"]);
