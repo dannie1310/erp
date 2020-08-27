@@ -2,17 +2,33 @@
     <span>
         <div class="card">
             <div class="card-header">
-                <label ><i class="fa fa-th-list icon"></i>Datos Generales del Proveedor</label>
+                <label ><i class="fa fa-th-list icon"></i>Datos Generales</label>
             </div>
             <div class="card-body">
                  <div class="form-row">
-                     <div class="form-group col-md-12 error-content">
-                         <label for="razon_social" class="col-form-label">Razón Social:</label>
+                     <div class="col-md-3">
+                        <label class="col-form-label">Tipo de Empresa:</label>
+                        <div class="btn-group btn-group-toggle">
+                            <label class="btn btn-outline-secondary" :class="registro_proveedor.id_tipo_empresa === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos_empresa" :key="llave">
+                                <i :class="llave==1 ?'fa fa-boxes':'fa fa-building'"></i>
+                                <input type="radio"
+                                       class="btn-group-toggle"
+                                       name="id_tipo"
+                                       :id="'tipo' + llave"
+                                       :value="llave"
+                                       autocomplete="on"
+                                       v-model.number="registro_proveedor.id_tipo_empresa">
+                                        {{ tipo}}
+                            </label>
+                        </div>
+                     </div>
+                     <div class="form-group col-md-9 error-content">
+                         <label for="razon_social" class="col-form-label">Nombre / Razón Social:</label>
                          <input
                                 style="text-transform:uppercase;"
                                 type="text"
                                 name="razon_social"
-                                data-vv-as="'Razón Social'"
+                                data-vv-as="'Nombre / Razón Social'"
                                 v-validate="{required: true, min:6}"
                                 class="form-control"
                                 id="razon_social"
@@ -349,9 +365,14 @@
                 especialidades: [],
                 agregar_giro : false,
                 agregar_especialidad : false,
+                tipos_empresa: {
+                    2: "Contratista",
+                    1: "Proveedor"
+                },
                 registro_proveedor : {
                     id_especialidades:[],
                     razon_social : '',
+                    id_tipo_empresa : 2,
                     rfc : '',
                     no_imss: '',
                     giro : '',
