@@ -11,7 +11,7 @@
 </template>
 
 <script>
-    import PDF from '../FormatoEntradaAlmacen';
+    import PDF from '../Formato';
     export default {
         name: "ActionButtons",
         components: {PDF},

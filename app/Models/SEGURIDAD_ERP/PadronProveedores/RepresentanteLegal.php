@@ -19,9 +19,13 @@ class RepresentanteLegal extends Model
         'curp',
     ];
 
+    public function archivo()
+    {
+        return $this->belongsTo(Archivo::class,'id','id_representante_legal');
+    }
+
     public function getNombreCompletoAttribute()
     {
         return $this->nombre.' '.$this->apellido_paterno.' '.$this->apellido_materno;
     }
-
 }

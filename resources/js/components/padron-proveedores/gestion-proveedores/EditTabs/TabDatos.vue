@@ -109,7 +109,86 @@
                         </span>
                     </div>
                 </div>
-
+                <br>
+                <div class="card" v-if="empresa_registrar.tipo_empresa == 1">
+                    <div class="card-header">
+                        <label ><i class="fa fa-th-list icon"></i>Representantes Legales</label>
+                    </div>
+                    <div class="card-body table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="bg-gray-light index_corto">#</th>
+                                    <th class="bg-gray-light">Nombre(s)</th>
+                                    <th class="bg-gray-light">Apellido Paterno</th>
+                                    <th class="bg-gray-light">Apellido Materno</th>
+                                    <th class="bg-gray-light">CURP</th>
+                                    <th class="bg-gray-light icono">
+                                        <button type="button" class="btn btn-sm btn-outline-success" @click="agregarRepresentanteLegal" :disabled="cargando">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(representante_legal, i) in representantes_legales.data" >
+                                    <td class="index_corto">{{ i + 1 }}</td>
+                                    <td>
+                                        <input class="form-control"
+                                               :name="`nombre_rl[${i}]`"
+                                               :data-vv-as="`'Nombre ${i + 1}'`"
+                                               v-model="representante_legal.nombre"
+                                               :class="{'is-invalid': errors.has(`nombre_rl[${i}]`)}"
+                                               v-validate="{ required: true, min:3 }"
+                                               :id="`nombre_rl[${i}]`"
+                                               :maxlength="50"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`nombre_rl[${i}]`)">{{ errors.first(`nombre_rl[${i}]`) }}</div>
+                                    </td>
+                                    <td>
+                                        <input class="form-control"
+                                               :name="`apellido_paterno[${i}]`"
+                                               :data-vv-as="`'Apellido Paterno ${i + 1}'`"
+                                               v-model="representante_legal.apellido_paterno"
+                                               :class="{'is-invalid': errors.has(`apellido_paterno[${i}]`)}"
+                                               v-validate="{ required: true, min:2 }"
+                                               :id="`apellido_paterno[${i}]`"
+                                               :maxlength="50"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`apellido_paterno[${i}]`)">{{ errors.first(`apellido_paterno[${i}]`) }}</div>
+                                    </td>
+                                    <td>
+                                        <input class="form-control"
+                                               :name="`apellido_materno[${i}]`"
+                                               :data-vv-as="`'Apellido Materno ${i + 1}'`"
+                                               v-model="representante_legal.apellido_materno"
+                                               :class="{'is-invalid': errors.has(`apellido_materno[${i}]`)}"
+                                               v-validate="{ required: true, min:2 }"
+                                               :id="`apellido_materno[${i}]`"
+                                               :maxlength="50"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`apellido_materno[${i}]`)">{{ errors.first(`apellido_materno[${i}]`) }}</div>
+                                    </td>
+                                    <td v-if="representante_legal.id">{{representante_legal.curp}}</td>
+                                    <td v-else>
+                                        <input class="form-control"
+                                               :name="`curp[${i}]`"
+                                               :data-vv-as="`'CURP ${i + 1}'`"
+                                               v-model="representante_legal.curp"
+                                               :class="{'is-invalid': errors.has(`curp[${i}]`)}"
+                                               v-validate="{ required: true, min: 18, regex: /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/}"
+                                               :id="`curp[${i}]`"
+                                               :maxlength="18"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`curp[${i}]`)">{{ errors.first(`curp[${i}]`) }}</div>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarRepresentanteLegal(i)" :disabled="representantes_legales.data.length == 1" >
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <br>
                 <div class="card">
                     <div class="card-header">
@@ -228,9 +307,11 @@
                     'especialidades': [],
                     'nueva_especialidad' : false,
                     'especialidades_nuevas':[],
-                    'especialidad_nuevo' : ''
+                    'especialidad_nuevo' : '',
+                    'tipo_empresa' : ''
                 },
                 contactos : [],
+                representantes_legales : [],
                 giros: [],
                 especialidades: [],
                 cargando : true
@@ -254,6 +335,18 @@
             quitarContacto(index){
                 this.contactos.data.splice(index, 1);
             },
+            agregarRepresentanteLegal(){
+                var array = {
+                    'nombre' : '',
+                    'apellido_paterno' : '',
+                    'apellido_materno' : '',
+                    'curp' : ''
+                }
+                this.representantes_legales.data.push(array);
+            },
+            quitarRepresentanteLegal(index){
+                this.representantes_legales.data.splice(index, 1);
+            },
             especialidadesAcomodar () {
                this.especialidades = this.especialidades.map(i => ({
                     id: i.id,
@@ -274,7 +367,7 @@
                 this.empresa_registrar.especialidades_nuevas = [];
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['giro', 'especialidades', 'contactos','tipo']}
+                    params: {include: ['giro', 'especialidades', 'contactos', 'tipo', 'representantesLegales']}
                 }).then(data => {
                     this.empresa_registrar.id = data.id;
                     this.empresa_registrar.rfc = data.rfc;
@@ -282,7 +375,9 @@
                     this.empresa_registrar.nss = data.nss;
                     this.empresa_registrar.giro = data.giro;
                     this.empresa_registrar.especialidades = data.especialidades ? data.especialidades : [];
+                    this.empresa_registrar.tipo_empresa = data.tipo.id;
                     this.contactos = data.contactos ? data.contactos : [];
+                    this.representantes_legales = data.representantesLegales ? data.representantesLegales : [];
                     this.agregarEspecialidades();
                 })
             },
@@ -323,6 +418,10 @@
                         {
                             swal('¡Error!', 'Debe existir al menos un contacto.', 'error')
                         }
+                        else if (this.representantes_legales.data.length == 0)
+                        {
+                            swal('¡Error!', 'Debe existir al menos un representante legal.', 'error')
+                        }
                         else {
                             this.update()
                         }
@@ -332,15 +431,12 @@
             update() {
                 this.empresa_registrar.razon_social = this.empresa_registrar.razon_social.toUpperCase();
                 this.empresa_registrar.contactos = this.contactos;
+                this.empresa_registrar.representantes_legales = this.representantes_legales;
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
                     data: this.$data.empresa_registrar,
-                    params: {include: ['prestadora', 'archivos']}
                 }).then((data) => {
-                    this.getEspecialidades();
-                    this.getGiros();
-                    this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
-                    this.find();
+                    location.reload();
                 })
             },
         }
