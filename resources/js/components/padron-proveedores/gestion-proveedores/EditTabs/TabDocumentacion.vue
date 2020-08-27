@@ -2,7 +2,14 @@
     <span>
         <div class="card">
             <div class="card-body">
-                <div class="row" v-if="empresa" >
+                <div class="row" v-if="!areas">
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" v-if="areas" >
                     <div class="col-md-12">
                         <div class="table-responsive">
                             <table class="table table-striped" id="documentos" name="documentos">
