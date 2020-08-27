@@ -412,7 +412,7 @@
                     if (result) {
                         if(this.empresa_registrar.especialidades_nuevas.length == 0 && this.empresa_registrar.nueva_especialidad == false)
                         {
-                            swal('¡Error!', 'Debe existir al menos una especialidad seleccionada.', 'error')
+                            swal('¡Error!', 'Debe existir al menos una especialidad seleccionada..', 'error')
                         }
                         else if (this.contactos.data.length == 0)
                         {
@@ -423,10 +423,59 @@
                             swal('¡Error!', 'Debe existir al menos un representante legal.', 'error')
                         }
                         else {
-                            this.update()
+                            var error_curp = 0;
+                            if(this.empresa_registrar.tipo_personalidad==1){
+                                var BreakException = {};
+                                try{
+                                    this.representantes_legales.data.forEach(e => {
+                                        if(!this.validaCurp(e.curp)){
+                                            swal(
+                                                'CURP inválido',
+                                                e.curp,
+                                                'error'
+                                            );
+                                            error_curp = 1;
+                                            throw BreakException;
+                                        }
+                                    });
+                                } catch (e){
+                                    if (e !== BreakException) throw e;
+                                }
+                            }
+
+                            if(error_curp == 0)
+                            {
+                                this.update();
+                            }
+
                         }
                     }
                 });
+            },
+            validaCurp(curp){
+                var re = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/,
+                    validado = curp.match(re);
+
+                if (!validado)
+                    return false;
+
+                if(curp.substr(17,1) != this.digitoVerificador(curp))
+                    return false;
+
+                return true;
+
+            },
+
+            digitoVerificador(curp17) {
+                //Fuente https://consultas.curp.gob.mx/CurpSP/
+                var diccionario  = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
+                    lngSuma      = 0.0,
+                    lngDigito    = 0.0;
+                for(var i=0; i<17; i++)
+                    lngSuma = lngSuma + diccionario.indexOf(curp17.charAt(i)) * (18 - i);
+                lngDigito = 10 - lngSuma % 10;
+                if (lngDigito == 10) return 0;
+                return lngDigito;
             },
             update() {
                 this.empresa_registrar.razon_social = this.empresa_registrar.razon_social.toUpperCase();
