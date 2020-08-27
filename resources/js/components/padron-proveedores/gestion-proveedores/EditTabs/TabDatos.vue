@@ -424,12 +424,8 @@
                 return this.$store.dispatch('padronProveedores/empresa/update', {
                     id: this.id,
                     data: this.$data.empresa_registrar,
-                    params: {include: ['prestadora', 'archivos']}
                 }).then((data) => {
-                    this.getEspecialidades();
-                    this.getGiros();
-                    this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
-                    this.find();
+                    location.reload();
                 })
             },
         }
