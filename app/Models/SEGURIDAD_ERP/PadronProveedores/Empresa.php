@@ -230,7 +230,7 @@ class Empresa extends Model
             else{
                 if($this->id_tipo_empresa != 3){
                     $this->agregarDatosProveedora($data);
-                    if($this->id_tipo_empresa == 1){
+                    if($this->id_tipo_personalidad == 1){
                         if (key_exists("representantes_legales", $data)) {
                             $this->agregarRepresentantesLegales($data);
                         }
