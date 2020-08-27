@@ -21,7 +21,8 @@ class EmpresaTransformer extends TransformerAbstract
         'prestadora',
         'proveedor',
         'archivos',
-        'contactos'
+        'contactos',
+        'representantesLegales'
     ];
 
     public function transform(Empresa $model)
@@ -31,8 +32,6 @@ class EmpresaTransformer extends TransformerAbstract
             'razon_social' => $model->razon_social,
             'rfc' => $model->rfc,
             'nss' => $model->no_imss,
-            'telefono' => $model->telefono,
-            'correo' => $model->correo_electronico,
             'estado_expediente' => $model->estado_expediente->descripcion,
             'avance_expediente' => $model->avance_expediente,
             'archivos_esperados' => $model->no_archivos_esperados,
@@ -128,6 +127,19 @@ class EmpresaTransformer extends TransformerAbstract
         if($contactos = $model->contactos)
         {
             return $this->collection($contactos, new ContactoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeRepresentantesLegales(Empresa $model)
+    {
+        if($representantes = $model->representantesLegales)
+        {
+            return $this->collection($representantes, new RepresentanteLegalTransformer);
         }
         return null;
     }

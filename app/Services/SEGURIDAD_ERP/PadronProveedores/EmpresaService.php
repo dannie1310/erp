@@ -8,9 +8,11 @@ use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgEstadoExpediente;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
 use App\Utils\Files;
 use Chumper\Zipper\Zipper;
+use Illuminate\Support\Facades\Storage;
 
 class EmpresaService
 {
@@ -251,6 +253,7 @@ class EmpresaService
 
     public function update(array $data, $id)
     {
+        $empresa = $this->repository->show($id);
         if(array_key_exists('rfc_prestadora', $data)){
             $empresa = $this->repository->getEmpresaXRFC($data["rfc"]);
             if($empresa) {
@@ -277,6 +280,30 @@ class EmpresaService
             }
             if($data['nueva_especialidad']) {
                 array_push($data['especialidades_nuevas'], $this->getIdEspecialidad($data['especialidad_nuevo']));
+            }
+            if($data['tipo_empresa'] == 1)
+            {
+                if(count($data['representantes_legales']['data']) == 0) {
+                    abort(500, "Debe existir al menos un representante legal para la empresa.");
+                }
+                $ids = array();
+                foreach ($data['representantes_legales']['data'] as $representante)
+                {
+                    if(array_key_exists('id', $representante))
+                    {
+                        array_push($ids, $representante['id']);
+                    }
+                }
+                $representantes = $empresa->representantesLegales()->pluck('representantes_legales.id');
+                $borradas = $representantes->count() > 0 ? array_diff($representantes->toArray(), $ids) : [];
+                foreach ($borradas as $borrar)
+                {
+                    $representante_legal = RepresentanteLegal::where('id','=',$borrar)->first();
+                    if($representante_legal->archivo != null) {
+                        $this->eliminarArchivo($empresa->rfc, $representante_legal->archivo->nombre_archivo . "." . $representante_legal->archivo->extension_archivo);
+                    }
+                }
+                $data['representantes_borrados'] = $borradas;
             }
             if(count($data['contactos']['data']) == 0){
                 abort(500, "Debe existir al menos un contacto para la empresa.");
@@ -378,6 +405,12 @@ class EmpresaService
         } else {
             return response()->json(["mensaje"=>"El expediente no cuenta con archivos"]);
         }
+    }
 
+    private function eliminarArchivo($rfc_proveedora,$nombre_archivo)
+    {
+        if(is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix().$rfc_proveedora.'/'.$nombre_archivo)) {
+            Storage::disk('padron_contratista')->delete($rfc_proveedora.'/'.$nombre_archivo);
+        }
     }
 }
