@@ -86,6 +86,7 @@ import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edic
 import tipoPoliza from './modules/contabilidadGeneral/tipo-poliza';
 
 //CONTRATOS
+import asigacionContratista from './modules/contratos/asignacion-contratista'
 import contratoConcepto from './modules/contratos/contrato-concepto';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
 import estimacion from './modules/contratos/estimacion';
@@ -221,6 +222,7 @@ export default new Vuex.Store({
         'configuracion/nodo-tipo' : nodoTipo,
         'configuracion/nodo-proyecto' : nodoProyecto,
 
+        'contratos/asignacion-contratista' : asigacionContratista,
         'contratos/contrato-concepto' : contratoConcepto,
         'contratos/contrato-proyectado': contratoProyectado,
         'contratos/estimacion' : estimacion,

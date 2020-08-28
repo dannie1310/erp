@@ -700,6 +700,16 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
         /**
+         * ASIGNACION DE CONTRATISTAS
+         */
+        $api->group(['prefix' => 'asignacion-contratista'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@show')->where(['id' => '[0-9]+']);
+        });
+
+
+
+        /**
          * CONTRATO PROYECTADO
          */
         $api->group(['prefix' => 'contrato-proyectado'], function ($api){
