@@ -90,7 +90,7 @@
                                             <div class="col-md-10">{{solicitud.observaciones}}</div>
                                         </div>
                                     </div>
-                                     <hr />
+                                    <hr />
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">

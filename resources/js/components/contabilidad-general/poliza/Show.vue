@@ -1,5 +1,8 @@
 <template>
     <span>
+         <button @click="find"  type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+            <i class="fa fa-eye"></i>
+        </button>
         <div class="modal fade" ref="modalShowPoliza" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -98,7 +101,7 @@
                                     <tbody>
                                         <tr v-for="(movimiento, i) in poliza.movimientos_poliza.data">
                                             <td>{{ i + 1 }}</td>
-                                            <td>{{movimiento.cuenta}}</td>
+                                            <td>{{movimiento.cuenta.cuenta}}</td>
                                             <td class="money">{{movimiento.cargo_format}}</td>
                                             <td class="money">{{movimiento.abono_format}}</td>
                                             <td>{{movimiento.referencia}}</td>
@@ -122,7 +125,7 @@
 
 export default {
     name: "poliza-show",
-    props : ["tipo_modal"],
+    props : ['id', 'id_empresa'],
     data(){
         return {
         }
@@ -134,6 +137,17 @@ export default {
         },
         init(){
             $(this.$refs.modalShowPoliza).modal('show');
+        },
+        find()
+        {
+            this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
+            return this.$store.dispatch('contabilidadGeneral/poliza/find', {
+                id: this.id,
+                params: {include: ['movimientos_poliza'], id_empresa : this.id_empresa}
+            }).then(data => {
+                this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+                $(this.$refs.modalShowPoliza).modal('show');
+            })
         }
     },
 

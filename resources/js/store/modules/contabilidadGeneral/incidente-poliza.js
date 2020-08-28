@@ -72,6 +72,20 @@ export default {
                     })
             });
         },
+
+        obtenerInforme(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'obtener-informe', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
     },
 
     getters: {

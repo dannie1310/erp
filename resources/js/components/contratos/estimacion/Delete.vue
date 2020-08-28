@@ -265,8 +265,8 @@
             </div>
         </div>
         <div class="modal-footer" v-if="!cargando">
-                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                <button type="button" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''" v-on:click="validate">Eliminar</button>
+            <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
+            <button type="button" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''" v-on:click="validate">Eliminar</button>
         </div>
     </span>
 </template>
@@ -275,7 +275,7 @@
 import Resumen from './resumen/Show';
     export default {
         name: "estimacion-delete",
-         components: {Resumen},
+        components: {Resumen},
         props: ['id'],
         data() {
             return {

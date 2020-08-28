@@ -146,6 +146,17 @@ class Diferencia extends Model
         return $query->where("activo",1);
     }
 
+    public function scopeSinPartidaSolicitud($query)
+    {
+        //return $query->doesntHave("partida_solicitud");
+        return $query->whereIn("id_tipo", [1,3,4,5,6,10,11]);
+    }
+
+    public function scopeConPartidaSolicitud($query)
+    {
+        //return $query->whereHas("partida_solicitud");
+        return $query->whereIn("id_tipo", [2,7,8,9,12]);
+    }
 
     public function poliza()
     {
@@ -259,30 +270,44 @@ class Diferencia extends Model
     {
         if($this->id_cuenta>0)
         {
-            return $this->cuenta->Codigo;
+            try{
+                return $this->cuenta->Codigo;
+            } catch (\Exception $e){
+                return "Sin Acceso a BD";
+            }
+
         } else {
-            return "";
+            return "-";
         }
     }
 
     public function getIdentificadorPolizaAttribute()
     {
-        if($this->poliza)
-        {
-            return $this->poliza->Ejercicio .'-'. $this->poliza->Periodo .'-'. $this->poliza->tipo_poliza->Nombre .'-'. $this->poliza->Folio;
-        } else {
-            return "";
+        try{
+            if($this->poliza)
+            {
+                return $this->poliza->Ejercicio .'-'. $this->poliza->Periodo .'-'. $this->poliza->tipo_poliza->Nombre .'-'. $this->poliza->Folio;
+            } else {
+                return "-";
+            }
+        } catch (\Exception $e){
+            return "Sin Acceso a BD";
         }
     }
 
     public function getNumeroMovimientoAttribute()
     {
-        if($this->movimiento)
-        {
-            return $this->movimiento->NumMovto;
-        } else {
-            return "-";
+        try{
+            if($this->movimiento)
+            {
+                return $this->movimiento->NumMovto;
+            } else {
+                return "-";
+            }
+        } catch (\Exception $e){
+            return "Sin Acceso a BD";
         }
+
     }
     public function getCampoAttribute()
     {
@@ -299,47 +324,108 @@ class Diferencia extends Model
     public function getMovimientosOrdenarAttribute()
     {
         $arreglo = [];
-        if($this->id_tipo ==12){
+        if($this->id_tipo ==12) {
             $arreglo = [];
-            if($this->poliza)
-            {
-                $relacion = RelacionPolizas::where("id_poliza_a","=", $this->id_poliza)
-                    ->where("base_datos_a","=",$this->base_datos_revisada)
-                    ->where("tipo_relacion","=",$this->tipo_busqueda)->first();
-                $movimientos = $this->poliza->movimientos()->orderBy("NumMovto")->get();
-
-                DB::purge('cntpq');
-                Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
-                $poliza_relacionada = Poliza::find($relacion->id_poliza_b);
-                $movimientos_relacionados = $poliza_relacionada->movimientos()->orderBy("NumMovto")->get();
-                $i=0;
-                foreach($movimientos as $movimiento){
-                    DB::purge('cntpq');
-                    Config::set('database.connections.cntpq.database', $relacion->base_datos_a);
-                    $movimiento->load("cuenta");
+            try {
+                if($this->poliza)
+                {
+                    $relacion = RelacionPolizas::where("id_poliza_a","=", $this->id_poliza)
+                        ->where("base_datos_a","=",$this->base_datos_revisada)
+                        ->where("tipo_relacion","=",$this->tipo_busqueda)->first();
+                    $movimientos = $this->poliza->movimientos()->orderBy("NumMovto")->get();
 
                     DB::purge('cntpq');
                     Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
-                    $movimientos_relacionados[$i]->load("cuenta");
+                    $poliza_relacionada = Poliza::find($relacion->id_poliza_b);
+                    $movimientos_relacionados = $poliza_relacionada->movimientos()->orderBy("NumMovto")->get();
+                    $i=0;
+                    foreach($movimientos as $movimiento){
+                        DB::purge('cntpq');
+                        Config::set('database.connections.cntpq.database', $relacion->base_datos_a);
+                        $movimiento->load("cuenta");
 
-                    $arreglo[] = [
-                        "no_movto_a"=>$movimiento->NumMovto,
-                        "no_movto_b"=>$movimientos_relacionados[$i]->NumMovto,
-                        "codigo_a"=>$movimiento->cuenta->Codigo,
-                        "codigo_b"=>$movimientos_relacionados[$i]->cuenta->Codigo,
-                        "cuenta_a"=>$movimiento->cuenta->Nombre,
-                        "cuenta_b"=>$movimientos_relacionados[$i]->cuenta->Nombre,
-                        "cargo_a"=>$movimiento->cargo_format,
-                        "cargo_b"=>$movimientos_relacionados[$i]->cargo_format,
-                        "abono_a"=>$movimiento->abono_format,
-                        "abono_b"=>$movimientos_relacionados[$i]->abono_format,
-                    ];
-                    $i++;
+                        DB::purge('cntpq');
+                        Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
+                        $movimientos_relacionados[$i]->load("cuenta");
+
+                        $arreglo[] = [
+                            "no_movto_a"=>$movimiento->NumMovto,
+                            "no_movto_b"=>$movimientos_relacionados[$i]->NumMovto,
+                            "codigo_a"=>$movimiento->cuenta->Codigo,
+                            "codigo_b"=>$movimientos_relacionados[$i]->cuenta->Codigo,
+                            "cuenta_a"=>$movimiento->cuenta->Nombre,
+                            "cuenta_b"=>$movimientos_relacionados[$i]->cuenta->Nombre,
+                            "cargo_a"=>$movimiento->cargo_format,
+                            "cargo_b"=>$movimientos_relacionados[$i]->cargo_format,
+                            "abono_a"=>$movimiento->abono_format,
+                            "abono_b"=>$movimientos_relacionados[$i]->abono_format,
+                        ];
+                        $i++;
+                    }
                 }
+                return $arreglo;
+
+            } catch (\Exception $e){
+                return "";
             }
-            return $arreglo;
-        } else {
+        }
+        else {
             return "";
+        }
+
+    }
+
+    public function getValorAFormatAttribute()
+    {
+        if(is_numeric($this->valor_a) && in_array($this->id_tipo,[3,11])){
+            return number_format($this->valor_a,2);
+        } else if($this->id_tipo==10 && $this->valor_a ==0) {
+            return "Cargo";
+        } else if($this->id_tipo==10 && $this->valor_a ==1) {
+            return "Abono";
+        } else {
+            return $this->valor_a;
+        }
+    }
+
+    public function getValorBFormatAttribute()
+    {
+        if(is_numeric($this->valor_b) && in_array($this->id_tipo,[3,11])){
+            return number_format($this->valor_b,2);
+        } else if($this->id_tipo==10 && $this->valor_b ==0) {
+            return "Cargo";
+        } else if($this->id_tipo==10 && $this->valor_b ==1) {
+            return "Abono";
+        } else {
+            return $this->valor_b;
+        }
+    }
+
+    public function getSolicitudNumeroFolioAttribute(){
+        if($this->partida_solicitud){
+            return $this->partida_solicitud->solicitud->numero_folio;
+        }else {
+            return "";
+        }
+    }
+
+    public function getSolicitudIdAttribute(){
+        if($this->partida_solicitud){
+            return $this->partida_solicitud->solicitud->id;
+        }else {
+            return "";
+        }
+    }
+
+    public function getIdRelacionAttribute()
+    {
+        $relacion = RelacionPolizas::where("id_poliza_a","=", $this->id_poliza)
+            ->where("base_datos_a","=",$this->base_datos_revisada)
+            ->where("tipo_relacion","=",$this->tipo_busqueda)->first();
+        if($relacion){
+            return $relacion->id;
+        } else {
+            return null;
         }
     }
 }
