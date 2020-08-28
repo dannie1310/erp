@@ -146,6 +146,7 @@ use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
@@ -289,6 +290,7 @@ use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\ArchivoObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacionObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadoraObserver;
+use App\Observers\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegalObserver;
 use App\Observers\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSolicitanteObserver;
@@ -551,6 +553,7 @@ class AppServiceProvider extends ServiceProvider
             EmpresaExcluidaDocumentacion::observe(EmpresaExcluidaDocumentacionObserver::class);
             \App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa::observe(\App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaObserver::class);
             EmpresaPrestadora::observe(EmpresaPrestadoraObserver::class);
+            RepresentanteLegal::observe(RepresentanteLegalObserver::class);
 
             /**
              * PolizasCtpqIncidentes
