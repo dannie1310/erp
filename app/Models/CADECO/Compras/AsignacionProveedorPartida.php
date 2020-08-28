@@ -4,16 +4,18 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompra;
+use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
-use App\Models\CADECO\Compras\AsignacionProveedores;
+use App\Models\CADECO\Compras\AsignacionProveedor;
 
-class AsignacionProveedoresPartida extends Model
+class AsignacionProveedorPartida extends Model
 {
     protected $connection = 'cadeco';
     protected $table      = 'Compras.asignacion_proveedores_partidas';
@@ -39,8 +41,9 @@ class AsignacionProveedoresPartida extends Model
         });
     }
 
-    public function asignacion(){
-        return $this->belongsTo(AsignacionProveedores::class, 'id_asignacion_proveedores', 'id');
+    public function asignacion()
+    {
+        return $this->belongsTo(AsignacionProveedor::class, 'id_asignacion_proveedores', 'id');
     }
 
     public function cotizacion()
@@ -48,7 +51,8 @@ class AsignacionProveedoresPartida extends Model
         return $this->belongsTo(CotizacionCompraPartida::class, 'id_transaccion_cotizacion', 'id_transaccion')->where('id_material', '=', $this->id_material);
     }
 
-    public function cotizacionCompra(){
+    public function cotizacionCompra()
+    {
         return $this->belongsTo(CotizacionCompra::class, 'id_transaccion_cotizacion', 'id_transaccion');
     }
 
@@ -57,11 +61,13 @@ class AsignacionProveedoresPartida extends Model
         return $this->belongsTo(ItemSolicitudCompra::class, 'id_item_solicitud', 'id_item');
     }
 
-    public function ordenCompra(){
+    public function ordenCompra()
+    {
         return $this->hasMany(OrdenCompra::class, 'id_referente', 'id_transaccion_cotizacion');
     }
 
-    public function material(){
+    public function material()
+    {
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
 
@@ -76,5 +82,43 @@ class AsignacionProveedoresPartida extends Model
 
     public function getConOrdenCompraAttribute(){
         return $this->cotizacion?$this->ordenCompra()->where('id_moneda', '=', $this->cotizacion->id_moneda)->count() > 0:0;
+    }
+
+    public function getTotalPrecioMonedaAttribute()
+    {
+        switch ($this->cotizacion->id_moneda)
+        {
+            case (1):
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto;
+                break;
+            case (2):
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(2);
+                break;
+            case (3):
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(3);
+                break;
+            case (4):
+                return $this->cantidad_asignada * $this->cotizacion->precio_compuesto * $this->tipo_cambio(4);
+                break;
+        }
+    }
+
+    public function tipo_cambio($tipo)
+    {
+        $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
+        return $tipo_cambio ? $tipo_cambio->cambio : $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getSumaCantidadAsignadaAttribute()
+    {
+        $suma = 0;
+        foreach ($this->asignacion->partidas as $partida)
+        {
+            if($partida->id_material == $this->id_material)
+            {
+                $suma += $partida->cantidad_asignada;
+            }
+        }
+        return $suma;
     }
 }

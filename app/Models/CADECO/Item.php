@@ -47,6 +47,26 @@ class Item extends Model
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
 
+    public function partida_antecedente()
+    {
+        return $this->belongsTo(self::class, 'item_antecedente', 'id_item');
+    }
+
+    public function movimiento()
+    {
+        return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
+    }
+
+    public function transaccion()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function transaccionAntecedente()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function getCantidadFormatAttribute()
     {
         return number_format($this->cantidad,3,'.', ',');

@@ -36,7 +36,8 @@ class Fondo extends Model
         'nombre',
         'fecha',
         'fondo_obra',
-        'id_costo'
+        'id_costo',
+        'saldo'
     ];
 
     protected static function boot()

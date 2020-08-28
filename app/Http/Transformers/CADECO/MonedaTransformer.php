@@ -17,6 +17,13 @@ use League\Fractal\TransformerAbstract;
 
 class MonedaTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = [
+        'tipo_cambio_cadeco'
+    ];
+
+    protected $defaultIncludes = [
+        'tipo_cambio_cadeco'
+    ];
     /**
      * @param Moneda $model
      * @return array
@@ -32,5 +39,18 @@ class MonedaTransformer extends TransformerAbstract
             'tipo_cambio' => $model->tipo_cambio,
             'tipo_cambio_igh' => $model->tipo_cambio_igh
         ];
+    }
+
+    /**
+     * @param Moneda $moneda
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipoCambioCadeco(Moneda $moneda)
+    {
+        if($cambio = $moneda->cambio)
+        {
+            return $this->item($cambio, new CambioTransformer);
+        }
+        return null;
     }
 }

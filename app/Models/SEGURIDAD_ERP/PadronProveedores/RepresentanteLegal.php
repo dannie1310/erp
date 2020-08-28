@@ -19,9 +19,18 @@ class RepresentanteLegal extends Model
         'curp',
     ];
 
+    public function archivos()
+    {
+        return $this->hasMany(Archivo::class,'id_representante_legal','id');
+    }
+
+    public function empresas()
+    {
+        return $this->hasManyThrough(Empresa::class, EmpresaRepresentanteLegal::class, 'id_representante_legal', 'id', 'id', 'id_empresa');
+    }
+
     public function getNombreCompletoAttribute()
     {
         return $this->nombre.' '.$this->apellido_paterno.' '.$this->apellido_materno;
     }
-
 }
