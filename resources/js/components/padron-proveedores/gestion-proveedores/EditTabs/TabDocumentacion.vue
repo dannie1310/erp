@@ -160,7 +160,7 @@
                                 <label for="cargar_file" class="col-lg-12 col-form-label">
                                     <i class="fa fa-users"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
-                                    <input type="file" class="form-control" id="cargar_file"
+                                    <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                             @change="onFileChange"
                                             row="3"
                                             v-validate="{required:true, ext: ['pdf'],  size: 5120}"
@@ -178,7 +178,7 @@
                                 <label for="cargar_file" class="col-lg-12 col-form-label">
                                     <i class="fa fa-file-pdf"></i> <i class="fa fa-file-archive-o" v-if="archivo.tipo_archivo == id_pago_sua"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
-                                    <input type="file" class="form-control" id="cargar_file"
+                                    <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                            @change="onFileChange"
                                            row="3"
                                            v-validate="{required:true, ext: validarExtenciones(archivo.tipo_archivo),  size: 5120}"
@@ -224,6 +224,7 @@ export default {
             archivo:'',
             file:'',
             file_name:'',
+            files:[],
             id_tipo: '',
             tipos: {
                 2: "Prestadora de Servicios",
@@ -248,18 +249,49 @@ export default {
             reader.onload = (e) => {
                 vm.file = e.target.result;
             };
-            reader.readAsDataURL(file);
-
+            return reader.readAsDataURL(file);
+            
         },
         onFileChange(e){
+            var size = 0;
             this.file = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
-            if(e.target.id == 'cargar_file') {
-                this.file_name = files[0].name;
-                this.createImage(files[0]);
+            if(files.length > 15){
+                swal("El limite de archivos PDF permitidos es de 15", {
+                                icon: "warning",
+                                buttons: {
+                                    confirm: {
+                                        text: 'Enterado',
+                                        closeModal: true,
+                                    }
+                                }
+                            }) .then(() => {
+                                if(this.$refs.cargar_file !== undefined){
+                                    this.$refs.cargar_file.value = '';
+                                }
+                                this.file = null;
+                                this.file_name = '';
+                            })
             }
+            if(e.target.id == 'cargar_file') {
+                for(let i=0; i<files.length; i++) {
+                    this.createImage(files[i]);
+                    size = +size + +files[i].size;
+                    this.files[i] = {
+                        nombre: files[i].name,
+                        archivo: this.file,
+                        file:this.createImage(files[i]),
+                    };
+                    // this.files[i].nombre = files[i].name;
+                    // this.files[i].archivo = this.createImage(files[i]);
+
+                }
+                
+            }
+            console.log(size);
+            console.log(this.files);
         },
         find() {
             return this.$store.dispatch('padronProveedores/empresa/getDoctosGenerales', {
