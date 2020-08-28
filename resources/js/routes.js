@@ -1747,6 +1747,17 @@ export const routes = [
                             permission: 'consultar_asignacion_contratista'
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'asignacion-contratista-create',
+                        component: require('./components/contratos/asignacion-contratista/Create').default,
+                        meta: {
+                            title: 'Registrar Asignación Proveedores',
+                            breadcrumb: { parent: 'asignacion-contratista', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_asignacion_contratista']
+                        }
+                    }
                 ]
             },
             {

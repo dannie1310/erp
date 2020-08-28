@@ -25,6 +25,10 @@ class AsignacionContratista extends Model
         'estado'
     ];
 
+    public function partidas(){
+        return $this->hasMany(AsignacionContratistaPartida::class, 'id_asignacion', 'id_asignacion');
+    }
+
     public function asignacionSubcontrato(){
         return $this->belongsTo(AsignacionSubcontrato::class, 'id_asignacion', 'id_asignacion');
     }

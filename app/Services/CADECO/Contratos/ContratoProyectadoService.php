@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Contratos;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contrato;
 use App\Repositories\Repository;
@@ -17,6 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
+use App\Models\CADECO\PresupuestoContratistaPartida;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 
 class ContratoProyectadoService
@@ -251,6 +253,142 @@ class ContratoProyectadoService
             mkdir($dir_xls, 777, true);
         }
         return ["path_xls" => $path_xls, "dir_xls" => $dir_xls];
+    }
+
+    
+    public function getContratos(){
+        $contratos = DB::connection('cadeco')->select(' SELECT DISTINCT(id_transaccion), id_transaccion_b64, folio, referencia FROM (
+
+            SELECT 
+                cp.id_transaccion as id_transaccion_b64
+                , cp.numero_folio as folio
+                , cp.referencia
+                , cp.id_transaccion 
+				, con.id_concepto
+				, con.cantidad_original
+				, sum(pa.cantidad_asignada) as total_asignado
+				, con.cantidad_original - sum(pa.cantidad_asignada) as restante,
+				 ( 
+				 SELECT SUM(pa.cantidad_asignada) as asignada
+				   FROM Subcontratos.partidas_asignacion pa 
+				     WHERE id_transaccion in(
+                     SELECT id_transaccion 
+					 FROM dbo.transacciones 
+					   WHERE tipo_transaccion=50 and id_antecedente =cp.id_transaccion
+                     ) 
+				 )as asignada,
+				( 
+				      SELECT SUM (cantidad_original) from contratos where id_transaccion=cp.id_transaccion
+				)as proyectada
+
+
+            FROM 
+                transacciones as cp  
+                
+				JOIN dbo.transacciones as pc on(cp.id_transaccion = pc.id_antecedente)
+				 
+				JOIN dbo.contratos as con ON(con.id_transaccion = cp.id_transaccion)
+				
+				JOIN dbo.presupuestos AS pre ON(pre.id_concepto = con.id_concepto AND pre.id_transaccion = pc.id_transaccion AND pre.no_cotizado != 1)
+                                LEFT JOIN Subcontratos.partidas_asignacion AS pa ON(pa.id_transaccion = pc.id_transaccion AND pa.id_concepto = con.id_concepto)
+             
+              INNER JOIN Contratos.cp_areas_subcontratantes m ON
+                         cp.id_transaccion=m.id_transaccion  AND m.id_area_subcontratante IN (1,2)  
+            WHERE 
+                cp.tipo_transaccion = 49 
+                AND cp.id_obra = '.Context::getIdObra().'
+
+            GROUP BY 
+                cp.numero_folio 
+                , cp.referencia
+                , cp.id_transaccion
+				, con.id_concepto
+				, con.cantidad_original
+
+             HAVING con.cantidad_original - sum(pa.cantidad_asignada) > 0 OR sum(pa.cantidad_asignada) is null 
+             ) AS TA  where (TA.proyectada-Ta.asignada )>0 or TA.asignada is null  ORDER BY folio desc ');
+        
+
+             $data = [];
+            foreach($contratos as $contrato){
+                $data[] = [
+                    'id_transaccion' => $contrato->id_transaccion,
+                    'folio' => '#' . str_pad($contrato->folio, 5,0,0),
+                    'referencia' => $contrato->referencia,
+                ];
+            }
+
+        return $data;
+    }
+
+    public function getCotizaciones($id){
+        try{
+            $items = array();
+            $presupuestos = array();
+            $contrato_p = $this->repository->show($id);
+            $contratos = $contrato_p->conceptos;
+            $presupuesto_contratistas = $contrato_p->presupuestos;
+            
+            foreach($contratos as $i => $contrato){
+                $cantidad_pendiente = 0;
+                if(($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada')) > 0){
+                    $items[$i] = [
+                        'id_concepto' => $contrato->id_concepto,
+                        'descripcion' => $contrato->descripcion,
+                        'descripcion_corta' => substr($contrato->descripcion, 0, 20),
+                        'destino' => $contrato->destino->concepto->getAncestrosAttribute($contrato->destino->concepto->nivel),
+                        'destino_corto' => substr($contrato->destino->concepto->getAncestrosAttribute($contrato->destino->concepto->nivel), 0, 20),
+                        'unidad' => $contrato->unidad,
+                        'cantidad_solicitada' => number_format($contrato->cantidad_original, 4, '.', ''),
+                        'cantidad_aprobada' => number_format($contrato->cantidad_original, 4, '.', ''),
+                        'cantidad_disponible' => number_format($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada'), 4, '.', ''),
+                        'cantidad_base' => number_format($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada'), 4, '.', ''),
+                        'item_pendiente' => $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada') > 0?true:false,
+                    ];
+                    $cantidad_pendiente = $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada');
+                    foreach($presupuesto_contratistas as $presupuesto){
+                        if(!array_key_exists($presupuesto->id_transaccion, $presupuestos)){
+                            $presupuestos[$presupuesto->id_transaccion] = [
+                                'id_transaccion' => $presupuesto->id_transaccion,
+                                'razon_social' => $presupuesto->empresa->razon_social,
+                                'sucursal' => $presupuesto->sucursal->descripcion,
+                                'direccion' => $presupuesto->sucursal->direccion,
+                            ];
+                            $presupuestos[$presupuesto->id_transaccion]['partidas'] = array();
+                        }
+                        array_key_exists($presupuesto->id_transaccion, $presupuestos)?'': $presupuestos[$presupuesto->id_transaccion] = array();
+                        $partida_presupuestada = PresupuestoContratistaPartida::where('id_transaccion', '=',$presupuesto->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+                        $desc = 1;
+                        $partida_presupuestada->descuento > 0?$desc = $partida_presupuestada->descuento / 100:'';
+                        if($partida_presupuestada && $partida_presupuestada->precio_unitario > 0){
+                            $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = [
+                                'id_concepto' => $contrato->id_concepto,
+                                'precio_unitario' => '$ ' . number_format($partida_presupuestada->precio_unitario, 2, '.', ','),
+                                'precio_total_antes_desc' => '$ ' . number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente, 2, '.', ','),
+                                'precio_unitario_con_desc' =>  number_format($partida_presupuestada->precio_unitario * $desc , 2, '.', ','),
+                                'precio_total_con_desc' =>   number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc , 2, '.', ','),
+                                'descuento' => $partida_presupuestada->descuento,
+                                'moneda' => $partida_presupuestada->moneda->abreviatura,
+                                'tipo_cambio' => $partida_presupuestada->moneda->tipo == 1?1: number_format($partida_presupuestada->moneda->cambio->cambio, 4, '.', ','),
+                                'importe_moneda_conversion' => $partida_presupuestada->moneda->tipo == 1? number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc , 2, '.', ',')
+                                                            : number_format($partida_presupuestada->moneda->cambio->cambio * ($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc), 4, '.', ','),
+                                'observaciones' => $partida_presupuestada->Observaciones,
+                                'cantidad_asignada' => '',
+                            ];
+                        }else{
+                            $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = null;
+                        }
+
+                    }
+
+                    
+                }
+            }
+            return ['items'=>$items,'presupuestos'=> $presupuestos];
+            
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     /**

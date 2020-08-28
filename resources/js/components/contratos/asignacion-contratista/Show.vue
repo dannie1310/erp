@@ -50,12 +50,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" v-if="info.subcontrato">
                                         <div class="col-12">
                                             <h5>Asignación Subcontrato: </h5>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" v-if="info.subcontrato">
                                         <div class="table-responsive col-md-12">
                                             <table class="table">
                                                 <tbody>
@@ -87,12 +87,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                     <div class="row">
+                                     <div class="row" v-if="info.subcontrato">
                                         <div class="col-12">
                                             <h6><b>Detalle de las partidas</b></h6>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" v-if="info.subcontrato">
                                         <div class="table-responsive col-md-12">
                                             <table class="table table-striped">
                                                 <thead>
@@ -120,7 +120,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" v-if="info.subcontrato">
                                         <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Subtotal Antes Descuento:</label>
                                             <label class="col-sm-2 col-form-label" style="text-align: right">{{info.asignacionEstimacion.subcontrato.subtotal_antes_descuento}}</label>
@@ -160,7 +160,7 @@
                                     </div>
                                     
                                     <hr>
-                                    <div class="row col-md-12">
+                                    <div class="row col-md-12" v-if="info.subcontrato">
                                         <div class="col-md-2"><b>Plazo de Ejecución:</b></div>
                                         <div class="col-md-4" v-if="info.asignacionEstimacion.subcontrato.subcontratos"><b>Del</b>&nbsp; {{info.asignacionEstimacion.subcontrato.subcontratos.fecha_ini}} &nbsp;<b>Al</b>&nbsp; {{info.asignacionEstimacion.subcontrato.subcontratos.fecha_fin}}</div>
                                         <div class="col-md-4" v-else><b>Del</b>&nbsp; -------- &nbsp;<b>Al</b>&nbsp; --------</div>
@@ -169,7 +169,7 @@
                                         <div class="col-md-4" v-if="info.asignacionEstimacion.subcontrato.subcontratos">{{info.asignacionEstimacion.subcontrato.subcontratos.descripcion}}</div>
                                     </div>
                                     <br>
-                                    <div class="row col-md-12">
+                                    <div class="row col-md-12" v-if="info.subcontrato">
                                         <div class="col-md-2"><b>Observaciones:</b></div>
                                         <div class="col-md-10">{{info.asignacionEstimacion.subcontrato.observaciones}}</div>
                                     </div>
