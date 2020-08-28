@@ -319,7 +319,7 @@ class Empresa extends Model
         $ids = array();
         foreach ($data['representantes_legales']['data'] as $representante) {
             if (array_key_exists('id', $representante)) {
-                $representante_legal = RepresentanteLegal::find($representante["id"])->first();
+                $representante_legal = RepresentanteLegal::find($representante["id"]);
                 array_push($ids, $representante['id']);
                 $representante_legal->update([
                     'nombre' => $representante['nombre'],
