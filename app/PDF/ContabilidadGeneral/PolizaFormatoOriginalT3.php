@@ -72,10 +72,7 @@ class PolizaFormatoOriginalT3 extends Rotation
         $this->Cell(0, 0, utf8_decode('Impreso de pólizas del ').'01/'.$this->mes.'/'.$this->anio.' al 30/'.$this->mes.'/'.$this->anio, 0, 0, 'L');
         $this->setXY(16.6, 1.6);
 
-        $fecha = new DateTime($this->poliza->Fecha);
-        $fecha->add(new DateInterval('P5D'));
-        $fecha = strftime("%d/", $fecha->getTimestamp()).substr(ucfirst(strftime("%b", $fecha->getTimestamp())), 0, 3).strftime("/%Y", $fecha->getTimestamp());
-        $this->Cell(0, 0, utf8_decode('Fecha: ').$fecha, 0, 0, 'L');
+        $this->Cell(0, 0, utf8_decode('Fecha: ').$this->poliza->fecha_consulta, 0, 0, 'L');
 
         //TODO: CAMBIAR EL HARCODEO DEL TIPO DE MONEDA
         $this->setXY(8.3, 2);
@@ -140,8 +137,8 @@ class PolizaFormatoOriginalT3 extends Rotation
             $this->Cell(5.2, 0.5, strlen($cuenta_padre->Nombre) > 25 ? utf8_decode(substr($cuenta_padre->Nombre, 0, 25)) . '..' : utf8_decode($cuenta_padre->Nombre), '', 0, 'L', 180);
             $this->Cell(4, 0.5, '', '', 0, 'L', 180);
             $this->Cell(2.5, 0.5, '', '', 0, 'L', 180);
-            $this->Cell(2.5, 0.5, $suma_cargos > 0 ? $suma_cargos : '', '', 0, 'R', 180);
-            $this->Cell(2.29, 0.5,$suma_abonos > 0 ? $suma_abonos : '', '', 0, 'R', 180);
+            $this->Cell(2.5, 0.5, $suma_cargos != 0 ? $suma_cargos : '', '', 0, 'R', 180);
+            $this->Cell(2.29, 0.5,$suma_abonos != 0 ? $suma_abonos : '', '', 0, 'R', 180);
             $this->Ln(0.45);
             $this->Cell(3.1, 0.3, '', '', 0, 'L', 180);
             $this->Cell(5.2, 0.3, strlen($movimiento->Concepto) > 23 ? '  ' . utf8_decode(substr($movimiento->Concepto, 0, 22)) . '..' : '  ' . utf8_decode($movimiento->Concepto), '', 1, 'L', 180);

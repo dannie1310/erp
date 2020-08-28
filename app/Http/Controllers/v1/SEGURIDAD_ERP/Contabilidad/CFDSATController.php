@@ -49,10 +49,21 @@ class CFDSATController extends Controller
         return response()->json($respuesta, 200);
     }
 
-    public function procesaDirectorioZIPCFD(Request $request){
+    public function procesaDirectorioZIPCFD(Request $request)
+    {
         $respuesta =$this->service->procesaDirectorioZIPCFD();
         return response()->json($respuesta, 200);
+    }
 
+    public function obtenerInformeEmpresaMes()
+    {
+        $respuesta =$this->service->obtenerInformeEmpresaMes();
+        return response()->json($respuesta, 200);
+    }
+
+    public function getContenidoDirectorio(){
+        $respuesta =$this->service->getContenidoDirectorio();
+        return response()->json($respuesta, 200);
     }
 
 }

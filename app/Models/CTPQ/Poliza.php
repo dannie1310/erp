@@ -13,8 +13,10 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Support\Facades\Config;
@@ -26,11 +28,23 @@ class Poliza extends Model
     protected $table = 'Polizas';
     protected $primaryKey = 'Id';
 
+    protected $fillable = [
+        'Fecha',
+        'Ejercicio',
+        'Periodo',
+        'TipoPol',
+        'Folio',
+        'Cargos',
+        'Abonos'
+    ];
+
+    protected $dates = ["Fecha"];
+
     public $timestamps = false;
 
     public function movimientos()
     {
-        return $this->hasMany(PolizaMovimiento::class, 'IdPoliza', 'Id');
+        return $this->hasMany(PolizaMovimiento::class,  'IdPoliza','Id');
     }
 
     public function cuentas()
@@ -61,26 +75,117 @@ class Poliza extends Model
 
     public function getFechaMesLetraFormatAttribute()
     {
-        setlocale(LC_ALL,"es_ES");
-        $fecha =New DateTime($this->Fecha);
-        return strftime("%d/",$fecha->getTimestamp()).substr(ucfirst(strftime("%b",$fecha->getTimestamp())), 0, 3).strftime("/%Y",$fecha->getTimestamp());
+        $meses = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+        $mes = $meses[($this->Fecha->format('n')) - 1];
+        //setlocale(LC_ALL,"es_ES");
+        $fecha = New DateTime($this->Fecha);
+        return strftime("%d/", $fecha->getTimestamp()) . substr($mes, 0, 3) . strftime("/%Y", $fecha->getTimestamp());
+    }
+
+    public function getFechaConsultaAttribute()
+    {
+        $meses = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+        $mes = $meses[($this->Fecha->format('n')) - 1];
+        $fecha = new DateTime($this->Fecha);
+        $fecha->add(new \DateInterval('P5D'));
+        $fecha = strftime("%d/", $fecha->getTimestamp()) . substr($mes, 0, 3) . strftime("/%Y", $fecha->getTimestamp());
+        return $fecha;
     }
 
     public function actualiza($datos)
     {
+        $fecha = Carbon::createFromFormat('d/m/Y', date_format(date_create($datos['fecha_completa']['date']), "d/m/Y"));
         if ($this->Ejercicio != 2015) {
             try {
                 DB::connection('cntpq')->beginTransaction();
-                $this->Concepto = $datos["concepto"];
-                $this->update();
-                foreach ($datos["movimientos"] as $datos_movimiento) {
-                    $movimiento = PolizaMovimiento::find($datos_movimiento["id"]);
-                    $movimiento->Referencia = $datos_movimiento["referencia"];
-                    $movimiento->Concepto = $datos_movimiento["concepto"];
-                    $movimiento->update();
+                DB::connection('seguridad')->beginTransaction();
+                if ($datos['concepto'] != $this->Concepto) {
+                    $this->Concepto = $datos["concepto"];
                 }
+                if ($fecha->format('d/m/Y') != $this->fecha_format) {
+                    $this->Fecha = $fecha;
+                    $this->Ejercicio = $fecha->format('Y');
+                    $this->Periodo = $fecha->format('m');
+                }
+                if ($datos['tipo']['id'] != $this->TipoPol) {
+                    $this->TipoPol = $datos["tipo"]["id"];
+                }
+                if ($datos['folio'] != $this->Folio) {
+                    $this->Folio = $datos["folio"];
+                }
+                if ($datos['cargo_nuevo'] != $this->Cargos) {
+                    $this->Cargos = $datos["cargo_nuevo"];
+                }
+                if ($datos['abono_nuevo'] != $this->Abonos) {
+                    $this->Abonos = $datos["abono_nuevo"];
+                }
+                $this->update();
+                $find = 0;
+                foreach ($this->movimientos as $movimiento) {
+                    foreach ($datos["movimientos_poliza"]["data"] as $key => $dato_nuevo) {
+                        if (array_key_exists('id', $dato_nuevo) && $dato_nuevo['id'] == $movimiento->Id) {
+                            $find = 1;
+                            if ($movimiento->Referencia != $dato_nuevo["referencia"]) {
+                                $movimiento->Referencia = $dato_nuevo["referencia"];
+                            }
+                            if ($movimiento->Concepto != $dato_nuevo["concepto"]) {
+                                $movimiento->Concepto = $dato_nuevo["concepto"];
+                            }
+                            if ($movimiento->NumMovto != $key) {
+                                $movimiento->NumMovto = $key + 1;
+                            }
+                            if ($fecha->format('d/m/Y') != $movimiento->fecha_format) {
+                                $movimiento->Fecha = $fecha->format('Y-m-d');
+                                $movimiento->Ejercicio = $fecha->format('Y');
+                                $movimiento->Periodo = $fecha->format('m');
+                            }
+                            if ($datos['tipo']['id'] != $movimiento->TipoPol) {
+                                $movimiento->TipoPol = $datos["tipo"]["id"];
+                            }
+                            if ($datos['folio'] != $movimiento->Folio) {
+                                $movimiento->Folio = $datos["folio"];
+                            }
+                            if ($movimiento->IdCuenta != $dato_nuevo["cuenta"]["id"]) {
+                                $movimiento->IdCuenta = $dato_nuevo["cuenta"]["id"];
+                            }
+                            if ($movimiento->TipoMovto != $dato_nuevo["tipo"]) {
+                                $movimiento->TipoMovto = $dato_nuevo["tipo"];
+                            }
+                            if ($movimiento->Importe != $dato_nuevo["importe"]) {
+                                $movimiento->Importe = $dato_nuevo["importe"];
+                            }
+                            $movimiento->update();
+                        }
+                    }
+                    if ($find == 0) {
+                        $movimiento->delete();
+                    }
+                    $find = 0;
+                }
+                foreach ($datos["movimientos_poliza"]["data"] as $key => $dato_nuevo)
+                {
+                    if(array_key_exists('id', $dato_nuevo) == false){
+                        $this->movimientos()->create([
+                            'IdPoliza' => $this->Id,
+                            'Ejercicio' => $fecha->format('Y'),
+                            'Periodo' => $fecha->format('m'),
+                            'TipoPol' => $datos["tipo"]["id"],
+                            'Folio' => $datos["folio"],
+                            'NumMovto' => $key + 1,
+                            'IdCuenta' => $dato_nuevo["cuenta"]["id"],
+                            'TipoMovto' => $dato_nuevo["tipo"],
+                            'Importe' => $dato_nuevo["importe"],
+                            'Referencia' => $dato_nuevo["referencia"],
+                            'Concepto' => $dato_nuevo["concepto"],
+                            'Fecha' => $fecha->format('Y-m-d'),
+                        ]);
+                    }
+                }
+                DB::connection('seguridad')->commit();
                 DB::connection('cntpq')->commit();
+                return $this;
             } catch (\Exception $e) {
+                DB::connection('seguridad')->rollBack();
                 DB::connection('cntpq')->rollBack();
                 abort(400, $e->getMessage());
                 throw $e;
@@ -96,8 +201,7 @@ class Poliza extends Model
             Config::set('database.connections.cntpq.database', $relacion->base_datos_b);
             $poliza_relacionada = Poliza::find($relacion->id_poliza_b);
             $poliza_relacionada->load("movimientos");
-            foreach ($poliza_relacionada->movimientos as $movimiento)
-            {
+            foreach ($poliza_relacionada->movimientos as $movimiento) {
                 $movimiento->load("cuenta");
             }
             DB::purge('cntpq');
@@ -153,22 +257,24 @@ class Poliza extends Model
         return $relaciones;
     }
 
-    private function resuelveIncidenteNoEncontrada($busqueda){
+    private function resuelveIncidenteNoEncontrada($busqueda)
+    {
         $datos_diferencia = [
             "id_poliza" => $this->Id,
             "base_datos_revisada" => $busqueda->base_datos_busqueda,
             "base_datos_referencia" => $busqueda->base_datos_referencia,
             "id_tipo" => 1,
             "tipo_busqueda" => $busqueda->id_tipo_busqueda,
-            "id_busqueda"=>$busqueda->id,
+            "id_busqueda" => $busqueda->id,
         ];
         $diferencia_prexistente = Diferencia::buscarSO($datos_diferencia);
-        if($diferencia_prexistente){
+        if ($diferencia_prexistente) {
             $diferencia_prexistente->corregir($busqueda->id);
         }
     }
 
-    private function registraIncidenteNoEncontrada($busqueda){
+    private function registraIncidenteNoEncontrada($busqueda)
+    {
         $datos_diferencia = [
             "id_poliza" => $this->Id,
             "base_datos_revisada" => $busqueda->base_datos_busqueda,
@@ -176,7 +282,7 @@ class Poliza extends Model
             "id_tipo" => 1,
             "tipo_busqueda" => $busqueda->id_tipo_busqueda,
             "observaciones" => "",
-            "id_busqueda"=>$busqueda->id,
+            "id_busqueda" => $busqueda->id,
         ];
         Diferencia::registrar($datos_diferencia);
     }
@@ -201,35 +307,35 @@ class Poliza extends Model
                 Config::set('database.connections.cntpq.database', $busqueda->base_datos_referencia);
                 $movimientos_referencia[$i]->load("cuenta");
                 //$movimientos_referencia[$i]->load("poliza");
-                try{
+                try {
 
-                $datos_relacion = [
-                    "id_movimiento_a" => $movimiento->Id,
-                    "base_datos_a" => $busqueda->base_datos_busqueda,
-                    "id_movimiento_b" => $movimientos_referencia[$i]->Id,
-                    "base_datos_b" => $busqueda->base_datos_referencia,
-                    "tipo_relacion" => $busqueda->id_tipo_busqueda,
-                    "num_movto_a" => $movimiento->NumMovto,
-                    "num_movto_b" => $movimientos_referencia[$i]->NumMovto,
-                    "tipo_movto_a" => $movimiento->TipoMovto,
-                    "tipo_movto_b" => $movimientos_referencia[$i]->TipoMovto,
-                    "codigo_cuenta_a" => $movimiento->cuenta->Codigo,
-                    "codigo_cuenta_b" => $movimientos_referencia[$i]->cuenta->Codigo,
-                    "nombre_cuenta_a" => $movimiento->cuenta->Nombre,
-                    "nombre_cuenta_b" => $movimientos_referencia[$i]->cuenta->Nombre,
-                    "importe_a" => $movimiento->Importe,
-                    "importe_b" => $movimientos_referencia[$i]->Importe,
-                    "referencia_a" => $movimiento->Referencia,
-                    "referencia_b" => $movimientos_referencia[$i]->Referencia,
-                    "concepto_a" => $movimiento->Concepto,
-                    "concepto_b" => $movimientos_referencia[$i]->Concepto,
-                    "id_poliza_a" => $movimiento->IdPoliza,
-                    "id_poliza_b" => $movimientos_referencia[$i]->IdPoliza,
-                    "id_cuenta_a" => $movimiento->IdCuenta,
-                    "id_cuenta_b" => $movimientos_referencia[$i]->IdCuenta,
-                ];}
-                catch (\Exception $e){
-                   // dd($busqueda->base_datos_busqueda,$movimiento);
+                    $datos_relacion = [
+                        "id_movimiento_a" => $movimiento->Id,
+                        "base_datos_a" => $busqueda->base_datos_busqueda,
+                        "id_movimiento_b" => $movimientos_referencia[$i]->Id,
+                        "base_datos_b" => $busqueda->base_datos_referencia,
+                        "tipo_relacion" => $busqueda->id_tipo_busqueda,
+                        "num_movto_a" => $movimiento->NumMovto,
+                        "num_movto_b" => $movimientos_referencia[$i]->NumMovto,
+                        "tipo_movto_a" => $movimiento->TipoMovto,
+                        "tipo_movto_b" => $movimientos_referencia[$i]->TipoMovto,
+                        "codigo_cuenta_a" => $movimiento->cuenta->Codigo,
+                        "codigo_cuenta_b" => $movimientos_referencia[$i]->cuenta->Codigo,
+                        "nombre_cuenta_a" => $movimiento->cuenta->Nombre,
+                        "nombre_cuenta_b" => $movimientos_referencia[$i]->cuenta->Nombre,
+                        "importe_a" => $movimiento->Importe,
+                        "importe_b" => $movimientos_referencia[$i]->Importe,
+                        "referencia_a" => $movimiento->Referencia,
+                        "referencia_b" => $movimientos_referencia[$i]->Referencia,
+                        "concepto_a" => $movimiento->Concepto,
+                        "concepto_b" => $movimientos_referencia[$i]->Concepto,
+                        "id_poliza_a" => $movimiento->IdPoliza,
+                        "id_poliza_b" => $movimientos_referencia[$i]->IdPoliza,
+                        "id_cuenta_a" => $movimiento->IdCuenta,
+                        "id_cuenta_b" => $movimientos_referencia[$i]->IdCuenta,
+                    ];
+                } catch (\Exception $e) {
+                    // dd($busqueda->base_datos_busqueda,$movimiento);
                 }
                 $relaciones_movimientos[$i] = RelacionMovimientos::registrar($datos_relacion);
                 $i++;
@@ -241,10 +347,8 @@ class Poliza extends Model
     public function sumaMismoPadreCargos($cuenta)
     {
         $suma = 0;
-        foreach ($this->movimientos()->where("TipoMovto","=",0)->orderBy('IdCuenta')->get() as $movimiento)
-        {
-            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta->Codigo)
-            {
+        foreach ($this->movimientos()->where("TipoMovto", "=", 0)->orderBy('IdCuenta')->get() as $movimiento) {
+            if ($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta->Codigo) {
                 $suma = $suma + $movimiento->Importe;
             }
         }
@@ -254,19 +358,18 @@ class Poliza extends Model
     public function sumaMismoPadreAbonos($cuenta)
     {
         $suma = 0;
-        foreach ($this->movimientos()->where("TipoMovto","=",1)->orderBy('IdCuenta')->get() as $movimiento)
-        {
-            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta->Codigo)
-            {
+        foreach ($this->movimientos()->where("TipoMovto", "=", 1)->orderBy('IdCuenta')->get() as $movimiento) {
+            if ($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta->Codigo) {
                 $suma = $suma + $movimiento->Importe;
             }
         }
         return $suma;
     }
 
-    public function getConceptoPropuesta(SolicitudEdicion $solicitud_edicion){
-        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","2")->where("id_poliza","=",$this->Id)->toArray());
-        if(count($diferencias) > 0){
+    public function getConceptoPropuesta(SolicitudEdicion $solicitud_edicion)
+    {
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo", "=", "2")->where("id_poliza", "=", $this->Id)->toArray());
+        if (count($diferencias) > 0) {
             return $diferencias[0]["valor_b"];
 
         } else {
@@ -274,9 +377,10 @@ class Poliza extends Model
         }
     }
 
-    public function getConceptoOriginalT2(SolicitudEdicion $solicitud_edicion){
-        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","2")->where("id_poliza","=",$this->Id)->toArray());
-        if(count($diferencias) > 0){
+    public function getConceptoOriginalT2(SolicitudEdicion $solicitud_edicion)
+    {
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo", "=", "2")->where("id_poliza", "=", $this->Id)->toArray());
+        if (count($diferencias) > 0) {
             return $diferencias[0]["valor_a"];
 
         } else {
@@ -287,8 +391,7 @@ class Poliza extends Model
     public function getCuentasPadresAttribute()
     {
         $cuentas_padres = [];
-        foreach($this->cuentas()->orderBy("NumMovto")->get() as $cuenta)
-        {
+        foreach ($this->cuentas()->orderBy("NumMovto")->get() as $cuenta) {
             $cuentas_padres [] = $cuenta->cuenta_mayor;
         }
         return array_unique($cuentas_padres);
@@ -298,27 +401,26 @@ class Poliza extends Model
     {
         $parametro = Parametro::find(1);
         $cuentas_padres = [];
-        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->toArray());
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo", "=", "12")->where("id_poliza", "=", $this->Id)->toArray());
 
-        if(count($diferencias) > 0){
-            $relacion = RelacionPolizas::where("id_poliza_a","=", $this->Id)
-                ->where("tipo_relacion","=",$diferencias[0]["tipo_busqueda"])
-                ->where("base_datos_a",Config::get('database.connections.cntpq.database'))->first();
+        if (count($diferencias) > 0) {
+            $relacion = RelacionPolizas::where("id_poliza_a", "=", $this->Id)
+                ->where("tipo_relacion", "=", $diferencias[0]["tipo_busqueda"])
+                ->where("base_datos_a", Config::get('database.connections.cntpq.database'))->first();
             $poliza_relacion = $this->getPolizaReferencia($relacion);
-            foreach($poliza_relacion->movimientos as $movimiento_relacionado)
-            {
+            foreach ($poliza_relacion->movimientos as $movimiento_relacionado) {
                 $cuenta = Cuenta::where("Codigo", $movimiento_relacionado->cuenta->getCodigoLongitud($parametro->longitud_cuenta))->first();
-                try{
-                    $movimiento = $this->movimientos()->where("Importe",$movimiento_relacionado->Importe)
+                try {
+                    $movimiento = $this->movimientos()->where("Importe", $movimiento_relacionado->Importe)
                         ->where("TipoMovto", $movimiento_relacionado->TipoMovto)
                         ->where("IdCuenta", $cuenta->Id)
                         ->first();
-                    if($movimiento){
+                    if ($movimiento) {
                         $cuentas_padres [] = $movimiento->cuenta->cuenta_mayor;
                     } else {
-                        $solicitud_edicion->partidas->where("id_diferencia","=", $diferencias[0]["id"])->first()->cancelaPartidaSolicitudReordenamientoImprocedente();
+                        $solicitud_edicion->partidas->where("id_diferencia", "=", $diferencias[0]["id"])->first()->cancelaPartidaSolicitudReordenamientoImprocedente();
                     }
-                } catch (\Exception $e){
+                } catch (\Exception $e) {
                 }
             }
             return array_unique($cuentas_padres);
@@ -331,29 +433,27 @@ class Poliza extends Model
     {
         $parametro = Parametro::find(1);
         $cuentas_padres = [];
-        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->toArray());
-        $relacion = RelacionPolizas::where("id_poliza_a","=", $this->Id)
-            ->where("tipo_relacion","=",$diferencias[0]["tipo_busqueda"])
-            ->where("base_datos_a",Config::get('database.connections.cntpq.database'))->first();
+        $diferencias = array_values($solicitud_edicion->diferencias->where("id_tipo", "=", "12")->where("id_poliza", "=", $this->Id)->toArray());
+        $relacion = RelacionPolizas::where("id_poliza_a", "=", $this->Id)
+            ->where("tipo_relacion", "=", $diferencias[0]["tipo_busqueda"])
+            ->where("base_datos_a", Config::get('database.connections.cntpq.database'))->first();
         $poliza_relacion = $this->getPolizaReferencia($relacion);
         $movimientos_cuenta_padre = [];
-        foreach($poliza_relacion->movimientos as $movimiento_relacionado)
-        {
+        foreach ($poliza_relacion->movimientos as $movimiento_relacionado) {
             $cuenta = Cuenta::where("Codigo", $movimiento_relacionado->cuenta->getCodigoLongitud($parametro->longitud_cuenta))->first();
-            try{
-                $movimiento = $this->movimientos()->where("Importe",$movimiento_relacionado->Importe)
+            try {
+                $movimiento = $this->movimientos()->where("Importe", $movimiento_relacionado->Importe)
                     ->where("TipoMovto", $movimiento_relacionado->TipoMovto)
                     ->where("IdCuenta", $cuenta->Id)
                     ->first();
-                if($movimiento){
-                    if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
-                    {
+                if ($movimiento) {
+                    if ($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo) {
                         $movimientos_cuenta_padre[] = $movimiento;
                     }
                 } else {
-                    $solicitud_edicion->partidas->where("id_diferencia","=", $diferencias[0]["id"])->first()->cancelaPartidaSolicitudReordenamientoImprocedente();
+                    $solicitud_edicion->partidas->where("id_diferencia", "=", $diferencias[0]["id"])->first()->cancelaPartidaSolicitudReordenamientoImprocedente();
                 }
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
             }
         }
         return $movimientos_cuenta_padre;
@@ -363,10 +463,8 @@ class Poliza extends Model
     {
         $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
         $primer_movimiento = "";
-        foreach($movimientos as $movimiento)
-        {
-            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
-            {
+        foreach ($movimientos as $movimiento) {
+            if ($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo) {
                 $primer_movimiento = $movimiento;
                 break;
             }
@@ -378,10 +476,8 @@ class Poliza extends Model
     {
         $movimientos = $this->getMovimientosReordenados($cuenta_padre, $solicitud_edicion);
         $primer_movimiento = "";
-        foreach($movimientos as $movimiento)
-        {
-            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
-            {
+        foreach ($movimientos as $movimiento) {
+            if ($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo) {
                 $primer_movimiento = $movimiento;
                 break;
             }
@@ -393,10 +489,8 @@ class Poliza extends Model
     {
         $movimientos = $this->movimientos()->orderBy('NumMovto', 'asc')->get();
         $movimientos_cuenta_padre = [];
-        foreach($movimientos as $movimiento)
-        {
-            if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
-            {
+        foreach ($movimientos as $movimiento) {
+            if ($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo) {
                 $movimientos_cuenta_padre[] = $movimiento;
             }
         }
@@ -407,27 +501,25 @@ class Poliza extends Model
     {
         $parametro = Parametro::find(1);
         $cuentas_padres = [];
-        $diferencia = $solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->first();
+        $diferencia = $solicitud_edicion->diferencias->where("id_tipo", "=", "12")->where("id_poliza", "=", $this->Id)->first();
         $partida_solicitud = $diferencia->partida_solicitud;
         $movimientos_ordenados = [];
 
-        if($diferencia){
+        if ($diferencia) {
 
-            foreach($this->movimientos as $movimiento)
-            {
-                $log = LogEdicion::where("id_solicitud_partida","=", $partida_solicitud->id)
-                    ->where("id_movimiento",$movimiento->Id)
+            foreach ($this->movimientos as $movimiento) {
+                $log = LogEdicion::where("id_solicitud_partida", "=", $partida_solicitud->id)
+                    ->where("id_movimiento", $movimiento->Id)
                     ->first();
-                if($log){
-                    $movimientos_ordenados[$log->valor_original]=$movimiento;
+                if ($log) {
+                    $movimientos_ordenados[$log->valor_original] = $movimiento;
                 } else {
                     return $this->cuentas_padres;
                 }
 
             }
             ksort($movimientos_ordenados);
-            foreach($movimientos_ordenados as $movimiento)
-            {
+            foreach ($movimientos_ordenados as $movimiento) {
                 $cuentas_padres [] = $movimiento->cuenta->cuenta_mayor;
             }
             return array_unique($cuentas_padres);
@@ -440,35 +532,59 @@ class Poliza extends Model
     {
         $parametro = Parametro::find(1);
         $cuentas_padres = [];
-        $diferencia = $solicitud_edicion->diferencias->where("id_tipo","=","12")->where("id_poliza","=",$this->Id)->first();
+        $diferencia = $solicitud_edicion->diferencias->where("id_tipo", "=", "12")->where("id_poliza", "=", $this->Id)->first();
         $partida_solicitud = $diferencia->partida_solicitud;
         $movimientos_ordenados = [];
 
-        if($diferencia){
+        if ($diferencia) {
 
-            foreach($this->movimientos as $movimiento)
-            {
-                $log = LogEdicion::where("id_solicitud_partida","=", $partida_solicitud->id)
-                    ->where("id_movimiento",$movimiento->Id)
+            foreach ($this->movimientos as $movimiento) {
+                $log = LogEdicion::where("id_solicitud_partida", "=", $partida_solicitud->id)
+                    ->where("id_movimiento", $movimiento->Id)
                     ->first();
-                if($log){
-                    $movimientos_ordenados[$log->valor_original]=$movimiento;
+                if ($log) {
+                    $movimientos_ordenados[$log->valor_original] = $movimiento;
                 } else {
                     return $this->getMovimientos($cuenta_padre);
                 }
 
             }
             ksort($movimientos_ordenados);
-            foreach($movimientos_ordenados as $movimiento)
-            {
-                if($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo)
-                {
+            foreach ($movimientos_ordenados as $movimiento) {
+                if ($movimiento->cuenta->cuenta_mayor->Codigo == $cuenta_padre->Codigo) {
                     $movimientos_cuenta_padre[] = $movimiento;
                 }
             }
             return $movimientos_cuenta_padre;
         } else {
             return $this->getMovimientos($cuenta_padre);
+        }
+    }
+
+    public function getTipoAttribute()
+    {
+        if ($this->tipo_poliza) {
+            return $this->tipo_poliza->Nombre;
+        } else {
+            return "";
+        }
+    }
+
+    public function createLog($campo, $valor_original, $valor_modificado)
+    {
+        LogEdicion::create([
+            'id_poliza' => $this->Id,
+            'id_campo' => $campo,
+            'valor_original' => $valor_original,
+            'valor_modificado' => $valor_modificado
+        ]);
+    }
+
+    public function validarReglas()
+    {
+        if(self::where('Ejercicio', $this->Ejercicio)->where('Periodo', $this->Periodo)->where('TipoPol', $this->TipoPol)->where('Folio', $this->Folio)->where('Id', '!=', $this->Id)->first())
+        {
+            abort(500,"No se puede realizar el cambio, existe una Póliza en el mismo ejercicio y periodo");
         }
     }
 }

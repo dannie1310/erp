@@ -18,7 +18,7 @@ class ItemOrdenCompra extends Item
 
     public function orden_partida_complemento()
     {
-        return $this->hasOne(OrdenCompraPartidaComplemento::class, 'id_item');
+        return $this->belongsTo(OrdenCompraPartidaComplemento::class, 'id_item');
     }
 
     public function entrega()
@@ -157,18 +157,12 @@ class ItemOrdenCompra extends Item
                             $this->saldo = $this->saldo - $pagado_remision;
                             $this->save();
                         }
-
                         $importe_pagado -=$pagado_remision;
-
                     }
                 }
             }
         } catch (\Exception $e){
             abort(500,"Error al amortizar anticipo de item: ".$this->id_item." ".$e->getMessage());
         }
-
-
-
-
     }
 }

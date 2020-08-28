@@ -121,7 +121,7 @@
                                 });
 
                                 if($.inArray(data.areasSubcontratantes.data[0].id, areas) == -1) {
-                                    this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO_PROYECTADO', this.id);
+                                    this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO', this.id);
                                 }
 
                             })
