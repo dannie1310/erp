@@ -30,9 +30,31 @@ class OrdenCompra extends Transaccion
         self::addGlobalScope('tipo',function ($query) {
             return $query->where('tipo_transaccion', '=', 19)
                 ->where('opciones', '=', 1)
-                ->where('estado', '!=', -2);
+                ->where('estado', '!=', -2)
+                ->whereHas('solicitud');
         });
     }
+
+    protected $fillable = [
+        'id_antecedente',
+        'id_referente',
+        'tipo_transaccion',
+        'numero_folio',
+        'id_empresa',
+        'id_sucursal',
+        'id_moneda',
+        'opciones',
+        'monto',
+        'saldo',
+        'impuesto',
+        'fecha',
+        'estado',
+        'id_obra',
+        'comentario',
+        'observaciones',
+        'FechaHoraRegistro',
+        'porcentaje_anticipo_pactado',
+    ];
 
     public function empresa()
     {
@@ -195,5 +217,16 @@ class OrdenCompra extends Transaccion
 
                 break;
         }
+    }
+
+    public function getTieneEntradaAlmacenAttribute(){
+        return $this->entradasAlmacen()->count() > 0;
+    }
+
+    public function getAnticipoOrdenAttribute(){
+        if($partida = $this->partidas()->first()){
+            return $partida->anticipo;
+        }
+        return 0;
     }
 }

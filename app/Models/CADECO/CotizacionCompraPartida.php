@@ -4,10 +4,12 @@
 namespace App\Models\CADECO;
 
 
-use App\Models\CADECO\Compras\CotizacionComplementoPartida;
+use App\Models\CADECO\Moneda;
+use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 
-class Cotizacion extends Model
+class CotizacionCompraPartida extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'dbo.cotizaciones';
@@ -27,11 +29,13 @@ class Cotizacion extends Model
         'no_cotizado'
     ];
 
-
-    public function partida(){
+    public function partida()
+    {
         return $this->belongsTo(CotizacionComplementoPartida::class,'id_transaccion', 'id_transaccion')->where('id_material', '=', $this->id_material);
     }
-    public function material(){
+
+    public function material()
+    {
         return $this->belongsTo(Material::class,'id_material', 'id_material');
     }
 
@@ -53,7 +57,7 @@ class Cotizacion extends Model
     public function getPrecioUnitarioFormatAttribute()
     {
         return '$ '. number_format($this->precio_unitario, 2, '.', ',');
-    }    
+    }
 
     public function getPrecioTotalAttribute()
     {
@@ -73,6 +77,43 @@ class Cotizacion extends Model
             case (3):
                 return ($this->cotizacion->complemento) ? '$ '. number_format(($this->cantidad * $this->precio_unitario * $this->cotizacion->complemento->tc_eur), 2, '.', ',') : '---------';
                 break;
+            case (4):
+                return  '$ '. number_format(($this->cantidad * $this->precio_unitario * $this->tipo_cambio), 2, '.', ',');
+                break;
         }
+    }
+
+    public function getTotalPrecioMonedaAttribute()
+    {
+        switch ($this->id_moneda)
+        {
+            case (1):
+                return $this->cantidad * $this->precio_compuesto;
+                break;
+            case (2):
+                return($this->cotizacion->complemento) ? $this->cantidad * $this->precio_compuesto * $this->cotizacion->complemento->tc_usd : $this->cantidad * $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            case (3):
+                return ($this->cotizacion->complemento) ? $this->cantidad * $this->precio_compuesto * $this->cotizacion->complemento->tc_eur : $this->cantidad * $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            case (4):
+                return $this->cantidad * $this->precio_compuesto * $this->tipo_cambio;
+                break;
+        }
+    }
+
+    public function getPrecioCompuestoAttribute()
+    {
+        return $this->descuento != 0 ? $this->precio_unitario - ($this->precio_unitario * $this->descuento / 100) : $this->precio_unitario;
+    }
+
+    public function getPrecioCompuestoTotalAttribute()
+    {
+        return $this->precio_compuesto * $this->cantidad;
+    }
+
+    public function getTipoCambioAttribute()
+    {
+        return $this->moneda->cambio ? $this->moneda->cambio->cambio : 1;
     }
 }

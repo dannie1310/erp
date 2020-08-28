@@ -18,7 +18,7 @@ class ItemOrdenCompra extends Item
 
     public function orden_partida_complemento()
     {
-        return $this->hasOne(OrdenCompraPartidaComplemento::class, 'id_item');
+        return $this->belongsTo(OrdenCompraPartidaComplemento::class, 'id_item');
     }
 
     public function entrega()

@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Compras\SolicitudPartidaComplemento;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 
 class ItemSolicitudCompra extends Item
 {
@@ -19,9 +20,7 @@ class ItemSolicitudCompra extends Item
         'id_transaccion',
         'id_material',
         'unidad',
-        'cantidad',
-        'id_concepto',
-        'id_almacen'
+        'cantidad'
     ];
 
     public function complemento()
@@ -47,6 +46,11 @@ class ItemSolicitudCompra extends Item
     public function inventario()
     {
         return $this->hasMany(Inventario::class, 'id_material', 'id_material');
+    }
+
+    public function asignaciones()
+    {
+        return $this->hasMany(AsignacionProveedorPartida::class, 'id_item_solicitud', 'id_item');
     }
 
     public function itemsOrdenCompra()
@@ -91,5 +95,10 @@ class ItemSolicitudCompra extends Item
     public function getSumaInventarioFormatAttribute()
     {
         return number_format($this->inventario->sum('saldo'), 1,'.',',');
+    }
+
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad, 1, '.', ',');
     }
 }

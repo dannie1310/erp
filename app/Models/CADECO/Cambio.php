@@ -22,6 +22,11 @@ class Cambio extends Model
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
+    public function getCambioFormatoAttribute()
+    {
+        return number_format($this->cambio, 4, '.', ',');
+    }
+
     public function getCambioFormatAttribute(){
         return '$ ' . number_format($this->cambio, 4);
     }

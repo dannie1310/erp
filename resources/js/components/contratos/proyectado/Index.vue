@@ -1,6 +1,11 @@
 <template>
     <div class="row">
-
+        <div class="col-12">
+            <button @click="registrar" v-if="$root.can('registrar_contrato_proyectado')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-plus" v-else></i> Registrar
+            </button>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -54,17 +59,20 @@
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO_PROYECTADO', data.data);
+                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
                         this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
             },
+            registrar(){
+                this.$router.push({name: 'proyectado-create'});
+            },
         },
         computed: {
             contratosProyectados(){
-                return this.$store.getters['contratos/contrato-proyectado/contratoProyectado'];
+                return this.$store.getters['contratos/contrato-proyectado/contratos'];
             },
             meta(){
                 return this.$store.getters['contratos/contrato-proyectado/meta'];
@@ -85,13 +93,16 @@
                         fecha: contratoProyectado.fecha,
                         referencia: contratoProyectado.referencia,
                         buttons: $.extend({}, {
-                            cambiaAreaSubcontratante: (this.$root.can('aprobar_estimacion_subcontrato')) ? true : undefined,
+                            cambiaAreaSubcontratante: (this.$root.can('modificar_area_subcontratante_cp')) ? true : undefined,
                             id: contratoProyectado.id,
                             numero_folio: `# ${contratoProyectado.numeroFolio}`,
                             fecha: contratoProyectado.fecha,
                             referencia: contratoProyectado.referencia,
                             area:contratoProyectado.areasSubcontratantes.data[0],
-                            contratoProyectado: contratoProyectado
+                            contratoProyectado: contratoProyectado,
+                            delete : (this.$root.can('eliminar_contrato_proyectado')) ? true : false,
+                            show : this.$root.can('consultar_contrato_proyectado') ? true : false,
+                            edit : this.$root.can('editar_contrato_proyectado') ? true : false
                         })
                     }));
                 },

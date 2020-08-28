@@ -5,7 +5,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\Compras\SolicitudComplementoTransformer;
-use App\Http\Transformers\CADECO\CotizacionTransformer;
+use App\Http\Transformers\CADECO\Compras\CotizacionCompraTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\SolicitudCompra;
 use League\Fractal\TransformerAbstract;
@@ -83,7 +83,7 @@ class SolicitudCompraTransformer extends TransformerAbstract
     {
         if($cotizaciones = $model->cotizaciones)
         {
-            return $this->collection($cotizaciones, new CotizacionTransformer);
+            return $this->collection($cotizaciones, new CotizacionCompraTransformer);
         }
         return null;
     }
