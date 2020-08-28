@@ -28,7 +28,7 @@
                                         <table class="table">
                                             <tbody>
                                                 <tr>
-                                                    <td class="bg-gray-light" align="center" colspan="6"><b>{{(cotizacion.empresa) ? cotizacion.empresa.razon_social : '-----------'}}</b></td>
+                                                    <td class="bg-gray-light" align="center" colspan="8"><b>{{(cotizacion.empresa) ? cotizacion.empresa.razon_social : '-----------'}}</b></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
@@ -37,10 +37,12 @@
                                                     <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</td>
                                                     <td class="bg-gray-light"><b>TC EURO:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</td>
+                                                    <td class="bg-gray-light"><b>TC LIBRA:</b></td>
+                                                    <td class="bg-gray-light">{{libra}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="bg-gray-light"><b>Direccion:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.direccion : '----------'}}</td>
+                                                    <td class="bg-gray-light" colspan="2"><b>Direccion:</b></td>
+                                                    <td class="bg-gray-light" colspan="2">{{(cotizacion.sucursal) ? cotizacion.sucursal.direccion : '----------'}}</td>
                                                     <td class="bg-gray-light"><b>Folio:</b></td>
                                                     <td class="bg-gray-light">{{cotizacion.folio_format}}</td>
                                                     <td class="bg-gray-light"><b>Importe:</b></td>
@@ -50,7 +52,7 @@
                                         </table>
                                     </div>
                                 <hr />
-                                
+
                                 <div class="row" v-if="cotizacion.partidas">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
@@ -62,7 +64,7 @@
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
                                                     <th></th>
-                                                    <th class="cantidad_input">Cantidad</th>                                                  
+                                                    <th class="cantidad_input">Cantidad</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
                                                     <th class="cantidad_input">% Descuento</th>
                                                     <th class="money">Precio Total</th>
@@ -82,7 +84,7 @@
                                                                 <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
-                                                        </td>                                                        
+                                                        </td>
                                                         <td style="text-align:center;">{{partida.cantidad_format}}</td>
                                                         <td>
                                                             <input type="number"
@@ -144,7 +146,7 @@
                                         </div>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Descuento:</label>                                        
+                                        <label class="col-sm-2 col-form-label">% Descuento:</label>
                                     </div>
                                     <div class=" col-md-2" align="right">
                                         <input
@@ -154,7 +156,7 @@
                                                                 max="100"
                                                                 name="descuento_cot"
                                                                 v-model="descuento_cot"
-                                                                v-validate="{required: true,}"
+                                                                v-validate="{required: true}"
                                                                 class="col-sm-6 form-control"
                                                                 id="descuento_cot"
                                                                 :class="{'is-invalid': errors.has('descuento_cot')}">
@@ -172,12 +174,20 @@
                                         <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal Precios LIBRA:</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">TC USD:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">TC EURO:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</label>
+                                    </div>
+                                     <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">TC LIBRA:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{libra}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
@@ -192,7 +202,7 @@
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Pago en Parcialidades (%):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Pago en Parcialidades (%):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -202,13 +212,13 @@
                                                                 max="100"
                                                                 name="pago"
                                                                 v-model="pago"
-                                                                v-validate="{required: true,}"
+                                                                v-validate="{required: true}"
                                                                 class="col-sm-6 form-control"
                                                                 id="pago"
                                                                 :class="{'is-invalid': errors.has('pago')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>                                        
+                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -218,13 +228,13 @@
                                                                 max="100"
                                                                 name="anticipo"
                                                                 v-model="anticipo"
-                                                                v-validate="{required: true,}"
+                                                                v-validate="{required: true}"
                                                                 class="col-sm-6 form-control"
                                                                 id="anticipo"
                                                                 :class="{'is-invalid': errors.has('anticipo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -239,7 +249,7 @@
                                                                 :class="{'is-invalid': errors.has('credito')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Tiempo de Entrega (días):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Tiempo de Entrega (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -248,13 +258,13 @@
                                                                 step="1"
                                                                 name="tiempo"
                                                                 v-model="tiempo"
-                                                                v-validate="{required: true,}"
+                                                                v-validate="{required: true}"
                                                                 class="col-sm-6 form-control"
                                                                 id="tiempo"
                                                                 :class="{'is-invalid': errors.has('tiempo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -263,7 +273,7 @@
                                                                 step="1"
                                                                 name="vigencia"
                                                                 v-model="vigencia"
-                                                                v-validate="{required: true,}"
+                                                                v-validate="{required: true}"
                                                                 class="col-sm-6 form-control"
                                                                 id="vigencia"
                                                                 :class="{'is-invalid': errors.has('vigencia')}">
@@ -293,7 +303,7 @@
                             </div>
                              <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Registrar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
                              </div>
                         </form>
                     </div>
@@ -331,6 +341,7 @@
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
+                libras:0,
                 cotizacion: [],
                 moneda_input:[],
                 sucursal: true,
@@ -363,7 +374,7 @@
                 vigencia: 0,
                 descuento: [],
                 enable: []
-                             
+
             }
         },
         mounted() {
@@ -373,9 +384,7 @@
             this.moneda_input = [];
             this.observaciones_inputs = [];
             this.descuento = [];
-            this.find();            
             this.$validator.reset();
-            
         },
         methods : {
             formatoFecha(date){
@@ -387,31 +396,43 @@
                 return this.$store.dispatch('cadeco/moneda/index', {
                 }).then(data => {
                     this.monedas = data.data;
+                    this.find();
                 }).finally(()=>{
 
                 })
             },
             salir()
             {
-                 this.$router.push({name: 'cotizacion'}); 
+                 this.$router.push({name: 'cotizacion'});
             },
             find() {
-                                
                 this.cargando = true;
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
                 return this.$store.dispatch('compras/cotizacion/find', {
                     id: this.id,
                     params:{include: [
+                        'solicitud',
                         'empresa',
                         'sucursal',
                         'complemento',
                         'partidas.material'
                     ]}
-                }).then(data => {         
-                    this.cotizacion = data;                               
-                    this.fecha = data.fecha;                    
+                }).then(data => {
+                    this.cotizacion = data;
+                    this.fecha = data.fecha;
                     this.ordenar();
                     this.cargando = false;
+                    if(data.partidas.data.length === 0)
+                    {
+                        return this.$store.dispatch('compras/solicitud-compra/find', {
+                            id: data.solicitud.id,
+                            params:{include: [
+                                    'partidas.complemento'
+                                ]}
+                        }).then(data => {
+                            this.cotizacion.partidas = data.partidas
+                        })
+                    }
                 })
             },
             calcular()
@@ -421,30 +442,35 @@
                 this.dolares = 0;
                 this.euros = 0;
                 while(this.x < this.cotizacion.partidas.data.length)
-                {                    
+                {
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
-                    {                        
+                    {
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
-                            this.pesos = (this.pesos + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] - 
+                            this.pesos = (this.pesos + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] -
                             ((this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
-                            this.dolares = (this.dolares + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] - 
+                            this.dolares = (this.dolares + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] -
                             ((this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
                         }
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
-                            this.euros = (this.euros + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] - 
+                            this.euros = (this.euros + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] -
                             ((this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
-                        }                       
+                        }
+                        if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
+                        {
+                            this.libras = (this.libras + parseFloat(this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] -
+                                ((this.cotizacion.partidas.data[this.x].cantidad * this.precio[this.x] * this.descuento[this.x]) / 100)));
+                        }
                     }
-                    this.x ++;                    
-                }         
+                    this.x ++;
+                }
             },
             ordenar()
-            {                
+            {
                 this.x = 0;
                 while(this.x < this.cotizacion.partidas.data.length)
                 {
@@ -454,7 +480,7 @@
                         this.precio[this.x] = this.cotizacion.partidas.data[this.x].precio_unitario;
                         this.moneda_input[this.x] = (this.cotizacion.partidas.data[this.x].id_moneda != 0) ? this.cotizacion.partidas.data[this.x].id_moneda : 1;
                         this.descuento[this.x] = (this.cotizacion.partidas.data[this.x].descuento > 0) ? this.cotizacion.partidas.data[this.x].descuento : 0;
-                        
+
                     }else{
                         var busqueda = this.carga.partidas.find(x=>x.id_material == this.cotizacion.partidas.data[this.x].material.id);
                         this.cotizacion.partidas.data[this.x].observacion = busqueda.observaciones;
@@ -463,7 +489,7 @@
                         this.moneda_input[this.x] = busqueda.id_moneda;
                         this.descuento[this.x] = busqueda.descuento;
                     }
-                    this.x ++;                    
+                    this.x ++;
                 }
                 if(!this.carga)
                 {
@@ -483,14 +509,14 @@
                     this.cotizacion.observaciones = this.carga.observaciones_generales;
                 }
                         this.tipo_cambio[1] = 1;
-                        this.tipo_cambio[2] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_igh;
-                        this.tipo_cambio[3] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_eur : this.monedas[2].tipo_cambio_igh;
-                        this.tipo_cambio[4] = 1;                        
+                        this.tipo_cambio[2] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_cadeco.cambio_formato;
+                        this.tipo_cambio[3] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_eur : this.monedas[2].tipo_cambio_cadeco.cambio_formato;
+                        this.tipo_cambio[4] =  this.monedas[3].tipo_cambio_cadeco.cambio_formato;
 
-                    this.calcular();                
+                    this.calcular();
             },
             validate() {
-                
+
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.post.partidas = this.cotizacion.partidas.data;
@@ -511,11 +537,11 @@
                         this.post.observaciones = this.cotizacion.observaciones;
                         this.post.tipo_cambio = this.tipo_cambio;
                         this.save()
-                    }                    
+                    }
                 });
             },
             save() {
-                
+
                 if(this.total == 0)
                 {
                     swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
@@ -527,7 +553,7 @@
                 })
                     .then((data) => {
                         this.$router.push({name: 'cotizacion'});
-                    });                
+                    });
                 }
             },
         },
@@ -537,8 +563,8 @@
             },
             subtotal()
             {
-                return ((this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3])) - 
-                ((this.descuento_cot * (this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]))) / 100 ));
+                return ((this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]) + (this.libras * this.tipo_cambio[4])) -
+                ((this.descuento_cot * (this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]) + (this.libras * this.tipo_cambio[4]))) / 100 ));
             },
             iva()
             {
@@ -550,11 +576,15 @@
             },
             dolar()
             {
-                return '$ ' + this.monedas[1].tipo_cambio_igh;
+                return this.monedas[1].tipo_cambio_cadeco.cambio_format;
             },
             euro()
             {
-                return '$ ' + this.monedas[2].tipo_cambio_igh;
+                return this.monedas[2].tipo_cambio_cadeco.cambio_format;
+            },
+            libra()
+            {
+                return this.monedas[3].tipo_cambio_cadeco.cambio_format;
             },
             carga()
             {
@@ -577,7 +607,7 @@
                 }
             },
             descuento()
-            {                
+            {
                 if(this.descuento.length > 0)
                 {
                     this.calcular();
@@ -588,8 +618,8 @@
                 if(this.enable.length > 0)
                 {
                     this.calcular();
-                }                
-            }            
+                }
+            }
         }
     }
 </script>

@@ -3,15 +3,12 @@
 
 namespace App\Http\Transformers\CADECO\Compras;
 
-use App\Http\Transformers\CADECO\CotizacionCompraPartidaTransformer;
-use App\Http\Transformers\CADECO\CotizacionCompraTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
-use App\Models\CADECO\Compras\AsignacionProveedores;
 use League\Fractal\TransformerAbstract;
-use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Http\Transformers\CADECO\Compras\SolicitudCompraPartidaTransformer;
 
-class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
+class AsignacionProveedorPartidaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -34,7 +31,7 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
         'material'
     ];
 
-    public function transform(AsignacionProveedoresPartida $model)
+    public function transform(AsignacionProveedorPartida $model)
     {
         return [
             'id' => (int) $model->getKey(),
@@ -51,20 +48,20 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
      * @param ItemSolicitudCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeItemSolicitud(AsignacionProveedoresPartida $model)
+    public function includeItemSolicitud(AsignacionProveedorPartida $model)
     {
-        
+
         if ($itemSolicitud = $model->itemSolicitud) {
             return $this->item($itemSolicitud, new SolicitudCompraPartidaTransformer);
         }
         return null;
     }
-    
+
     /**
      * @param CotizacionCompra $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeCotizacion(AsignacionProveedoresPartida $model)
+    public function includeCotizacion(AsignacionProveedorPartida $model)
     {
         if ($cotizacion = $model->cotizacionCompra)
         {
@@ -72,24 +69,24 @@ class AsignacionProveedoresPartidaTransformer extends TransformerAbstract
         }
         return null;
     }
-    
+
     /**
      * @param CotizacionCompraPartida $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeCotizacionPartida(AsignacionProveedoresPartida $model)
+    public function includeCotizacionPartida(AsignacionProveedorPartida $model)
     {
         if ($cotizacion = $model->cotizacion) {
             return $this->item($cotizacion, new CotizacionCompraPartidaTransformer);
         }
         return null;
     }
-    
+
     /**
      * @param Material $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeMaterial(AsignacionProveedoresPartida $model)
+    public function includeMaterial(AsignacionProveedorPartida $model)
     {
         if ($material = $model->material) {
             return $this->item($material, new MaterialTransformer);

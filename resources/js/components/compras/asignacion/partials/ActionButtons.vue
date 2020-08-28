@@ -1,15 +1,13 @@
 <template>
     <div class="btn-group">
-        <button @click="show" type="button"
-                class="btn btn-sm btn-outline-secondary" title="Ver">
+        <button @click="show" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </button>
-        <PDF></PDF>
-        <button @click="edit" type="button" v-if="$root.can('registrar_orden_compra')"
-                class="btn btn-sm btn-outline-success" title="Editar">
+        <PDF v-bind:id="value.id"></PDF>
+        <button @click="edit" type="button" v-if="value.editar" class="btn btn-sm btn-outline-success" title="Editar">
             <i class="fa fa-pencil"></i>
         </button>
-        <Eliminar v-if="$root.can('eliminar_asignacion_proveedor') && value.estado == 1" v-bind:id="value.id"></Eliminar>
+        <Eliminar v-if="value.eliminar" v-bind:id="value.id"></Eliminar>
     </div>
 </template>
 
@@ -27,19 +25,11 @@
         },
         methods:{
             show(){
-                this.$router.push({name: 'asignacion-proveedores-show', params: { id: this.value.id }});
+                this.$router.push({name: 'asignacion-proveedor-show', params: { id: this.value.id }});
             },
             edit(){
-                this.$router.push({name: 'asignacion-proveedores-edit', params: { id: this.value.id }});
+                this.$router.push({name: 'asignacion-proveedor-edit', params: { id: this.value.id }});
             },
-            // descargaLayout() {
-            //     console.log('Descarga de Layouts');
-            //     return this.$store.dispatch('compras/asignacion/descargaLayout',{id: 5})
-            //         .then(() => {
-            //             this.$emit('success')
-
-            //         })
-            // },
         }
     }
 

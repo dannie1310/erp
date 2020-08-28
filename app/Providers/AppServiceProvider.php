@@ -11,8 +11,8 @@ use App\Models\CADECO\Almacenes\EntregaContratista;
 use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Cliente;
-use App\Models\CADECO\Compras\AsignacionProveedores;
-use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
+use App\Models\CADECO\Compras\AsignacionProveedor;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\RequisicionComplemento;
@@ -155,8 +155,8 @@ use App\Observers\CADECO\Almacenes\EntregaContratistaObserver;
 use App\Observers\CADECO\AnticipoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\ClienteObserver;
-use App\Observers\CADECO\Compras\AsignacionProveedoresObserver;
-use App\Observers\CADECO\Compras\AsignacionProveedoresPartidaObserver;
+use App\Observers\CADECO\Compras\AsignacionProveedorObserver;
+use App\Observers\CADECO\Compras\AsignacionProveedorPartidaObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\OrdenCompraComplementoObserver;
 use App\Observers\CADECO\Compras\RequisicionComplementoObserver;
@@ -338,8 +338,8 @@ class AppServiceProvider extends ServiceProvider
             /**
              * Compras
              */
-            AsignacionProveedores::observe(AsignacionProveedoresObserver::class);
-            AsignacionProveedoresPartida::observe(AsignacionProveedoresPartidaObserver::class);
+            AsignacionProveedor::observe(AsignacionProveedorObserver::class);
+            AsignacionProveedorPartida::observe(AsignacionProveedorPartidaObserver::class);
             CotizacionComplemento::observe(CotizacionComplementoObserver::class);
             EntradaEliminada::observe(EntradaEliminadaObserver::class);
             RequisicionComplemento::observe(RequisicionComplementoObserver::class);

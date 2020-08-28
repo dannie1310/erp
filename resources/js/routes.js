@@ -1203,7 +1203,7 @@ export const routes = [
                         meta: {
                             title: 'Registrar Proveedor / Contratista',
                             breadcrumb: { parent: 'proveedor-contratista', name: 'REGISTRAR PROVEEDOR-CONTRATISTA'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
                             permission: 'registrar_proveedor'
                         }
                     },
@@ -1229,55 +1229,55 @@ export const routes = [
                 }
             },
             {
-                path: 'asignacion-proveedores',
+                path: 'asignacion-proveedor',
                 component: require('./components/compras/asignacion/Layout').default,
                 children: [
                     {
                         path: '/',
-                        name: 'asignacion-proveedores',
+                        name: 'asignacion-proveedor',
                         component: require('./components/compras/asignacion/Index').default,
                         meta: {
                             title: 'Asignación de Proveedores',
                             breadcrumb: {parent: 'compras', name: 'ASIGNACIÓN DE PROVEEDORES'},
-                            middleware: [auth, context],
-                        }
-                    },
-                    {
-                        path: ':id',
-                        name: 'asignacion-proveedores-show',
-                        component: require('./components/compras/asignacion/Show').default,
-                        props: true,
-                        meta: {
-                            title: 'Consultar Asignación de Proveedores',
-                            breadcrumb: { parent: 'asignacion-proveedores', name: 'VER'},
-                            middleware: [auth, context],
-                            // permission: 'registrar_proveedor'
-                        }
-                    },
-                    {
-                        path: ':id/edit',
-                        name: 'asignacion-proveedores-edit',
-                        component: require('./components/compras/asignacion/Edit').default,
-                        props: true,
-                        meta: {
-                            title: 'Editar Asignación de Proveedores',
-                            breadcrumb: { parent: 'asignacion-proveedores', name: 'EDITAR'},
-                            middleware: [auth, context],
-                            // permission: 'registrar_proveedor'
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_asignacion_proveedor'
                         }
                     },
                     {
                         path: 'create',
-                        name: 'asignacion-proveedores-create',
+                        name: 'asignacion-proveedor-create',
                         component: require('./components/compras/asignacion/Create').default,
-                        props: true,
                         meta: {
                             title: 'Registrar Asignación de Proveedores',
-                            breadcrumb: { parent: 'asignacion-proveedores', name: 'REGISTRAR'},
-                            middleware: [auth, context],
-                            // permission: 'registrar_proveedor'
+                            breadcrumb: { parent: 'asignacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_asignacion_proveedor'
                         }
                     },
+                    {
+                        path: ':id',
+                        name: 'asignacion-proveedor-show',
+                        component: require('./components/compras/asignacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedor', name: 'VER'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_asignacion_proveedor'
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'asignacion-proveedor-edit',
+                        component: require('./components/compras/asignacion/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Editar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedor', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_orden_compra'
+                        }
+                    }
                 ]
             },
             {

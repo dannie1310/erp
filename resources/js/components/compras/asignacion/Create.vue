@@ -10,11 +10,11 @@
                                     <model-list-select
                                         :disabled="cargando"
                                         name="id_solicitud"
-                                        option-value="id"                                                               
+                                        option-value="id"
                                         v-model="id_solicitud"
                                         :custom-text="numeroFolioFormatAndObservaciones"
                                         :list="solicitudes"
-                                        :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
+                                        :placeholder="!cargando?'Seleccionar o buscar solicitud de compra por número de folio o observación':'Cargando...'"
                                         :isError="errors.has(`id_solicitud`)">
                                     </model-list-select>
                                 <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
@@ -60,7 +60,7 @@
                                                 <th style="width: 6%;">Cantidad Solicitada</th>
                                                 <th style="width: 6%;">Cantidad Asignada Previamente</th>
                                                 <th style="width: 6%;">Cantidad Pendiente Asignar</th>
-                                             
+
                                                 <th class="bg-gray-light ">Precio Unitario</th>
                                                 <th class="bg-gray-light">% Descuento</th>
                                                 <th class="bg-gray-light ">Precio Total</th>
@@ -87,7 +87,7 @@
                                                         <input v-on:change="recalcular(i)"
                                                             type="number"
                                                             :disabled="item.cantidad_disponible == 0 && data.cotizaciones[id_empresa].partidas[i].cantidad_asignada == ''"
-                                                            
+
                                                             class="form-control"
                                                             :name="`cantidad_asignada[${item.id_material}]`"
                                                             data-vv-as="Cantidad Asignada"
@@ -118,7 +118,7 @@
 <script>
 import {ModelListSelect} from 'vue-search-select';
 export default {
-    name: "asignacion-proveedores-create",
+    name: "asignacion-proveedor-create",
     components: {ModelListSelect},
     data() {
         return {
@@ -133,7 +133,7 @@ export default {
         this.getSolicitudes();
     },
     computed: {
-        
+
     },
     methods: {
         numeroFolioFormatAndObservaciones(item){
@@ -200,7 +200,7 @@ export default {
             Object.values(this.data.cotizaciones).forEach(partida =>{
                 if(partida.partidas[i] && partida.partidas[i].cantidad_asignada !== ''){
                     asignadas = +asignadas + +partida.partidas[i].cantidad_asignada;
-                }                   
+                }
             });
 
             if(asignadas > this.data.items[i].cantidad_base){
@@ -219,7 +219,7 @@ export default {
                 let c_asignada =this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada !== ''?this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada:0;
                 this.data.cotizaciones[this.id_empresa].partidas[i].importe = parseFloat(p_unitario * c_asignada).formatMoney(2);
                 this.data.cotizaciones[this.id_empresa].partidas[i].importe_moneda_conversion = parseFloat((p_unitario * c_asignada) * this.data.cotizaciones[this.id_empresa].partidas[i].tipo_cambio).formatMoney(2);
-     
+
             }
             // this.data.items[i].cantidad_disponible = this.data.items[i].cantidad_base;
             this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_base - asignadas).toFixed(4);
@@ -232,7 +232,7 @@ export default {
                 cotizaciones:this.data.cotizaciones
             })
             .then((data) => {
-                this.$router.push({name: 'asignacion-proveedores'});
+                this.$router.push({name: 'asignacion-proveedor'});
             })
             .finally(() => {
                 this.cargando = false;

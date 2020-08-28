@@ -5,11 +5,11 @@ namespace App\Repositories\CADECO\Compras\Asignacion;
 
 
 use App\Repositories\RepositoryInterface;
-use App\Models\CADECO\Compras\AsignacionProveedores;
+use App\Models\CADECO\Compras\AsignacionProveedor;
 
 class Repository extends \App\Repositories\Repository  implements RepositoryInterface
 {
-    public function __construct(AsignacionProveedores $model)
+    public function __construct(AsignacionProveedor $model)
     {
         parent::__construct($model);
         $this->model = $model;
@@ -29,7 +29,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         return $query->paginate(10);
     }
 
-    
+
     public function sort()
     {
         if (request('sort')) {
@@ -38,7 +38,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             }else{
                 $this->model = $this->model->orderBy(request('sort'), request('order'));
             }
-            
+
         }
     }
 }
