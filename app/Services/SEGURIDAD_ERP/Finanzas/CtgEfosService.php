@@ -4,6 +4,8 @@
 namespace App\Services\SEGURIDAD_ERP\Finanzas;
 
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
+use App\PDF\Fiscal\InformeEFOSCFD;
+use App\PDF\Fiscal\InformeEFOSCFDDesglosado;
 use App\Repositories\SEGURIDAD_ERP\CtgEfos\Repository;
 
 class CtgEfosService
@@ -47,6 +49,30 @@ class CtgEfosService
                 return $this->repository->where([['razon_social','like', '%'.$data['razon_social'].'%']])->paginate();
             }
                 return $this->repository->paginate();
+    }
+
+    public function obtenerInforme(){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        return $this->repository->getInformeCFD();
+    }
+
+    public function obtenerInformeDesglosado(){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        return $this->repository->getInformeCFDDesglosado();
+    }
+
+    public function obtenerInformePDF(){
+        $informe = $this->obtenerInforme();
+        $pdf = new InformeEFOSCFD($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeDesglosadoPDF(){
+        $informe = $this->obtenerInformeDesglosado();
+        $pdf = new InformeEFOSCFDDesglosado($informe);
+        return $pdf->create();
     }
 
 }

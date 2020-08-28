@@ -25,6 +25,8 @@ class Rol extends Model
     protected $connection = 'seguridad';
     protected $table = 'dbo.roles';
 
+    /*protected $dateFormat = 'Y-m-d H:i:s';*/
+
     protected $fillable = [
         'display_name',
         'description'
@@ -34,6 +36,8 @@ class Rol extends Model
         'name',
         'display_name',
     ];
+
+    /*protected $dateFormat = 'Y-m-d H:i:s';*/
 
     public function permisos()
     {

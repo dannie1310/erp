@@ -8,18 +8,24 @@
 
 namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
-use App\Jobs\ProcessBusquedaDiferenciasPolizas;
+use stdClass;
 use App\Models\CTPQ\Poliza;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Config;
+use App\Jobs\ProcessBusquedaDiferenciasPolizas;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
-use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
+use App\PDF\ContabilidadGeneral\PolizaFormatoOriginal;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
+use App\PDF\ContabilidadGeneral\InformeDiferenciasPolizas;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\CtgTipo;
-use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
+use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
+use App\Utils\BusquedaDiferenciasPolizas;
 
 class DiferenciaService
 {
@@ -78,6 +84,16 @@ class DiferenciaService
         $datos_lote = [];
         /*$lote = LoteBusqueda::find(1);
         $lote->generaSolicitudesCambio();*/
+        /*29097 ok*/
+        /*error 19195*/
+        /*$relaciones["relacion_poliza"] = RelacionPolizas::where("id_poliza_a","=",19195)
+            ->where("base_datos_a","=", 'ctPCO811231EI4_014')->first();
+        $relaciones["relaciones_movimientos"] = RelacionMovimientos::where("id_poliza_a","=",19195)
+            ->where("base_datos_a","=", 'ctPCO811231EI4_014')->get();
+
+        $busqueda = New BusquedaDiferenciasPolizas($relaciones);
+        $impedir_busqueda = $busqueda->buscarDiferenciasPolizas();*/
+
         $lote =LoteBusqueda::getLoteActivo();
         if(!$lote){
             $lote = $this->generaPeticionesBusquedas($parametros);
@@ -227,5 +243,61 @@ class DiferenciaService
         {
             return "q1920";
         }*/
+    }
+
+    public function obtenerInforme($parametros){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        $solicitud = 1;
+        $diferencias = 1;
+
+        if($parametros->sin_solicitud_relacionada == 1 && $parametros->con_solicitud_relacionada == 1){
+            $solicitud = 2;
+        } else if($parametros->sin_solicitud_relacionada == 1 && $parametros->con_solicitud_relacionada === false){
+            $solicitud = 1;
+        } else if($parametros->sin_solicitud_relacionada === false && $parametros->con_solicitud_relacionada == 1){
+            $solicitud = 0;
+        } else {
+            $solicitud = 2;
+        }
+
+        if($parametros->solo_diferencias_activas == 1 && $parametros->no_solo_diferencias_activas == 1){
+            $diferencias = 2;
+        } else if($parametros->solo_diferencias_activas == 1 && $parametros->no_solo_diferencias_activas === false){
+            $diferencias = 1;
+        } else if($parametros->solo_diferencias_activas === false && $parametros->no_solo_diferencias_activas == 1){
+            $diferencias = 0;
+        } else {
+            $diferencias = 2;
+        }
+        return $this->repository->getInforme($parametros->id_empresa, $solicitud, $diferencias, $parametros->tipo_agrupacion);
+    }
+
+    public function impresionPolizas($id_relacion){
+        $relacion = $this->repository->getRelacion($id_relacion);
+        if($relacion){
+            $polizas  = $relacion->polizas;
+            $pdf = new PolizaFormatoOriginal($polizas);
+            return $pdf->create();
+        } else {
+            dd("Relación no encontrada");
+        }
+
+
+    }
+
+    public function pdfDiferencias($data){
+        $solicitud = 2;
+        if($data['sin_solicitud_relacionada'] == 'true'  && $data['con_solicitud_relacionada'] == 'false' ) $solicitud = 1;
+        if($data['sin_solicitud_relacionada'] == 'false'  && $data['con_solicitud_relacionada'] == 'true' ) $solicitud = 0;
+
+        $diferencias = 2;
+        if($data['solo_diferencias_activas'] == 'true'  && $data['no_solo_diferencias_activas'] == 'false' ) $diferencias = 1;
+        if($data['solo_diferencias_activas'] == 'false'  && $data['no_solo_diferencias_activas'] == 'true' ) $diferencias = 0;
+
+        $info = $this->repository->getInforme($data['id_empresa'], $solicitud, $diferencias, $data['tipo_agrupacion']);
+        $pdf = new InformeDiferenciasPolizas($data, $info);
+        return $pdf->create();
+
     }
 }

@@ -17,26 +17,42 @@ class PolizaObserver
     /**
      * @param Poliza $poliza
      */
-    public function updating(Poliza $poliza)
+    public function creating(Poliza $poliza)
     {
 
+    }
 
+    public function updating(Poliza $poliza)
+    {
+        $poliza->validarReglas();
     }
 
     public function updated(Poliza $poliza)
     {
-        $base_datos = config('database.connections.cntpq.database');
         if($poliza->getOriginal("Concepto") !=  $poliza->Concepto){
-            $poliza->logs()->create([
-                "id_poliza"=>$poliza->Id,
-                "id_empresa"=>Empresa::getIdEmpresa($base_datos),
-                "empresa"=>Empresa::getNombreEmpresa($base_datos),
-                "id_campo"=>1,
-                "valor_original"=>$poliza->getOriginal("Concepto"),
-                "valor_modificado"=>$poliza->Concepto,
-                "bd_contpaq" => $base_datos
-            ]);
+            $poliza->createLog(1,$poliza->getOriginal("Concepto"), $poliza->Concepto);
+        }
+        $date = date_create($poliza->getOriginal("Fecha"));
+        if(date_format($date, "d/m/Y") != $poliza->fecha_format) {
+            $poliza->createLog(8,$poliza->getOriginal("Fecha"),$poliza->Fecha);
+        }
+        if($poliza->getOriginal("Ejercicio") != $poliza->Ejercicio) {
+            $poliza->createLog(6, $poliza->getOriginal("Ejercicio"),$poliza->Ejercicio);
+        }
+        if($poliza->getOriginal("Periodo") != $poliza->Periodo) {
+            $poliza->createLog(7,$poliza->getOriginal("Periodo"), $poliza->Periodo);
+        }
+        if($poliza->getOriginal("TipoPol") != $poliza->TipoPol) {
+            $poliza->createLog(9,$poliza->getOriginal("TipoPol"),$poliza->TipoPol);
+        }
+        if($poliza->getOriginal("Folio") != $poliza->Folio) {
+            $poliza->createLog( 10,$poliza->getOriginal("Folio"),$poliza->Folio);
+        }
+        if($poliza->getOriginal("Cargos") != $poliza->Cargos) {
+            $poliza->createLog( 11,$poliza->getOriginal("Cargos"),$poliza->Cargos);
+        }
+        if($poliza->getOriginal("Abonos") != $poliza->Abonos) {
+            $poliza->createLog( 12,$poliza->getOriginal("Abonos"),$poliza->Abonos);
         }
     }
-
 }

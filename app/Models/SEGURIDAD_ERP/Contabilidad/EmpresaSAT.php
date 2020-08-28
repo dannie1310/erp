@@ -22,4 +22,9 @@ class EmpresaSAT extends Model
         'razon_social'
     ];
 
+    public function cfd()
+    {
+        return $this->hasMany(CFDSAT::class,"rfc_receptor", "rfc");
+    }
+
 }
