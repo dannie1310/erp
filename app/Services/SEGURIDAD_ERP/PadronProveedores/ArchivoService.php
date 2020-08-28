@@ -66,15 +66,8 @@ class ArchivoService
         if(array_key_exists('rfc_empresa', $data)){
             $directorio = $data['rfc_empresa'] . '/' . $directorio;
         }
-
         $archivo = $this->repository->show($data['id_archivo']);
-        $hash_file = hash_file('md5', $data["archivo"]);
-        $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
 
-        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
-            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
-            ;
-        }
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
         }
@@ -105,6 +98,16 @@ class ArchivoService
         $pdf_file = fopen($paths["path_pdf"].'temp_pdf.pdf', 'r');
 
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
+
+
+        $hash_file = hash_file('md5', $paths["path_pdf"].'temp_pdf.pdf');
+        $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
+
+        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
+            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
+            ;
+        }
+
         if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'.pdf', $pdf_file )){
             $archivo->hash_file = $hash_file;
             $archivo->nombre_archivo = $archivo->nombre_descarga;
