@@ -98,11 +98,11 @@
         },
         mounted() {
             this.getEmpresas();
-            this.$Progress.start();
-            this.paginate()
-                .finally(() => {
-                    this.$Progress.finish();
-                })
+            // this.$Progress.start();
+            // this.paginate()
+            //     .finally(() => {
+            //         this.$Progress.finish();
+            //     })
         },
         methods: {
             carga_masiva() {
