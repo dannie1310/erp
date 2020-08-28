@@ -36,36 +36,51 @@ class PagoService
     public function paginate($data){
         $pagos = $this->repository;
 
-        if(isset($data['numero_folio'])){
+        if(isset($data['numero_folio']))
+        {
             $pagos = $pagos->where([['numero_folio','LIKE', '%'.$data['numero_folio'].'%']]);
         }
 
-        if(isset($data['destino'])){
+        if(isset($data['destino']))
+        {
             $pagos = $pagos->where([['destino','LIKE', '%'.$data['destino'].'%']]);
         }
 
-        if(isset($data['numero_cuenta'])){
+        if(isset($data['numero_cuenta']))
+        {
             $cuenta = Cuenta::query()->where([['numero', 'LIKE', '%'.$data['numero_cuenta'].'%']])->get();
 
-            foreach ($cuenta as $e){
+            foreach ($cuenta as $e)
+            {
                 $pagos= $pagos->where([['id_cuenta', '=', $e->id_cuenta]]);
             }
         }
 
-        if(isset($data['observaciones'])){
+        if(isset($data['observaciones']))
+        {
             $pagos = $pagos->where([['observaciones','LIKE', '%'.$data['observaciones'].'%']]);
         }
 
-        if(isset($data['id_moneda'])){
+        if(isset($data['id_moneda']))
+        {
             $moneda = Moneda::query()->where([['nombre', 'LIKE', '%'.$data['id_moneda'].'%']])->get();
 
-            foreach ($moneda as $e){
+            foreach ($moneda as $e)
+            {
                 $pagos= $pagos->where([['id_moneda', '=', $e->id_moneda]]);
             }
         }
 
-
         return $pagos->paginate($data);
     }
 
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data'][0]);
+    }
 }

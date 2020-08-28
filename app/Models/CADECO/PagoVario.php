@@ -9,7 +9,7 @@
 namespace App\Models\CADECO;
 
 
-class PagoVario extends Transaccion
+class PagoVario extends Pago
 {
     public const TIPO_ANTECEDENTE = null;
 
