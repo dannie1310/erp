@@ -326,9 +326,13 @@ class Empresa extends Model
                     'apellido_paterno' => $representante['apellido_paterno'],
                     'apellido_materno' => $representante['apellido_materno'],
                 ]);
-                $representante_legal->archivo->complemento_nombre = $representante_legal->nombre_completo;
-                $representante_legal->archivo->id_representante_legal = $representante_legal->id;
-                $representante_legal->archivo->save();
+                $archivos = $representante_legal->archivos;
+                foreach($archivos as $archivo){
+                    $archivo->complemento_nombre = $representante_legal->nombre_completo;
+                    $archivo->id_representante_legal = $representante_legal->id;
+                    $archivo->save();
+                }
+
             } else {
                 $representante_legal = RepresentanteLegal::where("curp", $representante["curp"])->first();
                 if(!$representante_legal) {

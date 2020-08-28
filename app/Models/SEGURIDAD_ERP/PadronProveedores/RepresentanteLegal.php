@@ -19,9 +19,9 @@ class RepresentanteLegal extends Model
         'curp',
     ];
 
-    public function archivo()
+    public function archivos()
     {
-        return $this->belongsTo(Archivo::class,'id','id_representante_legal');
+        return $this->hasMany(Archivo::class,'id_representante_legal','id');
     }
 
     public function empresas()
