@@ -36,6 +36,9 @@ import sucursal from './modules/cadeco/sucursal';
 import suministrado from './modules/cadeco/suministrado';
 import unidad from './modules/cadeco/unidad'
 
+//CATALOGOS
+import unificacionProveedores from './modules/catalogos/unificacion-proveedores';
+
 
 //COMPRAS
 import asignacion from "./modules/compras/asignacion";
@@ -204,6 +207,8 @@ export default new Vuex.Store({
         'cadeco/sucursal': sucursal,
         'cadeco/suministrado': suministrado,
         'cadeco/unidad': unidad,
+
+        'catalogos/unificacion-proveedores' : unificacionProveedores,
 
         'compras/asignacion' : asignacion,
         'compras/cotizacion' : cotizacion,

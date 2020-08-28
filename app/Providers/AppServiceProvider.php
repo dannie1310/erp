@@ -12,6 +12,7 @@ use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\AplicacionManual;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Cliente;
+use App\Models\CADECO\Catalogos\UnificacionProveedores;
 use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\Compras\CotizacionComplemento;
@@ -161,6 +162,7 @@ use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\ClienteObserver;
 use App\Observers\CADECO\Compras\AsignacionProveedorObserver;
 use App\Observers\CADECO\Compras\AsignacionProveedorPartidaObserver;
+use App\Observers\CADECO\Catalogos\UnificacionProveedoresObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\OrdenCompraComplementoObserver;
 use App\Observers\CADECO\Compras\RequisicionComplementoObserver;
@@ -340,6 +342,11 @@ class AppServiceProvider extends ServiceProvider
              */
             AjusteEliminado::observe(AjusteEliminadoObserver::class);
             EntregaContratista::observe(EntregaContratistaObserver::class);
+
+            /**
+             * Catalogos
+             */
+            UnificacionProveedores::observe(UnificacionProveedoresObserver::class);
 
             /**
              * Compras
