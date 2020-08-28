@@ -212,6 +212,8 @@ class PolizaFormatoT1 extends Rotation
             $this->AddPage();
             $this->SetAutoPageBreak(true,5);
             $this->partidas();
+
+        
         }
 
         try {
