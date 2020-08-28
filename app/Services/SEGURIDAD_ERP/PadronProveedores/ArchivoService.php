@@ -66,7 +66,7 @@ class ArchivoService
         if(array_key_exists('rfc_empresa', $data)){
             $directorio = $data['rfc_empresa'] . '/' . $directorio;
         }
-        
+
         $archivo = $this->repository->show($data['id_archivo']);
         $hash_file = hash_file('md5', $data["archivo"]);
         $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
@@ -78,7 +78,7 @@ class ArchivoService
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
         }
-        
+
         $paths = $this->generaDirectorios();
         $exp = explode("base64,", $data['archivo']);
         $decode = base64_decode($exp[1]);
@@ -88,7 +88,8 @@ class ArchivoService
         $zipper->make(public_path($paths["path_zip"]))->extractTo(public_path($paths["path_pdf"]));
         $zipper->delete();
 
-        $files = array_diff(scandir($paths["path_pdf"]), array('.', '..'));
+        $files = array_diff(scandir($paths["path_pdf"]), array('.', '..','__MACOSX'));
+        sort($files, SORT_NUMERIC);
 
         $pdf = new \Clegginabox\PDFMerger\PDFMerger;
         foreach($files as $file) {
@@ -115,14 +116,14 @@ class ArchivoService
             $this->removerCarpetas($paths["dir_pdf"]);
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
-        
+
         $pdf = null;
         fclose($pdf_file);
         $this->removerCarpetas($paths["dir_pdf"]);
 
         return $archivo;
 
-        
+
     }
 
     private function removerCarpetas($path){
