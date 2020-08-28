@@ -17,5 +17,4 @@ class TipoPoliza extends Model
     protected $primaryKey = 'Id';
 
     public $timestamps = false;
-
 }

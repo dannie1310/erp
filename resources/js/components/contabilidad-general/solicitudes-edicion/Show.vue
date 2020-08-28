@@ -97,13 +97,13 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th class="index_corto">#</th>
-                                    <th class="fecha">Fecha</th>
+                                    <th class="index">#</th>
+                                    <th class="money">Fecha</th>
                                     <th class="fecha">Tipo</th>
                                     <th class="fecha">Folio</th>
                                     <th class="money"></th>
-                                    <th>Concepto</th>
                                     <th class="referencia_input">Referencia</th>
+                                    <th>Concepto</th>
                                     <th class="index_corto">#BD</th>
                                     <th class="index_corto">#P</th>
                                     <th class="index_corto">#M</th>
@@ -117,20 +117,20 @@
                                         <td>{{partida.tipo_format}}</td>
                                         <td>{{partida.folio}}</td>
                                         <td></td>
-                                        <td>{{partida.concepto}}</td>
                                         <td>{{partida.referencia}}</td>
+                                        <td>{{partida.concepto}}</td>
                                         <td>{{partida.numero_bd}}</td>
                                         <td>{{partida.numero_polizas}}</td>
                                         <td>{{partida.numero_movimientos}}</td>
                                     </tr>
                                     <tr v-for="(poliza, j) in partida.polizas.data">
                                         <td>
-                                            <i :class="poliza.class_estado"></i>
+                                            <i :class="poliza.class_estado"></i> {{j+1}}
                                         </td>
-                                        <td style="text-align: right">{{j+1}}</td>
+                                        <td style="text-align: right" > {{poliza.monto_format}}</td>
                                         <td colspan="2">{{poliza.bd_contpaq}}</td>
-                                        <td >{{poliza.monto_format}}</td>
-                                        <td colspan="4">{{poliza.concepto_original}}</td>
+                                        <td colspan="2">{{poliza.empresa_contpaq}}</td>
+                                        <td colspan="3">{{poliza.concepto_original}}</td>
                                         <td>{{poliza.movimientos.data.length}}</td>
                                     </tr>
                                 </template>

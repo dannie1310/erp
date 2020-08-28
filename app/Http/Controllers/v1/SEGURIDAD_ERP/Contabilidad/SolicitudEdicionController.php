@@ -36,7 +36,7 @@ class SolicitudEdicionController extends Controller
 
     public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
-        $this->middleware( 'auth:api')->except('impresionPolizas');
+        // $this->middleware( 'auth:api')->except('impresionPolizas');
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -69,18 +69,18 @@ class SolicitudEdicionController extends Controller
         return $this->service->descargarXLS($id);
     }
 
-    public function impresionPolizas($id)
+    public function impresionPolizas(Request $request, $id)
     {
-        return $this->service->impresionPolizas($id)->create();
+        return $this->service->impresionPolizas($id, $request->caida)->create();
     }
 
-    public function impresionPolizasPropuesta($id)
+    public function impresionPolizasPropuesta(Request $request, $id)
     {
-        return $this->service->impresionPolizasPropuesta($id)->create();
+        return $this->service->impresionPolizasPropuesta($id, $request->caida)->create();
     }
 
-    public function impresionPolizasOriginal($id)
+    public function impresionPolizasOriginal(Request $request, $id)
     {
-        return $this->service->impresionPolizasOriginal($id)->create();
+        return $this->service->impresionPolizasOriginal($id, $request->caida)->create();
     }
 }

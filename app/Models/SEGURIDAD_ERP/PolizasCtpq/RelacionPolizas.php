@@ -10,9 +10,11 @@ namespace App\Models\SEGURIDAD_ERP\PolizasCtpq;
 
 
 use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 class RelacionPolizas extends Model
 {
@@ -46,6 +48,19 @@ class RelacionPolizas extends Model
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $this->base_datos_b);
         return $this->belongsTo(Poliza::class, "id_poliza_b", "Id");
+    }
+
+    public function getPolizasAttribute()
+    {
+        $this->poliza_revisada->load("movimientos");
+        $this->poliza_revisada->load("cuentas");
+        $polizas[0]["poliza"] = $this->poliza_revisada;
+        $polizas[0]["empresa"] = Empresa::where("AliasBDD", $this->base_datos_a)->first();
+        $this->poliza_referencia->load("movimientos");
+        $this->poliza_referencia->load("cuentas");
+        $polizas[1]["poliza"] = $this->poliza_referencia;
+        $polizas[1]["empresa"] = Empresa::where("AliasBDD", $this->base_datos_b)->first();
+        return $polizas;
     }
 
     public function diferencias()

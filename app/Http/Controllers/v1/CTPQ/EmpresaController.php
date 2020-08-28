@@ -54,6 +54,4 @@ class EmpresaController extends Controller
     public function conectar(Request $request){
         return $this->service->conectar($request->id);
     }
-
-
 }

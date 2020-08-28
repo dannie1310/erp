@@ -9,6 +9,10 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -36,7 +40,14 @@ class CFDSAT extends Model
         ,"id_proveedor_sat"
         ,"moneda"
         ,"id_carga_cfd_sat"
+        ,"tipo_comprobante"
+        ,"estado"
+        ,"estado_txt"
+        ,"fecha_cancelacion"
     ];
+
+    protected $dates =["fecha", "fecha_cancelacion"];
+    /*protected $dateFormat = 'Y-m-d H:i:s';*/
 
     public function carga()
     {
@@ -63,6 +74,41 @@ class CFDSAT extends Model
         return $this->belongsTo(EmpresaSAT::class, 'id_empresa_sat', 'id');
     }
 
+    public function efo()
+    {
+        return $this->belongsTo(EFOS::class,"rfc_emisor","rfc");
+    }
+
+    public function autocorreccion()
+    {
+        return $this->hasOne(CFDAutocorreccion::class, "id_cfd_sat", "id");
+    }
+
+    public function ctgEstado()
+    {
+        return $this->belongsTo(CtgEstadoCFD::class, 'estado', 'id');
+    }
+
+    public function scopeDeEFO($query)
+    {
+        return $query->whereHas("efo");
+    }
+
+    public function scopeNoAutocorregidos($query)
+    {
+        return $query->doesnthave("autocorreccion");
+    }
+
+    public function scopeDefinitivo($query)
+    {
+        return $query->where('estado', '=', 0);
+    }
+
+    public function scopeExceptoTipo($query, $tipo)
+    {
+        return $query->where('tipo_comprobante', '!=', $tipo);
+    }
+
     public function registrar($data)
     {
         $factura = null;
@@ -85,9 +131,39 @@ class CFDSAT extends Model
             return $cfd;
 
         } catch (\Exception $e) {
+            dd($data);
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
         }
     }
 
+    public static function getFechaUltimoCFDTxt()
+    {
+        $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
+        $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
+        $mes = $meses[($ultimo_cfd->fecha->format('n')) - 1];
+        $fecha = "CFD cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
+        return $fecha;
+    }
+
+    public function scopePorProveedor($query, $id_proveedor)
+    {
+        return $query->where('id_proveedor_sat', '=', $id_proveedor);
+    }
+
+    public function scopeBancoGlobal($query)
+    {
+        return $query->where('id_ctg_bancos', '!=', null);
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->total),2);
+    }
 }
