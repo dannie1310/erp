@@ -52,6 +52,11 @@ class ArchivoController extends Controller
         return $this->respondWithItem($archivo);
     }
 
+    public function cargarArchivoZIP(Request $request){
+        $archivo = $this->service->cargarArchivoZIP($request->all());
+        return $this->respondWithItem($archivo);
+    }
+
     public function documento(Request $request,$id){
         return $this->service->documento($request,$id);
     }
