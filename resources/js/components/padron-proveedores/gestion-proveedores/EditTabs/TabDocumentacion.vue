@@ -61,6 +61,7 @@
                                                     <div class="btn-group">
                                                         <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
                                                         <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo"></Documento>
+                                                        <Imagen></Imagen>
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
@@ -221,10 +222,11 @@
 
 <script>
 import Documento from '../Documento';
+import Imagen from '../Imagen';
 export default {
     name: "tab-documentacion",
     props: ['id'],
-    components:{Documento},
+    components:{Documento, Imagen},
     data(){
         return{
             documentos:[],
