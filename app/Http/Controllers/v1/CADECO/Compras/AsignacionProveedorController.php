@@ -6,13 +6,13 @@ namespace App\Http\Controllers\v1\CADECO\Compras;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Compras\EliminarAsignacionRequest;
-use App\Services\CADECO\Compras\AsignacionService;
+use App\Services\CADECO\Compras\AsignacionProveedorService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
-use App\Http\Transformers\CADECO\Compras\AsignacionProveedoresTransformer;
+use App\Http\Transformers\CADECO\Compras\AsignacionProveedorTransformer;
 
-class AsignacionController extends Controller
+class AsignacionProveedorController extends Controller
 {
     use ControllerTrait {
         destroy as traitDestroy;
@@ -24,39 +24,36 @@ class AsignacionController extends Controller
     private $fractal;
 
     /**
-     * @var AsignacionService
+     * @var AsignacionProveedorService
      */
 
     private $service;
 
     /**
-     * @var AsignacionProveedoresTransformer
+     * @var AsignacionProveedorTransformer
      */
     private $transformer;
 
     /**
-     * AsignacionController constructor.
+     * AsignacionProveedorController constructor.
      * @param Manager $fractal
-     * @param AsignacionService $service
-     * @param AsignacionProveedoresTransformer $transformer
+     * @param AsignacionProveedorService $service
+     * @param AsignacionProveedorTransformer $transformer
      */
 
-    public function __construct(Manager $fractal, AsignacionService $service, AsignacionProveedoresTransformer $transformer)
+    public function __construct(Manager $fractal, AsignacionProveedorService $service, AsignacionProveedorTransformer $transformer)
     {
+        $this->middleware('addAccessToken')->only('pdf');
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:registrar_asignacion_proveedor')->only('store');
         $this->middleware('permiso:consultar_asignacion_proveedor')->only(['paginate', 'show']);
         $this->middleware('permiso:eliminar_asignacion_proveedor')->only('destroy');
+        $this->middleware('permiso:registrar_orden_compra')->only('generarOrdenCompra');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
-    }
-
-    public function asignacion($id)
-    {
-        $this->service->asignacion($id)->create();
     }
 
     public function cargaLayout(Request $request){
@@ -89,5 +86,10 @@ class AsignacionController extends Controller
     {
 //        Falta descarga
         var_dump('Descarga de layout de controlador asignacion',$id);
+    }
+
+    public function pdf($id)
+    {
+        return $this->service->pdf($id);
     }
 }

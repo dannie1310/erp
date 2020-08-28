@@ -29,6 +29,23 @@
                 </ul>
             </li>
 
+             <li class="nav-item" v-if="$root.can(['consultar_asignacion_contratista'])">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <p>
+                        Gestión de Asignación Proveedores
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can(['consultar_asignacion_contratista'])">
+                        <router-link :to="{name: 'asignacion-contratista'}" class="nav-link" :class="{active: this.$route.name == 'asignacion-contratista'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Asignación Proveedores</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+
              <li class="nav-item" v-if="$root.can('consultar_subcontrato')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>

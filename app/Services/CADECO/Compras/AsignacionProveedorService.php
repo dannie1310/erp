@@ -7,22 +7,20 @@ namespace App\Services\CADECO\Compras;
 use App\Models\CADECO\OrdenCompra;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Compras\AsignacionFormato;
-use App\Models\CADECO\Compras\Asignacion;
 use App\Models\CADECO\OrdenCompraPartida;
-use App\Models\CADECO\Compras\AsignacionProveedores;
-use App\Models\CADECO\Compras\OrdenCompraComplemento;
+use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Repositories\CADECO\Compras\Asignacion\Repository;
-use App\Models\CADECO\Compras\AsignacionProveedoresPartida;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
 
-class AsignacionService
+class AsignacionProveedorService
 {
     /**
      * @var Repository
      */
     protected $repository;
 
-    public function __construct(AsignacionProveedores $model)
+    public function __construct(AsignacionProveedor $model)
     {
         $this->repository = new Repository($model);
     }
@@ -57,7 +55,7 @@ class AsignacionService
                 $transf_orden_compra = new OrdenCompraTransformer();
                 $orden_compra_transf = [];
 
-                
+
                 if(count($partida->ordenCompra) > 0){
                     foreach($partida->ordenCompra as $key => $orden){
                         $orden_compra_transf[$key] = $transf_orden_compra->transform($orden);
@@ -70,10 +68,10 @@ class AsignacionService
                     'sucursal' => $partida->cotizacionCompra->sucursal->descripcion,
                     'direccion' => $partida->cotizacionCompra->sucursal->direccion,
                     'orden_compra' => $orden_compra_transf,
-                    
+
                 ];
                 $data[$partida->id_transaccion_cotizacion]['partidas'] = array();
-            } 
+            }
             $p_u = $partida->cotizacion->precio_unitario;
             $desc = $partida->cotizacion->descuento > 0? $p_u * $partida->cotizacion->descuento / 100 : 0;
             $cantidad_a = $partida->cantidad_asignada;
@@ -92,7 +90,7 @@ class AsignacionService
                 'cantidad_asignada' => number_format($cantidad_a, 4, '.', ','),
             ];
         }
-        
+
         return [
             'folio_asignacion_format' => $asignacion->folio_format,
             'usuario' => $asignacion->usuarioRegistro,
@@ -120,7 +118,7 @@ class AsignacionService
             foreach($data['cotizaciones'] as $cotizacion){
                 foreach($cotizacion['partidas'] as $partida){
                     if($partida && $partida['cantidad_asignada'] > 0){
-                        AsignacionProveedoresPartida::create([
+                        AsignacionProveedorPartida::create([
                             'id_asignacion_proveedores' => $asignacion->id,
                             'id_item_solicitud' => $partida['id_item'],
                             'id_transaccion_cotizacion' => $partida['id_transaccion'],
@@ -131,11 +129,11 @@ class AsignacionService
                     }
                 }
             }
-            
+
             if($registradas == 0){
                 abort(403,'La asignación debe tener al menos una partida con cantidad asignada a un proveedor.');
             }
-            
+
             DB::connection('cadeco')->commit();
             return $asignacion;
         }catch (\Exception $e){
@@ -156,7 +154,7 @@ class AsignacionService
                 if($partida->con_orden_compra){
                     continue;
                 }
-                
+
 
                 if(!$orden_c = OrdenCompra::where('id_antecedente', '=', $partida->cotizacionCompra->id_antecedente)
                                         ->where('id_referente', '=', $partida->cotizacionCompra->id_transaccion)
@@ -164,8 +162,8 @@ class AsignacionService
                                         ->where('id_sucursal', '=', $partida->cotizacionCompra->id_sucursal)
                                         ->where('id_moneda', '=', $partida->cotizacion->id_moneda)->first()
                                         ){
-                                            
-                                        
+
+
                     $orden_c = $partida->ordenCompra()->firstOrCreate([
                             'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
                             'id_referente' => $partida->cotizacionCompra->id_transaccion,
@@ -175,14 +173,14 @@ class AsignacionService
                             'observaciones' => $partida->cotizacionCompra->observaciones,
                             'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
                         ]);
-                        
+
                         $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion]);
 
                 }
 
-                
 
-                
+
+
                 $descuento_material = $partida->cotizacion->descuento / 100 * $partida->cotizacion->precio_unitario;
                 $importe = ($partida->cotizacion->precio_unitario - $descuento_material) * $partida->cantidad_asignada;
                 $anticipo_material = $partida->cotizacion->precio_unitario - ($partida->cotizacion->anticipo / 100 * $partida->cotizacion->precio_unitario);
@@ -234,7 +232,7 @@ class AsignacionService
     public function generarOrdenIndividual($data){
         try{
             DB::connection('cadeco')->beginTransaction();
-            $partidas = AsignacionProveedoresPartida::where('id_transaccion_cotizacion', '=', $data['id_transaccion'])->where('id_asignacion_proveedores', '=', $data['id'])->get();
+            $partidas = AsignacionProveedorPartida::where('id_transaccion_cotizacion', '=', $data['id_transaccion'])->where('id_asignacion_proveedores', '=', $data['id'])->get();
 
             $transaccion_cotizacion = '';
             $orden_c = null;
@@ -250,7 +248,7 @@ class AsignacionService
                         'observaciones' => $partida->cotizacionCompra->observaciones,
                     ]);
                 }
-    
+
                 $descuento_material = $partida->cotizacion->descuento / 100 * $partida->cotizacion->precio_unitario;
                 $importe = ($partida->cotizacion->precio_unitario - $descuento_material) * $partida->cantidad_asignada;
                 $anticipo_material = $partida->cotizacion->precio_unitario - ($partida->cotizacion->anticipo / 100 * $partida->cotizacion->precio_unitario);
@@ -282,7 +280,7 @@ class AsignacionService
                 $orden_c->anticipo_monto = $orden_c->anticipo_monto + ($partida->cotizacion->anticipo / 100 * $monto);
                 $orden_c->anticipo_saldo = $orden_c->anticipo_saldo + ($partida->cotizacion->anticipo / 100 * $monto);
                 $orden_c->save();
-                
+
 
             }
 
@@ -309,12 +307,6 @@ class AsignacionService
         }
 
         return $resp;
-    }
-
-    public function asignacion($id)
-    {
-        $pdf = new AsignacionFormato($id);
-        return $pdf;
     }
 
     public function descargaLayout()
@@ -395,5 +387,11 @@ class AsignacionService
         fclose($myfile);
         return $content;
 
+    }
+
+    public function pdf($id)
+    {
+        $pdf = new AsignacionFormato($this->repository->show($id));
+        return $pdf->create();
     }
 }

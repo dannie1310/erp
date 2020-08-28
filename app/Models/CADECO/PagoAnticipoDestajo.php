@@ -41,19 +41,23 @@ class PagoAnticipoDestajo extends Pago
         });
     }
 
-    public function solicitud(){
+    public function solicitud()
+    {
         return $this->belongsTo(SolicitudAnticipoDestajo::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function transaccion(){
+    public function transaccion()
+    {
         return $this->belongsTo(Transaccion::class, 'id_referente', 'id_transaccion');
     }
 
-    public function anticipo(){
+    public function anticipo()
+    {
         return $this->hasOne(Anticipo::class, "id_antecedente", "id_transaccion");
     }
 
-    public function generaAnticipo(){
+    public function generaAnticipo()
+    {
         $anticipo = $this->anticipo;
         if($anticipo){
             return $anticipo;
@@ -76,10 +80,53 @@ class PagoAnticipoDestajo extends Pago
         }
     }
 
-    private function validaAnticipo(Anticipo $anticipo){
+    private function validaAnticipo(Anticipo $anticipo)
+    {
         if(!$anticipo){
             DB::connection('cadeco')->rollBack();
             abort(400, 'Hubo un error durante el registro del anticipo');
+        }
+    }
+
+    /**
+     * Implementa lógica de SP borra_transacción para eliminar pagos
+     */
+    public function recalculaAnticipo()
+    {
+        if ($this->transaccion->opciones < 65536)
+        {
+            if($this->anticipo)
+            {
+                $saldo = $this->transaccion->anticipo_saldo - $this->anticipo->saldo;
+                $consulta = "'Pago 131073: Pago anticipado destajo edita transaccion id_referente".$this->id_referente." anticipo_saldo = ".$this->transaccion->anticipo_saldo." cambio a ".$saldo."'";
+                $this->transaccion->update([
+                    'anticipo_saldo' => $saldo
+                ]);
+                $this->crearLogRespaldo($consulta);
+                $consulta = "'Pago 131073: Pago anticipado destajo elimina anticipo id_transaccion".$this->anticipo->id_transaccion."'";
+                $this->anticipo->delete();
+                $this->crearLogRespaldo($consulta);
+            }
+        }
+        else{
+            $saldo = $this->transaccion->anticipo_saldo - $this->monto;
+            $consulta = "'Pago 131073: Pago anticipado destajo edita transaccion id_referente".$this->id_referente." anticipo_saldo = ".$this->transaccion->anticipo_saldo." cambio a ".$saldo."'";
+            $this->transaccion->update([
+                'anticipo_saldo' => $saldo
+            ]);
+        }
+    }
+
+    public function ajustarOC()
+    {
+        if($this->transaccion->where('tipo_transaccion', '=', 19)->where('estado', '=', 1)->first())
+        {
+            if(is_null(Transaccion::where('id_antecedente', '=', $this->id_referente)->first()) && is_null(Transaccion::where('id_referente', $this->id_referente)->first()))
+            {
+                $this->transaccion->update([
+                    'estado' => 0
+                ]);
+            }
         }
     }
 }

@@ -26,7 +26,7 @@
                                         <table class="table" v-if="asignacion">
                                             <tbody>
                                                 <tr>
-                                                    <td class="bg-gray-light" align="center" colspan="4"><h6><b>{{razon_social}}</b></h6></td>                                                    
+                                                    <td class="bg-gray-light" align="center" colspan="4"><h6><b>{{razon_social}}</b></h6></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
@@ -44,7 +44,7 @@
                                                     <td class="bg-gray-light"><b>Concepto</b></td>
                                                     <td class="bg-gray-light">{{asignacion.observaciones}}</td>
                                                     <td class="bg-gray-light"><b>Fecha / Hora Registro</b></td>
-                                                    <td class="bg-gray-light">{{asignacion.fecha_asignacion}}</td>                                                    
+                                                    <td class="bg-gray-light">{{asignacion.fecha_asignacion}}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -66,7 +66,7 @@
                                                         <th class="no_parte">% Descuento</th>
                                                         <th style="width:10%;">Precio Total</th>
                                                         <th class="no_parte">Moneda</th>
-                                                        <th style="width:12%;">Precio Total Moneda Conversión</th>                                                        
+                                                        <th style="width:12%;">Precio Total Moneda Conversión</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -79,7 +79,7 @@
                                                         <td style="text-align: center">{{(partida.cotizacion_partida) ? partida.cotizacion_partida.descuento : '--------------'}}</td>
                                                         <td style="text-align: center">{{'$ ' + parseFloat(((partida.cotizacion_partida) ? partida.cotizacion_partida.precio_unitario : 0) * partida.cantidad_asignada).formatMoney(2,'.',',')}}</td>
                                                         <td style="text-align: center">{{(partida.cotizacion_partida) ? partida.cotizacion_partida.moneda.nombre : '-------'}}</td>
-                                                        <td style="text-align: center">{{'$ ' + parseFloat(partida.cantidad_asignada * partida.cotizacion_partida.precio_unitario * ((partida.cotizacion.complemento) ? ((partida.cotizacion_partida.id_moneda > 1) ? ((partida.cotizacion_partida.id_moneda == 2) ? partida.cotizacion.complemento.tc_usd : partida.cotizacion.complemento.tc_eur) : 1) : partida.cotizacion_partida.moneda.tipo_cambio_igh)).formatMoney(2, '.', ',')}}</td>                                                        
+                                                        <td style="text-align: center">{{'$ ' + parseFloat(partida.cantidad_asignada * partida.cotizacion_partida.precio_unitario * ((partida.cotizacion.complemento) ? ((partida.cotizacion_partida.id_moneda > 1) ? ((partida.cotizacion_partida.id_moneda == 2) ? partida.cotizacion.complemento.tc_usd : partida.cotizacion.complemento.tc_eur) : 1) : partida.cotizacion_partida.moneda.tipo_cambio_igh)).formatMoney(2, '.', ',')}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -123,7 +123,7 @@
 
 <script>
 export default {
-    name: "asignacion-proveedores-delete",
+    name: "asignacion-proveedor-delete",
     props: ['id'],
     data() {
         return {
@@ -134,7 +134,7 @@ export default {
         }
     },
     methods: {
-        destroy() {            
+        destroy() {
             return this.$store.dispatch('compras/asignacion/delete', {
                 id: this.id,
                 params: {data: this.motivo}
@@ -159,11 +159,11 @@ export default {
                     id: this.id,
                     params:{include: [
                         'partidas.cotizacion_partida.moneda',
-                        'partidas.cotizacion.complemento',                        
+                        'partidas.cotizacion.complemento',
                         'partidas.cotizacion.empresa',
-                        'partidas.cotizacion.sucursal',                        
+                        'partidas.cotizacion.sucursal',
                         'partidas.cotizacion_partida',
-                        'partidas.material',                        
+                        'partidas.material',
                         'solicitud',
                         'usuario'
                         ]}
@@ -172,10 +172,10 @@ export default {
                     this.$store.commit('compras/asignacion/SET_ASIGNACION', data);
                     this.asignacion = data;
                     this.partidas = this.asignacion.partidas.data;
-                    
+
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
-                    
+
                 }).finally(() => {
                     this.cargando = false;
                 })

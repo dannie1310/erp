@@ -1,8 +1,10 @@
 <?php
 
 
-namespace App\Http\Transformers\CADECO;
+namespace App\Http\Transformers\CADECO\Compras;
 
+use App\Http\Transformers\CADECO\MaterialTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Models\CADECO\CotizacionCompraPartida;
 use League\Fractal\TransformerAbstract;
 

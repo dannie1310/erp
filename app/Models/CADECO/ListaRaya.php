@@ -48,4 +48,20 @@ class ListaRaya extends Transaccion
         }
     }
 
+    /**
+     * Implementa lógica de SP: sp_desaplicar_pago
+     */
+    public function desaplicaPago()
+    {
+        if($this->items)
+        {
+            foreach ($this->items as $item)
+            {
+                $item->inventario->update([
+                    'monto_pagado' => 0
+                ]);
+                $item->inventario->distribuirPagoInventarios();
+            }
+        }
+    }
 }
