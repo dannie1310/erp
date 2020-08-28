@@ -446,10 +446,9 @@
             agregarRepresentanteLegal(){
                 var array = {
                     'nombre' : '',
-                    'puesto' : '',
-                    'telefono' : '',
-                    'email' : '',
-                    'notas' : ''
+                    'apellido_paterno' : '',
+                    'apellido_materno' : '',
+                    'curp' : ''
                 }
                 this.registro_proveedor.representantes_legales.push(array);
             },
