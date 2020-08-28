@@ -188,7 +188,7 @@
                                     <input type="file" class="form-control" id="cargar_file"
                                            @change="onFileChange"
                                            row="3"
-                                           v-validate="{required:true, ext: validarExtenciones(archivo.tipo_archivo),  size: 5120}"
+                                           v-validate="{required:true, ext: validarExtensiones(archivo.tipo_archivo),  size: 5120}"
                                            name="cargar_file"
                                            data-vv-as="Cargar"
                                            ref="cargar_file"
@@ -367,7 +367,7 @@ export default {
                 });
 
         },
-        validarExtenciones(id){
+        validarExtensiones(id){
             if(this.id_pago_sua == id){
                 return ['pdf', 'zip'];
             }
