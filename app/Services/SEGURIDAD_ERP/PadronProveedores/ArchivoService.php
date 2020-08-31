@@ -96,6 +96,7 @@ class ArchivoService
         $pdf->merge('file', $paths["path_pdf"].'temp_pdf.pdf', 'P');
 
         $pdf_file = fopen($paths["path_pdf"].'temp_pdf.pdf', 'r');
+        fclose($pdf_file);
 
         $nombre_archivo = explode('.', $data["archivo_nombre"]);
 
