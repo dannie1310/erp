@@ -224,6 +224,7 @@ export default {
             archivo:'',
             file:'',
             file_name:'',
+            names:[],
             files:[],
             id_tipo: '',
             tipos: {
@@ -247,9 +248,9 @@ export default {
             var reader = new FileReader();
             var vm = this;
             reader.onload = (e) => {
-                vm.file = e.target.result;
+                vm.files[tipo] = {archivo:e.target.result}
             };
-            return reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
             
         },
         onFileChange(e){
@@ -271,27 +272,40 @@ export default {
                                 if(this.$refs.cargar_file !== undefined){
                                     this.$refs.cargar_file.value = '';
                                 }
-                                this.file = null;
-                                this.file_name = '';
+                                this.names = [];
+                                this.files = [];
                             })
             }
             if(e.target.id == 'cargar_file') {
                 for(let i=0; i<files.length; i++) {
                     this.createImage(files[i]);
                     size = +size + +files[i].size;
-                    this.files[i] = {
+                    this.names[i] = {
                         nombre: files[i].name,
-                        archivo: this.file,
-                        file:this.createImage(files[i]),
                     };
-                    // this.files[i].nombre = files[i].name;
-                    // this.files[i].archivo = this.createImage(files[i]);
+                    this.createImage(files[i], i);
 
                 }
                 
             }
-            console.log(size);
-            console.log(this.files);
+            if(size > 5120000){
+                swal("El tamaño máximo permitido es de 5 Mb.", {
+                    icon: "warning",
+                    buttons: {
+                        confirm: {
+                            text: 'Enterado',
+                            closeModal: true,
+                        }
+                    }
+                }) .then(() => {
+                    if(this.$refs.cargar_file !== undefined){
+                        this.$refs.cargar_file.value = '';
+                    }
+                    this.names = [];
+                    this.files = [];
+                })
+            }
+            
         },
         find() {
             return this.$store.dispatch('padronProveedores/empresa/getDoctosGenerales', {
@@ -420,8 +434,8 @@ export default {
         },
         upload(){
             var formData = new FormData();
-            formData.append('archivo',  this.file);
-            formData.append('archivo_nombre',  this.file_name);
+            formData.append('archivos',  JSON.stringify(this.files));
+            formData.append('archivos_nombres',  JSON.stringify(this.names));
             formData.append('id_empresa',  this.id);
             formData.append('rfc',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
