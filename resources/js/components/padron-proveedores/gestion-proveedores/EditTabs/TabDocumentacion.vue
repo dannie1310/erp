@@ -61,7 +61,9 @@
                                                     <div class="btn-group">
                                                         <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
                                                         <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo"></Documento>
-                                                        <Imagen></Imagen>
+                                                        <button type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen">
+                                                            <i class="fa fa-picture-o"></i>
+                                                        </button>
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
@@ -217,6 +219,23 @@
                 </div>
             </div>
         </div>
+
+          <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
+            <div class="modal-dialog modal-lg"  role="document" id="mdialTamanio">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Ver Imagenes</h4>
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <Imagen></Imagen>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </span>
 </template>
 
@@ -326,6 +345,10 @@ export default {
             }else{
                 this.openModal(archivo);
             }
+        },
+        modalImagen(){
+            $(this.$refs.modalImagen).appendTo('body')
+            $(this.$refs.modalImagen).modal('show');
         },
         openModal(archivo){
             this.archivo = archivo;
