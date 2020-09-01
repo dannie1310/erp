@@ -281,6 +281,7 @@ export default {
                                 }
                                 this.names = [];
                                 this.files = [];
+                                $(this.$refs.modal).modal('hide');
                             })
             }
             if(e.target.id == 'cargar_file') {
@@ -310,6 +311,7 @@ export default {
                     }
                     this.names = [];
                     this.files = [];
+                    $(this.$refs.modal).modal('hide');
                 })
             }
             
