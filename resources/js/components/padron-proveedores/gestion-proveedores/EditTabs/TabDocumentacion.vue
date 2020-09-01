@@ -2,7 +2,14 @@
     <span>
         <div class="card">
             <div class="card-body">
-                <div class="row" v-if="empresa" >
+                <div class="row" v-if="!areas">
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" v-if="areas" >
                     <div class="col-md-12">
                         <div class="table-responsive">
                             <table class="table table-striped" id="documentos" name="documentos">
@@ -163,7 +170,7 @@
                                     <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                             @change="onFileChange"
                                             row="3"
-                                            v-validate="{required:true, ext: ['pdf'],  size: 5120}"
+                                            v-validate="{required:true, ext: validarExtensiones(archivo.tipo_archivo),  size: 5120}"
                                             name="cargar_file"
                                             data-vv-as="Cargar"
                                             ref="cargar_file"
@@ -176,12 +183,12 @@
                         <div class="row justify-content-between" v-else-if="archivo.tipo_archivo != id_archivo_sua">
                             <div class="col-md-12">
                                 <label for="cargar_file" class="col-lg-12 col-form-label">
-                                    <i class="fa fa-file-pdf"></i> <i class="fa fa-file-archive-o" v-if="archivo.tipo_archivo == id_pago_sua"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
+                                     Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
                                     <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                            @change="onFileChange"
                                            row="3"
-                                           v-validate="{required:true, ext: validarExtenciones(archivo.tipo_archivo),  size: 5120}"
+                                           v-validate="{required:true, ext: validarExtensiones(),  size: 5120}"
                                            name="cargar_file"
                                            data-vv-as="Cargar"
                                            ref="cargar_file"
@@ -194,10 +201,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary">
+                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary" :disabled="errors.count() > 0">
                             <i class="fa fa-save"></i> Guardar
                         </button>
-                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary">
+                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary" :disabled="errors.count() > 0">
                             <span v-if="cargando==true">
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
@@ -406,11 +413,8 @@ export default {
                 });
 
         },
-        validarExtenciones(id){
-            if(this.id_pago_sua == id){
-                return ['pdf', 'zip'];
-            }
-            return ['pdf'];
+        validarExtensiones(){
+            return ['pdf', 'zip'];
         },
         registrarPrestadora(asociacion){
             this.cargando = true;

@@ -1,6 +1,13 @@
 <template>
     <span>
-        <div class="row" v-if="empresa">
+        <div class="row" v-if="!empresa">
+            <div class="col-md-12">
+                <div class="spinner-border text-success" role="status">
+                   <span class="sr-only">Cargando...</span>
+                </div>
+            </div>
+        </div>
+        <div class="row" v-else>
             <div class="col-md-12">
                 <button v-if="empresa.archivos_cargados>0" type="button" class="btn btn-secondary pull-right" :disabled="cargando" v-on:click="descargarZip">
                     <span v-if="cargando">
@@ -16,14 +23,24 @@
         <nav>
             <div class="card" v-if="empresa">
                 <div class="card-body">
-                    <div class="form-group row">
-                        <label class="col-md-2 col-form-label">Razón Social: </label>
-                        <div class="col-md-6 col-form-label">
-                            {{empresa.razon_social}}
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label  class="col-form-label">Tipo de Empresa:</label>
+                            <div>
+                                <i :class="empresa.tipo.id==1 ?'fa fa-boxes':'fa fa-building'"></i>{{empresa.tipo.descripcion}}
+                            </div>
                         </div>
-                        <label class="col-md-1 col-form-label">RFC: </label>
-                        <div class="col-md-3 col-form-label">
-                            {{empresa.rfc}}
+                        <div class="form-group col-md-6">
+                            <label  class="col-form-label">Nombre / Razón Social:</label>
+                            <div>
+                                {{empresa.razon_social}}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label  class="col-form-label">RFC:</label>
+                            <div>
+                                {{empresa.rfc}}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,7 +102,7 @@
                 this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', null);
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['prestadora', 'archivos']}
+                    params: {include: ['prestadora', 'archivos','tipo']}
                 }).then(data => {
                     // if(data.prestadora ){
                     //     this.prestadora = true;

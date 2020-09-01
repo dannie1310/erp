@@ -231,6 +231,11 @@ class Empresa extends Model
             else{
                 if($this->id_tipo_empresa != 3){
                     $this->agregarDatosProveedora($data);
+                    if($this->id_tipo_personalidad == 1){
+                        if (key_exists("representantes_legales", $data)) {
+                            $this->actualizarRepresentantesLegales($data);
+                        }
+                    }
                     $this->update([
                         'razon_social' => $data['razon_social'],
                         'no_imss' => $data['nss'],
@@ -306,6 +311,59 @@ class Empresa extends Model
                 foreach ($borradas as $id) {
                     EmpresaEspecialidad::where('id_especialidad', $id)->where('id_empresa_proveedora', $this->id)->delete();
                 }
+            }
+        }
+    }
+
+    private function actualizarRepresentantesLegales($data)
+    {
+        $ids = array();
+        foreach ($data['representantes_legales']['data'] as $representante) {
+            if (array_key_exists('id', $representante)) {
+                $representante_legal = RepresentanteLegal::find($representante["id"]);
+                array_push($ids, $representante['id']);
+                $representante_legal->update([
+                    'nombre' => $representante['nombre'],
+                    'apellido_paterno' => $representante['apellido_paterno'],
+                    'apellido_materno' => $representante['apellido_materno'],
+                ]);
+                $archivos = $representante_legal->archivos;
+                foreach($archivos as $archivo){
+                    $archivo->complemento_nombre = $representante_legal->nombre_completo;
+                    $archivo->id_representante_legal = $representante_legal->id;
+                    $archivo->save();
+                }
+
+            } else {
+                $representante_legal = RepresentanteLegal::where("curp", $representante["curp"])->first();
+                if(!$representante_legal) {
+                    $representante_legal = RepresentanteLegal::create($representante);
+                }
+                EmpresaRepresentanteLegal::create(["id_representante_legal" => $representante_legal->id, "id_empresa" => $this->id]);
+                $this->archivos()->create(
+                    [
+                        "id_tipo_archivo" => 3,
+                        "obligatorio" => 1,
+                        "complemento_nombre" => $representante_legal->nombre_completo,
+                        "id_representante_legal" => $representante_legal->id,
+                    ]
+                );
+                array_push($ids, $representante_legal->id);
+            }
+        }
+
+        if (array_key_exists('representantes_borrados', $data)) {
+            $borradas = $data['representantes_borrados'];
+            foreach ($borradas as $id) {
+                EmpresaRepresentanteLegal::where('id_representante_legal', '=', $id)->where('id_empresa', '=', $this->id)->delete();
+                Archivo::where("id_representante_legal",$id)->where("id_empresa", $this->id)->delete();
+                RepresentanteLegal::find($id)->delete();
+            }
+        }
+        if (array_key_exists('representantes_desasociados', $data)) {
+            foreach ($data['representantes_desasociados'] as $id) {
+                EmpresaRepresentanteLegal::where('id_representante_legal', '=', $id)->where('id_empresa', '=', $this->id)->delete();
+                Archivo::where("id_representante_legal",$id)->where("id_empresa", $this->id)->delete();
             }
         }
     }
