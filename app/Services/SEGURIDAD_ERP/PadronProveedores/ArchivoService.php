@@ -4,9 +4,13 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 
-use App\Repositories\Repository as Repository;
-use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
+use FilesystemIterator;
+use Chumper\Zipper\Zipper;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
 use Illuminate\Support\Facades\Storage;
+use App\Repositories\SEGURIDAD_ERP\PadronProveedores\ArchivoRepository as Repository;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
 
 class ArchivoService
 {
@@ -16,8 +20,8 @@ class ArchivoService
     protected $repository;
 
     /**
-     * GiroService constructor.
-     * @param Model $model
+     * ArchivoService constructor.
+     * @param Archivo $model
      */
     public function __construct(Archivo $model)
     {
@@ -26,14 +30,9 @@ class ArchivoService
 
     public function cargarArchivo($data){
         $directorio = $data['rfc'];
-        $hash_file = hash_file('md5', $data["archivo"]);
+        $hash_file = hash_file('sha1', $data["archivo"]);
         $archivo = $this->repository->show($data['id_archivo']);
-        $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
-
-        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
-            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
-            ;
-        }
+        $this->validaRepetido($hash_file,$data["archivo_nombre"], $archivo);
 
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
@@ -57,6 +56,137 @@ class ArchivoService
         return $archivo;
     }
 
+    private function validaRepetido($hashfile, $nombre, Archivo $archivoConsolidador =  null)
+    {
+        $repetido = $this->repository->getRepetido($hashfile);
+        if($repetido){
+            if($repetido->archivoConsolidador){
+                if($repetido->count() > 0 && $archivoConsolidador->id_tipo_archivo != $repetido->archivoConsolidador->id_tipo_archivo){
+                    $archivoConsolidador->eliminarArchivosIntegrantes();
+                    abort(403, 'El archivo '.$nombre.' ya ha sido registrado previamente como parte del archivo '.$repetido->archivoConsolidador->ctgTipoArchivo->descripcion . ' de la empresa '.$repetido->archivoConsolidador->empresa->razon_social ." (".$repetido->archivoConsolidador->empresa->rfc.")")
+                    ;
+                }
+            } else {
+                if($repetido->count() > 0 && $archivoConsolidador->id_tipo_archivo != $repetido->id_tipo_archivo){
+                    $archivoConsolidador->eliminarArchivosIntegrantes();
+                    abort(403, 'El archivo '.$nombre.' ya ha sido registrado previamente como '.$repetido->ctgTipoArchivo->descripcion . ' de la empresa '.$repetido->empresa->razon_social ." (".$repetido->empresa->rfc.")")
+                    ;
+                }
+            }
+        }
+    }
+
+    private function guardarArchivoIntegrante( $idConsolidador, $path, $archivoIntegrante)
+    {
+        $archivoConsolidador = $this->repository->show($idConsolidador);
+        $hash_file = hash_file('sha1', $path.$archivoIntegrante);
+        $this->validaRepetido($hash_file,$archivoIntegrante, $archivoConsolidador);
+
+        $nombre_archivo = explode('.', $archivoIntegrante);
+
+        $data["hash_file"] = $hash_file;
+        $data["nombre_archivo_usuario"] = $archivoIntegrante;
+        $data["extension"] = $nombre_archivo[count($nombre_archivo)-1];
+
+        $archivo_integrante = $this->repository->registrarArchivoIntegrante($idConsolidador, $data);
+        Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo_integrante->hash_file.'.pdf',  $path.$archivoIntegrante);
+
+    }
+
+    public function cargarArchivoZIP($data){
+        $directorio = $data['rfc'];
+        if(array_key_exists('rfc_empresa', $data)){
+            $directorio = $data['rfc_empresa'] . '/' . $directorio;
+        }
+        $archivo = $this->repository->show($data['id_archivo']);
+
+        if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
+            abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
+        }
+
+        $paths = $this->generaDirectorios();
+        $exp = explode("base64,", $data['archivo']);
+        $decode = base64_decode($exp[1]);
+        $file = public_path($paths["path_zip"]);
+        file_put_contents($file, $decode);
+        $zipper = new Zipper;
+        $zipper->make(public_path($paths["path_zip"]))->extractTo(public_path($paths["path_pdf"]));
+        $zipper->delete();
+
+        $files = array_diff(scandir($paths["path_pdf"]), array('.', '..','__MACOSX'));
+        sort($files, SORT_NUMERIC);
+
+        $pdf = new \Clegginabox\PDFMerger\PDFMerger;
+        foreach($files as $file) {
+            $file_explode = \explode('.', $file);
+            if(strtolower ( $file_explode[count($file_explode)-1]) != 'pdf'){
+                $this->removerCarpetas($paths["dir_pdf"]);
+                abort(403, 'El archivo contiene documentos que no son del tipo PDF.');
+            }
+            $this->guardarArchivoIntegrante($data['id_archivo'],$paths["path_pdf"], $file);
+            $pdf->addPDF($paths["path_pdf"]. $file, 'all');
+        }
+        $pdf->merge('file', $paths["path_pdf"].'temp_pdf.pdf', 'P');
+
+        $pdf_file = fopen($paths["path_pdf"].'temp_pdf.pdf', 'r');
+
+        $hash_file = hash_file('sha1', $paths["path_pdf"].'temp_pdf.pdf');
+        $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
+
+        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
+            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
+            ;
+        }
+
+        if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'.pdf', $pdf_file )){
+            $archivo->hash_file = $hash_file;
+            $archivo->nombre_archivo = $archivo->nombre_descarga;
+            $archivo->nombre_archivo_usuario = $data["archivo_nombre"];
+            $archivo->extension_archivo = 'pdf';
+            $archivo->save();
+            Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.pdf',  $pdf_file);
+        }else{
+            $this->removerCarpetas($paths["dir_pdf"]);
+            abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
+        }
+
+        $pdf = null;
+        fclose($pdf_file);
+        $this->removerCarpetas($paths["dir_pdf"]);
+
+        return $archivo;
+
+
+    }
+
+    private function removerCarpetas($path){
+        gc_collect_cycles();
+        $di = new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
+        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ( $ri as $file ) {
+            $file->isDir() ?  rmdir($file) : @unlink($file);
+        }
+        return true;
+
+    }
+
+    private function generaDirectorios()
+    {
+        $nombre = date("Ymdhis");
+        $nombre_zip = $nombre . ".zip";
+        $dir_zip = "uploads/padron-zip/zip/";
+        $dir_pdf = "uploads/padron-zip/pdf/";
+        $path_pdf = $dir_pdf . $nombre . "/";
+        $path_zip = $dir_zip . $nombre_zip;
+        if (!file_exists($dir_zip) && !is_dir($dir_zip)) {
+            mkdir($dir_zip, 0777, true);
+        }
+        if (!file_exists($dir_pdf) && !is_dir($dir_pdf)) {
+            mkdir($dir_pdf, 0777, true);
+        }
+        return ["path_zip" => $path_zip, "path_pdf" => $path_pdf, "dir_pdf" => $dir_pdf];
+    }
+
     public function documento($data, $id){
         $archivo = $this->repository->show($id);
         if($archivo->prestadora)
@@ -66,7 +196,8 @@ class ArchivoService
             $directorio = $archivo->empresa->rfc;
         }
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
-        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo .'.'. $archivo->extension_archivo);
+        // dd($storagePath . $directorio . '/' . $archivo->nombre_archivo);
+        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo . '.' . $archivo->extension_archivo );
     }
 
     public function getArchivosPrestadora($data){
@@ -90,7 +221,8 @@ class ArchivoService
             Storage::disk('padron_contratista')->delete($rfc_proveedora.'/'.$nombre_archivo);
             return $datos_arch;
         }else{
-            abort(403, 'No se encontro el archivo: "'.$nombre_archivo.'" para eliminarlo.');
+            $datos_arch = $archivo->eliminar();
+            return $datos_arch;
         }
     }
 }
