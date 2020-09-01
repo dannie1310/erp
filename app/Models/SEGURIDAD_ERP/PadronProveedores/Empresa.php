@@ -85,7 +85,8 @@ class Empresa extends Model
 
     public function getPorcentajeAvanceExpedienteAttribute()
     {
-        return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,0,"","");
+        // return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,0,"","");
+        return 1;
     }
 
     public function getColorBarraAttribute()
@@ -232,7 +233,7 @@ class Empresa extends Model
                     $this->agregarDatosProveedora($data);
                     if($this->id_tipo_personalidad == 1){
                         if (key_exists("representantes_legales", $data)) {
-                            $this->agregarRepresentantesLegales($data);
+                            $this->actualizarRepresentantesLegales($data);
                         }
                     }
                     $this->update([
@@ -314,21 +315,25 @@ class Empresa extends Model
         }
     }
 
-    private function agregarRepresentantesLegales($data)
+    private function actualizarRepresentantesLegales($data)
     {
         $ids = array();
         foreach ($data['representantes_legales']['data'] as $representante) {
             if (array_key_exists('id', $representante)) {
-                $representante_legal = RepresentanteLegal::find($representante["id"])->first();
+                $representante_legal = RepresentanteLegal::find($representante["id"]);
                 array_push($ids, $representante['id']);
                 $representante_legal->update([
                     'nombre' => $representante['nombre'],
                     'apellido_paterno' => $representante['apellido_paterno'],
                     'apellido_materno' => $representante['apellido_materno'],
                 ]);
-                $representante_legal->archivo->complemento_nombre = $representante_legal->nombre_completo;
-                $representante_legal->archivo->id_representante_legal = $representante_legal->id;
-                $representante_legal->archivo->save();
+                $archivos = $representante_legal->archivos;
+                foreach($archivos as $archivo){
+                    $archivo->complemento_nombre = $representante_legal->nombre_completo;
+                    $archivo->id_representante_legal = $representante_legal->id;
+                    $archivo->save();
+                }
+
             } else {
                 $representante_legal = RepresentanteLegal::where("curp", $representante["curp"])->first();
                 if(!$representante_legal) {
@@ -346,11 +351,19 @@ class Empresa extends Model
                 array_push($ids, $representante_legal->id);
             }
         }
-        $borradas = $data['representantes_borrados'];
+
         if (array_key_exists('representantes_borrados', $data)) {
+            $borradas = $data['representantes_borrados'];
             foreach ($borradas as $id) {
                 EmpresaRepresentanteLegal::where('id_representante_legal', '=', $id)->where('id_empresa', '=', $this->id)->delete();
+                Archivo::where("id_representante_legal",$id)->where("id_empresa", $this->id)->delete();
                 RepresentanteLegal::find($id)->delete();
+            }
+        }
+        if (array_key_exists('representantes_desasociados', $data)) {
+            foreach ($data['representantes_desasociados'] as $id) {
+                EmpresaRepresentanteLegal::where('id_representante_legal', '=', $id)->where('id_empresa', '=', $this->id)->delete();
+                Archivo::where("id_representante_legal",$id)->where("id_empresa", $this->id)->delete();
             }
         }
     }

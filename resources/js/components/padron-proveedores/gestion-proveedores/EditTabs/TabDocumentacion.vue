@@ -173,7 +173,7 @@
                                     <input type="file" class="form-control" id="cargar_file"
                                             @change="onFileChange"
                                             row="3"
-                                            v-validate="{required:true, ext: ['pdf'],  size: 5120}"
+                                            v-validate="{required:true, ext: validarExtensiones(archivo.tipo_archivo),  size: 5120}"
                                             name="cargar_file"
                                             data-vv-as="Cargar"
                                             ref="cargar_file"
@@ -186,28 +186,28 @@
                         <div class="row justify-content-between" v-else-if="archivo.tipo_archivo != id_archivo_sua">
                             <div class="col-md-12">
                                 <label for="cargar_file" class="col-lg-12 col-form-label">
-                                    <i class="fa fa-file-pdf"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
+                                     Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
                                     <input type="file" class="form-control" id="cargar_file"
                                            @change="onFileChange"
                                            row="3"
-                                           v-validate="{required:true, ext: ['pdf'],  size: 5120}"
+                                           v-validate="{required:true, ext: validarExtensiones(),  size: 5120}"
                                            name="cargar_file"
                                            data-vv-as="Cargar"
                                            ref="cargar_file"
                                            :class="{'is-invalid': errors.has('cargar_file')}"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} (PDF)</div>
+                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} <span v-if="archivo.tipo_archivo == id_pago_sua">(PDF o ZIP)</span><span v-else>(PDF)</span></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary">
+                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary" :disabled="errors.count() > 0">
                             <i class="fa fa-save"></i> Guardar
                         </button>
-                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary">
+                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary" :disabled="errors.count() > 0">
                             <span v-if="cargando==true">
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
@@ -262,6 +262,7 @@ export default {
             nss: '',
             orden:[],
             id_archivo_sua:15,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Listado de personal dado de alta ante el IMSS a través de SUA" EN LA BBDD
+            id_pago_sua:34,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Pago SUA" EN LA BBDD
             cargando: false
         }
     },
@@ -391,6 +392,9 @@ export default {
                 });
 
         },
+        validarExtensiones(){
+            return ['pdf', 'zip'];
+        },
         registrarPrestadora(asociacion){
             this.cargando = true;
             this.rfc = this.rfc.toUpperCase();
@@ -418,8 +422,27 @@ export default {
             formData.append('id_empresa',  this.id);
             formData.append('rfc',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
+            let split = this.file_name.split('.');
+            if(split[split.length -1].toLowerCase() == 'zip'){
+                this.uploadZIP(formData);
+            }else{
+                this.uploadPDF(formData);
+            }
+        },
+        uploadPDF(data){
             return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
-                data: formData,
+                data: data,
+                config: {
+                        params: { _method: 'POST'}
+                    }
+            }).then((data) => {
+                this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
+                $(this.$refs.modal).modal('hide');
+            })
+        },
+        uploadZIP(data){
+            return this.$store.dispatch('padronProveedores/archivo/cargarArchivoZIP', {
+                data: data,
                 config: {
                         params: { _method: 'POST'}
                     }
