@@ -85,7 +85,8 @@ class Empresa extends Model
 
     public function getPorcentajeAvanceExpedienteAttribute()
     {
-        return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,0,"","");
+        // return number_format($this->no_archivos_cargados/ $this->no_archivos_esperados*100,0,"","");
+        return 1;
     }
 
     public function getColorBarraAttribute()
