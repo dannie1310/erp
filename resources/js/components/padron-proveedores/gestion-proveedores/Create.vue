@@ -53,6 +53,7 @@
                     <div class="form-group col-md-3 error-content">
                         <label for="rfc" class="col-form-label" ><b>Registro Patronal: </b> </label>
                         <input class="form-control"
+                               v-if="registro_proveedor.id_tipo_empresa==2"
                                style="text-transform:uppercase;"
                                name="numero_imss"
                                data-vv-as="'Registro Patronal'"
@@ -61,6 +62,9 @@
                                v-validate="{ length:11, min:11 }"
                                id="numero_imss"
                                :maxlength="11"/>
+                        <div v-else>
+                            <input class="form-control" disabled="disabled" value="No Aplica" />
+                        </div>
                         <div class="invalid-feedback" v-show="errors.has('numero_imss')">{{ errors.first('numero_imss') }}</div>
                     </div>
                     <div class="form-group col-md-3 error-content">
