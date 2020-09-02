@@ -52,7 +52,7 @@ class ArchivoService
             $this->validaRepetido($hash_file,$archivos_nombres[$key]->nombre, $archivo);
             $exp = explode("base64,", $archivo_pdf->archivo);
             $decode = base64_decode($exp[1]);
-            $file = public_path(str_replace('/', '\\', $paths["dir_pdf"]));
+            $file = public_path(str_replace('/', '/', $paths["dir_pdf"]));
             file_put_contents($file . $archivos_nombres[$key]->nombre,$decode);
         }
 
@@ -83,7 +83,7 @@ class ArchivoService
             $archivo->extension_archivo = 'pdf';
             $archivo->save();
             Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.pdf',  $pdf_file);
-            
+
         }else{
             $this->removerCarpetas($paths["dir_pdf"]);
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
