@@ -5,7 +5,7 @@
                 <div v-for="(imagen,i) in imagenes" class="carousel-item" :class="i==0 ? 'active' : ''">
                     <img :src="imagen['imagen']" :alt="imagen['descripcion']" width="1200" height="800">
                     <div class="carousel-caption">
-                        <h3>{{imagen['descripcion']}}</h3>
+                        <h3 style="color:#7BC143">{{imagen['descripcion']}}</h3>
                     </div>
                 </div>
             </div>
