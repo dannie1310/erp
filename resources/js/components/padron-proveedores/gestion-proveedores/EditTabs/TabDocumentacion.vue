@@ -311,7 +311,7 @@ export default {
             this.$store.commit('padronProveedores/ctg-area/SET_AREAS', null);
             return this.$store.dispatch('padronProveedores/ctg-area/index', {
                 id: this.id,
-                params: {include: [], sort: 'id', order: 'asc'}
+                params: {include: [], sort: 'orden', order: 'asc'}
             }).then(data => {
                 this.$store.commit('padronProveedores/ctg-area/SET_AREAS', data);
                 this.setNumero();
