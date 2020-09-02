@@ -34,6 +34,7 @@ class ArchivoTransformer extends TransformerAbstract
             'estatus' => $model->estatus,
             'seccion' => $model->ctgTipoArchivo->ctgSeccion->descripcion,
             'id_area' => (int)$model->ctgTipoArchivo->id_area,
+            'extension' => $model->extension_archivo
         ];
     }
 
