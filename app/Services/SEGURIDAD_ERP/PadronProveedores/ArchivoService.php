@@ -4,6 +4,8 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Utils\Files;
+use Clegginabox\PDFMerger\PDFMerger;
 use FilesystemIterator;
 use Chumper\Zipper\Zipper;
 use RecursiveIteratorIterator;
@@ -41,8 +43,7 @@ class ArchivoService
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
         }
 
-        $paths = $this->generaDirectorios();
-        $this->removerCarpetas($paths["dir_pdf"]);
+        $paths = $this->generaDirectorioPDF();
         foreach($archivos_pdf as $key => $archivo_pdf){
             $nombre_explode = \explode('.', $archivos_nombres[$key]->nombre);
             if(strtolower ( $nombre_explode[count($nombre_explode)-1]) != 'pdf'){
@@ -85,14 +86,13 @@ class ArchivoService
             Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.pdf',  $pdf_file);
 
         }else{
-            $this->removerCarpetas($paths["dir_pdf"]);
+            Files::eliminaDirectorio($paths["dir_pdf"]);
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
 
         $pdf = null;
         fclose($pdf_file);
-        $this->removerCarpetas($paths["dir_pdf"]);
-
+        Files::eliminaDirectorio($paths["dir_pdf"]);
         return $archivo;
     }
 
@@ -156,11 +156,11 @@ class ArchivoService
         $files = array_diff(scandir($paths["path_pdf"]), array('.', '..','__MACOSX'));
         sort($files, SORT_NUMERIC);
 
-        $pdf = new \Clegginabox\PDFMerger\PDFMerger;
+        $pdf = new PDFMerger;
         foreach($files as $file) {
             $file_explode = \explode('.', $file);
             if(strtolower ( $file_explode[count($file_explode)-1]) != 'pdf'){
-                $this->removerCarpetas($paths["dir_pdf"]);
+                Files::eliminaDirectorio($paths["dir_pdf"]);
                 abort(403, 'El archivo contiene documentos que no son del tipo PDF.');
             }
             $this->guardarArchivoIntegrante($data['id_archivo'],$paths["path_pdf"], $file);
@@ -186,28 +186,26 @@ class ArchivoService
             $archivo->save();
             Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.pdf',  $pdf_file);
         }else{
-            $this->removerCarpetas($paths["dir_pdf"]);
+            Files::eliminaDirectorio($paths["dir_pdf"]);
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
 
         $pdf = null;
         fclose($pdf_file);
-        $this->removerCarpetas($paths["dir_pdf"]);
+        Files::eliminaDirectorio($paths["dir_pdf"]);
 
         return $archivo;
 
 
     }
 
-    private function removerCarpetas($path){
-        gc_collect_cycles();
-        $di = new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
-        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ( $ri as $file ) {
-            $file->isDir() ?  rmdir($file) : @unlink($file);
+    private function generaDirectorioPDF()
+    {
+        $dir_pdf = "uploads/padron_contratistas/pdf_temporal/".date("Ymdhis")."/";
+        if (!file_exists($dir_pdf) && !is_dir($dir_pdf)) {
+            mkdir($dir_pdf, 0777, true);
         }
-        return true;
-
+        return ["dir_pdf" => $dir_pdf];
     }
 
     private function generaDirectorios()
@@ -215,7 +213,7 @@ class ArchivoService
         $nombre = date("Ymdhis");
         $nombre_zip = $nombre . ".zip";
         $dir_zip = "uploads/padron-zip/zip/";
-        $dir_pdf = "uploads/padron-zip/pdf/";
+        $dir_pdf = "uploads/padron-zip/pdf/".date("Ymdhisu")."/";
         $path_pdf = $dir_pdf . $nombre . "/";
         $path_zip = $dir_zip . $nombre_zip;
         if (!file_exists($dir_zip) && !is_dir($dir_zip)) {
