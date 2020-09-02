@@ -90,7 +90,6 @@
             return {
                 cargando: false,
                 prestadora : false,
-                url : "1.jpeg",
             }
         },
         mounted(){
