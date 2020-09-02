@@ -1,5 +1,6 @@
 <template>
     <span>
+
      <div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel">
          <!--<ul class="carousel-indicators">
              <li class="active"   data-target="#item" data-slide-to="0" ></li>
@@ -8,24 +9,32 @@
          </ul>-->
          <div class="carousel-inner">
              <div class="carousel-item active">
-                 <img src="../../../../../public/uploads/padron_contratistas/MUC1803013I7/imagen.png" alt="Los dfsdfsdfdfsdfs" width="800" height="500">
+                 <img class="img-responsive" src="../../../../../public/uploads/padron_contratistas/MUC1803013I7/codigo.png" :alt="getURLImagen()" width="800" height="500">
                  <div class="carousel-caption">
-                     <h3>New Yodsfdfsrk</h3>
-                     <p>We love the dfsdfsdf Apple!</p>
+                     <h3>Porqueria!</h3>
+                     <p>We love the dfsdfsdf Apple! aqui?</p>
                  </div>
              </div>
+
              <div class="carousel-item">
-                 <img src="../../../../../public/uploads/padron_contratistas/MUC1803013I7/imagen_prueba.png" alt="Los Angedsfsdfsdfles" width="800" height="500">
+                 <img :src="getURLImagen()"  alt="Los Angedsfsdfsdfles" width="800" height="500">
                  <div class="carousel-caption">
                      <h3>prueba 2</h3>
-                     <p>We love the Big Apple!</p>
+                     <p>We love the Big Apple!si?</p>
                  </div>
              </div>
              <div class="carousel-item">
-                 <img src="../../../../../public/uploads/padron_contratistas/MUC1803013I7/imagenprueba.jpg" alt="Los Artert534534ngeles" width="800" height="500">
+                 <img  :src="getURLImagen()"   :alt="getURLImagen()" width="800" height="500">
                  <div class="carousel-caption">
-                     <h3>prueba 33333</h3>
-                     <p>We love the Big Apple!</p>
+                     <h3>prueba aqui 2</h3>
+                     <p>We love the Big Apple!si?</p>
+                 </div>
+             </div>
+             <div class="carousel-item">
+                 <img :src="'../../../../../public/uploads/padron_contratistas/MUC1803013I7/'+url" :alt="'../../../../../public/uploads/padron_contratistas/MUC1803013I7/'+url" width="800" height="500">
+                 <div class="carousel-caption">
+                     <h3>aqq</h3>
+                     <p>We love the Big Apple!oooo</p>
                  </div>
              </div>
          </div>
@@ -47,8 +56,8 @@
         },
         data() {
             return {
-                url : '/public/uploads/padron_contratistas/MUC1803013I7',
-                url1 : '../../../../../public/uploads/padron_contratistas/MUC1803013I7/',
+                url : "1.jpeg",
+                url1 : '../../../../../public/uploads/padron_contratistas/MUC1803013I7/imagen.png',
                 imagenes: {
                     3: "imagen_prueba.png",
                     2: "imagenprueba.png",
@@ -56,6 +65,13 @@
                 },
             };
         },
+        methods: {
+            getURLImagen()
+            {
+                console.log("../../../../../public/uploads/padron_contratistas/MUC1803013I7/imagenprueba.jpg")
+                return "../../../../../public/uploads/padron_contratistas/MUC1803013I7/imagenprueba.jpg";
+            }
+        }
     }
 </script>
 <style scoped>
