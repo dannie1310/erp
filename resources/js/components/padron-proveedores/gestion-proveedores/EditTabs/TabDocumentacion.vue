@@ -262,7 +262,8 @@ export default {
         },
         onFileChange(e){
             var size = 0;
-            this.file = null;
+            this.files = [];
+            this.names = [];
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
@@ -379,8 +380,8 @@ export default {
             if(this.$refs.cargar_file !== undefined){
                 this.$refs.cargar_file.value = '';
             }
-            this.file = null;
-            this.file_name = '';
+            this.names = [];
+            this.files = [];
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
         },
@@ -440,15 +441,17 @@ export default {
         },
         upload(){
             var formData = new FormData();
-            formData.append('archivos',  JSON.stringify(this.files));
-            formData.append('archivos_nombres',  JSON.stringify(this.names));
+            
             formData.append('id_empresa',  this.id);
             formData.append('rfc',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
-            let split = this.file_name.split('.');
-            if(split[split.length -1].toLowerCase() == 'zip'){
+            if(this.validateArchivos(this.names)){
+                formData.append('archivo',  this.files[0].archivo);
+                formData.append('archivo_nombre',  this.names[0].nombre);
                 this.uploadZIP(formData);
             }else{
+                formData.append('archivos',  JSON.stringify(this.files));
+                formData.append('archivos_nombres',  JSON.stringify(this.names));
                 this.uploadPDF(formData);
             }
         },
@@ -490,6 +493,15 @@ export default {
             if(this.archivos){
                 return this.archivos.some(el => el.id_area === tipo);
             }
+        },
+        validateArchivos(nombres){
+            if(nombres.length === 1){
+                let split = nombres[0].nombre.split('.');
+                if(split[split.length -1].toLowerCase() == 'zip'){
+                    return true;
+                }
+            }
+            return false;
         },
         verEspecificaciones(archivo, index){
             let data = {
