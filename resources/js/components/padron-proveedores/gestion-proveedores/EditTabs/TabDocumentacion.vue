@@ -61,7 +61,7 @@
                                                     <div class="btn-group">
                                                         <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
                                                         <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo"></Documento>
-                                                        <button type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen">
+                                                        <button v-if="archivo.integrantes.data.length > 0" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)">
                                                             <i class="fa fa-picture-o"></i>
                                                         </button>
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
@@ -221,18 +221,9 @@
         </div>
 
           <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
-            <div class="modal-dialog modal-lg"  role="document" id="mdialTamanio">
+            <div class="modal-dialog modal-xl"  role="document" id="mdialTamanio">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Ver Imagenes</h4>
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <Imagen></Imagen>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                    </div>
+                    <Imagen v-bind:imagenes="imagenes"></Imagen>
                 </div>
             </div>
         </div>
@@ -250,6 +241,7 @@ export default {
         return{
             documentos:[],
             archivo:'',
+            imagenes:[],
             file:'',
             file_name:'',
             id_tipo: '',
@@ -347,9 +339,21 @@ export default {
                 this.openModal(archivo);
             }
         },
-        modalImagen(){
-            $(this.$refs.modalImagen).appendTo('body')
-            $(this.$refs.modalImagen).modal('show');
+        modalImagen(archivo){
+            this.imagenes = []
+            this.getImagenes(archivo.id)
+            if (this.imagenes != []) {
+                $(this.$refs.modalImagen).appendTo('body')
+                $(this.$refs.modalImagen).modal('show');
+            }
+        },
+        getImagenes(id) {
+            return this.$store.dispatch('padronProveedores/archivo/getImagenes', {
+                id: id,
+                params: {include: []}
+            }).then(data => {
+                this.imagenes = data;
+            })
         },
         openModal(archivo){
             this.archivo = archivo;
