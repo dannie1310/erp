@@ -196,7 +196,6 @@ class ArchivoService
 
         return $archivo;
 
-
     }
 
     private function generaDirectorioPDF()

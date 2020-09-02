@@ -258,7 +258,6 @@ export default {
                 vm.files[tipo] = {archivo:e.target.result}
             };
             reader.readAsDataURL(file);
-            
         },
         onFileChange(e){
             var size = 0;
@@ -267,24 +266,6 @@ export default {
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
-            if(files.length > 15){
-                swal("El limite de archivos PDF permitidos es de 15", {
-                                icon: "warning",
-                                buttons: {
-                                    confirm: {
-                                        text: 'Enterado',
-                                        closeModal: true,
-                                    }
-                                }
-                            }) .then(() => {
-                                if(this.$refs.cargar_file !== undefined){
-                                    this.$refs.cargar_file.value = '';
-                                }
-                                this.names = [];
-                                this.files = [];
-                                $(this.$refs.modal).modal('hide');
-                            })
-            }
             if(e.target.id == 'cargar_file') {
                 for(let i=0; i<files.length; i++) {
                     this.createImage(files[i]);
@@ -295,10 +276,10 @@ export default {
                     this.createImage(files[i], i);
 
                 }
-                
+
             }
             if(size > 5120000){
-                swal("El tamaño máximo permitido es de 5 Mb.", {
+                swal("El tamaño máximo permitido para la carga de archivos es de 5 MB.", {
                     icon: "warning",
                     buttons: {
                         confirm: {
@@ -315,7 +296,7 @@ export default {
                     $(this.$refs.modal).modal('hide');
                 })
             }
-            
+
         },
         find() {
             return this.$store.dispatch('padronProveedores/empresa/getDoctosGenerales', {
@@ -441,7 +422,7 @@ export default {
         },
         upload(){
             var formData = new FormData();
-            
+
             formData.append('id_empresa',  this.id);
             formData.append('rfc',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
