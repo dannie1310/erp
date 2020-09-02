@@ -167,7 +167,7 @@
                                 <label for="cargar_file" class="col-lg-12 col-form-label">
                                     <i class="fa fa-users"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
-                                    <input type="file" class="form-control" id="cargar_file"
+                                    <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                             @change="onFileChange"
                                             row="3"
                                             v-validate="{required:true, ext: validarExtensiones(archivo.tipo_archivo),  size: 5120}"
@@ -185,7 +185,7 @@
                                 <label for="cargar_file" class="col-lg-12 col-form-label">
                                      Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
-                                    <input type="file" class="form-control" id="cargar_file"
+                                    <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                            @change="onFileChange"
                                            row="3"
                                            v-validate="{required:true, ext: validarExtensiones(),  size: 5120}"
@@ -231,6 +231,8 @@ export default {
             archivo:'',
             file:'',
             file_name:'',
+            names:[],
+            files:[],
             id_tipo: '',
             tipos: {
                 2: "Prestadora de Servicios",
@@ -253,20 +255,48 @@ export default {
             var reader = new FileReader();
             var vm = this;
             reader.onload = (e) => {
-                vm.file = e.target.result;
+                vm.files[tipo] = {archivo:e.target.result}
             };
             reader.readAsDataURL(file);
-
         },
         onFileChange(e){
-            this.file = null;
+            var size = 0;
+            this.files = [];
+            this.names = [];
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
             if(e.target.id == 'cargar_file') {
-                this.file_name = files[0].name;
-                this.createImage(files[0]);
+                for(let i=0; i<files.length; i++) {
+                    this.createImage(files[i]);
+                    size = +size + +files[i].size;
+                    this.names[i] = {
+                        nombre: files[i].name,
+                    };
+                    this.createImage(files[i], i);
+
+                }
+
             }
+            if(size > 5120000){
+                swal("El tamaño máximo permitido para la carga de archivos es de 5 MB.", {
+                    icon: "warning",
+                    buttons: {
+                        confirm: {
+                            text: 'Enterado',
+                            closeModal: true,
+                        }
+                    }
+                }) .then(() => {
+                    if(this.$refs.cargar_file !== undefined){
+                        this.$refs.cargar_file.value = '';
+                    }
+                    this.names = [];
+                    this.files = [];
+                    $(this.$refs.modal).modal('hide');
+                })
+            }
+
         },
         find() {
             return this.$store.dispatch('padronProveedores/empresa/getDoctosGenerales', {
@@ -331,8 +361,8 @@ export default {
             if(this.$refs.cargar_file !== undefined){
                 this.$refs.cargar_file.value = '';
             }
-            this.file = null;
-            this.file_name = '';
+            this.names = [];
+            this.files = [];
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
         },
@@ -392,15 +422,17 @@ export default {
         },
         upload(){
             var formData = new FormData();
-            formData.append('archivo',  this.file);
-            formData.append('archivo_nombre',  this.file_name);
+
             formData.append('id_empresa',  this.id);
             formData.append('rfc',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
-            let split = this.file_name.split('.');
-            if(split[split.length -1].toLowerCase() == 'zip'){
+            if(this.validateArchivos(this.names)){
+                formData.append('archivo',  this.files[0].archivo);
+                formData.append('archivo_nombre',  this.names[0].nombre);
                 this.uploadZIP(formData);
             }else{
+                formData.append('archivos',  JSON.stringify(this.files));
+                formData.append('archivos_nombres',  JSON.stringify(this.names));
                 this.uploadPDF(formData);
             }
         },
@@ -442,6 +474,15 @@ export default {
             if(this.archivos){
                 return this.archivos.some(el => el.id_area === tipo);
             }
+        },
+        validateArchivos(nombres){
+            if(nombres.length === 1){
+                let split = nombres[0].nombre.split('.');
+                if(split[split.length -1].toLowerCase() == 'zip'){
+                    return true;
+                }
+            }
+            return false;
         },
         verEspecificaciones(archivo, index){
             let data = {
