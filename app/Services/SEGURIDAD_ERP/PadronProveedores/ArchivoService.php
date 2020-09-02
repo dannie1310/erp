@@ -73,7 +73,7 @@ class ArchivoService
         $hash_file = hash_file('sha1', $paths["dir_pdf"].'temp_pdf.pdf');
         $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
 
-        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
+        if($repetidos->count() > 0){
             abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
             ;
         }
@@ -101,13 +101,13 @@ class ArchivoService
         $repetido = $this->repository->getRepetido($hashfile);
         if($repetido){
             if($repetido->archivoConsolidador){
-                if($repetido->count() > 0 && $archivoConsolidador->id_tipo_archivo != $repetido->archivoConsolidador->id_tipo_archivo){
+                if($repetido->count() > 0 ){
                     $archivoConsolidador->eliminarArchivosIntegrantes();
                     abort(403, 'El archivo '.$nombre.' ya ha sido registrado previamente como parte del archivo '.$repetido->archivoConsolidador->ctgTipoArchivo->descripcion . ' de la empresa '.$repetido->archivoConsolidador->empresa->razon_social ." (".$repetido->archivoConsolidador->empresa->rfc.")")
                     ;
                 }
             } else {
-                if($repetido->count() > 0 && $archivoConsolidador->id_tipo_archivo != $repetido->id_tipo_archivo){
+                if($repetido->count() > 0 ){
                     $archivoConsolidador->eliminarArchivosIntegrantes();
                     abort(403, 'El archivo '.$nombre.' ya ha sido registrado previamente como '.$repetido->ctgTipoArchivo->descripcion . ' de la empresa '.$repetido->empresa->razon_social ." (".$repetido->empresa->rfc.")")
                     ;
@@ -173,7 +173,7 @@ class ArchivoService
         $hash_file = hash_file('sha1', $paths["path_pdf"].'temp_pdf.pdf');
         $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
 
-        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
+        if($repetidos->count() > 0){
             abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
             ;
         }
