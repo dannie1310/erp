@@ -85,16 +85,16 @@
                             <div class="col-md-12">
                                 <label for="cargar_file" class="col-lg-12 col-form-label">Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
-                                    <input type="file" class="form-control" id="cargar_file" multiple="multiple"
+                                    <input type="file" class="form-control" id="cargar_file"
                                             @change="onFileChange"
                                             row="3"
-                                            v-validate="{required:true, ext: ['pdf', 'zip', 'jpg', 'jpeg', 'png'],  size: 5120}"
+                                            v-validate="{required:true, ext: ['pdf'],  size: 5120}"
                                             name="cargar_file"
                                             data-vv-as="Cargar"
                                             ref="cargar_file"
                                             :class="{'is-invalid': errors.has('cargar_file')}"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} (PDF, JPG, JPEG, PNG, ZIP)</div>
+                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} (PDF)</div>
                                 </div>
                             </div>
                         </div>
@@ -122,8 +122,6 @@ export default {
             archivo:'',
             file:'',
             file_name:'',
-            names:[],
-            files:[],
             id_tipo: '',
             tipos: {
                 2: "Prestadora de Servicios",
@@ -142,48 +140,20 @@ export default {
             var reader = new FileReader();
             var vm = this;
             reader.onload = (e) => {
-                vm.files[tipo] = {archivo:e.target.result}
+                vm.file = e.target.result;
             };
             reader.readAsDataURL(file);
+
         },
-                onFileChange(e){
-            var size = 0;
-            this.files = [];
-            this.names = [];
+        onFileChange(e){
+            this.file = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
             if(e.target.id == 'cargar_file') {
-                for(let i=0; i<files.length; i++) {
-                    this.createImage(files[i]);
-                    size = +size + +files[i].size;
-                    this.names[i] = {
-                        nombre: files[i].name,
-                    };
-                    this.createImage(files[i], i);
-
-                }
-
+                this.file_name = files[0].name;
+                this.createImage(files[0]);
             }
-            if(size > 5120000){
-                swal("El tamaño máximo permitido para la carga de archivos es de 5 MB.", {
-                    icon: "warning",
-                    buttons: {
-                        confirm: {
-                            text: 'Enterado',
-                            closeModal: true,
-                        }
-                    }
-                }) .then(() => {
-                    if(this.$refs.cargar_file !== undefined){
-                        this.$refs.cargar_file.value = '';
-                    }
-                    this.names = [];
-                    this.files = [];
-                    $(this.$refs.modal).modal('hide');
-                })
-            }
-
         },
         find() {
             return this.$store.dispatch('padronProveedores/empresa/getDoctosGenerales', {
@@ -234,8 +204,8 @@ export default {
         openModal(archivo){
             this.archivo = archivo;
             this.$refs.cargar_file.value = '';
-            this.files = null;
-            this.names = '';
+            this.file = null;
+            this.file_name = '';
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
         },
@@ -269,51 +239,23 @@ export default {
              }
         },
         upload(){
+            this.cargando = true;
             var formData = new FormData();
-
-            formData.append('id_empresa',  this.id);
-            formData.append('rfc',  this.empresa.rfc);
+            formData.append('archivo',  this.file);
+            formData.append('archivo_nombre',  this.file_name);
+            formData.append('id_empresa',  this.empresa.prestadora.id);
+            formData.append('rfc',  this.empresa.prestadora.rfc);
+            formData.append('rfc_empresa',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
-            if(this.validateArchivos(this.names)){
-                formData.append('archivo',  this.files[0].archivo);
-                formData.append('archivo_nombre',  this.names[0].nombre);
-                this.uploadZIP(formData);
-            }else{
-                formData.append('archivos',  JSON.stringify(this.files));
-                formData.append('archivos_nombres',  JSON.stringify(this.names));
-                this.uploadPDF(formData);
-            }
-        },
-        uploadPDF(data){
             return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
-                data: data,
+                data: formData,
                 config: {
                         params: { _method: 'POST'}
                     }
             }).then((data) => {
-                this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
+                this.$store.commit('padronProveedores/archivo-prestadora/UPDATE_ARCHIVO', data);
                 $(this.$refs.modal).modal('hide');
             })
-        },
-        uploadZIP(data){
-            return this.$store.dispatch('padronProveedores/archivo/cargarArchivoZIP', {
-                data: data,
-                config: {
-                        params: { _method: 'POST'}
-                    }
-            }).then((data) => {
-                this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
-                $(this.$refs.modal).modal('hide');
-            })
-        },
-        validateArchivos(nombres){
-            if(nombres.length === 1){
-                let split = nombres[0].nombre.split('.');
-                if(split[split.length -1].toLowerCase() == 'zip'){
-                    return true;
-                }
-            }
-            return false;
         },
         validate() {
             this.$validator.validate().then(result => {
