@@ -262,4 +262,28 @@ class ArchivoService
             return $datos_arch;
         }
     }
+
+    public function imagenBase64($id)
+    {
+        $archivo = $this->repository->show($id);
+        $imagenes = array();
+
+        if(count($archivo->archivosIntegrantes) > 0) {
+            foreach ($archivo->archivosIntegrantes as $key => $imagen) {
+                if (is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix() .  'hashfiles/' . $imagen->hash_file.".".$imagen->extension_archivo)) {
+                    if ($imagen->extension_archivo != 'pdf') {
+                        $imagenes[$key]['imagen'] = "data:image/" . $imagen->extension_archivo . ";base64," . base64_encode(file_get_contents(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix() .  'hashfiles/' . $imagen->hash_file.".".$imagen->extension_archivo));
+                        $imagenes[$key]['descripcion'] = $archivo->descripcion_complementada;
+                    }
+                }
+            }
+        }else{
+            if($archivo->nombre_archivo)
+            {
+                $imagenes['0']['imagen'] = "data:image/" . $archivo->extension_archivo. ";base64," . base64_encode(file_get_contents(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix() .  'hashfiles/' . $archivo->hash_file.".".$archivo->extension_archivo));
+                $imagenes['0']['descripcion'] = $archivo->descripcion_complementada;
+            }
+        }
+        return $imagenes;
+    }
 }

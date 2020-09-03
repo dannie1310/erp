@@ -174,6 +174,19 @@ export default {
                     });
             });
         },
+        getImagenes(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/imagenes', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
     },
     getters: {
         archivos(state) {
