@@ -418,13 +418,13 @@
                     if (result) {
                         if(this.empresa_registrar.especialidades_nuevas.length == 0 && this.empresa_registrar.nueva_especialidad == false)
                         {
-                            swal('¡Error!', 'Debe existir al menos una especialidad seleccionada..', 'error')
+                            swal('¡Error!', 'Debe existir al menos una especialidad seleccionada.', 'error')
                         }
                         else if (this.contactos.data.length == 0)
                         {
                             swal('¡Error!', 'Debe existir al menos un contacto.', 'error')
                         }
-                        else if (this.representantes_legales.data.length == 0)
+                        else if (this.representantes_legales.data.length == 0 && this.empresa_registrar.tipo_personalidad == 1)
                         {
                             swal('¡Error!', 'Debe existir al menos un representante legal.', 'error')
                         }
