@@ -89,7 +89,7 @@
         data() {
             return {
                 cargando: false,
-                prestadora : false
+                prestadora : false,
             }
         },
         mounted(){
@@ -102,12 +102,8 @@
                 this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', null);
                 return this.$store.dispatch('padronProveedores/empresa/find', {
                     id: this.id,
-                    params: {include: ['prestadora', 'archivos','tipo']}
+                    params: {include: ['prestadora', 'archivos.integrantes','tipo']}
                 }).then(data => {
-                    // if(data.prestadora ){
-                    //     this.prestadora = true;
-                    //     this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.prestadora.archivos.data);
-                    // }
                     this.prestadora = data.prestadora ? true : false;
                     this.$store.commit('padronProveedores/empresa/SET_EMPRESA', data);
                     this.$store.commit('padronProveedores/archivo/SET_ARCHIVOS', data.archivos.data);

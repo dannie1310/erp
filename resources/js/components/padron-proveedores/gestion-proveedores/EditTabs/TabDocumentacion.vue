@@ -60,7 +60,10 @@
                                                 <td>
                                                     <div class="btn-group">
                                                         <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                                        <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo"></Documento>
+                                                        <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo && archivo.extension == 'pdf'"></Documento>
+                                                        <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)">
+                                                            <i class="fa fa-picture-o"></i>
+                                                        </button>
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
@@ -216,19 +219,29 @@
                 </div>
             </div>
         </div>
+
+          <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
+            <div class="modal-dialog modal-xl modal-dialog-centered"  role="document" id="mdialTamanio">
+                <div class="modal-content">
+                    <Imagen v-bind:imagenes="imagenes"></Imagen>
+                </div>
+            </div>
+        </div>
     </span>
 </template>
 
 <script>
 import Documento from '../Documento';
+import Imagen from '../Imagen';
 export default {
     name: "tab-documentacion",
     props: ['id'],
-    components:{Documento},
+    components:{Documento, Imagen},
     data(){
         return{
             documentos:[],
             archivo:'',
+            imagenes:[],
             file:'',
             file_name:'',
             id_tipo: '',
@@ -325,6 +338,22 @@ export default {
             }else{
                 this.openModal(archivo);
             }
+        },
+        modalImagen(archivo){
+            this.imagenes = []
+            this.getImagenes(archivo.id)
+            if (this.imagenes != []) {
+                $(this.$refs.modalImagen).appendTo('body')
+                $(this.$refs.modalImagen).modal('show');
+            }
+        },
+        getImagenes(id) {
+            return this.$store.dispatch('padronProveedores/archivo/getImagenes', {
+                id: id,
+                params: {include: []}
+            }).then(data => {
+                this.imagenes = data;
+            })
         },
         openModal(archivo){
             this.archivo = archivo;
