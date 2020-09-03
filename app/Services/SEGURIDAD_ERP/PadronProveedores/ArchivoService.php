@@ -4,6 +4,8 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Utils\Files;
+use Clegginabox\PDFMerger\PDFMerger;
 use FilesystemIterator;
 use Chumper\Zipper\Zipper;
 use RecursiveIteratorIterator;
@@ -30,29 +32,67 @@ class ArchivoService
 
     public function cargarArchivo($data){
         $directorio = $data['rfc'];
-        $hash_file = hash_file('sha1', $data["archivo"]);
+        if(array_key_exists('rfc_empresa', $data)){
+            $directorio = $data['rfc_empresa'] . '/' . $directorio;
+        }
+        $archivos_nombres = \json_decode($data['archivos_nombres']);
+        $archivos_pdf = \json_decode($data['archivos']);
         $archivo = $this->repository->show($data['id_archivo']);
-        $this->validaRepetido($hash_file,$data["archivo_nombre"], $archivo);
 
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
         }
 
-        if(array_key_exists('rfc_empresa', $data)){
-            $directorio = $data['rfc_empresa'] . '/' . $directorio;
+        $paths = $this->generaDirectorioPDF();
+        foreach($archivos_pdf as $key => $archivo_pdf){
+            $nombre_explode = \explode('.', $archivos_nombres[$key]->nombre);
+            if(strtolower ( $nombre_explode[count($nombre_explode)-1]) != 'pdf'){
+                abort(403, 'No se puede procesar el archivo '. $archivos_nombres[$key]->nombre . '  porque no es un documento PDF.');
+            }
+            $hash_file = hash_file('sha1', $archivo_pdf->archivo);
+            $this->validaRepetido($hash_file,$archivos_nombres[$key]->nombre, $archivo);
+            $exp = explode("base64,", $archivo_pdf->archivo);
+            $decode = base64_decode($exp[1]);
+            $file = public_path(str_replace('/', '/', $paths["dir_pdf"]));
+            file_put_contents($file . $archivos_nombres[$key]->nombre,$decode);
         }
 
-        $nombre_archivo = explode('.', $data["archivo_nombre"]);
-        if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'))){
+        $files = array_diff(scandir($paths["dir_pdf"]), array('.', '..','__MACOSX'));
+        sort($files, SORT_NUMERIC);
+
+        $pdf = new \Clegginabox\PDFMerger\PDFMerger;
+        foreach($files as $file) {
+            $file_explode = \explode('.', $file);
+            $this->guardarArchivoIntegrante($data['id_archivo'],$paths["dir_pdf"], $file);
+            $pdf->addPDF($paths["dir_pdf"]. $file, 'all');
+        }
+        $pdf->merge('file', $paths["dir_pdf"].'temp_pdf.pdf', 'P');
+
+        $pdf_file = fopen($paths["dir_pdf"].'temp_pdf.pdf', 'r');
+
+        $hash_file = hash_file('sha1', $paths["dir_pdf"].'temp_pdf.pdf');
+        $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
+
+        if($repetidos->count() > 0){
+            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
+            ;
+        }
+
+        if($ok = Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'.pdf', $pdf_file )){
             $archivo->hash_file = $hash_file;
             $archivo->nombre_archivo = $archivo->nombre_descarga;
-            $archivo->nombre_archivo_usuario = $data["archivo_nombre"];
-            $archivo->extension_archivo = $nombre_archivo[count($nombre_archivo)-1];
+            $archivo->extension_archivo = 'pdf';
             $archivo->save();
-            Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.'.$nombre_archivo[count($nombre_archivo)-1],  fopen($data['archivo'], 'r'));
+            Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.pdf',  $pdf_file);
+
         }else{
+            Files::eliminaDirectorio($paths["dir_pdf"]);
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
+
+        $pdf = null;
+        fclose($pdf_file);
+        Files::eliminaDirectorio($paths["dir_pdf"]);
         return $archivo;
     }
 
@@ -61,13 +101,13 @@ class ArchivoService
         $repetido = $this->repository->getRepetido($hashfile);
         if($repetido){
             if($repetido->archivoConsolidador){
-                if($repetido->count() > 0 && $archivoConsolidador->id_tipo_archivo != $repetido->archivoConsolidador->id_tipo_archivo){
+                if($repetido->count() > 0 ){
                     $archivoConsolidador->eliminarArchivosIntegrantes();
                     abort(403, 'El archivo '.$nombre.' ya ha sido registrado previamente como parte del archivo '.$repetido->archivoConsolidador->ctgTipoArchivo->descripcion . ' de la empresa '.$repetido->archivoConsolidador->empresa->razon_social ." (".$repetido->archivoConsolidador->empresa->rfc.")")
                     ;
                 }
             } else {
-                if($repetido->count() > 0 && $archivoConsolidador->id_tipo_archivo != $repetido->id_tipo_archivo){
+                if($repetido->count() > 0 ){
                     $archivoConsolidador->eliminarArchivosIntegrantes();
                     abort(403, 'El archivo '.$nombre.' ya ha sido registrado previamente como '.$repetido->ctgTipoArchivo->descripcion . ' de la empresa '.$repetido->empresa->razon_social ." (".$repetido->empresa->rfc.")")
                     ;
@@ -116,11 +156,11 @@ class ArchivoService
         $files = array_diff(scandir($paths["path_pdf"]), array('.', '..','__MACOSX'));
         sort($files, SORT_NUMERIC);
 
-        $pdf = new \Clegginabox\PDFMerger\PDFMerger;
+        $pdf = new PDFMerger;
         foreach($files as $file) {
             $file_explode = \explode('.', $file);
             if(strtolower ( $file_explode[count($file_explode)-1]) != 'pdf'){
-                $this->removerCarpetas($paths["dir_pdf"]);
+                Files::eliminaDirectorio($paths["dir_pdf"]);
                 abort(403, 'El archivo contiene documentos que no son del tipo PDF.');
             }
             $this->guardarArchivoIntegrante($data['id_archivo'],$paths["path_pdf"], $file);
@@ -133,7 +173,7 @@ class ArchivoService
         $hash_file = hash_file('sha1', $paths["path_pdf"].'temp_pdf.pdf');
         $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
 
-        if($repetidos->count() > 0 && $archivo->id_tipo_archivo != $repetidos[0]->id_tipo_archivo){
+        if($repetidos->count() > 0){
             abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
             ;
         }
@@ -146,28 +186,25 @@ class ArchivoService
             $archivo->save();
             Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.pdf',  $pdf_file);
         }else{
-            $this->removerCarpetas($paths["dir_pdf"]);
+            Files::eliminaDirectorio($paths["dir_pdf"]);
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
         }
 
         $pdf = null;
         fclose($pdf_file);
-        $this->removerCarpetas($paths["dir_pdf"]);
+        Files::eliminaDirectorio($paths["dir_pdf"]);
 
         return $archivo;
 
-
     }
 
-    private function removerCarpetas($path){
-        gc_collect_cycles();
-        $di = new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
-        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ( $ri as $file ) {
-            $file->isDir() ?  rmdir($file) : @unlink($file);
+    private function generaDirectorioPDF()
+    {
+        $dir_pdf = "uploads/padron_contratistas/pdf_temporal/".date("Ymdhis")."/";
+        if (!file_exists($dir_pdf) && !is_dir($dir_pdf)) {
+            mkdir($dir_pdf, 0777, true);
         }
-        return true;
-
+        return ["dir_pdf" => $dir_pdf];
     }
 
     private function generaDirectorios()
@@ -175,7 +212,7 @@ class ArchivoService
         $nombre = date("Ymdhis");
         $nombre_zip = $nombre . ".zip";
         $dir_zip = "uploads/padron-zip/zip/";
-        $dir_pdf = "uploads/padron-zip/pdf/";
+        $dir_pdf = "uploads/padron-zip/pdf/".date("Ymdhisu")."/";
         $path_pdf = $dir_pdf . $nombre . "/";
         $path_zip = $dir_zip . $nombre_zip;
         if (!file_exists($dir_zip) && !is_dir($dir_zip)) {
