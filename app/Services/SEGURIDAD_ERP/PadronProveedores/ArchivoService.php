@@ -31,6 +31,94 @@ class ArchivoService
     }
 
     public function cargarArchivo($data){
+        $tipos_imagen = ['jpg', 'jpeg', 'png'];
+        $archivos_nombres = \json_decode($data['archivos_nombres']);
+        $ext_inicio = '';
+        foreach($archivos_nombres as $key => $Archivo_nombre){
+            $nom_explode = \explode('.', $Archivo_nombre->nombre);
+            if($key == 0){
+                $ext_inicio = strtolower($nom_explode[count($nom_explode)-1]); 
+                continue;
+            }
+            if(in_array($ext_inicio, $tipos_imagen) && strtolower($nom_explode[count($nom_explode)-1]) == 'pdf'){
+                abort(403, 'No puede mezclar archivos de imágen (jpg, jpeg, png) con PDF en la misma carga.');
+            }else if($ext_inicio == 'pdf' && \in_array(strtolower($nom_explode[count($nom_explode)-1]),$tipos_imagen )){
+                abort(403, 'No puede mezclar archivos de imágen (jpg, jpeg, png) con PDF en la misma carga.');
+            }
+        }
+
+        if($ext_inicio == 'pdf'){
+            return $this->cargarArchivosPDF($data);
+        }else{
+            return $this->cargarArchivosImagen($data);
+        }
+    }
+
+    public function cargarArchivosImagen($data){
+        $directorio = $data['rfc'];
+        if(array_key_exists('rfc_empresa', $data)){
+            $directorio = $data['rfc_empresa'] . '/' . $directorio;
+        }
+        $archivos_nombres = \json_decode($data['archivos_nombres']);
+        $archivos_img = \json_decode($data['archivos']);
+        $archivo = $this->repository->show($data['id_archivo']);
+
+        if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
+            abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
+        }
+        if(count($archivos_nombres) == 1){
+            $nombre_explode = explode('.', $archivos_nombres[0]->nombre);
+            $hash_file = hash_file('sha1', $archivos_img[0]->archivo);
+            $this->validaRepetido($hash_file,$archivos_nombres[0]->nombre, $archivo);
+            $exp = explode("base64,", $archivos_img[0]->archivo);
+            $decode = base64_decode($exp[1]);
+
+            if($ok = Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga. '.' . $nombre_explode[count($nombre_explode)-1], $decode )){
+                $archivo->hash_file = $hash_file;
+                $archivo->nombre_archivo = $archivo->nombre_descarga;
+                $archivo->extension_archivo = $nombre_explode[count($nombre_explode)-1];
+                $archivo->nombre_archivo_usuario = $archivos_nombres[0]->nombre;
+                $archivo->save();
+                Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.' . $nombre_explode[count($nombre_explode)-1], $decode);
+    
+            }else{
+                Files::eliminaDirectorio($paths["dir_pdf"]);
+                abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
+            }
+        }else{
+            $directorio = $directorio . '/' . $archivo->nombre_descarga;
+            $paths = $this->generaDirectorioPDF();
+            foreach($archivos_img as $key => $archivo_img){
+                $nombre_explode = \explode('.', $archivos_nombres[$key]->nombre);
+                $hash_file = hash_file('sha1', $archivo_img->archivo);
+                $this->validaRepetido($hash_file,$archivos_nombres[$key]->nombre, $archivo);
+                $exp = explode("base64,", $archivo_img->archivo);
+                $decode = base64_decode($exp[1]);
+                $file = public_path(str_replace('/', '/', $paths["dir_pdf"]));
+                file_put_contents($file . $archivos_nombres[$key]->nombre,$decode);
+                Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'_'. ($key+1) . '.' . $nombre_explode[count($nombre_explode)-1], $decode );
+                
+                $archivo->nombre_archivo = $archivo->nombre_descarga;
+                $archivo->extension_archivo = $nombre_explode[count($nombre_explode)-1];
+                $archivo->save();
+            }
+
+            $files = array_diff(scandir($paths["dir_pdf"]), array('.', '..','__MACOSX'));
+            sort($files, SORT_NUMERIC);
+
+            foreach($files as $file) {
+                $file_explode = \explode('.', $file);
+                $this->guardarArchivoIntegrante($data['id_archivo'],$paths["dir_pdf"], $file);
+            }
+
+
+        }
+        Files::eliminaDirectorio(public_path('uploads/padron_contratistas/pdf_temporal'));
+        return $archivo;
+
+    }
+
+    public function cargarArchivosPDF($data){
         $directorio = $data['rfc'];
         if(array_key_exists('rfc_empresa', $data)){
             $directorio = $data['rfc_empresa'] . '/' . $directorio;
@@ -129,7 +217,7 @@ class ArchivoService
         $data["extension"] = $nombre_archivo[count($nombre_archivo)-1];
 
         $archivo_integrante = $this->repository->registrarArchivoIntegrante($idConsolidador, $data);
-        Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo_integrante->hash_file.'.pdf',  $path.$archivoIntegrante);
+        Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo_integrante->hash_file.'.'.$nombre_archivo[count($nombre_archivo)-1],  $path.$archivoIntegrante);
 
     }
 
