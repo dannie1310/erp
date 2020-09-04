@@ -15,6 +15,7 @@ class ArchivoTransformer extends TransformerAbstract
     ];
 
     protected $availableIncludes = [
+        'integrantes'
     ];
 
     public function transform(Archivo $model)
@@ -33,6 +34,20 @@ class ArchivoTransformer extends TransformerAbstract
             'estatus' => $model->estatus,
             'seccion' => $model->ctgTipoArchivo->ctgSeccion->descripcion,
             'id_area' => (int)$model->ctgTipoArchivo->id_area,
+            'extension' => $model->extension_archivo
         ];
+    }
+
+    /**
+     * @param Archivo $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeIntegrantes(Archivo $model)
+    {
+        if($integrante = $model->archivosIntegrantes)
+        {
+            return $this->collection($integrante, new ArchivoIntegranteTransformer);
+        }
+        return null;
     }
 }

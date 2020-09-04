@@ -32,7 +32,8 @@
                     <div class="col-md-4">
                         <div class="form-group error-content">
                             <label for="nss" class="col-form-label">Registro Patronal:</label>
-                            <input class="form-control"
+                            <input v-if="empresa_registrar.tipo_empresa==2"
+                                   class="form-control"
                                    name="nss"
                                    data-vv-as="'Registro Patronal'"
                                    v-model="empresa_registrar.nss"
@@ -40,6 +41,9 @@
                                    id="nss"
                                    :class="{'is-invalid': errors.has('nss')}"
                                    placeholder="Registro Patronal" :maxlength="11"/>
+                            <div v-else>
+                                <input class="form-control" disabled="disabled" value="No Aplica" />
+                            </div>
                             <div class="invalid-feedback" v-show="errors.has('nss')">{{ errors.first('nss') }}</div>
                         </div>
                     </div>
@@ -308,7 +312,8 @@
                     'nueva_especialidad' : false,
                     'especialidades_nuevas':[],
                     'especialidad_nuevo' : '',
-                    'tipo_personalidad' : ''
+                    'tipo_personalidad' : '',
+                    'tipo_empresa' : ''
                 },
                 contactos : [],
                 representantes_legales : [],
@@ -376,6 +381,7 @@
                     this.empresa_registrar.giro = data.giro;
                     this.empresa_registrar.especialidades = data.especialidades ? data.especialidades : [];
                     this.empresa_registrar.tipo_personalidad = data.personalidad.id;
+                    this.empresa_registrar.tipo_empresa = data.tipo.id;
                     this.contactos = data.contactos ? data.contactos : [];
                     this.representantes_legales = data.representantesLegales ? data.representantesLegales : [];
                     this.agregarEspecialidades();
@@ -412,13 +418,13 @@
                     if (result) {
                         if(this.empresa_registrar.especialidades_nuevas.length == 0 && this.empresa_registrar.nueva_especialidad == false)
                         {
-                            swal('¡Error!', 'Debe existir al menos una especialidad seleccionada..', 'error')
+                            swal('¡Error!', 'Debe existir al menos una especialidad seleccionada.', 'error')
                         }
                         else if (this.contactos.data.length == 0)
                         {
                             swal('¡Error!', 'Debe existir al menos un contacto.', 'error')
                         }
-                        else if (this.representantes_legales.data.length == 0)
+                        else if (this.representantes_legales.data.length == 0 && this.empresa_registrar.tipo_personalidad == 1)
                         {
                             swal('¡Error!', 'Debe existir al menos un representante legal.', 'error')
                         }

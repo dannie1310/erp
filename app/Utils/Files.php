@@ -95,7 +95,7 @@ class Files
         while (false !== ($current = readdir($dh))) {
             if($current != '.' && $current != '..') {
                 if (!@unlink($dir.'/'.$current))
-                    deleteDirectory($dir.'/'.$current);
+                    Files::eliminaDirectorio($dir.'/'.$current);
             }
         }
         closedir($dh);
