@@ -98,19 +98,13 @@ class ArchivoService
                 file_put_contents($file . $archivos_nombres[$key]->nombre,$decode);
                 Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'_'. ($key+1) . '.' . $nombre_explode[count($nombre_explode)-1], $decode );
                 
+                $archivo->hash_file = 1;
                 $archivo->nombre_archivo = $archivo->nombre_descarga;
                 $archivo->extension_archivo = $nombre_explode[count($nombre_explode)-1];
                 $archivo->save();
+
+                $this->guardarImagenIntegrante($data['id_archivo'],$paths["dir_pdf"], $archivos_nombres[$key]->nombre, $decode);
             }
-
-            $files = array_diff(scandir($paths["dir_pdf"]), array('.', '..','__MACOSX'));
-            sort($files, SORT_NUMERIC);
-
-            foreach($files as $file) {
-                $file_explode = \explode('.', $file);
-                $this->guardarArchivoIntegrante($data['id_archivo'],$paths["dir_pdf"], $file);
-            }
-
 
         }
         Files::eliminaDirectorio(public_path('uploads/padron_contratistas/pdf_temporal'));
@@ -219,6 +213,21 @@ class ArchivoService
         $archivo_integrante = $this->repository->registrarArchivoIntegrante($idConsolidador, $data);
         Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo_integrante->hash_file.'.'.$nombre_archivo[count($nombre_archivo)-1],  $path.$archivoIntegrante);
 
+    }
+
+    private function guardarImagenIntegrante( $idConsolidador, $path, $archivoIntegrante, $img_file){
+        $archivoConsolidador = $this->repository->show($idConsolidador);
+        $hash_file = hash_file('sha1', $path.$archivoIntegrante);
+        $this->validaRepetido($hash_file,$archivoIntegrante, $archivoConsolidador);
+        $nombre_archivo = explode('.', $archivoIntegrante);
+
+        $data["hash_file"] = $hash_file;
+        $data["nombre_archivo_usuario"] = $archivoIntegrante;
+        $data["extension"] = $nombre_archivo[count($nombre_archivo)-1];
+
+        $archivo_integrante = $this->repository->registrarArchivoIntegrante($idConsolidador, $data);
+        Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo_integrante->hash_file.'.'.$nombre_archivo[count($nombre_archivo)-1],  $img_file);
+        
     }
 
     public function cargarArchivoZIP($data){

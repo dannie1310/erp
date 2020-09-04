@@ -469,7 +469,7 @@ export default {
             return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
                 data: data,
                 config: {
-                        params: { _method: 'POST'}
+                        params: { _method: 'POST', include:['integrantes']}
                     }
             }).then((data) => {
                 this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
