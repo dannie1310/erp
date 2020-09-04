@@ -356,6 +356,7 @@ class ArchivoService
             return $datos_arch;
         }else{
             $datos_arch = $archivo->eliminar();
+            Files::eliminaDirectorio(public_path('uploads/padron_contratistas/'. $rfc_proveedora . '/'. $archivo->nombre_archivo ));
             return $datos_arch;
         }
     }
