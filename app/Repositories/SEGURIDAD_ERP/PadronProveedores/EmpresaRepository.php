@@ -74,15 +74,13 @@ class EmpresaRepository extends Repository implements RepositoryInterface
         for($i = 1; $i<=3;$i++){
             $ultimos_anios[] = date("Y")-$i;
         }
+        $ultimos_3_anios =[];
+        for($i = 0; $i<=2;$i++){
+            $ultimos_3_anios[] = date("Y")-$i;
+        }
         foreach ($tipos_archivos as $tipo_archivo){
-            if($tipo_archivo->id_tipo_archivo != 13 && $tipo_archivo->id_tipo_archivo !=14)
+            if($tipo_archivo->id_tipo_archivo == 13 || $tipo_archivo->id_tipo_archivo ==14)
             {
-                $tipos_archivos_arr[] = [
-                    "id_tipo_archivo" => $tipo_archivo->id_tipo_archivo,
-                    "complemento_nombre" => null,
-                    "obligatorio" => $tipo_archivo->obligatorio,
-                ];
-            } else{
                 foreach ($ultimos_anios as $ultimo_anio){
                     $tipos_archivos_arr[] = [
                         "id_tipo_archivo" => $tipo_archivo->id_tipo_archivo,
@@ -90,6 +88,23 @@ class EmpresaRepository extends Repository implements RepositoryInterface
                         "obligatorio" => $tipo_archivo->obligatorio,
                     ];
                 }
+
+            } else if($tipo_archivo->id_tipo_archivo == 40 || $tipo_archivo->id_tipo_archivo ==41)
+            {
+                foreach ($ultimos_3_anios as $ultimo_anio){
+                    $tipos_archivos_arr[] = [
+                        "id_tipo_archivo" => $tipo_archivo->id_tipo_archivo,
+                        "complemento_nombre" => $ultimo_anio,
+                        "obligatorio" => $tipo_archivo->obligatorio,
+                    ];
+                }
+
+            } else {
+                $tipos_archivos_arr[] = [
+                    "id_tipo_archivo" => $tipo_archivo->id_tipo_archivo,
+                    "complemento_nombre" => null,
+                    "obligatorio" => $tipo_archivo->obligatorio,
+                ];
             }
         }
         return $tipos_archivos_arr;

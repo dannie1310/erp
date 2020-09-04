@@ -72,4 +72,9 @@ class ArchivoController extends Controller
         $item = $this->service->delete($request->all(), $id);
         return $this->respondWithItem($item);
     }
+
+    public function imagenes(Request $request, $id)
+    {
+        return $this->service->imagenBase64($id);
+    }
 }
