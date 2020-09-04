@@ -55,13 +55,15 @@ class ArchivoService
     }
 
     public function cargarArchivosImagen($data){
-        $directorio = $data['rfc'];
-        if(array_key_exists('rfc_empresa', $data)){
-            $directorio = $data['rfc_empresa'] . '/' . $directorio;
-        }
         $archivos_nombres = \json_decode($data['archivos_nombres']);
         $archivos_img = \json_decode($data['archivos']);
         $archivo = $this->repository->show($data['id_archivo']);
+        if($archivo->prestadora)
+        {
+            $directorio = $archivo->proveedor->rfc .'/'. $archivo->prestadora->rfc;
+        } else {
+            $directorio = $archivo->empresa->rfc;
+        }
 
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
@@ -113,13 +115,15 @@ class ArchivoService
     }
 
     public function cargarArchivosPDF($data){
-        $directorio = $data['rfc'];
-        if(array_key_exists('rfc_empresa', $data)){
-            $directorio = $data['rfc_empresa'] . '/' . $directorio;
-        }
         $archivos_nombres = \json_decode($data['archivos_nombres']);
         $archivos_pdf = \json_decode($data['archivos']);
         $archivo = $this->repository->show($data['id_archivo']);
+        if($archivo->prestadora)
+        {
+            $directorio = $archivo->proveedor->rfc .'/'. $archivo->prestadora->rfc;
+        } else {
+            $directorio = $archivo->empresa->rfc;
+        }
 
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
@@ -169,7 +173,7 @@ class ArchivoService
 
         }else{
             Files::eliminaDirectorio($paths["dir_pdf"]);
-            abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
+            abort(403, 'Hubo un error al cargar el archivo, intente mas tarde y si el problema persiste reportelo a soporte_aplicaciones@grupohi.mx');
         }
 
         $pdf = null;
@@ -231,11 +235,14 @@ class ArchivoService
     }
 
     public function cargarArchivoZIP($data){
-        $directorio = $data['rfc'];
-        if(array_key_exists('rfc_empresa', $data)){
-            $directorio = $data['rfc_empresa'] . '/' . $directorio;
-        }
+
         $archivo = $this->repository->show($data['id_archivo']);
+        if($archivo->prestadora)
+        {
+            $directorio = $archivo->proveedor->rfc .'/'. $archivo->prestadora->rfc;
+        } else {
+            $directorio = $archivo->empresa->rfc;
+        }
 
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
