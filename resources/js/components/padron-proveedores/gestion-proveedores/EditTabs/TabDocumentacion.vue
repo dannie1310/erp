@@ -59,10 +59,16 @@
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
+                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-danger" title="Reemplazar"  v-if="$root.can('actualizar_expediente_proveedor', true) && archivo.nombre_archivo != null"><i class="fa fa-retweet"></i></button>
+                                                        <button  @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-else-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
                                                         <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo && archivo.extension == 'pdf'"></Documento>
                                                         <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)">
-                                                            <i class="fa fa-picture-o"></i>
+                                                            <span v-if="cargando_imagenes == true">
+                                                                <i class="fa fa-spin fa-spinner"></i>
+                                                            </span>
+                                                            <span v-else>
+                                                                <i class="fa fa-picture-o"></i>
+                                                            </span>
                                                         </button>
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
                                                             <i class="fa fa-trash"></i>
@@ -220,9 +226,9 @@
             </div>
         </div>
 
-          <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
+        <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
             <div class="modal-dialog modal-xl modal-dialog-centered"  role="document" id="mdialTamanio">
-                <div class="modal-content">
+                <div class="modal-content" v-if="cargando_imagenes == false">
                     <Imagen v-bind:imagenes="imagenes"></Imagen>
                 </div>
             </div>
@@ -257,7 +263,8 @@ export default {
             orden:[],
             id_archivo_sua:15,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Listado de personal dado de alta ante el IMSS a través de SUA" EN LA BBDD
             id_pago_sua:34,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Pago SUA" EN LA BBDD
-            cargando: false
+            cargando: false,
+            cargando_imagenes: false
         }
     },
     mounted() {
@@ -348,7 +355,7 @@ export default {
         },
         modalCarga(archivo){
             if(archivo.nombre_archivo != null){
-                swal("¿Desea actualizar el documento cargado previamente?, se perdera el archivo anterior.", {
+                swal("Se Perderá el Archivo Anterior", "¿Desea reemplazar el documento cargado previamente?",{
                         icon: "warning",
                         buttons: {
                             cancel: {
@@ -356,7 +363,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Actualizar',
+                            text: 'Si, Reemplazar',
                             closeModal: true,
                         }
                         }
@@ -370,12 +377,9 @@ export default {
             }
         },
         modalImagen(archivo){
+            this.cargando_imagenes = true;
             this.imagenes = []
             this.getImagenes(archivo.id)
-            if (this.imagenes != []) {
-                $(this.$refs.modalImagen).appendTo('body')
-                $(this.$refs.modalImagen).modal('show');
-            }
         },
         getImagenes(id) {
             return this.$store.dispatch('padronProveedores/archivo/getImagenes', {
@@ -383,6 +387,10 @@ export default {
                 params: {include: []}
             }).then(data => {
                 this.imagenes = data;
+            }).finally( ()=>{
+                this.cargando_imagenes = false;
+                $(this.$refs.modalImagen).appendTo('body');
+                $(this.$refs.modalImagen).modal('show');
             })
         },
         openModal(archivo){
