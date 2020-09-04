@@ -208,7 +208,7 @@ class ArchivoService
 
         $data["hash_file"] = $hash_file;
         $data["nombre_archivo_usuario"] = $archivoIntegrante;
-        $data["extension"] = $nombre_archivo[count($nombre_archivo)-1];
+        $data["extension_archivo"] = $nombre_archivo[count($nombre_archivo)-1];
 
         $archivo_integrante = $this->repository->registrarArchivoIntegrante($idConsolidador, $data);
         Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo_integrante->hash_file.'.'.$nombre_archivo[count($nombre_archivo)-1],  $path.$archivoIntegrante);
