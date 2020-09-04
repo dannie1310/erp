@@ -59,7 +59,8 @@
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
+                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-danger" title="Reemplazar"  v-if="$root.can('actualizar_expediente_proveedor', true) && archivo.nombre_archivo != null"><i class="fa fa-retweet"></i></button>
+                                                        <button  @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-else-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
                                                         <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo && archivo.extension == 'pdf'"></Documento>
                                                         <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)">
                                                             <i class="fa fa-picture-o"></i>
@@ -348,7 +349,7 @@ export default {
         },
         modalCarga(archivo){
             if(archivo.nombre_archivo != null){
-                swal("¿Desea actualizar el documento cargado previamente?, se perdera el archivo anterior.", {
+                swal("Se Perderá el Archivo Anterior", "¿Desea reemplazar el documento cargado previamente?",{
                         icon: "warning",
                         buttons: {
                             cancel: {
@@ -356,7 +357,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Actualizar',
+                            text: 'Si, Reemplazar',
                             closeModal: true,
                         }
                         }
