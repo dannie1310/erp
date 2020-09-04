@@ -53,8 +53,17 @@
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                                        <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo"></Documento>
+                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-danger" title="Reemplazar"  v-if="$root.can('actualizar_expediente_proveedor', true) && archivo.nombre_archivo != null"><i class="fa fa-retweet"></i></button>
+                                                        <button  @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-else-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
+                                                        <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo && archivo.extension == 'pdf'"></Documento>
+                                                        <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
+                                                            <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
+                                                                <i class="fa fa-spin fa-spinner"></i>
+                                                            </span>
+                                                            <span v-else>
+                                                                <i class="fa fa-picture-o"></i>
+                                                            </span>
+                                                        </button>
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
@@ -101,9 +110,23 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                        <button @click="validate" type="button" class="btn btn-primary" >Cargar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
+                        <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true" >
+                            <span v-if="cargando==true">
+                                <i class="fa fa-spin fa-spinner"></i>
+                            </span>
+                            <span v-else>
+                                <i class="fa fa-save"></i>
+                            </span> Guardar
+                        </button>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
+            <div class="modal-dialog modal-xl modal-dialog-centered"  role="document" id="mdialTamanio">
+                <div class="modal-content" >
+                    <Imagen v-bind:imagenes="imagenes" v-bind:id="id_archivo"></Imagen>
                 </div>
             </div>
         </div>
@@ -112,16 +135,19 @@
 
 <script>
 import Documento from '../Documento';
+import Imagen from "../Imagen";
 export default {
     name: "tab-documentacion-prestadora",
     props: ['id_empresa', 'id_prestadora'],
-    components:{Documento},
+    components:{Documento, Imagen},
     data(){
         return{
+            id_archivo:'',
             documentos:[],
             archivo:'',
             file:'',
             file_name:'',
+            imagenes : [],
             id_tipo: '',
             tipos: {
                 2: "Prestadora de Servicios",
@@ -130,6 +156,8 @@ export default {
             razon_social:'',
             rfc:'',
             orden:[],
+            cargando: false,
+            cargando_imagenes: false
         }
     },
     mounted() {
@@ -216,11 +244,13 @@ export default {
             }).then(data => {
                 this.$store.commit('padronProveedores/archivo-prestadora/SET_ARCHIVOS', data.data);
                 this.setNumero();
+            }).finally( ()=>{
+                this.cargando = false;
             })
         },
         modalCarga(archivo){
             if(archivo.nombre_archivo != null){
-                swal("¿Desea actualizar el documento cargado previamente?, se perdera el archivo anterior.", {
+                swal("Se Perderá el Archivo Anterior", "¿Desea reemplazar el documento cargado previamente?",{
                         icon: "warning",
                         buttons: {
                             cancel: {
@@ -248,6 +278,24 @@ export default {
             this.file_name = '';
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
+        },
+        modalImagen(archivo){
+            this.id_archivo = archivo.id;
+            this.cargando_imagenes = true;
+            this.imagenes = []
+            this.getImagenes(archivo.id);
+        },
+        getImagenes(id) {
+            return this.$store.dispatch('padronProveedores/archivo/getImagenes', {
+                id: id,
+                params: {include: []}
+            }).then(data => {
+                this.imagenes = data;
+            }).finally( ()=>{
+                this.cargando_imagenes = false;
+                $(this.$refs.modalImagen).appendTo('body');
+                $(this.$refs.modalImagen).modal('show');
+            })
         },
         registrarPrestadora(){
             this.cargando = true;

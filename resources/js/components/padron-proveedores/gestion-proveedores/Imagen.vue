@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel" v-if="imagenes">
+        <div :id="`myCarousel${id}`" class="carousel slide carousel-fade" data-ride="carousel" v-if="imagenes">
             <div class="carousel-inner">
                 <div v-for="(imagen,i) in imagenes" class="carousel-item" :class="i==0 ? 'active' : ''">
                     <img :src="imagen['imagen']" :alt="imagen['descripcion']" width="800" height="500">
@@ -9,10 +9,10 @@
                     </div>
                 </div>
             </div>
-            <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
+            <a class="carousel-control-prev" :href="`#myCarousel${id}`" data-slide="prev">
                 <span class="carousel-control-prev-icon"></span>
             </a>
-            <a class="carousel-control-next" href="#myCarousel" data-slide="next">
+            <a class="carousel-control-next" :href="`#myCarousel${id}`" data-slide="next">
                 <span class="carousel-control-next-icon"></span>
             </a>
         </div>
@@ -22,7 +22,7 @@
 <script>
     export default {
         name: "Imagen",
-        props: ['imagenes'],
+        props: ['imagenes','id'],
     }
 </script>
 <style scoped>

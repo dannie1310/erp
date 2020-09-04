@@ -62,8 +62,8 @@
                                                         <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-danger" title="Reemplazar"  v-if="$root.can('actualizar_expediente_proveedor', true) && archivo.nombre_archivo != null"><i class="fa fa-retweet"></i></button>
                                                         <button  @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-else-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
                                                         <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo && archivo.extension == 'pdf'"></Documento>
-                                                        <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)">
-                                                            <span v-if="cargando_imagenes == true">
+                                                        <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
+                                                            <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
                                                                 <i class="fa fa-spin fa-spinner"></i>
                                                             </span>
                                                             <span v-else>
@@ -210,10 +210,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary" :disabled="errors.count() > 0">
+                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
                             <i class="fa fa-save"></i> Guardar
                         </button>
-                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary" :disabled="errors.count() > 0">
+                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
                             <span v-if="cargando==true">
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
@@ -228,8 +228,8 @@
 
         <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
             <div class="modal-dialog modal-xl modal-dialog-centered"  role="document" id="mdialTamanio">
-                <div class="modal-content" v-if="cargando_imagenes == false">
-                    <Imagen v-bind:imagenes="imagenes"></Imagen>
+                <div class="modal-content" >
+                    <Imagen v-bind:imagenes="imagenes" v-bind:id="id_archivo"></Imagen>
                 </div>
             </div>
         </div>
@@ -245,6 +245,7 @@ export default {
     components:{Documento, Imagen},
     data(){
         return{
+            id_archivo:'',
             documentos:[],
             archivo:'',
             imagenes:[],
@@ -378,8 +379,9 @@ export default {
         },
         modalImagen(archivo){
             this.cargando_imagenes = true;
+            this.id_archivo = archivo.id;
             this.imagenes = []
-            this.getImagenes(archivo.id)
+            this.getImagenes(archivo.id);
         },
         getImagenes(id) {
             return this.$store.dispatch('padronProveedores/archivo/getImagenes', {
