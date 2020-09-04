@@ -197,7 +197,7 @@
                                            ref="cargar_file"
                                            :class="{'is-invalid': errors.has('cargar_file')}"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} <span v-if="archivo.tipo_archivo == id_pago_sua">(PDF o ZIP)</span><span v-else>(PDF)</span></div>
+                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} <span v-if="archivo.tipo_archivo == id_pago_sua">(PDF, JPG, JPEG, PNG, ZIP)</span><span v-else>(PDF)</span></div>
                                 </div>
                             </div>
                         </div>
@@ -427,7 +427,7 @@ export default {
 
         },
         validarExtensiones(){
-            return ['pdf', 'zip'];
+            return ['pdf', 'zip', 'jpg', 'jpeg', 'png'];
         },
         registrarPrestadora(asociacion){
             this.cargando = true;
