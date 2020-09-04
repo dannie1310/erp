@@ -37,7 +37,7 @@ class ArchivoService
         foreach($archivos_nombres as $key => $Archivo_nombre){
             $nom_explode = \explode('.', $Archivo_nombre->nombre);
             if($key == 0){
-                $ext_inicio = strtolower($nom_explode[count($nom_explode)-1]); 
+                $ext_inicio = strtolower($nom_explode[count($nom_explode)-1]);
                 continue;
             }
             if(in_array($ext_inicio, $tipos_imagen) && strtolower($nom_explode[count($nom_explode)-1]) == 'pdf'){
@@ -80,7 +80,7 @@ class ArchivoService
                 $archivo->nombre_archivo_usuario = $archivos_nombres[0]->nombre;
                 $archivo->save();
                 Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hash_file.'.' . $nombre_explode[count($nombre_explode)-1], $decode);
-    
+
             }else{
                 Files::eliminaDirectorio($paths["dir_pdf"]);
                 abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
@@ -97,7 +97,7 @@ class ArchivoService
                 $file = public_path(str_replace('/', '/', $paths["dir_pdf"]));
                 file_put_contents($file . $archivos_nombres[$key]->nombre,$decode);
                 Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'_'. ($key+1) . '.' . $nombre_explode[count($nombre_explode)-1], $decode );
-                
+
                 $archivo->hash_file = 1;
                 $archivo->nombre_archivo = $archivo->nombre_descarga;
                 $archivo->extension_archivo = $nombre_explode[count($nombre_explode)-1];
@@ -155,7 +155,7 @@ class ArchivoService
         $hash_file = hash_file('sha1', $paths["dir_pdf"].'temp_pdf.pdf');
         $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
 
-        if($repetidos->count() > 0){
+        if($repetidos->count() > 0 && $repetidos[0] != $archivo){
             abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
             ;
         }
@@ -183,13 +183,13 @@ class ArchivoService
         $repetido = $this->repository->getRepetido($hashfile);
         if($repetido){
             if($repetido->archivoConsolidador){
-                if($repetido->count() > 0 ){
+                if($repetido->count() > 0 && $repetido->archivoConsolidador != $archivoConsolidador){
                     $archivoConsolidador->eliminarArchivosIntegrantes();
                     abort(403, 'El archivo '.$nombre.' ya ha sido registrado previamente como parte del archivo '.$repetido->archivoConsolidador->ctgTipoArchivo->descripcion . ' de la empresa '.$repetido->archivoConsolidador->empresa->razon_social ." (".$repetido->archivoConsolidador->empresa->rfc.")")
                     ;
                 }
             } else {
-                if($repetido->count() > 0 ){
+                if($repetido->count() > 0 && $repetido!=$archivoConsolidador){
                     $archivoConsolidador->eliminarArchivosIntegrantes();
                     abort(403, 'El archivo '.$nombre.' ya ha sido registrado previamente como '.$repetido->ctgTipoArchivo->descripcion . ' de la empresa '.$repetido->empresa->razon_social ." (".$repetido->empresa->rfc.")")
                     ;
@@ -227,7 +227,7 @@ class ArchivoService
 
         $archivo_integrante = $this->repository->registrarArchivoIntegrante($idConsolidador, $data);
         Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo_integrante->hash_file.'.'.$nombre_archivo[count($nombre_archivo)-1],  $img_file);
-        
+
     }
 
     public function cargarArchivoZIP($data){
@@ -270,9 +270,8 @@ class ArchivoService
         $hash_file = hash_file('sha1', $paths["path_pdf"].'temp_pdf.pdf');
         $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
 
-        if($repetidos->count() > 0){
-            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
-            ;
+        if($repetidos->count() > 0 && $repetidos[0] != $archivo){
+            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")");
         }
 
         if(Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'.pdf', $pdf_file )){
@@ -356,7 +355,7 @@ class ArchivoService
             return $datos_arch;
         }else{
             Files::eliminaDirectorio(public_path('uploads/padron_contratistas/'. $rfc_proveedora . '/'. $archivo->nombre_archivo ));
-            $datos_arch = $archivo->eliminar();          
+            $datos_arch = $archivo->eliminar();
             return $datos_arch;
         }
     }
