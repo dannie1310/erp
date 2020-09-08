@@ -253,6 +253,13 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     }
 
+    public function rolesSinContextoAsignado()
+    {
+        return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
+        //return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user', 'user_id', 'role_id');
+
+    }
+
     public function rolesGlobales()
     {
         $obra =  Obra::query()->find(Context::getIdObra());
@@ -324,6 +331,12 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     {
         $permisos = [];
         foreach ($this->rolesSinContexto as $rol) {
+            foreach ($rol->permisos()->aplicacion()->get() as $perm) {
+                array_push($permisos, $perm->name);
+            }
+        }
+
+        foreach ($this->rolesSinContextoAsignado as $rol) {
             foreach ($rol->permisos()->aplicacion()->get() as $perm) {
                 array_push($permisos, $perm->name);
             }
