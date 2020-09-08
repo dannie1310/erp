@@ -152,7 +152,7 @@ class EntradaAlmacenFormato extends Rotation
            $this->MultiCell(9.5, .5,
                utf8_decode($this->obra->facturar) . '
 ' . utf8_decode($this->obra->direccion) . '
-' . 'Estado: ' . utf8_decode($this->obra->estado) . ' C.P:' . $this->obra->codigo_postal . ' 
+' . 'Estado: ' . utf8_decode($this->obra->estado) . ' C.P:' . $this->obra->codigo_postal . '
 ' . $this->obra->rfc, '', 'L');
 
            $this->setY($y_alto);
@@ -177,7 +177,7 @@ class EntradaAlmacenFormato extends Rotation
         $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
         $this->SetHeights([0.4]);
         $this->SetAligns(['C','C','C','C','C','C',]);
-        $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad", "Fecha Entrega"]);
+        $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad", "Fecha de Entrega Requerida"]);
 
 
 
@@ -197,7 +197,7 @@ class EntradaAlmacenFormato extends Rotation
                 $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
                 $this->SetHeights([0.4]);
                 $this->SetAligns(['C','C','C','C','C','C',]);
-                $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad", "Fecha Entrega"]);
+                $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad", "Fecha de Entrega Requerida"]);
                 $this->dim_aux=1;
             }
 
@@ -211,9 +211,9 @@ class EntradaAlmacenFormato extends Rotation
                 $i+1,
                 $p->material['numero_parte'],
                 utf8_decode($p->material['descripcion']),
-               $p['unidad'],
+                $p['unidad'],
                 $p->cantidad_format,
-                date("d-m-Y", strtotime($p->material['FechaHoraRegistro']))
+                $p->itemSolicitud->entrega->fecha_format
             ]);
 
 

@@ -101,7 +101,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'obra' => Obra::with(['datosContables', 'configuracion'])->find($request->id_obra),
+            'obra' => Obra::with(['datosContables', 'configuracion'])->find($request->id_obra)/*->pluck("id_obra","nombre")*/,
             'permisos' => auth()->user()->permisos()
         ]);
     }
