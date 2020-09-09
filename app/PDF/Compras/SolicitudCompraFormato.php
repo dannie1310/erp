@@ -149,7 +149,7 @@ class SolicitudCompraFormato extends Rotation
         /* se sobre escribe la información */
         $this->Cell(10);
         $this->SetFont('Arial', 'B', 10);
-        $this->CellFitScale(9.5, .5, utf8_decode($this->obra->constructora), '', 'J');
+        $this->CellFitScale(9.5, .5, utf8_decode($this->obra->facturar), '', 'J');
         $this->Ln(.5);
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);
