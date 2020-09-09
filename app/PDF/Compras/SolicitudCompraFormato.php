@@ -149,12 +149,12 @@ class SolicitudCompraFormato extends Rotation
         /* se sobre escribe la información */
         $this->Cell(10);
         $this->SetFont('Arial', 'B', 10);
-        $this->CellFitScale(9.5, .5, utf8_decode($this->obra->descripcion), '', 'J');
+        $this->CellFitScale(9.5, .5, utf8_decode($this->obra->facturar), '', 'J');
         $this->Ln(.5);
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);
         $this->Multicell(9.5, .5, utf8_decode($this->obra->direccion . ' 
-RFC: ' . $this->obra->rfc), '', 'J');
+        RFC: ' . $this->obra->rfc), '', 'J');
 
 
         $this->Ln(.2);
@@ -211,7 +211,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetX($x);
         $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FOLIO SAO'), 'LB', 0, 'L');
         $this->SetFont('Arial', 'B', '#' . 10);
-        $this->Cell(0.207 * $this->WidthTotal, 0.5,utf8_decode("000"), 'RB', 1, 'R');
+        $this->Cell(0.207 * $this->WidthTotal, 0.5,$this->solicitud->numero_folio_format, 'RB', 1, 'R');
 
     }
 
