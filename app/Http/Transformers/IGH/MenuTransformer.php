@@ -16,6 +16,7 @@ class MenuTransformer extends TransformerAbstract
             'menu' => ($model->menu)?$model->menu:$model->name,
             'ruta' => ($model->ruta)?$model->ruta:$model->url,
             'target' => $model->target,
+            'manual' => (string) $model->url_manual
         ];
     }
 }

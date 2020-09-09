@@ -23,6 +23,9 @@
                                 <a :href="`${aplicacion.ruta}?origen=${url}`" :target="aplicacion.target">
                                     <span class="info-box-text">IR <i class="fa fa-arrow-circle-o-right"></i> </span>
                                 </a>
+                                <a :href="`${aplicacion.manual}`" v-if="aplicacion.manual" target="_blank">
+                                    <span class="info-box-text" align="right" title="Ver manual de usuario"><i class="fa fa-file-pdf-o" /></span>
+                                </a>
                             </div>
                         </div>
                     </div>
