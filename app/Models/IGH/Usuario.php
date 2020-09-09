@@ -16,6 +16,7 @@ use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\UsuarioNotificacion;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
+use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
 use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
@@ -247,7 +248,16 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function rolesSinContexto()
     {
+        //return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
+        return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user', 'user_id', 'role_id');
+
+    }
+
+    public function rolesSinContextoAsignado()
+    {
         return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
+        //return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user', 'user_id', 'role_id');
+
     }
 
     public function rolesGlobales()
@@ -286,6 +296,11 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->belongsToMany( CtgAreaSolicitante::class, 'Compras.areas_solicitantes_usuario', 'id_usuario', 'id_area_solicitante' );
     }
 
+    public function aplicaciones()
+    {
+        return $this->hasManyThrough(Sistema::class, SistemaPermiso::class,"permission_id","id", "id", "sistema_id");
+    }
+
     public function permisos()
     {
         $permisos = [];
@@ -316,12 +331,16 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     {
         $permisos = [];
         foreach ($this->rolesSinContexto as $rol) {
-            // Validate against the Permission table
-            foreach ($rol->permisos as $perm) {
+            foreach ($rol->permisos()->aplicacion()->get() as $perm) {
                 array_push($permisos, $perm->name);
             }
         }
 
+        foreach ($this->rolesSinContextoAsignado as $rol) {
+            foreach ($rol->permisos()->aplicacion()->get() as $perm) {
+                array_push($permisos, $perm->name);
+            }
+        }
         return array_unique($permisos);
     }
 

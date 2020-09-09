@@ -81,6 +81,11 @@ class ItemEntradaAlmacen extends Item
         return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
     }
 
+    public function itemSolicitud()
+    {
+        return $this->belongsTo(ItemSolicitudCompra::class,"item_antecedente", "id_item");
+    }
+
     public function itemsFactura()
     {
         return $this->hasMany(ItemFactura::class,"item_antecedente", "id_item");

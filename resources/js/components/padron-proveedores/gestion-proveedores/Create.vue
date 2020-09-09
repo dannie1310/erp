@@ -53,6 +53,7 @@
                     <div class="form-group col-md-3 error-content">
                         <label for="rfc" class="col-form-label" ><b>Registro Patronal: </b> </label>
                         <input class="form-control"
+                               v-if="registro_proveedor.id_tipo_empresa==2"
                                style="text-transform:uppercase;"
                                name="numero_imss"
                                data-vv-as="'Registro Patronal'"
@@ -61,6 +62,9 @@
                                v-validate="{ length:11, min:11 }"
                                id="numero_imss"
                                :maxlength="11"/>
+                        <div v-else>
+                            <input class="form-control" disabled="disabled" value="No Aplica" />
+                        </div>
                         <div class="invalid-feedback" v-show="errors.has('numero_imss')">{{ errors.first('numero_imss') }}</div>
                     </div>
                     <div class="form-group col-md-3 error-content">
@@ -158,7 +162,7 @@
             </div>
         </div>
 
-        <div class="card" v-if="tipo_empresa == 1">
+        <div class="card" v-if="tipo_personalidad == 1">
             <div class="card-header">
                 <label ><i class="fa fa-th-list icon"></i>Representantes Legales</label>
             </div>
@@ -404,7 +408,7 @@
             this.getGiros();
         },
         computed: {
-            tipo_empresa : function () {
+            tipo_personalidad : function () {
                 var digito_validacion;
                 digito_validacion = this.registro_proveedor.rfc.substr(3,1);
                 if(!isNaN(parseInt(digito_validacion))){
@@ -509,7 +513,7 @@
                     this.registro_proveedor.rfc = this.registro_proveedor.rfc.toUpperCase();
                     if (result) {
                         var error_curp = 0;
-                        if(this.tipo_empresa==1){
+                        if(this.tipo_personalidad==1){
                             var BreakException = {};
                             try{
                                 this.registro_proveedor.representantes_legales.forEach(e => {

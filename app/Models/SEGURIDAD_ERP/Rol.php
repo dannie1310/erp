@@ -37,11 +37,12 @@ class Rol extends Model
         'display_name',
     ];
 
-    /*protected $dateFormat = 'Y-m-d H:i:s';*/
+    //protected $dateFormat = 'Y-m-d H:i:s';
 
     public function permisos()
     {
-        return $this->belongsToMany(Permiso::class, 'dbo.permission_role', 'role_id', 'permission_id');
+        return $this->hasManyThrough(Permiso::class, PermisoRol::class,"role_id","id", "id", "permission_id")
+            ;
     }
 
     public function getUsadoAttribute()

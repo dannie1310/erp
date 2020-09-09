@@ -59,8 +59,17 @@
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                                        <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo"></Documento>
+                                                        <button @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-danger" title="Reemplazar"  v-if="$root.can('actualizar_expediente_proveedor', true) && archivo.nombre_archivo != null"><i class="fa fa-retweet"></i></button>
+                                                        <button  @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-else-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
+                                                        <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo && archivo.extension == 'pdf'"></Documento>
+                                                        <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
+                                                            <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
+                                                                <i class="fa fa-spin fa-spinner"></i>
+                                                            </span>
+                                                            <span v-else>
+                                                                <i class="fa fa-picture-o"></i>
+                                                            </span>
+                                                        </button>
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
@@ -167,10 +176,10 @@
                                 <label for="cargar_file" class="col-lg-12 col-form-label">
                                     <i class="fa fa-users"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
-                                    <input type="file" class="form-control" id="cargar_file"
+                                    <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                             @change="onFileChange"
                                             row="3"
-                                            v-validate="{required:true, ext: ['pdf'],  size: 5120}"
+                                            v-validate="{required:true, ext: validarExtensiones(archivo.tipo_archivo),  size: 5120}"
                                             name="cargar_file"
                                             data-vv-as="Cargar"
                                             ref="cargar_file"
@@ -183,28 +192,28 @@
                         <div class="row justify-content-between" v-else-if="archivo.tipo_archivo != id_archivo_sua">
                             <div class="col-md-12">
                                 <label for="cargar_file" class="col-lg-12 col-form-label">
-                                    <i class="fa fa-file-pdf"></i> Cargar {{archivo.tipo_archivo_descripcion}}</label>
+                                     Cargar {{archivo.tipo_archivo_descripcion}}</label>
                                 <div class="col-lg-12">
-                                    <input type="file" class="form-control" id="cargar_file"
+                                    <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                            @change="onFileChange"
                                            row="3"
-                                           v-validate="{required:true, ext: ['pdf'],  size: 5120}"
+                                           v-validate="{required:true, ext: validarExtensiones(),  size: 5120}"
                                            name="cargar_file"
                                            data-vv-as="Cargar"
                                            ref="cargar_file"
                                            :class="{'is-invalid': errors.has('cargar_file')}"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} (PDF)</div>
+                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} <span v-if="archivo.tipo_archivo == id_pago_sua">(PDF, JPG, JPEG, PNG, ZIP)</span><span v-else>(PDF)</span></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
-                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary">
+                        <button @click="validate" v-if="archivo.tipo_archivo != id_archivo_sua || id_tipo == 1" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
                             <i class="fa fa-save"></i> Guardar
                         </button>
-                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary">
+                        <button @click="validate" v-if="archivo.tipo_archivo == id_archivo_sua && id_tipo == 2" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
                             <span v-if="cargando==true">
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
@@ -216,21 +225,34 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
+            <div class="modal-dialog modal-xl modal-dialog-centered"  role="document" id="mdialTamanio">
+                <div class="modal-content" >
+                    <Imagen v-bind:imagenes="imagenes" v-bind:id="id_archivo"></Imagen>
+                </div>
+            </div>
+        </div>
     </span>
 </template>
 
 <script>
 import Documento from '../Documento';
+import Imagen from '../Imagen';
 export default {
     name: "tab-documentacion",
     props: ['id'],
-    components:{Documento},
+    components:{Documento, Imagen},
     data(){
         return{
+            id_archivo:'',
             documentos:[],
             archivo:'',
+            imagenes:[],
             file:'',
             file_name:'',
+            names:[],
+            files:[],
             id_tipo: '',
             tipos: {
                 2: "Prestadora de Servicios",
@@ -241,7 +263,9 @@ export default {
             nss: '',
             orden:[],
             id_archivo_sua:15,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Listado de personal dado de alta ante el IMSS a través de SUA" EN LA BBDD
-            cargando: false
+            id_pago_sua:34,  /// CAMBIAR SOLO AQUI EN CASO QUE CAMBIE EL ID DE "Pago SUA" EN LA BBDD
+            cargando: false,
+            cargando_imagenes: false
         }
     },
     mounted() {
@@ -252,20 +276,48 @@ export default {
             var reader = new FileReader();
             var vm = this;
             reader.onload = (e) => {
-                vm.file = e.target.result;
+                vm.files[tipo] = {archivo:e.target.result}
             };
             reader.readAsDataURL(file);
-
         },
         onFileChange(e){
-            this.file = null;
+            var size = 0;
+            this.files = [];
+            this.names = [];
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
             if(e.target.id == 'cargar_file') {
-                this.file_name = files[0].name;
-                this.createImage(files[0]);
+                for(let i=0; i<files.length; i++) {
+                    this.createImage(files[i]);
+                    size = +size + +files[i].size;
+                    this.names[i] = {
+                        nombre: files[i].name,
+                    };
+                    this.createImage(files[i], i);
+
+                }
+
             }
+            if(size > 5120000){
+                swal("El tamaño máximo permitido para la carga de archivos es de 5 MB.", {
+                    icon: "warning",
+                    buttons: {
+                        confirm: {
+                            text: 'Enterado',
+                            closeModal: true,
+                        }
+                    }
+                }) .then(() => {
+                    if(this.$refs.cargar_file !== undefined){
+                        this.$refs.cargar_file.value = '';
+                    }
+                    this.names = [];
+                    this.files = [];
+                    $(this.$refs.modal).modal('hide');
+                })
+            }
+
         },
         find() {
             return this.$store.dispatch('padronProveedores/empresa/getDoctosGenerales', {
@@ -280,7 +332,7 @@ export default {
             this.$store.commit('padronProveedores/ctg-area/SET_AREAS', null);
             return this.$store.dispatch('padronProveedores/ctg-area/index', {
                 id: this.id,
-                params: {include: [], sort: 'id', order: 'asc'}
+                params: {include: [], sort: 'orden', order: 'asc'}
             }).then(data => {
                 this.$store.commit('padronProveedores/ctg-area/SET_AREAS', data);
                 this.setNumero();
@@ -304,7 +356,7 @@ export default {
         },
         modalCarga(archivo){
             if(archivo.nombre_archivo != null){
-                swal("¿Desea actualizar el documento cargado previamente?, se perdera el archivo anterior.", {
+                swal("Se Perderá el Archivo Anterior", "¿Desea reemplazar el documento cargado previamente?",{
                         icon: "warning",
                         buttons: {
                             cancel: {
@@ -312,7 +364,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Actualizar',
+                            text: 'Si, Reemplazar',
                             closeModal: true,
                         }
                         }
@@ -325,13 +377,31 @@ export default {
                 this.openModal(archivo);
             }
         },
+        modalImagen(archivo){
+            this.cargando_imagenes = true;
+            this.id_archivo = archivo.id;
+            this.imagenes = []
+            this.getImagenes(archivo.id);
+        },
+        getImagenes(id) {
+            return this.$store.dispatch('padronProveedores/archivo/getImagenes', {
+                id: id,
+                params: {include: []}
+            }).then(data => {
+                this.imagenes = data;
+            }).finally( ()=>{
+                this.cargando_imagenes = false;
+                $(this.$refs.modalImagen).appendTo('body');
+                $(this.$refs.modalImagen).modal('show');
+            })
+        },
         openModal(archivo){
             this.archivo = archivo;
             if(this.$refs.cargar_file !== undefined){
                 this.$refs.cargar_file.value = '';
             }
-            this.file = null;
-            this.file_name = '';
+            this.names = [];
+            this.files = [];
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
         },
@@ -366,6 +436,9 @@ export default {
                 });
 
         },
+        validarExtensiones(){
+            return ['pdf', 'zip', 'jpg', 'jpeg', 'png'];
+        },
         registrarPrestadora(asociacion){
             this.cargando = true;
             this.rfc = this.rfc.toUpperCase();
@@ -388,13 +461,34 @@ export default {
         },
         upload(){
             var formData = new FormData();
-            formData.append('archivo',  this.file);
-            formData.append('archivo_nombre',  this.file_name);
+
             formData.append('id_empresa',  this.id);
             formData.append('rfc',  this.empresa.rfc);
             formData.append('id_archivo',  this.archivo.id);
+            if(this.validateArchivos(this.names)){
+                formData.append('archivo',  this.files[0].archivo);
+                formData.append('archivo_nombre',  this.names[0].nombre);
+                this.uploadZIP(formData);
+            }else{
+                formData.append('archivos',  JSON.stringify(this.files));
+                formData.append('archivos_nombres',  JSON.stringify(this.names));
+                this.uploadPDF(formData);
+            }
+        },
+        uploadPDF(data){
             return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
-                data: formData,
+                data: data,
+                config: {
+                        params: { _method: 'POST', include:['integrantes']}
+                    }
+            }).then((data) => {
+                this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
+                $(this.$refs.modal).modal('hide');
+            })
+        },
+        uploadZIP(data){
+            return this.$store.dispatch('padronProveedores/archivo/cargarArchivoZIP', {
+                data: data,
                 config: {
                         params: { _method: 'POST'}
                     }
@@ -419,6 +513,15 @@ export default {
             if(this.archivos){
                 return this.archivos.some(el => el.id_area === tipo);
             }
+        },
+        validateArchivos(nombres){
+            if(nombres.length === 1){
+                let split = nombres[0].nombre.split('.');
+                if(split[split.length -1].toLowerCase() == 'zip'){
+                    return true;
+                }
+            }
+            return false;
         },
         verEspecificaciones(archivo, index){
             let data = {
