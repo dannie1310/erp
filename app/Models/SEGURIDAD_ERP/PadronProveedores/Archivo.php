@@ -9,41 +9,22 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgTipoArchivo;
 use Illuminate\Support\Facades\DB;
 
-class Archivo extends Model
+class Archivo extends ArchivoGeneralizacion
 {
-    protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.PadronProveedores.archivos';
-    public $timestamps = false;
 
-    protected $fillable = [
-        'id_tipo_archivo',
-        'id_tipo_empresa',
-        'hash_file',
-        'usuario_registro',
-        'fecha_hora_registro',
-        'nombre_archivo',
-        'extension_archivo',
-        'id_empresa_proveedor',
-        'id_empresa_prestadora',
-        'obligatorio',
-        'complemento_nombre',
-        'nombre_archivo_usuario',
-        'id_representante_legal'
-    ];
-
-    public function ctgTipoArchivo()
+    protected static function boot()
     {
-        return $this->belongsTo(CtgTipoArchivo::class, 'id_tipo_archivo', 'id');
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->whereNull('id_archivo_consolidador');
+        });
     }
 
     public function usuarioRegistro(){
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
-    public function empresa()
-    {
-        return $this->belongsTo(Empresa::class, 'id_empresa','id');
-    }
 
     public function prestadora()
     {
@@ -58,6 +39,11 @@ class Archivo extends Model
     public function representanteLegal()
     {
         return $this->belongsTo(RepresentanteLegal::class, 'id_representante_legal','id');
+    }
+
+    public function archivosIntegrantes()
+    {
+        return $this->hasMany(ArchivoIntegrante::class,"id_archivo_consolidador", "id");
     }
 
     public function scopeCargados($query)
@@ -110,6 +96,11 @@ class Archivo extends Model
         return $this->ctgTipoArchivo->descripcion . " " . $this->complemento_nombre;
     }
 
+    public function getNombreDescargaAttribute()
+    {
+        return $this->ctgTipoArchivo->nombre."_".strtolower(str_replace(" ","_",$this->complemento_nombre));
+    }
+
     public function eliminar()
     {
         try {
@@ -120,6 +111,7 @@ class Archivo extends Model
                 'extension_archivo' => null,
                 'nombre_archivo_usuario' => null
             ]);
+            $this->eliminarArchivosIntegrantes();
             DB::connection('seguridad')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -129,8 +121,17 @@ class Archivo extends Model
         }
     }
 
-    public function getNombreDescargaAttribute()
+    public function eliminarArchivosIntegrantes()
     {
-        return $this->ctgTipoArchivo->nombre."_".strtolower(str_replace(" ","_",$this->complemento_nombre));
+        $archivos_integrantes = $this->archivosIntegrantes;
+        if($archivos_integrantes){
+            foreach ($archivos_integrantes as $archivo_integrante){
+                $archivo_integrante->delete();
+            }
+        }
+    }
+
+    public function agregarArchivoIntegrante($data){
+        return $this->archivosIntegrantes()->create($data);
     }
 }

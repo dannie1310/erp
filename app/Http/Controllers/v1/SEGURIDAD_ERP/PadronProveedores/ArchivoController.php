@@ -52,6 +52,11 @@ class ArchivoController extends Controller
         return $this->respondWithItem($archivo);
     }
 
+    public function cargarArchivoZIP(Request $request){
+        $archivo = $this->service->cargarArchivoZIP($request->all());
+        return $this->respondWithItem($archivo);
+    }
+
     public function documento(Request $request,$id){
         return $this->service->documento($request,$id);
     }
@@ -66,5 +71,10 @@ class ArchivoController extends Controller
     {
         $item = $this->service->delete($request->all(), $id);
         return $this->respondWithItem($item);
+    }
+
+    public function imagenes(Request $request, $id)
+    {
+        return $this->service->imagenBase64($id);
     }
 }

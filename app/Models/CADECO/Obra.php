@@ -56,6 +56,7 @@ class Obra extends Model
         'fecha_inicial',
         'fecha_final'
     ];
+    //protected $dateFormat = 'Y-m-d H:i:s';
 
     protected $hidden = ['logo'];
 
