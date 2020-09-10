@@ -23,10 +23,10 @@
                                 <div class="invoice p-3 mb-3">
                                     <div class="row col-md-12">
                                         <div class="col-md-6">
-                                            <h5>Folio: &nbsp; <b>{{solicitud.numero_folio_format}}</b></h5>
+                                            <h5>Folio SAO: &nbsp; <b>{{solicitud.numero_folio_format}}</b></h5>
                                         </div>
                                         <div class="col-md-6">
-                                            <h5>Folio Compuesto: &nbsp; <b>{{solicitud.complemento ? solicitud.complemento.folio : '---'}}</b></h5>
+                                            <h5>Folio: &nbsp; <b>{{solicitud.complemento ? solicitud.complemento.folio : '---'}}</b></h5>
                                         </div>
                                     </div>
                                     <div class="table-responsive col-md-12">
@@ -50,9 +50,14 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Concepto:</b></td>
-                                                    <td class="bg-gray-light" colspan="3">{{(solicitud.complemento) ? solicitud.complemento.concepto : '------------'}}</td>
+                                                    <td class="bg-gray-light" colspan="5">{{(solicitud.complemento) ? solicitud.complemento.concepto : '------------'}}</td>
+                                                </tr>
+                                                <tr>
                                                     <td class="bg-gray-light"><b>Usuario Registró:</b></td>
-                                                    <td class="bg-gray-light">{{(solicitud.usuario) ? solicitud.usuario.nombre : '------------'}}</td></tr>
+                                                    <td class="bg-gray-light" colspan="2">{{(solicitud.usuario) ? solicitud.usuario.nombre : '------------'}}</td>
+                                                    <td class="bg-gray-light"><b>Fecha / Hora de Registro:</b></td>
+                                                    <td class="bg-gray-light" colspan="2">{{solicitud.fecha_registro}}</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -67,10 +72,11 @@
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th class="no_parte">Núm de Parte</th>
+                                                        <th class="no_parte">No. de Parte</th>
                                                         <th>Descripción</th>
+                                                        <th class="unidad">Unidad</th>
                                                         <th class="no_parte">Cantidad</th>
-                                                        <th class="no_parte">Fecha Entrega</th>
+                                                        <th class="fecha">Fecha de Entrega</th>
                                                         <th>Destino</th>
                                                         <th>Observaciones</th>
                                                     </tr>
@@ -80,9 +86,13 @@
                                                         <td>{{i+1}}</td>
                                                         <td style="text-align: center"><b>{{partida.material.numero_parte}}</b></td>
                                                         <td style="text-align: center">{{partida.material.descripcion}}</td>
+                                                        <td style="text-align: center">{{partida.material.unidad}}</td>
                                                         <td style="text-align: center">{{partida.cantidad}}</td>
                                                         <td style="text-align: center">{{(partida.entrega) ? partida.entrega.fecha_format : '------------'}}</td>
-                                                        <td v-if="partida.entrega">{{(partida.entrega.concepto) ? partida.entrega.concepto.path : partida.entrega.almacen ? partida.entrega.almacen.descripcion : '------------'}}</td>
+
+                                                        <td v-if="partida.entrega.destino_path" :title="`${partida.entrega.destino_path}`"><u>{{partida.entrega.destino_descripcion}}</u></td>
+                                                        <td v-else >{{partida.entrega.destino_descripcion}}</td>
+
                                                         <td style="text-align: left">{{(partida.complemento) ? partida.complemento.observaciones : '------------'}}</td>
                                                     </tr>
                                                 </tbody>
