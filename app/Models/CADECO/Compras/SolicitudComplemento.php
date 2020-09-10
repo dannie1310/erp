@@ -56,6 +56,11 @@ class SolicitudComplemento extends Model
         return $this->belongsTo(ActivoFijo::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function estadoSolicitud()
+    {
+        return $this->belongsTo(CtgEstadoSolicitud::class, 'estado','id');
+    }
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha_requisicion_origen);

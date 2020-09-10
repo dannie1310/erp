@@ -30,16 +30,45 @@ class SolicitudCompraService
     public function paginate($data)
     {
         $solicitudes = $this->repository;
-        $solicitudes = $this->repository;
 
         if(isset($data['numero_folio']))
         {
             $solicitudes = $solicitudes->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
         }
 
-        if(isset($data['fecha']))
+        if (isset($data['fecha_registro'])) {
+            $solicitudes->whereBetween( ['FechaHoraRegistro', [ request( 'fecha_registro' )." 00:00:00",request( 'fecha_registro' )." 23:59:59"]] );
+        }
+
+        if (isset($data['fecha'])) {
+            $solicitudes->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
+
+        if (isset($data['estado'])) {
+            $solicitudes = $solicitudes
+                ->join("Compras.solicitud_complemento", "transacciones.id_transaccion","=","solicitud_complemento.id_transaccion")
+                ->join("Compras.ctg_estados_solicitud", "solicitud_complemento.estado","=","ctg_estados_solicitud.id")
+                ->where([['ctg_estados_solicitud.descripcion', 'LIKE', '%'.$data['estado'].'%']]);
+
+        }
+
+        if(isset($data['observaciones']))
         {
-            $solicitudes = $solicitudes->where( [['fecha', '=', $data['fecha']]] );
+            $solicitudes = $solicitudes->where([['observaciones', 'LIKE', '%'.$data['observaciones'].'%']]);
+        }
+
+        if(isset($data['concepto']))
+        {
+            $solicitudes = $solicitudes
+                ->join("Compras.solicitud_complemento", "transacciones.id_transaccion","=","solicitud_complemento.id_transaccion")
+                ->where([['solicitud_complemento.concepto', 'LIKE', '%'.$data['concepto'].'%']]);
+        }
+
+        if(isset($data['numero_folio_compuesto']))
+        {
+            $solicitudes = $solicitudes
+                ->join("Compras.solicitud_complemento", "transacciones.id_transaccion","=","solicitud_complemento.id_transaccion")
+                ->where([['solicitud_complemento.folio_compuesto', 'LIKE', '%'.$data['numero_folio_compuesto'].'%']]);
         }
 
         return $solicitudes->paginate($data);
