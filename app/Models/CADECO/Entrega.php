@@ -32,6 +32,16 @@ class Entrega extends Model
         return $this->belongsTo(OrdenCompraPartida::class, 'id_item','id_item');
     }
 
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class, 'id_almacen');
+    }
+
+    public function concepto()
+    {
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha);
@@ -41,6 +51,15 @@ class Entrega extends Model
     public function getPendienteEntregaAttribute()
     {
         return number_format(($this->cantidad - $this->surtida), 2, '.', '');
+    }
+
+    public function getDestinoAttribute()
+    {
+        if ($this->concepto) {
+            return $this->concepto;
+        } else {
+            return $this->almacen;
+        }
     }
 
     public function setCumplida()
@@ -60,15 +79,5 @@ class Entrega extends Model
         $surtido = $this->ordenCompraPartida->entradas->sum("cantidad");
         $this->surtida = $surtido;
         $this->save();
-    }
-
-    public function almacen()
-    {
-        return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
-    }
-
-    public function concepto()
-    {
-        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 }

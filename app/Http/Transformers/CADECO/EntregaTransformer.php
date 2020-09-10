@@ -45,7 +45,9 @@ class EntregaTransformer extends TransformerAbstract{
             'fecha' => $model->fecha,
             'fecha_format' => $model->fecha_format,
             'id_concepto' => $model->id_concepto,
-            'id_almacen' => $model->id_almacen
+            'id_almacen' => $model->id_almacen,
+            'destino_descripcion' => $model->destino->descripcion,
+            'destino_path' => $model->destino->path,
         ];
     }
 

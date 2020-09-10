@@ -570,7 +570,7 @@
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: 'materialesParaCompras',
-                        sort: 'descripcion', order: 'desc'
+                        sort: 'descripcion', order: 'asc'
                     }
                 })
                     .then(data => {

@@ -13,7 +13,6 @@ namespace App\Models\CADECO\Compras;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\Compras\CtgTipo;
-use Dingo\Blueprint\Annotation\Attributes;
 use Illuminate\Database\Eloquent\Model;
 
 class SolicitudComplemento extends Model
@@ -60,6 +59,11 @@ class SolicitudComplemento extends Model
         return $this->belongsTo(ActivoFijo::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function estadoSolicitud()
+    {
+        return $this->belongsTo(CtgEstadoSolicitud::class, 'estado','id');
+    }
+
     /**
      * Scopes
      */
@@ -71,7 +75,7 @@ class SolicitudComplemento extends Model
     }
 
     /**
-     * @Attributes()
+     * Attributes
      */
     public function getFechaFormatAttribute()
     {
