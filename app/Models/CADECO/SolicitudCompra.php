@@ -52,7 +52,7 @@ class SolicitudCompra extends Transaccion
 
     public function complemento()
     {
-        return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
+        return $this->hasOne(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
     }
 
     public function partidas()

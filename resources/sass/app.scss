@@ -67,6 +67,14 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
   text-align: center;
 }
 
+.th_c120, th.c120
+{
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
+    text-align: center;
+}
+
 .th_c150, th.c150
 {
   width: 150px;
@@ -177,7 +185,7 @@ th.cantidad_input,.th_cantidad_input
   text-align: center;
 }
 
-td.money_input,.td_money_input, th.no_parte_input, th_no_parte_input
+td.money_input,.td_money_input, th.no_parte_input, .th_no_parte_input
 {
   width: 150px;
   max-width: 150px;
@@ -186,7 +194,7 @@ td.money_input,.td_money_input, th.no_parte_input, th_no_parte_input
 
 thead th {text-align: center}
 
-.fecha_hora
+.fecha_hora, .th_fecha_hora, .td_fecha_hora
 {
   text-align: center;
   width: 150px;
@@ -194,7 +202,7 @@ thead th {text-align: center}
   min-width: 150px;
 }
 
-.fecha, th_fecha, td_fecha
+.fecha, .th_fecha, .td_fecha
 {
   text-align: center;
   width: 80px;
