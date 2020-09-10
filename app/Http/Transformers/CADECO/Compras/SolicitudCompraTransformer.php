@@ -47,7 +47,8 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'concepto' => $model->complemento->concepto,
             'numero_folio_compuesto' =>($model->complemento)?$model->complemento->folio_compuesto:'',
             'numero_folio_format'=>(string) $model->numero_folio_format,
-            'cotizaciones' => ($model->cotizaciones) ? $model->cotizaciones->count() : null
+            'cotizaciones' => ($model->cotizaciones) ? $model->cotizaciones->count() : null,
+            'autorizacion_requerida' =>($model->obra->configuracionCompras)?$model->obra->configuracionCompras->con_asutorizacion:"0"
         ];
     }
 
