@@ -130,7 +130,7 @@ class SolicitudCompraFormato extends Rotation
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);
         $this->Multicell(9.5, .5, utf8_decode($this->obra->direccion) . '
-        RFC: ' . $this->obra->rfc, '', 'J');
+    RFC: ' . $this->obra->rfc, '', 'J');
         $y_final = $this->getY();
         $alto = $y_final - $y_inicial;
 
@@ -154,7 +154,7 @@ class SolicitudCompraFormato extends Rotation
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);
         $this->Multicell(9.5, .5, utf8_decode($this->obra->direccion . '
-        RFC: ' . $this->obra->rfc), '', 'J');
+RFC: ' . $this->obra->rfc), '', 'J');
 
 
         $this->Ln(.2);
@@ -219,7 +219,6 @@ class SolicitudCompraFormato extends Rotation
 
         /*Concepto*/
         if(!is_null($this->solicitud->complemento)){
-            $this->Ln(.7);
             $this->SetWidths(array(19.5));
             $this->SetRounds(array('12'));
             $this->SetRadius(array(0.2));
@@ -254,7 +253,7 @@ class SolicitudCompraFormato extends Rotation
         $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
         $this->SetHeights([0.4]);
         $this->SetAligns(['C','C','C','C','C','C','C']);
-        $this->Row(["#","Cant. Solicitada", "Cant. Autorizada", "Unidad", "No. Parte", utf8_decode("Descripción"), "Fecha. Req"]);
+        $this->Row(["#","Cant. Solicitada", "Cant. Autorizada", "Unidad", "No. Parte", utf8_decode("Descripción"), "Fecha de Entrega Requerida"]);
 
 
 
@@ -331,7 +330,93 @@ class SolicitudCompraFormato extends Rotation
 
     function firmas(){
 
-        $this->SetTextColor('0', '0', '0');
+        /*if($this->data["estado"] == 0 && $this->data["base_sao"] == "SAO1814" && substr($this->data["obra_sao"], 0,3) == "HO "){
+            $this->SetFont('Arial','',80);
+            $this->SetTextColor(204,204,204);
+            $this->RotatedText(2,20,"PENDIENTE DE",45);
+            $this->RotatedText(7,20,"AUTORIZAR",45);
+            $this->SetTextColor('0,0,0');
+        }
+        if(($this->data["estado"] == -1 || $this->data["estado"] == -2) && $this->data["base_sao"] == "SAO1814" && substr($this->data["obra_sao"], 0,3) == "HO "){
+            $this->SetFont('Arial','',80);
+            $this->SetTextColor(204,204,204);
+            $this->RotatedText(2,20,"SOLICITUD",45);
+            $this->RotatedText(7,20,"RECHAZADA",45);
+            $this->SetTextColor('0,0,0');
+        }*/
+        $this->SetFont('Arial', '', 6);
+        if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
+            //if(true){
+            $this->SetY(-7);
+            $this->SetFont('Arial', '', 6);
+            $this->SetFillColor(180, 180, 180);
+            $this->Cell(4.8, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            //$this->Cell(4.8, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(4.8, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(10, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            //$this->Cell(4, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
+            $this->Cell(4.8, .4, utf8_decode('Jefe Almacén'), 'TRLB', 0, 'C', 1);
+            $this->Cell(4.8, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
+            $this->Cell(5, .4, utf8_decode('Control de Costos'), 'TRLB', 0, 'C', 1);
+            $this->Cell(5, .4, 'Director de proyecto', 'TRLB', 0, 'C', 1);
+            $this->Ln();
+
+            //$this->Cell(4, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(4.8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(4.8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Ln();
+            //$this->SetFillColor(180, 180, 180);
+            //$this->Cell(4, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
+            $this->Cell(4.8, .4, 'LIC. FERNANDO HERNANDEZ ALMAZAN', 'TRLB', 0, 'C', 1);
+            $this->Cell(4.8, .4, 'C.P. ROGELIO HERNANDEZ BELTRAN', 'TRLB', 0, 'C', 1);
+            $this->Cell(5, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
+            $this->Cell(5, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
+        }else if(Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3){
+            $this->SetY(-7);
+            $this->SetFont('Arial', '', 6);
+            $this->SetFillColor(255, 255, 255);
+            //$this->Cell(4, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
+            $this->Cell(4.8, .4, utf8_decode('Solicitó'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('Capturó'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, utf8_decode('Aprobó'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, 'Control de Proyectos', 'TRLB', 0, 'C', 0);
+            $this->Ln();
+
+            //$this->Cell(4, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(4.8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(4.8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Ln();
+            //$this->SetFillColor(180, 180, 180);
+            //$this->Cell(4, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
+            $this->Cell(4.8, .4, '', 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode($this->usuario_registro), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, '', 'TRLB', 0, 'C', 0);
+        }else{
+            $this->SetY(-6);
+
+            $this->CellFitScale(6, .5, utf8_decode('Solicitó'), 1, 0, 'C');
+            $this->Cell(.7);
+            $this->CellFitScale(6, .5, utf8_decode('Capturó'), 1, 0, 'C');
+            $this->Cell(.8);
+            $this->CellFitScale(6, .5, utf8_decode('Aprobó'), 1, 0, 'C');
+            $this->Ln(.5);
+            $this->CellFitScale(6, 1, ' ', 1, 0, 'C');
+            $this->Cell(.7);
+            $this->CellFitScale(6, 1, ' ', 1, 0, 'C');
+            $this->Cell(.8);
+            $this->CellFitScale(6, 1, ' ', 1, 0, 'R');
+            //echo $this->GetY()+1.2;
+
+        }
+
+
+        /*$this->SetTextColor('0', '0', '0');
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
         $this->SetY(-6);
@@ -354,7 +439,7 @@ class SolicitudCompraFormato extends Rotation
         $this->Cell(1.2);
         $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
         $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
+        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);*/
     }
 
     function Footer()
