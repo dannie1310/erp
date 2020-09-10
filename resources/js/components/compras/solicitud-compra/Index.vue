@@ -47,7 +47,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC'},
+                query: {scope: 'areasCompradorasAsignadas',sort: 'numero_folio', order: 'DESC'},
                 search: '',
                 cargando: false
             }

@@ -16,6 +16,7 @@ use App\Models\IGH\Usuario;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
+use Dingo\Blueprint\Annotation\Attributes;
 use Illuminate\Support\Facades\DB;
 
 class SolicitudCompra extends Transaccion
@@ -50,6 +51,9 @@ class SolicitudCompra extends Transaccion
         'fecha'
     ];
 
+    /**
+     * Relaciones
+     */
     public function complemento()
     {
         return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
@@ -85,6 +89,29 @@ class SolicitudCompra extends Transaccion
         return $this->hasMany(AsignacionProveedor::class, 'id_transaccion_solicitud', 'id_transaccion');
     }
 
+    /**
+     * Scopes
+     */
+    public function scopeCotizacion($query)
+    {
+        return $query->has('cotizaciones');
+    }
+
+    public function scopeConItems($query)
+    {
+        return $query->has('partidas');
+    }
+
+    public function scopeAreasCompradorasAsignadas($query)
+    {
+        return $query->whereHas('complemento', function ($q) {
+           return $q->areasCompradorasPorUsuario();
+        });
+    }
+
+    /**
+     * @Attributes()
+     */
     public function getRegistroAttribute()
     {
         $comentario = explode('|', $this->comentario);
@@ -98,7 +125,7 @@ class SolicitudCompra extends Transaccion
     }
 
     /**
-     * Acciones
+     * Métodos
      */
     public function aprobarSolicitud($data)
     {
@@ -181,16 +208,6 @@ class SolicitudCompra extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
-    }
-
-    public function scopeCotizacion($query)
-    {
-        return $query->has('cotizaciones');
-    }
-
-    public function scopeConItems($query)
-    {
-        return $query->has('partidas');
     }
 
     /**

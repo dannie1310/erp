@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'', sort: 'id', order: 'desc'},
+                query: {scope: 'areasCompradorasAsignadas', sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false
             }
