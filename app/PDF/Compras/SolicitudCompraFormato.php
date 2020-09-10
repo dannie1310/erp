@@ -129,7 +129,7 @@ class SolicitudCompraFormato extends Rotation
         $this->Ln(.5);
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);
-        $this->Multicell(9.5, .5, utf8_decode($this->obra->direccion) . ' 
+        $this->Multicell(9.5, .5, utf8_decode($this->obra->direccion) . '
         RFC: ' . $this->obra->rfc, '', 'J');
         $y_final = $this->getY();
         $alto = $y_final - $y_inicial;
@@ -153,7 +153,7 @@ class SolicitudCompraFormato extends Rotation
         $this->Ln(.5);
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);
-        $this->Multicell(9.5, .5, utf8_decode($this->obra->direccion . ' 
+        $this->Multicell(9.5, .5, utf8_decode($this->obra->direccion . '
         RFC: ' . $this->obra->rfc), '', 'J');
 
 
@@ -324,6 +324,7 @@ class SolicitudCompraFormato extends Rotation
             $this->SetTextColors(array('0,0,0'));
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
+            $this->SetAligns(array('J'));
             $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', "".$this->solicitud->observaciones))));
         }
     }
