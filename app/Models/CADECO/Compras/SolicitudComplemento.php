@@ -36,6 +36,9 @@ class SolicitudComplemento extends Model
         'timestamp_registro',
     ];
 
+    /**
+     * Relaciones
+     */
     public function tipo()
     {
         return $this->belongsTo(CtgTipo::class, 'id_tipo', 'id');
@@ -61,13 +64,33 @@ class SolicitudComplemento extends Model
         return $this->belongsTo(CtgEstadoSolicitud::class, 'estado','id');
     }
 
+    /**
+     * Scopes
+     */
+    public function scopeAreasCompradorasPorUsuario($query)
+    {
+        return $query->whereHas('area_compradora', function ($q1) {
+            return $q1->areasPorUsuario();
+        });
+    }
+
+    /**
+     * Attributes
+     */
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha_requisicion_origen);
         return date_format($date,"d/m/Y");
-
     }
 
+    public function getRequisicionFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->requisicion_origen);
+    }
+
+    /**
+     * Métodos
+     */
     public function generaFolioCompuesto()
     {
         $count = $this->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
@@ -87,10 +110,4 @@ class SolicitudComplemento extends Model
             'id_transaccion' => $this->id_transaccion
         ]);
     }
-
-    public function getRequisicionFolioFormatAttribute()
-    {
-        return '# ' . sprintf("%05d", $this->requisicion_origen);
-    }
-
 }

@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'},
+                query: {scope: 'areasCompradorasAsignadas', include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'},
                 estado: "",
                 cargando: false
             }
