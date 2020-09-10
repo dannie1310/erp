@@ -49,7 +49,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa']},
+                query: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa']},
                 search: '',
                 cargando: false
             }
@@ -96,7 +96,7 @@
                         return {
                             color: '#7889d6',
                             descripcion: 'Fincada'
-                        }  
+                        }
                     default:
                         return {
                             color: '#d2d6de',
