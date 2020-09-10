@@ -109,6 +109,24 @@ class SolicitudCompra extends Transaccion
         });
     }
 
+    public function scopeConAutorizacion($query)
+    {
+        if($this->obra){
+            if($this->obra->configuracionCompras){
+                if($this->obra->configuracionCompras->conAutorizacion == 1){
+                    return $query->where("estado","=",1);
+                } else {
+                    return $query;
+                }
+            } else {
+                return $query;
+            }
+        } else {
+            return $query;
+        }
+
+    }
+
     /**
      * Attributes
      */

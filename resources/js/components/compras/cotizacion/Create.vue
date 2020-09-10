@@ -554,7 +554,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('compras/solicitud-compra/index', {
                     params: {
-                        scope: ['conItems','areasCompradorasAsignadas'],
+                        scope: ['conItems','areasCompradorasAsignadas','conAutorizacion'],
                         order: 'DESC',
                         sort: 'numero_folio'
                     }
