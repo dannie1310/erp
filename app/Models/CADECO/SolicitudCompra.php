@@ -118,11 +118,6 @@ class SolicitudCompra extends Transaccion
         return $comentario[1];
     }
 
-    public function getFechaFormatAttribute()
-    {
-        $date = date_create($this->fecha);
-        return date_format($date,"d/m/Y");
-    }
 
     /**
      * Métodos

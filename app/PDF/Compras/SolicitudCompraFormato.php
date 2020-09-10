@@ -381,7 +381,7 @@ class SolicitudCompraFormato extends Rotation
         $this->SetY(-0.8);
         $this->setX(4.5);
         $this->SetTextColor('0,0,0');
-        $this->Cell(7, .4, utf8_decode('Formato generado desde el sistema de compras. Fecha de registro: '.$this->solicitud->fecha_format), 0, 0, 'L');
+        $this->Cell(7, .4, utf8_decode('Formato generado desde el sistema de compras del SAO ERP. Fecha y hora de registro: '.$this->solicitud->fecha_hora_registro_format), 0, 0, 'L');
 
         $this->Ln(.5);
         $this->SetY(-0.9);
