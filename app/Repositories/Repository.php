@@ -171,4 +171,10 @@ class Repository implements RepositoryInterface
         $this->model = $this->model->withoutGlobalScopes();
         return $this;
     }
+
+    public function join($tabla, $campo1, $signo, $campo2)
+    {
+        $this->model = $this->model->join($tabla,$campo1,$signo,$campo2);
+        return $this;
+    }
 }

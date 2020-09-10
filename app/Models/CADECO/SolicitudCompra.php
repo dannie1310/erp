@@ -6,6 +6,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\AsignacionProveedor;
+use App\Models\CADECO\Compras\CtgEstadoSolicitud;
 use App\Models\CADECO\Compras\EntregaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Compras\SolicitudEliminada;
@@ -52,7 +53,7 @@ class SolicitudCompra extends Transaccion
 
     public function complemento()
     {
-        return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
+        return $this->hasOne(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
     }
 
     public function partidas()
@@ -143,8 +144,8 @@ class SolicitudCompra extends Transaccion
                 'fecha' => $fecha->format("Y-m-d H:i:s"),
                 'observaciones' => $data['observaciones']
             ]);
-            $solicitud_complemento = $this->complemento()->create([
-                'id_transaccion' => $solicitud->id_transaccion,
+            $solicitud_complemento = $solicitud->complemento()->create([
+                /*'id_transaccion' => $solicitud->id_transaccion,*/
                 'id_area_compradora' => $data['id_area_compradora'],
                 'id_tipo' => $data['id_tipo'],
                 'id_area_solicitante' => $data['id_area_solicitante'],
