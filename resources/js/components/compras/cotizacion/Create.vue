@@ -29,12 +29,13 @@
                                         <div class="form-group">
                                             <label for="id_solicitud">Buscar Solicitud:</label>
                                                  <model-list-select
+                                                                id="id_solicitud"
                                                                 name="id_solicitud"
                                                                 option-value="id"
                                                                 v-model="id_solicitud"
                                                                 :custom-text="idFolioObservaciones"
                                                                 :list="solicitudes"
-                                                                :placeholder="!cargando?'Seleccionar o buscar solicitud de compra por número de folio o observaciones':'Cargando...'">
+                                                                :placeholder="!cargando?'Seleccionar o buscar solicitud de compra por número de folio, concepto u observaciones':'Cargando...'">
                                                             </model-list-select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
                                         </div>
@@ -455,7 +456,7 @@
         methods : {
             idFolioObservaciones (item)
             {
-                return `[${item.numero_folio_format}] ---- [ ${item.observaciones} ]`;
+                return `[${item.numero_folio_format}] - [ ${item.concepto} ] - [ ${item.observaciones} ]`;
             },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
@@ -553,7 +554,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('compras/solicitud-compra/index', {
                     params: {
-                        scope: 'conItems',
+                        scope: ['conItems','areasCompradorasAsignadas'],
                         order: 'DESC',
                         sort: 'numero_folio'
                     }
