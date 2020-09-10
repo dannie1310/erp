@@ -329,21 +329,25 @@ RFC: ' . $this->obra->rfc), '', 'J');
     }
 
     function firmas(){
-
-        /*if($this->data["estado"] == 0 && $this->data["base_sao"] == "SAO1814" && substr($this->data["obra_sao"], 0,3) == "HO "){
-            $this->SetFont('Arial','',80);
-            $this->SetTextColor(204,204,204);
-            $this->RotatedText(2,20,"PENDIENTE DE",45);
-            $this->RotatedText(7,20,"AUTORIZAR",45);
-            $this->SetTextColor('0,0,0');
+        if($this->obra->configuracionCompras){
+            if($this->obra->configuracionCompras->con_autorizacion == 1)
+            {
+                if($this->solicitud->estado == 0 ){
+                    $this->SetFont('Arial','',80);
+                    $this->SetTextColor(204,204,204);
+                    $this->RotatedText(2,20,"PENDIENTE DE",45);
+                    $this->RotatedText(7,20,"AUTORIZAR",45);
+                    $this->SetTextColor('0,0,0');
+                }
+                if($this->solicitud->estado == -1 || $this->solicitud->estado == -2){
+                    $this->SetFont('Arial','',80);
+                    $this->SetTextColor(204,204,204);
+                    $this->RotatedText(2,20,"SOLICITUD",45);
+                    $this->RotatedText(7,20,"RECHAZADA",45);
+                    $this->SetTextColor('0,0,0');
+                }
+            }
         }
-        if(($this->data["estado"] == -1 || $this->data["estado"] == -2) && $this->data["base_sao"] == "SAO1814" && substr($this->data["obra_sao"], 0,3) == "HO "){
-            $this->SetFont('Arial','',80);
-            $this->SetTextColor(204,204,204);
-            $this->RotatedText(2,20,"SOLICITUD",45);
-            $this->RotatedText(7,20,"RECHAZADA",45);
-            $this->SetTextColor('0,0,0');
-        }*/
         $this->SetFont('Arial', '', 6);
         if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
             //if(true){
