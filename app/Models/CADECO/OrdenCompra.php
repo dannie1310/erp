@@ -16,7 +16,6 @@ use App\Models\CADECO\Compras\OrdenCompraComplemento;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\Transaccion;
-use Dingo\Blueprint\Annotation\Attributes;
 use Illuminate\Support\Facades\DB;
 
 class OrdenCompra extends Transaccion
@@ -159,7 +158,7 @@ class OrdenCompra extends Transaccion
     }
 
     /**
-     * @Attributes()
+     * Attributes
      */
     public function getNombreAttribute()
     {

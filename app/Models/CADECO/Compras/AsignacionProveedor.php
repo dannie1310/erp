@@ -78,7 +78,7 @@ class AsignacionProveedor extends Model
     }
 
     /**
-     * @Attributes()
+     * Attributes
      */
     public function getFechaFormatAttribute(){
         $date = date_create($this->timestamp_registro);

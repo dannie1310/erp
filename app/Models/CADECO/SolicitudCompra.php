@@ -16,7 +16,6 @@ use App\Models\IGH\Usuario;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
-use Dingo\Blueprint\Annotation\Attributes;
 use Illuminate\Support\Facades\DB;
 
 class SolicitudCompra extends Transaccion
@@ -110,7 +109,7 @@ class SolicitudCompra extends Transaccion
     }
 
     /**
-     * @Attributes()
+     * Attributes
      */
     public function getRegistroAttribute()
     {

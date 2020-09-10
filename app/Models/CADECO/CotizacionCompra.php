@@ -125,7 +125,7 @@ class CotizacionCompra  extends Transaccion
     }
 
     /**
-     * @Attributes()
+     * Attributes
      */
     public function getSumaSubtotalPartidasAttribute()
     {
