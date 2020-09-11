@@ -32,8 +32,7 @@ class Permiso extends Model
 
     public function sistemas()
     {
-        return $this->hasManyThrough(Sistema::class, SistemaPermiso::class,"permission_id","id", "id", "sistema_id")
-            ;
+        return $this->hasManyThrough(Sistema::class, SistemaPermiso::class,"permission_id","id", "id", "sistema_id");
     }
 
     public function aplicaciones()
