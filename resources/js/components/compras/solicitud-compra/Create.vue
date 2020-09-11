@@ -57,7 +57,7 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_tipo')">{{ errors.first('id_tipo') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-2" v-if="configuracion && configuracion.configuracion_area_solicitante == 1">
                                         <div class="form-group">
                                             <label for="id_area_solicitante">Área Solicitante</label>
                                             <select class="form-control"
@@ -339,6 +339,7 @@
             return{
                 cargando: false,
                 es:es,
+                configuracion : '',
                 fechasDeshabilitadas:{},
                 fechasDeshabilitadasHasta:{},
                 fecha : '',
@@ -355,7 +356,7 @@
                 id_tipo : '',
                 materiales : [],
                 almacenes : [],
-                id_area_solicitante : '',
+                id_area_solicitante : null,
                 concepto : '',
                 observaciones : '',
                 folio_req : '',
@@ -388,7 +389,7 @@
         mounted() {
             this.$validator.reset()
             this.getAreasCompradoras();
-            this.getAreasSolicitantes();
+            this.getConfiguracion();
             this.getTipos();
             this.getMateriales();
             this.getAlmacenes();
@@ -418,6 +419,16 @@
                     concepto_temporal : "",
                     destino :  ""
                 }];
+            },
+            getConfiguracion() {
+                return this.$store.dispatch('seguridad/configuracion-obra/getConfiguracion', {  } )
+                    .then(data => {
+                       this.configuracion =  data;
+                       if(data.configuracion_area_solicitante == 1) {
+                           this.getAreasSolicitantes();
+                           this.id_area_solicitante = '';
+                       }
+                    })
             },
             changeSelect(item){
                 var busqueda = this.materiales.find(x=>x.id === item.id_material);

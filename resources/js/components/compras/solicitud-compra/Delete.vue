@@ -39,10 +39,12 @@
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Departamento Responsable:</b></td>
                                                         <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_compradora.descripcion : '------------'}}</td>
+                                                        <td class="bg-gray-light" v-if="configuracion && configuracion.configuracion_area_solicitante == 1"><b>Área Solicitante:</b></td>
+                                                        <td class="bg-gray-light" v-else></td>
+                                                        <td class="bg-gray-light" v-if="configuracion && configuracion.configuracion_area_solicitante == 1">{{solicitud.complemento.area_solicitante.descripcion}}</td>
+                                                        <td class="bg-gray-light" v-else></td>
                                                         <td class="bg-gray-light"><b>Tipo:</b></td>
                                                         <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.tipo.descripcion : '------------'}}</td>
-                                                        <td class="bg-gray-light"><b>Área Solicitante:</b></td>
-                                                        <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_solicitante.descripcion : '------------'}}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Concepto:</b></td>
@@ -131,12 +133,13 @@
         data(){
             return{
                 cargando : false,
-                motivo : ''
+                motivo : '',
+                configuracion: ''
             }
         },
         methods: {
             find() {
-
+                this.getConfiguracion();
                 this.cargando = true;
                 this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
                 return this.$store.dispatch('compras/solicitud-compra/find', {
@@ -151,6 +154,12 @@
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
                 })
+            },
+            getConfiguracion() {
+                return this.$store.dispatch('seguridad/configuracion-obra/getConfiguracion', {  } )
+                    .then(data => {
+                        this.configuracion =  data;
+                    })
             },
             eliminar() {
                 this.cargando = true;

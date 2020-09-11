@@ -11,6 +11,7 @@ namespace App\Models\SEGURIDAD_ERP;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Compras\Configuracion;
 use Illuminate\Database\Eloquent\Model;
 
 class ConfiguracionObra extends Model
@@ -69,6 +70,11 @@ class ConfiguracionObra extends Model
         return $this->belongsTo(Usuario::class, 'id_responsable', 'idusuario');
     }
 
+    public function configuracionCompra()
+    {
+        return $this->belongsTo(Configuracion::class, 'id_proyecto', 'id_proyecto')->where('id_obra', '=', $this->id_obra);
+    }
+
     public function scopeObraTerminada($query)
     {
         return $query->where('tipo_obra', '!=', 2);
@@ -88,6 +94,15 @@ class ConfiguracionObra extends Model
         if($this->responsable)
         {
             return $this->responsable->nombre_completo;
+        }
+        return null;
+    }
+
+    public function getConfiguracionAreaSolicitanteAttribute()
+    {
+        if($this->configuracionCompra)
+        {
+            return $this->configuracionCompra->con_area_solicitante;
         }
         return null;
     }

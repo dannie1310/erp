@@ -55,7 +55,7 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_tipo')">{{ errors.first('id_tipo') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-2"  v-if="configuracion && configuracion.configuracion_area_solicitante == 1">
                                         <div class="form-group">
                                             <label for="id_area_solicitante">Área Solicitante</label>
                                             <select class="form-control"
@@ -128,7 +128,7 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_tipo')">{{ errors.first('id_tipo') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-2" v-if="configuracion && configuracion.configuracion_area_solicitante == 1">
                                         <div class="form-group">
                                             <label for="id_area_solicitante">Área Solicitante</label>
                                             <select class="form-control"
@@ -446,6 +446,7 @@
             return{
                 cargando: false,
                 es:es,
+                configuracion:'',
                 solicitud: [],
                 fechasDeshabilitadas:{},
                 fechasDeshabilitadasHasta:{},
@@ -476,7 +477,7 @@
             this.cargando = true;
             this.find()
             this.getAreasCompradoras();
-            this.getAreasSolicitantes();
+            this.getConfiguracion();
             this.getTipos();
             this.getMateriales();
             this.getAlmacenes();
@@ -495,6 +496,16 @@
                 }).then(data => {
                     this.solicitud = data;
                 })
+            },
+            getConfiguracion() {
+                return this.$store.dispatch('seguridad/configuracion-obra/getConfiguracion', {  } )
+                    .then(data => {
+                        this.configuracion =  data;
+                        if(data.configuracion_area_solicitante == 1) {
+                            this.getAreasSolicitantes();
+                            this.id_area_solicitante = '';
+                        }
+                    })
             },
             changeSelect(item){
                 var busqueda = this.materiales.find(x=>x.id === item.id_material);
