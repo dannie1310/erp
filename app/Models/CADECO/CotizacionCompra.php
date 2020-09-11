@@ -172,7 +172,7 @@ class CotizacionCompra  extends Transaccion
      */
     public function validarAsignacion($motivo)
     {
-        if ($this->asignacionPartida) {
+        if ($this->asignacionPartida->count()>0) {
             throw New \Exception('No se puede ' . $motivo . ' la cotización ' . $this->numero_folio_format . ' debido a que ya han sido asignados algunos materiales');
         }
     }
@@ -419,10 +419,7 @@ class CotizacionCompra  extends Transaccion
             }
             abort(500, "Esta cotización de compra tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
         }
-        if($this->asignacionPartida)
-        {
-            throw New \Exception('No se puede eliminar la cotización '. $this->numero_folio_format .' debido a que ya han sido asignados algunos materiales');
-        }
+        $this->validarAsignacion("eliminar");
     }
 
     /**
