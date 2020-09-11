@@ -27,7 +27,7 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label for="id_area_compradora">Departamento Responsable</label>
+                                            <label for="id_area_compradora">Departamento Responsable:</label>
                                             <select class="form-control"
                                                     name="id_area_compradora"
                                                     data-vv-as="Departamento Responsable"
@@ -43,7 +43,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="id_tipo">Tipo</label>
+                                            <label for="id_tipo">Tipo:</label>
                                             <select class="form-control"
                                                     data-vv-as="Tipo"
                                                     id="id_tipo"
@@ -59,7 +59,7 @@
                                     </div>
                                     <div class="col-md-2" v-if="configuracion && configuracion.configuracion_area_solicitante == 1">
                                         <div class="form-group">
-                                            <label for="id_area_solicitante">Área Solicitante</label>
+                                            <label for="id_area_solicitante">Área Solicitante:</label>
                                             <select class="form-control"
                                                     id="id_area_solicitante"
                                                     data-vv-as="Área Solicitante"
@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>Fecha Requisición Origen:</label>
+                                            <label>Fecha de la Requisición Origen:</label>
                                             <datepicker v-model = "fecha_requisicion"
                                                         name = "fecha_requisicion"
                                                         :format = "formatoFecha"
@@ -90,7 +90,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label>Folio Requisición Origen</label>
+                                            <label>Folio de la Requisición Origen:</label>
                                             <input
                                                 type="number"
                                                 data-vv-as="Folio Requisición"
@@ -257,8 +257,12 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Registrar</button>
+                                <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                    <i class="fa fa-angle-left"></i>
+                                    Regresar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-save"></i>
+                                    Guardar</button>
                             </div>
                         </form>
                     </div>

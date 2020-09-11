@@ -35,8 +35,13 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="cerrarModal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" @click="validate" :disabled="!file">Cargar</button>
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal">
+                                <i class="fa fa-times-circle"></i>
+                                Cerrar
+                            </button>
+                            <button type="button" class="btn btn-primary" @click="validate" :disabled="!file">
+                                <i class="fa fa-upload"></i>
+                                Cargar</button>
                         </div>
                     </form>
                 </div>
@@ -88,7 +93,7 @@
                 $(this.$refs.modal).modal('hide')
             },
             cargarLayout(){
-                
+
                 var formData = new FormData();
                 formData.append('file',  this.file);
                 formData.append('id',  this.id);
@@ -103,7 +108,7 @@
                     })
                     .then(data => {
                         this.data = data;
-                        
+
                     }).finally(() => {
                         this.$refs.carga_layout.value = '';
                         this.file = null;
@@ -113,7 +118,7 @@
                             $(this.$refs.modal).modal('hide');
                             this.$emit('back', this.data);
                         }, 100);
-                        
+
                     });
             },
             createImage(file, tipo) {
@@ -131,7 +136,7 @@
                 var files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
                     return;
-                    this.nombre = files[0].name;                    
+                    this.nombre = files[0].name;
                 if(e.target.id == 'carga_layout') {
                     this.createImage(files[0]);
                 }
