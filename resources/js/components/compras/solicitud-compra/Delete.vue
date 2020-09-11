@@ -41,7 +41,7 @@
                                                         <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.area_compradora.descripcion : '------------'}}</td>
                                                         <td class="bg-gray-light" v-if="configuracion && configuracion.configuracion_area_solicitante == 1"><b>Área Solicitante:</b></td>
                                                         <td class="bg-gray-light" v-else></td>
-                                                        <td class="bg-gray-light" v-if="configuracion && configuracion.configuracion_area_solicitante == 1">{{solicitud.complemento.area_solicitante.descripcion}}</td>
+                                                        <td class="bg-gray-light" v-if="configuracion && configuracion.configuracion_area_solicitante == 1">{{solicitud.complemento.area_solicitante ? solicitud.complemento.area_solicitante.descripcion :  '------------'}}</td>
                                                         <td class="bg-gray-light" v-else></td>
                                                         <td class="bg-gray-light"><b>Tipo:</b></td>
                                                         <td class="bg-gray-light">{{(solicitud.complemento) ? solicitud.complemento.tipo.descripcion : '------------'}}</td>
