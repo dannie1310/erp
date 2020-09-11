@@ -5,8 +5,9 @@ namespace App\Models\SEGURIDAD_ERP\Compras;
 
 
 use App\Facades\Context;
+use Illuminate\Database\Eloquent\Model;
 
-class Configuracion extends \Illuminate\Database\Eloquent\Model
+class Configuracion extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'Compras.configuracion';

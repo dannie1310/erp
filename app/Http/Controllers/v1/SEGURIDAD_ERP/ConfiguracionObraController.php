@@ -50,4 +50,9 @@ class ConfiguracionObraController extends Controller
     {
         return $this->service->contexto();
     }
+
+    public function configuracion(Request $request)
+    {
+        return $this->respondWithItem($this->service->configuracion($request->all()));
+    }
 }

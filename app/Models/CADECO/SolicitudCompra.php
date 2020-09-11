@@ -15,6 +15,7 @@ use App\Models\CADECO\Compras\SolicitudPartidaEliminada;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
@@ -171,17 +172,20 @@ class SolicitudCompra extends Transaccion
     public function registrar($data)
     {
         try {
-            $fecha =New DateTime($data['fecha']);
+            $fecha = New DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $fecha_req =New DateTime($data['fecha_requisicion']);
+            $fecha_req = New DateTime($data['fecha_requisicion']);
             $fecha_req->setTimezone(new DateTimeZone('America/Mexico_City'));
             DB::connection('cadeco')->beginTransaction();
             $solicitud = $this->create([
                 'fecha' => $fecha->format("Y-m-d H:i:s"),
                 'observaciones' => $data['observaciones']
             ]);
+            $configuracion = ConfiguracionObra::query()->first();
+            if (is_null($configuracion->configuracion_area_solicitante) || $configuracion->configuracion_area_solicitante == 0) {
+                $data['id_area_solicitante'] = null;
+            }
             $solicitud_complemento = $solicitud->complemento()->create([
-                /*'id_transaccion' => $solicitud->id_transaccion,*/
                 'id_area_compradora' => $data['id_area_compradora'],
                 'id_tipo' => $data['id_tipo'],
                 'id_area_solicitante' => $data['id_area_solicitante'],
@@ -198,7 +202,7 @@ class SolicitudCompra extends Transaccion
                     'unidad' => $partida['material']['unidad'],
                     'cantidad' => $partida['cantidad']
                 ]);
-                $fecha =New DateTime($partida['fecha']);
+                $fecha = New DateTime($partida['fecha']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $complemento = $item->complemento()->create([
                     'id_item' => $item->id_item,
@@ -310,6 +314,11 @@ class SolicitudCompra extends Transaccion
                 'fecha' => $fecha->format("Y-m-d H:i:s"),
                 'observaciones' => $datos['observaciones']
             ]);
+            $configuracion = ConfiguracionObra::query()->first();
+            if (is_null($configuracion->configuracion_area_solicitante) || $configuracion->configuracion_area_solicitante == 0) {
+                $datos['complemento']['id_area_solicitante'] = null;
+                $datos['id_area_solicitante'] = null;
+            }
             if($this->complemento) {
                 $this->complemento()->update([
                     'id_transaccion' => $this->id_transaccion,
