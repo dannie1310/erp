@@ -567,6 +567,7 @@ class AppServiceProvider extends ServiceProvider
              */
             Diferencia::observe(DiferenciaObserver::class);
 
+        \App\Models\SEGURIDAD_ERP\AuditoriaPermisoRol::observe(\App\Observers\SEGURIDAD_ERP\AuditoriaPermisoRolObserver::class);
         AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
         AuditoriaRolUsuario::observe(AuditoriaRolUsuarioObserver::class);
         AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
