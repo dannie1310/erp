@@ -67,7 +67,7 @@
                                                     v-validate="{required: true}"
                                                     :error="errors.has('id_sucursal')"
                                                     id="id_sucursal">
-                                                <option value>-- Seleccionar--</option>
+                                                <option value >-- Seleccionar--</option>
                                                 <option v-for="sucursal in sucursales" :value="sucursal.id" >{{ sucursal.descripcion}}</option>
                                             </select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_sucursal')">{{ errors.first('id_sucursal') }}</div>
@@ -610,6 +610,9 @@
                     var busqueda = this.proveedores.find(x=>x.id === value);
                     this.sucursales = busqueda.sucursales.data;
                     this.sucursal = (busqueda.sucursales.data.length) ? true : false;
+                    if(this.sucursales.length == 1){
+                        this.id_sucursal = this.sucursales[0].id;
+                    }
                 }
             },
             moneda_input()
