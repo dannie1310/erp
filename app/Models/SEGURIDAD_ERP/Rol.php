@@ -41,8 +41,7 @@ class Rol extends Model
 
     public function permisos()
     {
-        return $this->hasManyThrough(Permiso::class, PermisoRol::class,"role_id","id", "id", "permission_id")
-            ;
+        return $this->hasManyThrough(Permiso::class, PermisoRol::class,"role_id","id", "id", "permission_id");
     }
 
     public function getUsadoAttribute()
