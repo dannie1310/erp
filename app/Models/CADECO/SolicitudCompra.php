@@ -4,6 +4,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Models\CADECO\Compras\CtgEstadoSolicitud;
@@ -110,6 +111,20 @@ class SolicitudCompra extends Transaccion
         });
     }
 
+    public function scopeConAutorizacion($query)
+    {
+        $obra = Obra::find(Context::getIdObra());
+        if($obra->configuracionCompras){
+            if($obra->configuracionCompras->con_autorizacion == 1){
+                return $query->where("estado","=",1);
+            } else {
+                return $query;
+            }
+        } else {
+            return $query;
+        }
+    }
+
     /**
      * Attributes
      */
@@ -119,11 +134,6 @@ class SolicitudCompra extends Transaccion
         return $comentario[1];
     }
 
-    public function getFechaFormatAttribute()
-    {
-        $date = date_create($this->fecha);
-        return date_format($date,"d/m/Y");
-    }
 
     /**
      * Métodos

@@ -6,9 +6,15 @@ namespace App\Utils;
 
 class ValidacionSistema
 {
-    private $deposito_claves = "C:/DKEY/";
+    private $deposito_claves;
+
+    public function __construct()
+    {
+        $this->deposito_claves = config('app.env_variables.DKEY');
+    }
 
     function encripta($texto_plano) {
+
         $base = 1024;
         $restar = 88;
         $lon = 2048;

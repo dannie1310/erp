@@ -134,7 +134,7 @@
                         estado_solicitud: solicitud.estado_solicitud,
                         buttons: $.extend({}, {
                             show: true,
-                            aprobar: (self.$root.can('aprobar_solicitud_compra') && (solicitud.estado == 0)) ? true : false,
+                            aprobar: (self.$root.can('aprobar_solicitud_compra') && (solicitud.estado == 0) && (solicitud.autorizacion_requerida == 1)) ? true : false,
                             delete: self.$root.can('eliminar_solicitud_compra') ? true : false,
                             edit: (self.$root.can('editar_solicitud_compra') && (solicitud.estado == 0)) ? true : false,
                             id: solicitud.id,
