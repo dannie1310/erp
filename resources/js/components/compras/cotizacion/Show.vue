@@ -131,7 +131,8 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
                             <i class="fa fa-times-circle"></i>
-                            Cerrar</button>
+                            Cerrar
+                        </button>
                     </div>
                 </div>
             </div>

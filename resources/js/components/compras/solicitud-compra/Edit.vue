@@ -363,8 +363,14 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                               <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0">Guardar </button>
+                                <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                    <i class="fa fa-angle-left"></i>
+                                    Regresar
+                                </button>
+                               <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0">
+                                   <i class="fa fa-save"></i>
+                                   Guardar
+                               </button>
                             </div>
                         </form>
                     </div>
