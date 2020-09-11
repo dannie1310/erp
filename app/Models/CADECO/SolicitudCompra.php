@@ -4,6 +4,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Models\CADECO\Compras\CtgEstadoSolicitud;
@@ -111,20 +112,16 @@ class SolicitudCompra extends Transaccion
 
     public function scopeConAutorizacion($query)
     {
-        if($this->obra){
-            if($this->obra->configuracionCompras){
-                if($this->obra->configuracionCompras->conAutorizacion == 1){
-                    return $query->where("estado","=",1);
-                } else {
-                    return $query;
-                }
+        $obra = Obra::find(Context::getIdObra());
+        if($obra->configuracionCompras){
+            if($obra->configuracionCompras->con_autorizacion == 1){
+                return $query->where("estado","=",1);
             } else {
                 return $query;
             }
         } else {
             return $query;
         }
-
     }
 
     /**
