@@ -58,7 +58,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
-                                                            <th class="no_parte">Núm de Parte</th>
+                                                            <th class="no_parte">No. de Parte</th>
                                                             <th>Descripción</th>
                                                             <th class="no_parte">Unidad</th>
                                                             <th class="no_parte">Cantidad</th>
@@ -194,9 +194,7 @@
                         this.$store.commit('compras/cotizacion/DELETE_COTIZACION', {id: this.id})
                         $(this.$refs.modal).modal('hide');
                         this.$store.dispatch('compras/cotizacion/paginate', {
-                            params: {
-                                sort: 'numero_folio', order: 'DESC'
-                            }
+                            params: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa']}
                         })
                             .then(data => {
                                 this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
