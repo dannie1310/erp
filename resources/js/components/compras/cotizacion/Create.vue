@@ -449,9 +449,6 @@
             this.fecha = new Date();
             this.$validator.reset();
             this.getProveedores();
-            this.getMonedas();
-            this.getSolicitudes();
-
         },
         methods : {
             idFolioObservaciones (item)
@@ -462,12 +459,16 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             getProveedores() {
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:1,3', include: 'sucursales' }
                 })
                     .then(data => {
                         this.proveedores = data.data;
                     })
+                .finally(()=>{
+                    this.getMonedas();
+                })
             },
             getMonedas(){
                 this.cargando = true;
@@ -476,7 +477,7 @@
                 }).then(data => {
                     this.monedas = data.data;
                 }).finally(()=>{
-
+                    this.getSolicitudes();
                 })
             },
             salir()
@@ -501,7 +502,6 @@
                             'cotizaciones']}
                 }).then(data => {
                     this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
-
                     this.cargando = false;
                 })
             },
@@ -559,10 +559,12 @@
                         sort: 'numero_folio'
                     }
                 })
-                    .then(data => {
-                        this.solicitudes = data.data;
-                        this.cargando = false;
-                    })
+                .then(data => {
+                    this.solicitudes = data.data;
+                })
+                .finally(()=>{
+                    this.cargando = false;
+                })
             },
             validate() {
 
