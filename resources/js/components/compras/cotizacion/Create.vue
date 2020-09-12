@@ -44,7 +44,7 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="id_proveedor">Proveedores</label>
+                                            <label for="id_proveedor">Proveedores:</label>
                                             <select class="form-control"
                                                     name="id_proveedor"
                                                     data-vv-as="Proveedores"
@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="col-md-3 offset-1" v-if="sucursal">
                                         <div class="form-group">
-                                            <label for="id_sucursal">Sucursal</label>
+                                            <label for="id_sucursal">Sucursal:</label>
                                             <select class="form-control"
                                                     name="id_sucursal"
                                                     data-vv-as="Sucursal"
@@ -76,7 +76,7 @@
                                     </div>
                                     <div class="col-md-3 offset-1" v-else>
                                         <div class="form-group">
-                                            <label for="id_sucursal">Sucursal</label>
+                                            <label for="id_sucursal">Sucursal:</label>
                                             <select class="form-control"
                                                     name="id_sucursal"
                                                     :disabled="true"
@@ -90,31 +90,11 @@
                                     <div class="col-md-3 offset-1">
                                         <div class="custom-control custom-switch" style="top:40%">
                                             <input type="checkbox" class="custom-control-input button" id="cotizacion" v-model="pendiente" >
-                                            <label class="custom-control-label" for="cotizacion">Dejar pendiente captura de precios</label>
+                                            <label class="custom-control-label" for="cotizacion">Dejar pendiente la captura de precios</label>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                    <div class="col-md-12">
-                                        <label for="concepto" class="col-form-label">Concepto: </label>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group row error-content">
-                                            <textarea
-                                                name="concepto"
-                                                id="concepto"
-                                                class="form-control"
-                                                v-model="concepto"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Concepto"
-                                                :class="{'is-invalid': errors.has('concepto')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
-                                        </div>
-                                    </div>
-                                </div> -->
+
                                 <hr />
 
                                 <div class="row" v-if="id_solicitud != '' && !pendiente">
@@ -127,7 +107,7 @@
                                                     <th style="width:110px;">No. de Parte</th>
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
-                                                    <th></th>
+                                                    <th class="index_corto"></th>
                                                     <th class="cantidad_input">Cantidad Solicitada</th>
                                                     <th class="cantidad_input">Cantidad Aprobada</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
