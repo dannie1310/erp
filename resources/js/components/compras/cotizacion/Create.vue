@@ -29,36 +29,35 @@
                                         <div class="form-group">
                                             <label for="id_solicitud">Buscar Solicitud:</label>
                                                  <model-list-select
-                                                                id="id_solicitud"
-                                                                name="id_solicitud"
-                                                                option-value="id"
-                                                                v-model="id_solicitud"
-                                                                :custom-text="idFolioObservaciones"
-                                                                :list="solicitudes"
-                                                                :placeholder="!cargando?'Seleccionar o buscar solicitud de compra por número de folio, concepto u observaciones':'Cargando...'">
-                                                            </model-list-select>
+                                                     id="id_solicitud"
+                                                     name="id_solicitud"
+                                                     option-value="id"
+                                                     v-model="id_solicitud"
+                                                     :custom-text="idFolioObservaciones"
+                                                     :list="solicitudes"
+                                                     :placeholder="!cargando?'Seleccionar o buscar solicitud de compra por número de folio, concepto u observaciones':'Cargando...'">
+                                                 </model-list-select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-5">
                                         <div class="form-group">
-                                            <label for="id_proveedor">Proveedores</label>
-                                            <select class="form-control"
+                                            <label for="id_proveedor">Proveedor</label>
+                                                <model-list-select
+                                                    id="id_proveedor"
                                                     name="id_proveedor"
-                                                    data-vv-as="Proveedores"
+                                                    option-value="id"
                                                     v-model="id_proveedor"
-                                                    v-validate="{required: true}"
-                                                    :error="errors.has('id_proveedor')"
-                                                    id="id_proveedor">
-                                                <option value>-- Seleccionar--</option>
-                                                <option v-for="proveedor in proveedores" :value="proveedor.id" >{{ proveedor.razon_social}}</option>
-                                            </select>
+                                                    :custom-text="razonSocialRFC"
+                                                    :list="proveedores"
+                                                    :placeholder="!cargando?'Seleccionar o busca proveedor por razón social o RFC':'Cargando...'">
+                                                 </model-list-select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 offset-1" v-if="sucursal">
+                                    <div class="col-md-2 offset-1" v-if="id_proveedor">
                                         <div class="form-group">
                                             <label for="id_sucursal">Sucursal</label>
                                             <select class="form-control"
@@ -68,23 +67,10 @@
                                                     v-validate="{required: true}"
                                                     :error="errors.has('id_sucursal')"
                                                     id="id_sucursal">
-                                                <option value>-- Seleccionar--</option>
+                                                <option value >-- Seleccionar--</option>
                                                 <option v-for="sucursal in sucursales" :value="sucursal.id" >{{ sucursal.descripcion}}</option>
                                             </select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_sucursal')">{{ errors.first('id_sucursal') }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 offset-1" v-else>
-                                        <div class="form-group">
-                                            <label for="id_sucursal">Sucursal</label>
-                                            <select class="form-control"
-                                                    name="id_sucursal"
-                                                    :disabled="true"
-                                                    v-model="id_sucursal"
-                                                    :error="errors.has('id_sucursal')"
-                                                    id="id_sucursal">
-                                                <option value>-- Sin Sucursal--</option>
-                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-3 offset-1">
@@ -94,29 +80,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                    <div class="col-md-12">
-                                        <label for="concepto" class="col-form-label">Concepto: </label>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group row error-content">
-                                            <textarea
-                                                name="concepto"
-                                                id="concepto"
-                                                class="form-control"
-                                                v-model="concepto"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Concepto"
-                                                :class="{'is-invalid': errors.has('concepto')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
-                                        </div>
-                                    </div>
-                                </div> -->
                                 <hr />
-
                                 <div class="row" v-if="id_solicitud != '' && !pendiente">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
@@ -216,16 +180,16 @@
                                     </div>
                                     <div class=" col-md-2" align="right">
                                         <input
-                                                                :disabled="cargando"
-                                                                type="number"
-                                                                step=".01"
-                                                                max="100"
-                                                                name="descuento_cot"
-                                                                v-model="descuento_cot"
-                                                                v-validate="{required: true,}"
-                                                                class="col-sm-6 form-control"
-                                                                id="descuento_cot"
-                                                                :class="{'is-invalid': errors.has('descuento_cot')}">
+                                            :disabled="cargando"
+                                            type="number"
+                                            step=".01"
+                                            max="100"
+                                            name="descuento_cot"
+                                            v-model="descuento_cot"
+                                            v-validate="{required: true}"
+                                            class="col-sm-6 form-control"
+                                            id="descuento_cot"
+                                            :class="{'is-invalid': errors.has('descuento_cot')}">
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXP)</label>
@@ -272,77 +236,77 @@
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
-                                                                :disabled="cargando"
-                                                                type="number"
-                                                                step="1"
-                                                                max="100"
-                                                                name="pago"
-                                                                v-model="pago"
-                                                                v-validate="{required: true,}"
-                                                                class="col-sm-6 form-control"
-                                                                id="pago"
-                                                                :class="{'is-invalid': errors.has('pago')}">
+                                            :disabled="cargando"
+                                            type="number"
+                                            step="1"
+                                            max="100"
+                                            name="pago"
+                                            v-model="pago"
+                                            v-validate="{required: true}"
+                                            class="col-sm-6 form-control"
+                                            id="pago"
+                                            :class="{'is-invalid': errors.has('pago')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">% Anticipo:</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
-                                                                :disabled="cargando"
-                                                                type="number"
-                                                                step=".01"
-                                                                max="100"
-                                                                name="anticipo"
-                                                                v-model="anticipo"
-                                                                v-validate="{required: true,}"
-                                                                class="col-sm-6 form-control"
-                                                                id="anticipo"
-                                                                :class="{'is-invalid': errors.has('anticipo')}">
+                                            :disabled="cargando"
+                                            type="number"
+                                            step=".01"
+                                            max="100"
+                                            name="anticipo"
+                                            v-model="anticipo"
+                                            v-validate="{required: true}"
+                                            class="col-sm-6 form-control"
+                                            id="anticipo"
+                                            :class="{'is-invalid': errors.has('anticipo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">Crédito (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
-                                                                :disabled="cargando"
-                                                                type="number"
-                                                                step="1"
-                                                                name="credito"
-                                                                v-model="credito"
-                                                                v-validate="{required: true,}"
-                                                                class="col-sm-6 form-control"
-                                                                id="credito"
-                                                                :class="{'is-invalid': errors.has('credito')}">
+                                            :disabled="cargando"
+                                            type="number"
+                                            step="1"
+                                            name="credito"
+                                            v-model="credito"
+                                            v-validate="{required: true}"
+                                            class="col-sm-6 form-control"
+                                            id="credito"
+                                            :class="{'is-invalid': errors.has('credito')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">Tiempo de Entrega (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
-                                                                :disabled="cargando"
-                                                                type="number"
-                                                                step="1"
-                                                                name="tiempo"
-                                                                v-model="tiempo"
-                                                                v-validate="{required: true,}"
-                                                                class="col-sm-6 form-control"
-                                                                id="tiempo"
-                                                                :class="{'is-invalid': errors.has('tiempo')}">
+                                            :disabled="cargando"
+                                            type="number"
+                                            step="1"
+                                            name="tiempo"
+                                            v-model="tiempo"
+                                            v-validate="{required: true}"
+                                            class="col-sm-6 form-control"
+                                            id="tiempo"
+                                            :class="{'is-invalid': errors.has('tiempo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">Vigencia( días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
-                                                                :disabled="cargando"
-                                                                type="number"
-                                                                step="1"
-                                                                name="vigencia"
-                                                                v-model="vigencia"
-                                                                v-validate="{required: true,}"
-                                                                class="col-sm-6 form-control"
-                                                                id="vigencia"
-                                                                :class="{'is-invalid': errors.has('vigencia')}">
+                                            :disabled="cargando"
+                                            type="number"
+                                            step="1"
+                                            name="vigencia"
+                                            v-model="vigencia"
+                                            v-validate="{required: true}"
+                                            class="col-sm-6 form-control"
+                                            id="vigencia"
+                                            :class="{'is-invalid': errors.has('vigencia')}">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -367,10 +331,10 @@
                                     </div>
                                 </div>
                             </div>
-                             <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" :disabled="id_solicitud == ''" class="btn btn-primary">Registrar</button>
-                             </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
+                                <button type="submit" :disabled="id_solicitud == ''" class="btn btn-primary">Registrar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -454,6 +418,10 @@
             idFolioObservaciones (item)
             {
                 return `[${item.numero_folio_format}] - [ ${item.concepto} ] - [ ${item.observaciones} ]`;
+            },
+            razonSocialRFC (item)
+            {
+                return `[${item.razon_social}] - [ ${item.rfc} ]`;
             },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
@@ -642,6 +610,9 @@
                     var busqueda = this.proveedores.find(x=>x.id === value);
                     this.sucursales = busqueda.sucursales.data;
                     this.sucursal = (busqueda.sucursales.data.length) ? true : false;
+                    if(this.sucursales.length == 1){
+                        this.id_sucursal = this.sucursales[0].id;
+                    }
                 }
             },
             moneda_input()
