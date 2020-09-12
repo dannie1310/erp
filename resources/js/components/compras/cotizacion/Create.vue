@@ -310,7 +310,7 @@
                                                                 :class="{'is-invalid': errors.has('tiempo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>
+                                        <label class="col-sm-2 col-form-label">Vigencia (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
