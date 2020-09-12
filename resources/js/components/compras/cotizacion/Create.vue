@@ -52,7 +52,7 @@
                                                     v-model="id_proveedor"
                                                     :custom-text="razonSocialRFC"
                                                     :list="proveedores"
-                                                    :placeholder="'Seleccionar o busca proveedor por razón social o RFC'">
+                                                    :placeholder="!cargando?'Seleccionar o busca proveedor por razón social o RFC':'Cargando...'">
                                                  </model-list-select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                                         </div>
