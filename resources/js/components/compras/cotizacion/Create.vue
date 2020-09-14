@@ -44,7 +44,7 @@
                                 <div class="row">
                                     <div class="col-md-5">
                                         <div class="form-group">
-                                            <label for="id_proveedor">Proveedor</label>
+                                            <label for="id_proveedor">Proveedor:</label>
                                                 <model-list-select
                                                     id="id_proveedor"
                                                     name="id_proveedor"
@@ -59,7 +59,7 @@
                                     </div>
                                     <div class="col-md-2 offset-1" v-if="id_proveedor">
                                         <div class="form-group">
-                                            <label for="id_sucursal">Sucursal</label>
+                                            <label for="id_sucursal">Sucursal:</label>
                                             <select class="form-control"
                                                     name="id_sucursal"
                                                     data-vv-as="Sucursal"
@@ -76,10 +76,11 @@
                                     <div class="col-md-3 offset-1">
                                         <div class="custom-control custom-switch" style="top:40%">
                                             <input type="checkbox" class="custom-control-input button" id="cotizacion" v-model="pendiente" >
-                                            <label class="custom-control-label" for="cotizacion">Dejar pendiente captura de precios</label>
+                                            <label class="custom-control-label" for="cotizacion">Dejar pendiente la captura de precios</label>
                                         </div>
                                     </div>
                                 </div>
+
                                 <hr />
                                 <div class="row" v-if="id_solicitud != '' && !pendiente">
                                     <div  class="col-md-12">
@@ -91,7 +92,7 @@
                                                     <th style="width:110px;">No. de Parte</th>
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
-                                                    <th></th>
+                                                    <th class="index_corto"></th>
                                                     <th class="cantidad_input">Cantidad Solicitada</th>
                                                     <th class="cantidad_input">Cantidad Aprobada</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
@@ -294,7 +295,7 @@
                                             :class="{'is-invalid': errors.has('tiempo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>
+                                        <label class="col-sm-2 col-form-label">Vigencia (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -331,10 +332,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                <button type="submit" :disabled="id_solicitud == ''" class="btn btn-primary">Registrar</button>
-                            </div>
+                             <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                        <i class="fa fa-angle-left"></i>
+                                        Regresar</button>
+                                    <button type="submit" :disabled="id_solicitud == ''" class="btn btn-primary">
+                                        <i class="fa fa-save"></i>
+                                        Guardar
+                                    </button>
+                             </div>
                         </form>
                     </div>
                 </div>
