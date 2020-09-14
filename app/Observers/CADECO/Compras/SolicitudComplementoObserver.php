@@ -23,7 +23,6 @@ class SolicitudComplementoObserver
     {
         $solicitudComplemento->folio_compuesto = $solicitudComplemento->generaFolioCompuesto();
         $solicitudComplemento->estado = 1;
-        $solicitudComplemento->registro = auth()->id();
         if($solicitudComplemento->id_tipo === 3)
         {
             $solicitudComplemento->generarActivoFijo();
