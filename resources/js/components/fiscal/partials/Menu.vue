@@ -14,7 +14,7 @@
                             <p>Informe CFD x Empresa x Mes</p>
                         </router-link>
                     </li>
-                    <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+                    <li class="nav-item"  v-if="$root.can('consultar_cfdi',true)">
                         <router-link :to="{name: 'cfd-sat'}" class="nav-link" :class="{active: this.$route.name == 'cfd-sat'}">
                             <i class="fa fa-file-invoice nav-icon"></i>
                             <p>CFD SAT</p>
