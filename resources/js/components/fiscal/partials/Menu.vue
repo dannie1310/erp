@@ -1,7 +1,9 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-item"  v-if="$root.can('consultar_autocorreccion_cfd_efo',true) || $root.can('consultar_cfdi',true)">
+            <li class="nav-item"  v-if="$root.can('consultar_autocorreccion_cfd_efo',true) || $root.can('consultar_cfdi',true)
+            || $root.can('consultar_informe_cfd_x_empresa_x_mes',true)
+            || $root.can('consultar_no_deducido_cfd_efo',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-file-invoice nav-icon"></i>
                     <p>Gestión de CFD</p>
