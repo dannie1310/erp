@@ -635,6 +635,11 @@ class CFDSATService
         return $this->repository->getInformeEmpresaMes();
     }
 
+    public function obtenerInformeCompleto()
+    {
+        return $this->repository->getInformeCompleto();
+    }
+
     public function getContenidoDirectorio()
     {
         $path = "uploads/contabilidad/zip_cfd/";

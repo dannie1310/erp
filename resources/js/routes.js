@@ -673,10 +673,22 @@ export const routes = [
                         name: 'informe-cfd-empresa-tiempo',
                         component: require('./components/fiscal/cfd/cfd-sat/InformeCFDEmpresaMes').default,
                         meta: {
-                            title: 'Informe CFD Cargados x Empresa x Mes',
+                            title: 'Informe CFDI Cargados x Empresa x Mes',
                             breadcrumb: {name: 'INFORME', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe-completo',
+                        name: 'informe-cfdi-completo',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeCFDICompleto').default,
+                        meta: {
+                            title: 'Informe de CFDI Cargados x Empresa x Mes (Completo)',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfdi_x_empresa_desglosado'],
                             general: true
                         }
                     },

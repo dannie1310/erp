@@ -66,4 +66,10 @@ class CFDSATController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function obtenerInformeCompleto()
+    {
+        $respuesta =$this->service->obtenerInformeCompleto();
+        return response()->json($respuesta, 200);
+    }
+
 }
