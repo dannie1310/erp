@@ -464,7 +464,7 @@ class GestionPagoService
                 abort(403, 'Archivo de bitácora procesado previamente.');
             }
         
-            $cod_operacion = ['FUE001', 'FUE002', 'FUE003', 'FUE542'];
+            $cod_operacion = ['FUE001', 'FUE002', 'FUE003', 'FUE542', 'FUE543'];
             $myfile = fopen($bitacora, "r") or die("Unable to open file!");
             $content = array();
             while(!feof($myfile)) {
@@ -492,22 +492,24 @@ class GestionPagoService
                 }
                 return $this->validarBitacoraV1($data, $bitacora_nombre, $id_dispersion);
             }
-            if(count(explode("|",$content[0])) == 9){
+            if(count(explode("|",$content[0])) == 11){
                 foreach($content as $line){
                     $linea = explode("|",$line);
-                    if(in_array($linea[1], $cod_operacion) && ($linea[6] == 'Aceptada' || $linea[6] == 'Ejecutada')) {
+                    if(in_array($linea[1], $cod_operacion) && ($linea[8] == 'Aceptada' || $linea[8] == 'Ejecutada')) {
                         $fecha_format = explode(" ",$linea[0])[0];
                         $fecha_format = str_replace('-', '/', $fecha_format);
                         $data[] = array(
                             "fecha" => $fecha_format,
                             "codigo" => $linea[1],
                             "evento" => $linea[2],
-                            "monto" =>  $this->getAmount($linea[3]),
-                            "referencia" =>  $linea[4],
-                            "usuario" => $linea[5],
-                            "estatus" => $linea[6],
-                            "descripcion" => $linea[7],
-                            "ip_user" => $linea[8],
+                            "cta_cargo" => $linea[3],
+                            "cta_abono" => $linea[4],
+                            "monto" =>  $this->getAmount($linea[5]),
+                            "referencia" =>  $linea[6],
+                            "usuario" => $linea[7],
+                            "estatus" => $linea[8],
+                            "descripcion" => $linea[9],
+                            "ip_user" => $linea[10],
                         );
                     }
                 }
