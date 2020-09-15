@@ -82,9 +82,74 @@ ORDER BY razon_social asc , anio desc, mes asc";
             $empresas[$item["rfc"]]["valor"] = $item["cfd_rs"];
             $anio_mes[$item["anio"].$item["mes_z"]] = $item["mes_txt"].' '.$item["anio"];
             $valores[$item["rfc"]][$item["anio"]][$item["mes"]]["cantidad"] =($item["cantidad"]>0)?number_format($item["cantidad"],0,".",","):"-";
-            $valores[$item["rfc"]][$item["anio"]][$item["mes"]]["total"] =($item["total"]>0)?'$'.number_format($item["total"],0,".",","):"-";
+            $valores[$item["rfc"]][$item["anio"]][$item["mes"]]["total"] =($item["total"]>0)?'$'.number_format($item["total"],2,".",","):"-";
+            if(!key_exists("totales",$valores[$item["rfc"]][$item["anio"]]))
+            {
+                $valores[$item["rfc"]][$item["anio"]]["totales"]["cantidad"] = 0;
+                $valores[$item["rfc"]][$item["anio"]]["totales"]["total"] = 0;
+            }
+            $valores[$item["rfc"]][$item["anio"]]["totales"]["cantidad"] += $item["cantidad"];
+            $valores[$item["rfc"]][$item["anio"]]["totales"]["total"] += $item["total"];
+
+            $valores[$item["rfc"]][$item["anio"]]["totales"]["cantidad_f"] = number_format($valores[$item["rfc"]][$item["anio"]]["totales"]["cantidad"],0,"",",");
+            $valores[$item["rfc"]][$item["anio"]]["totales"]["total_f"] = "$".number_format($valores[$item["rfc"]][$item["anio"]]["totales"]["total"],2,".",",");
+
+            if(!key_exists("totales",$valores[$item["rfc"]]))
+            {
+                $valores[$item["rfc"]]["totales"]["cantidad"] = 0;
+                $valores[$item["rfc"]]["totales"]["total"] = 0;
+            }
+            $valores[$item["rfc"]]["totales"]["cantidad"] += $item["cantidad"];
+            $valores[$item["rfc"]]["totales"]["total"] += $item["total"];
+
+            $valores[$item["rfc"]]["totales"]["cantidad_f"] = number_format($valores[$item["rfc"]]["totales"]["cantidad"],0,"",",");
+            $valores[$item["rfc"]]["totales"]["total_f"] = "$".number_format($valores[$item["rfc"]]["totales"]["total"],2,".",",");
+
+            #TOTAL EMPRESA
+            if(!key_exists($item["mes"],$valores[$item["rfc"]]["totales"]))
+            {
+                $valores[$item["rfc"]]["totales"][$item["mes"]]["cantidad"] = 0;
+                $valores[$item["rfc"]]["totales"][$item["mes"]]["total"] = 0;
+            }
+
+            $valores[$item["rfc"]]["totales"][$item["mes"]]["cantidad"] += $item["cantidad"];
+            $valores[$item["rfc"]]["totales"][$item["mes"]]["total"] += $item["total"];
+
+            $valores[$item["rfc"]]["totales"][$item["mes"]]["cantidad_f"] = number_format($valores[$item["rfc"]]["totales"][$item["mes"]]["cantidad"],0,"",",");
+            $valores[$item["rfc"]]["totales"][$item["mes"]]["total_f"] = "$".number_format($valores[$item["rfc"]]["totales"][$item["mes"]]["total"],2,".",",");
+
+            #TOTAL GLOBAL
+
+            if(!key_exists("totales",$valores))
+            {
+                $valores["totales"] = [];
+            }
+
+            if(!key_exists($item["mes"],$valores["totales"]))
+            {
+                $valores["totales"][$item["mes"]]["cantidad"] = 0;
+                $valores["totales"][$item["mes"]]["total"] = 0;
+                $valores["totales"]["cantidad"] = 0;
+                $valores["totales"]["total"] = 0;
+            }
+
+            $valores["totales"][$item["mes"]]["cantidad"] += $item["cantidad"];
+            $valores["totales"][$item["mes"]]["total"] += $item["total"];
+
+            $valores["totales"][$item["mes"]]["cantidad_f"] = number_format($valores["totales"][$item["mes"]]["cantidad"],0,"",",");
+            $valores["totales"][$item["mes"]]["total_f"] = "$".number_format($valores["totales"][$item["mes"]]["total"],2,".",",");
+
+            $valores["totales"]["cantidad"] += $item["cantidad"];
+            $valores["totales"]["total"] += $item["total"];
+
+            $valores["totales"]["cantidad_f"] = number_format($valores["totales"]["cantidad"],0,"",",");
+            $valores["totales"]["total_f"] = "$".number_format($valores["totales"]["total"],2,".",",");
+
+
+
             $anios_empresa_t[$item["rfc"]][] = $item["anio"];
         }
+
 
         foreach ($anios_empresa_t as $k=>$v){
             $anios_empresa[$k] = array_unique($v);
