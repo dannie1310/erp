@@ -21,7 +21,6 @@ class SolicitudCompraPartidaObserver
                 'cantidad' => $partida->cantidad,
                 'estado' => $partida->estado,
                 'cantidad_original1' => $partida->cantidad_original1,
-                'fecha_entrega' => $partida->complemento ? $partida->complemento->fecha_entrega : NULL,
                 'observaciones' => $partida->complemento ? $partida->complemento->observaciones : NULL
             ]
         );
