@@ -30,8 +30,6 @@ class SolicitudEliminada extends Model
         'concepto',
         'fecha_requisicion_origen',
         'requisicion_origen',
-        'registro',
-        'timestamp_registro',
         'usuario_elimina',
         'motivo',
         'fecha_eliminacion'
