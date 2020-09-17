@@ -206,7 +206,7 @@ class SolicitudCompra extends Transaccion
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $complemento = $item->complemento()->create([
                     'id_item' => $item->id_item,
-                    'observaciones' => $partida['observaciones']
+                    'observaciones' => $partida['observaciones'] ? $partida['observaciones'] : ''
                 ]);
                 $entrega = Entrega::create([
                     'id_item' => $item->id_item,
@@ -362,12 +362,12 @@ class SolicitudCompra extends Transaccion
                     ]);
                     if ($partida->complemento) {
                         $partida->complemento->update([
-                            'observaciones' => $cambios['complemento']['observaciones']
+                            'observaciones' => $cambios['complemento']['observaciones'] ? $cambios['complemento']['observaciones'] : ''
                         ]);
                     } else {
                         $partida->complemento()->create([
                             'id_item' => $partida->id_item,
-                            'observaciones' => $cambios['observaciones']
+                            'observaciones' => $cambios['observaciones'] ? $cambios['observaciones'] : ''
                         ]);
                     }
 
@@ -412,7 +412,7 @@ class SolicitudCompra extends Transaccion
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             $complemento = $item->complemento()->create([
                 'id_item' => $item->id_item,
-                'observaciones' => $partida['observaciones'],
+                'observaciones' => $partida['observaciones'] ? $partida['observaciones'] : '',
             ]);
             $entrega = Entrega::create([
                 'id_item' => $item->id_item,

@@ -135,7 +135,7 @@
                                                                       :name="`observaciones[${i}]`"
                                                                       data-vv-as="Observaciones"
                                                                       :disabled="enable[i] == false"
-                                                                      v-validate="{required: true}"
+                                                                      v-validate="{}"
                                                                       :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                       v-model="partida.observacion"/>
                                                              <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>

@@ -89,18 +89,8 @@
                         }
                     case 1:
                         return {
-                            color: '#00a65a',
-                            descripcion: 'Parcialmente Fincada'
-                        }
-                    case 2:
-                        return {
-                            color: '#7889d6',
-                            descripcion: 'Fincada'
-                        }
-                    default:
-                        return {
-                            color: '#d2d6de',
-                            descripcion: 'Sin solicitud'
+                            color: '#f39c12',
+                            descripcion: 'Registrada'
                         }
                 }
             },

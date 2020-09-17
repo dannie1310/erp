@@ -103,8 +103,8 @@
                                                     <th>Observaciones</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody v-if="solicitud">
-                                                    <tr v-for="(partida, i) in solicitud.partidas.data">
+                                                <tbody v-if="solicitud_editar">
+                                                    <tr v-for="(partida, i) in solicitud_editar.partidas.data">
                                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                         <td style="text-align:center;">{{partida.material.numero_parte}}</td>
                                                         <td>{{partida.material.descripcion}}</td>
@@ -116,7 +116,7 @@
                                                             </div>
                                                         </td>
                                                         <td style="text-align:center;">{{partida.cantidad_original_num}}</td>
-                                                        <td style="text-align:center;">{{(solicitud.estado === 1) ? partida.cantidad : '0.0'}}</td>
+                                                        <td style="text-align:center;">{{(solicitud_editar.estado === 1) ? partida.cantidad : '0.0'}}</td>
                                                         <td>
                                                             <input type="number"
                                                                    min="0.01"
@@ -141,10 +141,10 @@
                                                                    data-vv-as="Descuento(%)"
                                                                    v-validate="{required: true}"
                                                                    :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
-                                                                   v-model="descuento[i]"/>
+                                                                   v-model="partida.descuento"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(precio[i]) ? '$ ' + parseFloat(((solicitud.estado === 0) ? partida.cantidad_original_num : partida.cantidad) * precio[i]).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">{{(precio[i]) ? '$ ' + parseFloat(((solicitud_editar.estado === 0) ? partida.cantidad_original_num : partida.cantidad) * precio[i]).formatMoney(2,'.',',') : '$ 0.00'}}</td>
                                                         <td style="width:120px;" >
                                                             <select
                                                                 type="text"
@@ -166,7 +166,7 @@
                                                                       :name="`observaciones[${i}]`"
                                                                       data-vv-as="Observaciones"
                                                                       :disabled="enable[i] == false"
-                                                                      v-validate="{required: true}"
+                                                                      v-validate="{}"
                                                                       :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                       v-model="observaciones_inputs[i]"/>
                                                              <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
@@ -410,9 +410,8 @@
                 credito: 0,
                 tiempo: 0,
                 vigencia: 0,
-                descuento: [],
-                enable: []
-
+                enable: [],
+                solicitud_editar: []
             }
         },
         mounted() {
@@ -465,8 +464,8 @@
                 this.pendiente = false;
                 this.moneda_input = [];
                 this.observaciones_inputs = [];
-                this.descuento = [];
                 this.cargando = true;
+                this.solicitud_editar = [];
                 this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
                 return this.$store.dispatch('compras/solicitud-compra/find', {
                     id: this.id_solicitud,
@@ -476,6 +475,7 @@
                             'partidas.entrega',
                             'cotizaciones']}
                 }).then(data => {
+                    this.solicitud_editar = data;
                     this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
                     this.cargando = false;
                 })
@@ -487,49 +487,49 @@
                 this.dolares = 0;
                 this.euros = 0;
                 this.libras = 0;
-                while(this.x < this.solicitud.partidas.data.length)
+                while(this.x < this.solicitud_editar.partidas.data.length)
                 {
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
                     {
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
-                            this.pesos = (this.pesos + parseFloat(((this.solicitud.estado === 0) ?
-                            this.solicitud.partidas.data[this.x].cantidad_original_num :
-                            this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ?
-                            this.descuento[this.x] : 0))/100))));
-                            this.solicitud.partidas.data[this.x].calculo_precio_total = (this.solicitud.estado === 0 ?
-                                this.solicitud.partidas.data[this.x].cantidad_original_num : this.solicitud.partidas.data[this.x].cantidad)
-                                * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? this.descuento[this.x] : 0))/100));
+                            this.pesos = (this.pesos + parseFloat(((this.solicitud_editar.estado === 0) ?
+                            this.solicitud_editar.partidas.data[this.x].cantidad_original_num :
+                            this.solicitud_editar.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * (( this.solicitud_editar.partidas.data[this.x].descuento) ?
+                             this.solicitud_editar.partidas.data[this.x].descuento : 0))/100))));
+                            this.solicitud_editar.partidas.data[this.x].calculo_precio_total = (this.solicitud_editar.estado === 0 ?
+                                this.solicitud_editar.partidas.data[this.x].cantidad_original_num : this.solicitud_editar.partidas.data[this.x].cantidad)
+                                * (this.precio[this.x] - ((this.precio[this.x] * (( this.solicitud_editar.partidas.data[this.x].descuento) ?  this.solicitud_editar.partidas.data[this.x].descuento : 0))/100));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
-                            this.dolares = (this.dolares + parseFloat(((this.solicitud.estado === 0) ?
-                            this.solicitud.partidas.data[this.x].cantidad_original_num :
-                            this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ?
-                            this.descuento[this.x] : 0))/100))));
-                            this.solicitud.partidas.data[this.x].calculo_precio_total = ((this.solicitud.estado === 0 ?
-                                this.solicitud.partidas.data[this.x].cantidad_original_num : this.solicitud.partidas.data[this.x].cantidad)
-                                * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? this.descuento[this.x] : 0))/100)));
+                            this.dolares = (this.dolares + parseFloat(((this.solicitud_editar.estado === 0) ?
+                            this.solicitud_editar.partidas.data[this.x].cantidad_original_num :
+                            this.solicitud_editar.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * (( this.solicitud_editar.partidas.data[this.x].descuento) ?
+                             this.solicitud_editar.partidas.data[this.x].descuento : 0))/100))));
+                            this.solicitud_editar.partidas.data[this.x].calculo_precio_total = ((this.solicitud_editar.estado === 0 ?
+                                this.solicitud_editar.partidas.data[this.x].cantidad_original_num : this.solicitud_editar.partidas.data[this.x].cantidad)
+                                * (this.precio[this.x] - ((this.precio[this.x] * (( this.solicitud_editar.partidas.data[this.x].descuento) ?  this.solicitud_editar.partidas.data[this.x].descuento : 0))/100)));
                         }
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
-                            this.euros = (this.euros + parseFloat(((this.solicitud.estado === 0) ?
-                            this.solicitud.partidas.data[this.x].cantidad_original_num :
-                            this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ?
-                            this.descuento[this.x] : 0))/100))));
-                            this.solicitud.partidas.data[this.x].calculo_precio_total = ((this.solicitud.estado === 0 ?
-                                this.solicitud.partidas.data[this.x].cantidad_original_num : this.solicitud.partidas.data[this.x].cantidad)
-                                * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? this.descuento[this.x] : 0))/100)));
+                            this.euros = (this.euros + parseFloat(((this.solicitud_editar.estado === 0) ?
+                            this.solicitud_editar.partidas.data[this.x].cantidad_original_num :
+                            this.solicitud_editar.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * (( this.solicitud_editar.partidas.data[this.x].descuento) ?
+                             this.solicitud_editar.partidas.data[this.x].descuento : 0))/100))));
+                            this.solicitud_editar.partidas.data[this.x].calculo_precio_total = ((this.solicitud_editar.estado === 0 ?
+                                this.solicitud_editar.partidas.data[this.x].cantidad_original_num : this.solicitud_editar.partidas.data[this.x].cantidad)
+                                * (this.precio[this.x] - ((this.precio[this.x] * (( this.solicitud_editar.partidas.data[this.x].descuento) ?  this.solicitud_editar.partidas.data[this.x].descuento : 0))/100)));
                         }
                         if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
                         {
-                            this.libras = (this.libras + parseFloat(((this.solicitud.estado === 0) ?
-                                this.solicitud.partidas.data[this.x].cantidad_original_num :
-                                this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ?
-                                this.descuento[this.x] : 0))/100))));
-                            this.solicitud.partidas.data[this.x].calculo_precio_total = ((this.solicitud.estado === 0 ?
-                                this.solicitud.partidas.data[this.x].cantidad_original_num : this.solicitud.partidas.data[this.x].cantidad)
-                                * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? this.descuento[this.x] : 0))/100)));
+                            this.libras = (this.libras + parseFloat(((this.solicitud_editar.estado === 0) ?
+                                this.solicitud_editar.partidas.data[this.x].cantidad_original_num :
+                                this.solicitud_editar.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * (( this.solicitud_editar.partidas.data[this.x].descuento) ?
+                                 this.solicitud_editar.partidas.data[this.x].descuento : 0))/100))));
+                            this.solicitud_editar.partidas.data[this.x].calculo_precio_total = ((this.solicitud_editar.estado === 0 ?
+                                this.solicitud_editar.partidas.data[this.x].cantidad_original_num : this.solicitud_editar.partidas.data[this.x].cantidad)
+                                * (this.precio[this.x] - ((this.precio[this.x] * (( this.solicitud_editar.partidas.data[this.x].descuento) ?  this.solicitud_editar.partidas.data[this.x].descuento : 0))/100)));
                         }
                     }
                     this.x ++;
@@ -556,7 +556,7 @@
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.post.partidas = this.solicitud.partidas.data;
+                        this.post.partidas = this.solicitud_editar.partidas.data;
                         this.post.id_solicitud = this.id_solicitud;
                         this.post.id_proveedor = this.id_proveedor;
                         this.post.sucursal = this.sucursal;
@@ -566,7 +566,6 @@
                         this.post.observacion = this.observaciones;
                         this.post.precio = this.precio;
                         this.post.enable = this.enable;
-                        this.post.descuento = this.descuento;
                         this.post.descuento_cot = this.descuento_cot;
                         this.post.pago = this.pago;
                         this.post.anticipo = this.anticipo;
@@ -659,13 +658,6 @@
             precio()
             {
                 if(this.precio.length > 0)
-                {
-                    this.calcular();
-                }
-            },
-            descuento()
-            {
-                if(this.descuento.length > 0)
                 {
                     this.calcular();
                 }
