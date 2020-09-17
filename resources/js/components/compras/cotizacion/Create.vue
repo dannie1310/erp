@@ -155,12 +155,12 @@
                                                                 class="form-control"
                                                                 id="moneda"
                                                                 v-model="moneda_input[i]"
-                                                                :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
+                                                                :class="{'is-invalid': errors.has(`moneda[${i}]`)}">
                                                                     <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.abreviatura }}</option>
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(moneda_input[i] && precio[i]) ? '$ ' + parseFloat((((solicitud.estado === 0) ? partida.cantidad_original_num : partida.cantidad) * precio[i] * monedas[moneda_input[i] - 1].tipo_cambio_cadeco ? monedas[moneda_input[i] - 1].tipo_cambio_cadeco.cambio : 1)).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">{{'$ '+parseFloat(getPrecioTotal(i,partida.calculo_precio_total)).formatMoney(2,'.',',')}}</td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -448,7 +448,8 @@
                 this.cargando = true;
                 this.$store.commit('cadeco/moneda/SET_MONEDAS', null);
                 return this.$store.dispatch('cadeco/moneda/index', {
-                }).then(data => {
+                    params: {sort: 'id_moneda', order: 'asc',}
+                    }).then(data => {
                     this.monedas = data.data;
                 }).finally(()=>{
                     this.getSolicitudes();
@@ -496,6 +497,9 @@
                             this.solicitud.partidas.data[this.x].cantidad_original_num :
                             this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ?
                             this.descuento[this.x] : 0))/100))));
+                            this.solicitud.partidas.data[this.x].calculo_precio_total = (this.solicitud.estado === 0 ?
+                                this.solicitud.partidas.data[this.x].cantidad_original_num : this.solicitud.partidas.data[this.x].cantidad)
+                                * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? this.descuento[this.x] : 0))/100));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
@@ -503,6 +507,9 @@
                             this.solicitud.partidas.data[this.x].cantidad_original_num :
                             this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ?
                             this.descuento[this.x] : 0))/100))));
+                            this.solicitud.partidas.data[this.x].calculo_precio_total = ((this.solicitud.estado === 0 ?
+                                this.solicitud.partidas.data[this.x].cantidad_original_num : this.solicitud.partidas.data[this.x].cantidad)
+                                * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? this.descuento[this.x] : 0))/100)));
                         }
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
@@ -510,6 +517,9 @@
                             this.solicitud.partidas.data[this.x].cantidad_original_num :
                             this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ?
                             this.descuento[this.x] : 0))/100))));
+                            this.solicitud.partidas.data[this.x].calculo_precio_total = ((this.solicitud.estado === 0 ?
+                                this.solicitud.partidas.data[this.x].cantidad_original_num : this.solicitud.partidas.data[this.x].cantidad)
+                                * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? this.descuento[this.x] : 0))/100)));
                         }
                         if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
                         {
@@ -517,10 +527,12 @@
                                 this.solicitud.partidas.data[this.x].cantidad_original_num :
                                 this.solicitud.partidas.data[this.x].cantidad) * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ?
                                 this.descuento[this.x] : 0))/100))));
+                            this.solicitud.partidas.data[this.x].calculo_precio_total = ((this.solicitud.estado === 0 ?
+                                this.solicitud.partidas.data[this.x].cantidad_original_num : this.solicitud.partidas.data[this.x].cantidad)
+                                * (this.precio[this.x] - ((this.precio[this.x] * ((this.descuento[this.x]) ? this.descuento[this.x] : 0))/100)));
                         }
                     }
                     this.x ++;
-
                 }
             },
             getSolicitudes() {
@@ -582,6 +594,23 @@
                     });
                 }
             },
+            getPrecioTotal(i, precio) {
+                var suma_total = 0;
+                if(this.moneda_input.length != 0) {
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 1) {
+                       return  suma_total = precio != undefined ? precio : '1.00'
+                    }
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 2) {
+                        return suma_total = precio != undefined ? precio * this.monedas[1].tipo_cambio_cadeco.cambio : this.monedas[1].tipo_cambio_cadeco.cambio
+                    }
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 3) {
+                        return suma_total = precio != undefined ? precio * this.monedas[2].tipo_cambio_cadeco.cambio : this.monedas[2].tipo_cambio_cadeco.cambio
+                    }
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 4) {
+                        return suma_total = precio != undefined ? precio * this.monedas[3].tipo_cambio_cadeco.cambio : this.monedas[3].tipo_cambio_cadeco.cambio
+                    }
+                }
+            }
         },
         computed: {
             solicitud(){
@@ -590,17 +619,16 @@
             subtotal()
             {
                 return (this.pesos + (this.dolares * this.monedas[1].tipo_cambio_cadeco.cambio) + (this.euros * this.monedas[2].tipo_cambio_cadeco.cambio) + (this.libras * this.monedas[3].tipo_cambio_cadeco.cambio) -
-                        ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.monedas[1].tipo_cambio_cadeco.cambio) + (this.euros *
-                        this.monedas[2].tipo_cambio_cadeco.cambio) + (this.libras * this.monedas[3].tipo_cambio_cadeco.cambio)) * parseFloat(this.descuento_cot))/100) : 0));
+                    ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.monedas[1].tipo_cambio_cadeco.cambio) + (this.euros *
+                        this.monedas[2].tipo_cambio_cadeco.cambio) + (this.libras * this.monedas[3].tipo_cambio_cadeco.cambio)) * parseFloat(this.descuento_cot)) / 100) : 0));
             },
-            iva()
-            {
+            iva() {
                 return this.subtotal * 0.16;
             },
-            total()
-            {
+            total() {
                 return this.subtotal + this.iva;
-            }
+            },
+
         },
         watch: {
             id_solicitud(value)
