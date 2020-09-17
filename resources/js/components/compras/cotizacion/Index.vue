@@ -89,7 +89,7 @@
                         }
                     case 1:
                         return {
-                            color: '#00a65a',
+                            color: '#f39c12',
                             descripcion: 'Registrada'
                         }
                 }

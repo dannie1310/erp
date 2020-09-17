@@ -341,7 +341,7 @@ class CotizacionCompra  extends Transaccion
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],
                             'descuento_partida' => $partida['descuento'],
-                            'observaciones' => $data['observaciones'][$x] ? $data['observaciones'][$x] : '',
+                            'observaciones' => $data['observaciones'] ? $data['observaciones'][$x] : '',
                             'estatus' => 3
                         ]);
                     }
@@ -376,7 +376,7 @@ class CotizacionCompra  extends Transaccion
                     'importe' => 0,
                     'timestamp_registro' => $fecha->format("Y-m-d")
                 ]);
-            }
+            }dd("ok");
             DB::connection('cadeco')->commit();
             return $cotizacion;
         } catch (\Exception $e) {
