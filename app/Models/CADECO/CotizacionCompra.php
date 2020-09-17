@@ -231,12 +231,10 @@ class CotizacionCompra  extends Transaccion
                         'no_cotizado' => (!$data['enable'][$i]) ? 1 : 0,
                         'id_moneda' => ($data['enable'][$i]) ? $data['moneda'][$i] : null
                     ]);
-
-                    if ($item->first()->partida) {
-                        CotizacionComplementoPartida::where('id_transaccion', '=', $this->id_transaccion)
-                            ->where('id_material', '=', $partida['material']['id'])->update([
+                    if ($item->partida) {
+                        $item->partida->update([
                                 'descuento_partida' => ($data['enable'][$i]) ? $data['descuento'][$i] : 0,
-                                'observaciones' => ($data['enable'][$i]) ? $partida['observacion'] : null,
+                                'observaciones' => ($data['enable'][$i] && $partida['observacion']) ? $partida['observacion'] : null,
                                 'estatus' => ($data['enable'][$i]) ? 3 : 1
                             ]);
                     } else {
@@ -244,7 +242,7 @@ class CotizacionCompra  extends Transaccion
                             'id_transaccion' => $this->id_transaccion,
                             'id_material' => $partida['material']['id'],
                             'descuento_partida' => ($data['enable'][$i]) ? $data['descuento'][$i] : 0,
-                            'observaciones' => ($data['enable'][$i]) ? $partida['observacion'] : null,
+                            'observaciones' => ($data['enable'][$i] && $partida['observacion']) ? $partida['observacion'] : null,
                             'estatus' => ($data['enable'][$i]) ? 3 : 1
                         ]);
                     }
@@ -268,7 +266,7 @@ class CotizacionCompra  extends Transaccion
                             'id_transaccion' => $this->id_transaccion,
                             'id_material' => $partida['material']['id'],
                             'descuento_partida' => $data['descuento'][$i],
-                            'observaciones' => $data['observaciones'][$i],
+                            'observaciones' => $data['observaciones'] ? $data['observaciones'][$i] : '',
                             'estatus' => 3
                         ]);
                     }
@@ -328,7 +326,7 @@ class CotizacionCompra  extends Transaccion
                             'id_material' => $partida['material']['id'],
                             'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
                             'precio_unitario' => $data['precio'][$x],
-                            'descuento' => ($data['descuento_cot'] + $data['descuento'][$x] - (($data['descuento_cot'] * $data['descuento'][$x]) / 100)),
+                            'descuento' => ($data['descuento_cot'] + $partida['descuento'] - (($data['descuento_cot'] * $partida['descuento']) / 100)),
                             'anticipo' => $data['anticipo'],
                             'dias_credito' => $data['credito'],
                             'dias_entrega' => $data['tiempo'],
@@ -342,13 +340,15 @@ class CotizacionCompra  extends Transaccion
                         $cotizaciones->partida()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],
-                            'descuento_partida' => $data['descuento'][$x],
-                            'observaciones' => $data['observaciones'][$x],
+                            'descuento_partida' => $partida['descuento'],
+                            'observaciones' => $data['observaciones'][$x] ? $data['observaciones'][$x] : '',
                             'estatus' => 3
                         ]);
                     }
                     $x++;
                 }
+                $this->estado = 1;
+                $this->save();
             }
             else{
                 $cotizacion = $this->create([
