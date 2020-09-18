@@ -379,6 +379,24 @@ class CotizacionCompra  extends Transaccion
                     'importe' => 0,
                     'timestamp_registro' => $fecha->format("Y-m-d")
                 ]);
+                
+                foreach($data['partidas'] as $partida) {
+                    $cotizaciones = $cotizacion->partidas()->create([
+                        'id_transaccion' => $cotizacion->id_transaccion,
+                        'id_material' => $partida['material']['id'],
+                        'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                    ]);
+
+                    #------- Compras.cotizacion_partidas_complemento
+
+                    $cotizaciones->partida()->create([
+                        'id_transaccion' => $cotizacion->id_transaccion,
+                        'id_material' => $partida['material']['id'],
+                        'descuento_partida' => 0,
+                        'observaciones' => '',
+                        'estatus' => 3
+                    ]);
+                }
             }
             DB::connection('cadeco')->commit();
             return $cotizacion;
