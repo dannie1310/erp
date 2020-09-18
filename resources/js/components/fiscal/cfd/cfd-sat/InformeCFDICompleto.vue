@@ -9,6 +9,12 @@
         </div>
         <span v-else-if="informe && cargando== false">
             <div class="row" >
+
+                <div class="offset-md-6 col-md-6">
+                    <ImpresionInforme ></ImpresionInforme>
+                </div>
+            </div>
+            <div class="row" >
                 <div class="col-md-12">
                     <table class="table table-bordered">
                         <tbody>
@@ -91,8 +97,10 @@
 </template>
 
 <script>
+    import ImpresionInforme from './../partials/ImpresionInforme';
     export default {
         name: "InformeCFDCompleto",
+        components:{ImpresionInforme},
         data() {
             return {
                 informe : [],
