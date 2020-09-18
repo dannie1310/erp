@@ -9,6 +9,7 @@
 namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 
 use App\Informes\CFDEmpresaMes;
+use App\Informes\CFDICompleto;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
@@ -124,6 +125,12 @@ class CFDSATRepository extends Repository implements RepositoryInterface
     public function getInformeEmpresaMes()
     {
         $informe["informe"] = CFDEmpresaMes::get();
+        return $informe;
+    }
+
+    public function getInformeCompleto()
+    {
+        $informe["informe"] = CFDICompleto::get();
         return $informe;
     }
 }

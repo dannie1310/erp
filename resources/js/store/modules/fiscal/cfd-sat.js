@@ -149,6 +149,19 @@ export default {
                     })
             });
         },
+        obtenerInformeCFDICompleto(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'obtener-informe-completo', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         getContenidoDirectorio(context, payload){
             return new Promise((resolve, reject) => {
                 axios
