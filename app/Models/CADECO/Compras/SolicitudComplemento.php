@@ -89,7 +89,7 @@ class SolicitudComplemento extends Model
     public function getColorEstadoAttribute()
     {
         if($this->estado == 1){
-            return '#f39c12';
+            return '#f7f420';
         }elseif ($this->estado == 2){
             return '#f29111';
         }elseif ($this->estado == 3){
