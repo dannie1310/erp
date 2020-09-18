@@ -44,7 +44,7 @@
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'folio', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -89,18 +89,8 @@
                         }
                     case 1:
                         return {
-                            color: '#00a65a',
-                            descripcion: 'Parcialmente Fincada'
-                        }
-                    case 2:
-                        return {
-                            color: '#7889d6',
-                            descripcion: 'Fincada'
-                        }
-                    default:
-                        return {
-                            color: '#d2d6de',
-                            descripcion: 'Sin solicitud'
+                            color: '#f39c12',
+                            descripcion: 'Registrada'
                         }
                 }
             },

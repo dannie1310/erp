@@ -86,6 +86,26 @@ class SolicitudComplemento extends Model
         return '# ' . sprintf("%05d", $this->requisicion_origen);
     }
 
+    public function getColorEstadoAttribute()
+    {
+        if($this->estado == 1){
+            return '#f7f420';
+        }elseif ($this->estado == 2){
+            return '#f29111';
+        }elseif ($this->estado == 3){
+            return '#00a65a';
+        }elseif ($this->estado == 4){
+            return '#a40ec2';
+        }elseif ($this->estado == 5){
+            return '#7889d6';
+        }
+    }
+
+    public function getDescripcionEstadoAttribute()
+    {
+       return $this->estadoSolicitud ? $this->estadoSolicitud->descripcion : '';
+    }
+
     /**
      * Métodos
      */
@@ -107,5 +127,13 @@ class SolicitudComplemento extends Model
         $this->activoFijo()->create([
             'id_transaccion' => $this->id_transaccion
         ]);
+    }
+
+    public function setCambiarEstado($estatus_actual, $nuevo_estado)
+    {
+        if($this->estado ==  $estatus_actual){
+            $this->estado = $nuevo_estado;
+            $this->save();
+        }
     }
 }

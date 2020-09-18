@@ -47,6 +47,8 @@ class SolicitudComplementoTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'folio' => $model->folio_compuesto,
             'estado' => $model->estado,
+            'color' => $model->color_estado,
+            'descripcion_estado' => $model->descripcion_estado,
             'concepto' => $model->concepto,
             'id_area_compradora' => $model->id_area_compradora,
             'id_tipo' => $model->id_tipo,

@@ -18,9 +18,17 @@ class CotizacionCompraObserver extends TransaccionObserver
         parent::creating($cotizacionCompra);
 
         $cotizacionCompra->tipo_transaccion = 18;
-        $cotizacionCompra->estado = ($cotizacionCompra->complemento) ? 1 : 0;
+        $cotizacionCompra->estado = 0;
         $cotizacionCompra->opciones = 1;
         $cotizacionCompra->id_moneda = 1;
+    }
+
+    public function created(CotizacionCompra $cotizacionCompra)
+    {
+        /**
+         * Cambiar estado de la solicitud a: En proceso de cotización
+         */
+        $cotizacionCompra->solicitudComplemento->setCambiarEstado(1,2);
     }
 
     public function updating(CotizacionCompra $cotizacionCompra)

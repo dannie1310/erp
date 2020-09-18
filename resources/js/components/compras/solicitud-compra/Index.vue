@@ -43,12 +43,12 @@
                     { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, thClass: 'th_fecha', sortable: false },
                     { title: 'Concepto', field: 'concepto', sortable: false, thComp: require('../../globals/th-Filter').default },
                     { title: 'Observaciones', field: 'observaciones', thComp: require('../../globals/th-Filter').default, sortable: false },
-                    { title: 'Estatus', field: 'estado_solicitud', sortable: true, thClass:'th_c120', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Estatus', field: 'estado_solicitud', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {scope: 'areasCompradorasAsignadas',sort: 'numero_folio', order: 'DESC'},
+                query: {scope: 'areasCompradorasAsignadas',sort: 'numero_folio', order: 'DESC', include: 'complemento'},
                 search: '',
                 cargando: false
             }
@@ -76,31 +76,10 @@
 
                     })
             },
-
-            getEstado(estado) {
-
-                let val = parseInt(estado);
-                switch (val) {
-                    case 0:
-                        return {
-                            color: '#f39c12',
-                            descripcion: 'Registrada'
-                        }
-                    case 1:
-                        return {
-                            color: '#00a65a',
-                            descripcion: 'Aprobada'
-                        }
-                    case 2:
-                        return {
-                            color: '#7889d6',
-                            descripcion: 'Tercer caso'
-                        }
-                    default:
-                        return {
-                            color: '#d2d6de',
-                            descripcion: 'Desconocido'
-                        }
+            getEstado(estado, color) {
+                return {
+                    color: color,
+                    descripcion: estado
                 }
             },
             create() {
@@ -130,8 +109,7 @@
                         observaciones: solicitud.observaciones,
                         concepto: solicitud.concepto,
                         numero_folio_compuesto: solicitud.numero_folio_compuesto,
-                        estado: this.getEstado(solicitud.estado),
-                        estado_solicitud: solicitud.estado_solicitud,
+                        estado_solicitud: this.getEstado(solicitud.complemento ? solicitud.complemento.descripcion_estado : '', solicitud.complemento ? solicitud.complemento.color : ''),
                         buttons: $.extend({}, {
                             show: true,
                             aprobar: (self.$root.can('aprobar_solicitud_compra') && (solicitud.estado == 0) && (solicitud.autorizacion_requerida == 1)) ? true : false,

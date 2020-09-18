@@ -51,7 +51,7 @@ class MonedaTransformer extends TransformerAbstract
         {
             return $this->item($cambio, new CambioTransformer);
         } else if($moneda->tipo != 1) {
-            abort(400, "Ho hay ningun tipo de cambio registrado para la moneda: ".$moneda->nombre);
+            abort(400, "No hay ningun tipo de cambio registrado para la moneda: ".$moneda->nombre);
         }
         return null;
     }

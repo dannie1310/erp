@@ -206,7 +206,7 @@ class SolicitudCompra extends Transaccion
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $complemento = $item->complemento()->create([
                     'id_item' => $item->id_item,
-                    'observaciones' => $partida['observaciones']
+                    'observaciones' => $partida['observaciones'] ? $partida['observaciones'] : ''
                 ]);
                 $entrega = Entrega::create([
                     'id_item' => $item->id_item,
@@ -362,12 +362,12 @@ class SolicitudCompra extends Transaccion
                     ]);
                     if ($partida->complemento) {
                         $partida->complemento->update([
-                            'observaciones' => $cambios['complemento']['observaciones']
+                            'observaciones' => $cambios['complemento']['observaciones'] ? $cambios['complemento']['observaciones'] : ''
                         ]);
                     } else {
                         $partida->complemento()->create([
                             'id_item' => $partida->id_item,
-                            'observaciones' => $cambios['observaciones']
+                            'observaciones' => $cambios['observaciones'] ? $cambios['observaciones'] : ''
                         ]);
                     }
 
@@ -412,7 +412,7 @@ class SolicitudCompra extends Transaccion
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             $complemento = $item->complemento()->create([
                 'id_item' => $item->id_item,
-                'observaciones' => $partida['observaciones'],
+                'observaciones' => $partida['observaciones'] ? $partida['observaciones'] : '',
             ]);
             $entrega = Entrega::create([
                 'id_item' => $item->id_item,
@@ -446,5 +446,33 @@ class SolicitudCompra extends Transaccion
     {
         $pdf = new SolicitudCompraFormato($this);
         return $pdf->create();
+    }
+
+    /**
+     * @return bool
+     * Revisar si las partidas de la solicitud se han cotizado
+     * true : cotizado completamente
+     * false : faltan partidas por cotizar
+     */
+    public function validarCotizada()
+    {
+        $contador = 0;
+        foreach ($this->partidas()->get() as $partida)
+        {
+            $cotizaciones = CotizacionCompra::where('id_antecedente', '=', $partida->id_transaccion)->get();
+            foreach ($cotizaciones as $cotizacion) {
+                $cot_partida = CotizacionCompraPartida::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->where('cantidad', '!=', 0)->count();
+                if($cot_partida > 0)
+                {
+                    $contador++;
+                    break;
+                }
+            }
+        }
+        if($contador == $this->partidas()->count())
+        {
+            return true;
+        }
+        return false;
     }
 }

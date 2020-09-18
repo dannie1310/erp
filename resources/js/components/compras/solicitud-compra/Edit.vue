@@ -317,7 +317,7 @@
                                                         <textarea class="form-control"
                                                                   :name="`observaciones[${i}]`"
                                                                   data-vv-as="Observaciones"
-                                                                  v-validate="{required: true}"
+                                                                  v-validate="{}"
                                                                   :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                   v-model="partida.complemento.observaciones"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
@@ -326,7 +326,7 @@
                                                         <textarea class="form-control"
                                                                   :name="`observaciones[${i}]`"
                                                                   data-vv-as="Observaciones"
-                                                                  v-validate="{required: true}"
+                                                                  v-validate="{}"
                                                                   :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                   v-model="partida.observaciones"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
