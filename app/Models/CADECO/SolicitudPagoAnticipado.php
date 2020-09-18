@@ -72,6 +72,7 @@ class SolicitudPagoAnticipado extends Solicitud
             throw New \Exception('La solicitud de pago anticipado no puede ser cancelada, porque no tiene el estatus "registrada" ');
         }
         $solicitud->estado = -2;
+        $solicitud->id_antecedente = null;
         $solicitud->save();
         return $solicitud;
     }
