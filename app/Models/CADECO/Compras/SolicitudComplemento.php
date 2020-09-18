@@ -86,6 +86,26 @@ class SolicitudComplemento extends Model
         return '# ' . sprintf("%05d", $this->requisicion_origen);
     }
 
+    public function getColorEstadoAttribute()
+    {
+        if($this->estado == 1){
+            return '#f39c12';
+        }elseif ($this->estado == 2){
+            return '#f29111';
+        }elseif ($this->estado == 3){
+            return '#00a65a';
+        }elseif ($this->estado == 4){
+            return '#a40ec2';
+        }elseif ($this->estado == 5){
+            return '#7889d6';
+        }
+    }
+
+    public function getDescripcionEstadoAttribute()
+    {
+       return $this->estadoSolicitud ? $this->estadoSolicitud->descripcion : '';
+    }
+
     /**
      * Métodos
      */

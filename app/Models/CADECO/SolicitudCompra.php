@@ -448,6 +448,12 @@ class SolicitudCompra extends Transaccion
         return $pdf->create();
     }
 
+    /**
+     * @return bool
+     * Revisar si las partidas de la solicitud se han cotizado
+     * true : cotizado completamente
+     * false : faltan partidas por cotizar
+     */
     public function validarCotizada()
     {
         $contador = 0;

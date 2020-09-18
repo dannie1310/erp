@@ -44,7 +44,7 @@
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'folio', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],

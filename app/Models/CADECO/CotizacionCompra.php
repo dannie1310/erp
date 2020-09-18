@@ -379,7 +379,7 @@ class CotizacionCompra  extends Transaccion
                     'importe' => 0,
                     'timestamp_registro' => $fecha->format("Y-m-d")
                 ]);
-                
+
                 foreach($data['partidas'] as $partida) {
                     $cotizaciones = $cotizacion->partidas()->create([
                         'id_transaccion' => $cotizacion->id_transaccion,
@@ -417,8 +417,8 @@ class CotizacionCompra  extends Transaccion
             DB::connection('cadeco')->beginTransaction();
             $this->validar();
             $this->delete();
-            $this->cambioEstadoSolicitud();
             $this->revisarRespaldos($motivo);
+            $this->cambioEstadoSolicitud();
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -482,9 +482,26 @@ class CotizacionCompra  extends Transaccion
         return $suma;
     }
 
-
+    /**
+     * Revisar si es necesario cambiar el estado de la solicitud (dependiendo de sus cotizaciones)
+     *
+     */
     public function cambioEstadoSolicitud()
     {
-       dd($this->solicitud);
+        $this->refresh();
+        if(!$this->solicitud->validarCotizada()){
+            /**
+             * Cambiar estado de la solicitud de: 'Cotizada' a:  'En proceso de cotización'
+             */
+            $this->solicitud->complemento->setCambiarEstado(3,2);
+
+        }
+        if($this->solicitud->cotizaciones->count() == 0)
+        {
+            /**
+             * Cambiar estado de la solicitud de: 'En proceso de cotización' a: 'Pendiente de cotización'
+             */
+            $this->solicitud->complemento->setCambiarEstado(2,1);
+        }
     }
 }
