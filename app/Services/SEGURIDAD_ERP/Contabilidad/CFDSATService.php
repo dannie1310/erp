@@ -12,6 +12,7 @@ use App\Events\CambioEFOS;
 use App\Events\FinalizaCargaCFD;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\PDF\Fiscal\InformeCFDICompleto;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
 use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
@@ -633,6 +634,18 @@ class CFDSATService
     public function obtenerInformeEmpresaMes()
     {
         return $this->repository->getInformeEmpresaMes();
+    }
+
+    public function obtenerInformeCompleto()
+    {
+        return $this->repository->getInformeCompleto();
+    }
+
+    public function obtenerInformeCompletoPDF()
+    {
+        $informe = $this->obtenerInformeCompleto();
+        $pdf = new InformeCFDICompleto($informe);
+        return $pdf->create();
     }
 
     public function getContenidoDirectorio()
