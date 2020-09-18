@@ -447,4 +447,26 @@ class SolicitudCompra extends Transaccion
         $pdf = new SolicitudCompraFormato($this);
         return $pdf->create();
     }
+
+    public function validarCotizada()
+    {
+        $contador = 0;
+        foreach ($this->partidas()->get() as $partida)
+        {
+            $cotizaciones = CotizacionCompra::where('id_antecedente', '=', $partida->id_transaccion)->get();
+            foreach ($cotizaciones as $cotizacion) {
+                $cot_partida = CotizacionCompraPartida::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->where('cantidad', '!=', 0)->count();
+                if($cot_partida > 0)
+                {
+                    $contador++;
+                    break;
+                }
+            }
+        }
+        if($contador == $this->partidas()->count())
+        {
+            return true;
+        }
+        return false;
+    }
 }

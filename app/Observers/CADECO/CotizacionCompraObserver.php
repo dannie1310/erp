@@ -23,6 +23,14 @@ class CotizacionCompraObserver extends TransaccionObserver
         $cotizacionCompra->id_moneda = 1;
     }
 
+    public function created(CotizacionCompra $cotizacionCompra)
+    {
+        /**
+         * Cambiar estado de la solicitud a: En proceso de cotización
+         */
+        $cotizacionCompra->solicitudComplemento->setCambiarEstado(1,2);
+    }
+
     public function updating(CotizacionCompra $cotizacionCompra)
     {
         $cotizacionCompra->validarAsignacion('editar');

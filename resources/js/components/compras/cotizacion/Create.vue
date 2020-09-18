@@ -50,6 +50,7 @@
                                                     name="id_proveedor"
                                                     option-value="id"
                                                     v-model="id_proveedor"
+                                                    v-validate="{required: true}"
                                                     :custom-text="razonSocialRFC"
                                                     :list="proveedores"
                                                     :placeholder="!cargando?'Seleccionar o busca proveedor por razón social o RFC':'Cargando...'">
@@ -103,7 +104,7 @@
                                                     <th>Observaciones</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody v-if="solicitud_editar">
+                                                <tbody v-if="solicitud">
                                                     <tr v-for="(partida, i) in solicitud_editar.partidas.data">
                                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                         <td style="text-align:center;">{{partida.material.numero_parte}}</td>
@@ -336,7 +337,7 @@
                                     <button type="button" class="btn btn-secondary" v-on:click="salir">
                                         <i class="fa fa-angle-left"></i>
                                         Regresar</button>
-                                    <button type="submit" :disabled="id_solicitud == ''" class="btn btn-primary">
+                                    <button type="button" @click="validate" :disabled="id_solicitud == ''" class="btn btn-primary">
                                         <i class="fa fa-save"></i>
                                         Guardar
                                     </button>

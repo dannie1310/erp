@@ -108,4 +108,12 @@ class SolicitudComplemento extends Model
             'id_transaccion' => $this->id_transaccion
         ]);
     }
+
+    public function setCambiarEstado($estatus_actual, $nuevo_estado)
+    {
+        if($this->estado ==  $estatus_actual){
+            $this->estado = $nuevo_estado;
+            $this->save();
+        }
+    }
 }
