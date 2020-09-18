@@ -320,7 +320,7 @@ class SolicitudCompra extends Transaccion
                 $datos['id_area_solicitante'] = null;
             }
             if($this->complemento) {
-                $this->complemento()->update([
+                $this->complemento->update([
                     'id_transaccion' => $this->id_transaccion,
                     'id_area_compradora' => $datos['complemento'] ? $datos['complemento']['id_area_compradora'] : $datos['id_area_compradora'],
                     'id_tipo' => $datos['complemento'] ? $datos['complemento']['id_tipo'] : $datos['id_tipo'],
