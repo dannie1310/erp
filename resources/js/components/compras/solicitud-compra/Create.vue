@@ -143,7 +143,7 @@
                                                     <th class="icono"></th>
                                                     <th>Observaciones</th>
                                                     <th class="icono">
-                                                        <button type="button" class="btn btn-success btn-sm" v-if="cargando">
+                                                        <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando...">
                                                             <i class="fa fa-spin fa-spinner"></i>
                                                         </button>
                                                         <button type="button" class="btn btn-success btn-sm" @click="addPartidas()" v-else>
@@ -356,7 +356,6 @@
                 es:es,
                 configuracion : '',
                 fechasDeshabilitadas:{},
-                fechasDeshabilitadasHasta:{},
                 fecha : '',
                 fecha_requisicion : '',
                 fecha_hoy : '',
@@ -407,7 +406,6 @@
             this.fecha_requisicion = new Date();
             this.fecha = new Date();
             this.fechasDeshabilitadas.from= new Date();
-            this.fechasDeshabilitadasHasta.to= new Date();
             this.getAreasCompradoras();
             this.getConfiguracion();
             this.getTipos();
