@@ -532,7 +532,7 @@
                 this.fecha = new Date();
                 this.fechasDeshabilitadas.from= new Date();
                 return this.$store.dispatch('configuracion/area-compradora/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+                    params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_compradoras = data;
@@ -674,7 +674,7 @@
             },
             getAreasSolicitantes() {
                 return this.$store.dispatch('configuracion/area-solicitante/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+                    params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_solicitantes = data;
