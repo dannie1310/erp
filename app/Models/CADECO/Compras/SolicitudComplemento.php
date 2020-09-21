@@ -10,6 +10,8 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\Compras\CtgTipo;
@@ -33,6 +35,15 @@ class SolicitudComplemento extends Model
         'fecha_requisicion_origen',
         'requisicion_origen',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->whereHas('solicitud');
+        });
+    }
 
     /**
      * Relaciones
@@ -60,6 +71,11 @@ class SolicitudComplemento extends Model
     public function estadoSolicitud()
     {
         return $this->belongsTo(CtgEstadoSolicitud::class, 'estado','id');
+    }
+
+    public function solicitud()
+    {
+        return $this->belongsTo(SolicitudCompra::class, 'id_transaccion', 'id_transaccion');
     }
 
     /**
@@ -111,9 +127,23 @@ class SolicitudComplemento extends Model
      */
     public function generaFolioCompuesto()
     {
-        $count = $this->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
-        $count++;
+       /* $entrega = EntregaContratista::join("dbo.transacciones", "transacciones.id_transaccion", "Almacenes.entregas_contratista.id_transaccion")
+            ->where("transacciones.id_empresa","=",$id_empresa)
+            ->select("entregas_contratista.numero_folio")
+            ->orderBy('entregas_contratista.numero_folio', 'DESC')->first();
+        */
+        $complemento = self::join('dbo.transacciones', 'transacciones.id_transaccion','Compras.solicitud_complemento.id_transaccion')
+            ->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)
+            ->where('id_obra', '=', Context::getIdObra())->get();
+        dd($complemento);
+        dd($this->whereHas('solicitud', function ($q){
+            return $q->where('id_obra', '=', Context::getIdObra());
+        })->first());
 
+        $count = $this->where('id_are3a_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
+      //  dd($this, $count);
+        $count++;
+//dd("pas");
         $tipo= CtgTipo::find($this->id_tipo);
         $area_compradora = CtgAreaCompradora::find($this->id_area_compradora);
 
