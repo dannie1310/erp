@@ -202,8 +202,9 @@ class CotizacionCompra  extends Transaccion
                 $this->complemento->descuento = $data['descuento_cot'];
                 $this->complemento->anticipo = $data['anticipo'];
                 $this->complemento->importe = $data['importe'];
-                $this->complemento->tc_usd = $data['tipo_cambio'][2];
-                $this->complemento->tc_eur = $data['tipo_cambio'][3];
+                $this->complemento->tc_usd = $data['tc_usd'];
+                $this->complemento->tc_eur = $data['tc_eur'];
+                $this->complemento->tc_libra = $data['tc_libra'];
                 $this->complemento->save();
             }
             else{
@@ -216,24 +217,25 @@ class CotizacionCompra  extends Transaccion
                     'descuento' => $data['descuento_cot'],
                     'anticipo' => $data['anticipo'],
                     'importe' => $data['importe'],
-                    'tc_usd' => $data['tipo_cambio'][2],
-                    'tc_eur' => $data['tipo_cambio'][3],
+                    'tc_usd' => $data['tc_usd'],
+                    'tc_eur' => $data['tc_eur'],
+                    'tc_libra' => $data['tc_libra'],
                     'timestamp_registro' => $fecha->format("Y-m-d")
                 ]);
             }
 
             $i = 0;
-            foreach($data['partidas'] as $partida) {
-                $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->first();
+            foreach($data['partidas'] as $key => $partida) {
+                $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->first();               
                 if ($item) {
-                    $item->update([
+                    CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
                         'precio_unitario' => ($data['enable'][$i]) ? $data['precio'][$i] : 0,
                         'descuento' => ($data['enable'][$i] !== false) ? ($data['descuento_cot'] + $data['descuento'][$i] - (($data['descuento_cot'] * $data['descuento'][$i]) / 100)) : 0,
                         'no_cotizado' => (!$data['enable'][$i]) ? 1 : 0,
                         'id_moneda' => ($data['enable'][$i]) ? $data['moneda'][$i] : null
                     ]);
                     if ($item->partida) {
-                        $item->partida->update([
+                        CotizacionComplementoPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
                                 'descuento_partida' => ($data['enable'][$i]) ? $data['descuento'][$i] : 0,
                                 'observaciones' => ($data['enable'][$i] && $partida['observacion']) ? $partida['observacion'] : null,
                                 'estatus' => ($data['enable'][$i]) ? 3 : 1
