@@ -315,6 +315,7 @@ class CotizacionCompra  extends Transaccion
                     'descuento' => $data['descuento_cot'],
                     'tc_usd' => $moneda[1]->cambio->cambio,
                     'tc_eur' => $moneda[2]->cambio->cambio,
+                    'tc_libra' => $moneda[3]->cambio->cambio,
                     'anticipo' => $data['anticipo'],
                     'importe' => $data['importe'],
                     'timestamp_registro' => $fecha->format("Y-m-d")
@@ -376,6 +377,7 @@ class CotizacionCompra  extends Transaccion
                     'descuento' => 0,
                     'tc_usd' => $moneda[1]->cambio->cambio,
                     'tc_eur' => $moneda[2]->cambio->cambio,
+                    'tc_libra' => $moneda[3]->cambio->cambio,
                     'anticipo' => 0,
                     'importe' => 0,
                     'timestamp_registro' => $fecha->format("Y-m-d")
