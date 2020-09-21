@@ -570,6 +570,14 @@
 
                 this.$validator.validate().then(result => {
                     if (result) {
+                        
+                        let self = this;
+                        this.descuento.forEach(function(desc, i) {
+                            self.cotizacion.partidas.data[i].enable = self.enable[i];
+                            self.cotizacion.partidas.data[i].precio_unitario = self.precio[i];
+                            self.cotizacion.partidas.data[i].id_moneda = self.moneda_input[i];
+                            self.cotizacion.partidas.data[i].descuento = self.descuento[i];
+                        });
                         this.post.partidas = this.cotizacion.partidas.data;
                         this.post.id_cotizacion = this.id;
                         this.post.fecha = this.cotizacion.fecha;
