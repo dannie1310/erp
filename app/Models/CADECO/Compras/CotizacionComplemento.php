@@ -38,6 +38,11 @@ class CotizacionComplemento extends Model
         return '$ ' . number_format($this->tc_eur, 4, '.', ',');
     }
 
+    public function getTipoCambioLibFormatAttribute()
+    {
+        return '$ ' . number_format($this->tc_libra, 4, '.', ',');
+    }
+
     public function getDescuentoFormatAttribute()
     {
         return number_format($this->descuento, 2, '.', ',') . ' %';

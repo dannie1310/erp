@@ -23,8 +23,10 @@ class CotizacionComplementoTransformer extends TransformerAbstract
             'entrega' => (int) $model->plazo_entrega,
             'tc_usd_format' => $model->tipo_cambio_usd_format,
             'tc_eur_format' => $model->tipo_cambio_eur_format,
+            'tc_libra_format' => $model->tipo_cambio_lib_format,
             'tc_usd' => $model->tc_usd,
-            'tc_eur' => $model->tc_eur
+            'tc_eur' => $model->tc_eur,
+            'tc_libra' => $model->tc_libra
         ];
     }
 }
