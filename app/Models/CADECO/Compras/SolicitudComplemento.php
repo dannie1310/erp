@@ -10,6 +10,8 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\Compras\CtgTipo;
@@ -62,6 +64,11 @@ class SolicitudComplemento extends Model
         return $this->belongsTo(CtgEstadoSolicitud::class, 'estado','id');
     }
 
+    public function solicitud()
+    {
+        return $this->belongsTo(SolicitudCompra::class, 'id_transaccion', 'id_transaccion');
+    }
+
     /**
      * Scopes
      */
@@ -111,15 +118,12 @@ class SolicitudComplemento extends Model
      */
     public function generaFolioCompuesto()
     {
-        $count = $this->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
-        $count++;
-
+        $consecutivo = self::join('dbo.transacciones', 'transacciones.id_transaccion','Compras.solicitud_complemento.id_transaccion')
+            ->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)
+            ->where('id_obra', '=', Context::getIdObra())->count();
         $tipo= CtgTipo::find($this->id_tipo);
         $area_compradora = CtgAreaCompradora::find($this->id_area_compradora);
-
-        $folio=$area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.$count;
-
-        return $folio;
+        return $area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.($consecutivo+1);
     }
 
     public function generarActivoFijo()
