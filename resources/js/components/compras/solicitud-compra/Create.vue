@@ -143,7 +143,10 @@
                                                     <th class="icono"></th>
                                                     <th>Observaciones</th>
                                                     <th class="icono">
-                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
+                                                        <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando...">
+                                                            <i class="fa fa-spin fa-spinner"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()" v-else>
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </th>
@@ -184,7 +187,7 @@
                                                     </td>
                                                     <td style="width:120px;" v-if="partida.material">{{partida.material.unidad}}</td>
                                                     <td style="width:120px;" v-else></td>
-                                                    <td class="fecha">
+                                                    <td class="fecha" v-if="materiales.length != 0">
                                                         <datepicker v-model="partida.fecha"
                                                                     :name="`fecha[${i}]`"
                                                                     :format = "formatoFecha"
@@ -192,11 +195,11 @@
                                                                     :bootstrap-styling = "true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
-                                                                    :disabled-dates="fechasDeshabilitadasHasta"
                                                                     :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
                                                         ></datepicker>
                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                     </td>
+                                                    <td class="fecha" v-else></td>
                                                     <td  v-if="partida.destino ===  ''" >
                                                          <small class="badge badge-secondary">
                                                             <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
@@ -259,10 +262,16 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" v-on:click="salir">
                                     <i class="fa fa-angle-left"></i>
-                                    Regresar</button>
+                                    Regresar
+                                </button>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-save"></i>
-                                    Guardar</button>
+                                     <span v-if="cargando">
+                                         <i class="fa fa-spin fa-spinner"></i>
+                                     </span>
+                                    <span v-else>
+                                        <i class="fa fa-save"></i> Guardar
+                                    </span>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -347,7 +356,6 @@
                 es:es,
                 configuracion : '',
                 fechasDeshabilitadas:{},
-                fechasDeshabilitadasHasta:{},
                 fecha : '',
                 fecha_requisicion : '',
                 fecha_hoy : '',
@@ -394,6 +402,10 @@
         },
         mounted() {
             this.$validator.reset()
+            this.fecha_hoy = new Date();
+            this.fecha_requisicion = new Date();
+            this.fecha = new Date();
+            this.fechasDeshabilitadas.from= new Date();
             this.getAreasCompradoras();
             this.getConfiguracion();
             this.getTipos();
@@ -450,11 +462,6 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             getAreasCompradoras() {
-                this.fecha_hoy = new Date();
-                this.fecha_requisicion = new Date();
-                this.fecha = new Date();
-                this.fechasDeshabilitadas.from= new Date();
-                this.fechasDeshabilitadasHasta.to= new Date();
                 return this.$store.dispatch('configuracion/area-compradora/index', {
                     params: {sort: 'descripcion', order: 'asc'}
                 })
@@ -603,11 +610,17 @@
                         while(t < this.partidas.length){
                             if(this.partidas[t].destino === '' || typeof this.partidas[t].destino.destino === 'undefined' )
                             {
-                                this.m ++;
+                                m ++;
                                 swal('¡Error!', 'Ingrese un destino válido en partida '+(t + 1) +'.', 'error');
                             }
+                            else if(moment(this.fecha).format('YYYY/MM/DD') > moment(this.partidas[t].fecha).format('YYYY/MM/DD'))
+                            {
+                                m ++;
+                                swal('¡Error!', 'La fecha de la partida '+(t + 1) +' ('+moment(this.partidas[t].fecha).format('DD/MM/YYYY')+') debe ser posterior o igual a la fecha de la solicitud ('+moment(this.fecha).format('DD/MM/YYYY')+').', 'error')
+                            }
                             t ++;
-                        }if(m == 0) {
+                        }
+                        if(m == 0) {
                             this.store()
                         }
                     }

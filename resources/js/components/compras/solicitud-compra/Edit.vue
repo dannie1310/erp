@@ -218,7 +218,10 @@
                                                     <th class="icono"></th>
                                                     <th>Observaciones</th>
                                                     <th class="icono">
-                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
+                                                          <button type="button" class="btn btn-success btn-sm" v-if="materiales.length == 0" title="Cargando...">
+                                                            <i class="fa fa-spin fa-spinner"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()" v-else>
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </th>
@@ -266,7 +269,6 @@
                                                                     :bootstrap-styling = "true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
-                                                                    :disabled-dates="fechasDeshabilitadasHasta"
                                                                     :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
                                                         ></datepicker>
                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
@@ -279,7 +281,6 @@
                                                                     :bootstrap-styling = "true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
-                                                                    :disabled-dates="fechasDeshabilitadasHasta"
                                                                     :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
                                                         ></datepicker>
                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
@@ -455,7 +456,6 @@
                 configuracion:'',
                 solicitud: [],
                 fechasDeshabilitadas:{},
-                fechasDeshabilitadasHasta:{},
                 fecha : '',
                 fecha_hoy : '',
                 areas_compradoras : [],
@@ -531,9 +531,8 @@
                 this.fecha_requisicion = new Date();
                 this.fecha = new Date();
                 this.fechasDeshabilitadas.from= new Date();
-                this.fechasDeshabilitadasHasta.to= new Date();
                 return this.$store.dispatch('configuracion/area-compradora/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+                    params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_compradoras = data;
@@ -675,7 +674,7 @@
             },
             getAreasSolicitantes() {
                 return this.$store.dispatch('configuracion/area-solicitante/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+                    params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_solicitantes = data;
@@ -706,7 +705,7 @@
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: 'materialesParaCompras',
-                        sort: 'descripcion', order: 'desc'
+                        sort: 'descripcion', order: 'ASC'
                     }
                 })
                     .then(data => {
@@ -721,11 +720,22 @@
                         while(t < this.solicitud.partidas.data.length) {
                             if (typeof this.solicitud.partidas.data[t].entrega === 'undefined' && (this.solicitud.partidas.data[t].destino === '' || typeof this.solicitud.partidas.data[t].destino === 'undefined'))
                             {
-                                this.m++;
+                                m++;
                                 swal('¡Error!', 'Ingrese un destino válido en partida ' + (t + 1) + '.', 'error');
                             }
+                            else if(typeof this.solicitud.partidas.data[t].entrega != 'undefined' && moment(this.solicitud.fecha).format('YYYY/MM/DD') > moment(this.solicitud.partidas.data[t].entrega.fecha).format('YYYY/MM/DD'))
+                            {
+                                m ++;
+                                swal('¡Error!', 'La fecha de la partida '+(t + 1) +' ('+moment(this.solicitud.partidas.data[t].entrega.fecha).format('DD/MM/YYYY')+') debe ser posterior o igual a la fecha de la solicitud ('+moment(this.solicitud.fecha).format('DD/MM/YYYY')+').', 'error')
+                            }
+                            else if(typeof this.solicitud.partidas.data[t].entrega === 'undefined' && moment(this.solicitud.fecha).format('YYYY/MM/DD') > moment(this.solicitud.partidas.data[t].fecha_entrega).format('YYYY/MM/DD'))
+                            {
+                                m ++;
+                                swal('¡Error!', 'La fecha de la partida '+(t + 1) +' ('+moment(this.solicitud.partidas.data[t].fecha_entrega).format('DD/MM/YYYY')+') debe ser posterior o igual a la fecha de la solicitud ('+moment(this.solicitud.fecha).format('DD/MM/YYYY')+').', 'error')
+                            }
                             t ++;
-                        }if(m == 0) {
+                        }
+                        if(m == 0) {
                             this.update()
                         }
                     }
