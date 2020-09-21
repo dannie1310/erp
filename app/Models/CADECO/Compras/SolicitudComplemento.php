@@ -36,15 +36,6 @@ class SolicitudComplemento extends Model
         'requisicion_origen',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->whereHas('solicitud');
-        });
-    }
-
     /**
      * Relaciones
      */
@@ -127,29 +118,12 @@ class SolicitudComplemento extends Model
      */
     public function generaFolioCompuesto()
     {
-       /* $entrega = EntregaContratista::join("dbo.transacciones", "transacciones.id_transaccion", "Almacenes.entregas_contratista.id_transaccion")
-            ->where("transacciones.id_empresa","=",$id_empresa)
-            ->select("entregas_contratista.numero_folio")
-            ->orderBy('entregas_contratista.numero_folio', 'DESC')->first();
-        */
-        $complemento = self::join('dbo.transacciones', 'transacciones.id_transaccion','Compras.solicitud_complemento.id_transaccion')
+        $consecutivo = self::join('dbo.transacciones', 'transacciones.id_transaccion','Compras.solicitud_complemento.id_transaccion')
             ->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)
-            ->where('id_obra', '=', Context::getIdObra())->get();
-        dd($complemento);
-        dd($this->whereHas('solicitud', function ($q){
-            return $q->where('id_obra', '=', Context::getIdObra());
-        })->first());
-
-        $count = $this->where('id_are3a_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
-      //  dd($this, $count);
-        $count++;
-//dd("pas");
+            ->where('id_obra', '=', Context::getIdObra())->count();
         $tipo= CtgTipo::find($this->id_tipo);
         $area_compradora = CtgAreaCompradora::find($this->id_area_compradora);
-
-        $folio=$area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.$count;
-
-        return $folio;
+        return $area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.($consecutivo+1);
     }
 
     public function generarActivoFijo()
