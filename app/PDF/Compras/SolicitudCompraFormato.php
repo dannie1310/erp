@@ -55,19 +55,20 @@ class SolicitudCompraFormato extends Rotation
         $this->txtSeccionTam = 9;
         $this->txtContenidoTam = 11;
         $this->txtFooterTam = 6;
-        $this->encabezado_pdf = utf8_decode('SOLICITUD DE COMPRA');
+        $this->encabezado_pdf = $this->solicitud->encabezado_pdf;
         $this->createQR();
     }
 
     function Header()
     {
-        $this->setXY(1, 2);
-        $this->SetFont('Arial', 'B', 24);
-        $this->CellFitScale(1* $this->WidthTotal, 0.1, $this->encabezado_pdf, '', 'CB');
+        $this->setXY(1, 1.5);
+        $this->SetFont('Arial', 'B', 18);
+        $this->MultiCell(12.5,"0.7",utf8_decode($this->encabezado_pdf),0,"C"); //(1* $this->WidthTotal, 0.1, utf8_decode($this->encabezado_pdf), '', 'CB');
 
+        $this->setY(2);
         //Obtener Posiciones despues de los títulos
         $y_inicial = $this->getY() - 1;
-        $x_inicial = $this->GetPageWidth() / 1.48;
+        $x_inicial = 14;
         $this->setY($y_inicial);
         $this->setX($x_inicial);
 
@@ -103,7 +104,7 @@ class SolicitudCompraFormato extends Rotation
 
         //Obtener Y después de la tabla
         $this->setY($y_final);
-        $this->Ln(1);
+        $this->Ln(0.5);
 
         $this->SetFont('Arial', 'B', 13);
 
