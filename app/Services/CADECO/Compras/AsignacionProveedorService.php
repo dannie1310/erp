@@ -151,10 +151,6 @@ class AsignacionProveedorService
             $transaccion_cotizacion = '';
             $orden_c = null;
             foreach($partidas as $partida){
-                if($partida->con_orden_compra){
-                    continue;
-                }
-
 
                 if(!$orden_c = OrdenCompra::where('id_antecedente', '=', $partida->cotizacionCompra->id_antecedente)
                                         ->where('id_referente', '=', $partida->cotizacionCompra->id_transaccion)
