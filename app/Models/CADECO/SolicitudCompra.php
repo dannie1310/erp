@@ -134,6 +134,22 @@ class SolicitudCompra extends Transaccion
         return $comentario[1];
     }
 
+    public function getEncabezadoPDFAttribute()
+    {
+        if($this->complemento)
+        {
+            if($this->complemento->tipo->id == 4 || $this->complemento->tipo->id == 2)
+            {
+                $encabezado = 'SOLICITUD DE '.strtoupper($this->complemento->tipo->descripcion);
+            } else {
+                $encabezado = 'SOLICITUD DE ADQUISICIÓN DE '. strtoupper($this->complemento->tipo->descripcion);
+            }
+        } else {
+            $encabezado = "SOLICITUD DE ADQUISICIÓN";
+        }
+        return $encabezado;
+    }
+
 
     /**
      * Métodos

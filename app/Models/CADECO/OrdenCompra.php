@@ -219,6 +219,22 @@ class OrdenCompra extends Transaccion
         return 0;
     }
 
+    public function getEncabezadoPDFAttribute()
+    {
+        if($this->solicitud->complemento)
+        {
+            if($this->solicitud->complemento->tipo->id == 4 || $this->solicitud->complemento->tipo->id == 2)
+            {
+                $encabezado = strtoupper($this->solicitud->complemento->tipo->descripcion);
+            } else {
+                $encabezado = 'ORDEN DE COMPRA DE '. strtoupper($this->solicitud->complemento->tipo->descripcion);
+            }
+        } else {
+            $encabezado = "ORDEN DE COMPRA";
+        }
+        return $encabezado;
+    }
+
     /**
      * Métodos
      */

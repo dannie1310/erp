@@ -68,15 +68,15 @@ class OrdenCompraFormato extends Rotation
      */
     public function __construct($ordenCompra)
     {
-        parent::__construct('P', 'cm', 'A4');
+        parent::__construct('P', 'cm', 'Letter');
 
         $this->obra = Obra::find(Context::getIdObra());
 
         $this->id_oc=$ordenCompra;
-        if(!(empty($this->ordenCompra[0]->complemento->fecha_entrega))){
-            $this->domicilio=$this->ordenCompra[0]->complemento->domicilio_entrega;
-            $this->plazo=$this->ordenCompra[0]->complemento->plazos_entrega_ejecucion;
-            $this->condiciones=$this->ordenCompra[0]->complemento->otras_condiciones;
+        if(!(empty($this->ordenCompra->complemento->fecha_entrega))){
+            $this->domicilio=$this->ordenCompra->complemento->domicilio_entrega;
+            $this->plazo=$this->ordenCompra->complemento->plazos_entrega_ejecucion;
+            $this->condiciones=$this->ordenCompra->complemento->otras_condiciones;
             $this->descuento=$this->complemento[0]->descuento;
         }else{
             $this->domicilio='';
@@ -85,20 +85,20 @@ class OrdenCompraFormato extends Rotation
             $this->descuento='';
         }
 
-        $this->ordenCompra = OrdenCompra::with('solicitud','partidas','complemento','solicitud')->where('id_transaccion', '=', $ordenCompra)->get();
-        $this->fecha = substr($this->ordenCompra[0]->fecha, 0, 10);
-        $this->id_antecedente=$this->ordenCompra[0]->id_antecedente;
+        $this->ordenCompra = OrdenCompra::with('solicitud','partidas','complemento')->where('id_transaccion', '=', $ordenCompra)->first();
+        $this->fecha = substr($this->ordenCompra->fecha, 0, 10);
+        $this->id_antecedente=$this->ordenCompra->id_antecedente;
 
-        $this->sucursal=Sucursal::where('id_sucursal','=',$this->ordenCompra[0]->id_sucursal )->get();
+        $this->sucursal=Sucursal::where('id_sucursal','=',$this->ordenCompra->id_sucursal )->get();
         $this->sucursal_direccion=$this->sucursal[0]->direccion;
         $this->id_empresa=$this->sucursal[0]->id_empresa;
         $this->empresa=Empresa::where('id_empresa','=',$this->id_empresa)->get();
         $this->empresa_nombre=$this->empresa[0]->razon_social;
         $this->empresa_rfc=$this->empresa[0]->rfc;
 
-        $versiones = OrdenCompra::where('id_transaccion', '=', $this->ordenCompra[0]->id_transaccion)->count();
-        $this->folio_sao = $this->ordenCompra[0]->numero_folio_format;
-        $this->requisicion_folio_sao =str_pad($this->ordenCompra[0]->solicitud->numero_folio_format, 5, '0', STR_PAD_LEFT);
+        $versiones = OrdenCompra::where('id_transaccion', '=', $this->ordenCompra->id_transaccion)->count();
+        $this->folio_sao = $this->ordenCompra->numero_folio_format;
+        $this->requisicion_folio_sao =str_pad($this->ordenCompra->solicitud->numero_folio_format, 5, '0', STR_PAD_LEFT);
         $this->obra_nombre = $this->obra->nombre;
 
 
@@ -120,14 +120,14 @@ class OrdenCompraFormato extends Rotation
             }
             switch (Context::getDatabase()) {
                 case "SAO1814_SPM_MOBILIARIO":
-                    $this->archivo = $this->ordenCompra[0]->complemento->con_fianza == 0 ? 'ClausuladoHSPMSF.jpg' : 'ClausuladoHSPM.jpg';
+                    $this->archivo = $this->ordenCompra->complemento->con_fianza == 0 ? 'ClausuladoHSPMSF.jpg' : 'ClausuladoHSPM.jpg';
                     break;
                 case "SAO1814_MUSEO_BARROCO":
-                    $this->archivo = $this->ordenCompra[0]->complemento->con_fianza == 0 ? 'ClausuladoMIBSF.jpg' : 'ClausuladoMIB.jpg';
+                    $this->archivo = $this->ordenCompra->complemento->con_fianza == 0 ? 'ClausuladoMIBSF.jpg' : 'ClausuladoMIB.jpg';
                     break;
                 case "SAO1814_HOTEL_DREAMS_PM":
                     if (Context::getId() == 1) {
-                        switch ($this->ordenCompra[0]->complemento->con_fianza) {
+                        switch ($this->ordenCompra->complemento->con_fianza) {
                             case 0:
                                 $this->archivo = "ClausuladoDreamsSF_COD.jpg";
                                 break;
@@ -151,7 +151,7 @@ class OrdenCompraFormato extends Rotation
                                 break;
                         }
                     } else {
-                        switch ($this->ordenCompra[0]->complemento->con_fianza) {
+                        switch ($this->ordenCompra->complemento->con_fianza) {
                             case 0:
                                 $this->archivo = "ClausuladoDreamsSF.jpg";
                                 break;
@@ -193,16 +193,7 @@ class OrdenCompraFormato extends Rotation
         $this->clausulado_page=public_path('pdf/clausulados/'.$this->archivo);
         $this->SetAutoPageBreak(true, 3);
         $this->sin_texto=public_path('pdf/clausulados/SinTexto.jpg');
-
-
-//        $this->clausulado_page = $this->setSourceFile(public_path('pdf/clausulados/MDD.pdf'));
-//        $this->clausulado_page = $this->setSourceFile(public_path('pdf/clausulados/' . $this->archivo));
-//
-//        $this->SetAutoPageBreak(true, 3);
-//       $this->clausulado=$this->importPage($this->clausulado_page );
-//
-//        $this->setSourceFile(public_path('pdf/clausulados/SinTexto.pdf'));
-//        $this->sin_texto =  $this->importPage(1);
+        $this->NuevoClausulado=2;
 
     }
 
@@ -211,36 +202,34 @@ class OrdenCompraFormato extends Rotation
         $residuo = $this->PageNo() % 2;
 
         if ($residuo > 0) {
-            $postTitle = .7;
+            //Es par
 
+            $x_f = 13.5;
 
-            $this->Cell(11.5);
-            $x_f = $this->GetX();
-            $y_f = $this->GetY();
+            $this->setXY(1, 1);
+            $this->SetFont('Arial', 'B', 18);
+            $this->MultiCell(13,"0.7",utf8_decode($this->ordenCompra->encabezado_pdf),0,"C");
+
+            $this->setXY(13.5, 1);
 
 
             $this->SetTextColor('0,0,0');
             $this->SetFont('Arial', 'B', 14);
-            $this->Cell(4.5, .7, utf8_decode('NÚMERO '), 'LT', 0, 'L');
+            $this->Cell(3.5, .7, utf8_decode('NÚMERO '), 'LT', 0, 'L');
             $this->Cell(3.5, .7, $this->folio_sao, 'RT', 0, 'L');
             $this->Ln(.7);
             $y_f = $this->GetY();
 
-            $this->SetFont('Arial', 'B', 24);
-            $this->Cell(11.5, $postTitle, 'ORDEN DE COMPRA ', 0, 0, 'C', 0);
-            $this->Ln();
-
-
-
             $this->SetY($y_f);
             $this->SetX($x_f);
             $this->SetFont('Arial', 'B', 10);
-            $this->Cell(4.5, .7, 'FECHA ', 'L', 0, 'L');
+            $this->Cell(3.5, .7, 'FECHA ', 'L', 0, 'L');
             $this->Cell(3.5, .7, date("d-m-Y", strtotime($this->fecha)) . ' ', 'R', 0, 'L');
             $this->Ln(.7);
 
-            $this->Cell(11.5);
-            $this->Cell(4.5, .7, 'SOLICITUD ', 'LB', 0, 'L');
+            $this->SetX($x_f);
+
+            $this->Cell(3.5, .7, 'SOLICITUD ', 'LB', 0, 'L');
             $this->Cell(3.5, .7, $this->requisicion_folio_sao . ' ', 'RB', 1, 'L');
             $this->Ln(.5);
 
@@ -341,11 +330,7 @@ class OrdenCompraFormato extends Rotation
                 $this->SetWidths([19.5]);
                 $this->SetAligns(['J']);
             }
-//            } else if ($this->encola == "centro_costo") {
-//                $this->SetRadius([0]);
-//                $this->SetTextColors(['0,0,0']);
-//                $this->SetWidths([19.5]);
-//                $this->SetAligns(['J']);
+
             else if ($this->encola == "observaciones_encabezado") {
                 $this->SetWidths([19.5]);
                 $this->SetRounds(['12']);
@@ -367,161 +352,106 @@ class OrdenCompraFormato extends Rotation
                 $this->SetWidths([19.5]);
             }
         } else {
+            //Es non y lleva clausulado o sin texto
             if ($this->NuevoClausulado == 1) {
 
-//                $this->SetTextColor('0,0,0');
-//                $this->SetFont('Arial', 'B', 10);
-//
-//                $this->Cell(10);
-//                $this->CellFitScale(4.6, .7, utf8_decode('OBRA: '), '', 0, 'R');
-//                $this->CellFitScale(5, .7,   $this->obra_nombre  . ' ', 'LRT', 0, 'L');
-//                $this->Ln(.5);
-//
-//
-//                $this->Cell(10);
-//                $this->CellFitScale(4.6, .7, utf8_decode('FECHA: '), '', 0, 'R');
-//                $this->CellFitScale(5, .7, date("d-m-Y", strtotime($this->fecha)) . ' ', 'LR', 0, 'L');
-//                $this->Ln(.5);
-//
-//                $this->Cell(10);
-//                $this->CellFitScale(4.6, .5, utf8_decode('NÚMERO: '), '', 0, 'R');
-//                $this->CellFitScale(5, .5,  $this->folio_sao . ' ', 'LRB', 0, 'L');
                 $this->Ln(.5);
-
-
-                // -----------------------   pie
                 $this->Ln(19.5);
 
                 $this->SetFont('Arial', 'B', 4);
                 $this->image($this->sin_texto, 0, 5, 21);
-//                $this->Cell(10);
-//                $this->Cell(4.6, .5, utf8_decode('"EL CLIENTE"'), 'LT', 0, 'C');
-//                $this->Cell(5, .5, utf8_decode('"EL PROVEEDOR"'), 'LRT', 0, 'C');
                 $this->Ln(.4);
-
-
-//                $this->Cell(10);
-//                $this->CellFitScale(4.6, 1.6, '   ____________________________________________   ', 'LT', 0, 'C');
-//                $this->CellFitScale(5, 1.6, '   ____________________________________________   ', 'LTR', 0, 'C');
-//                $this->Ln(1);
-//
-//
-//                $this->Cell(10);
-//                $this->CellFitScale(4.6, .4, utf8_decode($this->ordenCompra[0]->obra->facturar), 'LT', 0, 'C');
-//                $this->CellFitScale(5, .4, utf8_decode($this->ordenCompra[0]->empresa->razon_social), 'LTR', 0, 'C');
-//                $this->Ln(.4);
-//
-//
-//                $this->Cell(10);
-//                $this->Cell(4.6, .2, 'APODERADO LEGAL, FACTOR o', 'LTR', 0, 'C');
-//                $this->Cell(5, .2, 'APODERADO LEGAL, FACTOR o', 'RT', 0, 'C');
-//                $this->Ln(.2);
-//
-//                $this->Cell(10);
-//
-//                $this->Cell(4.6, .2, 'DEPENDIENTE', 'LB', 0, 'C');
-//                $this->Cell(5, .2, 'DEPENDIENTE', 'LRB', 0, 'C');
                 $this->Ln(.2);
-//                $this->Ln(.7);
-//                $this->Ln(.8);
-//                $this->Ln(.8);
-//                $this->Ln(.8);
-//                $x_f = $this->GetX();
-//                $y_f = $this->GetY();
-//                $this->Cell(20,10);
-//                $this->SetTextColor('0,0,0');
-//                $this->SetFont('Arial', 'B', 14);
-//                $this->Cell(4.5, .7, utf8_decode('NÚMERO '), 'LT', 0, 'L');
-//                $this->Cell(3.5, .7, $this->folio_sao, 'RT', 0, 'L');
 
 
             }else if ($this->NuevoClausulado==2){
                 $this->SetTextColor('0,0,0');
                 $this->SetFont('Arial', 'B', 10);
 
-                $this->Cell(11.5);
-                $this->Cell(3, .7, utf8_decode('NÚMERO OC: '), 'LT', 0, 'L');
-                $this->Cell(5, .7, $this->folio_sao . ' ', 'RT', 0, 'L');
+                $this->setX(14);
+                $this->Cell(2.5, .7, utf8_decode('NÚMERO: '), 'LT', 0, 'L');
+                $this->Cell(4, .7, $this->folio_sao . ' ', 'RT', 0, 'L');
                 $this->Ln(.5);
 
-                $this->Cell(11.5);
-                $this->Cell(3, .7, utf8_decode('OBRA: '), 'L', 0, 'L');
-                $this->Cell(5, .7, $this->obra_nombre  . ' ', 'R', 0, 'L');
-                $this->Ln(.5);
-
-                $this->SetFont('Arial', 'B', 10);
-                $this->Cell(11.5);
-                $this->Cell(3, .5, 'FECHA: ', 'L', 0, 'L');
-                $this->Cell(5, .5, date("d-m-Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
+                $this->setX(14);
+                $this->Cell(2.5, .7, utf8_decode('OBRA: '), 'L', 0, 'L');
+                $this->Cell(4, .7, $this->obra_nombre  . ' ', 'R', 0, 'L');
                 $this->Ln(.5);
 
                 $this->SetFont('Arial', 'B', 10);
-                $this->Cell(11.5);
-                $this->Cell(3, .5, 'SOLICITUD: ', 'L', 0, 'L');
-                $this->Cell(5, .5, $this->requisicion_folio_sao   . ' ', 'R', 0, 'L');
+                $this->setX(14);
+                $this->Cell(2.5, .5, 'FECHA: ', 'L', 0, 'L');
+                $this->Cell(4, .5, date("d-m-Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
                 $this->Ln(.5);
 
-                $this->Cell(11.5);
-                $this->Cell(4.5, .5, 'TOTAL: ', 'LB', 0, 'L');
-                $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra[0]->monto, 2, '.', ','), 'RB', 1, 'L');
+                $this->SetFont('Arial', 'B', 10);
+                $this->setX(14);
+                $this->Cell(2.5, .5, 'SOLICITUD: ', 'L', 0, 'L');
+                $this->Cell(4, .5, $this->requisicion_folio_sao   . ' ', 'R', 0, 'L');
                 $this->Ln(.5);
+
+                $this->setX(14);
+                $this->Cell(2.5, .5, 'TOTAL: ', 'LB', 0, 'L');
+                $this->Cell(4, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
+                $this->Ln(.5);
+                $this->image($this->clausulado_page, 0, 3.1, 21);
             }
             else {
                 if (\Ghi\Core\Facades\Context::getDatabaseName() == "SAO1814_TERMINAL_NAICM") {
                     $this->SetTextColor('0,0,0');
                     $this->SetFont('Arial', 'B', 10);
 
-                    $this->Cell(11.5);
+                    $this->setX(13.5);
                     $this->Cell(3, .7, utf8_decode('NO. OC: '), 'LT', 0, 'L');
-                    $this->Cell(5, .7, $this->ordenCompra[0]->numero_folio . ' ', 'RT', 0, 'L');
+                    $this->Cell(5, .7, $this->ordenCompra->numero_folio . ' ', 'RT', 0, 'L');
                     $this->Ln(.5);
 
-                    $this->Cell(11.5);
+                    $this->setX(13.5);
                     $this->Cell(3, .7, utf8_decode('OBRA: '), 'L', 0, 'L');
                     $this->Cell(5, .7, $this->obra_nombre  . ' ', 'R', 0, 'L');
                     $this->Ln(.5);
 
                     $this->SetFont('Arial', 'B', 10);
-                    $this->Cell(11.5);
+                    $this->setX(13.5);
                     $this->Cell(3, .5, 'FECHA: ', 'L', 0, 'L');
                     $this->Cell(5, .5, date("d-m-Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
                     $this->Ln(.5);
 
                     $this->SetFont('Arial', 'B', 10);
-                    $this->Cell(11.5);
+                    $this->setX(13.5);
                     $this->Cell(3, .5, 'NO. SOLICITUD: ', 'L', 0, 'L');
                     $this->Cell(5, .5, $this->folio_sao  . ' ', 'R', 0, 'L');
                     $this->Ln(.5);
 
-                    $this->Cell(11.5);
+                    $this->setX(13.5);
                     $this->Cell(4.5, .5, 'TOTAL: ', 'LB', 0, 'L');
-                    $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra[0]->monto, 2, '.', ','), 'RB', 1, 'L');
+                    $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
                     $this->Ln(.5);
                 } else {
                     $this->SetTextColor('0,0,0');
                     $this->SetFont('Arial', 'B', 14);
 
-                    $this->Cell(11.5);
-                    $this->Cell(4.5, .7, utf8_decode('NÚMERO OC '), 'LT', 0, 'L');
-                    $this->Cell(3.5, .7, $this->ordenCompra[0]->numero_folio . ' ', 'RT', 0, 'L');
+                    $this->setX(13.5);
+                    $this->Cell(2.5, .7, utf8_decode('NÚMERO:'), 'LT', 0, 'L');
+                    $this->Cell(3.5, .7, $this->ordenCompra->numero_folio . ' ', 'RT', 0, 'L');
                     $this->Ln(.7);
 
 
                     $this->SetFont('Arial', 'B', 10);
-                    $this->Cell(11.5);
-                    $this->Cell(4.5, .5, 'FECHA ', 'L', 0, 'L');
+                    $this->setX(13.5);
+                    $this->Cell(2.5, .5, 'FECHA: ', 'L', 0, 'L');
                     $this->Cell(3.5, .5, date("d-m-Y", strtotime($this->fecha)) . ' ', 'R', 0, 'L');
                     $this->Ln(.5);
 
                     $this->SetFont('Arial', 'B', 10);
-                    $this->Cell(11.5);
-                    $this->Cell(4.5, .5, 'SOLICITUD ', 'L', 0, 'L');
+                    $this->setX(13.5);
+                    $this->Cell(2.5, .5, 'SOLICITUD: ', 'L', 0, 'L');
                     $this->Cell(3.5, .5, $this->folio_sao  . ' ', 'R', 0, 'L');
                     $this->Ln(.5);
 
-                    $this->Cell(11.5);
-                    $this->Cell(4.5, .5, 'TOTAL ', 'LB', 0, 'L');
-                    $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra[0]->monto, 2, '.', ','), 'RB', 1, 'L');
+                    $this->setX(13.5);
+                    $this->Cell(2.5, .5, 'TOTAL: ', 'LB', 0, 'L');
+                    $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'R');
                     $this->Ln(.5);
                 }
             }
@@ -537,22 +467,22 @@ class OrdenCompraFormato extends Rotation
 
         // Declara variables a usar.
         $id_costo="";
-        $id_costo = $this->ordenCompra[0]->id_costo;
+        $id_costo = $this->ordenCompra->id_costo;
         if(empty($id_costo)){
             $id_costo='';
         }
-        $total = $this->ordenCompra[0]->monto;
-        $moneda = Moneda::where('id_moneda', '=', $this->ordenCompra[0]->id_moneda)->first()->nombre;
-        $cambio = Cambio::where('id_moneda', '=', $this->ordenCompra[0]->id_moneda)->where('fecha', '=',$this->ordenCompra[0]->fecha)->first();
+        $total = $this->ordenCompra->monto;
+        $moneda = Moneda::where('id_moneda', '=', $this->ordenCompra->id_moneda)->first()->nombre;
+        $cambio = Cambio::where('id_moneda', '=', $this->ordenCompra->id_moneda)->where('fecha', '=',$this->ordenCompra->fecha)->first();
         if(is_null($cambio)){
-            $cambio = Cambio::where('id_moneda','=',  $this->ordenCompra[0]->id_moneda)->orderByDesc('fecha')->first();
+            $cambio = Cambio::where('id_moneda','=',  $this->ordenCompra->id_moneda)->orderByDesc('fecha')->first();
         }
-        $tipo_cambio = $this->ordenCompra[0]->id_moneda != 1 ? $cambio->cambio : 1;
+        $tipo_cambio = $this->ordenCompra->id_moneda != 1 ? $cambio->cambio : 1;
         $total_pesos = ($total * $tipo_cambio);
-        $anticipo_monto = $this->ordenCompra[0]->anticipo_monto;
-        $iva = $this->ordenCompra[0]->impuesto;
+        $anticipo_monto = $this->ordenCompra->anticipo_monto;
+        $iva = $this->ordenCompra->impuesto;
         $subtotal = $total - $iva;
-        $anticipo_pactado_monetario = $total * $this->ordenCompra[0]->porcentaje_anticipo_pactado / 100;
+        $anticipo_pactado_monetario = $total * $this->ordenCompra->porcentaje_anticipo_pactado / 100;
 
         $descuento= 0;
         $subtotal_antes_descuento = (100 * $subtotal) / (100 - (float) $descuento);
@@ -602,7 +532,7 @@ class OrdenCompraFormato extends Rotation
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Fecha de entrega: ', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(2, .5,$this->ordenCompra[0]->complemento->fecha_entrega_format, 1, 0,'R');
+        $this->CellFitScale(2, .5,$this->ordenCompra->complemento->fecha_entrega_format, 1, 0,'R');
         $this->Ln(.7);
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
@@ -670,11 +600,9 @@ class OrdenCompraFormato extends Rotation
         $this->SetWidths([19.5]);
         $this->encola="observaciones";
 
-        $this->Row([utf8_decode($this->ordenCompra[0]->observaciones)]);
+        $this->Row([utf8_decode($this->ordenCompra->observaciones)]);
 
-        $this->NuevoClausulado=2;
         $this->AddPage();
-        $this->image($this->clausulado_page, 0, 3.1, 21);
     }
 
 
@@ -708,13 +636,13 @@ class OrdenCompraFormato extends Rotation
 
 
             if(!empty($this->destino_item[0]->id_concepto)){
-                $item_arr= Concepto::where('id_concepto','=',$this->destino_item[0]->id_concepto)->where('id_obra','=',$this->ordenCompra[0]->obra->id_obra)->get();
+                $item_arr= Concepto::where('id_concepto','=',$this->destino_item[0]->id_concepto)->where('id_obra','=',$this->ordenCompra->obra->id_obra)->get();
 
                 $this->obs_item=$item_arr[0]->descripcion;
 
             }else{
                 if(!empty($this->destino_item[0]->id_almacen)){
-                    $item_arr= Almacen::where('id_almacen','=',$this->destino_item[0]->id_almacen)->where('id_obra','=',$this->ordenCompra[0]->obra->id_obra)->get();
+                    $item_arr= Almacen::where('id_almacen','=',$this->destino_item[0]->id_almacen)->where('id_obra','=',$this->ordenCompra->obra->id_obra)->get();
                     $this->obs_item=$item_arr[0]->descripcion;
                 }else{
                     $this->obs_item='';
@@ -804,7 +732,7 @@ class OrdenCompraFormato extends Rotation
 
         // Firmas.
         if ($residuo > 0) {
-            if (Context::getDatabase() == "SAO1814" && $this->ordenCompra[0]->obra->id_obra == 41) {
+            if (Context::getDatabase() == "SAO1814" && $this->ordenCompra->obra->id_obra == 41) {
                 $this->SetY(-4.5);
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(180, 180, 180);
@@ -833,7 +761,7 @@ class OrdenCompraFormato extends Rotation
                 $this->Cell(3.92, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
 
-            } else if (Context::getDatabase() == "SAO1814_SPM_MOBILIARIO" && $this->ordenCompra[0]->obra->id_obra == 1) {
+            } else if (Context::getDatabase() == "SAO1814_SPM_MOBILIARIO" && $this->ordenCompra->obra->id_obra == 1) {
                 $this->SetY(-3.5);
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(180, 180, 180);
@@ -841,9 +769,9 @@ class OrdenCompraFormato extends Rotation
                 $this->CellFitScale(6.53, .4, utf8_decode('Gerente de Procuración'), 'TRLB', 0, 'C', 1);
                 $this->CellFitScale(6.53, .4, utf8_decode('Facturar a:'), 'TRLB', 0, 'C', 1);
                 $this->Ln();
-                $this->CellFitScale(6.53, .4, utf8_decode($this->ordenCompra[0]->empresa->razon_social), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(6.53, .4, utf8_decode($this->ordenCompra->empresa->razon_social), 'TRLB', 0, 'C', 1);
                 $this->CellFitScale(6.53, .4, '', 'TRLB', 0, 'C', 1);
-                $this->CellFitScale(6.53, .4, utf8_decode($this->ordenCompra[0]->obra->facturar), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(6.53, .4, utf8_decode($this->ordenCompra->obra->facturar), 'TRLB', 0, 'C', 1);
                 $this->Ln();
 
                 $this->CellFitScale(6.53, 1.2, '', 'TRLB', 0, 'C');
@@ -875,7 +803,7 @@ class OrdenCompraFormato extends Rotation
                 $this->Ln();
                 $this->CellFitScale(4.89, .4, utf8_decode($this->ordenCompra->empresa->razon_social), 'TRLB', 0, 'C', 1);
                 $this->CellFitScale(4.89, .4, '', 'TRLB', 0, 'C', 1);
-                $this->CellFitScale(9.78, .4, utf8_decode($this->ordenCompra[0]->obra->facturar), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(9.78, .4, utf8_decode($this->ordenCompra->obra->facturar), 'TRLB', 0, 'C', 1);
                 $this->Ln();
                 $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
                 $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
@@ -973,7 +901,7 @@ class OrdenCompraFormato extends Rotation
             $this->Cell(10, .3, (''), 0, 1, 'L');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de ordenes de compra. Fecha de registro: ' . date("d-m-Y", strtotime($this->fecha))), 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de compras del SAO ERP. Fecha y hora de registro: ') . $this->ordenCompra->fecha_hora_registro_format, 0, 0, 'L');
         $this->Cell(9.5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
 
     }
@@ -990,12 +918,12 @@ class OrdenCompraFormato extends Rotation
 
     function create()
     {
-        $this->SetMargins(0.4, 0.5, 0.4);
+        $this->SetMargins(1, 0.5, 1);
         $this->AliasNbPages();
         $this->AddPage();
         $this->SetAutoPageBreak(true, 3.75);
         // Partidas.
-        $this->partidas($this->ordenCompra[0]->partidas);
+        $this->partidas($this->ordenCompra->partidas);
 
         $a= $this->PageNo()%2;
 
