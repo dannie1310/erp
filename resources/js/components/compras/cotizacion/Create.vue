@@ -209,17 +209,53 @@
                                         <label class="col-sm-2 col-form-label">Subtotal Precios Libra:</label>
                                         <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
                                     </div>
-                                    <div class=" col-md-12" align="right">
+                                    <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">TC USD:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[1].tipo_cambio_cadeco.cambio)).formatMoney(4,'.',',')}}</label>
                                     </div>
-                                    <div class=" col-md-12" align="right">
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                max="100"
+                                                name="tc_usd"
+                                                v-model="dolar"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_usd"
+                                                :class="{'is-invalid': errors.has('tc_usd')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">TC EURO:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_cadeco.cambio)).formatMoney(4,'.',',')}}</label>
                                     </div>
-                                    <div class=" col-md-12" align="right">
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                max="100"
+                                                name="tc_eur"
+                                                v-model="euro"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_eur"
+                                                :class="{'is-invalid': errors.has('tc_eur')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">TC LIBRA:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[3].tipo_cambio_cadeco.cambio)).formatMoney(4,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                max="100"
+                                                name="tc_libra"
+                                                v-model="libra"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_libra"
+                                                :class="{'is-invalid': errors.has('tc_libra')}">
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
@@ -378,6 +414,9 @@
                 dolares: 0,
                 euros: 0,
                 libras: 0,
+                dolar:0,
+                euro:0,
+                libra:0,
                 moneda_input:[],
                 sucursal: true,
                 observaciones_inputs:[],
@@ -451,6 +490,9 @@
                     params: {sort: 'id_moneda', order: 'asc',}
                     }).then(data => {
                     this.monedas = data.data;
+                    this.dolar = parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    this.libra = parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
                 }).finally(()=>{
                     this.getSolicitudes();
                 })
@@ -458,6 +500,12 @@
             salir()
             {
                  this.$router.push({name: 'cotizacion'});
+            },
+            fillMonedaInput(){
+                let self = this;
+                self.solicitud_editar.partidas.data.forEach(function(partida, i){
+                    self.moneda_input[i] = 1;
+                });
             },
             find() {
                 this.enable = [];
@@ -478,6 +526,7 @@
                 }).then(data => {
                     this.solicitud_editar = data;
                     this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
+                    this.fillMonedaInput();
                     this.cargando = false;
                 })
             },
@@ -577,6 +626,9 @@
                         this.post.importe = this.total;
                         this.post.impuesto = this.iva;
                         this.post.pendiente = this.pendiente;
+                        this.post.tc_eur = this.euro;
+                        this.post.tc_usd = this.dolar;
+                        this.post.tc_libra = this.libra;
                         this.store()
                     }
                 });
