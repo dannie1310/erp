@@ -185,12 +185,12 @@
                                                 :disabled="cargando"
                                                 type="number"
                                                 step="any"
-                                                max="100"
                                                 name="tc_usd"
                                                 v-model="dolar"
                                                 v-validate="{required: true}"
                                                 class="col-sm-6 form-control"
                                                 id="tc_usd"
+                                                @change ="actualizaTC(2)"
                                                 :class="{'is-invalid': errors.has('tc_usd')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
@@ -201,12 +201,12 @@
                                                 :disabled="cargando"
                                                 type="number"
                                                 step="any"
-                                                max="100"
                                                 name="tc_eur"
                                                 v-model="euro"
                                                 v-validate="{required: true}"
                                                 class="col-sm-6 form-control"
                                                 id="tc_eur"
+                                                @change ="actualizaTC(3)"
                                                 :class="{'is-invalid': errors.has('tc_eur')}">
                                     </div>
                                      <div class=" col-md-10" align="right">
@@ -217,12 +217,12 @@
                                                 :disabled="cargando"
                                                 type="number"
                                                 step="any"
-                                                max="100"
                                                 name="tc_libra"
                                                 v-model="libra"
                                                 v-validate="{required: true}"
                                                 class="col-sm-6 form-control"
                                                 id="tc_libra"
+                                                @change ="actualizaTC(4)"
                                                 :class="{'is-invalid': errors.has('tc_libra')}">
                                     </div>
                                     <div class=" col-md-12" align="right">
@@ -432,6 +432,20 @@
             this.$validator.reset();
         },
         methods : {
+            actualizaTC(index){
+                switch (index){
+                    case 2:
+                        this.tipo_cambio[index] = this.dolar;
+                        break;
+                    case 3:
+                        this.tipo_cambio[index] = this.euro;
+                        break;
+                    case 4:
+                        this.tipo_cambio[index] = this.libra;
+                        break;
+                }
+                this.calcular();
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
@@ -486,6 +500,7 @@
                 this.pesos = 0;
                 this.dolares = 0;
                 this.euros = 0;
+                this.libras = 0;
                 while(this.x < this.cotizacion.partidas.data.length)
                 {
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
