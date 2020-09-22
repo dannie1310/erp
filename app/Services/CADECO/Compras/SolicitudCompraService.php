@@ -118,7 +118,7 @@ class SolicitudCompraService
 
     public function delete($data, $id)
     {
-        return $this->repository->delete($data['data'], $id);
+        return $this->repository->show($id)->eliminar($data['data']);
     }
 
     public function show($id)
