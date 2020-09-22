@@ -15,6 +15,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
+use Illuminate\Support\Facades\App;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SolicitudCompraFormato extends Rotation
@@ -427,6 +428,13 @@ RFC: ' . $this->obra->rfc), '', 'J');
 
     function Footer()
     {
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',80);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,21,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $this->firmas();
 
         $this->SetY(-3.8);
