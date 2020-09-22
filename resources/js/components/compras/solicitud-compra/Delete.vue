@@ -174,10 +174,12 @@
                     params: {data: this.$data.motivo}
                 })
                     .then(data => {
+                        this.motivo = ''
                         this.$store.commit('compras/solicitud-compra/DELETE_SOLICITUD', {id: this.id})
                         $(this.$refs.modal).modal('hide');
                         this.$store.dispatch('compras/solicitud-compra/paginate', {
                             params: {
+                                scope: 'areasCompradorasAsignadas', include: 'complemento',
                                 sort: 'numero_folio', order: 'DESC'
                             }
                         })
