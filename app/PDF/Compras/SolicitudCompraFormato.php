@@ -348,10 +348,11 @@ RFC: ' . $this->obra->rfc), '', 'J');
                 }
             }
         }
+        $this->SetY(-5.35);
         $this->SetFont('Arial', '', 6);
         if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
             //if(true){
-            $this->SetY(-7);
+
             $this->SetFont('Arial', '', 6);
             $this->SetFillColor(180, 180, 180);
             $this->Cell(4.8, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
@@ -379,7 +380,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->Cell(5, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
             $this->Cell(5, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
         }else if(Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3){
-            $this->SetY(-7);
+
             $this->SetFont('Arial', '', 6);
             $this->SetFillColor(255, 255, 255);
             //$this->Cell(4, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
@@ -402,7 +403,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 0);
             $this->Cell(5, .4, '', 'TRLB', 0, 'C', 0);
         }else{
-            $this->SetY(-6);
+
 
             $this->CellFitScale(6, .5, utf8_decode('Solicitó'), 1, 0, 'C');
             $this->Cell(.7);
@@ -419,31 +420,6 @@ RFC: ' . $this->obra->rfc), '', 'J');
 
         }
 
-
-        /*$this->SetTextColor('0', '0', '0');
-        $this->SetFont('Arial', '', 6);
-        $this->SetFillColor(180, 180, 180);
-        $this->SetY(-6);
-
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-
-        $this->SetY(-5.59);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 1.2, '', 'TRLB', 0, 'C');
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 1.2, '', 'TRLB', 0, 'C');
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 1.2, '', 'TRLB', 0, 'C');
-
-        $this->SetY(-4.4);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);*/
     }
 
     function Footer()
@@ -503,7 +479,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
        $this->SetMargins(1, 0.5, 1);
        $this->AliasNbPages();
        $this->AddPage();
-       $this->SetAutoPageBreak(true,3.75);
+       $this->SetAutoPageBreak(true,5.5);
        $this->partidas();
 
        try {
