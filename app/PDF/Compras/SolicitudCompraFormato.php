@@ -291,14 +291,16 @@ RFC: ' . $this->obra->rfc), '', 'J');
             }
 
             /*Observaciones de partida*/
-            $this->SetRounds(['4','','','','','','3']);
-            $this->SetRadius([0,0,0,0,0,0,0,0,0]);
-            $this->SetWidths([19.5]);
-            $this->SetAligns(['L']);
+            if($item->complemento->observaciones != "") {
+                $this->SetRounds(['4','','','','','','3']);
+                $this->SetRadius([0,0,0,0,0,0,0,0,0]);
+                $this->SetWidths([19.5]);
+                $this->SetAligns(['L']);
 
-            if($item->complemento)
-            {
-                $this->Row([utf8_decode($item->complemento->observaciones)]);
+                if($item->complemento)
+                {
+                    $this->Row([utf8_decode($item->complemento->observaciones)]);
+                }
             }
         }
 
