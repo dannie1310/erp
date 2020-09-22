@@ -175,6 +175,9 @@ class SolicitudCompraService
                 array_key_exists($cotizacion->id_transaccion, $cotizaciones)?'': $cotizaciones[$cotizacion->id_transaccion] = array();
                 $cot = CotizacionCompraPartida::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->first();
                 if($cot && $cot->precio_unitario > 0){
+                    $descuento = $cot->descuento?number_format($cot->descuento, 2, '.', ','):0;
+                    $importe = $partida->cantidad * $cot->precio_unitario - ($partida->cantidad * $cot->precio_unitario * $descuento / 100);
+                    $t_cambio = $cot->moneda->tipo == 1?1: number_format($cot->moneda->cambio->cambio, 4, '.', '');
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = [
                         'id_material' => $cot->id_material,
                         'id_item' => $partida->id_item,
@@ -183,10 +186,10 @@ class SolicitudCompraService
                         'precio_unitario' => $cot->precio_unitario,
                         'precio_unitario_format' => '$ ' . number_format($cot->precio_unitario, 2, '.', ','),
                         'moneda' => $cot->moneda->abreviatura,
-                        'tipo_cambio' => $cot->moneda->tipo == 1?1: number_format($cot->moneda->cambio->cambio, 4, '.', ','),
-                        'importe' => 0,
-                        'importe_moneda_conversion' => 0,
-                        'descuento' => $cot->descuento?number_format($cot->descuento, 2, '.', ','):0,
+                        'tipo_cambio' => $t_cambio,
+                        'importe' => number_format($importe, 2, '.', ','),
+                        'importe_moneda_conversion' =>  number_format($importe * $t_cambio, 2, '.', ','),
+                        'descuento' => $descuento,
                     ];
                 }else{
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = null;

@@ -84,7 +84,7 @@
                                                 <td style="text-align: right" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
                                                 <td>
                                                     <span  v-if="data.cotizaciones[id_empresa].partidas[i]">
-                                                        <input v-on:change="recalcular(i)"
+                                                        <input 
                                                             type="number"
                                                             :disabled="item.cantidad_disponible == 0 && data.cotizaciones[id_empresa].partidas[i].cantidad_asignada == ''"
 
