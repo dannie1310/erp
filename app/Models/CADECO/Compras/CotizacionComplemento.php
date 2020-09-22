@@ -24,6 +24,7 @@ class CotizacionComplemento extends Model
         'importe',
         'tc_usd',
         'tc_eur',
+        'tc_libra',
         'registro',
         'timestamp_registro'
     ];
