@@ -27,8 +27,7 @@ use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Cambio;
 use Ghidev\Fpdf\Rotation;
-
-
+use Illuminate\Support\Facades\App;
 
 
 class OrdenCompraFormato extends Rotation
@@ -726,6 +725,13 @@ class OrdenCompraFormato extends Rotation
 
     public function Footer()
     {
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',80);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,21,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $residuo = $this->PageNo() % 2;
 
         $this->SetTextColor('0,0,0');
@@ -846,6 +852,7 @@ class OrdenCompraFormato extends Rotation
             } else if (Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO") {
                 $this->SetY(-2.7);
                 $this->Cell(4.5);
+                $this->SetFont('Arial', '', 6);
                 $this->CellFitScale(5, .5, utf8_decode('Jefe de Compras'), 1, 0, 'C');
                 $this->CellFitScale(5, .5, utf8_decode('Gerente Administrativo'), 1, 0, 'C');
                 $this->CellFitScale(5, .5, utf8_decode('Gerente de Proyecto'), 1, 0, 'C');
@@ -858,6 +865,7 @@ class OrdenCompraFormato extends Rotation
             } else {
 
                 if ($this->conFirmaDAF) {
+                    $this->SetFont('Arial', '', 6);
                     $this->SetY(-3.7);
                     $this->Cell(19, .5, utf8_decode("Orden de Compra no válida sin la firma de la Dirección de Administración y Finanzas."), 0, 1, "L");
                     $this->Ln(0.3);
@@ -877,6 +885,7 @@ class OrdenCompraFormato extends Rotation
                     $this->CellFitScale(4.9, 1.2, ' ', 1, 0, 'R');
 
                 } else {
+                    $this->SetFont('Arial', '', 6);
                     $this->SetY(-2.7);
                     $this->Cell(4.5);
                     $this->CellFitScale(5, .5, utf8_decode('Proveedor'), 1, 0, 'C');
