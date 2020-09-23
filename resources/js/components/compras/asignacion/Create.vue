@@ -84,7 +84,7 @@
                                                 <td style="text-align: right" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
                                                 <td>
                                                     <span  v-if="data.cotizaciones[id_empresa].partidas[i]">
-                                                        <input 
+                                                        <input
                                                             type="number" @change="recalcular(i)"
                                                             :disabled="item.cantidad_disponible == 0 && data.cotizaciones[id_empresa].partidas[i].cantidad_asignada == ''"
 
@@ -106,7 +106,6 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                
                                 <button type="button" @click="borrarVolumenes()" class="btn btn-default pull-right" style="margin-left:5px">Borrar los Volúmenes del Proveedor</button>
                                 <button type="button" @click="cargarVolumenes()" class="btn btn-default pull-right">Cargar Todos los Volúmenes a Proveedor</button>
                             </div>
@@ -153,7 +152,6 @@ export default {
                     self.data.cotizaciones[self.id_empresa].partidas[i]? self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
                     item.cantidad_disponible = parseFloat(0).toFixed(4);
                 }
-                
             });
         },
         borrarVolumenes(){
@@ -165,7 +163,6 @@ export default {
                         item.cantidad_disponible = parseFloat(item.cantidad_base).toFixed(4);
                     }
                 }
-                
             });
         },
         cerrar(){
@@ -196,7 +193,7 @@ export default {
             this.data = null;
             return this.$store.dispatch('compras/solicitud-compra/index', {
                 params: {
-                    scope: ['cotizacion'],
+                    scope: ['cotizacion', 'conComplemento'],
                     limit: 200,
                     order: 'DESC',
                     sort: 'numero_folio'
