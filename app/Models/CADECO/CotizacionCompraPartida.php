@@ -102,6 +102,25 @@ class CotizacionCompraPartida extends Model
         }
     }
 
+    public function getPrecioUnitarioCompuestoAttribute()
+    {
+        switch ($this->id_moneda)
+        {
+            case (1):
+                return $this->precio_compuesto;
+                break;
+            case (2):
+                return ($this->cotizacion->complemento) ? $this->precio_compuesto * $this->cotizacion->complemento->tc_usd : $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            case (3):
+                return ($this->cotizacion->complemento) ? $this->precio_compuesto * $this->cotizacion->complemento->tc_eur : $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            case (4):
+                return ($this->cotizacion->complemento) ? $this->precio_compuesto * $this->cotizacion->complemento->tc_libra : $this->precio_compuesto * $this->tipo_cambio;
+                break;
+        }
+    }
+
     public function getPrecioCompuestoAttribute()
     {
         return $this->descuento != 0 ? $this->precio_unitario - ($this->precio_unitario * $this->descuento / 100) : $this->precio_unitario;
