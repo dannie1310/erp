@@ -586,12 +586,12 @@ class CotizacionCompra  extends Transaccion
                     $partidas[$p->id_material]['cotizaciones'][$cont]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
                     $partidas[$p->id_material]['cotizaciones'][$cont]['descuento_partida'] = $p->partida ? $p->partida->descuento_partida : 0;
                     $partidas[$p->id_material]['cotizaciones'][$cont]['observaciones'] = $p->partida ? $p->partida->observaciones : '';
-                    $partidas[$p->id_material]['cotizaciones'][$cont]['calculo_ki'] = $this->calcular_ki($p->precio_unitario_compuesto, $p->total_precio_moneda);
                 }
             }
         }
         foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
             $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
+            $cotizaciones[$cont]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cont]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
         }
         return [
             'cotizaciones' => $cotizaciones,
