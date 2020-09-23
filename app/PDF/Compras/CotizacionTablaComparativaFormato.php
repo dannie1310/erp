@@ -5,12 +5,8 @@ namespace App\PDF\Compras;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\Cambio;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Obra;
-use App\Models\CADECO\SolicitudCompra;
-use App\Models\CADECO\Transaccion;
-use App\Models\IGH\TipoCambio;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
 use Illuminate\Support\Facades\App;
