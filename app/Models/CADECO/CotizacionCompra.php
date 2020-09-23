@@ -593,7 +593,7 @@ class CotizacionCompra  extends Transaccion
             }
         }
         foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
-            $cotizaciones[$cont]['ivg_partida'] = number_format($this->calcular_ivg($precios, $cotizacion->partidas) * 100, '2', '.', ',');
+            $cotizaciones[$cont]['ivg_partida'] =$this->calcular_ivg($precios, $cotizacion->partidas);
         }
         return [
             'cotizaciones' => $cotizaciones,
@@ -608,7 +608,7 @@ class CotizacionCompra  extends Transaccion
             foreach ($partidas_cotizacion as $partida) {
                 $ivg += $partida->precio_unitario > 0 ? $this->calcular_ki($partida->precio_unitario_compuesto, $precios[$partida->id_material]) : 0;
             }
-            return count($partidas_cotizacion->toArray()) > 0 ? $ivg : -1;
+            return $partidas_cotizacion->count() > 0 ? $ivg : -1;
         }
         return -1;
     }

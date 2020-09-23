@@ -199,13 +199,8 @@ class CotizacionTablaComparativaFormato extends Rotation
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     $ki = 0;
                     if ($partida['cotizaciones'][$i]['precio_unitario'] > 0) {
-                        if ($partida['cotizaciones'][$i]['calculo_ki'] == 0) {
-                            $this->SetFillColor(150, 150, 150);
-                            $this->SetTextColor(0, 0, 0);
-                        } else {
                             $this->SetFillColor(255, 255, 255);
                             $this->SetTextColor(0, 0, 0);
-                        }
                     }else {
                         $this->SetFillColor(200, 200, 200);
                         $this->SetTextColor(200, 200, 200);
