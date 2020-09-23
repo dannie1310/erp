@@ -596,6 +596,7 @@ class CotizacionCompra  extends Transaccion
         return [
             'cotizaciones' => $cotizaciones,
             'partidas' => $partidas,
+            'precios_menores' => $precios
         ];
     }
 
@@ -611,7 +612,7 @@ class CotizacionCompra  extends Transaccion
         return -1;
     }
 
-    private function calcular_ki($precio, $precio_menor)
+    public function calcular_ki($precio, $precio_menor)
     {
         return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
     }
