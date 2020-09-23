@@ -62,7 +62,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <button type="button" class="btn btn-primary pull-right" @click="generarOC"  v-if="asignaciones.asignaciones_pendientes_o_compra">Generar Ordenes de Compra</button>
+                                <button type="button" class="btn btn-primary pull-right" @click="generarOC"  v-if="asignaciones.asignaciones_pendientes_o_compra">Generar Órdenes de Compra</button>
                             </div>
                         </div>
                         <div class="row">
@@ -140,7 +140,7 @@
                     <div class="row">
                         <div class="col-12">
                             <h4>
-                                <i class="fa fa-list"></i> Ordenes de Compra Generadas
+                                <i class="fa fa-list"></i> Órdenes de Compra Generadas
                             </h4>
                         </div>
                     </div>
