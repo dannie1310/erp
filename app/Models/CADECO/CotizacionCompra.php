@@ -226,7 +226,7 @@ class CotizacionCompra  extends Transaccion
 
             $i = 0;
             foreach($data['partidas'] as $key => $partida) {
-                $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->first();               
+                $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->first();
                 if ($item) {
                     CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
                         'precio_unitario' => ($data['enable'][$i]) ? $data['precio'][$i] : 0,
@@ -487,6 +487,19 @@ class CotizacionCompra  extends Transaccion
         return $suma;
     }
 
+    public function sumaPrecioPartidaMoneda($tipo_moneda)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            if($tipo_moneda == $partida->id_moneda)
+            {
+                $suma += $partida->precio_compuesto_total;
+            }
+        }
+        return $suma;
+    }
+
     /**
      * Revisar si es necesario cambiar el estado de la solicitud (dependiendo de sus cotizaciones)
      *
@@ -508,5 +521,98 @@ class CotizacionCompra  extends Transaccion
              */
             $this->solicitud->complemento->setCambiarEstado(2,1);
         }
+    }
+
+    public function datosComparativos()
+    {
+        $partidas = [];
+        $cotizaciones = [];
+        $precios = [];
+
+        foreach ($this->solicitud->items as $key => $item) {
+            if (array_key_exists($item->id_material, $partidas)) {
+                $partidas[$item->id_material]['cantidad'] = $partidas[$item->id_material]['cantidad'] + $item->cantidad;
+            } else {
+                $partidas[$item->id_material]['material'] = $item->material->descripcion;
+                $partidas[$item->id_material]['unidad'] = $item->unidad;
+                $partidas[$item->id_material]['cantidad'] = $item->cantidad;
+                $partidas[$item->id_material]['observaciones'] = $item->complemento ? $item->complemento->observaciones : '';
+            }
+        }
+
+        foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
+            $cotizaciones[$cont]['id_transaccion'] = $cotizacion->id_transaccion;
+            $cotizaciones[$cont]['empresa'] = $cotizacion->empresa->razon_social;
+            $cotizaciones[$cont]['fecha'] = $cotizacion->fecha_format;
+            $cotizaciones[$cont]['vigencia'] = $cotizacion->complemento ? $cotizacion->complemento->vigencia : '-';
+            $cotizaciones[$cont]['anticipo'] = $cotizacion->complemento ? $cotizacion->complemento->anticipo : '-';
+            $cotizaciones[$cont]['dias_credito'] = $cotizacion->complemento ? $cotizacion->complemento->dias_credito : '-';
+            $cotizaciones[$cont]['plazo_entrega'] = $cotizacion->complemento ? $cotizacion->complemento->plazo_entrega : '-';
+            $cotizaciones[$cont]['descuento_global'] = ($cotizacion->complemento && $cotizacion->complemento->descuento > 0) ? $cotizacion->complemento->descuento : '-';
+            $cotizaciones[$cont]['suma_subtotal_partidas'] = $cotizacion->suma_subtotal_partidas;
+            $cotizaciones[$cont]['iva_partidas'] = $cotizacion->iva_partidas;
+            $cotizaciones[$cont]['total_partidas'] = $cotizacion->total_partidas;
+            $cotizaciones[$cont]['tipo_moneda'] = $cotizacion->moneda ? $cotizacion->moneda->nombre : '';
+            $cotizaciones[$cont]['observaciones'] = $cotizacion->complemento ? $cotizacion->complemento->observaciones : '-';
+            $cotizaciones[$cont]['tc_usd'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_usd ? $cotizacion->complemento->tc_usd :Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
+            $cotizaciones[$cont]['tc_eur'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_eur ? $cotizacion->complemento->tc_eur : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
+            $cotizaciones[$cont]['tc_libra'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_libra ? $cotizacion->complemento->tc_libra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
+            $cotizaciones[$cont]['subtotal_peso'] = $cotizacion->sumaSubtotalPartidas(1) == 0 ? '-' : number_format($cotizacion->sumaSubtotalPartidas(1), 2, '.', ',');
+            $cotizaciones[$cont]['subtotal_dolar'] = $cotizacion->sumaSubtotalPartidas(2) == 0 ? '-' : number_format($cotizacion->sumaSubtotalPartidas(2), 2, '.', ',');
+            $cotizaciones[$cont]['subtotal_euro'] = $cotizacion->sumaSubtotalPartidas(3) == 0 ? '-' : number_format($cotizacion->sumaSubtotalPartidas(3), 2, '.', ',');
+            $cotizaciones[$cont]['subtotal_libra'] = $cotizacion->sumaSubtotalPartidas(4)== 0 ? '-' : number_format($cotizacion->sumaSubtotalPartidas(4), 2, '.', ',');
+            $cotizaciones[$cont]['suma_total_dolar'] = $cotizacion->sumaPrecioPartidaMoneda(2) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(2), 2, '.', ',');
+            $cotizaciones[$cont]['suma_total_euro'] = $cotizacion->sumaPrecioPartidaMoneda(3) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(3), 2, '.', ',');
+            $cotizaciones[$cont]['suma_total_libra'] = $cotizacion->sumaPrecioPartidaMoneda(4)== 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(4), 2, '.', ',');
+            foreach ($cotizacion->partidas as $p) {
+                if (key_exists($p->id_material, $precios)) {
+                    if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
+                        $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                } else {
+                    if($p->precio_unitario_compuesto > 0) {
+                        $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                    }
+                }
+                if (array_key_exists($p->id_material, $partidas)) {
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['id_transaccion'] = $cotizacion->id_transaccion;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['cantidad'] = $p->cantidad;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['precio_unitario'] = $p->precio_unitario;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['id_moneda'] = $p->id_moneda;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['cantidad_format'] = $p->cantidad_format;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['precio_total_moneda'] = $p->total_precio_moneda;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['precio_con_descuento'] = $p->precio_compuesto;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['precio_total_compuesto'] = $p->precio_compuesto_total;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['precio_unitario_compuesto'] = $p->precio_unitario_compuesto;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['descuento_partida'] = $p->partida ? $p->partida->descuento_partida : 0;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['observaciones'] = $p->partida ? $p->partida->observaciones : '';
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['calculo_ki'] = $this->calcular_ki($p->precio_unitario_compuesto, $p->total_precio_moneda);
+                }
+            }
+        }
+        foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
+            $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
+        }
+        return [
+            'cotizaciones' => $cotizaciones,
+            'partidas' => $partidas,
+        ];
+    }
+
+    private function calcular_ivg($precios, $partidas_cotizacion)
+    {
+        $ivg = 0;
+        if ($partidas_cotizacion) {
+            foreach ($partidas_cotizacion as $partida) {
+                $ivg += $partida->precio_unitario > 0 ? $this->calcular_ki($partida->precio_unitario_compuesto, $precios[$partida->id_material]) : 0;
+            }
+            return $partidas_cotizacion->count() > 0 ? $ivg : -1;
+        }
+        return -1;
+    }
+
+    private function calcular_ki($precio, $precio_menor)
+    {
+        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
     }
 }
