@@ -56,7 +56,7 @@ class CotizacionCompra  extends Transaccion
 
         self::addGlobalScope(function($query) {
             return $query->where('tipo_transaccion', '=', 18)
-            ->where('opciones','=', 1)->where('estado', '!=', 2)->whereHas('complemento');
+            ->where('opciones','=', 1)->whereHas('complemento');
         });
     }
 
@@ -81,6 +81,11 @@ class CotizacionCompra  extends Transaccion
     }
 
     public function asignacionPartida()
+    {
+        return $this->hasMany(AsignacionProveedorPartida::class, 'id_transaccion_cotizacion', 'id_transaccion');
+    }
+
+    public function asignacionesPartida()
     {
         return $this->hasMany(AsignacionProveedorPartida::class, 'id_transaccion_cotizacion', 'id_transaccion');
     }
@@ -166,6 +171,21 @@ class CotizacionCompra  extends Transaccion
     public function getTotalConDescuentoAttribute()
     {
         return $this->subtotal_con_descuento + $this->iva_con_descuento;
+    }
+
+    public function getAsignadaAttribute()
+    {
+        if($this->asignacionPartida->count()>0)
+        {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getEstadoFormularioAttribute()
+    {
+
     }
 
     /**
@@ -300,6 +320,7 @@ class CotizacionCompra  extends Transaccion
                     'id_empresa' => $data['id_proveedor'],
                     'id_sucursal' => ($data['sucursal']) ? $data['id_sucursal'] : null,
                     'observaciones' => $data['observacion'],
+                    'estado' => 1,
                     'fecha' => $fecha->format("Y-m-d"),
                     'monto' => $data['importe'],
                     'impuesto' => $data['impuesto'],
@@ -365,6 +386,7 @@ class CotizacionCompra  extends Transaccion
                     'observaciones' => $data['observacion'],
                     'fecha' => $fecha->format("Y-m-d"),
                     'monto' => 0,
+                    'estado' => 0,
                     'impuesto' => 0,
                     'cumplimiento' => $fecha->format("Y-m-d"),
                     'vencimiento' => $fecha->format("Y-m-d"),

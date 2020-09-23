@@ -35,6 +35,7 @@ class CotizacionCompraTransformer extends TransformerAbstract
             'observaciones' => (string)$model->observaciones,
             'estado' => (int) $model->estado,
             'estado_format' => $model->estado_format,
+            'estado_formulario' => $model->estado_formulario,
             'folio' => $model->numero_folio,
             'operacion' => $model->operacion,
             'opciones' => $model->opciones,
@@ -42,7 +43,8 @@ class CotizacionCompraTransformer extends TransformerAbstract
             'usuario_registro' => ($model->id_usuario) ? $model->id_usuario : '--------------',
             'importe' => $model->monto_format,
             'subtotal' => $model->subtotal_format,
-            'impuesto' => $model->impuesto_format
+            'impuesto' => $model->impuesto_format,
+            'asignada' => $model->asignada
         ];
     }
 
