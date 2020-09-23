@@ -207,7 +207,7 @@ class OrdenCompraFormato extends FPDI
         $residuo = $this->PageNo() % 2;
 
         if ($residuo > 0) {
-            //Es par
+            //Es non
 
             $x_f = 13.5;
 
@@ -357,18 +357,39 @@ class OrdenCompraFormato extends FPDI
                 $this->SetWidths([19.5]);
             }
         } else {
-            //Es non y lleva clausulado o sin texto
-            if ($this->NuevoClausulado == 1) {
+            //Es par y lleva encabezado corto
 
+            if (Context::getDatabase() == "SAO1814_TERMINAL_NAICM") {
+                $this->SetTextColor(0,0,0);
+                $this->SetFont('Arial', 'B', 10);
+
+                $this->setX(13.5);
+                $this->Cell(3, .7, utf8_decode('NO. OC: '), 'LT', 0, 'L');
+                $this->Cell(5, .7, $this->ordenCompra->numero_folio . ' ', 'RT', 0, 'L');
                 $this->Ln(.5);
-                $this->Ln(19.5);
 
-                $this->SetFont('Arial', 'B', 4);
-                $this->Ln(.4);
-                $this->Ln(.2);
+                $this->setX(13.5);
+                $this->Cell(3, .7, utf8_decode('OBRA: '), 'L', 0, 'L');
+                $this->Cell(5, .7, $this->obra_nombre  . ' ', 'R', 0, 'L');
+                $this->Ln(.5);
 
+                $this->SetFont('Arial', 'B', 10);
+                $this->setX(13.5);
+                $this->Cell(3, .5, 'FECHA: ', 'L', 0, 'L');
+                $this->Cell(5, .5, date("d-m-Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
+                $this->Ln(.5);
 
-            }else if ($this->NuevoClausulado==2){
+                $this->SetFont('Arial', 'B', 10);
+                $this->setX(13.5);
+                $this->Cell(3, .5, 'NO. SOLICITUD: ', 'L', 0, 'L');
+                $this->Cell(5, .5, $this->folio_sao  . ' ', 'R', 0, 'L');
+                $this->Ln(.5);
+
+                $this->setX(13.5);
+                $this->Cell(4.5, .5, 'TOTAL: ', 'LB', 0, 'L');
+                $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
+                $this->Ln(.5);
+            } else {
                 $this->SetTextColor(0,0,0);
                 $this->SetFont('Arial', 'B', 10);
 
@@ -385,7 +406,7 @@ class OrdenCompraFormato extends FPDI
                 $this->SetFont('Arial', 'B', 10);
                 $this->setX(14);
                 $this->Cell(2.5, .5, 'FECHA: ', 'L', 0, 'L');
-                $this->Cell(4, .5, date("d-m-Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
+                $this->Cell(4, .5, date("d/m/Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
                 $this->Ln(.5);
 
                 $this->SetFont('Arial', 'B', 10);
@@ -399,65 +420,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(4, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
                 $this->Ln(.5);
             }
-            else {
-                if (\Ghi\Core\Facades\Context::getDatabaseName() == "SAO1814_TERMINAL_NAICM") {
-                    $this->SetTextColor(0,0,0);
-                    $this->SetFont('Arial', 'B', 10);
 
-                    $this->setX(13.5);
-                    $this->Cell(3, .7, utf8_decode('NO. OC: '), 'LT', 0, 'L');
-                    $this->Cell(5, .7, $this->ordenCompra->numero_folio . ' ', 'RT', 0, 'L');
-                    $this->Ln(.5);
-
-                    $this->setX(13.5);
-                    $this->Cell(3, .7, utf8_decode('OBRA: '), 'L', 0, 'L');
-                    $this->Cell(5, .7, $this->obra_nombre  . ' ', 'R', 0, 'L');
-                    $this->Ln(.5);
-
-                    $this->SetFont('Arial', 'B', 10);
-                    $this->setX(13.5);
-                    $this->Cell(3, .5, 'FECHA: ', 'L', 0, 'L');
-                    $this->Cell(5, .5, date("d-m-Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
-                    $this->Ln(.5);
-
-                    $this->SetFont('Arial', 'B', 10);
-                    $this->setX(13.5);
-                    $this->Cell(3, .5, 'NO. SOLICITUD: ', 'L', 0, 'L');
-                    $this->Cell(5, .5, $this->folio_sao  . ' ', 'R', 0, 'L');
-                    $this->Ln(.5);
-
-                    $this->setX(13.5);
-                    $this->Cell(4.5, .5, 'TOTAL: ', 'LB', 0, 'L');
-                    $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
-                    $this->Ln(.5);
-                } else {
-                    $this->SetTextColor(0,0,0);
-                    $this->SetFont('Arial', 'B', 14);
-
-                    $this->setX(13.5);
-                    $this->Cell(2.5, .7, utf8_decode('NÚMERO:'), 'LT', 0, 'L');
-                    $this->Cell(3.5, .7, $this->ordenCompra->numero_folio . ' ', 'RT', 0, 'L');
-                    $this->Ln(.7);
-
-
-                    $this->SetFont('Arial', 'B', 10);
-                    $this->setX(13.5);
-                    $this->Cell(2.5, .5, 'FECHA: ', 'L', 0, 'L');
-                    $this->Cell(3.5, .5, date("d-m-Y", strtotime($this->fecha)) . ' ', 'R', 0, 'L');
-                    $this->Ln(.5);
-
-                    $this->SetFont('Arial', 'B', 10);
-                    $this->setX(13.5);
-                    $this->Cell(2.5, .5, 'SOLICITUD: ', 'L', 0, 'L');
-                    $this->Cell(3.5, .5, $this->folio_sao  . ' ', 'R', 0, 'L');
-                    $this->Ln(.5);
-
-                    $this->setX(13.5);
-                    $this->Cell(2.5, .5, 'TOTAL: ', 'LB', 0, 'L');
-                    $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'R');
-                    $this->Ln(.5);
-                }
-            }
         }
         $this->y_subtotal = $this->GetY();
         $this->SetY(8.5);
@@ -612,8 +575,6 @@ class OrdenCompraFormato extends FPDI
 
     public function partidas($partidas = [])
     {
-
-
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180);
         $this->SetWidths([0.5,1.5,1.5,2.5,6.5,2,1,2,2]);
@@ -1194,7 +1155,7 @@ class OrdenCompraFormato extends FPDI
         $this->totales();
 
         $this->AddPage();
-        $this->useTemplate($this->clausulado,0, -0.5, 22);
+        $this->useTemplate($this->clausulado,0, 0.5, 22);
 
         try {
             $this->Output('I', 'Formato - Orden de Compra.pdf', 1);
