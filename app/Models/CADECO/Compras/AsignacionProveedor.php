@@ -97,7 +97,7 @@ class AsignacionProveedor extends Model
                 $con_Orden++;
             }
         }
-        $res = $total > $con_Orden?1:2;
+        $res = $con_Orden == 0?1:2;
         $this->estado = $res;
         $this->save();
         return $this->estadoAsignacion->descripcion;
@@ -105,12 +105,13 @@ class AsignacionProveedor extends Model
 
     public function getOrdenCompraPendienteAttribute(){
         $partidas = $this->partidas;
+        $cant = 0;
         foreach($partidas as $partida){
             if(!$partida->con_orden_compra){
-                return true;
+                $cant++;
             }
         }
-        return false;
+        return $cant;
     }
 
     public function getSumaSubtotalPartidasAttribute()

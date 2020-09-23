@@ -99,8 +99,8 @@ class AsignacionProveedorService
             'observaciones' => $asignacion->solicitud->observaciones,
             'fecha_registro' => $asignacion->solicitud->fecha_format,
             'fecha_asignacion' => $asignacion->fecha_format,
-            'asignaciones_pendientes_o_compra' => $o_cmpra_pendientes,
-            'asignaciones_con_o_compra' => count($data) -  $o_cmpra_pendientes,
+            'asignaciones_pendientes_o_compra' => $o_cmpra_pendientes > 0,
+            'asignaciones_con_o_compra' => count($partidas) -  $o_cmpra_pendientes,
             'data' => $data
         ];
     }
