@@ -1,8 +1,8 @@
 <template>
     <div class="btn-group">
         <Show v-bind:id="value.id" v-bind:show="value.show"></Show>
-        <DescargarLayout v-if="$root.can('descargar_layout_cotizacion_compra')" v-bind:id="value.id"></DescargarLayout>
-        <CargaLayout v-if="$root.can('cargar_layout_cotizacion_compra') && $root.can('editar_cotizacion_compra')" v-on:back="layout" v-bind:id="value.id"></CargaLayout>
+        <DescargarLayout v-if="$root.can('descargar_layout_cotizacion_compra') && $root.can('editar_cotizacion_compra') && value.edit" v-bind:id="value.id"></DescargarLayout>
+        <CargaLayout v-if="$root.can('cargar_layout_cotizacion_compra') && $root.can('editar_cotizacion_compra')  && value.edit" v-on:back="layout" v-bind:id="value.id"></CargaLayout>
         <button @click="edit" v-if="$root.can('editar_cotizacion_compra') && value.edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
             <i class="fa fa-pencil"></i>
         </button>
