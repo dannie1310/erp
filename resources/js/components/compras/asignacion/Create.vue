@@ -149,15 +149,23 @@ export default {
         cargarVolumenes(){
             let self = this;
             self.data.items.forEach(function (item, i){
-                self.data.cotizaciones[self.id_empresa].partidas[i]? self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
-                item.cantidad_disponible = parseFloat(0).toFixed(4);
+                if(item.cantidad_disponible > 0){
+                    self.data.cotizaciones[self.id_empresa].partidas[i]? self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
+                    item.cantidad_disponible = parseFloat(0).toFixed(4);
+                }
+                
             });
         },
         borrarVolumenes(){
             let self = this;
             self.data.items.forEach(function (item, i){
-                self.data.cotizaciones[self.id_empresa].partidas[i]? self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = '':'';
-                item.cantidad_disponible = parseFloat(item.cantidad_base).toFixed(4);
+                if(self.data.cotizaciones[self.id_empresa].partidas[i]){
+                    if(self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada > 0){
+                        self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = '';
+                        item.cantidad_disponible = parseFloat(item.cantidad_base).toFixed(4);
+                    }
+                }
+                
             });
         },
         cerrar(){

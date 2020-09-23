@@ -33,7 +33,7 @@
             <li class="nav-item" v-if="$root.can('consultar_orden_compra')">
                 <router-link :to="{name: 'orden-compra'}" class="nav-link">
                     <i class="fa fa-circle nav-icon"></i>
-                    <p>Ordenes de Compra</p>
+                    <p>Órdenes de Compra</p>
                 </router-link>
             </li>
              <li class="nav-item" v-if="catalogo">

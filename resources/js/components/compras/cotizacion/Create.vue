@@ -522,7 +522,9 @@
                             'complemento',
                             'partidas.complemento',
                             'partidas.entrega',
-                            'cotizaciones']}
+                            'cotizaciones'],
+                            order:'ASC',
+                            sort:'id_item'}
                 }).then(data => {
                     this.solicitud_editar = data;
                     // this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);

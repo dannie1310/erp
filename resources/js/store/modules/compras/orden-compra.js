@@ -66,7 +66,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar Orden(es) de Compra",
-                    text: "¿Estás seguro/a de que desea eliminar la(s) orden(es) de Compra?",
+                    text: "¿Está seguro/a de que desea eliminar la(s) Orden(es) de Compra?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -86,7 +86,7 @@ export default {
                                 .post(URI + 'eliminarOrdenes', payload.data)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Requisición de Compra eliminada correctamente", {
+                                    swal("Orden de Compra eliminada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -106,7 +106,7 @@ export default {
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Actualizar Orden de COmpra",
+                    title: "Actualizar Orden de Compra",
                     text: "¿Está seguro/a de que desea actualizar la orden de compra?",
                     icon: "warning",
                     buttons: {

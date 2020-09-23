@@ -54,6 +54,11 @@ class CotizacionCompraPartida extends Model
         return number_format($this->cantidad, 1, '.', ',');
     }
 
+    public function getItemSolicitudAttribute(){
+        $item = Item::where('id_transaccion', '=', $this->cotizacion->id_antecedente)->where('id_material', '=', $this->id_material)->first();
+        return $item->id_item;
+    }
+
     public function getPrecioUnitarioFormatAttribute()
     {
         return '$ '. number_format($this->precio_unitario, 2, '.', ',');

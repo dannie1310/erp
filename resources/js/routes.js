@@ -1221,7 +1221,7 @@ export const routes = [
                     },
                 ]
             },
-            
+
             {
                 path: 'unificacion-proveedores',
                 component: require('./components/catalogos/unificacion-proveedores/Layout').default,
@@ -1429,8 +1429,8 @@ export const routes = [
                         name: 'orden-compra',
                         component: require('./components/compras/orden-compra/Index').default,
                         meta: {
-                            title: 'Ordenes de Compra',
-                            breadcrumb: { parent: 'compras', name: 'ORDENES DE COMPRA' },
+                            title: 'Órdenes de Compra',
+                            breadcrumb: { parent: 'compras', name: 'ÓRDENES DE COMPRA' },
                             middleware: [auth, context, permission],
                             permission: ['consultar_orden_compra']
                         }
