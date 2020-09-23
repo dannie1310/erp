@@ -84,13 +84,18 @@
                 switch (val) {
                     case 0:
                         return {
-                            color: '#f39c12',
-                            descripcion: 'Registrada'
+                            color: '#ff0000',
+                            descripcion: 'Precios Pendientes'
                         }
                     case 1:
                         return {
                             color: '#f39c12',
                             descripcion: 'Registrada'
+                        }
+                    case 2:
+                        return {
+                            color: '#4f9b34',
+                            descripcion: 'En Asignación'
                         }
                 }
             },
@@ -130,7 +135,8 @@
                         buttons: $.extend({}, {
                             show: true,
                             id: cotizacion.id,
-                            delete: self.$root.can('eliminar_cotizacion_compra')  ? true : false,
+                            delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
+                            edit: (cotizacion.asignada) ? false : true,
                         })
                     }));
                 },
