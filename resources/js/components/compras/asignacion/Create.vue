@@ -85,7 +85,7 @@
                                                 <td>
                                                     <span  v-if="data.cotizaciones[id_empresa].partidas[i]">
                                                         <input 
-                                                            type="number"
+                                                            type="number" @change="recalcular(i)"
                                                             :disabled="item.cantidad_disponible == 0 && data.cotizaciones[id_empresa].partidas[i].cantidad_asignada == ''"
 
                                                             class="form-control"
@@ -150,9 +150,16 @@ export default {
             let self = this;
             self.data.items.forEach(function (item, i){
                 self.data.cotizaciones[self.id_empresa].partidas[i]? self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
+                item.cantidad_disponible = parseFloat(0).toFixed(4);
             });
         },
-        borrarVolumenes(){},
+        borrarVolumenes(){
+            let self = this;
+            self.data.items.forEach(function (item, i){
+                self.data.cotizaciones[self.id_empresa].partidas[i]? self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = '':'';
+                item.cantidad_disponible = parseFloat(item.cantidad_base).toFixed(4);
+            });
+        },
         cerrar(){
             swal({
                 title: "Cerrar Asignación de Proveedores",
@@ -225,17 +232,7 @@ export default {
                 }
                 asignadas = +asignadas - +this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada;
                 this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada = '';
-            }else{
-                let p_unitario = 0;
-                this.data.cotizaciones[this.id_empresa].partidas[i].descuento > 0?
-                    p_unitario = this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario - (this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario * (this.data.cotizaciones[this.id_empresa].partidas[i].descuento / 100))
-                    :p_unitario =this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario;
-                let c_asignada =this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada !== ''?this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada:0;
-                this.data.cotizaciones[this.id_empresa].partidas[i].importe = parseFloat(p_unitario * c_asignada).formatMoney(2);
-                this.data.cotizaciones[this.id_empresa].partidas[i].importe_moneda_conversion = parseFloat((p_unitario * c_asignada) * this.data.cotizaciones[this.id_empresa].partidas[i].tipo_cambio).formatMoney(2);
-
             }
-            // this.data.items[i].cantidad_disponible = this.data.items[i].cantidad_base;
             this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_base - asignadas).toFixed(4);
 
         },
