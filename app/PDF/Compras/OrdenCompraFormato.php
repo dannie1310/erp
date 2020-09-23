@@ -26,11 +26,11 @@ use App\Facades\Context;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Cambio;
-use Ghidev\Fpdf\Rotation;
+use App\Utils\PDF\FPDI\FPDI;
 use Illuminate\Support\Facades\App;
 
 
-class OrdenCompraFormato extends Rotation
+class OrdenCompraFormato extends FPDI
 {
 
     protected $obra;
