@@ -200,13 +200,18 @@ class CotizacionTablaComparativaFormato extends Rotation
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     $ki = 0;
                     if (array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_unitario'] > 0) {
+                        $ki = $this->cotizacion->calcular_ki($partida['cotizaciones'][$i]['precio_unitario_compuesto'], $datos_partidas['precios_menores'][$key]);
+                        if ($ki == 0) {
+                            $this->SetFillColor(150, 150, 150);
+                            $this->SetTextColor(0, 0, 0);
+                        } else {
                             $this->SetFillColor(255, 255, 255);
                             $this->SetTextColor(0, 0, 0);
+                        }
                     }else {
                         $this->SetFillColor(200, 200, 200);
                         $this->SetTextColor(200, 200, 200);
                     }
-                    $ki = array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['calculo_ki'] ? $partida['cotizaciones'][$i]['calculo_ki'] : 0;
                     $this->SetFont('Arial', '', $font2);
                     $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_con_descuento'] ?  number_format($partida['cotizaciones'][$i]['precio_con_descuento'], 3, '.', ',') : '', "T B L", 0, "R", 1);
                     $this->CellFitScale($anchos["d"], $heigth, $ki == 0 ? '-' : number_format($ki, '4', '.', ','), "T B L", 0, "R", 1);
