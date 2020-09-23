@@ -487,7 +487,7 @@
                             id: data.solicitud.id,
                             params:{include: [
                                     'partidas.complemento'
-                                ]}
+                                ], order:'asc', sort:'id_item'}
                         }).then(data => {
                             this.cotizacion.partidas = data.partidas
                         })
@@ -531,6 +531,11 @@
             },
             ordenar()
             {
+                let sort = this.cotizacion.partidas.data.sort(function(a, b) {
+                    return a.id_item_solicitud - b.id_item_solicitud;
+                });
+                
+                this.cotizacion.partidas.data = sort;
                 this.x = 0;
                 while(this.x < this.cotizacion.partidas.data.length)
                 {

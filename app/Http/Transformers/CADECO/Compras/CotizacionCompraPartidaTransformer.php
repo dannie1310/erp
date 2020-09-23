@@ -43,7 +43,8 @@ class CotizacionCompraPartidaTransformer extends TransformerAbstract
             'precio_total_moneda' => $model->precio_total_moneda,
             'observacion' => ($model->partida) ? $model->partida->observaciones : null,
             'no_cotizado' => ($model->no_cotizado == 0) ? true :false,
-            'id_moneda' => (int) $model->id_moneda
+            'id_moneda' => (int) $model->id_moneda,
+            'id_item_solicitud' => (int) $model->item_solicitud,
         ];
     }
 

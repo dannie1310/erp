@@ -2,19 +2,20 @@
 
 namespace App\CSV;
 
-use App\Models\CADECO\Cambio;
-use App\Models\CADECO\CotizacionCompra;
+use function Complex\cot;
 use App\Models\CADECO\Item;
+use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Moneda;
 use App\Utils\ValidacionSistema;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use App\Models\CADECO\CotizacionCompra;
+use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Events\AfterSheet;
-use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
-use PhpOffice\PhpSpreadsheet\Style\Protection;
+use App\Models\CADECO\CotizacionCompraPartida;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-use function Complex\cot;
+use PhpOffice\PhpSpreadsheet\Style\Protection;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 
 class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
 {
@@ -66,8 +67,8 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getColumnDimension('L')->setAutoSize(true);
 
                 $i=2;
-                foreach ($this->cotizacion->partidas as $cot){
-                    $item = Item::where('id_transaccion', '=', $cot->cotizacion->solicitud->id_transaccion)->where('id_material', '=', $cot->id_material)->first();
+                foreach ($this->cotizacion->solicitud->partidas as $item){
+                    $cot = CotizacionCompraPartida::where('id_transaccion', '=', $this->cotizacion->id_transaccion)->where('id_material', '=', $item->id_material)->first();
                     $id_moneda = '';
                     switch ((int)$cot->id_moneda){
                         case 1:
