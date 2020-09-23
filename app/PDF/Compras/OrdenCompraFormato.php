@@ -26,11 +26,12 @@ use App\Facades\Context;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Cambio;
-use Ghidev\Fpdf\Rotation;
+use App\Utils\PDF\FPDI\FPDI;
+//use setasign\Fpdi\Fpdi;
 use Illuminate\Support\Facades\App;
 
 
-class OrdenCompraFormato extends Rotation
+class OrdenCompraFormato extends FPDI
 {
 
     protected $obra;
@@ -40,13 +41,13 @@ class OrdenCompraFormato extends Rotation
     private $encola = '',
         $archivo='',
         $clausulado = '',
+        $sin_texto= '',
         $con_fianza = 0,
         $tipo_orden = null,
         $encabezado_pdf,
         $conFirmaDAF = false,
         $id_tipo_fianza = 0,
         $folio_sao,
-        $sin_texto,
         $NuevoClausulado = 0,
         $dim=0,
         $dim_aux=0,
@@ -191,8 +192,13 @@ class OrdenCompraFormato extends Rotation
 
         $this->clausulado_page=public_path('pdf/clausulados/'.$this->archivo);
         $this->SetAutoPageBreak(true, 3);
-        $this->sin_texto=public_path('pdf/clausulados/SinTexto.jpg');
-        $this->NuevoClausulado=2;
+        //$this->sin_texto=public_path('pdf/clausulados/SinTexto.jpg');
+        //$this->NuevoClausulado=2;
+
+        $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_2019.pdf'));
+        $this->clausulado = $this->importPage(1);
+        $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
+        $this->sin_texto =  $this->importPage(1);
 
     }
 
@@ -212,7 +218,7 @@ class OrdenCompraFormato extends Rotation
             $this->setXY(13.5, 1);
 
 
-            $this->SetTextColor('0,0,0');
+            $this->SetTextColor(0,0,0);
             $this->SetFont('Arial', 'B', 14);
             $this->Cell(3.5, .7, utf8_decode('NÚMERO '), 'LT', 0, 'L');
             $this->Cell(3.5, .7, $this->folio_sao, 'RT', 0, 'L');
@@ -358,13 +364,12 @@ class OrdenCompraFormato extends Rotation
                 $this->Ln(19.5);
 
                 $this->SetFont('Arial', 'B', 4);
-                $this->image($this->sin_texto, 0, 5, 21);
                 $this->Ln(.4);
                 $this->Ln(.2);
 
 
             }else if ($this->NuevoClausulado==2){
-                $this->SetTextColor('0,0,0');
+                $this->SetTextColor(0,0,0);
                 $this->SetFont('Arial', 'B', 10);
 
                 $this->setX(14);
@@ -393,11 +398,10 @@ class OrdenCompraFormato extends Rotation
                 $this->Cell(2.5, .5, 'TOTAL: ', 'LB', 0, 'L');
                 $this->Cell(4, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
                 $this->Ln(.5);
-                $this->image($this->clausulado_page, 0, 3.1, 21);
             }
             else {
                 if (\Ghi\Core\Facades\Context::getDatabaseName() == "SAO1814_TERMINAL_NAICM") {
-                    $this->SetTextColor('0,0,0');
+                    $this->SetTextColor(0,0,0);
                     $this->SetFont('Arial', 'B', 10);
 
                     $this->setX(13.5);
@@ -427,7 +431,7 @@ class OrdenCompraFormato extends Rotation
                     $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
                     $this->Ln(.5);
                 } else {
-                    $this->SetTextColor('0,0,0');
+                    $this->SetTextColor(0,0,0);
                     $this->SetFont('Arial', 'B', 14);
 
                     $this->setX(13.5);
@@ -456,6 +460,7 @@ class OrdenCompraFormato extends Rotation
             }
         }
         $this->y_subtotal = $this->GetY();
+        $this->SetY(8.5);
     }
 
     public function totales()
@@ -601,7 +606,6 @@ class OrdenCompraFormato extends Rotation
 
         $this->Row([utf8_decode($this->ordenCompra->observaciones)]);
 
-        $this->AddPage();
     }
 
 
@@ -609,7 +613,7 @@ class OrdenCompraFormato extends Rotation
     public function partidas($partidas = [])
     {
 
-        $this->Ln(.8);
+
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180);
         $this->SetWidths([0.5,1.5,1.5,2.5,6.5,2,1,2,2]);
@@ -730,11 +734,11 @@ class OrdenCompraFormato extends Rotation
             $this->SetTextColor(155,155,155);
             $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
             $this->RotatedText(6,21,utf8_decode("SIN VALOR"),45);
-            $this->SetTextColor('0,0,0');
+            $this->SetTextColor(0,0,0);
         }
         $residuo = $this->PageNo() % 2;
 
-        $this->SetTextColor('0,0,0');
+        $this->SetTextColor(0,0,0);
 
         // Firmas.
         if ($residuo > 0) {
@@ -905,23 +909,277 @@ class OrdenCompraFormato extends Rotation
 
         if ($residuo > 0)
             $this->Cell(10, .3, utf8_decode('Términos y condiciones adicionales al reverso.'), 0, 1, 'L');
-
         else
             $this->Cell(10, .3, (''), 0, 1, 'L');
-
         $this->SetFont('Arial', 'BI', 6);
         $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de compras del SAO ERP. Fecha y hora de registro: ') . $this->ordenCompra->fecha_hora_registro_format, 0, 0, 'L');
         $this->Cell(9.5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
-
     }
 
 
     public function agregaPagina()
     {
-        $this->AddPageSH($this->CurOrientation);
-        $this->useTemplatePDF($this->sin_texto, 0, -0.5, 22);
-        $this->AddPage($this->CurOrientation);
+        $this->AddPageSH($this->CurOrientation, $this->CurPageSize, $this->CurRotation);
+        $this->useTemplate($this->sin_texto, 0, -0.5, 22);
+        $this->AddPage($this->CurOrientation,  $this->CurPageSize, $this->CurRotation);
+    }
 
+    function CheckPageBreak($h)
+    {
+        //If the height h would cause an overflow, add a new page immediately
+        if($this->GetY()+$h>$this->PageBreakTrigger)
+            $this->agregaPagina();
+    }
+    function Close()
+    {
+        //Terminate document
+        if($this->state==3)
+            return;
+        if($this->page==0)
+            $this->agregaPagina();
+        //Page footer
+        $this->InFooter=true;
+        $this->Footer();
+        $this->InFooter=false;
+        //Close page
+        $this->_endpage();
+        //Close document
+        $this->_enddoc();
+    }
+
+    function AddPageSH($orientation='',$size='', $rotation=0)
+    {
+        if($this->state==3)
+            $this->Error('The document is closed');
+        $family = $this->FontFamily;
+        $style = $this->FontStyle.($this->underline ? 'U' : '');
+        $fontsize = $this->FontSizePt;
+        $lw = $this->LineWidth;
+        $dc = $this->DrawColor;
+        $fc = $this->FillColor;
+        $tc = $this->TextColor;
+        $cf = $this->ColorFlag;
+        if($this->page>0)
+        {
+            // Page footer
+            $this->InFooter = true;
+            $this->Footer();
+            $this->InFooter = false;
+            // Close page
+            $this->_endpage();
+        }
+        // Start new page
+        $this->_beginpage($orientation,$size,$rotation);
+        // Set line cap style to square
+        $this->_out('2 J');
+        // Set line width
+        $this->LineWidth = $lw;
+        $this->_out(sprintf('%.2F w',$lw*$this->k));
+        // Set font
+        if($family)
+            $this->SetFont($family,$style,$fontsize);
+        // Set colors
+        $this->DrawColor = $dc;
+        if($dc!='0 G')
+            $this->_out($dc);
+        $this->FillColor = $fc;
+        if($fc!='0 g')
+            $this->_out($fc);
+        $this->TextColor = $tc;
+        $this->ColorFlag = $cf;
+        // Page header
+        $this->InHeader = true;
+        //$this->Header();
+        $this->InHeader = false;
+        // Restore line width
+        if($this->LineWidth!=$lw)
+        {
+            $this->LineWidth = $lw;
+            $this->_out(sprintf('%.2F w',$lw*$this->k));
+        }
+        // Restore font
+        if($family)
+            $this->SetFont($family,$style,$fontsize);
+        // Restore colors
+        if($this->DrawColor!=$dc)
+        {
+            $this->DrawColor = $dc;
+            $this->_out($dc);
+        }
+        if($this->FillColor!=$fc)
+        {
+            $this->FillColor = $fc;
+            $this->_out($fc);
+        }
+        $this->TextColor = $tc;
+        $this->ColorFlag = $cf;
+    }
+
+    function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+    {
+        // Output a cell
+        $k = $this->k;
+        if($this->y+$h>$this->PageBreakTrigger && !$this->InHeader && !$this->InFooter && $this->AcceptPageBreak())
+        {
+            // Automatic page break
+            $x = $this->x;
+            $ws = $this->ws;
+            if($ws>0)
+            {
+                $this->ws = 0;
+                $this->_out('0 Tw');
+            }
+            $this->agregaPagina();
+            //$this->AddPage($this->CurOrientation,$this->CurPageSize,$this->CurRotation);
+            $this->x = $x;
+            if($ws>0)
+            {
+                $this->ws = $ws;
+                $this->_out(sprintf('%.3F Tw',$ws*$k));
+            }
+        }
+        if($w==0)
+            $w = $this->w-$this->rMargin-$this->x;
+        $s = '';
+        if($fill || $border==1)
+        {
+            if($fill)
+                $op = ($border==1) ? 'B' : 'f';
+            else
+                $op = 'S';
+            $s = sprintf('%.2F %.2F %.2F %.2F re %s ',$this->x*$k,($this->h-$this->y)*$k,$w*$k,-$h*$k,$op);
+        }
+        if(is_string($border))
+        {
+            $x = $this->x;
+            $y = $this->y;
+            if(strpos($border,'L')!==false)
+                $s .= sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-$y)*$k,$x*$k,($this->h-($y+$h))*$k);
+            if(strpos($border,'T')!==false)
+                $s .= sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-$y)*$k);
+            if(strpos($border,'R')!==false)
+                $s .= sprintf('%.2F %.2F m %.2F %.2F l S ',($x+$w)*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+            if(strpos($border,'B')!==false)
+                $s .= sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-($y+$h))*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+        }
+        if($txt!=='')
+        {
+            if(!isset($this->CurrentFont))
+                $this->Error('No font has been set');
+            if($align=='R')
+                $dx = $w-$this->cMargin-$this->GetStringWidth($txt);
+            elseif($align=='C')
+                $dx = ($w-$this->GetStringWidth($txt))/2;
+            else
+                $dx = $this->cMargin;
+            if($this->ColorFlag)
+                $s .= 'q '.$this->TextColor.' ';
+            $s .= sprintf('BT %.2F %.2F Td (%s) Tj ET',($this->x+$dx)*$k,($this->h-($this->y+.5*$h+.3*$this->FontSize))*$k,$this->_escape($txt));
+            if($this->underline)
+                $s .= ' '.$this->_dounderline($this->x+$dx,$this->y+.5*$h+.3*$this->FontSize,$txt);
+            if($this->ColorFlag)
+                $s .= ' Q';
+            if($link)
+                $this->Link($this->x+$dx,$this->y+.5*$h-.5*$this->FontSize,$this->GetStringWidth($txt),$this->FontSize,$link);
+        }
+        if($s)
+            $this->_out($s);
+        $this->lasth = $h;
+        if($ln>0)
+        {
+            // Go to next line
+            $this->y += $h;
+            if($ln==1)
+                $this->x = $this->lMargin;
+        }
+        else
+            $this->x += $w;
+    }
+
+    function Cell1($w,$h=0,$txt='',$border=0,$ln=0,$align='',$fill=0,$link='')
+    {
+        if(is_numeric($txt)){
+            if(!($txt>0) && !($txt<0)){
+                $txt = "-";
+            }
+        }
+
+        //Output a cell
+        $k=$this->k;
+        if($this->y+$h>$this->PageBreakTrigger && !$this->InFooter && $this->AcceptPageBreak())
+        {
+            //Automatic page break
+            $x=$this->x;
+            $ws=$this->ws;
+            if($ws>0)
+            {
+                $this->ws=0;
+                $this->_out('0 Tw');
+            }
+            $this->agregaPagina();
+            /*$this->AddPage($this->CurOrientation);*/
+            $this->x=$x;
+            if($ws>0)
+            {
+                $this->ws=$ws;
+                $this->_out(sprintf('%.3f Tw',$ws*$k));
+            }
+        }
+        if($w==0)
+            $w=$this->w-$this->rMargin-$this->x;
+        $s='';
+        if($fill==1 || $border==1)
+        {
+            if($fill==1)
+                $op=($border==1) ? 'B' : 'f';
+            else
+                $op='S';
+            $s=sprintf('%.2f %.2f %.2f %.2f re %s ',$this->x*$k,($this->h-$this->y)*$k,$w*$k,-$h*$k,$op);
+        }
+        if(is_string($border))
+        {
+            $x=$this->x;
+            $y=$this->y;
+            if(strpos($border,'L')!==false)
+                $s.=sprintf('%.2f %.2f m %.2f %.2f l S ',$x*$k,($this->h-$y)*$k,$x*$k,($this->h-($y+$h))*$k);
+            if(strpos($border,'T')!==false)
+                $s.=sprintf('%.2f %.2f m %.2f %.2f l S ',$x*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-$y)*$k);
+            if(strpos($border,'R')!==false)
+                $s.=sprintf('%.2f %.2f m %.2f %.2f l S ',($x+$w)*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+            if(strpos($border,'B')!==false)
+                $s.=sprintf('%.2f %.2f m %.2f %.2f l S ',$x*$k,($this->h-($y+$h))*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+        }
+        if($txt!=='')
+        {
+            if($align=='R')
+                $dx=$w-$this->cMargin-$this->GetStringWidth($txt);
+            elseif($align=='C')
+                $dx=($w-$this->GetStringWidth($txt))/2;
+            else
+                $dx=$this->cMargin;
+            if($this->ColorFlag)
+                $s.='q '.$this->TextColor.' ';
+            $txt2=str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',$txt)));
+            $s.=sprintf('BT %.2f %.2f Td (%s) Tj ET',($this->x+$dx)*$k,($this->h-($this->y+.5*$h+.3*$this->FontSize))*$k,$txt2);
+            if($this->underline)
+                $s.=' '.$this->_dounderline($this->x+$dx,$this->y+.5*$h+.3*$this->FontSize,$txt);
+            if($this->ColorFlag)
+                $s.=' Q';
+            if($link)
+                $this->Link($this->x+$dx,$this->y+.5*$h-.5*$this->FontSize,$this->GetStringWidth($txt),$this->FontSize,$link);
+        }
+        if($s)
+            $this->_out($s);
+        $this->lasth=$h;
+        if($ln>0)
+        {
+            //Go to next line
+            $this->y+=$h;
+            if($ln==1)
+                $this->x=$this->lMargin;
+        }
+        else
+            $this->x+=$w;
     }
 
 
@@ -933,16 +1191,10 @@ class OrdenCompraFormato extends Rotation
         $this->SetAutoPageBreak(true, 3.75);
         // Partidas.
         $this->partidas($this->ordenCompra->partidas);
+        $this->totales();
 
-        $a= $this->PageNo()%2;
-
-        if($a==0){
-            $this->AddPage();
-            $this->totales();
-        }
-        else{
-            $this->totales();
-        }
+        $this->AddPage();
+        $this->useTemplate($this->clausulado,0, -0.5, 22);
 
         try {
             $this->Output('I', 'Formato - Orden de Compra.pdf', 1);
