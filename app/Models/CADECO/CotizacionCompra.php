@@ -564,7 +564,6 @@ class CotizacionCompra  extends Transaccion
             $cotizaciones[$cont]['suma_total_dolar'] = $cotizacion->sumaPrecioPartidaMoneda(2) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(2), 2, '.', ',');
             $cotizaciones[$cont]['suma_total_euro'] = $cotizacion->sumaPrecioPartidaMoneda(3) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(3), 2, '.', ',');
             $cotizaciones[$cont]['suma_total_libra'] = $cotizacion->sumaPrecioPartidaMoneda(4)== 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(4), 2, '.', ',');
-
             foreach ($cotizacion->partidas as $p) {
                 if (key_exists($p->id_material, $precios)) {
                     if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
@@ -584,8 +583,7 @@ class CotizacionCompra  extends Transaccion
                     $partidas[$p->id_material]['cotizaciones'][$cont]['precio_con_descuento'] = $p->precio_compuesto;
                     $partidas[$p->id_material]['cotizaciones'][$cont]['precio_total_compuesto'] = $p->precio_compuesto_total;
                     $partidas[$p->id_material]['cotizaciones'][$cont]['precio_unitario_compuesto'] = $p->precio_unitario_compuesto;
-                    $partidas[$p->id_material]['cotizaciones'][$cont]['tipo_cambio'] = $p->tipo_cambio;
-                    $partidas[$p->id_material]['cotizaciones'][$cont]['tipo_cambio_descripcion'] = $p->moneda->abreviatura;
+                    $partidas[$p->id_material]['cotizaciones'][$cont]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
                     $partidas[$p->id_material]['cotizaciones'][$cont]['descuento_partida'] = $p->partida ? $p->partida->descuento_partida : 0;
                     $partidas[$p->id_material]['cotizaciones'][$cont]['observaciones'] = $p->partida ? $p->partida->observaciones : '';
                     $partidas[$p->id_material]['cotizaciones'][$cont]['calculo_ki'] = $this->calcular_ki($p->precio_unitario_compuesto, $p->total_precio_moneda);
@@ -593,7 +591,7 @@ class CotizacionCompra  extends Transaccion
             }
         }
         foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
-            $cotizaciones[$cont]['ivg_partida'] =$this->calcular_ivg($precios, $cotizacion->partidas);
+            $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
         }
         return [
             'cotizaciones' => $cotizaciones,
@@ -615,6 +613,6 @@ class CotizacionCompra  extends Transaccion
 
     private function calcular_ki($precio, $precio_menor)
     {
-        return ($precio - $precio_menor) / $precio_menor;
+        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
     }
 }

@@ -198,20 +198,20 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->Cell($anchos["u"], $heigth, number_format($partida['cantidad'], '2', '.', ','), 1, 0, 'L', 0, '');
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     $ki = 0;
-                    if ($partida['cotizaciones'][$i]['precio_unitario'] > 0) {
+                    if (array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_unitario'] > 0) {
                             $this->SetFillColor(255, 255, 255);
                             $this->SetTextColor(0, 0, 0);
                     }else {
                         $this->SetFillColor(200, 200, 200);
                         $this->SetTextColor(200, 200, 200);
                     }
-                    $ki = $partida['cotizaciones'][$i]['calculo_ki'];
+                    $ki = array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['calculo_ki'] ? $partida['cotizaciones'][$i]['calculo_ki'] : 0;
                     $this->SetFont('Arial', '', $font2);
-                    $this->Cell($anchos["pu"], $heigth, number_format($partida['cotizaciones'][$i]['precio_con_descuento'], 3, '.', ','), "T B L", 0, "R", 1);
+                    $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_con_descuento'] ?  number_format($partida['cotizaciones'][$i]['precio_con_descuento'], 3, '.', ',') : '', "T B L", 0, "R", 1);
                     $this->CellFitScale($anchos["d"], $heigth, $ki == 0 ? '-' : number_format($ki, '4', '.', ','), "T B L", 0, "R", 1);
-                    $this->Cell($anchos["it"], $heigth, number_format($partida['cotizaciones'][$i]['precio_total_compuesto'], 2, '.', ','), "T B L", 0, "R", 1);
-                    $this->CellFitScale($anchos["m"], $heigth, $partida['cotizaciones'][$i]['precio_unitario'] > 0 ? $partida['cotizaciones'][$i]['tipo_cambio_descripcion'] : '-', "T B L", 0, "R", 1);
-                    $this->Cell($anchos["ic"], $heigth, number_format($partida['cotizaciones'][$i]['precio_total_moneda'], 2, '.', ','), "B L R T", 0, "R", 1);
+                    $this->Cell($anchos["it"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_total_compuesto'] ? number_format($partida['cotizaciones'][$i]['precio_total_compuesto'], 2, '.', ',') : '', "T B L", 0, "R", 1);
+                    $this->CellFitScale($anchos["m"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_unitario'] > 0 ? $partida['cotizaciones'][$i]['tipo_cambio_descripcion'] : '-', "T B L", 0, "R", 1);
+                    $this->Cell($anchos["ic"], $heigth,array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_total_moneda'] ? number_format($partida['cotizaciones'][$i]['precio_total_moneda'], 2, '.', ',') : '', "B L R T", 0, "R", 1);
                 }
 
                 $this->Ln();
@@ -235,7 +235,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                     $this->SetFont('Arial', '', $font2);
                     $this->setY($yop_ini);
                     $this->setX($xop_ini);
-                    $this->MultiCell($anchos["op"], $heigth, (float)$partida['cotizaciones'][$i]['precio_unitario'] > 0 ? utf8_decode($partida['cotizaciones'][$i]['observaciones']) : '-', "B L R T", "L", 1);
+                    $this->MultiCell($anchos["op"], $heigth, array_key_exists($i, $partida['cotizaciones']) && (float)$partida['cotizaciones'][$i]['precio_unitario'] > 0 ? utf8_decode($partida['cotizaciones'][$i]['observaciones']) : '', "B L R T", "L", 1);
                     $this->y_para_descripcion_arr[] = $this->GetY();
                     $xop_ini += $anchos["op"];
                 }
@@ -256,7 +256,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth, $datos_partidas['cotizaciones'][$i]['descuento_global'], 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['descuento_global'] : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -269,7 +269,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth, number_format($datos_partidas['cotizaciones'][$i]['suma_subtotal_partidas'], 2, '.', ','), 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? number_format($datos_partidas['cotizaciones'][$i]['suma_subtotal_partidas'], 2, '.', ',') : '', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -282,7 +282,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth, number_format($datos_partidas['cotizaciones'][$i]['iva_partidas'], 2, '.', ','), 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? number_format($datos_partidas['cotizaciones'][$i]['iva_partidas'], 2, '.', ',') : '', 1, 0, 'R', 1);
             }
 
             $this->Ln();
@@ -296,7 +296,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth, number_format($datos_partidas['cotizaciones'][$i]['total_partidas'], 2, '.', ','), 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? number_format($datos_partidas['cotizaciones'][$i]['total_partidas'], 2, '.', ',') : '', 1, 0, 'R', 1);
             }
 
             $this->Ln();
@@ -311,7 +311,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth, $datos_partidas['cotizaciones'][$i]['tipo_moneda'], 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ?  $datos_partidas['cotizaciones'][$i]['tipo_moneda'] : '', 1, 0, 'R', 1);
             }
 
             $this->Ln();
@@ -326,7 +326,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font);
 
                 $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth, $datos_partidas['cotizaciones'][$i]['subtotal_peso'], 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['subtotal_peso'] : '', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -339,10 +339,9 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"], $heigth, $datos_partidas['cotizaciones'][$i]['suma_total_dolar'], 1, 0, 'R', 1);
-                $this->Cell($anchos["tc"], $heigth, $datos_partidas['cotizaciones'][$i]['tc_usd'], 1, 0, 'R', 1);
-                $this->Cell($anchos["dg"], $heigth, $datos_partidas['cotizaciones'][$i]['subtotal_dolar'], 1, 0, 'R', 1);
-
+                $this->Cell($anchos["ar"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['suma_total_dolar'] : '', 1, 0, 'R', 1);
+                $this->Cell($anchos["tc"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['tc_usd'] : '', 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['subtotal_dolar'] : '', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -354,9 +353,9 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"], $heigth, $datos_partidas['cotizaciones'][$i]['suma_total_euro'], 1, 0, 'R', 1);
-                $this->Cell($anchos["tc"], $heigth, $datos_partidas['cotizaciones'][$i]['tc_eur'], 1, 0, 'R', 1);
-                $this->Cell($anchos["dg"], $heigth, $datos_partidas['cotizaciones'][$i]['subtotal_euro'], 1, 0, 'R', 1);
+                $this->Cell($anchos["ar"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['suma_total_euro'] : '', 1, 0, 'R', 1);
+                $this->Cell($anchos["tc"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['tc_eur'] : '', 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['subtotal_euro'] : '', 1, 0, 'R', 1);
 
             }
             $this->Ln();
@@ -370,9 +369,9 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"], $heigth, $datos_partidas['cotizaciones'][$i]['suma_total_libra'], 1, 0, 'R', 1);
-                $this->Cell($anchos["tc"], $heigth, $datos_partidas['cotizaciones'][$i]['tc_libra'], 1, 0, 'R', 1);
-                $this->Cell($anchos["dg"], $heigth, $datos_partidas['cotizaciones'][$i]['subtotal_libra'], 1, 0, 'R', 1);
+                $this->Cell($anchos["ar"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['suma_total_libra'] : '', 1, 0, 'R', 1);
+                $this->Cell($anchos["tc"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['tc_libra'] : '', 1, 0, 'R', 1);
+                $this->Cell($anchos["dg"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['subtotal_libra'] : '', 1, 0, 'R', 1);
 
             }
             $this->Ln();
@@ -389,7 +388,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font);
                 $this->setY($y_ini);
                 $this->setX($x_ini);
-                $this->MultiCell($anchos["og"], $heigth, utf8_decode($datos_partidas['cotizaciones'][$i]['observaciones']), 1, 'J', false);
+                $this->MultiCell($anchos["og"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? utf8_decode($datos_partidas['cotizaciones'][$i]['observaciones']) : '-', 1, 'J', false);
                 $this->Ln();
                 $this->Ln();
                 $this->Ln();
