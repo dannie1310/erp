@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SolicitudCompra;
 use App\PDF\Compras\OrdenCompraFormato;
 use App\Models\CADECO\Compras\OrdenCompraEliminada;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\Compras\OrdenCompraPartidaEliminada;
 
 
@@ -78,6 +79,8 @@ class OrdenCompraService
     public function eliminarOrdenes($data){
         try{
             DB::connection('cadeco')->beginTransaction();
+            $orden_compra_eliminada = null;
+            $item_antecedente= null;
             foreach($data['data'] as $orden){
                 $orden_compra = $this->repository->show($orden);
                 
@@ -122,7 +125,8 @@ class OrdenCompraService
                 ]);
 
                 foreach($orden_compra->partidas as $partida){
-                    OrdenCompraPartidaEliminada::create([
+                    $item_antecedente = $partida->item_antecedente;
+                    $orden_compra_partida = OrdenCompraPartidaEliminada::create([
                         'id_orden_compra_eliminada' => $orden_compra_eliminada->id,
                         'id_item' => $partida->id_item,
                         'id_transaccion' => $partida->id_transaccion,
@@ -144,7 +148,15 @@ class OrdenCompraService
                 
                 $this->repository->delete([], $orden);
             }
-             
+            
+            $pendientes = $this->repository->where([['id_referente', '=', $orden_compra_eliminada->id_referente]])->all();
+            
+            if($pendientes->count() == 0){
+                $asignacion_partida = AsignacionProveedorPartida::where('id_item_solicitud', '=', $item_antecedente)->where('id_transaccion_cotizacion', '=', $orden_compra_eliminada->id_referente)->first();
+                $asignacion_partida->asignacion->estado = 1;
+                $asignacion_partida->asignacion->save();
+            }
+            
             DB::connection('cadeco')->commit();
             return response()->json("{}", 200);
         }catch (\Exception $e){
