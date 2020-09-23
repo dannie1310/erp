@@ -27,6 +27,7 @@ use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Cambio;
 use App\Utils\PDF\FPDI\FPDI;
+//use setasign\Fpdi\Fpdi;
 use Illuminate\Support\Facades\App;
 
 
@@ -194,7 +195,7 @@ class OrdenCompraFormato extends FPDI
         //$this->sin_texto=public_path('pdf/clausulados/SinTexto.jpg');
         //$this->NuevoClausulado=2;
 
-        $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado.pdf'));
+        $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_2019.pdf'));
         $this->clausulado = $this->importPage(1);
         $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
         $this->sin_texto =  $this->importPage(1);
@@ -217,7 +218,7 @@ class OrdenCompraFormato extends FPDI
             $this->setXY(13.5, 1);
 
 
-            $this->SetTextColor('0,0,0');
+            $this->SetTextColor(0,0,0);
             $this->SetFont('Arial', 'B', 14);
             $this->Cell(3.5, .7, utf8_decode('NÚMERO '), 'LT', 0, 'L');
             $this->Cell(3.5, .7, $this->folio_sao, 'RT', 0, 'L');
@@ -363,13 +364,12 @@ class OrdenCompraFormato extends FPDI
                 $this->Ln(19.5);
 
                 $this->SetFont('Arial', 'B', 4);
-                //$this->image($this->sin_texto, 0, 5, 21);
                 $this->Ln(.4);
                 $this->Ln(.2);
 
 
             }else if ($this->NuevoClausulado==2){
-                $this->SetTextColor('0,0,0');
+                $this->SetTextColor(0,0,0);
                 $this->SetFont('Arial', 'B', 10);
 
                 $this->setX(14);
@@ -398,11 +398,10 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(2.5, .5, 'TOTAL: ', 'LB', 0, 'L');
                 $this->Cell(4, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
                 $this->Ln(.5);
-                //$this->image($this->clausulado_page, 0, 3.1, 21);
             }
             else {
                 if (\Ghi\Core\Facades\Context::getDatabaseName() == "SAO1814_TERMINAL_NAICM") {
-                    $this->SetTextColor('0,0,0');
+                    $this->SetTextColor(0,0,0);
                     $this->SetFont('Arial', 'B', 10);
 
                     $this->setX(13.5);
@@ -432,7 +431,7 @@ class OrdenCompraFormato extends FPDI
                     $this->Cell(3.5, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
                     $this->Ln(.5);
                 } else {
-                    $this->SetTextColor('0,0,0');
+                    $this->SetTextColor(0,0,0);
                     $this->SetFont('Arial', 'B', 14);
 
                     $this->setX(13.5);
@@ -461,6 +460,7 @@ class OrdenCompraFormato extends FPDI
             }
         }
         $this->y_subtotal = $this->GetY();
+        $this->SetY(8.5);
     }
 
     public function totales()
@@ -613,7 +613,7 @@ class OrdenCompraFormato extends FPDI
     public function partidas($partidas = [])
     {
 
-        $this->Ln(.8);
+
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180);
         $this->SetWidths([0.5,1.5,1.5,2.5,6.5,2,1,2,2]);
@@ -734,11 +734,11 @@ class OrdenCompraFormato extends FPDI
             $this->SetTextColor(155,155,155);
             $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
             $this->RotatedText(6,21,utf8_decode("SIN VALOR"),45);
-            $this->SetTextColor('0,0,0');
+            $this->SetTextColor(0,0,0);
         }
         $residuo = $this->PageNo() % 2;
 
-        $this->SetTextColor('0,0,0');
+        $this->SetTextColor(0,0,0);
 
         // Firmas.
         if ($residuo > 0) {

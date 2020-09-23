@@ -1,17 +1,15 @@
 <?php
-
-namespace App\Utils\PDF;
 /*******************************************************************************
  * FPDF                                                                         *
  *                                                                              *
- * Version: 1.81                                                                *
- * Date:    2015-12-20                                                          *
+ * Version: 1.82                                                                *
+ * Date:    2019-12-07                                                          *
  * Author:  Olivier PLATHEY                                                     *
  *******************************************************************************/
+namespace App\Utils\PDF;
+define('FPDF_VERSION','1.82');
 
-define('FPDF_VERSION','1.81');
-
-class Fpdf
+class FPDF
 {
     protected $page;               // current page number
     protected $n;                  // current object number
@@ -73,7 +71,7 @@ class Fpdf
      *                               Public methods                                 *
      *******************************************************************************/
 
-    function __construct($orientation='P', $unit='cm', $size='A4')
+    function __construct($orientation='P', $unit='mm', $size='A4')
     {
         // Some checks
         $this->_dochecks();
@@ -117,14 +115,14 @@ class Fpdf
         // Core fonts
         $this->CoreFonts = array('courier', 'helvetica', 'times', 'symbol', 'zapfdingbats');
         // Scale factor
-        if($unit=='pt'){
-            $this->k = 1;}
-        elseif($unit=='mm'){
-            $this->k = 72/25.4;}
-        elseif($unit=='cm'){
-            $this->k = 72/2.54;}
-        elseif($unit=='in'){
-            $this->k = 72;}
+        if($unit=='pt')
+            $this->k = 1;
+        elseif($unit=='mm')
+            $this->k = 72/25.4;
+        elseif($unit=='cm')
+            $this->k = 72/2.54;
+        elseif($unit=='in')
+            $this->k = 72;
         else
             $this->Error('Incorrect unit: '.$unit);
         // Page sizes
@@ -270,7 +268,7 @@ class Fpdf
     function Error($msg)
     {
         // Fatal error
-        throw new \Exception('FPDF error: '.$msg);
+        throw new Exception('FPDF error: '.$msg);
     }
 
     function Close()
@@ -389,13 +387,10 @@ class Fpdf
     function SetFillColor($r, $g=null, $b=null)
     {
         // Set color for all filling operations
-        if(($r==0 && $g==0 && $b==0) || $g===null) {
-            $datos= explode(',', $r);
-            $this->FillColor = sprintf('%.3F g', $datos[0]/ 255);
-        }
-        else {
-            $this->FillColor = sprintf('%.3F %.3F %.3F rg', $r / 255, $g / 255, $b / 255);
-        }
+        if(($r==0 && $g==0 && $b==0) || $g===null)
+            $this->FillColor = sprintf('%.3F g',$r/255);
+        else
+            $this->FillColor = sprintf('%.3F %.3F %.3F rg',$r/255,$g/255,$b/255);
         $this->ColorFlag = ($this->FillColor!=$this->TextColor);
         if($this->page>0)
             $this->_out($this->FillColor);
@@ -404,13 +399,10 @@ class Fpdf
     function SetTextColor($r, $g=null, $b=null)
     {
         // Set color for text
-        if(($r==0 && $g==0 && $b==0) || $g===null) {
-            $datos = explode(',', $r);
-            $this->TextColor = sprintf('%.3F g', $datos[0] / 255);
-        }
-        else {
-            $this->TextColor = sprintf('%.3F %.3F %.3F rg', $r / 255, $g / 255, $b / 255);
-        }
+        if(($r==0 && $g==0 && $b==0) || $g===null)
+            $this->TextColor = sprintf('%.3F g',$r/255);
+        else
+            $this->TextColor = sprintf('%.3F %.3F %.3F rg',$r/255,$g/255,$b/255);
         $this->ColorFlag = ($this->FillColor!=$this->TextColor);
     }
 
@@ -1047,9 +1039,6 @@ class Fpdf
         // Check mbstring overloading
         if(ini_get('mbstring.func_overload') & 2)
             $this->Error('mbstring overloading must be disabled');
-        // Ensure runtime magic quotes are disabled
-        if(get_magic_quotes_runtime())
-            @set_magic_quotes_runtime(0);
     }
 
     protected function _checkoutput()
