@@ -107,7 +107,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 
-                                <button type="button" @click="borrarVolumenes()" class="btn btn-default pull-right" style="margin-left:5px">Borrar los Volúmnes del Proveedor</button>
+                                <button type="button" @click="borrarVolumenes()" class="btn btn-default pull-right" style="margin-left:5px">Borrar los Volúmenes del Proveedor</button>
                                 <button type="button" @click="cargarVolumenes()" class="btn btn-default pull-right">Cargar Todos los Volúmenes a Proveedor</button>
                             </div>
                         </div>
