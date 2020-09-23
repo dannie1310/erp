@@ -460,12 +460,14 @@ class FPDI extends FPDF_TPL {
 
     			reset ($value[1]);
 
-    			while (list($k, $v) = each($value[1])) {
-    				$this->_straightOut($k . ' ');
-    				$this->pdf_write_value($v);
+                foreach ($value[1] as $k=>$v) {
+                    $this->_straightOut($k . ' ');
+                    $this->pdf_write_value($v);
     			}
 
-    			$this->_straightOut('>>');
+    			foreach ($value as $val){
+                    $this->_straightOut('>>');
+                }
     			break;
 
     		case PDF_TYPE_OBJREF:

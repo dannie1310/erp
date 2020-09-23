@@ -194,6 +194,11 @@ class OrdenCompraFormato extends FPDI
         $this->sin_texto=public_path('pdf/clausulados/SinTexto.jpg');
         $this->NuevoClausulado=2;
 
+        $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado.pdf'));
+        $this->clausulado = $this->importPage(1);
+        $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
+        $this->sin_texto =  $this->importPage(1);
+
     }
 
     function Header()
