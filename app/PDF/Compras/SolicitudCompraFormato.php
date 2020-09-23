@@ -15,6 +15,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
+use Illuminate\Support\Facades\App;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SolicitudCompraFormato extends Rotation
@@ -55,19 +56,20 @@ class SolicitudCompraFormato extends Rotation
         $this->txtSeccionTam = 9;
         $this->txtContenidoTam = 11;
         $this->txtFooterTam = 6;
-        $this->encabezado_pdf = utf8_decode('SOLICITUD DE COMPRA');
+        $this->encabezado_pdf = $this->solicitud->encabezado_pdf;
         $this->createQR();
     }
 
     function Header()
     {
-        $this->setXY(1, 2);
-        $this->SetFont('Arial', 'B', 24);
-        $this->CellFitScale(1* $this->WidthTotal, 0.1, $this->encabezado_pdf, '', 'CB');
+        $this->setXY(1, 1.5);
+        $this->SetFont('Arial', 'B', 18);
+        $this->MultiCell(12.5,"0.7",utf8_decode($this->encabezado_pdf),0,"C"); //(1* $this->WidthTotal, 0.1, utf8_decode($this->encabezado_pdf), '', 'CB');
 
+        $this->setY(2);
         //Obtener Posiciones despues de los títulos
         $y_inicial = $this->getY() - 1;
-        $x_inicial = $this->GetPageWidth() / 1.48;
+        $x_inicial = 14;
         $this->setY($y_inicial);
         $this->setX($x_inicial);
 
@@ -103,7 +105,7 @@ class SolicitudCompraFormato extends Rotation
 
         //Obtener Y después de la tabla
         $this->setY($y_final);
-        $this->Ln(1);
+        $this->Ln(0.5);
 
         $this->SetFont('Arial', 'B', 13);
 
@@ -291,14 +293,16 @@ RFC: ' . $this->obra->rfc), '', 'J');
             }
 
             /*Observaciones de partida*/
-            $this->SetRounds(['4','','','','','','3']);
-            $this->SetRadius([0,0,0,0,0,0,0,0,0]);
-            $this->SetWidths([19.5]);
-            $this->SetAligns(['L']);
+            if($item->complemento->observaciones != "") {
+                $this->SetRounds(['4','','','','','','3']);
+                $this->SetRadius([0,0,0,0,0,0,0,0,0]);
+                $this->SetWidths([19.5]);
+                $this->SetAligns(['L']);
 
-            if($item->complemento)
-            {
-                $this->Row([utf8_decode($item->complemento->observaciones)]);
+                if($item->complemento)
+                {
+                    $this->Row([utf8_decode($item->complemento->observaciones)]);
+                }
             }
         }
 
@@ -348,10 +352,11 @@ RFC: ' . $this->obra->rfc), '', 'J');
                 }
             }
         }
+        $this->SetY(-5.35);
         $this->SetFont('Arial', '', 6);
         if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
             //if(true){
-            $this->SetY(-7);
+
             $this->SetFont('Arial', '', 6);
             $this->SetFillColor(180, 180, 180);
             $this->Cell(4.8, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
@@ -379,7 +384,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->Cell(5, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
             $this->Cell(5, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
         }else if(Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3){
-            $this->SetY(-7);
+
             $this->SetFont('Arial', '', 6);
             $this->SetFillColor(255, 255, 255);
             //$this->Cell(4, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
@@ -402,7 +407,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 0);
             $this->Cell(5, .4, '', 'TRLB', 0, 'C', 0);
         }else{
-            $this->SetY(-6);
+
 
             $this->CellFitScale(6, .5, utf8_decode('Solicitó'), 1, 0, 'C');
             $this->Cell(.7);
@@ -419,35 +424,17 @@ RFC: ' . $this->obra->rfc), '', 'J');
 
         }
 
-
-        /*$this->SetTextColor('0', '0', '0');
-        $this->SetFont('Arial', '', 6);
-        $this->SetFillColor(180, 180, 180);
-        $this->SetY(-6);
-
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-
-        $this->SetY(-5.59);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 1.2, '', 'TRLB', 0, 'C');
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 1.2, '', 'TRLB', 0, 'C');
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 1.2, '', 'TRLB', 0, 'C');
-
-        $this->SetY(-4.4);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
-        $this->Cell(1.2);
-        $this->Cell(($this->GetPageWidth() - 4.5) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);*/
     }
 
     function Footer()
     {
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',80);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,21,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $this->firmas();
 
         $this->SetY(-3.8);
@@ -503,7 +490,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
        $this->SetMargins(1, 0.5, 1);
        $this->AliasNbPages();
        $this->AddPage();
-       $this->SetAutoPageBreak(true,3.75);
+       $this->SetAutoPageBreak(true,5.5);
        $this->partidas();
 
        try {

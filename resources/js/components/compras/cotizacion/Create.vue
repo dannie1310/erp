@@ -104,7 +104,7 @@
                                                     <th>Observaciones</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody v-if="solicitud">
+                                                <tbody v-if="Object.keys(solicitud_editar).length > 0">
                                                     <tr v-for="(partida, i) in solicitud_editar.partidas.data">
                                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                         <td style="text-align:center;">{{partida.material.numero_parte}}</td>
@@ -132,7 +132,7 @@
                                                             <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                         </td>
                                                         <td>
-                                                            <input type="number"
+                                                            <input type="number" @change="calcular()"
                                                                    min="0.00"
                                                                    max="100"
                                                                    step=".01"
@@ -145,7 +145,7 @@
                                                                    v-model="partida.descuento"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{(precio[i]) ? '$ ' + parseFloat(((solicitud_editar.estado === 0) ? partida.cantidad_original_num : partida.cantidad) * precio[i]).formatMoney(2,'.',',') : '$ 0.00'}}</td>
+                                                        <td style="text-align:right;">{{getPrecio(partida, i)}}</td>
                                                         <td style="width:120px;" >
                                                             <select
                                                                 type="text"
@@ -515,7 +515,7 @@
                 this.observaciones_inputs = [];
                 this.cargando = true;
                 this.solicitud_editar = [];
-                this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
+                // this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
                 return this.$store.dispatch('compras/solicitud-compra/find', {
                     id: this.id_solicitud,
                     params:{include: [
@@ -525,7 +525,7 @@
                             'cotizaciones']}
                 }).then(data => {
                     this.solicitud_editar = data;
-                    this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
+                    // this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
                     this.fillMonedaInput();
                     this.cargando = false;
                 })
@@ -653,26 +653,35 @@
                        return  suma_total = precio != undefined ? precio : '1.00'
                     }
                     if (this.moneda_input[i] != undefined && this.moneda_input[i] == 2) {
-                        return suma_total = precio != undefined ? precio * this.monedas[1].tipo_cambio_cadeco.cambio : this.monedas[1].tipo_cambio_cadeco.cambio
+                        return suma_total = precio != undefined ? precio * this.dolar : this.dolar
                     }
                     if (this.moneda_input[i] != undefined && this.moneda_input[i] == 3) {
-                        return suma_total = precio != undefined ? precio * this.monedas[2].tipo_cambio_cadeco.cambio : this.monedas[2].tipo_cambio_cadeco.cambio
+                        return suma_total = precio != undefined ? precio * this.euro : this.euro
                     }
                     if (this.moneda_input[i] != undefined && this.moneda_input[i] == 4) {
-                        return suma_total = precio != undefined ? precio * this.monedas[3].tipo_cambio_cadeco.cambio : this.monedas[3].tipo_cambio_cadeco.cambio
+                        return suma_total = precio != undefined ? precio * this.libra : this.libra
                     }
                 }
-            }
+            },
+            getPrecio(partida, index){
+                /// (precio[i]) ? '$ ' + parseFloat(((solicitud_editar.estado === 0) ? partida.cantidad_original_num : partida.cantidad) * precio[i]).formatMoney(2,'.',',') : '$ 0.00'
+                if(this.precio[index]){
+                    let cantidad = 0;
+                    this.solicitud_editar.estado === 0? cantidad = partida.cantidad_original_num: cantidad = partida.cantidad;
+                    return '$' + parseFloat(this.precio[index] * cantidad - (this.precio[index] * cantidad * partida.descuento / 100).formatMoney(2,'.',','));
+                }
+                return '$ 0.00';
+            },
         },
         computed: {
-            solicitud(){
-                return this.$store.getters['compras/solicitud-compra/currentSolicitud'];
-            },
+            // solicitud(){
+            //     return this.$store.getters['compras/solicitud-compra/currentSolicitud'];
+            // },
             subtotal()
             {
-                return (this.pesos + (this.dolares * this.monedas[1].tipo_cambio_cadeco.cambio) + (this.euros * this.monedas[2].tipo_cambio_cadeco.cambio) + (this.libras * this.monedas[3].tipo_cambio_cadeco.cambio) -
-                    ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.monedas[1].tipo_cambio_cadeco.cambio) + (this.euros *
-                        this.monedas[2].tipo_cambio_cadeco.cambio) + (this.libras * this.monedas[3].tipo_cambio_cadeco.cambio)) * parseFloat(this.descuento_cot)) / 100) : 0));
+                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) -
+                    ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.dolar) + (this.euros *
+                        this.euro) + (this.libras * this.libra)) * parseFloat(this.descuento_cot)) / 100) : 0));
             },
             iva() {
                 return this.subtotal * 0.16;

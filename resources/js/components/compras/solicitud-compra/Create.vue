@@ -143,7 +143,7 @@
                                                     <th class="icono"></th>
                                                     <th>Observaciones</th>
                                                     <th class="icono">
-                                                        <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando...">
+                                                        <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando..." :disabled="cargando">
                                                             <i class="fa fa-spin fa-spinner"></i>
                                                         </button>
                                                         <button type="button" class="btn btn-success btn-sm" @click="addPartidas()" v-else>
@@ -264,7 +264,7 @@
                                     <i class="fa fa-angle-left"></i>
                                     Regresar
                                 </button>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" :disabled="cargando">
                                      <span v-if="cargando">
                                          <i class="fa fa-spin fa-spinner"></i>
                                      </span>
