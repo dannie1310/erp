@@ -170,7 +170,7 @@ class AsignacionProveedorService
                             'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
                         ]);
 
-                        $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion]);
+                        $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion, 'id_asignacion_proveedor'=>$asignacion->id]);
 
                 }
 

@@ -9,6 +9,8 @@
 namespace App\Models\CADECO;
 
 use App\Facades\Context;
+use App\Models\CADECO\Compras\OrdenCompraEliminada;
+use App\Models\CADECO\Compras\OrdenCompraPartidaEliminada;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\OrdenCompraPartida;
 use App\Models\CADECO\Empresa;
@@ -265,6 +267,41 @@ class OrdenCompra extends Transaccion
             $this->update(["estado"=>1]);
         }else{
             $this->update(["estado"=>0]);
+        }
+    }
+
+    /**
+     * Eliminar orden de compra
+     * @param $motivo
+     * @return $this
+     */
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            //$this->validar();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function revisarRespaldos($motivo)
+    {
+        if (($orden = OrdenCompraEliminada::where('id_transaccion', $this->id_transaccion)->first()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la orden de compra, no se respaldo la orden correctamente.');
+        } else {
+            $orden->motivo = $motivo;
+            $orden->save();
+        }
+        if (($item = OrdenCompraPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la orden de compra, no se respaldo los items correctamente.');
         }
     }
 }
