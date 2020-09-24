@@ -6,7 +6,7 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
 
-            <li class="nav-item" v-if="$root.can('modificar_area_subcontratante_cp')">
+            <li class="nav-item" v-if="$root.can(['modificar_area_subcontratante_cp', 'consultar_contrato_proyectado'])">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>
                         Gestión de Contratos Proyectados
@@ -14,10 +14,33 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('modificar_area_subcontratante_cp')">
+                    <li class="nav-item" v-if="$root.can(['modificar_area_subcontratante_cp', 'consultar_contrato_proyectado'])">
                         <router-link :to="{name: 'proyectado'}" class="nav-link" :class="{active: this.$route.name == 'proyectado'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Contrato Proyectado</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_presupuesto_contratista')">
+                        <router-link :to="{name: 'presupuesto'}" class="nav-link" :class="{active: this.$route.name == 'presupuesto'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Presupuesto Contratista</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+
+             <li class="nav-item" v-if="$root.can(['consultar_asignacion_contratista'])">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <p>
+                        Gestión de Asignación Proveedores
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can(['consultar_asignacion_contratista'])">
+                        <router-link :to="{name: 'asignacion-contratista'}" class="nav-link" :class="{active: this.$route.name == 'asignacion-contratista'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Asignación Proveedores</p>
                         </router-link>
                     </li>
                 </ul>

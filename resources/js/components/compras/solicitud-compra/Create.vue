@@ -27,7 +27,7 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label for="id_area_compradora">Departamento Responsable</label>
+                                            <label for="id_area_compradora">Departamento Responsable:</label>
                                             <select class="form-control"
                                                     name="id_area_compradora"
                                                     data-vv-as="Departamento Responsable"
@@ -43,7 +43,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="id_tipo">Tipo</label>
+                                            <label for="id_tipo">Tipo:</label>
                                             <select class="form-control"
                                                     data-vv-as="Tipo"
                                                     id="id_tipo"
@@ -57,9 +57,9 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_tipo')">{{ errors.first('id_tipo') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-2" v-if="configuracion && configuracion.configuracion_area_solicitante == 1">
                                         <div class="form-group">
-                                            <label for="id_area_solicitante">Área Solicitante</label>
+                                            <label for="id_area_solicitante">Área Solicitante:</label>
                                             <select class="form-control"
                                                     id="id_area_solicitante"
                                                     data-vv-as="Área Solicitante"
@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>Fecha Requisición Origen:</label>
+                                            <label>Fecha de la Requisición Origen:</label>
                                             <datepicker v-model = "fecha_requisicion"
                                                         name = "fecha_requisicion"
                                                         :format = "formatoFecha"
@@ -90,13 +90,18 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label>Folio Requisición Origen</label>
+                                            <label>Folio de la Requisición Origen:</label>
                                             <input
                                                 type="number"
                                                 data-vv-as="Folio Requisición"
+                                                name = "folio_requisicion"
+                                                id="folio_requisicion"
                                                 class="form-control"
                                                 placeholder="Folio Requisición"
+                                                v-validate="{min_value:0, max_value: 999999999}"
+                                                :class="{'is-invalid': errors.has('folio_requisicion')}"
                                                 v-model="folio_req"/>
+                                                <div class="invalid-feedback" v-show="errors.has('folio_requisicion')">{{ errors.first('folio_requisicion') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -138,7 +143,10 @@
                                                     <th class="icono"></th>
                                                     <th>Observaciones</th>
                                                     <th class="icono">
-                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
+                                                        <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando..." :disabled="cargando">
+                                                            <i class="fa fa-spin fa-spinner"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()" v-else>
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </th>
@@ -179,7 +187,7 @@
                                                     </td>
                                                     <td style="width:120px;" v-if="partida.material">{{partida.material.unidad}}</td>
                                                     <td style="width:120px;" v-else></td>
-                                                    <td class="fecha">
+                                                    <td class="fecha" v-if="materiales.length != 0">
                                                         <datepicker v-model="partida.fecha"
                                                                     :name="`fecha[${i}]`"
                                                                     :format = "formatoFecha"
@@ -187,11 +195,11 @@
                                                                     :bootstrap-styling = "true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
-                                                                    :disabled-dates="fechasDeshabilitadasHasta"
                                                                     :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
                                                         ></datepicker>
                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                     </td>
+                                                    <td class="fecha" v-else></td>
                                                     <td  v-if="partida.destino ===  ''" >
                                                          <small class="badge badge-secondary">
                                                             <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
@@ -215,7 +223,7 @@
                                                         <textarea class="form-control"
                                                                   :name="`observaciones[${i}]`"
                                                                   data-vv-as="Observaciones"
-                                                                  v-validate="{required: true}"
+                                                                  v-validate="{}"
                                                                   :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                   v-model="partida.observaciones"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
@@ -252,8 +260,18 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Registrar</button>
+                                <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                    <i class="fa fa-angle-left"></i>
+                                    Regresar
+                                </button>
+                                <button type="submit" class="btn btn-primary" :disabled="cargando">
+                                     <span v-if="cargando">
+                                         <i class="fa fa-spin fa-spinner"></i>
+                                     </span>
+                                    <span v-else>
+                                        <i class="fa fa-save"></i> Guardar
+                                    </span>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -313,7 +331,9 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
+                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino">
+                                    <i class="fa fa-close"  ></i> Cerrar
+                                </button>
                              </div>
                         </form>
                     </div>
@@ -334,8 +354,8 @@
             return{
                 cargando: false,
                 es:es,
+                configuracion : '',
                 fechasDeshabilitadas:{},
-                fechasDeshabilitadasHasta:{},
                 fecha : '',
                 fecha_requisicion : '',
                 fecha_hoy : '',
@@ -350,7 +370,7 @@
                 id_tipo : '',
                 materiales : [],
                 almacenes : [],
-                id_area_solicitante : '',
+                id_area_solicitante : null,
                 concepto : '',
                 observaciones : '',
                 folio_req : '',
@@ -382,8 +402,12 @@
         },
         mounted() {
             this.$validator.reset()
+            this.fecha_hoy = new Date();
+            this.fecha_requisicion = new Date();
+            this.fecha = new Date();
+            this.fechasDeshabilitadas.from= new Date();
             this.getAreasCompradoras();
-            this.getAreasSolicitantes();
+            this.getConfiguracion();
             this.getTipos();
             this.getMateriales();
             this.getAlmacenes();
@@ -414,6 +438,16 @@
                     destino :  ""
                 }];
             },
+            getConfiguracion() {
+                return this.$store.dispatch('seguridad/configuracion-obra/getConfiguracion', {  } )
+                    .then(data => {
+                       this.configuracion =  data;
+                       if(data.configuracion_area_solicitante == 1) {
+                           this.getAreasSolicitantes();
+                           this.id_area_solicitante = '';
+                       }
+                    })
+            },
             changeSelect(item){
                 var busqueda = this.materiales.find(x=>x.id === item.id_material);
                 if(busqueda != undefined)
@@ -428,13 +462,8 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             getAreasCompradoras() {
-                this.fecha_hoy = new Date();
-                this.fecha_requisicion = new Date();
-                this.fecha = new Date();
-                this.fechasDeshabilitadas.from= new Date();
-                this.fechasDeshabilitadasHasta.to= new Date();
                 return this.$store.dispatch('configuracion/area-compradora/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+                    params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_compradoras = data;
@@ -532,7 +561,7 @@
             },
             getAreasSolicitantes() {
                 return this.$store.dispatch('configuracion/area-solicitante/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+                    params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_solicitantes = data;
@@ -565,7 +594,7 @@
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: 'materialesParaCompras',
-                        sort: 'descripcion', order: 'desc'
+                        sort: 'descripcion', order: 'asc'
                     }
                 })
                     .then(data => {
@@ -581,11 +610,17 @@
                         while(t < this.partidas.length){
                             if(this.partidas[t].destino === '' || typeof this.partidas[t].destino.destino === 'undefined' )
                             {
-                                this.m ++;
+                                m ++;
                                 swal('¡Error!', 'Ingrese un destino válido en partida '+(t + 1) +'.', 'error');
                             }
+                            else if(moment(this.fecha).format('YYYY/MM/DD') > moment(this.partidas[t].fecha).format('YYYY/MM/DD'))
+                            {
+                                m ++;
+                                swal('¡Error!', 'La fecha de la partida '+(t + 1) +' ('+moment(this.partidas[t].fecha).format('DD/MM/YYYY')+') debe ser posterior o igual a la fecha de la solicitud ('+moment(this.fecha).format('DD/MM/YYYY')+').', 'error')
+                            }
                             t ++;
-                        }if(m == 0) {
+                        }
+                        if(m == 0) {
                             this.store()
                         }
                     }

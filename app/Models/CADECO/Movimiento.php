@@ -32,6 +32,11 @@ class Movimiento extends Model
     public $timestamps = false;
 
 
+    public function items()
+    {
+        return $this->belongsTo(Item::class, 'id_item', 'id_item');
+    }
+
     public function inventario()
     {
         return $this->belongsTo(Inventario::class, 'lote_antecedente', 'id_lote');

@@ -153,6 +153,16 @@ class Estimacion extends Transaccion
         return $this->belongsTo(EstimacionEliminada::class, 'id_transaccion');
     }
 
+    public function partidasRelacionadas()
+    {
+        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_antecedente');
+    }
+
+    public function itemsReferenciados()
+    {
+        return $this->hasMany(Item::class, 'id_antecedente','id_transaccion');
+    }
+
     /**
      * Acciones
      */
@@ -645,8 +655,8 @@ class Estimacion extends Transaccion
         $monto_pagar -= $this->retencionIVA_2_3;
         if($this->configuracion->penalizacion_antes_iva == 0)
         {
-            $monto_pagar -= $this->penalizaciones->sum('importe');
-            $monto_pagar += $this->penalizacionLiberaciones->sum('importe');
+            $monto_pagar -= $this->suma_penalizaciones;
+            $monto_pagar += $this->suma_penalizaciones_liberadas;
         }
         return $monto_pagar;
     }
@@ -995,11 +1005,6 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->retencionIVA_2_3, 2);
     }
 
-    public function getRestaImportesAmortizacionAttribute()
-    {
-        return $this->suma_importes - $this->monto_anticipo_aplicado;
-    }
-
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
@@ -1098,5 +1103,32 @@ class Estimacion extends Transaccion
     public function getSumaPenalizacionesLiberadasFormatAttribute()
     {
         return '$ ' . number_format($this->suma_penalizaciones_liberadas, 2);
+    }
+
+    public function getRestaImportesAmortizacionAttribute()
+    {
+        return $this->suma_importes - $this->monto_anticipo_aplicado;
+    }
+
+    /**
+     * Ejecuta lógica: sp_revertir_transaccion
+     * Validaciones para revertir la estimación
+     * @param $estimacion
+     */
+    private function revertir_estimacion()
+    {
+        if (is_null($this->itemsReferenciados()))
+        {
+            abort(400, "Esta estimación ".$this->numero_folio_format." se encuentra asociada a otras transacciones.");
+        }
+
+        foreach ($this->items as $item)
+        {
+            $item->movimiento->delete();
+        }
+        $this->estado = 0;
+        $this->impreso = 0;
+        $this->saldo = $this->monto;
+        $this->save();
     }
 }

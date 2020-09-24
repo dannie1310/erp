@@ -10,8 +10,9 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\Contabilidad\CuentaCosto;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Contabilidad\CuentaCosto;
+use App\Models\CADECO\Contabilidad\DatosContables;
 
 class Costo extends Model
 {
@@ -69,6 +70,13 @@ class Costo extends Model
         return $query->whereRaw(" (descripcion like '5%' or
                                   descripcion like '6%' or
                                   descripcion like '7%' )");
+    }
+
+    public function scopeDatosContablesConfiguracion($query){
+        if(DatosContables::where('id_obra', '=', Context::getIdObra())->first()->costo_en_tipo_gasto){
+            return $this->scopeCostoFinanza($query);
+        }
+        return $query;
     }
 
 }

@@ -12,14 +12,21 @@ class CotizacionComplementoTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'descuento' => $model->descuento_format,
-            'anticipo' => $model->anticipo_format,
-            'parcialidades' => $model->parcialidades_format,
+            'descuento_format' => $model->descuento_format,
+            'descuento' => $model->descuento,
+            'anticipo' => $model->anticipo,
+            'anticipo_format' => $model->anticipo_format,
+            'parcialidades' => $model->parcialidades,
+            'parcialidades_format' => $model->parcialidades_format,
             'dias_credito' => (int) $model->dias_credito,
             'vigencia' => (int) $model->vigencia,
             'entrega' => (int) $model->plazo_entrega,
-            'tc_usd' => $model->tipo_cambio_usd_format,
-            'tc_eur' => $model->tipo_cambio_eur_format
+            'tc_usd_format' => $model->tipo_cambio_usd_format,
+            'tc_eur_format' => $model->tipo_cambio_eur_format,
+            'tc_libra_format' => $model->tipo_cambio_lib_format,
+            'tc_usd' => number_format($model->tc_usd, 4),
+            'tc_eur' => number_format($model->tc_eur, 4),
+            'tc_libra' => number_format($model->tc_libra, 4)
         ];
     }
 }

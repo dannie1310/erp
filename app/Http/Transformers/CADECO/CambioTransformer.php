@@ -39,6 +39,7 @@ class CambioTransformer extends TransformerAbstract
             'fecha' => $model->fecha,
             'cambio' => $model->cambio,
             'cambio_format' => $model->cambio_format,
+            'cambio_formato' => $model->cambio_formato
         ];
     }
 

@@ -24,6 +24,7 @@ class CotizacionComplemento extends Model
         'importe',
         'tc_usd',
         'tc_eur',
+        'tc_libra',
         'registro',
         'timestamp_registro'
     ];
@@ -36,6 +37,11 @@ class CotizacionComplemento extends Model
     public function getTipoCambioEurFormatAttribute()
     {
         return '$ ' . number_format($this->tc_eur, 4, '.', ',');
+    }
+
+    public function getTipoCambioLibFormatAttribute()
+    {
+        return '$ ' . number_format($this->tc_libra, 4, '.', ',');
     }
 
     public function getDescuentoFormatAttribute()

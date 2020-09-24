@@ -232,7 +232,7 @@ export const routes = [
                         meta: {
                             title: 'Solicitudes de Edición',
                             breadcrumb: {parent: 'contabilidad-general', name: 'SOLICITUDES DE EDICIÓN'},
-                            middleware: [auth, permission],
+                            middleware: [auth],
                             permission: ['consultar_solicitud_edicion_poliza_ctpq'],
                             general: true
                         }
@@ -270,7 +270,7 @@ export const routes = [
                         meta: {
                             title: 'Consultar Solicitud de Edición',
                             breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'CONSULTAR'},
-                            middleware: [auth, permission],
+                            middleware: [auth],
                             permission: 'consultar_solicitud_edicion_poliza_ctpq',
                             general: true
                         }
@@ -1215,8 +1215,37 @@ export const routes = [
                         meta: {
                             title: 'Registrar Proveedor / Contratista',
                             breadcrumb: { parent: 'proveedor-contratista', name: 'REGISTRAR PROVEEDOR-CONTRATISTA'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
                             permission: 'registrar_proveedor'
+                        }
+                    },
+                ]
+            },
+
+            {
+                path: 'unificacion-proveedores',
+                component: require('./components/catalogos/unificacion-proveedores/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'unificacion-proveedores',
+                        component: require('./components/catalogos/unificacion-proveedores/Index').default,
+                        meta: {
+                            title: 'Unificacion de Proveedores',
+                            breadcrumb: {parent: 'catalogos', name: 'UNIFICACIÓN PROVEEDORES'},
+                            middleware: [auth, context,permission],
+                            permission: ['consultar_unificacion_proveedores']
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'unificacion-proveedores-create',
+                        component: require('./components/catalogos/unificacion-proveedores/Create').default,
+                        meta: {
+                            title: 'Registrar Unificación de Proveedores',
+                            breadcrumb: { parent: 'unificacion-proveedores', name: 'REGISTRAR UNIFICACIÓN PROVEEDORES'},
+                            middleware: [auth, context,permission],
+                            permission: 'registrar_unificacion_proveedores'
                         }
                     },
                 ]
@@ -1241,19 +1270,55 @@ export const routes = [
                 }
             },
             {
-                path: 'asignacion-proveedores',
+                path: 'asignacion-proveedor',
                 component: require('./components/compras/asignacion/Layout').default,
                 children: [
                     {
                         path: '/',
-                        name: 'asignacion-proveedores',
+                        name: 'asignacion-proveedor',
                         component: require('./components/compras/asignacion/Index').default,
                         meta: {
                             title: 'Asignación de Proveedores',
                             breadcrumb: {parent: 'compras', name: 'ASIGNACIÓN DE PROVEEDORES'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_asignacion_proveedor'
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'asignacion-proveedor-create',
+                        component: require('./components/compras/asignacion/Create').default,
+                        meta: {
+                            title: 'Registrar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_asignacion_proveedor'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'asignacion-proveedor-show',
+                        component: require('./components/compras/asignacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedor', name: 'VER'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_asignacion_proveedor'
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'asignacion-proveedor-edit',
+                        component: require('./components/compras/asignacion/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Editar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedor', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_orden_compra'
+                        }
+                    }
                 ]
             },
             {
@@ -1336,9 +1401,21 @@ export const routes = [
                         component: require('./components/compras/cotizacion/Create').default,
                         meta: {
                             title: 'Registrar Cotización',
-                        breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR COTIZACIÓN'},
+                            breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR'},
                             middleware: [auth, context, permission],
                             permission: ['registrar_cotizacion_compra']
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'cotizacion-edit',
+                        props: true,
+                        component: require('./components/compras/cotizacion/Edit').default,
+                        meta: {
+                            title: 'Editar Cotización',
+                            breadcrumb: { parent: 'cotizacion', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['editar_cotizacion_compra', 'cargar_layout_cotizacion_compra']
                         }
                     },
                 ]
@@ -1346,17 +1423,30 @@ export const routes = [
             {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue').default,
-                children: [{
-                    path: '/',
-                    name: 'orden-compra',
-                    component: require('./components/compras/orden-compra/Index').default,
-                    meta: {
-                        title: 'Ordenes de Compra',
-                        breadcrumb: { parent: 'compras', name: 'ORDENES DE COMPRA' },
-                        middleware: [auth, context, permission],
-                        permission: ['consultar_orden_compra']
-                    }
-                }]
+                children: [
+                    {
+                        path: '/',
+                        name: 'orden-compra',
+                        component: require('./components/compras/orden-compra/Index').default,
+                        meta: {
+                            title: 'Órdenes de Compra',
+                            breadcrumb: { parent: 'compras', name: 'ÓRDENES DE COMPRA' },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_orden_compra']
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'orden-compra-edit',
+                        props: true,
+                        component: require('./components/compras/orden-compra/Edit').default,
+                        meta: {
+                            title: 'Editar Orden Compra',
+                            breadcrumb: { parent: 'orden-compra', name: 'EDITAR'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
             },
             {
                 path: 'requisicion',
@@ -1377,8 +1467,8 @@ export const routes = [
                         name: 'requisicion-create',
                         component: require('./components/compras/requisicion/Create').default,
                         meta: {
-                            title: 'Registrar Requisición de Compra',
-                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR REQUISICIÓN'},
+                            title: 'Registrar Requisición',
+                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_requisicion_compra'
                         }
@@ -1407,7 +1497,7 @@ export const routes = [
                         component: require('./components/compras/solicitud-compra/Create').default,
                         meta: {
                             title: 'Registrar Solicitud',
-                            breadcrumb: { parent: 'compras', name: 'REGISTRAR SOLICITUD'},
+                            breadcrumb: { parent: 'solicitud-compra', name: 'REGISTRAR'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_solicitud_compra'
                         }
@@ -1419,7 +1509,7 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Editar Solicitud',
-                            breadcrumb: { parent: 'compras', name: 'EDITAR SOLICITUD'},
+                            breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
                             middleware: [auth, context, permission],
                             permission: 'editar_solicitud_compra'
                         }
@@ -1625,11 +1715,90 @@ export const routes = [
                         component: require('./components/contratos/proyectado/Index').default,
                         meta: {
                             title: 'Contratos Proyectados',
-                            breadcrumb: {parent: 'contratos', name: 'PROYECTADOS'},
+                            breadcrumb: {parent: 'contratos', name: 'CONTRATOS PROYECTADOS'},
                             middleware: [auth, context],
 
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'proyectado-create',
+                        component: require('./components/contratos/proyectado/Create').default,
+                        meta: {
+                            title: 'Registrar Contratos Proyectados',
+                            breadcrumb: {parent: 'proyectado', name: 'REGISTRAR'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'presupuesto',
+                component: require('./components/contratos/presupuesto/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'presupuesto',
+                        component: require('./components/contratos/presupuesto/Index').default,
+                        meta: {
+                            title: 'Presupuesto Contratista',
+                            breadcrumb: {parent: 'contratos', name: 'PRESUPUESTO CONTRATISTA'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_presupuesto_contratista'
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'presupuesto-edit',
+                        props: true,
+                        component: require('./components/contratos/presupuesto/Edit').default,
+                        meta: {
+                            title: 'Editar Presupuesto Contratista',
+                            breadcrumb: { parent: 'presupuesto', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_presupuesto_contratista'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'presupuesto-create',
+                        component: require('./components/contratos/presupuesto/Create').default,
+                        meta: {
+                            title: 'Registrar Presupuesto Contratista',
+                            breadcrumb: { parent: 'presupuesto', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_presupuesto_contratista']
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'asignacion-contratista',
+                component: require('./components/contratos/asignacion-contratista/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'asignacion-contratista',
+                        component: require('./components/contratos/asignacion-contratista/Index').default,
+                        meta: {
+                            title: 'Asignaciones Proveedores',
+                            breadcrumb: {parent: 'contratos', name: 'ASIGNACIONES'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_asignacion_contratista'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'asignacion-contratista-create',
+                        component: require('./components/contratos/asignacion-contratista/Create').default,
+                        meta: {
+                            title: 'Registrar Asignación Proveedores',
+                            breadcrumb: { parent: 'asignacion-contratista', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_asignacion_contratista']
+                        }
+                    }
                 ]
             },
             {

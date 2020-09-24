@@ -1,10 +1,10 @@
 <template>
     <div class="row">
-        <!-- <div class="col-12">
+        <div class="col-12">
             <button @click="create" v-if="$root.can('registrar_cotizacion_compra')" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
-        </div> -->
+        </div>
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -38,18 +38,18 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Núm de Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Folio SAO Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtons').default},
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'folio', tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Núm de Folio de la Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtons').default},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa']},
+                query: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa']},
                 search: '',
                 cargando: false
             }
@@ -84,23 +84,18 @@
                 switch (val) {
                     case 0:
                         return {
-                            color: '#f39c12',
-                            descripcion: 'Por Autorizar'
+                            color: '#ff0000',
+                            descripcion: 'Precios Pendientes'
                         }
                     case 1:
                         return {
-                            color: '#00a65a',
-                            descripcion: 'Autorizada'
+                            color: '#f39c12',
+                            descripcion: 'Registrada'
                         }
                     case 2:
                         return {
-                            color: '#7889d6',
-                            descripcion: 'Tercer caso'
-                        }
-                    default:
-                        return {
-                            color: '#d2d6de',
-                            descripcion: 'Sin solicitud'
+                            color: '#4f9b34',
+                            descripcion: 'En Asignación'
                         }
                 }
             },
@@ -131,15 +126,17 @@
                         empresa: (cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----',
                         observaciones: cotizacion.observaciones,
                         importe: cotizacion.importe,
-                        estado: this.getEstado((cotizacion.solicitud) ? cotizacion.solicitud.estado : null),
+                        estado: this.getEstado(cotizacion.estado),
                         solicitud: $.extend({}, {
                             show: (cotizacion.solicitud) ? true : false,
                             id: (cotizacion.solicitud) ? cotizacion.solicitud.id : null,
-                            cotizacion: (cotizacion.solicitud) ? cotizacion.solicitud : null
+                            solicitud_consulta: (cotizacion.solicitud) ? cotizacion.solicitud : null
                         }),
                         buttons: $.extend({}, {
                             show: true,
                             id: cotizacion.id,
+                            delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
+                            edit: (cotizacion.asignada) ? false : true,
                         })
                     }));
                 },

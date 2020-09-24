@@ -10,10 +10,27 @@ use Illuminate\Database\Eloquent\Model;
 class CtgAreaCompradora extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'Compras.ctg_areas_compradoras';
+    protected $table = 'SEGURIDAD_ERP.Compras.ctg_areas_compradoras';
     protected $primaryKey = 'id';
     public $timestamps = false;
 
+    /**
+     * Relaciones
+     */
+    public function areasUsuario()
+    {
+        return $this->hasMany(AreaCompradoraUsuario::class, 'id_area_compradora', 'id');
+    }
+
+    /**
+     * Scopes
+     */
+    public function scopeAreasPorUsuario($query)
+    {
+        return $query->whereHas('areasUsuario', function ($q2) {
+            return $q2->porUsuario();
+        });
+    }
 
     public function scopeAsignadas($query)
     {
@@ -26,4 +43,12 @@ class CtgAreaCompradora extends Model
         $usuario = Usuario::query()->find($user_id);
         return $usuario->areasCompradoras();
     }
+
+    /**
+     * Attributes
+     */
+
+    /**
+     * Métodos
+     */
 }

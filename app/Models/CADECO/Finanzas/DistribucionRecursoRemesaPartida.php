@@ -117,4 +117,10 @@ class DistribucionRecursoRemesaPartida extends Model
     public function scopeTransaccionPago($query){
         return $query->whereNull('id_transaccion_pago');
     }
+
+    public function desvincularPago()
+    {
+        $this->id_transaccion_pago = null;
+        $this->save();
+    }
 }

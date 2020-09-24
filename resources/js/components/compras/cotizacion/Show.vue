@@ -32,9 +32,9 @@
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
                                                     <td class="bg-gray-light">{{(cotizacion.sucursal) ? cotizacion.sucursal.descripcion : '------ Sin Sucursal ------'}}</td>
                                                     <td class="bg-gray-light"><b>ToTC USD:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd : '---------------'}}</td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : '---------------'}}</td>
                                                     <td class="bg-gray-light"><b>ToTC EURO:</b></td>
-                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur : '---------------'}}</td>
+                                                    <td class="bg-gray-light">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : '---------------'}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Direccion:</b></td>
@@ -71,13 +71,13 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(partida, i) in cotizacion.cotizaciones.data" v-show="no_cotizados[i]">
+                                                    <tr v-for="(partida, i) in cotizacion.partidas.data" v-show="no_cotizados[i]">
                                                         <td >{{cuenta[i] + 1}}</td>
                                                         <td style="text-align: center"><b>{{(partida.material) ? partida.material.numero_parte : null}}</b></td>
                                                         <td style="text-align: center">{{(partida.material) ? partida.material.descripcion : '------------'}}</td>
                                                         <td style="text-align: center">{{(partida.material) ? partida.material.unidad : '-----'}}</td>
                                                         <td style="text-align: center">{{partida.cantidad}}</td>
-                                                        <td class="money">{{partida.precio_unitario}}</td>
+                                                        <td class="money">{{partida.precio_unitario_format}}</td>
                                                         <td style="text-align: center">{{partida.descuento}}</td>
                                                         <td class="money">{{partida.precio_total}}</td>
                                                         <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
@@ -90,7 +90,7 @@
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">% Descuento</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.descuento : '-----'}}</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.descuento_format : '-----'}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXP):</label>
@@ -106,9 +106,9 @@
                                     </div>
                                     <div class="row col-md-12" v-if="cotizacion.complemento">
                                         <div class="col-md-2"><b>Pago en Parcialidades (%):</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.parcialidades}}</div>
+                                        <div class="col-md-2">{{cotizacion.complemento.parcialidades_format}}</div>
                                         <div class="col-md-2"><b>Anticipo:</b></div>
-                                        <div class="col-md-2">{{cotizacion.complemento.anticipo}}</div>
+                                        <div class="col-md-2">{{cotizacion.complemento.anticipo_format}}</div>
                                     </div>
                                     <div class="row col-md-12" v-if="cotizacion.complemento">
                                         <div class="col-md-2"><b>Crédito (días):</b></div>
@@ -129,7 +129,10 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fa fa-times-circle"></i>
+                            Cerrar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -158,14 +161,14 @@
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
                 return this.$store.dispatch('compras/cotizacion/find', {
                     id: this.id,
-                    params:{include: ['empresa', 'sucursal', 'complemento', 'cotizaciones.material', 'cotizaciones.moneda']}
+                    params:{include: ['empresa', 'sucursal', 'complemento', 'partidas']}
                 }).then(data => {
                     this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
-                    this.items = data.cotizaciones.data;
+                    this.items = data.partidas.data;
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                     this.cargando = false;
-                    
+
                 })
             }
         },
@@ -184,7 +187,7 @@
                     this.no_cotizados[this.x] = this.items[this.x].no_cotizado;
                     this.cuenta[this.x] = (this.no_cotizados[this.x]) ? this.t ++ : 0;
                     this.x ++;
-                }                
+                }
             }
         }
     }

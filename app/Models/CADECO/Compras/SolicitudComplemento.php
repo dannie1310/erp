@@ -10,6 +10,8 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\Compras\CtgTipo;
@@ -32,10 +34,11 @@ class SolicitudComplemento extends Model
         'concepto',
         'fecha_requisicion_origen',
         'requisicion_origen',
-        'registro',
-        'timestamp_registro',
     ];
 
+    /**
+     * Relaciones
+     */
     public function tipo()
     {
         return $this->belongsTo(CtgTipo::class, 'id_tipo', 'id');
@@ -56,24 +59,71 @@ class SolicitudComplemento extends Model
         return $this->belongsTo(ActivoFijo::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function estadoSolicitud()
+    {
+        return $this->belongsTo(CtgEstadoSolicitud::class, 'estado','id');
+    }
+
+    public function solicitud()
+    {
+        return $this->belongsTo(SolicitudCompra::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    /**
+     * Scopes
+     */
+    public function scopeAreasCompradorasPorUsuario($query)
+    {
+        return $query->whereHas('area_compradora', function ($q1) {
+            return $q1->areasPorUsuario();
+        });
+    }
+
+    /**
+     * Attributes
+     */
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha_requisicion_origen);
         return date_format($date,"d/m/Y");
-
     }
 
+    public function getRequisicionFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->requisicion_origen);
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        if($this->estado == 1){
+            return '#f7f420';
+        }elseif ($this->estado == 2){
+            return '#f29111';
+        }elseif ($this->estado == 3){
+            return '#00a65a';
+        }elseif ($this->estado == 4){
+            return '#a40ec2';
+        }elseif ($this->estado == 5){
+            return '#7889d6';
+        }
+    }
+
+    public function getDescripcionEstadoAttribute()
+    {
+       return $this->estadoSolicitud ? $this->estadoSolicitud->descripcion : '';
+    }
+
+    /**
+     * Métodos
+     */
     public function generaFolioCompuesto()
     {
-        $count = $this->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
-        $count++;
-
+        $consecutivo = self::join('dbo.transacciones', 'transacciones.id_transaccion','Compras.solicitud_complemento.id_transaccion')
+            ->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)
+            ->where('id_obra', '=', Context::getIdObra())->count();
         $tipo= CtgTipo::find($this->id_tipo);
         $area_compradora = CtgAreaCompradora::find($this->id_area_compradora);
-
-        $folio=$area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.$count;
-
-        return $folio;
+        return $area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.($consecutivo+1);
     }
 
     public function generarActivoFijo()
@@ -81,5 +131,13 @@ class SolicitudComplemento extends Model
         $this->activoFijo()->create([
             'id_transaccion' => $this->id_transaccion
         ]);
+    }
+
+    public function setCambiarEstado($estatus_actual, $nuevo_estado)
+    {
+        if($this->estado ==  $estatus_actual){
+            $this->estado = $nuevo_estado;
+            $this->save();
+        }
     }
 }
