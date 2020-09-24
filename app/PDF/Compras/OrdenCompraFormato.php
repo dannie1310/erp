@@ -488,12 +488,6 @@ class OrdenCompraFormato extends FPDI
         $this->CellFitScale(2, .5, number_format($anticipo_monto, 2, '.', ','), 1, 0,'R');
         $this->Ln(.7);
 
-        $this->SetTextColor(0,0,0);
-        $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(4, .5, 'Pago en Parcialidades ('. "porcentaje ant pactado" .' %): ', 0, 0,'L');
-        $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(2, .5, number_format($anticipo_pactado_monetario, 2, '.', ','), 1, 0,'R');
-        $this->Ln(.7);
 
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
@@ -508,7 +502,7 @@ class OrdenCompraFormato extends FPDI
         $this->CellFitScale(5, .5, utf8_decode(""), 1, 0,'L');
         $this->Ln(.7);
 
-        $this->Ln(0.4);
+        $this->Ln(0.7);
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Domicilio Entrega:', 0, 0,'L');
