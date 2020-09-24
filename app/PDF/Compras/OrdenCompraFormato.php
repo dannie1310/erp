@@ -486,7 +486,7 @@ class OrdenCompraFormato extends FPDI
 
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(4, .5, 'Anticipo ('. "anticipo" .' %): ', 0, 0,'L');
+        $this->CellFitScale(4, .5, 'Anticipo ('. $this->ordenCompra->cotizacion->complemento->anticipo .' %): ', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
         $this->CellFitScale(2, .5, number_format($anticipo_monto, 2, '.', ','), 1, 0,'R');
         $this->Ln(.7);
