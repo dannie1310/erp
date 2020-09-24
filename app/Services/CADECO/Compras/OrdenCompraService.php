@@ -93,6 +93,11 @@ class OrdenCompraService
         }
     }
 
+    public function delete($data, $id)
+    {
+        return $this->repository->show($id)->eliminar($data['data']);
+    }
+
     public function update(array $data, $id)
     {
         $fecha_e = New DateTime($data['complemento']['fecha_entrega']);
