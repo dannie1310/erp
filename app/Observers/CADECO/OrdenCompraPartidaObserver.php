@@ -8,6 +8,7 @@
 
 namespace App\Observers\CADECO;
 
+use App\Models\CADECO\Compras\OrdenCompraComplemento;
 use App\Models\CADECO\Compras\OrdenCompraEliminada;
 use App\Models\CADECO\Compras\OrdenCompraPartidaEliminada;
 use App\Models\CADECO\OrdenCompraPartida;
@@ -58,6 +59,19 @@ class OrdenCompraPartidaObserver
         if($partida->complemento)
         {
             $partida->complemento->delete();
+        }
+    }
+
+    public function deleted(OrdenCompraPartida $partida)
+    {
+        /**
+         * Eliminar la partida de asignación si la asignación esta asociada a mas de una orden de compra
+         */
+        $ordenes_compra = OrdenCompraComplemento::where("id_asignacion_proveedor","=",$partida->ordenCompra->complemento->asignacion->id)
+            ->get();
+        if(count($ordenes_compra)>1)
+        {
+            $partida->partidaAsignacion->delete();
         }
     }
 }
