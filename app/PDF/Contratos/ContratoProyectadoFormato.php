@@ -36,7 +36,7 @@ class ContratoProyectadoFormato extends Rotation
         $this->txtSeccionTam = 9;
         $this->txtContenidoTam = 11;
         $this->txtFooterTam = 6;
-        $this->encabezado_pdf = utf8_decode('C o n t r a t o   P r o y e c t a d o  ');
+        $this->encabezado_pdf = utf8_decode('CONTRATO PROYECTADO');
     }
 
     function Header()
@@ -79,7 +79,7 @@ class ContratoProyectadoFormato extends Rotation
         $this->Row(array(""));
         $this->setY($y_inicial+1.5);
         $this->setX(2);
-        $this->MultiCell(16, 1, 'PROYECTO: '.$this->obra->nombre, '', 'C');
+        $this->MultiCell(16, 1, 'Proyecto: '.$this->obra->nombre, '', 'C');
 
         $this->Ln(.6);
         $this->SetFont('Arial', 'B', 10);
@@ -153,7 +153,7 @@ class ContratoProyectadoFormato extends Rotation
         foreach ($this->contrato->conceptos as $key => $c) {
             $this->Row([$key + 1,
                 mb_strtoupper($c->clave),
-                mb_strtoupper(utf8_decode($c->descripcion_guion_nivel_format)),
+                utf8_decode(mb_strtoupper($c->descripcion_guion_nivel_format)),
                 $c->unidad != null ? $c->unidad : '',
                 $c->cantidad_original != '0' ? number_format($c->cantidad_original, 2, ".", ",") : '-',
                 $c->destino ? utf8_decode($c->destino->ruta_destino) : '']);
@@ -226,7 +226,7 @@ class ContratoProyectadoFormato extends Rotation
         $this->Cell(10, .3, (''), 0, 1, 'L');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->contrato->fecha_hora_registro_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el Sistema de Contratos del SAO ERP. Fecha de registro: ') . $this->contrato->fecha_hora_registro_format.' Fecha de consulta: '.date("d/m/Y H:i:s"), 0, 0, 'L');
         $this->Cell(10, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
