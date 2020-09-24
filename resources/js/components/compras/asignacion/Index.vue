@@ -100,8 +100,8 @@
                             buttons: $.extend({}, {
                                 id:asignacion.id,
                                 estado:asignacion.estado,
-                                eliminar: (self.$root.can('eliminar_asignacion_proveedor') && asignacion.estado == 1) ? true : false,
-                                editar: self.$root.can('registrar_orden_compra') ? true : false
+                                eliminar: (self.$root.can('eliminar_asignacion_proveedor') && ! asignacion.aplicada) ? true : false,
+                                editar: self.$root.can('registrar_orden_compra') && ! asignacion.aplicada ? true : false
                             })
                         })
                     });

@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init"  class="btn btn-app btn-info pull-right" v-if="$root.can('registrar_orden_compra')">
+        <button @click="init"  class="btn btn-app pull-right" v-if="$root.can('registrar_orden_compra')">
             <i class="fa fa-plus"></i> Generar
         </button>
          <div class="modal fade" ref="modal" role="dialog">

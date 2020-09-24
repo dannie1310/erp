@@ -48,6 +48,7 @@ class AsignacionProveedorTransformer extends TransformerAbstract
             'folio_solicitud_format' => $model->solicitud->numero_folio_format,
             'opciones' => $model->solicitud->opciones,
             'folio_asignacion_format' => $model->folio_format,
+            'aplicada' => $model->aplicada,
 
         ];
     }

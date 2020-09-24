@@ -284,4 +284,16 @@ class AsignacionProveedor extends Model
         $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
         return $tipo_cambio ? $tipo_cambio->cambio : $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->orderByDesc('fecha')->first()->cambio;
     }
+
+    public function getAplicadaAttribute()
+    {
+        if($this->ordenCompraComplemento){
+            if($this->ordenCompraComplemento->count()>0)
+            {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 }
