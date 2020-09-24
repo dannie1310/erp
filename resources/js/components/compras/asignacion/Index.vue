@@ -31,16 +31,16 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio Solicitud', field: 'id_transaccion_solicitud',sortable: true},
-                    { title: 'Folio Asignación', field: 'id',sortable: true},
-                    { title: 'Concepto', field: 'observaciones'},
-                    { title: 'Fecha/Hora', field: 'registro',sortable: true},
-                    { title: 'Estado', field: 'estado', sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Folio', field: 'id', tdClass: 'th_numero_folio', sortable: true},
+                    { title: 'Folio SAO Solicitud', field: 'solicitud', tdClass: 'th_c120', tdComp: require('../solicitud-compra/partials/ActionButtons').default,sortable: true},
+                    { title: 'Concepto de Solicitud', field: 'concepto'},
+                    { title: 'Fecha / Hora de Registro', field: 'fecha_format',sortable: true},
+                    { title: 'Estado', field: 'estado', thClass:'th_c120', sortable: true},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'', sort: 'id', order: 'desc'},
+                query: {scope: 'areasCompradorasAsignadas', sort: 'id', order: 'desc', include: ['solicitudCompra']},
                 estado: "",
                 cargando: false
             }
@@ -87,16 +87,21 @@
                     asignaciones.forEach(function (asignacion, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            id_transaccion_solicitud: asignacion.folio_solicitud_format,
+                            folio_solicitud: asignacion.folio_solicitud_format,
                             id: asignacion.folio_asignacion_format,
-                            observaciones: asignacion.observaciones,
+                            concepto: asignacion.concepto,
                             estado: asignacion.estado_format,
                             fecha_format: asignacion.fecha_format,
+                            solicitud: $.extend({}, {
+                                show: (asignacion.solicitud) ? true : false,
+                                id: (asignacion.solicitud) ? asignacion.solicitud.id : null,
+                                solicitud_consulta: (asignacion.solicitud) ? asignacion.solicitud : null
+                            }),
                             buttons: $.extend({}, {
                                 id:asignacion.id,
                                 estado:asignacion.estado,
-                                eliminar: (self.$root.can('eliminar_asignacion_proveedor') && asignacion.estado == 1) ? true : false,
-                                editar: self.$root.can('registrar_orden_compra') ? true : false
+                                eliminar: (self.$root.can('eliminar_asignacion_proveedor') && ! asignacion.aplicada) ? true : false,
+                                editar: self.$root.can('registrar_orden_compra') && ! asignacion.aplicada ? true : false
                             })
                         })
                     });

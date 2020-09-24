@@ -84,8 +84,8 @@
                                                 <td style="text-align: right" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
                                                 <td>
                                                     <span  v-if="data.cotizaciones[id_empresa].partidas[i]">
-                                                        <input v-on:change="recalcular(i)"
-                                                            type="number"
+                                                        <input
+                                                            type="number" @change="recalcular(i)"
                                                             :disabled="item.cantidad_disponible == 0 && data.cotizaciones[id_empresa].partidas[i].cantidad_asignada == ''"
 
                                                             class="form-control"
@@ -104,10 +104,22 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" @click="borrarVolumenes()" class="btn btn-default pull-right" style="margin-left:5px">Borrar los Volúmenes del Proveedor</button>
+                                <button type="button" @click="cargarVolumenes()" class="btn btn-default pull-right">Cargar Todos los Volúmenes a Proveedor</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" @click=cerrar() class="btn btn-secondary">Cerrar</button>
-                        <button type="button" @click="validate()" class="btn btn-primary">Registrar</button>
+                        <button type="button" class="btn btn-secondary" v-on:click="salir">
+                            <i class="fa fa-angle-left"></i>
+                            Regresar
+                        </button>
+                        <button type="button" @click="validate()" class="btn btn-primary">
+                            <i class="fa fa-save"></i>
+                            Guardar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -139,10 +151,30 @@ export default {
         numeroFolioFormatAndObservaciones(item){
             return `[${item.numero_folio_format}] - [${item.observaciones}]`
         },
-        cerrar(){
+        cargarVolumenes(){
+            let self = this;
+            self.data.items.forEach(function (item, i){
+                if(item.cantidad_disponible > 0){
+                    self.data.cotizaciones[self.id_empresa].partidas[i]? self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
+                    item.cantidad_disponible = parseFloat(0).toFixed(4);
+                }
+            });
+        },
+        borrarVolumenes(){
+            let self = this;
+            self.data.items.forEach(function (item, i){
+                if(self.data.cotizaciones[self.id_empresa].partidas[i]){
+                    if(self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada > 0){
+                        self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = '';
+                        item.cantidad_disponible = parseFloat(item.cantidad_base).toFixed(4);
+                    }
+                }
+            });
+        },
+        salir(){
             swal({
-                title: "Cerrar Asignación de Proveedores",
-                text: "¿Está seguro/a de que quiere salir del registro de asignación de proveedores?",
+                title: "Salir de Asignación de Proveedores",
+                text: "¿Está seguro de que quiere salir del registro de asignación de proveedores?",
                 icon: "info",
                 buttons: {
                     cancel: {
@@ -157,7 +189,7 @@ export default {
             })
             .then((value) => {
                 if (value) {
-                    this.$router.push({name: 'asignacion-proveedores'});
+                    this.$router.push({name: 'asignacion-proveedor'});
                 }
             });
         },
@@ -167,7 +199,7 @@ export default {
             this.data = null;
             return this.$store.dispatch('compras/solicitud-compra/index', {
                 params: {
-                    scope: ['cotizacion'],
+                    scope: ['cotizacion', 'conComplemento'],
                     limit: 200,
                     order: 'DESC',
                     sort: 'numero_folio'
@@ -211,17 +243,7 @@ export default {
                 }
                 asignadas = +asignadas - +this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada;
                 this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada = '';
-            }else{
-                let p_unitario = 0;
-                this.data.cotizaciones[this.id_empresa].partidas[i].descuento > 0?
-                    p_unitario = this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario - (this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario * (this.data.cotizaciones[this.id_empresa].partidas[i].descuento / 100))
-                    :p_unitario =this.data.cotizaciones[this.id_empresa].partidas[i].precio_unitario;
-                let c_asignada =this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada !== ''?this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada:0;
-                this.data.cotizaciones[this.id_empresa].partidas[i].importe = parseFloat(p_unitario * c_asignada).formatMoney(2);
-                this.data.cotizaciones[this.id_empresa].partidas[i].importe_moneda_conversion = parseFloat((p_unitario * c_asignada) * this.data.cotizaciones[this.id_empresa].partidas[i].tipo_cambio).formatMoney(2);
-
             }
-            // this.data.items[i].cantidad_disponible = this.data.items[i].cantidad_base;
             this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_base - asignadas).toFixed(4);
 
         },

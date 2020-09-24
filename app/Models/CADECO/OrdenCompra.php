@@ -9,13 +9,15 @@
 namespace App\Models\CADECO;
 
 use App\Facades\Context;
+use App\Models\CADECO\Compras\OrdenCompraEliminada;
+use App\Models\CADECO\Compras\OrdenCompraPartidaEliminada;
+use App\Models\CADECO\Obra;
 use App\Models\CADECO\OrdenCompraPartida;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Compras\OrdenCompraComplemento;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\Transaccion;
-use App\Models\CADECO\Obra;
 use Illuminate\Support\Facades\DB;
 
 class OrdenCompra extends Transaccion
@@ -56,6 +58,9 @@ class OrdenCompra extends Transaccion
         'porcentaje_anticipo_pactado',
     ];
 
+    /**
+     * Relaciones
+     */
     public function empresa()
     {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
@@ -76,23 +81,14 @@ class OrdenCompra extends Transaccion
         return $this->hasMany(EntradaMaterial::class, 'id_antecedente','id_transaccion');
     }
 
-    public function getNombre()
-    {
-        return 'ORDEN DE COMPRA';
-    }
-
-    public function getEncabezadoReferencia()
-    {
-        if (strlen($this->observaciones) > 100) {
-            return utf8_encode(substr($this->observaciones, 0, 100));
-        } else {
-            return utf8_encode($this->observaciones);
-        }
-    }
-
     public function solicitud()
     {
         return $this->hasOne(SolicitudCompra::class, 'id_transaccion', 'id_antecedente');
+    }
+
+    public function cotizacion()
+    {
+        return $this->hasOne(CotizacionCompra::class, 'id_transaccion', 'id_referente');
     }
 
     public function complemento()
@@ -120,26 +116,9 @@ class OrdenCompra extends Transaccion
         return $this->hasMany(EntradaMaterial::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function getMontoFacturadoEntradaAlmacenAttribute()
-    {
-        return round(FacturaPartida::query()->whereIn('id_antecedente', $this->entradas_material()->pluck('id_transaccion'))->sum('importe'));
-    }
-
-    public function getMontoFacturadoOrdenCompraAttribute()
-    {
-       return round($this->partidas_facturadas()->sum('importe'),2);
-    }
-
-    public function getMontoPagoAnticipadoAttribute()
-    {
-        return round($this->pago_anticipado()->where('estado', '>=',0)->sum('monto'), 2);
-    }
-
-    public function getMontoDisponibleAttribute()
-    {
-        return round($this->saldo - ($this->montoFacturadoEntradaAlmacen + $this->montoFacturadoOrdenCompra + $this->MontoPagoAnticipado), 2);
-    }
-
+    /**
+     * Scopes
+     */
     public function scopeOrdenCompraDisponible($query, $id_empresa)
     {
         $transacciones = DB::connection('cadeco')->select(DB::raw("
@@ -170,41 +149,58 @@ class OrdenCompra extends Transaccion
         $transacciones = json_decode(json_encode($transacciones), true);
 
 
-       return $query->whereIn('id_transaccion', $transacciones);
+        return $query->whereIn('id_transaccion', $transacciones);
     }
 
     public function scopeDisponibleEntradaAlmacen($query)
     {
         return $query->where('estado', '!=', 2);
     }
-    public function cerrar()
+
+    public function scopeAreasCompradorasAsignadas($query)
     {
-        $partidas = $this->partidas;
-        $cantidad_surtida =0;
-        $cantidad_esperada =0;
-        foreach ($partidas as $partida)
-        {
-            $cantidad_surtida+= $partida->entrega->surtida;
-            $cantidad_esperada+= $partida->entrega->cantidad;
-        }
-        if(abs($cantidad_esperada-$cantidad_surtida)<=0.01)
-        {
-            $this->update(["estado"=>2]);
+        return $query->whereHas('solicitud', function ($q) {
+            $q->areasCompradorasAsignadas();
+        });
+    }
+
+    /**
+     * Attributes
+     */
+    public function getNombreAttribute()
+    {
+        return 'ORDEN DE COMPRA';
+    }
+
+    public function getEncabezadoReferenciaAttribute()
+    {
+        if (strlen($this->observaciones) > 100) {
+            return utf8_encode(substr($this->observaciones, 0, 100));
         } else {
-            $this->update(["estado"=>1]);
+            return utf8_encode($this->observaciones);
         }
     }
-    public function abrir()
+
+    public function getMontoFacturadoEntradaAlmacenAttribute()
     {
-        $transacciones_referenciadas = Transaccion::withoutGlobalScope("tipo")->where("id_antecedente","=",$this->id_transaccion)
-            ->orWhere("id_referente","=",$this->id_transaccion)->get();
-        if(count($transacciones_referenciadas)>0)
-        {
-            $this->update(["estado"=>1]);
-        }else{
-            $this->update(["estado"=>0]);
-        }
+        return round(FacturaPartida::query()->whereIn('id_antecedente', $this->entradas_material()->pluck('id_transaccion'))->sum('importe'));
     }
+
+    public function getMontoFacturadoOrdenCompraAttribute()
+    {
+       return round($this->partidas_facturadas()->sum('importe'),2);
+    }
+
+    public function getMontoPagoAnticipadoAttribute()
+    {
+        return round($this->pago_anticipado()->where('estado', '>=',0)->sum('monto'), 2);
+    }
+
+    public function getMontoDisponibleAttribute()
+    {
+        return round($this->saldo - ($this->montoFacturadoEntradaAlmacen + $this->montoFacturadoOrdenCompra + $this->MontoPagoAnticipado), 2);
+    }
+
     public function getEstadoFormatAttribute()
     {
         switch ($this->estado){
@@ -228,5 +224,89 @@ class OrdenCompra extends Transaccion
             return $partida->anticipo;
         }
         return 0;
+    }
+
+    public function getEncabezadoPDFAttribute()
+    {
+        if($this->solicitud->complemento)
+        {
+            if($this->solicitud->complemento->tipo->id == 4 || $this->solicitud->complemento->tipo->id == 2)
+            {
+                $encabezado = strtoupper($this->solicitud->complemento->tipo->descripcion);
+            } else {
+                $encabezado = 'ORDEN DE COMPRA DE '. strtoupper($this->solicitud->complemento->tipo->descripcion);
+            }
+        } else {
+            $encabezado = "ORDEN DE COMPRA";
+        }
+        return $encabezado;
+    }
+
+    /**
+     * Métodos
+     */
+    public function cerrar()
+    {
+        $partidas = $this->partidas;
+        $cantidad_surtida =0;
+        $cantidad_esperada =0;
+        foreach ($partidas as $partida)
+        {
+            $cantidad_surtida+= $partida->entrega->surtida;
+            $cantidad_esperada+= $partida->entrega->cantidad;
+        }
+        if(abs($cantidad_esperada-$cantidad_surtida)<=0.01)
+        {
+            $this->update(["estado"=>2]);
+        } else {
+            $this->update(["estado"=>1]);
+        }
+    }
+
+    public function abrir()
+    {
+        $transacciones_referenciadas = Transaccion::withoutGlobalScope("tipo")->where("id_antecedente","=",$this->id_transaccion)
+            ->orWhere("id_referente","=",$this->id_transaccion)->get();
+        if(count($transacciones_referenciadas)>0)
+        {
+            $this->update(["estado"=>1]);
+        }else{
+            $this->update(["estado"=>0]);
+        }
+    }
+
+    /**
+     * Eliminar orden de compra
+     * @param $motivo
+     * @return $this
+     */
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            //$this->validar();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function revisarRespaldos($motivo)
+    {
+        if (($orden = OrdenCompraEliminada::where('id_transaccion', $this->id_transaccion)->first()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la orden de compra, no se respaldo la orden correctamente.');
+        } else {
+            $orden->motivo = $motivo;
+            $orden->save();
+        }
+        if (($item = OrdenCompraPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la orden de compra, no se respaldo los items correctamente.');
+        }
     }
 }

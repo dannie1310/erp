@@ -4,8 +4,10 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\AsignacionProveedor;
+use App\Models\CADECO\Compras\CtgEstadoSolicitud;
 use App\Models\CADECO\Compras\EntregaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Compras\SolicitudEliminada;
@@ -13,6 +15,7 @@ use App\Models\CADECO\Compras\SolicitudPartidaEliminada;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
@@ -28,7 +31,7 @@ class SolicitudCompra extends Transaccion
 
         self::addGlobalScope(function($query) {
             return $query->where('tipo_transaccion', '=', 17)
-            ->where('opciones', '=', 1)->whereHas('complemento');
+            ->where('opciones', '=', 1);
         });
     }
 
@@ -50,9 +53,12 @@ class SolicitudCompra extends Transaccion
         'fecha'
     ];
 
+    /**
+     * Relaciones
+     */
     public function complemento()
     {
-        return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
+        return $this->hasOne(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
     }
 
     public function partidas()
@@ -85,20 +91,73 @@ class SolicitudCompra extends Transaccion
         return $this->hasMany(AsignacionProveedor::class, 'id_transaccion_solicitud', 'id_transaccion');
     }
 
+    /**
+     * Scopes
+     */
+    public function scopeCotizacion($query)
+    {
+        return $query->has('cotizaciones');
+    }
+
+    public function scopeConItems($query)
+    {
+        return $query->has('partidas');
+    }
+
+    public function scopeConComplemento($query)
+    {
+        return $query->whereHas('complemento');
+    }
+
+    public function scopeAreasCompradorasAsignadas($query)
+    {
+        return $query->whereHas('complemento', function ($q) {
+           return $q->areasCompradorasPorUsuario();
+        });
+    }
+
+    public function scopeConAutorizacion($query)
+    {
+        $obra = Obra::find(Context::getIdObra());
+        if($obra->configuracionCompras){
+            if($obra->configuracionCompras->con_autorizacion == 1){
+                return $query->where("estado","=",1);
+            } else {
+                return $query;
+            }
+        } else {
+            return $query;
+        }
+    }
+
+    /**
+     * Attributes
+     */
     public function getRegistroAttribute()
     {
         $comentario = explode('|', $this->comentario);
         return $comentario[1];
     }
 
-    public function getFechaFormatAttribute()
+    public function getEncabezadoPDFAttribute()
     {
-        $date = date_create($this->fecha);
-        return date_format($date,"d/m/Y");
+        if($this->complemento)
+        {
+            if($this->complemento->tipo->id == 4 || $this->complemento->tipo->id == 2)
+            {
+                $encabezado = 'SOLICITUD DE '.strtoupper($this->complemento->tipo->descripcion);
+            } else {
+                $encabezado = 'SOLICITUD DE ADQUISICIÓN DE '. strtoupper($this->complemento->tipo->descripcion);
+            }
+        } else {
+            $encabezado = "SOLICITUD DE ADQUISICIÓN";
+        }
+        return $encabezado;
     }
 
+
     /**
-     * Acciones
+     * Métodos
      */
     public function aprobarSolicitud($data)
     {
@@ -134,17 +193,20 @@ class SolicitudCompra extends Transaccion
     public function registrar($data)
     {
         try {
-            $fecha =New DateTime($data['fecha']);
+            $fecha = New DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $fecha_req =New DateTime($data['fecha_requisicion']);
+            $fecha_req = New DateTime($data['fecha_requisicion']);
             $fecha_req->setTimezone(new DateTimeZone('America/Mexico_City'));
             DB::connection('cadeco')->beginTransaction();
             $solicitud = $this->create([
                 'fecha' => $fecha->format("Y-m-d H:i:s"),
                 'observaciones' => $data['observaciones']
             ]);
-            $solicitud_complemento = $this->complemento()->create([
-                'id_transaccion' => $solicitud->id_transaccion,
+            $configuracion = ConfiguracionObra::query()->first();
+            if (is_null($configuracion->configuracion_area_solicitante) || $configuracion->configuracion_area_solicitante == 0) {
+                $data['id_area_solicitante'] = null;
+            }
+            $solicitud_complemento = $solicitud->complemento()->create([
                 'id_area_compradora' => $data['id_area_compradora'],
                 'id_tipo' => $data['id_tipo'],
                 'id_area_solicitante' => $data['id_area_solicitante'],
@@ -161,12 +223,11 @@ class SolicitudCompra extends Transaccion
                     'unidad' => $partida['material']['unidad'],
                     'cantidad' => $partida['cantidad']
                 ]);
-                $fecha =New DateTime($partida['fecha']);
+                $fecha = New DateTime($partida['fecha']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $complemento = $item->complemento()->create([
                     'id_item' => $item->id_item,
-                    'observaciones' => $partida['observaciones'],
-                    'fecha_entrega' => $fecha->format("Y-m-d H:i:s")
+                    'observaciones' => $partida['observaciones'] ? $partida['observaciones'] : ''
                 ]);
                 $entrega = Entrega::create([
                     'id_item' => $item->id_item,
@@ -182,16 +243,6 @@ class SolicitudCompra extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
-    }
-
-    public function scopeCotizacion($query)
-    {
-        return $query->has('cotizaciones');
-    }
-
-    public function scopeConItems($query)
-    {
-        return $query->has('partidas');
     }
 
     /**
@@ -284,8 +335,13 @@ class SolicitudCompra extends Transaccion
                 'fecha' => $fecha->format("Y-m-d H:i:s"),
                 'observaciones' => $datos['observaciones']
             ]);
+            $configuracion = ConfiguracionObra::query()->first();
+            if (is_null($configuracion->configuracion_area_solicitante) || $configuracion->configuracion_area_solicitante == 0) {
+                $datos['complemento']['id_area_solicitante'] = null;
+                $datos['id_area_solicitante'] = null;
+            }
             if($this->complemento) {
-                $this->complemento()->update([
+                $this->complemento->update([
                     'id_transaccion' => $this->id_transaccion,
                     'id_area_compradora' => $datos['complemento'] ? $datos['complemento']['id_area_compradora'] : $datos['id_area_compradora'],
                     'id_tipo' => $datos['complemento'] ? $datos['complemento']['id_tipo'] : $datos['id_tipo'],
@@ -327,14 +383,12 @@ class SolicitudCompra extends Transaccion
                     ]);
                     if ($partida->complemento) {
                         $partida->complemento->update([
-                            'fecha_entrega' => $fecha->format("Y-m-d H:i:s"),
-                            'observaciones' => $cambios['complemento']['observaciones']
+                            'observaciones' => $cambios['complemento']['observaciones'] ? $cambios['complemento']['observaciones'] : ''
                         ]);
                     } else {
                         $partida->complemento()->create([
                             'id_item' => $partida->id_item,
-                            'observaciones' => $cambios['observaciones'],
-                            'fecha_entrega' => $fecha->format("Y-m-d H:i:s")
+                            'observaciones' => $cambios['observaciones'] ? $cambios['observaciones'] : ''
                         ]);
                     }
 
@@ -379,8 +433,7 @@ class SolicitudCompra extends Transaccion
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             $complemento = $item->complemento()->create([
                 'id_item' => $item->id_item,
-                'observaciones' => $partida['observaciones'],
-                'fecha_entrega' => $fecha->format("Y-m-d H:i:s")
+                'observaciones' => $partida['observaciones'] ? $partida['observaciones'] : '',
             ]);
             $entrega = Entrega::create([
                 'id_item' => $item->id_item,
@@ -414,5 +467,33 @@ class SolicitudCompra extends Transaccion
     {
         $pdf = new SolicitudCompraFormato($this);
         return $pdf->create();
+    }
+
+    /**
+     * @return bool
+     * Revisar si las partidas de la solicitud se han cotizado
+     * true : cotizado completamente
+     * false : faltan partidas por cotizar
+     */
+    public function validarCotizada()
+    {
+        $contador = 0;
+        foreach ($this->partidas()->get() as $partida)
+        {
+            $cotizaciones = CotizacionCompra::where('id_antecedente', '=', $partida->id_transaccion)->get();
+            foreach ($cotizaciones as $cotizacion) {
+                $cot_partida = CotizacionCompraPartida::where('id_transaccion', '=', $cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->where('cantidad', '!=', 0)->count();
+                if($cot_partida > 0)
+                {
+                    $contador++;
+                    break;
+                }
+            }
+        }
+        if($contador == $this->partidas()->count())
+        {
+            return true;
+        }
+        return false;
     }
 }

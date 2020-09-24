@@ -54,6 +54,11 @@ class CotizacionCompraPartida extends Model
         return number_format($this->cantidad, 1, '.', ',');
     }
 
+    public function getItemSolicitudAttribute(){
+        $item = Item::where('id_transaccion', '=', $this->cotizacion->id_antecedente)->where('id_material', '=', $this->id_material)->first();
+        return $item->id_item;
+    }
+
     public function getPrecioUnitarioFormatAttribute()
     {
         return '$ '. number_format($this->precio_unitario, 2, '.', ',');
@@ -98,6 +103,25 @@ class CotizacionCompraPartida extends Model
                 break;
             case (4):
                 return $this->cantidad * $this->precio_compuesto * $this->tipo_cambio;
+                break;
+        }
+    }
+
+    public function getPrecioUnitarioCompuestoAttribute()
+    {
+        switch ($this->id_moneda)
+        {
+            case (1):
+                return $this->precio_compuesto;
+                break;
+            case (2):
+                return ($this->cotizacion->complemento) ? $this->precio_compuesto * $this->cotizacion->complemento->tc_usd : $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            case (3):
+                return ($this->cotizacion->complemento) ? $this->precio_compuesto * $this->cotizacion->complemento->tc_eur : $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            case (4):
+                return ($this->cotizacion->complemento) ? $this->precio_compuesto * $this->cotizacion->complemento->tc_libra : $this->precio_compuesto * $this->tipo_cambio;
                 break;
         }
     }

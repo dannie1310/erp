@@ -135,7 +135,7 @@
                                                                       :name="`observaciones[${i}]`"
                                                                       data-vv-as="Observaciones"
                                                                       :disabled="enable[i] == false"
-                                                                      v-validate="{required: true}"
+                                                                      v-validate="{}"
                                                                       :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                       v-model="partida.observacion"/>
                                                              <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
@@ -177,17 +177,53 @@
                                         <label class="col-sm-2 col-form-label">Subtotal Precios LIBRA:</label>
                                         <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
                                     </div>
-                                    <div class=" col-md-12" align="right">
+                                    <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">TC USD:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_usd_format : dolar}}</label>
                                     </div>
-                                    <div class=" col-md-12" align="right">
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                name="tc_usd"
+                                                v-model="dolar"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_usd"
+                                                @change ="actualizaTC(2)"
+                                                :class="{'is-invalid': errors.has('tc_usd')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">TC EURO:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.tc_eur_format : euro}}</label>
                                     </div>
-                                     <div class=" col-md-12" align="right">
+                                     <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                name="tc_eur"
+                                                v-model="euro"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_eur"
+                                                @change ="actualizaTC(3)"
+                                                :class="{'is-invalid': errors.has('tc_eur')}">
+                                    </div>
+                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">TC LIBRA:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{libra}}</label>
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                name="tc_libra"
+                                                v-model="libra"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_libra"
+                                                @change ="actualizaTC(4)"
+                                                :class="{'is-invalid': errors.has('tc_libra')}">
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
@@ -302,8 +338,14 @@
                                 </div>
                             </div>
                              <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                        <i class="fa fa-angle-left"></i>
+                                        Regresar
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-save"></i>
+                                        Guardar
+                                    </button>
                              </div>
                         </form>
                     </div>
@@ -342,6 +384,9 @@
                 dolares: 0,
                 euros: 0,
                 libras:0,
+                dolar:0,
+                euro:0,
+                libra:0,
                 cotizacion: [],
                 moneda_input:[],
                 sucursal: true,
@@ -387,6 +432,20 @@
             this.$validator.reset();
         },
         methods : {
+            actualizaTC(index){
+                switch (index){
+                    case 2:
+                        this.tipo_cambio[index] = this.dolar;
+                        break;
+                    case 3:
+                        this.tipo_cambio[index] = this.euro;
+                        break;
+                    case 4:
+                        this.tipo_cambio[index] = this.libra;
+                        break;
+                }
+                this.calcular();
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
@@ -428,7 +487,7 @@
                             id: data.solicitud.id,
                             params:{include: [
                                     'partidas.complemento'
-                                ]}
+                                ], order:'asc', sort:'id_item'}
                         }).then(data => {
                             this.cotizacion.partidas = data.partidas
                         })
@@ -441,6 +500,7 @@
                 this.pesos = 0;
                 this.dolares = 0;
                 this.euros = 0;
+                this.libras = 0;
                 while(this.x < this.cotizacion.partidas.data.length)
                 {
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
@@ -471,6 +531,11 @@
             },
             ordenar()
             {
+                let sort = this.cotizacion.partidas.data.sort(function(a, b) {
+                    return a.id_item_solicitud - b.id_item_solicitud;
+                });
+                
+                this.cotizacion.partidas.data = sort;
                 this.x = 0;
                 while(this.x < this.cotizacion.partidas.data.length)
                 {
@@ -493,6 +558,9 @@
                 }
                 if(!this.carga)
                 {
+                    this.libra = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_libra : this.monedas[3].tipo_cambio_cadeco.cambio_formato;
+                    this.euro = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_eur : this.monedas[2].tipo_cambio_cadeco.cambio_formato;
+                    this.dolar = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_cadeco.cambio_formato;
                     this.pago = (this.cotizacion.complemento) ? this.cotizacion.complemento.parcialidades : 0;
                     this.anticipo = (this.cotizacion.complemento) ? this.cotizacion.complemento.anticipo : 0;
                     this.credito = (this.cotizacion.complemento) ? this.cotizacion.complemento.dias_credito : 0;
@@ -501,6 +569,9 @@
                     this.descuento_cot = (this.cotizacion.complemento) ? this.cotizacion.complemento.descuento : 0;
                 }else{
                     this.pago = this.carga.pago_parcialidades;
+                    this.dolar = this.carga.tc_usd;
+                    this.euro = this.carga.tc_eur;
+                    this.libra = this.carga.tc_libra;
                     this.anticipo = this.carga.anticipo;
                     this.credito = this.carga.credito;
                     this.tiempo = this.carga.tiempo_entrega;
@@ -519,6 +590,14 @@
 
                 this.$validator.validate().then(result => {
                     if (result) {
+                        
+                        let self = this;
+                        this.descuento.forEach(function(desc, i) {
+                            self.cotizacion.partidas.data[i].enable = self.enable[i];
+                            self.cotizacion.partidas.data[i].precio_unitario = self.precio[i];
+                            self.cotizacion.partidas.data[i].id_moneda = self.moneda_input[i];
+                            self.cotizacion.partidas.data[i].descuento = self.descuento[i];
+                        });
                         this.post.partidas = this.cotizacion.partidas.data;
                         this.post.id_cotizacion = this.id;
                         this.post.fecha = this.cotizacion.fecha;
@@ -536,6 +615,9 @@
                         this.post.impuesto = this.iva;
                         this.post.observaciones = this.cotizacion.observaciones;
                         this.post.tipo_cambio = this.tipo_cambio;
+                        this.post.tc_eur = this.euro;
+                        this.post.tc_usd = this.dolar;
+                        this.post.tc_libra = this.libra;
                         this.save()
                     }
                 });
@@ -573,18 +655,6 @@
             total()
             {
                 return this.subtotal + this.iva;
-            },
-            dolar()
-            {
-                return this.monedas[1].tipo_cambio_cadeco.cambio_format;
-            },
-            euro()
-            {
-                return this.monedas[2].tipo_cambio_cadeco.cambio_format;
-            },
-            libra()
-            {
-                return this.monedas[3].tipo_cambio_cadeco.cambio_format;
             },
             carga()
             {

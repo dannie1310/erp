@@ -14,6 +14,7 @@ use App\Models\CADECO\Contabilidad\DatosContables;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\MODULOSSAO\BaseDatosObra;
 use App\Models\MODULOSSAO\UnificacionObra;
+use App\Models\SEGURIDAD_ERP\Compras\Configuracion;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Database\Eloquent\Model;
@@ -83,6 +84,11 @@ class Obra extends Model
     public function configuracion()
     {
         return $this->hasOne(ConfiguracionObra::class, 'id_obra');
+    }
+
+    public function configuracionCompras()
+    {
+        return $this->hasOne(Configuracion::class, "id_obra", "id_obra");
     }
 
     public function getLogoAttribute()

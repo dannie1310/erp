@@ -99,8 +99,8 @@ class AsignacionProveedorService
             'observaciones' => $asignacion->solicitud->observaciones,
             'fecha_registro' => $asignacion->solicitud->fecha_format,
             'fecha_asignacion' => $asignacion->fecha_format,
-            'asignaciones_pendientes_o_compra' => $o_cmpra_pendientes,
-            'asignaciones_con_o_compra' => count($data) -  $o_cmpra_pendientes,
+            'asignaciones_pendientes_o_compra' => $o_cmpra_pendientes > 0,
+            'asignaciones_con_o_compra' => count($partidas) -  $o_cmpra_pendientes,
             'data' => $data
         ];
     }
@@ -151,10 +151,6 @@ class AsignacionProveedorService
             $transaccion_cotizacion = '';
             $orden_c = null;
             foreach($partidas as $partida){
-                if($partida->con_orden_compra){
-                    continue;
-                }
-
 
                 if(!$orden_c = OrdenCompra::where('id_antecedente', '=', $partida->cotizacionCompra->id_antecedente)
                                         ->where('id_referente', '=', $partida->cotizacionCompra->id_transaccion)
@@ -174,7 +170,7 @@ class AsignacionProveedorService
                             'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
                         ]);
 
-                        $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion]);
+                        $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion, 'id_asignacion_proveedor'=>$asignacion->id]);
 
                 }
 

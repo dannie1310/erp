@@ -18,15 +18,24 @@ class CotizacionCompraObserver extends TransaccionObserver
         parent::creating($cotizacionCompra);
 
         $cotizacionCompra->tipo_transaccion = 18;
-        $cotizacionCompra->estado = ($cotizacionCompra->complemento) ? 1 : 0;
         $cotizacionCompra->opciones = 1;
         $cotizacionCompra->id_moneda = 1;
     }
 
+    public function created(CotizacionCompra $cotizacionCompra)
+    {
+        /**
+         * Cambiar estado de la solicitud a: En proceso de cotización
+         */
+        $cotizacionCompra->solicitudComplemento->setCambiarEstado(1,2);
+    }
+
     public function updating(CotizacionCompra $cotizacionCompra)
     {
-        $cotizacionCompra->validarAsignacion('editar');
-        $cotizacionCompra->estado = 1;
+        if(!($cotizacionCompra->getOriginal("estado") !=  $cotizacionCompra->estado)) {
+            $cotizacionCompra->validarAsignacion('editar');
+            $cotizacionCompra->estado = 1;
+        }
     }
 
     public function deleting(CotizacionCompra $cotizacionCompra)

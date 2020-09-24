@@ -93,8 +93,14 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || partidas.length == 0">Aprobar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                <i class="fa fa-times-circle"></i>
+                                Cerrar
+                            </button>
+                            <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || partidas.length == 0">
+                                <i class="fa fa-thumbs-o-up"></i>
+                                Aprobar
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -7,7 +7,7 @@
                 <div class="modal-dialog modal-dialog-centered modal-sn" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> ELIMINAR ORDEN DE COMPRA</h5>
+                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-trash"></i> ELIMINAR ORDEN DE COMPRA</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -35,8 +35,13 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-danger" @click="eliminarOC"  :disabled="motivo == ''">Eliminar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                <i class="fa fa-times-circle"></i>
+                                Cerrar</button>
+                            <button type="button" class="btn btn-danger" @click="eliminar"  :disabled="motivo == ''">
+                                <i class="fa fa-trash"></i>
+                                Eliminar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -59,11 +64,35 @@
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
+            eliminar() {
+                this.cargando = true;
+                return this.$store.dispatch('compras/orden-compra/eliminar', {
+                    id: this.id,
+                    params: {data: this.$data.motivo}
+                })
+                    .then(data => {
+                        this.motivo = ''
+                        this.$store.commit('compras/orden-compra/DELETE_ORDEN', {id: this.id})
+                        $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('compras/orden-compra/paginate', {
+                            params: {
+                                scope: 'areasCompradorasAsignadas', include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('compras/orden-compra/SET_ORDENES', data.data);
+                                this.$store.commit('compras/orden-compra/SET_META', data.meta);
+                            })
+                    })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
+            },
             eliminarOC(){
             this.cargando = true;
             let ordenes_c = [];
             ordenes_c.push(this.id);
-            return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:{data:ordenes_c, motivo:this.motivo}}
+            return this.$store.dispatch('compras/orden-compra/eliminar', { data:{data:ordenes_c, motivo:this.motivo}}
                 ).then(data => {
                 this.$emit('created', data);
                 $(this.$refs.modal).modal('hide');
@@ -71,7 +100,7 @@
                 this.cargando = false;
                 $(this.$refs.modal).modal('hide');
             })
-            
+
         },
         }
     }

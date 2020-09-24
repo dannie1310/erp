@@ -54,8 +54,6 @@ class SolicitudCompraObserver extends TransaccionObserver
                 'concepto' => $solicitudCompra->complemento ? $solicitudCompra->complemento->concepto : NULL,
                 'fecha_requisicion_origen' => $solicitudCompra->complemento ? $solicitudCompra->complemento->fecha_requisicion_origen : NULL,
                 'requisicion_origen' => $solicitudCompra->complemento ? $solicitudCompra->complemento->requisicion_origen : NULL,
-                'registro' => $solicitudCompra->complemento ? $solicitudCompra->complemento->registro : NULL,
-                'timestamp_registro' => $solicitudCompra->complemento ? $solicitudCompra->complemento->timestamp_registro : NULL,
                 'motivo' => '',
                 'usuario_elimina' => auth()->id(),
                 'fecha_eliminacion' => date('Y-m-d H:i:s')

@@ -21,8 +21,7 @@ class SolicitudPartidaComplemento extends Model
 
     protected $fillable = [
         'id_item',
-        'observaciones',
-        'fecha_entrega'
+        'observaciones'
     ];
 
 }

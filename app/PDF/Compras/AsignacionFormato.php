@@ -13,6 +13,7 @@ use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Obra;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
+use Illuminate\Support\Facades\App;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AsignacionFormato extends Rotation
@@ -700,8 +701,16 @@ class AsignacionFormato extends Rotation
 
     public function Footer()
     {
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',90);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $this->SetTextColor(0, 0, 0);
         $this->SetY(-5.4);
+        $this->SetFont('Arial', '', 6);
         $encabezados[0] = utf8_decode("Elaboró");
         $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
         $encabezados[2] = "Gerencia Solicitante";

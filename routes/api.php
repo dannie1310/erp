@@ -678,6 +678,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-orden-compra', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@pdfOrdenCompra')->where(['id' => '[0-9]+']);
             $api->post('eliminarOrdenes', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@eliminarOrdenes')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@destroy')->where(['id' => '[0-9]+']);
         });
 
         //REQUISICIÓN
@@ -1017,6 +1018,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'configuracion-obra'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@index');
             $api->get('contexto', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@contexto');
+            $api->get('/configuracion', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@configuracion');
         });
 
         $api->group(['prefix' => 'permiso'], function ($api) {

@@ -544,6 +544,13 @@ class AppServiceProvider extends ServiceProvider
             Incidencia::observe(IncidenciaObserver::class);
 
             /**
+             * Finanzas
+             */
+            CtgEfosLog::observe(CtgEfosLogObserver::class);
+            CtgEfos::observe(CtgEfosObserver::class);
+            FacturaRepositorio::observe(FacturaRepositorioObserver::class);
+
+            /**
              * Fiscal
              */
             Autocorreccion::observe(AutocorreccionObserver::class);
@@ -572,9 +579,6 @@ class AppServiceProvider extends ServiceProvider
         AuditoriaRolUsuario::observe(AuditoriaRolUsuarioObserver::class);
         AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
         ConfiguracionObra::observe(ConfiguracionObraObserver::class);
-        CtgEfosLog::observe(CtgEfosLogObserver::class);
-        CtgEfos::observe(CtgEfosObserver::class);
-        FacturaRepositorio::observe(FacturaRepositorioObserver::class);
         \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
         Rol::observe(RolObserver::class);
         UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);

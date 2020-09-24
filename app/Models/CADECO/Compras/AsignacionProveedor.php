@@ -8,6 +8,7 @@ use App\Models\CADECO\Cambio;
 use App\Models\IGH\TipoCambio;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\SolicitudCompra;
+use Dingo\Blueprint\Annotation\Attributes;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\CotizacionCompra;
@@ -35,7 +36,9 @@ class AsignacionProveedor extends Model
             return $query->whereHas('solicitud');
         });
     }
-
+    /**
+     * Relaciones
+     */
     public function estadoAsignacion(){
         return $this->belongsTo(CtgEstadoAsignacionProveedor::class, 'estado', 'id');
     }
@@ -60,58 +63,30 @@ class AsignacionProveedor extends Model
         return $this->belongsTo(OrdenCompraComplemento::class, 'id', 'id_asignacion_proveedor');
     }
 
+    /**
+     * Scopes
+     */
     public function scopePendientes($query){
         return $query->where('estado', '=', 1);
     }
 
+    public function scopeAreasCompradorasAsignadas($query)
+    {
+        return $query->whereHas('solicitud', function ($q) {
+            $q->areasCompradorasAsignadas();
+        });
+    }
+
+    /**
+     * Attributes
+     */
     public function getFechaFormatAttribute(){
         $date = date_create($this->timestamp_registro);
-        return date_format($date,"d/m/Y");
+        return date_format($date,"d/m/Y H:i:s");
     }
 
     public function getFolioFormatAttribute(){
         return '#' . sprintf("%05d", $this->id);
-    }
-
-    public function datosPartidas()
-    {
-        $items = array();
-        foreach($this->partidas as $partida)
-        {
-            $items[] = array(
-                'item_solicitud' => $partida->id_item_solicitud,
-                'id_material' => $partida->id_material,
-                'id_transaccion_cotizacion' => $partida->id_transaccion_cotizacion,
-                'cantidad_asignada' => $partida->cantidad_asignada,
-                'id_empresa' => $partida->cotizacionCompra->id_empresa,
-                'usuario_registro' => $partida->registro
-            );
-        }
-        return $items;
-    }
-
-    public function validaAsociadaOrdenCompra()
-    {
-        if($this->ordenCompraComplemento)
-        {
-            throw New \Exception("La Asignacion ". $this->folio_format. " ya se encuentra asociada a una Orden de Compra");
-        }
-    }
-
-    public function eliminarAsignacion($motivo)
-    {
-        try {
-            DB::connection('cadeco')->beginTransaction();
-            $this->delete();
-            $eliminada = AsignacionProveedorEliminada::find($this->id);
-            $eliminada->motivo_elimino = $motivo;
-            $eliminada->save();
-            DB::connection('cadeco')->commit();
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
     }
 
     public function getEstadoAsignacionFormatAttribute(){
@@ -122,7 +97,7 @@ class AsignacionProveedor extends Model
                 $con_Orden++;
             }
         }
-        $res = $total > $con_Orden?1:2;
+        $res = $con_Orden == 0?1:2;
         $this->estado = $res;
         $this->save();
         return $this->estadoAsignacion->descripcion;
@@ -130,12 +105,13 @@ class AsignacionProveedor extends Model
 
     public function getOrdenCompraPendienteAttribute(){
         $partidas = $this->partidas;
+        $cant = 0;
         foreach($partidas as $partida){
             if(!$partida->con_orden_compra){
-                return true;
+                $cant++;
             }
         }
-        return false;
+        return $cant;
     }
 
     public function getSumaSubtotalPartidasAttribute()
@@ -146,25 +122,6 @@ class AsignacionProveedor extends Model
             $suma += $partida->total_precio_moneda;
         }
         return $suma;
-    }
-
-    public function subtotalPorCotizacion($id_cotizacion)
-    {
-        $suma = 0;
-        foreach ($this->partidas as $partida)
-        {
-            if($partida->id_transaccion_cotizacion == $id_cotizacion)
-            {
-                $suma += $partida->total_precio_moneda;
-            }
-        }
-        return $suma;
-    }
-
-    public function tipo_cambio($tipo)
-    {
-        $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
-        return $tipo_cambio ? $tipo_cambio->cambio : $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->orderByDesc('fecha')->first()->cambio;
     }
 
     public function getMejorAsignadoAttribute()
@@ -263,5 +220,80 @@ class AsignacionProveedor extends Model
     public function getSumaSubtotalPartidasTotalAttribute()
     {
         return $this->suma_total_con_descuento + $this->suma_subtotal_partidas_iva;
+    }
+
+    /**
+     * Métodos
+     */
+    public function datosPartidas()
+    {
+        $items = array();
+        foreach($this->partidas as $partida)
+        {
+            $items[] = array(
+                'item_solicitud' => $partida->id_item_solicitud,
+                'id_material' => $partida->id_material,
+                'id_transaccion_cotizacion' => $partida->id_transaccion_cotizacion,
+                'cantidad_asignada' => $partida->cantidad_asignada,
+                'id_empresa' => $partida->cotizacionCompra->id_empresa,
+                'usuario_registro' => $partida->registro
+            );
+        }
+        return $items;
+    }
+
+    public function validaAsociadaOrdenCompra()
+    {
+        if($this->ordenCompraComplemento)
+        {
+            throw New \Exception("La Asignacion ". $this->folio_format. " ya se encuentra asociada a una Orden de Compra");
+        }
+    }
+
+    public function eliminarAsignacion($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->delete();
+            $eliminada = AsignacionProveedorEliminada::find($this->id);
+            $eliminada->motivo_elimino = $motivo;
+            $eliminada->save();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function subtotalPorCotizacion($id_cotizacion)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            if($partida->id_transaccion_cotizacion == $id_cotizacion)
+            {
+                $suma += $partida->total_precio_moneda;
+            }
+        }
+        return $suma;
+    }
+
+    public function tipo_cambio($tipo)
+    {
+        $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
+        return $tipo_cambio ? $tipo_cambio->cambio : $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getAplicadaAttribute()
+    {
+        if($this->ordenCompraComplemento){
+            if($this->ordenCompraComplemento->count()>0)
+            {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }

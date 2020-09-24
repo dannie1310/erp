@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="registrar" v-if="$root.can('registrar_contrato_proyectado')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <button @click="registrar" v-if="$root.can('registrar_contrato_proyectado')" class="btn btn-app pull-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i> Registrar
             </button>
@@ -30,11 +30,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', sortable: true },
+                    { title: 'Folio', field: 'numero_folio', sortable: true },
                     { title: 'Área Subcontratante', field: 'id_area_subcontratante',thComp: require('../../globals/th-Filter').default, sortable: false },
-                    { title: 'Fecha Contrato Proyectado', field: 'fecha', sortable: true },
-                    { title: 'Referencia Contrato Proyectado', field: 'referencia', sortable: false },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Referencia', field: 'referencia', sortable: false },
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c150',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -88,7 +88,7 @@
                     self.$data.data = []
                     self.$data.data = contratosProyectados.map((contratoProyectado, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: `# ${contratoProyectado.numeroFolio}`,
+                        numero_folio: contratoProyectado.numero_folio_format,
                         id_area_subcontratante:contratoProyectado.areasSubcontratantes.data.length ? contratoProyectado.areasSubcontratantes.data[0].descripcion : 'Sin Área Subcontratante Asignada',
                         fecha: contratoProyectado.fecha,
                         referencia: contratoProyectado.referencia,

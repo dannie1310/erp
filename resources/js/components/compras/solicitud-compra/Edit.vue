@@ -55,7 +55,7 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_tipo')">{{ errors.first('id_tipo') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-2"  v-if="configuracion && configuracion.configuracion_area_solicitante == 1">
                                         <div class="form-group">
                                             <label for="id_area_solicitante">Área Solicitante</label>
                                             <select class="form-control"
@@ -128,7 +128,7 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_tipo')">{{ errors.first('id_tipo') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-2" v-if="configuracion && configuracion.configuracion_area_solicitante == 1">
                                         <div class="form-group">
                                             <label for="id_area_solicitante">Área Solicitante</label>
                                             <select class="form-control"
@@ -218,7 +218,10 @@
                                                     <th class="icono"></th>
                                                     <th>Observaciones</th>
                                                     <th class="icono">
-                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
+                                                          <button type="button" class="btn btn-success btn-sm" v-if="materiales.length == 0" title="Cargando...">
+                                                            <i class="fa fa-spin fa-spinner"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()" v-else>
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </th>
@@ -266,7 +269,6 @@
                                                                     :bootstrap-styling = "true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
-                                                                    :disabled-dates="fechasDeshabilitadasHasta"
                                                                     :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
                                                         ></datepicker>
                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
@@ -279,7 +281,6 @@
                                                                     :bootstrap-styling = "true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
-                                                                    :disabled-dates="fechasDeshabilitadasHasta"
                                                                     :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
                                                         ></datepicker>
                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
@@ -317,7 +318,7 @@
                                                         <textarea class="form-control"
                                                                   :name="`observaciones[${i}]`"
                                                                   data-vv-as="Observaciones"
-                                                                  v-validate="{required: true}"
+                                                                  v-validate="{}"
                                                                   :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                   v-model="partida.complemento.observaciones"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
@@ -326,7 +327,7 @@
                                                         <textarea class="form-control"
                                                                   :name="`observaciones[${i}]`"
                                                                   data-vv-as="Observaciones"
-                                                                  v-validate="{required: true}"
+                                                                  v-validate="{}"
                                                                   :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                   v-model="partida.observaciones"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
@@ -363,8 +364,14 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                               <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0">Guardar </button>
+                                <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                    <i class="fa fa-angle-left"></i>
+                                    Regresar
+                                </button>
+                               <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0">
+                                   <i class="fa fa-save"></i>
+                                   Guardar
+                               </button>
                             </div>
                         </form>
                     </div>
@@ -446,9 +453,9 @@
             return{
                 cargando: false,
                 es:es,
+                configuracion:'',
                 solicitud: [],
                 fechasDeshabilitadas:{},
-                fechasDeshabilitadasHasta:{},
                 fecha : '',
                 fecha_hoy : '',
                 areas_compradoras : [],
@@ -476,7 +483,7 @@
             this.cargando = true;
             this.find()
             this.getAreasCompradoras();
-            this.getAreasSolicitantes();
+            this.getConfiguracion();
             this.getTipos();
             this.getMateriales();
             this.getAlmacenes();
@@ -496,6 +503,16 @@
                     this.solicitud = data;
                 })
             },
+            getConfiguracion() {
+                return this.$store.dispatch('seguridad/configuracion-obra/getConfiguracion', {  } )
+                    .then(data => {
+                        this.configuracion =  data;
+                        if(data.configuracion_area_solicitante == 1) {
+                            this.getAreasSolicitantes();
+                            this.id_area_solicitante = '';
+                        }
+                    })
+            },
             changeSelect(item){
                 var busqueda = this.materiales.find(x=>x.id === item.id_material);
                 if(busqueda != undefined)
@@ -514,9 +531,8 @@
                 this.fecha_requisicion = new Date();
                 this.fecha = new Date();
                 this.fechasDeshabilitadas.from= new Date();
-                this.fechasDeshabilitadasHasta.to= new Date();
                 return this.$store.dispatch('configuracion/area-compradora/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+                    params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_compradoras = data;
@@ -658,7 +674,7 @@
             },
             getAreasSolicitantes() {
                 return this.$store.dispatch('configuracion/area-solicitante/index', {
-                    params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
+                    params: {sort: 'descripcion', order: 'asc'}
                 })
                     .then(data => {
                         this.areas_solicitantes = data;
@@ -689,7 +705,7 @@
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: 'materialesParaCompras',
-                        sort: 'descripcion', order: 'desc'
+                        sort: 'descripcion', order: 'ASC'
                     }
                 })
                     .then(data => {
@@ -704,11 +720,22 @@
                         while(t < this.solicitud.partidas.data.length) {
                             if (typeof this.solicitud.partidas.data[t].entrega === 'undefined' && (this.solicitud.partidas.data[t].destino === '' || typeof this.solicitud.partidas.data[t].destino === 'undefined'))
                             {
-                                this.m++;
+                                m++;
                                 swal('¡Error!', 'Ingrese un destino válido en partida ' + (t + 1) + '.', 'error');
                             }
+                            else if(typeof this.solicitud.partidas.data[t].entrega != 'undefined' && moment(this.solicitud.fecha).format('YYYY/MM/DD') > moment(this.solicitud.partidas.data[t].entrega.fecha).format('YYYY/MM/DD'))
+                            {
+                                m ++;
+                                swal('¡Error!', 'La fecha de la partida '+(t + 1) +' ('+moment(this.solicitud.partidas.data[t].entrega.fecha).format('DD/MM/YYYY')+') debe ser posterior o igual a la fecha de la solicitud ('+moment(this.solicitud.fecha).format('DD/MM/YYYY')+').', 'error')
+                            }
+                            else if(typeof this.solicitud.partidas.data[t].entrega === 'undefined' && moment(this.solicitud.fecha).format('YYYY/MM/DD') > moment(this.solicitud.partidas.data[t].fecha_entrega).format('YYYY/MM/DD'))
+                            {
+                                m ++;
+                                swal('¡Error!', 'La fecha de la partida '+(t + 1) +' ('+moment(this.solicitud.partidas.data[t].fecha_entrega).format('DD/MM/YYYY')+') debe ser posterior o igual a la fecha de la solicitud ('+moment(this.solicitud.fecha).format('DD/MM/YYYY')+').', 'error')
+                            }
                             t ++;
-                        }if(m == 0) {
+                        }
+                        if(m == 0) {
                             this.update()
                         }
                     }

@@ -105,7 +105,7 @@ export default {
                     buttons: false
                 })
             }
-        },    
+        },
         update(context, payload)
         {
             return new Promise((resolve, reject) => {
@@ -189,7 +189,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar Cotización de Compra",
-                    text: "¿Estás seguro/a de que desea eliminar esta Cotización de Compra?",
+                    text: "¿Está seguro de que desea eliminar esta cotización?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -209,7 +209,7 @@ export default {
                                 .delete(URI + payload.id, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cotización de Compra eliminada correctamente", {
+                                    swal("Cotización eliminada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

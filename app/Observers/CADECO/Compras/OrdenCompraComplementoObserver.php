@@ -21,4 +21,18 @@ class OrdenCompraComplementoObserver
         $complemento->registro = auth()->id();
     }
 
+    public function deleted(OrdenCompraComplemento $complemento)
+    {
+        /**
+         * Cambiar estado de la asignación a: Registrada
+         */
+        $otras = OrdenCompraComplemento::where("id_asignacion_proveedor","=",$complemento->id_asignacion_proveedor)
+            ->where("id_transaccion","!=",$complemento->id_transaccion)->get();
+        if(count($otras)==0)
+        {
+            $complemento->asignacion->estado = 1;
+            $complemento->asignacion->save();
+        }
+    }
+
 }

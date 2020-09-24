@@ -32,6 +32,8 @@ class Transaccion extends Model
 
     protected $dates = ['cumplimiento'];
 
+    //protected $dateFormat = 'Y-m-d H:i:s';
+
     public const CREATED_AT = 'FechaHoraRegistro';
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
@@ -122,7 +124,7 @@ class Transaccion extends Model
     public function getFechaHoraRegistroFormatAttribute()
     {
         $date = date_create($this->FechaHoraRegistro);
-        return date_format($date,"d/m/Y H:i:s");
+        return date_format($date,"d/m/Y H:i");
     }
 
     public function getFechaHoraRegistroOrdenAttribute()

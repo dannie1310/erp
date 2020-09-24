@@ -51,6 +51,7 @@ class ConfiguracionObraTransformer extends TransformerAbstract
             'id_obra' => $model->id_obra,
             'consulta' => $model->consulta,
             'tipo_obra' => $model->tipo_obra,
+            'configuracion_area_solicitante' => $model->configuracion_area_solicitante
         ];
     }
 

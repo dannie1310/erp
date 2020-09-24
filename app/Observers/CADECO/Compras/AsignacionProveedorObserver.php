@@ -34,6 +34,8 @@ class AsignacionProveedorObserver
             'id_usuario_elimino' => auth()->id(),
             'partidas' => json_encode($partidas)
         ]);
-        $asignacion_proveedor->partidas()->delete();
+        foreach($asignacion_proveedor->partidas as $partida){
+            $partida->delete();
+        }
     }
 }

@@ -65,7 +65,7 @@ class CotizacionService
         {
             abort(400,'Archivo XLS no compatible');
         }
-        if(count($celdas) != count($cotizacion->partidas) +19)
+        if(count($celdas) != count($cotizacion->partidas) +21)
         {
             abort(400,'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
         }
@@ -81,10 +81,25 @@ class CotizacionService
             {
                 abort(400,'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
             }
+            $idMoneda = 0;
+            switch ($celdas[$x][9]) {
+                case 'PESO MXP':
+                    $idMoneda = 1;
+                break;
+                case 'DOLAR USD':
+                    $idMoneda = 2;
+                break;
+                case 'EURO':
+                    $idMoneda = 3;
+                break;
+                case 'LIBRA':
+                    $idMoneda = 4;
+                break;
+            }
             $partidas[] = array(
                 'precio_unitario' => $celdas[$x][6],
                 'descuento' => $celdas[$x][7],
-                'id_moneda' => ($celdas[$x][9] == 'PESO MXP') ? 1 : (($celdas[$x][9] == 'DOLAR USD') ? 2 : 3),
+                'id_moneda' => $idMoneda,
                 'observaciones' => $celdas[$x][11],
                 'id_material' => $item->material->id_material,
                 'descripcion' => $item->material->descripcion,
@@ -96,13 +111,16 @@ class CotizacionService
 
         $repuesta = [
             'descuento_cot' => $celdas[$x][6],
-            'fecha_cotizacion' => $celdas[$x + 10][6],
-            'pago_parcialidades' => $celdas[$x + 11][6],
-            'anticipo' => $celdas[$x + 12][6],
-            'credito' => $celdas[$x + 13][6],
-            'tiempo_entrega' => $celdas[$x + 14][6],
-            'vigencia' => $celdas[$x + 15][6],
-            'observaciones_generales' => $celdas[$x + 16][6],
+            'tc_usd' => $celdas[$x + 5][6],
+            'tc_eur' => $celdas[$x + 6][6],
+            'tc_libra' => $celdas[$x + 7][6],
+            'fecha_cotizacion' => $celdas[$x + 12][6],
+            'pago_parcialidades' => $celdas[$x + 13][6],
+            'anticipo' => $celdas[$x + 14][6],
+            'credito' => $celdas[$x + 15][6],
+            'tiempo_entrega' => $celdas[$x + 16][6],
+            'vigencia' => $celdas[$x + 17][6],
+            'observaciones_generales' => $celdas[$x + 18][6],
             'partidas' => $partidas
         ];
 

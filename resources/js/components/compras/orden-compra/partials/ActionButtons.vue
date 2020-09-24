@@ -1,8 +1,7 @@
 <template>
     <div class="btn-group">
         <PDF v-bind:id="value.id" @click="value.id"></PDF>
-        <button @click="editar" type="button" :disabled="value.tiene_entradas" class="btn btn-sm btn-outline-success" v-if="$root.can('modificar_orden_compra')" :title="value.tiene_entradas?'Orden con Entrada de Almacen':'Editar'"><i class="fa fa-pencil"></i></button>
-        <!-- <button @click="eliminar" type="button" :disabled="value.tiene_entradas" class="btn btn-sm btn-outline-danger" :title="value.tiene_entradas?'Orden con Entrada de Almacen':'Eliminar'"><i class="fa fa-trash"></i></button> -->
+        <button @click="editar" type="button"  :disabled="value.tiene_entradas" class="btn btn-sm btn-outline-success" v-if="$root.can('modificar_orden_compra') && !value.tiene_entradas" :title="value.tiene_entradas?'Orden con Entrada de Almacen':'Editar'"><i class="fa fa-pencil"></i></button>
         <Eliminar @created="paginate()" v-bind:id="value.id" v-if="$root.can('eliminar_orden_compra') && !value.tiene_entradas"></Eliminar>
     </div>
 </template>
@@ -17,7 +16,7 @@
         props: ['value'],
         data(){
             return{
-                query: {include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'},
+                query: {scope: ['areasCompradorasAsignadas'], include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'},
             }
         },
         methods: {
@@ -31,7 +30,7 @@
             eliminar(){
                 return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:[this.value.id]}
                   ).then(data => {
-                    this.$store.commit('compras/orden-compra/SET_ORDENES', []);  
+                    this.$store.commit('compras/orden-compra/SET_ORDENES', []);
                     return this.$store.dispatch('compras/orden-compra/paginate', { params: this.query})
                     .then(data => {
                         this.$store.commit('compras/orden-compra/SET_ORDENES', data.data);
