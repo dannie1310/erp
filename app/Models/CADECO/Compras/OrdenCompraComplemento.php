@@ -51,4 +51,9 @@ class OrdenCompraComplemento extends Model
     {
         return $this->fecha_entrega ?  date("d/m/Y", strtotime($this->fecha_entrega)) : '';
     }
+
+    public function formaPago()
+    {
+        return $this->hasOne(CtgFormaPagoCredito::class, "id", "id_forma_pago");
+    }
 }
