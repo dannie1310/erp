@@ -83,7 +83,7 @@ class OrdenCompraService
             $item_antecedente= null;
             foreach($data['data'] as $orden){
                 $orden_compra = $this->repository->show($orden);
-                
+
                 $orden_compra_eliminada = OrdenCompraEliminada::create([
                     'id_transaccion' => $orden_compra->id_transaccion,
                     'id_antecedente' => $orden_compra->id_antecedente,
@@ -145,18 +145,18 @@ class OrdenCompraService
                         'id_moneda' => $orden_compra->id_moneda,
                     ]);
                 }
-                
+
                 $this->repository->delete([], $orden);
             }
-            
+/*
             $pendientes = $this->repository->where([['id_referente', '=', $orden_compra_eliminada->id_referente]])->all();
-            
+
             if($pendientes->count() == 0){
                 $asignacion_partida = AsignacionProveedorPartida::where('id_item_solicitud', '=', $item_antecedente)->where('id_transaccion_cotizacion', '=', $orden_compra_eliminada->id_referente)->first();
                 $asignacion_partida->asignacion->estado = 1;
                 $asignacion_partida->asignacion->save();
-            }
-            
+            }*/
+
             DB::connection('cadeco')->commit();
             return response()->json("{}", 200);
         }catch (\Exception $e){

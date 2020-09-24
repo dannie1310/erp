@@ -38,10 +38,11 @@ class AsignacionProveedorTransformer extends TransformerAbstract
         return [
             'id' => (int) $model->getKey(),
             'fecha' => $model->solicitud->fecha,
+            'id_solicitud' => $model->solicitud->id_transaccion,
             'fecha_solicitud_format' => $model->solicitud->fecha_format,
             'fecha_asignacion' => date('d/m/Y H:i', strtotime($model->timestamp_registro)),
             'fecha_format' => $model->fecha_format,
-            'observaciones' => (string) $model->solicitud->observaciones,
+            'concepto' => (string) $model->solicitud->complemento?$model->solicitud->complemento->concepto:'',
             'estado_format' => $model->estadoAsignacion->descripcion,
             'estado' => $model->estado,
             'folio_solicitud_format' => $model->solicitud->numero_folio_format,

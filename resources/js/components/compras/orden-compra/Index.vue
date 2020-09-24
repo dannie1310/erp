@@ -31,10 +31,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio Orden de Compra', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Folio SAO Solicitud', field: 'id_antecedente', thComp: require('../../globals/th-Filter').default, sortable: false },
                     { title: 'Empresa', field: 'id_empresa', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Fecha de Registro', field: 'FechaHoraRegistro', sortable: true },
-                    { title: 'Folio Solicitud', field: 'id_antecedente', thComp: require('../../globals/th-Filter').default, sortable: false },
                     { title: 'Observaciones', field: 'observaciones', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
