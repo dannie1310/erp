@@ -199,6 +199,14 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
             return $requireAll;
         } else {
             if($global){
+                foreach ($this->rolesSinContextoAsignado as $rol) {
+                    // Validate against the Permission table
+                    foreach ($rol->permisos as $perm) {
+                        if (str_is($permiso, $perm->name)) {
+                            return true;
+                        }
+                    }
+                }
                 foreach ($this->rolesSinContexto as $rol) {
                     // Validate against the Permission table
                     foreach ($rol->permisos as $perm) {
