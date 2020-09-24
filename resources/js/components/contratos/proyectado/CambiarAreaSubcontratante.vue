@@ -112,7 +112,12 @@
                     params:{include:"areasSubcontratantes"}
                 })
                     .then(data => {
-                        $(this.$refs.modal).modal('hide');
+                      return this.$store.dispatch('contratos/contrato-proyectado/paginate', { params: {include: 'areasSubcontratantes', sort: 'numero_folio', order: 'DESC'}})
+                          .then(data => {
+                            this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
+                            this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
+                          })
+                        /*$(this.$refs.modal).modal('hide');
                         this.$store.dispatch('configuracion/area-subcontratante/getAreasUsuario', this.currentUser.idusuario)
                             .then(data_a => {
                                 var areas = [];
@@ -124,8 +129,11 @@
                                     this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO', this.id);
                                 }
 
-                            })
+                            })*/
                     })
+                    .finally( ()=>{
+                      $(this.$refs.modal).modal('hide');
+                    });
             },
 
         }
