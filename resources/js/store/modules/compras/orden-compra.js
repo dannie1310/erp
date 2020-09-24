@@ -18,6 +18,11 @@ export default {
         SET_META(state, data) {
             state.meta = data
         },
+        DELETE_ORDEN(state, id){
+            state.ordenes = state.ordenes.filter(orden => {
+                return orden.id != id
+            });
+        }
     },
 
     actions: {
@@ -60,6 +65,47 @@ export default {
                     .catch(error => {
                         reject(error)
                     })
+            });
+        },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Orden de Compra",
+                    text: "¿Está seguro de que desea eliminar la Orden de Compra?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Orden de Compra eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
             });
         },
         eliminarOrdenes(context, payload) {
