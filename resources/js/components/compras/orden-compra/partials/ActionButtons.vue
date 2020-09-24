@@ -17,7 +17,7 @@
         props: ['value'],
         data(){
             return{
-                query: {include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'},
+                query: {scope: ['areasCompradorasAsignadas'], include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'},
             }
         },
         methods: {
@@ -31,7 +31,7 @@
             eliminar(){
                 return this.$store.dispatch('compras/orden-compra/eliminarOrdenes', { data:[this.value.id]}
                   ).then(data => {
-                    this.$store.commit('compras/orden-compra/SET_ORDENES', []);  
+                    this.$store.commit('compras/orden-compra/SET_ORDENES', []);
                     return this.$store.dispatch('compras/orden-compra/paginate', { params: this.query})
                     .then(data => {
                         this.$store.commit('compras/orden-compra/SET_ORDENES', data.data);
