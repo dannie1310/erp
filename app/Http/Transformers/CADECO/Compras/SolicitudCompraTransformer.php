@@ -40,15 +40,15 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'numero_folio' => $model->numero_folio,
             'fecha' => $model->fecha,
             'estado' => (int) $model->estado,
-            'estado_solicitud' => ($model->complemento)?$model->complemento->estadoSolicitud->descripcion:'',
+            'estado_solicitud' => $model->complemento ? $model->complemento->estadoSolicitud->descripcion:'',
             'fecha_format'=>$model->fecha_format,
             'fecha_registro'=>$model->fecha_hora_registro_format,
             'observaciones' => $model->observaciones,
-            'concepto' => $model->complemento->concepto,
-            'numero_folio_compuesto' =>($model->complemento)?$model->complemento->folio_compuesto:'',
+            'concepto' => $model->complemento ? $model->complemento->concepto : '',
+            'numero_folio_compuesto' =>$model->complemento ? $model->complemento->folio_compuesto:'',
             'numero_folio_format'=>(string) $model->numero_folio_format,
-            'cotizaciones' => ($model->cotizaciones) ? $model->cotizaciones->count() : null,
-            'autorizacion_requerida' =>($model->obra->configuracionCompras)?$model->obra->configuracionCompras->con_autorizacion:"0"
+            'cotizaciones' => $model->cotizaciones ? $model->cotizaciones->count() : null,
+            'autorizacion_requerida' => $model->obra->configuracionCompras ? $model->obra->configuracionCompras->con_autorizacion:"0"
         ];
     }
 
