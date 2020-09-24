@@ -86,6 +86,11 @@ class OrdenCompra extends Transaccion
         return $this->hasOne(SolicitudCompra::class, 'id_transaccion', 'id_antecedente');
     }
 
+    public function cotizacion()
+    {
+        return $this->hasOne(CotizacionCompra::class, 'id_transaccion', 'id_referente');
+    }
+
     public function complemento()
     {
         return $this->hasOne(OrdenCompraComplemento::class, 'id_transaccion');
