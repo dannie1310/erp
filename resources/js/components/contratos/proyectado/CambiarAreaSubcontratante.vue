@@ -8,7 +8,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-search" style="padding-right:3px"></i>Cambiar Area Subcontratante</h5>
+                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-refresh" style="padding-right:3px"></i>Cambiar Área Subcontratante</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -18,7 +18,7 @@
                        <div class="col-md-6">
                            <h5>Número de folio: {{value.numero_folio}}</h5>
                             <div class="form-group error-content">
-                                <label for="id_area">Área Subcontratante</label>
+                                <label for="id_area">Área Subcontratante:</label>
                                 <select
                                         type="text"
                                         name="id_area"
