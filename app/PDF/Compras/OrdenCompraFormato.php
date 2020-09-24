@@ -73,11 +73,15 @@ class OrdenCompraFormato extends FPDI
         $this->obra = Obra::find(Context::getIdObra());
 
         $this->id_oc=$ordenCompra;
-        if(!(empty($this->ordenCompra->complemento->fecha_entrega))){
+
+
+        $this->ordenCompra = OrdenCompra::with('solicitud','partidas','complemento')->where('id_transaccion', '=', $ordenCompra)->first();
+
+        if($this->ordenCompra->complemento){
             $this->domicilio=$this->ordenCompra->complemento->domicilio_entrega;
             $this->plazo=$this->ordenCompra->complemento->plazos_entrega_ejecucion;
             $this->condiciones=$this->ordenCompra->complemento->otras_condiciones;
-            $this->descuento=$this->complemento[0]->descuento;
+            $this->descuento=$this->ordenCompra->complemento->descuento;
         }else{
             $this->domicilio='';
             $this->plazo='';
@@ -85,7 +89,6 @@ class OrdenCompraFormato extends FPDI
             $this->descuento='';
         }
 
-        $this->ordenCompra = OrdenCompra::with('solicitud','partidas','complemento')->where('id_transaccion', '=', $ordenCompra)->first();
         $this->fecha = substr($this->ordenCompra->fecha, 0, 10);
         $this->id_antecedente=$this->ordenCompra->id_antecedente;
 
@@ -483,7 +486,7 @@ class OrdenCompraFormato extends FPDI
 
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(4, .5, 'Anticipo ('. "anticipo" .' %): ', 0, 0,'L');
+        $this->CellFitScale(4, .5, 'Anticipo ('. $this->ordenCompra->cotizacion->complemento->anticipo .' %): ', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
         $this->CellFitScale(2, .5, number_format($anticipo_monto, 2, '.', ','), 1, 0,'R');
         $this->Ln(.7);
@@ -499,7 +502,7 @@ class OrdenCompraFormato extends FPDI
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Forma de Pago:', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(5, .5, utf8_decode(""), 1, 0,'L');
+        $this->CellFitScale(5, .5, utf8_decode($this->ordenCompra->complemento->formaPago->descripcion), 1, 0,'L');
         $this->Ln(.7);
 
         $this->Ln(0.7);
