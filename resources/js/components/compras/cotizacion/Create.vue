@@ -360,7 +360,6 @@
                                                 id="observaciones"
                                                 class="form-control"
                                                 v-model="observaciones"
-                                                v-validate="{required: true}"
                                                 data-vv-as="Observaciones"
                                                 :class="{'is-invalid': errors.has('observaciones')}"
                                             ></textarea>
