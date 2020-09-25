@@ -502,7 +502,7 @@ class OrdenCompraFormato extends FPDI
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Forma de Pago:', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(5, .5, utf8_decode($this->ordenCompra->complemento->formaPago->descripcion), 1, 0,'L');
+        $this->CellFitScale(5, .5, utf8_decode(($this->ordenCompra->complemento->formaPago)?$this->ordenCompra->complemento->formaPago->descripcion:""), 1, 0,'L');
         $this->Ln(.7);
 
         $this->Ln(0.7);
