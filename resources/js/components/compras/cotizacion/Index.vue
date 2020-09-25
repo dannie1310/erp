@@ -130,7 +130,7 @@
                         solicitud: $.extend({}, {
                             show: (cotizacion.solicitud) ? true : false,
                             id: (cotizacion.solicitud) ? cotizacion.solicitud.id : null,
-                            cotizacion: (cotizacion.solicitud) ? cotizacion.solicitud : null
+                            solicitud_consulta: (cotizacion.solicitud) ? cotizacion.solicitud : null
                         }),
                         buttons: $.extend({}, {
                             show: true,

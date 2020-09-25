@@ -124,7 +124,7 @@
 <script>
     export default {
         name: "solicitud-show",
-        props: ['id', 'cotizacion'],
+        props: ['id', 'solicitud_consulta'],
         data(){
             return{
                 cargando: false,
@@ -162,7 +162,7 @@
             },
             boton()
             {
-                return (this.cotizacion) ? this.cotizacion :false;
+                return (this.solicitud_consulta) ? this.solicitud_consulta :false;
             }
         }
     }

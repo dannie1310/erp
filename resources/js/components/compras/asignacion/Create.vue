@@ -112,8 +112,14 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" @click=cerrar() class="btn btn-secondary">Cerrar</button>
-                        <button type="button" @click="validate()" class="btn btn-primary">Registrar</button>
+                        <button type="button" class="btn btn-secondary" v-on:click="salir">
+                            <i class="fa fa-angle-left"></i>
+                            Regresar
+                        </button>
+                        <button type="button" @click="validate()" class="btn btn-primary">
+                            <i class="fa fa-save"></i>
+                            Guardar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -165,10 +171,10 @@ export default {
                 }
             });
         },
-        cerrar(){
+        salir(){
             swal({
-                title: "Cerrar Asignación de Proveedores",
-                text: "¿Está seguro/a de que quiere salir del registro de asignación de proveedores?",
+                title: "Salir de Asignación de Proveedores",
+                text: "¿Está seguro de que quiere salir del registro de asignación de proveedores?",
                 icon: "info",
                 buttons: {
                     cancel: {
@@ -183,7 +189,7 @@ export default {
             })
             .then((value) => {
                 if (value) {
-                    this.$router.push({name: 'asignacion-proveedores'});
+                    this.$router.push({name: 'asignacion-proveedor'});
                 }
             });
         },

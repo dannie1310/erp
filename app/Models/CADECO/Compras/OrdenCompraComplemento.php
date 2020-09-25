@@ -4,6 +4,7 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\CADECO\OrdenCompra;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
@@ -34,6 +35,16 @@ class OrdenCompraComplemento extends Model
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
+    }
+
+    public function ordenCompra()
+    {
+        return $this->belongsTo(OrdenCompra::class, "id_transaccion", "id_transaccion");
+    }
+
+    public function asignacion()
+    {
+        return $this->belongsTo(AsignacionProveedor::class, "id_asignacion_proveedor", "id");
     }
 
     public function getFechaEntregaFormatAttribute()

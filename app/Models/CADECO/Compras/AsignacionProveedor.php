@@ -82,7 +82,7 @@ class AsignacionProveedor extends Model
      */
     public function getFechaFormatAttribute(){
         $date = date_create($this->timestamp_registro);
-        return date_format($date,"d/m/Y");
+        return date_format($date,"d/m/Y H:i:s");
     }
 
     public function getFolioFormatAttribute(){
@@ -283,5 +283,17 @@ class AsignacionProveedor extends Model
     {
         $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
         return $tipo_cambio ? $tipo_cambio->cambio : $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getAplicadaAttribute()
+    {
+        if($this->ordenCompraComplemento){
+            if($this->ordenCompraComplemento->count()>0)
+            {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }
