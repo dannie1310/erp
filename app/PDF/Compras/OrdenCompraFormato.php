@@ -570,7 +570,7 @@ class OrdenCompraFormato extends FPDI
 
 
 
-    public function partidas($partidas = [])
+    public function partidas()
     {
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180);
@@ -586,21 +586,18 @@ class OrdenCompraFormato extends FPDI
 
         $this->item_ante=Item::where('id_transaccion','=',$this->id_antecedente)->get();
 
-        $count_partidas = count($partidas);
+        $count_partidas = count($this->ordenCompra->partidas);
 
         $ac = 0;
 
-        foreach ( $partidas as $i=> $p)
+        foreach ($this->ordenCompra->partidas as $i=> $p)
         {
-
             $this->destino_item=Entrega::where('id_item','=',$this->item_ante[$i]->id_item)->get();
-
 
             if(!empty($this->destino_item[0]->id_concepto)){
                 $item_arr= Concepto::where('id_concepto','=',$this->destino_item[0]->id_concepto)->where('id_obra','=',$this->ordenCompra->obra->id_obra)->get();
 
                 $this->obs_item=$item_arr[0]->descripcion;
-
             }else{
                 if(!empty($this->destino_item[0]->id_almacen)){
                     $item_arr= Almacen::where('id_almacen','=',$this->destino_item[0]->id_almacen)->where('id_obra','=',$this->ordenCompra->obra->id_obra)->get();
@@ -609,7 +606,6 @@ class OrdenCompraFormato extends FPDI
                     $this->obs_item='';
                 }
             }
-
 
             $partida_comp=OrdenCompraPartidaComplemento::where('id_item','=', $p->id_item)->get();
 
@@ -658,8 +654,10 @@ class OrdenCompraFormato extends FPDI
             $this->SetWidths([19.5]);
             $this->SetAligns(['L']);
 
-            if(!empty( $this->obs_item)){
-                $this->Row([utf8_decode($this->obs_item)]);
+            $this->Row([utf8_decode($p->itemSolicitudCompra->entrega->destino_txt)]);
+
+            if(!empty($p->itemSolicitudCompra->complemento->observaciones)){
+                $this->Row([utf8_decode($p->itemSolicitudCompra->complemento->observaciones)]);
             }
 
             if(!empty($p->complemento->observaciones))
@@ -1148,7 +1146,7 @@ class OrdenCompraFormato extends FPDI
         $this->AddPage();
         $this->SetAutoPageBreak(true, 3.75);
         // Partidas.
-        $this->partidas($this->ordenCompra->partidas);
+        $this->partidas();
         $this->totales();
 
         $this->AddPage();

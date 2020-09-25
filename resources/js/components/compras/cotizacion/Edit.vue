@@ -328,7 +328,6 @@
                                                 id="observaciones"
                                                 class="form-control"
                                                 v-model="cotizacion.observaciones"
-                                                v-validate="{required: true}"
                                                 data-vv-as="Observaciones"
                                                 :class="{'is-invalid': errors.has('observaciones')}"
                                             ></textarea>
@@ -534,7 +533,7 @@
                 let sort = this.cotizacion.partidas.data.sort(function(a, b) {
                     return a.id_item_solicitud - b.id_item_solicitud;
                 });
-                
+
                 this.cotizacion.partidas.data = sort;
                 this.x = 0;
                 while(this.x < this.cotizacion.partidas.data.length)
@@ -590,7 +589,7 @@
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        
+
                         let self = this;
                         this.descuento.forEach(function(desc, i) {
                             self.cotizacion.partidas.data[i].enable = self.enable[i];
