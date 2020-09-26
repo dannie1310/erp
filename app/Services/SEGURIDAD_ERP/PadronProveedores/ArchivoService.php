@@ -128,7 +128,7 @@ class ArchivoService
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
         }
-
+        
         $paths = $this->generaDirectorioPDF();
         foreach($archivos_pdf as $key => $archivo_pdf){
             $nombre_explode = \explode('.', $archivos_nombres[$key]->nombre);
@@ -146,19 +146,26 @@ class ArchivoService
         $files = array_diff(scandir($paths["dir_pdf"]), array('.', '..','__MACOSX'));
         sort($files, SORT_NUMERIC);
 
-        $pdf = new \Clegginabox\PDFMerger\PDFMerger;
-        foreach($files as $file) {
-            $file_explode = \explode('.', $file);
-            $this->guardarArchivoIntegrante($data['id_archivo'],$paths["dir_pdf"], $file);
-            $pdf->addPDF($paths["dir_pdf"]. $file, 'all');
+        if(count($files) > 1){
+            $pdf = new \Clegginabox\PDFMerger\PDFMerger;
+            foreach($files as $file) {
+                $file_explode = \explode('.', $file);
+                $this->guardarArchivoIntegrante($data['id_archivo'],$paths["dir_pdf"], $file);
+                $pdf->addPDF($paths["dir_pdf"]. $file, 'all');
+            }
+            $pdf->merge('file', $paths["dir_pdf"].'temp_pdf.pdf');
+
+            $pdf_file = fopen($paths["dir_pdf"].'temp_pdf.pdf', 'r');
+
+            $hash_file = hash_file('sha1', $paths["dir_pdf"].'temp_pdf.pdf');
+        }else{
+            $this->guardarArchivoIntegrante($data['id_archivo'],$paths["dir_pdf"], $files[0]);
+            $pdf_file = fopen($paths["dir_pdf"].$files[0], 'r');
+            $hash_file = hash_file('sha1', $paths["dir_pdf"].$files[0]);
         }
-        $pdf->merge('file', $paths["dir_pdf"].'temp_pdf.pdf', 'P');
-
-        $pdf_file = fopen($paths["dir_pdf"].'temp_pdf.pdf', 'r');
-
-        $hash_file = hash_file('sha1', $paths["dir_pdf"].'temp_pdf.pdf');
+      
         $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
-
+        
         if($repetidos->count() > 0 && $repetidos[0] != $archivo){
             abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
             ;
