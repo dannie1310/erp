@@ -100,9 +100,7 @@ class SolicitudCompraService
         foreach ($items as $key => $value) {
             if ($key != $i) {
                 if ($value['id_material'] === $item['id_material']) {
-                    if ($value['destino']['tipo_destino'] == $item['destino']['tipo_destino'] && $value['destino']['id_destino'] == $item['destino']['id_destino']) {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
