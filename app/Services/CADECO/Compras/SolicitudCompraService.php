@@ -85,9 +85,8 @@ class SolicitudCompraService
         try {
             /*Validación de Partidas*/
             foreach ($data['partidas'] as $key => $item){
-                $validacion= $this->validarPartidas($data['partidas'], $item, $key);
-                if($validacion===true){
-                    abort(400, 'No pueden existir dos partidas con el mismo material y mismo destino... Material en Fila: '.strval($key+1)." - ".strval($item['material']['label']));
+                if( $this->validarPartidas($data['partidas'], $item, $key)){
+                    abort(400, 'No esta permitido incluir más de una vez un insumo en una solicitud '.strval($item['material']['descripcion']).'.');
                 }
             }
             return $this->repository->create($data);
@@ -96,24 +95,16 @@ class SolicitudCompraService
         }
     }
 
-    public function validarPartidas($items, $item, $i){
-        foreach ($items as $key => $value){
-            if($key!=$i) {
+    public function validarPartidas($items, $item, $i)
+    {
+        foreach ($items as $key => $value) {
+            if ($key != $i) {
                 if ($value['id_material'] === $item['id_material']) {
-                    if ($value['id_destino'] === $item['id_destino']) {
-                        if ($value['destino_concepto'] === true && $item['destino_concepto'] === true) {
-                            return true;
-                        }
-                        if ($value['destino_almacen'] === true && $item['destino_almacen'] === true) {
-                            return true;
-                        }
-                        return false;
-                    }
-                    return false;
+                    return true;
                 }
             }
-            return false;
         }
+        return false;
     }
 
     public function delete($data, $id)
