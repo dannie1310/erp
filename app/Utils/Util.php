@@ -9,7 +9,7 @@
 namespace App\Utils;
 
 
-trait Util
+class Util
 {
     function elimina_caracteres_especiales($string){
         //echo $string;
