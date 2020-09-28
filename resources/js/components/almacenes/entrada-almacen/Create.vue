@@ -347,8 +347,7 @@
                         params: {
                             scope: 'disponibleEntradaAlmacen',
                             sort: 'numero_folio',
-                            order: 'desc',
-                            limit: 20,
+                            order: 'desc'
                         }
                     }
                 }).then(ordenes_compra => {
