@@ -86,7 +86,7 @@ class SolicitudCompraService
             /*Validación de Partidas*/
             foreach ($data['partidas'] as $key => $item){
                 if( $this->validarPartidas($data['partidas'], $item, $key)){
-                    abort(400, 'No pueden existir dos partidas con el mismo material ('.strval($item['material']['descripcion']).') y mismo destino ('.$item['destino']['destino']['descripcion'].') en la misma solicitud.');
+                    abort(400, 'No esta permitido incluir más de una vez un insumo en una solicitud '.strval($item['material']['descripcion']).'.');
                 }
             }
             return $this->repository->create($data);
