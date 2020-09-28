@@ -4,10 +4,11 @@
 namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Utils\Util;
 use App\Models\IGH\Usuario;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgTipoArchivo;
-use Illuminate\Support\Facades\DB;
 
 class Archivo extends ArchivoGeneralizacion
 {
@@ -98,7 +99,9 @@ class Archivo extends ArchivoGeneralizacion
 
     public function getNombreDescargaAttribute()
     {
-        return $this->ctgTipoArchivo->nombre."_".strtolower(str_replace(" ","_",$this->complemento_nombre));
+        $util = new Util();
+        $nombre_format = $util->elimina_caracteres_especiales($this->complemento_nombre);
+        return $this->ctgTipoArchivo->nombre."_".strtolower(str_replace(" ","_",$nombre_format));
     }
 
     public function eliminar()
