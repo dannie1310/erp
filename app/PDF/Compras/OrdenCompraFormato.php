@@ -296,7 +296,7 @@ class OrdenCompraFormato extends FPDI
             $this->setX($x_inicial);
             $this->MultiCell(9.5, .5,
                 "" . $this->empresa_nombre.'
-' . utf8_decode(strtoupper($this->sucursal_direccion)) . '
+' . utf8_decode($this->sucursal_direccion) . '
 ' . $this->empresa_rfc, '', 'L');
 
             $this->setY($y_inicial);
@@ -306,7 +306,7 @@ class OrdenCompraFormato extends FPDI
             $this->setY($y_inicial);
             $this->setX($x_inicial + 10);
             $this->MultiCell(9.8, .5,
-                utf8_decode($this->obra->cliente) . '
+                utf8_decode($this->obra->facturar) . '
 ' . $this->obra->direccion . '
 ' . $this->obra->rfc, '', 'L');
 
