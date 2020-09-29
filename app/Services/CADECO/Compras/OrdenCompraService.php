@@ -7,11 +7,18 @@
  */
 
 namespace App\Services\CADECO\Compras;
-use App\Models\CADECO\SolicitudCompra;
+
+use DateTime;
+use DateTimeZone;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\OrdenCompra;
-use App\PDF\Compras\OrdenCompraFormato;
 use App\Repositories\Repository;
+use App\Models\CADECO\OrdenCompra;
+use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\SolicitudCompra;
+use App\PDF\Compras\OrdenCompraFormato;
+use App\Models\CADECO\Compras\OrdenCompraEliminada;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
+use App\Models\CADECO\Compras\OrdenCompraPartidaEliminada;
 
 
 class OrdenCompraService
@@ -67,5 +74,49 @@ class OrdenCompraService
     {
         $pdf = new OrdenCompraFormato($id);
         return $pdf;
+    }
+
+    public function eliminarOrdenes($data){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+
+            foreach($data['data'] as $orden){
+                $orden_compra = $this->repository->show($orden);
+                $orden_compra->eliminar($data['motivo']);
+                            }
+            DB::connection('cadeco')->commit();
+            return response()->json("{}", 200);
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->show($id)->eliminar($data['data']);
+    }
+
+    public function update(array $data, $id)
+    {
+        $fecha_e = New DateTime($data['complemento']['fecha_entrega']);
+        $fecha_e->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $orden_compra = $this->repository->show($id);
+        $orden_compra->id_costo = $data['id_costo'];
+        $orden_compra->porcentaje_anticipo_pactado = $data['porcentaje_anticipo_pactado'];
+        $orden_compra->impuesto = $data['impuesto'];
+        $orden_compra->monto = $data['subtotal'] + $data['impuesto'];
+
+        $orden_compra->complemento->plazos_entrega_ejecucion = $data['complemento']['plazos_entrega_ejecucion'];
+        $orden_compra->complemento->id_forma_pago = $data['complemento']['id_forma_pago'];
+        $orden_compra->complemento->domicilio_entrega = $data['complemento']['domicilio_entrega'];
+        $orden_compra->complemento->otras_condiciones = $data['complemento']['otras_condiciones'];
+        $orden_compra->complemento->fecha_entrega = $fecha_e;
+
+        $orden_compra->save();
+        $orden_compra->complemento->save();
+
+        return $orden_compra;
     }
 }

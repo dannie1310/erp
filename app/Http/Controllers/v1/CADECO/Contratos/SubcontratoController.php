@@ -46,6 +46,7 @@ class SubcontratoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_subcontrato')->only(['show', 'paginate']);
 
         $this->service = $service;
         $this->fractal = $fractal;

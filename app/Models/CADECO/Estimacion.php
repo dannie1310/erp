@@ -153,6 +153,16 @@ class Estimacion extends Transaccion
         return $this->belongsTo(EstimacionEliminada::class, 'id_transaccion');
     }
 
+    public function partidasRelacionadas()
+    {
+        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_antecedente');
+    }
+
+    public function itemsReferenciados()
+    {
+        return $this->hasMany(Item::class, 'id_antecedente','id_transaccion');
+    }
+
     /**
      * Acciones
      */
@@ -179,7 +189,7 @@ class Estimacion extends Transaccion
                 ->where('id_concepto', '=', $concepto['item_antecedente'])
                 ->first()->precio_unitario;
 
-            $this->Items()->create([
+            $this->items()->create([
                 'id_transaccion' => $this->id_transaccion,
                 'id_antecedente' => $this->id_antecedente,
                 'item_antecedente' => $concepto['item_antecedente'],
@@ -280,11 +290,11 @@ class Estimacion extends Transaccion
                 $this->anticipo = 0;
                 $this->save();
             } else {
-                if ($this->subcontrato->first()->anticipo != 0) {
+                if ($this->subcontrato->anticipo != 0) {
                     $this->anticipo = ($data / $this->sumaImportes) * 100;
                     $this->save();
                 } else {
-                    throw new \Exception('No se puede actualizar la amortización de anticipo.');
+                    throw new \Exception('No se puede actualizar la amortización de anticipo de está estimación porque el Subcontrato no tiene porcentaje de anticipo definido.');
                 }
 
             }
@@ -379,8 +389,9 @@ class Estimacion extends Transaccion
                 'desc_pres_mat_antes_iva' => 1,
                 'desc_otros_prest_antes_iva' => 0,
                 'ret_fon_gar_con_iva' => 0,
+                'amort_anticipo_antes_iva' => 1
             ]);
-
+            $this->refresh();
         }
         return $configuracion;
     }
@@ -526,8 +537,8 @@ class Estimacion extends Transaccion
         }
         if($this->configuracion->penalizacion_antes_iva == 1)
         {
-            $subtotal -= $this->penalizaciones->sum('importe');
-            $subtotal += $this->penalizacionLiberaciones->sum('importe');
+            $subtotal -= $this->suma_penalizaciones;
+            $subtotal += $this->suma_penalizaciones_liberadas;
         }
         return $subtotal;
     }
@@ -644,8 +655,8 @@ class Estimacion extends Transaccion
         $monto_pagar -= $this->retencionIVA_2_3;
         if($this->configuracion->penalizacion_antes_iva == 0)
         {
-            $monto_pagar -= $this->penalizaciones->sum('importe');  
-            $monto_pagar += $this->penalizacionLiberaciones->sum('importe');          
+            $monto_pagar -= $this->suma_penalizaciones;
+            $monto_pagar += $this->suma_penalizaciones_liberadas;
         }
         return $monto_pagar;
     }
@@ -655,15 +666,20 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->monto_a_pagar, 2);
     }
 
+    public function getIvaRetenidoCalculadoAttribute()
+    {
+        return $this->IVARetenido + $this->retencionIVA_2_3;
+    }
+
     public function getIvaRetenidoFormatAttribute()
     {
-        return '$ ' . number_format($this->IVARetenido + $this->retencionIVA_2_3, 2);
+        return '$ ' . number_format($this->iva_retenido_calculado, 2);
     }
 
     public function getIvaRetenidoPorcentajeAttribute()
     {
-        if ($this->subtotal_orden_pago > 0) {
-            return number_format($this->IVARetenido * 100 / $this->subtotal_orden_pago, 2) . " %";
+        if ($this->suma_importes > 0) {
+            return number_format($this->IVARetenido * 100 / $this->suma_importes, 2) . " %";
         } else {
             return "0 %";
         }
@@ -739,9 +755,9 @@ class Estimacion extends Transaccion
             }
             $this->retencionIVA_2_3 = $retenciones['retencionIVA_2_3'];
         }
-        
+
         if($retenciones['retencion4'] != null && $retenciones['retencion4'] > 0){
-            $porcentaje = $retenciones['retencion4'] * 100 / $this->subtotal_orden_pago;
+            $porcentaje = $retenciones['retencion4'] * 100 / $this->suma_importes;
             if ($porcentaje <= 3.9999 || $porcentaje >= 4.0001) {
                 abort(403, 'La retención de IVA no es del 4%');
             }
@@ -757,7 +773,7 @@ class Estimacion extends Transaccion
         $retencion_registrada_6 = $this->retencion_iva6;
         $retenciones['retencion4'] != null? $retencion_registrada_4 = $retenciones['retencion4']:'';
         $retenciones['retencion6'] != null? $retencion_registrada_6 = $retenciones['retencion6']:'';
-        
+
         $retencion = $retencion_registrada_4 + $retencion_registrada_6;
 
         $this->IVARetenido = $retencion;
@@ -788,6 +804,8 @@ class Estimacion extends Transaccion
             'id_empresa'              => $this->empresa->id_empresa,
             'anticipo_format'         => $this->anticipo_format,
             'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
+            'estado'                  => $this->estado,
+            'estado_format'           => $this->estado_descripcion,
             'subcontrato'             => $this->subcontrato->subcontratoParaEstimar($this->id_transaccion)
         ];
     }
@@ -969,7 +987,7 @@ class Estimacion extends Transaccion
     public function getRetencionIva4FormatAttribute(){
         return '$ ' . number_format($this->retencion_iva4, 2);
     }
-    
+
     public function getRetencionIva6Attribute(){
         if($subtotal = $this->subtotal_orden_pago){
             $porcentaje = $this->IVARetenido * 100 / $subtotal;
@@ -982,13 +1000,135 @@ class Estimacion extends Transaccion
     public function getRetencionIva6FormatAttribute(){
         return '$ ' . number_format($this->retencion_iva6, 2);
     }
-    
+
     public function getRetencionIva23FormatAttribute(){
         return '$ ' . number_format($this->retencionIVA_2_3, 2);
     }
-    
+
+    public function getEstadoDescripcionAttribute()
+    {
+        switch ($this->estado) {
+            case 0:
+                return 'Registrada';
+                break;
+            case 1:
+                return 'Aprobada';
+                break;
+            case 2:
+                return 'Revisada';
+                break;
+            default:
+                return 'Desconocido';
+                break;
+        }
+    }
+
+    public function getIvaRetenidoCalculadoAnteriorAttribute()
+    {
+        $iva_retenido = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $iva_retenido += $estimacion->iva_retenido_calculado;
+        }
+        return $iva_retenido;
+    }
+
+    public function getAcumuladoPenalizacionesAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_penalizaciones;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoPenalizacionesLiberadaAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_penalizaciones_liberadas;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoRetencionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_retenciones;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoLiberacionAnterioresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_liberaciones;
+        }
+        return $acumulado;
+    }
+
+    public function getSumaPenalizacionesAttribute()
+    {
+        return $this->penalizaciones->sum('importe');
+    }
+
+    public function getSumaPenalizacionesLiberadasAttribute()
+    {
+        return $this->penalizacionLiberaciones->sum('importe');
+    }
+
+    public function getSumaPenalizacionesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_penalizaciones, 2);
+    }
+
+    public function getSumaPenalizacionesLiberadasFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_penalizaciones_liberadas, 2);
+    }
+
     public function getRestaImportesAmortizacionAttribute()
     {
         return $this->suma_importes - $this->monto_anticipo_aplicado;
+    }
+
+    /**
+     * Ejecuta lógica: sp_revertir_transaccion
+     * Validaciones para revertir la estimación
+     * @param $estimacion
+     */
+    private function revertir_estimacion()
+    {
+        if (is_null($this->itemsReferenciados()))
+        {
+            abort(400, "Esta estimación ".$this->numero_folio_format." se encuentra asociada a otras transacciones.");
+        }
+
+        foreach ($this->items as $item)
+        {
+            $item->movimiento->delete();
+        }
+        $this->estado = 0;
+        $this->impreso = 0;
+        $this->saldo = $this->monto;
+        $this->save();
     }
 }

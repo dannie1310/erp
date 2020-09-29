@@ -9,13 +9,19 @@ use App\Models\CADECO\AjustePositivoPartida;
 use App\Models\CADECO\Almacenes\AjusteEliminado;
 use App\Models\CADECO\Almacenes\EntregaContratista;
 use App\Models\CADECO\Anticipo;
+use App\Models\CADECO\AplicacionManual;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Cliente;
+use App\Models\CADECO\Catalogos\UnificacionProveedores;
+use App\Models\CADECO\Compras\AsignacionProveedor;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
+use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\RequisicionComplemento;
 use App\Models\CADECO\Compras\RequisicionEliminada;
 use App\Models\CADECO\Compras\RequisicionPartidaComplemento;
 use App\Models\CADECO\Compras\MovimientoEliminado;
+use App\Models\CADECO\Compras\OrdenCompraComplemento;
 use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Configuracion\NodoTipo;
@@ -34,17 +40,22 @@ use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use App\Models\CADECO\Contabilidad\TipoCuentaContable;
 use App\Models\CADECO\ContraRecibo;
+use App\Models\CADECO\Contrato;
+use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\CADECO\ControlPresupuesto\SolicitudCambio;
 use App\Models\CADECO\ControlPresupuesto\SolicitudCambioPartidas;
 use App\Models\CADECO\ControlPresupuesto\SolicitudCambioRechazada;
 use App\Models\CADECO\ControlPresupuesto\VariacionVolumen;
+use App\Models\CADECO\CotizacionCompra;
+use App\Models\CADECO\CotizacionCompraPartida;
 use App\Models\CADECO\Credito;
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Debito;
 use App\Models\CADECO\DepositoCliente;
 use App\Models\CADECO\DescuentoFondoGarantia;
 use App\Models\CADECO\Destajista;
+use App\Models\CADECO\Destino;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EmpresaFondoFijo;
 use App\Models\CADECO\EntradaMaterial;
@@ -60,6 +71,7 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLog;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
+use App\Models\CADECO\Finanzas\PagoEliminadoLog;
 use App\Models\CADECO\Finanzas\Servicio;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
@@ -74,6 +86,7 @@ use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\Inventarios\Marbete;
 use App\Models\CADECO\Inventarios\MarbeteLog;
 use App\Models\CADECO\ItemEstimacion;
+use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\Movimiento;
@@ -100,6 +113,7 @@ use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\SolicitudReposicionFF;
 use App\Models\CADECO\Subcontrato;
+use App\Models\CADECO\Subcontratos\AsignacionContratista;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
@@ -128,6 +142,17 @@ use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Fiscal\Autocorreccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\CFDNoDeducido;
+use App\Models\SEGURIDAD_ERP\Fiscal\NoDeducido;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacion;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjusteNegativoPartidaObserver;
@@ -136,9 +161,14 @@ use App\Observers\CADECO\AjustePositivoPartidaObserver;
 use App\Observers\CADECO\Almacenes\AjusteEliminadoObserver;
 use App\Observers\CADECO\Almacenes\EntregaContratistaObserver;
 use App\Observers\CADECO\AnticipoObserver;
+use App\Observers\CADECO\AplicacionManualObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\ClienteObserver;
+use App\Observers\CADECO\Compras\AsignacionProveedorObserver;
+use App\Observers\CADECO\Compras\AsignacionProveedorPartidaObserver;
+use App\Observers\CADECO\Catalogos\UnificacionProveedoresObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
+use App\Observers\CADECO\Compras\OrdenCompraComplementoObserver;
 use App\Observers\CADECO\Compras\RequisicionComplementoObserver;
 use App\Observers\CADECO\Compras\RequisicionEliminadaObserver;
 use App\Observers\CADECO\Compras\RequisicionPartidaComplementoObserver;
@@ -161,17 +191,21 @@ use App\Observers\CADECO\Contabilidad\PolizaMovimientoObserver;
 use App\Observers\CADECO\Contabilidad\PolizaObserver;
 use App\Observers\CADECO\Contabilidad\TipoCuentaContableObserver;
 use App\Observers\CADECO\ContrareciboObserver;
+use App\Observers\CADECO\ContratoObserver;
+use App\Observers\CADECO\ContratoProyectadoObserver;
 use App\Observers\CADECO\Contratos\AreaSubcontratanteObserver;
 use App\Observers\CADECO\ControlPresupuesto\SolicitudCambioObserver;
 use App\Observers\CADECO\ControlPresupuesto\SolicitudCambioPartidasObserver;
 use App\Observers\CADECO\ControlPresupuesto\SolicitudCambioRechazadaObserver;
 use App\Observers\CADECO\ControlPresupuesto\VariacionVolumenObserver;
+use App\Observers\CADECO\CotizacionCompraPartidaObserver;
 use App\Observers\CADECO\CreditoObserver;
 use App\Observers\CADECO\CuentaObserver;
 use App\Observers\CADECO\DebitoObserver;
 use App\Observers\CADECO\DepositoClienteObserver;
 use App\Observers\CADECO\DescuentoFondoGarantiaObserver;
 use App\Observers\CADECO\DestajistaObserver;
+use App\Observers\CADECO\DestinoObserver;
 use App\Observers\CADECO\EmpresaFondoFijoObserver;
 use App\Observers\CADECO\EmpresaObserver;
 use App\Observers\CADECO\EntradaMaterialObserver;
@@ -191,6 +225,7 @@ use App\Models\CADECO\Finanzas\FacturaEliminada;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaPartidaObserver;
 use App\Observers\CADECO\Finanzas\LayoutPagoObserver;
 use App\Observers\CADECO\Finanzas\LayoutPagoPartidaObserver;
+use App\Observers\CADECO\Finanzas\PagoEliminadoLogObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudAltaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudBajaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
@@ -225,9 +260,11 @@ use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
 use App\Observers\CADECO\Seguridad\RolObserver;
 use App\Observers\CADECO\SolicitudAnticipoDestajoObserver;
 use App\Observers\CADECO\SolicitudCompraObserver;
+use App\Observers\CADECO\SolicitudCompraPartidaObserver;
 use App\Observers\CADECO\SolicitudPagoAnticipadoObserver;
 use App\Observers\CADECO\SolicitudReposicionFFObserver;
 use App\Observers\CADECO\SubcontratoObserver;
+use App\Observers\CADECO\Subcontratos\AsignacionContratistaObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\DescuentoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\LiberacionObserver;
@@ -254,18 +291,33 @@ use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
 use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\CFDNoDeducidoObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\NoDeducidoObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\AutocorreccionObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\CFDAutocorreccionObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
+use App\Observers\SEGURIDAD_ERP\PadronProveedores\ArchivoObserver;
+use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacionObserver;
+use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadoraObserver;
+use App\Observers\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegalObserver;
+use App\Observers\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSolicitanteObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\PagoFactura;
+use App\Models\CADECO\PresupuestoContratista;
 use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
 use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\Unidad;
 use App\Models\CADECO\UnidadComplemento;
+use App\Observers\CADECO\Compras\CotizacionComplementoObserver;
+use App\Observers\CADECO\CotizacionCompraObserver;
 use App\Observers\CADECO\Finanzas\FacturaEliminadaObserver;
 use App\Observers\CADECO\PagoFacturaObserver;
+use App\Observers\CADECO\PresupuestoContratistaObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionLiberacionObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionObserver;
 use App\Observers\CADECO\UnidadComplementoObserver;
@@ -287,6 +339,7 @@ class AppServiceProvider extends ServiceProvider
          * */
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
         \App\Models\CTPQ\PolizaMovimiento::observe(\App\Observers\CTPQ\PolizaMovimientoObserver::class);
+        \App\Models\CTPQ\Cuenta::observe(\App\Observers\CTPQ\CuentaObserver::class);
 
         /**
          * CADECO
@@ -299,12 +352,21 @@ class AppServiceProvider extends ServiceProvider
             EntregaContratista::observe(EntregaContratistaObserver::class);
 
             /**
+             * Catalogos
+             */
+            UnificacionProveedores::observe(UnificacionProveedoresObserver::class);
+
+            /**
              * Compras
              */
+            AsignacionProveedor::observe(AsignacionProveedorObserver::class);
+            AsignacionProveedorPartida::observe(AsignacionProveedorPartidaObserver::class);
+            CotizacionComplemento::observe(CotizacionComplementoObserver::class);
             EntradaEliminada::observe(EntradaEliminadaObserver::class);
             RequisicionComplemento::observe(RequisicionComplementoObserver::class);
             RequisicionEliminada::observe(RequisicionEliminadaObserver::class);
             RequisicionPartidaComplemento::observe(RequisicionPartidaComplementoObserver::class);
+            OrdenCompraComplemento::observe(OrdenCompraComplementoObserver::class);
             SalidaEliminada::observe(SalidaEliminadaObserver::class);
             SolicitudComplemento::observe(SolicitudComplementoObserver::class);
 
@@ -362,6 +424,7 @@ class AppServiceProvider extends ServiceProvider
             FacturaEliminada::observe(FacturaEliminadaObserver::class);
             LayoutPago::observe(LayoutPagoObserver::class);
             LayoutPagoPartida::observe(LayoutPagoPartidaObserver::class);
+            PagoEliminadoLog::observe(PagoEliminadoLogObserver::class);
 
             /**
              * FinanzasCBE
@@ -382,12 +445,10 @@ class AppServiceProvider extends ServiceProvider
             MarbeteLog::observe(MarbeteLogObserver::class);
 
             /**
-             * Seguridad
+             * Subcontratos
              */
-            AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
-            AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
-            Rol::observe(RolObserver::class);
-            Incidencia::observe(IncidenciaObserver::class);
+            AsignacionContratista::observe(AsignacionContratistaObserver::class);
+
 
             /**
              * SubcontratosEstimaciones
@@ -422,15 +483,21 @@ class AppServiceProvider extends ServiceProvider
             AjustePositivo::observe(AjustePositivoObserver::class);
             AjustePositivoPartida::observe(AjustePositivoPartidaObserver::class);
             Anticipo::observe(AnticipoObserver::class);
+            AplicacionManual::observe(AplicacionManualObserver::class);
             Banco::observe(BancoObserver::class);
             Cliente::observe(ClienteObserver::class);
+            ContraRecibo::observe(ContrareciboObserver::class);
+            Contrato::observe(ContratoObserver::class);
+            ContratoProyectado::observe(ContratoProyectadoObserver::class);
+            CotizacionCompra::observe(CotizacionCompraObserver::class);
+            CotizacionCompraPartida::observe(CotizacionCompraPartidaObserver::class);
             Credito::observe(CreditoObserver::class);
             Cuenta::observe(CuentaObserver::class);
-            ContraRecibo::observe(ContrareciboObserver::class);
             Debito::observe(DebitoObserver::class);
             DepositoCliente::observe(DepositoClienteObserver::class);
             DescuentoFondoGarantia::observe(DescuentoFondoGarantiaObserver::class);
             Destajista::observe(DestajistaObserver::class);
+            Destino::observe(DestinoObserver::class);
             Empresa::observe(EmpresaObserver::class);
             EmpresaFondoFijo::observe(EmpresaFondoFijoObserver::class);
             Entrega::observe(EntregaObserver::class);
@@ -438,6 +505,7 @@ class AppServiceProvider extends ServiceProvider
             EntradaMaterialPartida::observe(EntradaMaterialPartidaObserver::class);
             Estimacion::observe(EstimacionObserver::class);
             ItemEstimacion::observe(EstimacionPartidaObserver::class);
+            ItemSolicitudCompra::observe(SolicitudCompraPartidaObserver::class);
             Factura::observe(FacturaObserver::class);
             Familia::observe(FamiliaObserver::class);
             Fondo::observe(FondoObserver::class);
@@ -457,6 +525,7 @@ class AppServiceProvider extends ServiceProvider
             Pago::observe(PagoObserver::class);
             PagoReposicionFF::observe(PagoReposicionFFObserver::class);
             PagoVario::observe(PagoVarioObserver::class);
+            PresupuestoContratista::observe(PresupuestoContratistaObserver::class);
             ProveedorContratista::observe(ProveedorContratistaObserver::class);
             Requisicion::observe(RequisicionObserver::class);
             RequisicionPartida::observe(RequisicionPartidaObserver::class);
@@ -478,20 +547,57 @@ class AppServiceProvider extends ServiceProvider
         /**
          * SEGURIDAD_ERP
          */
+            /**
+             * Contabilidad
+             */
+            LogEdicion::observe(LogEdicionObserver::class);
+            CargaCFDSAT::observe(CargaCFDSATObserver::class);
+            SolicitudEdicion::observe(SolicitudEdicionObserver::class);
+
+            /**
+             * ControlInterno
+             */
+            Incidencia::observe(IncidenciaObserver::class);
+
+            /**
+             * Finanzas
+             */
+            CtgEfosLog::observe(CtgEfosLogObserver::class);
+            CtgEfos::observe(CtgEfosObserver::class);
+            FacturaRepositorio::observe(FacturaRepositorioObserver::class);
+
+            /**
+             * Fiscal
+             */
+            Autocorreccion::observe(AutocorreccionObserver::class);
+            CFDAutocorreccion::observe(CFDAutocorreccionObserver::class);
+            CFDNoDeducido::observe(CFDNoDeducidoObserver::class);
+            EFOS::observe(EFOSObserver::class);
+            NoDeducido::observe(NoDeducidoObserver::class);
+            ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
+
+            /**
+             *  PadronProveedores
+             */
+            Archivo::observe(ArchivoObserver::class);
+            EmpresaExcluidaDocumentacion::observe(EmpresaExcluidaDocumentacionObserver::class);
+            \App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa::observe(\App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaObserver::class);
+            EmpresaPrestadora::observe(EmpresaPrestadoraObserver::class);
+            RepresentanteLegal::observe(RepresentanteLegalObserver::class);
+
+            /**
+             * PolizasCtpqIncidentes
+             */
+            Diferencia::observe(DiferenciaObserver::class);
+
         \App\Models\SEGURIDAD_ERP\AuditoriaPermisoRol::observe(\App\Observers\SEGURIDAD_ERP\AuditoriaPermisoRolObserver::class);
+        AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
         AuditoriaRolUsuario::observe(AuditoriaRolUsuarioObserver::class);
-        CtgEfos::observe(CtgEfosObserver::class);
-        CtgEfosLog::observe(CtgEfosLogObserver::class);
+        AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
         ConfiguracionObra::observe(ConfiguracionObraObserver::class);
         \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
+        Rol::observe(RolObserver::class);
         UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
-        FacturaRepositorio::observe(FacturaRepositorioObserver::class);
-        /*
-         * Contabilidad
-         * */
-        LogEdicion::observe(LogEdicionObserver::class);
-        CargaCFDSAT::observe(CargaCFDSATObserver::class);
-        SolicitudEdicion::observe(SolicitudEdicionObserver::class);
     }
 
     /**

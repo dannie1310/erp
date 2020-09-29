@@ -19,6 +19,8 @@ class Permiso extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'permissions';
+    //protected $dateFormat = 'Y-m-d H:i:s';
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -28,6 +30,22 @@ class Permiso extends Model
         return $this->belongsTo(Sistema::class, 'sistema_id');
     }
 
+    public function sistemas()
+    {
+        return $this->hasManyThrough(Sistema::class, SistemaPermiso::class,"permission_id","id", "id", "sistema_id");
+    }
+
+    public function aplicaciones()
+    {
+        return $this->hasManyThrough(Sistema::class, SistemaPermiso::class,"permission_id","id", "id", "sistema_id")
+            ->where("aplicacion",1);
+    }
+
+    public function scopeAplicacion($query)
+    {
+        return $query->whereHas("aplicaciones");
+    }
+
     /**
      * @param $query
      * @return mixed
@@ -35,6 +53,15 @@ class Permiso extends Model
     public function scopeReservados($query)
     {
         return $query->where('reservado', '=', true);
+    }
+
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function scopeReporte($query)
+    {
+        return $query->where('permissions.name', 'like', 'reporte_%');
     }
 
     public function roles()

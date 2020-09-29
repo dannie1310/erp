@@ -17,5 +17,14 @@ class EmpresaSAT extends Model
     protected $table = 'Contabilidad.ListaEmpresasSAT';
     protected $primaryKey = 'id';
     public $timestamps = false;
+    public $fillable = [
+        'rfc',
+        'razon_social'
+    ];
+
+    public function cfd()
+    {
+        return $this->hasMany(CFDSAT::class,"rfc_receptor", "rfc");
+    }
 
 }

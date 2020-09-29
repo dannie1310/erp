@@ -57,6 +57,12 @@
                     <p>Incidencias</p>
                 </router-link>
             </li>
+            <li class="nav-item"  v-if="$root.can('consultar_incidencias',true)">
+                <router-link :to="{name: 'busqueda-empresas-factureras'}" class="nav-link">
+                    <i class="fa fa-circle nav-icon"></i>
+                    <p>Búsqueda de Factureras</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
 </template>

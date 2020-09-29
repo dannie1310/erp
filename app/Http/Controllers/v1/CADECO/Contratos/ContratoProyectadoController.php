@@ -46,12 +46,17 @@ class ContratoProyectadoController extends Controller
      */
     public function __construct(ContratoProyectadoService $service, Manager $fractal, ContratoProyectadoTransformer $transformer)
     {
+        $this->middleware('addAccessToken')->only('pdf');
         $this->middleware('auth')->only('pdfOrdenPago');
         $this->middleware('auth:api');
 
         $this->middleware('context');
         $this->middleware('permiso:modificar_area_subcontratante_cp')->only('actualiza');
-        $this->middleware('permiso:consultar_contrato_proyectado')->only(['index','paginate','find','show']);
+        $this->middleware('permiso:editar_contrato_proyectado')->only('update');
+        $this->middleware('permiso:consultar_contrato_proyectado')->only(['index','paginate','find','show', 'pdf']);
+        $this->middleware('permiso:registrar_contrato_proyectado')->only(['store']);
+        $this->middleware('permiso:eliminar_contrato_proyectado')->only('destroy');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
@@ -68,5 +73,21 @@ class ContratoProyectadoController extends Controller
         return $this->respondWithItem($contrato_proyectado);
     }
 
+    public function getLayoutData(Request $request){
+        $respuesta = $this->service->getLayoutData($request);
+        return response()->json($respuesta, 200);
+    }
 
+    public function pdf($id)
+    {
+        return $this->service->pdf($id);
+    }
+    
+    public function getContratos(){
+        return $this->service->getContratos();
+    }
+
+    public function getCotizaciones($id){
+        return $this->service->getCotizaciones($id);
+    }
 }

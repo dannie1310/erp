@@ -33,27 +33,30 @@
                                         </div>
                                         <div class="col-md-10">
                                             <div class="form-group error-content">
-                                                <subcontrato-select
-                                                        scope="sinFondo"
+                                                <model-list-select
                                                         name="id_subcontrato"
-                                                        id="id_subcontrato"
+                                                        :placeholder="cargando?'Cargando...':'Seleccionar o buscar por número de folio o por referencia'"
                                                         data-vv-as="Subcontrato"
-                                                        v-validate="{required: true}"
                                                         v-model="id_subcontrato"
-                                                        :error="errors.has('id_subcontrato')">
-                                                ></subcontrato-select>
+                                                        option-value="id"
+                                                        :custom-text="numeroFolioAndReferencia"
+                                                        :list="subcontratos"
+                                                        v-validate="{required: true}"
+                                                        :isError="errors.has(`id_subcontrato`)"
+                                                >
+                                                </model-list-select>
                                                  <div class="error-label" v-show="errors.has('id_subcontrato')">{{ errors.first('id_subcontrato') }}</div>
                                             </div>
                                         </div>
                                     </div>
                                  </div>
                              </div>
-                            <div class="row" v-if="subcontrato.id">
+                            <div class="row" v-if="subcontrato.id && buscando == 0">
                                 <div class="col-md-12">
                                     <detalle-subcontrato :subcontrato="subcontrato" ></detalle-subcontrato>
                                 </div>
                             </div>
-                            <div class="card" v-if="!subcontrato.id && buscando == 1">
+                            <div class="card" v-if="buscando == 1">
                                 <div class="card-body">
                                     <div class="row" >
                                         <div class="col-md-12" align = "center">
@@ -76,10 +79,11 @@
 
 <script>
     import SubcontratoSelect from "../../cadeco/subcontrato/Select";
-    import DetalleSubcontrato from "../subcontratos/partials/DetalleSubcontrato";
+    import DetalleSubcontrato from "../subcontrato/partials/DetalleSubcontrato";
+    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "fondo-garantia-create",
-        components: {SubcontratoSelect, DetalleSubcontrato},
+        components: {SubcontratoSelect, DetalleSubcontrato, ModelListSelect},
 
         data() {
             return {
@@ -87,11 +91,12 @@
                 subcontrato : [],
                 buscando: 0,
                 cargando: false,
+                subcontratos:[],
             }
         },
 
         mounted() {
-            /*this.getSubcontratosSinFondo()*/
+            this.getSubcontratosSinFondo();
         },
 
         methods: {
@@ -114,7 +119,21 @@
             },
 
             getSubcontratosSinFondo() {
-                return [];
+                this.cargando = true;
+                 return this.$store.dispatch('contratos/subcontrato/index', {
+                    config: {
+                        params: {
+                            scope: ['sinFondo'],
+                        }
+                    }
+                })
+                    .then(data => {
+                        this.subcontratos = data;
+                        this.cargando = false;
+                    })
+            },
+            numeroFolioAndReferencia (item) {
+                return `[${item.numero_folio_format}] - Referencia: [${item.referencia}]`
             },
 
             validate() {
@@ -143,12 +162,15 @@
         watch : {
             id_subcontrato (id)
             {
-                this.find(id)
+                if(id != ''){
+                    this.find(id)
                     .then(data=>{
                         this.subcontrato = data
                         this.retencion = data.retencion
                         this.buscando = 0
                      })
+                }
+                
             }
         }
     }

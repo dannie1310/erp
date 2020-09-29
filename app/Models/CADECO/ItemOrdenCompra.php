@@ -7,6 +7,7 @@
  */
 
 namespace App\Models\CADECO;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\Compras\OrdenCompraPartidaComplemento;
 
 class ItemOrdenCompra extends Item
@@ -18,7 +19,7 @@ class ItemOrdenCompra extends Item
 
     public function orden_partida_complemento()
     {
-        return $this->hasOne(OrdenCompraPartidaComplemento::class, 'id_item');
+        return $this->belongsTo(OrdenCompraPartidaComplemento::class, 'id_item');
     }
 
     public function entrega()
@@ -44,6 +45,21 @@ class ItemOrdenCompra extends Item
     public function material()
     {
         return $this->belongsTo(Material::class, 'id_material');
+    }
+
+    public function itemSolicitudCompra()
+    {
+        return $this->belongsTo(ItemSolicitudCompra::class,"item_antecedente", "id_item");
+    }
+
+    public function partidaAsignacion()
+    {
+        return $this->belongsTo(AsignacionProveedorPartida::class,"item_antecedente", "id_item_solicitud")
+            ->where("id_asignacion_proveedores","=",$this->ordenCompra->complemento->asignacion->id)
+            ->where("id_transaccion_cotizacion","=",$this->ordenCompra->cotizacion->id_transaccion)
+            ->where("id_transaccion_cotizacion","=",$this->ordenCompra->cotizacion->id_transaccion)
+            ->where("cantidad_asignada","=",$this->cantidad)
+            ;
     }
 
     public function scopeDisponibleEntradaAlmacen($query)
@@ -157,18 +173,12 @@ class ItemOrdenCompra extends Item
                             $this->saldo = $this->saldo - $pagado_remision;
                             $this->save();
                         }
-
                         $importe_pagado -=$pagado_remision;
-
                     }
                 }
             }
         } catch (\Exception $e){
             abort(500,"Error al amortizar anticipo de item: ".$this->id_item." ".$e->getMessage());
         }
-
-
-
-
     }
 }

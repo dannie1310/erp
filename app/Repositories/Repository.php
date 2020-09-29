@@ -99,6 +99,12 @@ class Repository implements RepositoryInterface
         return $this;
     }
 
+    public function whereBetween($where)
+    {
+        $this->model = $this->model->whereBetween($where[0], $where[1]);
+        return $this;
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);
@@ -163,6 +169,12 @@ class Repository implements RepositoryInterface
     public function withoutGlobalScopes()
     {
         $this->model = $this->model->withoutGlobalScopes();
+        return $this;
+    }
+
+    public function join($tabla, $campo1, $signo, $campo2)
+    {
+        $this->model = $this->model->join($tabla,$campo1,$signo,$campo2);
         return $this;
     }
 }

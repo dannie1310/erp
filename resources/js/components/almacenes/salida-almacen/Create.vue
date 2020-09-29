@@ -39,7 +39,7 @@
                                                       name="referencia"
                                                       id="referencia"
                                                       data-vv-as="Referencia"
-                                                      v-validate="{required: true}"
+                                                      v-validate="{required: true, max: 64}"
                                                       v-model="dato.referencia"
                                                       :class="{'is-invalid': errors.has('referencia')}"
                                                >

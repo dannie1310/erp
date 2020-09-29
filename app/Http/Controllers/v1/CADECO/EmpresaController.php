@@ -9,11 +9,12 @@
 namespace App\Http\Controllers\v1\CADECO;
 
 
-use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Services\CADECO\EmpresaService;
-use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
+use App\Traits\ControllerTrait;
+use App\Http\Controllers\Controller;
+use App\Services\CADECO\EmpresaService;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
 
 class EmpresaController extends Controller
 {
@@ -45,9 +46,20 @@ class EmpresaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_unificacion_proveedores')->only(['detalleUnificacion','detalleEmpresaUnificacion']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function detalleUnificacion(Request $request, $id){
+        return $this->service->detalleUnificacion($request->all(), $id);
+
+    }
+
+    public function detalleEmpresaUnificacion(Request $request, $id){
+        return $this->service->detalleEmpresaUnificada($id);
+    }
+
 }

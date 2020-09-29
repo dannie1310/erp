@@ -44,17 +44,80 @@ export const routes = [
     },
     {
         path: '/configuracion',
-        name: 'configuracion_',
+        name: 'configuracion-area',
         components:  {
-            default: require('./components/pages/Configuracion.vue').default,
+            default: require('./components/configuracion-general/configuracion-area/Configuracion.vue').default,
             menu: require('./components/pages/partials/MenuConfiguracion.vue').default
         },
         meta: {
             title: 'CONFIGURACIÓN',
             middleware: [auth, permission],
-            permission: 'asignar_areas_subcontratantes',
+            permission: ['asignar_areas_subcontratantes'],
             general: true
         }
+    },
+    {
+        path: '/configuracion/general',
+        components: {
+            default: require('./components/configuracion-general/configuracion-obra/Obra.vue').default,
+            menu: require('./components/configuracion-general/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: 'obra',
+                component: require('./components/configuracion-general/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'configuracion-general-obra',
+                        component: require('./components/configuracion-general/configuracion-obra/Obra').default,
+                        meta: {
+                            title: 'Configuración de Obra',
+                            breadcrumb: {parent: 'configuracion-general', name: 'OBRA'},
+                            middleware: [auth, permission],
+                            permission: ['actualizar_estado_obra', 'administracion_configuracion_obra', 'reactivar_obra'],
+                            general: true,
+
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        path: '/reportes-pbi',
+        component: require('./components/reportes-pbi/Index.vue').default,
+        children:[
+            {
+                path:'',
+                name: 'reportes-pbi',
+                meta: {
+                    title: 'REPORTES PBI',
+                    middleware: [auth, permission],
+                    permission: ['consultar_reportes'],
+                    general: true
+                }
+            },
+        ]
+    },
+    {
+        path:"/reportes-pbi/ver/:id",
+        props: true,
+        component: require('./components/reportes-pbi/Visor.vue').default,
+        children:[
+            {
+                path:"/",
+                name:"visor-reportes",
+                component: require('./components/reportes-pbi/Visor.vue').default,
+                meta: {
+                    title: 'Reporte',
+                    breadcrumb: {parent: 'reportes-pbi', name: 'VER'},
+                    middleware: [auth, permission],
+                    permission: ['consultar_reportes'],
+                    general: true
+                }
+            }
+        ]
     },
     {
         path: '/contabilidad-general',
@@ -75,7 +138,7 @@ export const routes = [
             },
             {
                 path: 'polizas',
-                component: require('./components/contabilidad-general/poliza/Index.vue').default,
+                component: require('./components/contabilidad-general/poliza/Layout.vue').default,
                 children:[
                     {
                         path:"/",
@@ -86,6 +149,73 @@ export const routes = [
                             breadcrumb: {parent: 'contabilidad-general', name: 'PÓLIZAS'},
                             middleware: [auth, permission],
                             permission: ['editar_poliza','consultar_poliza'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'poliza-contpaq-edit',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/Edit').default,
+                        meta: {
+                            title: 'Editar Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: 'editar_poliza',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'diferencias',
+                component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"diferencia-poliza",
+                        component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/Index.vue').default,
+                        meta: {
+                            title: 'Diferencias en Pólizas',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'DIFERENCIAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'diferencias/informe',
+                component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/InformeDiferencias.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"informe-diferencia-poliza",
+                        component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/InformeDiferencias.vue').default,
+                        meta: {
+                            title: 'Informe de Diferencias en Pólizas',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'INFORME DE DIFERENCIAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'diferencias/detectar',
+                component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/DetectarDiferencia.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"detectar-diferencias-polizas",
+                        component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/DetectarDiferencia.vue').default,
+                        meta: {
+                            title: 'Detectar Diferencias en Pólizas',
+                            breadcrumb: {parent: 'diferencia-poliza', name: 'DETECTAR'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
                             general: true
                         }
                     }
@@ -102,7 +232,7 @@ export const routes = [
                         meta: {
                             title: 'Solicitudes de Edición',
                             breadcrumb: {parent: 'contabilidad-general', name: 'SOLICITUDES DE EDICIÓN'},
-                            middleware: [auth, permission],
+                            middleware: [auth],
                             permission: ['consultar_solicitud_edicion_poliza_ctpq'],
                             general: true
                         }
@@ -140,7 +270,7 @@ export const routes = [
                         meta: {
                             title: 'Consultar Solicitud de Edición',
                             breadcrumb: {parent: 'solicitud-edicion-poliza', name: 'CONSULTAR'},
-                            middleware: [auth, permission],
+                            middleware: [auth],
                             permission: 'consultar_solicitud_edicion_poliza_ctpq',
                             general: true
                         }
@@ -186,24 +316,6 @@ export const routes = [
                         }
                     }
                 ],
-            },
-            {
-                path: 'cfd-sat',
-                component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
-                children:[
-                    {
-                        path:"/",
-                        name:"cfd-sat",
-                        component: require('./components/contabilidad-general/cfd-sat/Index.vue').default,
-                        meta: {
-                            title: 'CFD SAT',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'CFD SAT'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_poliza'],
-                            general: true
-                        }
-                    }
-                ]
             },
             {
                 path: 'lista-empresa',
@@ -393,6 +505,257 @@ export const routes = [
                     general: true,
 
                 }
+            },
+        ]
+    },
+    {
+        path: '/control-interno/empresas-factureras',
+        components: {
+            default: require('./components/control-interno/partials/Layout.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'busqueda-empresas-factureras',
+                component: require('./components/control-interno/empresas-factureras/Busqueda').default,
+                meta: {
+                    title: 'Busqueda de Empresas Factureras',
+                    breadcrumb: {parent: 'control-interno', name: 'EMPRESAS FACTURERAS'},
+                    middleware: [auth],
+                    permission: 'consultar_incidencias',
+                    general: true,
+
+                }
+            },
+        ]
+    },
+    {
+        path: '/fiscal',
+        components:  {
+            default: require('./components/fiscal/partials/Layout.vue').default,
+            menu: require('./components/fiscal/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'fiscal',
+                meta: {
+                    title: 'FISCAL',
+                    middleware: [auth, permission],
+                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_efos_empresa','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_no_deducido_cfd_efo'],
+                    general: true
+                }
+            },
+            {
+                path: 'efos-empresa',
+                component: require('./components/fiscal/efos/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"efos-empresa",
+                        component: require('./components/fiscal/efos/Index.vue').default,
+                        meta: {
+                            title: 'EFOS',
+                            breadcrumb: {parent: 'fiscal', name: 'EFOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_efos_empresa'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-efos-vs-cfd',
+                        component: require('./components/fiscal/efos/InformeEFOSCFD').default,
+                        meta: {
+                            title: 'Informe Listado EFOS vs CFD Recibidos',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe-desglosado',
+                        name: 'informe-efos-vs-cfd-5a',
+                        component: require('./components/fiscal/efos/InformeEFOSCFD5A').default,
+                        meta: {
+                            title: 'Informe Listado EFOS vs CFD Recibidos (Desglosado)',
+                            breadcrumb: {name: 'INFORME DESGLOSADO', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    }
+
+                ]
+            },
+            {
+                path: 'cfd',
+                component: require('./components/fiscal/cfd/cfd-sat/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cfd-sat",
+                        component: require('./components/fiscal/cfd/cfd-sat/Index.vue').default,
+                        meta: {
+                            title: 'CFD SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza','consultar_autocorreccion_cfd_efo', 'consultar_informe_cfd_x_empresa_x_mes','consultar_no_deducido_cfd_efo'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'autocorreccion-cfd-efos',
+                        component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Layout.vue').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'autocorreccion-cfd-efos',
+                                component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Index.vue').default,
+                                meta: {
+                                    title: 'Autocorrección de CFD EFOS',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_autocorreccion_cfd_efo',
+                                    general: true,
+
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'autocorreccion-cfd-efos-create',
+                                component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Create.vue').default,
+                                meta: {
+                                    title: 'Registrar Autocorrección de CFD EFOS',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
+                                    middleware: [auth, permission],
+                                    permission: ['registrar_autocorreccion_cfd_efo'],
+                                    general: true
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        path: 'no-deducidos-cfd-efos',
+                        component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Layout.vue').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'no-deducidos-cfd-efos',
+                                component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Index.vue').default,
+                                meta: {
+                                    title: 'CFD No Deducidos de EFOS Definitivos',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'CFD NO DEDUCIDOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_no_deducido_cfd_efo',
+                                    general: true,
+
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'no-deducidos-cfd-efos-create',
+                                component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Create.vue').default,
+                                meta: {
+                                    title: 'Registrar CFD No Deducidos de EFOS Definitivos',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'no-deducidos-cfd-efos'},
+                                    middleware: [auth, permission],
+                                    permission: ['registrar_no_deducido_cfd_efo'],
+                                    general: true,
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-cfd-empresa-tiempo',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeCFDEmpresaMes').default,
+                        meta: {
+                            title: 'Informe CFDI Cargados x Empresa x Mes',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe-completo',
+                        name: 'informe-cfdi-completo',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeCFDICompleto').default,
+                        meta: {
+                            title: 'Informe de CFDI Cargados x Empresa x Mes (Completo)',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfdi_x_empresa_desglosado'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        path: '/padron-proveedores',
+        components:  {
+            default: require('./components/padron-proveedores/partials/Layout.vue').default,
+            menu: require('./components/padron-proveedores/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'padron-proveedores',
+                component: require('./components/padron-proveedores/Index').default,
+                meta: {
+                    title: 'Padrón de Proveedores',
+                    middleware: [auth, permission],
+                    permission: ['consultar_expediente_proveedor'],
+                    general: true
+                }
+            },
+            {
+                path: 'gestion-proveedores',
+                component: require('./components/padron-proveedores/gestion-proveedores/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'proveedores-index',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Index.vue').default,
+                        meta: {
+                            title: 'Listado de Proveedores',
+                            breadcrumb: {parent: 'padron-proveedores', name: 'PROVEEDORES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_expediente_proveedor',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'iniciar-expediente',
+                        name: 'proveedores-iniciar-expediente',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Create').default,
+                        meta: {
+                            title: 'Iniciar Expediente de Proveedor',
+                            breadcrumb: {name: 'INICIAR EXPEDIENTE', parent: 'proveedores-index'},
+                            middleware: [auth, permission],
+                            permission: ['iniciar_expediente_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'entrar-a-expediente',
+                        component: require('./components/padron-proveedores/gestion-proveedores/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Expediente de Proveedor',
+                            breadcrumb: {name: 'EXPEDIENTE', parent: 'proveedores-index'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_expediente_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
             },
         ]
     },
@@ -929,8 +1292,37 @@ export const routes = [
                         meta: {
                             title: 'Registrar Proveedor / Contratista',
                             breadcrumb: { parent: 'proveedor-contratista', name: 'REGISTRAR PROVEEDOR-CONTRATISTA'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
                             permission: 'registrar_proveedor'
+                        }
+                    },
+                ]
+            },
+
+            {
+                path: 'unificacion-proveedores',
+                component: require('./components/catalogos/unificacion-proveedores/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'unificacion-proveedores',
+                        component: require('./components/catalogos/unificacion-proveedores/Index').default,
+                        meta: {
+                            title: 'Unificacion de Proveedores',
+                            breadcrumb: {parent: 'catalogos', name: 'UNIFICACIÓN PROVEEDORES'},
+                            middleware: [auth, context,permission],
+                            permission: ['consultar_unificacion_proveedores']
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'unificacion-proveedores-create',
+                        component: require('./components/catalogos/unificacion-proveedores/Create').default,
+                        meta: {
+                            title: 'Registrar Unificación de Proveedores',
+                            breadcrumb: { parent: 'unificacion-proveedores', name: 'REGISTRAR UNIFICACIÓN PROVEEDORES'},
+                            middleware: [auth, context,permission],
+                            permission: 'registrar_unificacion_proveedores'
                         }
                     },
                 ]
@@ -955,19 +1347,55 @@ export const routes = [
                 }
             },
             {
-                path: 'asignacion-proveedores',
+                path: 'asignacion-proveedor',
                 component: require('./components/compras/asignacion/Layout').default,
                 children: [
                     {
                         path: '/',
-                        name: 'asignacion-proveedores',
+                        name: 'asignacion-proveedor',
                         component: require('./components/compras/asignacion/Index').default,
                         meta: {
                             title: 'Asignación de Proveedores',
                             breadcrumb: {parent: 'compras', name: 'ASIGNACIÓN DE PROVEEDORES'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_asignacion_proveedor'
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'asignacion-proveedor-create',
+                        component: require('./components/compras/asignacion/Create').default,
+                        meta: {
+                            title: 'Registrar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_asignacion_proveedor'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'asignacion-proveedor-show',
+                        component: require('./components/compras/asignacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedor', name: 'VER'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_asignacion_proveedor'
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'asignacion-proveedor-edit',
+                        component: require('./components/compras/asignacion/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Editar Asignación de Proveedores',
+                            breadcrumb: { parent: 'asignacion-proveedor', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_orden_compra'
+                        }
+                    }
                 ]
             },
             {
@@ -1040,7 +1468,31 @@ export const routes = [
                         meta: {
                             title: 'Cotizaciones',
                             breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_cotizacion_compra']
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'cotizacion-create',
+                        component: require('./components/compras/cotizacion/Create').default,
+                        meta: {
+                            title: 'Registrar Cotización',
+                            breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_cotizacion_compra']
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'cotizacion-edit',
+                        props: true,
+                        component: require('./components/compras/cotizacion/Edit').default,
+                        meta: {
+                            title: 'Editar Cotización',
+                            breadcrumb: { parent: 'cotizacion', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['editar_cotizacion_compra', 'cargar_layout_cotizacion_compra']
                         }
                     },
                 ]
@@ -1048,20 +1500,30 @@ export const routes = [
             {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue').default,
-                meta: {
-                    middleware: [auth, context]
-                },
-                children: [{
-                    path: '/',
-                    name: 'orden-compra',
-                    component: require('./components/compras/orden-compra/Index').default,
-                    meta: {
-                        title: 'Ordenes de Compra',
-                        breadcrumb: { parent: 'compras', name: 'ORDENES DE COMPRA' },
-                        middleware: [auth, context, permission],
-                        permission: ['consultar_orden_compra']
-                    }
-                }]
+                children: [
+                    {
+                        path: '/',
+                        name: 'orden-compra',
+                        component: require('./components/compras/orden-compra/Index').default,
+                        meta: {
+                            title: 'Órdenes de Compra',
+                            breadcrumb: { parent: 'compras', name: 'ÓRDENES DE COMPRA' },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_orden_compra']
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'orden-compra-edit',
+                        props: true,
+                        component: require('./components/compras/orden-compra/Edit').default,
+                        meta: {
+                            title: 'Editar Orden Compra',
+                            breadcrumb: { parent: 'orden-compra', name: 'EDITAR'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
             },
             {
                 path: 'requisicion',
@@ -1082,10 +1544,10 @@ export const routes = [
                         name: 'requisicion-create',
                         component: require('./components/compras/requisicion/Create').default,
                         meta: {
-                            title: 'Registrar Requisición de Compra',
-                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR REQUISICIÓN'},
-                            middleware: [auth, context],
-                            // permission: 'registrar_solicitud_compra'
+                            title: 'Registrar Requisición',
+                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_requisicion_compra'
                         }
                     },
 
@@ -1100,8 +1562,8 @@ export const routes = [
                         name: 'solicitud-compra',
                         component: require('./components/compras/solicitud-compra/Index').default,
                         meta: {
-                            title: 'SOLICITUDES DE COMPRA',
-                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA'},
+                            title: 'Solicitudes',
+                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_solicitud_compra'
                         }
@@ -1111,22 +1573,22 @@ export const routes = [
                         name: 'solicitud-compra-create',
                         component: require('./components/compras/solicitud-compra/Create').default,
                         meta: {
-                            title: 'Registrar Solicitud de Compra',
-                            breadcrumb: { parent: 'compras', name: 'REGISTRAR SOLICITUD DE COMPRA'},
-                            middleware: [auth, context],
-                            // permission: 'registrar_solicitud_compra'
+                            title: 'Registrar Solicitud',
+                            breadcrumb: { parent: 'solicitud-compra', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_solicitud_compra'
                         }
                     },
                     {
-                        path: ':id',
+                        path: ':id/editar',
                         name: 'solicitud-compra-edit',
                         component: require('./components/compras/solicitud-compra/Edit').default,
                         props: true,
                         meta: {
-                            title: 'Editar Solicitud de Compra',
-                            breadcrumb: { parent: 'compras', name: 'EDITAR'},
-                            middleware: [auth, context],
-                            // permission: 'editar_solicitud_compra'
+                            title: 'Editar Solicitud',
+                            breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_solicitud_compra'
                         }
                     }
                 ]
@@ -1330,9 +1792,105 @@ export const routes = [
                         component: require('./components/contratos/proyectado/Index').default,
                         meta: {
                             title: 'Contratos Proyectados',
-                            breadcrumb: {parent: 'contratos', name: 'PROYECTADOS'},
+                            breadcrumb: {parent: 'contratos', name: 'CONTRATOS PROYECTADOS'},
                             middleware: [auth, context],
 
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'proyectado-create',
+                        component: require('./components/contratos/proyectado/Create').default,
+                        meta: {
+                            title: 'Registrar Contratos Proyectados',
+                            breadcrumb: {parent: 'proyectado', name: 'REGISTRAR'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'presupuesto',
+                component: require('./components/contratos/presupuesto/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'presupuesto',
+                        component: require('./components/contratos/presupuesto/Index').default,
+                        meta: {
+                            title: 'Presupuesto Contratista',
+                            breadcrumb: {parent: 'contratos', name: 'PRESUPUESTO CONTRATISTA'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_presupuesto_contratista'
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'presupuesto-edit',
+                        props: true,
+                        component: require('./components/contratos/presupuesto/Edit').default,
+                        meta: {
+                            title: 'Editar Presupuesto Contratista',
+                            breadcrumb: { parent: 'presupuesto', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_presupuesto_contratista'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'presupuesto-create',
+                        component: require('./components/contratos/presupuesto/Create').default,
+                        meta: {
+                            title: 'Registrar Presupuesto Contratista',
+                            breadcrumb: { parent: 'presupuesto', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_presupuesto_contratista']
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'asignacion-contratista',
+                component: require('./components/contratos/asignacion-contratista/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'asignacion-contratista',
+                        component: require('./components/contratos/asignacion-contratista/Index').default,
+                        meta: {
+                            title: 'Asignaciones Proveedores',
+                            breadcrumb: {parent: 'contratos', name: 'ASIGNACIONES'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_asignacion_contratista'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'asignacion-contratista-create',
+                        component: require('./components/contratos/asignacion-contratista/Create').default,
+                        meta: {
+                            title: 'Registrar Asignación Proveedores',
+                            breadcrumb: { parent: 'asignacion-contratista', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_asignacion_contratista']
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'subcontrato',
+                component: require('./components/contratos/subcontrato/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'subcontrato',
+                        component: require('./components/contratos/subcontrato/Index').default,
+                        meta: {
+                            title: 'Subcontratos',
+                            breadcrumb: {parent: 'contratos', name: 'SUBCONTRATOS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_subcontrato'
                         }
                     },
                 ]

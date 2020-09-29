@@ -130,7 +130,7 @@
                         observaciones: estimacion.observaciones,
                         id_empresa: estimacion.subcontrato.empresa.razon_social,
                         estado: this.getEstado(estimacion.estado),
-                        total: estimacion.monto_format,
+                        total: estimacion.monto_pagar_format,
                         impuesto:estimacion.impuesto_format,
                         subtotal: estimacion.subtotal_format,
                         buttons: $.extend({}, {

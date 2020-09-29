@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class CtgEfosLog extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'Finanzas.ctg_efos_log';
+    protected $table = 'SEGURIDAD_ERP.Finanzas.ctg_efos_log';
     protected $primaryKey = 'id';
 
     public $timestamps = false;

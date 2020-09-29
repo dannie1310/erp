@@ -8,9 +8,12 @@
 
 namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 
+use App\Informes\CFDEmpresaMes;
+use App\Informes\CFDICompleto;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +29,7 @@ class CFDSATRepository extends Repository implements RepositoryInterface
     public function registrar(array $datos)
     {
         return $this->model->registrar($datos);
+
     }
 
     public function getArchivoSQL($archivo)
@@ -33,19 +37,32 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return DB::raw("CONVERT(VARBINARY(MAX), '" . $archivo . "')");
     }
 
-    public function getIdEmpresa($rfc){
-        $empresa = EmpresaSAT::where("rfc","=",$rfc)
-            ->first();
-        $salida = null;
+    public function getIdEmpresa($datos_receptor){
+        try{
+            $empresa = EmpresaSAT::where("rfc","=",$datos_receptor["rfc"])
+                ->first();
+            $salida = null;
 
-        if($empresa){
-            return $empresa->id;
+            if($empresa){
+                return $empresa->id;
+            } else {
+                $empresa = EmpresaSAT::create(
+                    ["rfc"=>$datos_receptor["rfc"], "razon_social"=>$datos_receptor["nombre"]]
+                );
+                return $empresa->id;
+            }
+        } catch (\Exception $e){
+            dd($datos_receptor);
         }
-        return $salida;
+
     }
 
     public function iniciaCarga($nombre_archivo){
         return $this->model->carga()->create(["nombre_archivo_zip"=>$nombre_archivo]);
+    }
+
+    public function finalizaCarga($carga){
+        EFOS::actualizaEFOS(null,$carga);
     }
 
     public function getIdProveedorSAT($datos, $id_empresa){
@@ -103,5 +120,17 @@ class CFDSATRepository extends Repository implements RepositoryInterface
     {
         $cfd = CFDSAT::where("uuid","=", $uuid)->first();
         return $cfd;
+    }
+
+    public function getInformeEmpresaMes()
+    {
+        $informe["informe"] = CFDEmpresaMes::get();
+        return $informe;
+    }
+
+    public function getInformeCompleto()
+    {
+        $informe["informe"] = CFDICompleto::get();
+        return $informe;
     }
 }

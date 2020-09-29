@@ -216,7 +216,7 @@
             },
             find(id){
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/sucursal/find', {
+                return this.$store.dispatch('cadeco/proveedor-contratista-sucursal/find', {
                     id: id
                 })
                 .then(data => {
@@ -236,12 +236,12 @@
                 });
             },
             update() {
-                return this.$store.dispatch('cadeco/sucursal/updateSucursalProveedor', {
+                return this.$store.dispatch('cadeco/proveedor-contratista-sucursal/updateSucursalProveedor', {
                     id: this.id,
                     data: this.sucursal,
                 })
                 .then(data => {
-                    this.$store.commit('cadeco/sucursal/UPDATE_SUCURSAL', data);
+                    this.$store.commit('cadeco/proveedor-contratista-sucursal/UPDATE_SUCURSAL', data);
                     $(this.$refs.modalEditSucursal).modal('hide');
                 })
             }

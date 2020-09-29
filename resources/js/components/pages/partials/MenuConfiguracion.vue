@@ -21,6 +21,15 @@
                 </a>
             </li>
         </ul>
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-header">CONFIGURACIÓN</li>
+            <li class="nav-item">
+                <router-link :to="{name: 'configuracion-general-obra'}" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Configuración de Obra</p>
+                </router-link>
+            </li>
+        </ul>
     </nav>
 </template>
 

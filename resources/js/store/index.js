@@ -31,9 +31,13 @@ import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
 import proveedorContratista from './modules/cadeco/proveedor-contratista';
+import proveedorContratistaSucursal from './modules/cadeco/proveedor-contratista-sucursal';
 import sucursal from './modules/cadeco/sucursal';
 import suministrado from './modules/cadeco/suministrado';
 import unidad from './modules/cadeco/unidad'
+
+//CATALOGOS
+import unificacionProveedores from './modules/catalogos/unificacion-proveedores';
 
 
 //COMPRAS
@@ -43,6 +47,7 @@ import itemContratista from './modules/compras/item-contratista';
 import ordenCompra from './modules/compras/orden-compra';
 import requisicion from './modules/compras/requisicion';
 import solicitudCompra from './modules/compras/solicitud-compra';
+import formaPagoCredito from './modules/compras/forma-pago-credito';
 
 //CONFIGURACION
 import areaCompradora from './modules/configuracion/area-compradora';
@@ -74,19 +79,22 @@ import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 
 //CONTABILIDAD GRAL
-
-import polizaGeneral from './modules/contabilidadGeneral/poliza';
+import cuentaCTPQ from './modules/contabilidadGeneral/cuenta';
 import empresaContabilidad from './modules/contabilidadGeneral/empresa';
 import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
 import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
-import CFDSAT from './modules/contabilidadGeneral/cfd-sat';
+import incidentePoliza from './modules/contabilidadGeneral/incidente-poliza';
+import polizaGeneral from './modules/contabilidadGeneral/poliza';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
+import tipoPoliza from './modules/contabilidadGeneral/tipo-poliza';
 
 //CONTRATOS
+import asigacionContratista from './modules/contratos/asignacion-contratista'
 import contratoConcepto from './modules/contratos/contrato-concepto';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
 import estimacion from './modules/contratos/estimacion';
 import fondoGarantia from './modules/contratos/fondo-garantia';
+import presupuesto from './modules/contratos/presupuesto';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
 
@@ -116,6 +124,15 @@ import tipoMovimiento from './modules/finanzas/tipo-movimiento';
 import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
 
+//PADRON PROVEEDORES
+import archivoPrestadoraExpediente from './modules/padronProveedores/archivo-prestadora';
+import archivoExpediente from './modules/padronProveedores/archivo';
+import ctgSeccion from './modules/padronProveedores/ctg-seccion';
+import ctgArea from './modules/padronProveedores/ctg-area';
+import empresaProveedor from './modules/padronProveedores/empresa';
+import especialidad from './modules/padronProveedores/especialidad';
+import giro from './modules/padronProveedores/giro';
+
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import incidencia from './modules/seguridad/control-interno/incidencia'
@@ -133,6 +150,13 @@ import transaccionEfo from './modules/seguridad/finanzas/transaccion-efo';
 import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
+//SEGURIDAD/FISCAL
+import autocorreccion from './modules/fiscal/autocorreccion';
+import CFDSAT from './modules/fiscal/cfd-sat';
+import efos from './modules/fiscal/efos';
+import empresaFacturera from './modules/fiscal/empresa-facturera';
+import noDeducido from './modules/fiscal/no-deducido';
+
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
 import penalizacion from './modules/subcontratosEstimaciones/penalizacion';
@@ -145,6 +169,8 @@ import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
 
+//REPORTES
+import reporte from './modules/reportes/reporte';
 
 //SCI
 import marca from "./modules/sci/marca";
@@ -152,6 +178,7 @@ import modelo from "./modules/sci/modelo";
 
 // VENTAS
 import venta from "./modules/ventas/venta";
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -183,9 +210,12 @@ export default new Vuex.Store({
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
         'cadeco/proveedor-contratista': proveedorContratista,
+        'cadeco/proveedor-contratista-sucursal': proveedorContratistaSucursal,
         'cadeco/sucursal': sucursal,
         'cadeco/suministrado': suministrado,
         'cadeco/unidad': unidad,
+
+        'catalogos/unificacion-proveedores' : unificacionProveedores,
 
         'compras/asignacion' : asignacion,
         'compras/cotizacion' : cotizacion,
@@ -193,6 +223,8 @@ export default new Vuex.Store({
         'compras/orden-compra' : ordenCompra,
         'compras/requisicion' : requisicion,
         'compras/solicitud-compra' : solicitudCompra,
+        'compras/forma-pago-credito' : formaPagoCredito,
+        
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,
@@ -202,10 +234,12 @@ export default new Vuex.Store({
         'configuracion/nodo-tipo' : nodoTipo,
         'configuracion/nodo-proyecto' : nodoProyecto,
 
+        'contratos/asignacion-contratista' : asigacionContratista,
         'contratos/contrato-concepto' : contratoConcepto,
         'contratos/contrato-proyectado': contratoProyectado,
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
+        'contratos/presupuesto' : presupuesto,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
 
@@ -252,12 +286,16 @@ export default new Vuex.Store({
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
         'contabilidad/transaccion-interfaz': transaccionInterfaz,
 
-        'contabilidadGeneral/poliza' :polizaGeneral,
+        'contabilidadGeneral/cuenta' : cuentaCTPQ,
         'contabilidadGeneral/empresa' :empresaContabilidad,
         'contabilidadGeneral/empresa-sat': empresaSAT,
-        'contabilidadGeneral/cfd-sat': CFDSAT,
         'contabilidadGeneral/empresa-contpaq': empresaContpaq,
+        'contabilidadGeneral/incidente-poliza' : incidentePoliza,
+        'contabilidadGeneral/poliza' :polizaGeneral,
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
+        'contabilidadGeneral/tipo-poliza' : tipoPoliza,
+
+        'reportes/reporte': reporte,
 
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
@@ -281,6 +319,20 @@ export default new Vuex.Store({
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
         'seguridad/lista-empresas': listaEmpresas,
+
+        'fiscal/empresa-facturera': empresaFacturera,
+        'fiscal/autocorreccion' : autocorreccion,
+        'fiscal/cfd-sat': CFDSAT,
+        'fiscal/efos' : efos,
+        'fiscal/no-deducido' : noDeducido,
+
+        'padronProveedores/archivo' : archivoExpediente,
+        'padronProveedores/archivo-prestadora' : archivoPrestadoraExpediente,
+        'padronProveedores/ctg-area' : ctgArea,
+        'padronProveedores/ctg-seccion' : ctgSeccion,
+        'padronProveedores/empresa' : empresaProveedor,
+        'padronProveedores/especialidad' : especialidad,
+        'padronProveedores/giro' : giro,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

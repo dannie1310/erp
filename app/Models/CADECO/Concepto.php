@@ -82,6 +82,13 @@ class Concepto extends Model
         return null;
     }
 
+    public function getEsAgrupadorAttribute(){
+        if ($this->nivel_padre != '') {
+            return self::where('nivel', '=', $this->nivel_padre)->first()->concepto_medible == 3;
+        }
+        return false;
+    }
+
     public function getTieneHijosAttribute()
     {
         return $this->hijos()->count() ? true : false;

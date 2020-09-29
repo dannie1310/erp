@@ -62,7 +62,7 @@ class EstimacionTransformer extends TransformerAbstract
             'anticipo_format' => $model->anticipo_format,
             'monto_anticipo_aplicado' => $model->monto_anticipo_aplicado,
             'monto_anticipo_aplicado_format' => $model->monto_anticipo_aplicado_format,
-            'retencion' => $model->subcontrato->retencion,
+            'retencion' => $model->retencion,
             'retencion_fondo_garantia' => $model->retencion_fondo_garantia_orden_pago_format,
             'total_retenciones' => $model->suma_retenciones_format,
             'retencion_iva' => $model->IVARetenido,
@@ -79,7 +79,9 @@ class EstimacionTransformer extends TransformerAbstract
             'total_orden_pago' => $model->total_orden_pago_format,
             'total_anticipo_liberar' => $model->anticipo_a_liberar_format,
             'monto_pagar' => $model->monto_a_pagar,
-            'monto_pagar_format' => $model->monto_a_pagar_format
+            'monto_pagar_format' => $model->monto_a_pagar_format,
+            'suma_penalizaciones' => $model->suma_penalizaciones_format,
+            'suma_penalizaciones_liberadas' => $model->suma_penalizaciones_liberadas_format
         ];
     }
 

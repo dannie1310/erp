@@ -43,4 +43,9 @@ class ConfiguracionObraService
         return $tipo_obra;
 
     }
+
+    public function configuracion()
+    {
+        return $this->repository->all()['0'];
+    }
 }

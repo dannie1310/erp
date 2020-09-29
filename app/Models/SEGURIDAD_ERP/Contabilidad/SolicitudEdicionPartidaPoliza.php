@@ -9,7 +9,9 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\CTPQ\Poliza;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudEdicionPartidaPoliza extends Model
 {
@@ -34,6 +36,18 @@ class SolicitudEdicionPartidaPoliza extends Model
         return $this->hasMany(SolicitudEdicionPartidaPolizaMovimiento::class,"id_solicitud_partida_poliza","id");
     }
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'bd_contpaq','AliasBDD');
+    }
+
+    public function poliza()
+    {
+        DB::purge('cntpq');
+        \Config::set('database.connections.cntpq.database', $this->bd_contpaq);
+        return $this->belongsTo(Poliza::class, "id_poliza", "Id");
+    }
+
     public function getMontoFormatAttribute()
     {
         return '$ ' . number_format(abs($this->monto),2);
@@ -41,7 +55,7 @@ class SolicitudEdicionPartidaPoliza extends Model
 
     public function scopeAutorizadas($query)
     {
-        return $query->where('estado', 1);
+        return $query->where('solicitud_edicion_partida_polizas.estado', 1);
     }
 
 }
