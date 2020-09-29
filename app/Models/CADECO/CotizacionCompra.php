@@ -47,7 +47,8 @@ class CotizacionCompra  extends Transaccion
         'numero_folio',
         'observaciones',
         'fecha',
-        'empresa.razon_social'
+        'empresa.razon_social',
+        'solicitud.numero_folio'
     ];
 
     protected static function boot()
