@@ -65,7 +65,7 @@ class Entrega extends Model
     public function getDestinoTxtAttribute()
     {
         if ($this->concepto) {
-            return $this->concepto->path.$this->concepto->descripcion;
+            return $this->concepto->path;
         } else {
             return $this->almacen;
         }
