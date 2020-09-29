@@ -527,8 +527,8 @@ class OrdenCompraFormato extends FPDI
 
         $this->CellFitScale(4, .5, 'Otras Condiciones:', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-        $tipo_gasto = 'NO REGISTRADO';
-        $this->MultiCell(15.5, .5, utf8_decode($tipo_gasto), 1, 'J');
+
+        $this->MultiCell(15.5, .5, utf8_decode($this->condiciones), 1, 'J');
 
         if (in_array(Context::getDatabase(), ["SAO1814_PISTA_AEROPUERTO", "SAO1814_DEV_PISTA_AEROPUERTO"]))
         {
