@@ -2,19 +2,19 @@
     <div class="btn-group">
         <Aprobar v-if="value.aprobar" v-bind:id="value.id"></Aprobar>
         <button v-if="value.edit" @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar Solicitud"> <i class="fa fa-pencil"></i></button>
-        <SolicitudShow v-if="value.show" @click="value.id" v-bind:id="value.id" v-bind:solicitud_consulta="value.solicitud_consulta"/>
+        <Consulta v-if="value.show" @click="value.id" v-bind:id="value.id" v-bind:solicitud_consulta="value.solicitud_consulta"/>
         <PDF v-bind:id="value.id"/>
         <Delete v-if="value.delete" v-bind:id="value.id"/>
     </div>
 </template>
 <script>
-    import SolicitudShow from '../Show.vue';
+    import Consulta from '../Show';
     import PDF from '../FormatoSolicitudCompra.vue';
     import Aprobar from '../Autorizar';
     import Delete from "../Delete";
     export default {
         name: "solicitud-compra-buttons",
-        components: {PDF, SolicitudShow, Aprobar, Delete},
+        components: {PDF, Consulta, Aprobar, Delete},
         props: ['value'],
         methods: {
             edit() {

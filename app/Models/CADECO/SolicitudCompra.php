@@ -116,6 +116,16 @@ class SolicitudCompra extends Transaccion
         });
     }
 
+    public function scopeAreasCompradorasAsignadasParaSolicitudes($query)
+    {
+        if (ConfiguracionObra::pluck('migrado_compras')->first() == 1) {
+            return $query->whereHas('complemento', function ($q) {
+                return $q->areasCompradorasPorUsuario();
+            });
+        }
+        return $query;
+    }
+
     public function scopeConAutorizacion($query)
     {
         $obra = Obra::find(Context::getIdObra());

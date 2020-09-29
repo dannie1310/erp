@@ -48,7 +48,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope: 'areasCompradorasAsignadas',sort: 'numero_folio', order: 'DESC', include: 'complemento'},
+                query: {scope: 'areasCompradorasAsignadasParaSolicitudes',sort: 'numero_folio', order: 'DESC', include: 'complemento'},
                 search: '',
                 cargando: false
             }
@@ -112,9 +112,10 @@
                         estado_solicitud: this.getEstado(solicitud.complemento ? solicitud.complemento.descripcion_estado : '', solicitud.complemento ? solicitud.complemento.color : ''),
                         buttons: $.extend({}, {
                             show: true,
+                            solicitud_consulta : false,
                             aprobar: (self.$root.can('aprobar_solicitud_compra') && (solicitud.estado == 0) && (solicitud.autorizacion_requerida == 1)) ? true : false,
-                            delete: self.$root.can('eliminar_solicitud_compra') ? true : false,
-                            edit: (self.$root.can('editar_solicitud_compra') && (solicitud.estado == 0)) ? true : false,
+                            delete: (self.$root.can('eliminar_solicitud_compra') && (solicitud.estado == 0) && solicitud.complemento) ? true : false,
+                            edit: (self.$root.can('editar_solicitud_compra') && solicitud.estado == 0  && solicitud.complemento) ? true : false,
                             id: solicitud.id,
                         })
                     }));
