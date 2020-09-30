@@ -196,25 +196,36 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->Cell($anchos["u"], $heigth, number_format($partida['cantidad'], '2', '.', ','), 1, 0, 'L', 0, '');
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     $ki = 0;
-                    if (array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_unitario'] > 0) {
-                        $ki = $this->cotizacion->calcular_ki($partida['cotizaciones'][$i]['precio_unitario_compuesto'], $datos_partidas['precios_menores'][$key]);
-                        if ($ki == 0) {
-                            $this->SetFillColor(150, 150, 150);
-                            $this->SetTextColor(0, 0, 0);
+                    if(array_key_exists('cotizaciones', $partida)){
+                        if (array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_unitario'] > 0) {
+                            $ki = $this->cotizacion->calcular_ki($partida['cotizaciones'][$i]['precio_unitario_compuesto'], $datos_partidas['precios_menores'][$key]);
+                            if ($ki == 0) {
+                                $this->SetFillColor(150, 150, 150);
+                                $this->SetTextColor(0, 0, 0);
+                            } else {
+                                $this->SetFillColor(255, 255, 255);
+                                $this->SetTextColor(0, 0, 0);
+                            }
                         } else {
-                            $this->SetFillColor(255, 255, 255);
-                            $this->SetTextColor(0, 0, 0);
+                            $this->SetFillColor(200, 200, 200);
+                            $this->SetTextColor(200, 200, 200);
                         }
+                        $this->SetFont('Arial', '', $font2);
+                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_con_descuento'] ? number_format($partida['cotizaciones'][$i]['precio_con_descuento'], 3, '.', ',') : '', "T B L", 0, "R", 1);
+                        $this->CellFitScale($anchos["d"], $heigth, $ki == 0 ? '-' : number_format($ki, '4', '.', ','), "T B L", 0, "R", 1);
+                        $this->Cell($anchos["it"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_total_compuesto'] ? number_format($partida['cotizaciones'][$i]['precio_total_compuesto'], 2, '.', ',') : '', "T B L", 0, "R", 1);
+                        $this->CellFitScale($anchos["m"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_unitario'] > 0 ? $partida['cotizaciones'][$i]['tipo_cambio_descripcion'] : '-', "T B L", 0, "R", 1);
+                        $this->Cell($anchos["ic"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_total_moneda'] ? number_format($partida['cotizaciones'][$i]['precio_total_moneda'], 2, '.', ',') : '', "B L R T", 0, "R", 1);
                     }else {
                         $this->SetFillColor(200, 200, 200);
                         $this->SetTextColor(200, 200, 200);
+                        $this->SetFont('Arial', '', $font2);
+                        $this->Cell($anchos["pu"], $heigth,  '', "T B L", 0, "R", 1);
+                        $this->CellFitScale($anchos["d"], $heigth, '', "T B L", 0, "R", 1);
+                        $this->Cell($anchos["it"], $heigth, '', "T B L", 0, "R", 1);
+                        $this->CellFitScale($anchos["m"], $heigth, '', "T B L", 0, "R", 1);
+                        $this->Cell($anchos["ic"], $heigth,'', "B L R T", 0, "R", 1);
                     }
-                    $this->SetFont('Arial', '', $font2);
-                    $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_con_descuento'] ?  number_format($partida['cotizaciones'][$i]['precio_con_descuento'], 3, '.', ',') : '', "T B L", 0, "R", 1);
-                    $this->CellFitScale($anchos["d"], $heigth, $ki == 0 ? '-' : number_format($ki, '4', '.', ','), "T B L", 0, "R", 1);
-                    $this->Cell($anchos["it"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_total_compuesto'] ? number_format($partida['cotizaciones'][$i]['precio_total_compuesto'], 2, '.', ',') : '', "T B L", 0, "R", 1);
-                    $this->CellFitScale($anchos["m"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_unitario'] > 0 ? $partida['cotizaciones'][$i]['tipo_cambio_descripcion'] : '-', "T B L", 0, "R", 1);
-                    $this->Cell($anchos["ic"], $heigth,array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_total_moneda'] ? number_format($partida['cotizaciones'][$i]['precio_total_moneda'], 2, '.', ',') : '', "B L R T", 0, "R", 1);
                 }
 
                 $this->Ln();
@@ -238,7 +249,11 @@ class CotizacionTablaComparativaFormato extends Rotation
                     $this->SetFont('Arial', '', $font2);
                     $this->setY($yop_ini);
                     $this->setX($xop_ini);
-                    $this->MultiCell($anchos["op"], $heigth, array_key_exists($i, $partida['cotizaciones']) && (float)$partida['cotizaciones'][$i]['precio_unitario'] > 0 ? utf8_decode($partida['cotizaciones'][$i]['observaciones']) : '', "B L R T", "L", 1);
+                    if(array_key_exists('cotizaciones', $partida)) {
+                        $this->MultiCell($anchos["op"], $heigth, array_key_exists($i, $partida['cotizaciones']) && (float)$partida['cotizaciones'][$i]['precio_unitario'] > 0 ? utf8_decode($partida['cotizaciones'][$i]['observaciones']) : '', "B L R T", "L", 1);
+                    }else{
+                        $this->MultiCell($anchos["op"], $heigth,'', "B L R T", "L", 1);
+                    }
                     $this->y_para_descripcion_arr[] = $this->GetY();
                     $xop_ini += $anchos["op"];
                 }
