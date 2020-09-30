@@ -262,16 +262,16 @@ class OrdenCompraFormato extends FPDI
             $y_inicial = $this->getY();
             $x_inicial = $this->getX();
             $this->MultiCell(9.5, .5,
-                "empresa" . '
-' . "sucrus" . '
-' . "dsad", '', 'L');
+                "" . utf8_decode($this->empresa_nombre).'
+' . utf8_decode($this->sucursal_direccion) . '
+' . $this->empresa_rfc, '', 'L');
             $y_final_1 = $this->getY();
             $this->setY($y_inicial);
             $this->setX($x_inicial + 10);
-            $this->MultiCell(9.5, .5,
-                utf8_decode("hora") . '
-' . "dir factura" . '
-' . "obra rfc", '', 'L');
+            $this->MultiCell(9.8, .5,
+                utf8_decode($this->obra->facturar) . '
+' . $this->obra->direccion . '
+' . $this->obra->rfc, '', 'L');
             $y_final_2 = $this->getY();
 
             if ($y_final_1 > $y_final_2)
@@ -280,7 +280,7 @@ class OrdenCompraFormato extends FPDI
             else
                 $y_alto = $y_final_2;
 
-            $alto = abs($y_inicial - $y_alto) + 1;
+            $alto = abs($y_inicial - $y_alto);
             $this->SetWidths([9.5]);
             $this->SetRounds(['1234']);
             $this->SetRadius([0.2]);
@@ -295,7 +295,7 @@ class OrdenCompraFormato extends FPDI
             $this->setY($y_inicial);
             $this->setX($x_inicial);
             $this->MultiCell(9.5, .5,
-                "" . $this->empresa_nombre.'
+                "" . utf8_decode($this->empresa_nombre).'
 ' . utf8_decode($this->sucursal_direccion) . '
 ' . $this->empresa_rfc, '', 'L');
 
@@ -431,9 +431,6 @@ class OrdenCompraFormato extends FPDI
 
     public function totales()
     {
-        if($this->dim_aux==1){
-            $this->Ln(.8);
-        }
 
         // Declara variables a usar.
         $id_costo="";
@@ -460,28 +457,6 @@ class OrdenCompraFormato extends FPDI
 
         $this->encola="";
         $this->y_subtotal = $this->GetY();
-        $this->SetTextColor(0,0,0);
-        $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(17.5, .5, 'Subtotal Antes Descuento:', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($subtotal_antes_descuento, 2, '.', ','), 1, 0,'R');
-        $this->Ln(.5);
-        $this->CellFitScale(17.5, .5, 'Descuento Global ('. $descuento .'%):', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($descuento_monetario, 2, '.', ','), 1, 0,'R');
-        $this->Ln(.5);
-
-        $this->CellFitScale(17.5, .5, 'Subtotal:', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($subtotal, 2, '.', ','), 1, 0,'R');
-        $this->Ln(.5);
-        $this->CellFitScale(17.5, .5, 'IVA:', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($iva, 2, '.', ','), 1, 0,'R');
-        $this->Ln(.5);
-        $this->CellFitScale(17.5, .5, 'Total:', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($total, 2, '.', ','), 1, 0,'R');
-        $this->Ln(.5);
-        $this->CellFitScale(17.5, .5, 'Moneda:', 0, 0,'R');
-        $this->CellFitScale(2, .5, $moneda, 1, 0,'R');
-        $this->Ln(.5);
-
         $this->setY($this->y_subtotal+0.3);
 
         $this->SetTextColor(0,0,0);
@@ -489,23 +464,48 @@ class OrdenCompraFormato extends FPDI
         $this->CellFitScale(4, .5, 'Anticipo ('. $this->ordenCompra->cotizacion->complemento->anticipo .' %): ', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
         $this->CellFitScale(2, .5, number_format($anticipo_monto, 2, '.', ','), 1, 0,'R');
-        $this->Ln(.7);
 
+        $this->SetTextColor(0,0,0);
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(11.5, .5, 'Subtotal Antes Descuento:', 0, 0,'R');
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2, .5, number_format($subtotal_antes_descuento, 2, '.', ','), 1, 1,'R');
 
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Fecha de entrega: ', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
         $this->CellFitScale(2, .5,$this->ordenCompra->complemento->fecha_entrega_format, 1, 0,'R');
-        $this->Ln(.7);
+
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(11.5, .5, 'Descuento Global ('. $descuento .'%):', 0, 0,'R');
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2, .5, number_format($descuento_monetario, 2, '.', ','), 1, 1,'R');
+
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Forma de Pago:', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
         $this->CellFitScale(5, .5, utf8_decode(($this->ordenCompra->complemento->formaPago)?$this->ordenCompra->complemento->formaPago->descripcion:""), 1, 0,'L');
-        $this->Ln(.7);
 
-        $this->Ln(0.7);
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(8.5, .5, 'Subtotal:', 0, 0,'R');
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2, .5, number_format($subtotal, 2, '.', ','), 1, 1,'R');
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(17.5, .5, 'IVA:', 0, 0,'R');
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2, .5, number_format($iva, 2, '.', ','), 1, 1,'R');
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(17.5, .5, 'Total:', 0, 0,'R');
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2, .5, number_format($total, 2, '.', ','), 1, 1,'R');
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(17.5, .5, 'Moneda:', 0, 0,'R');
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2, .5, $moneda, 1, 1,'R');
+        $this->Ln(.5);
+
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Domicilio Entrega:', 0, 0,'L');
@@ -607,7 +607,6 @@ class OrdenCompraFormato extends FPDI
                 }
             }
 
-            $partida_comp=OrdenCompraPartidaComplemento::where('id_item','=', $p->id_item)->get();
 
             $this->material=Material::where('id_material','=',$p->id_material)->get();
 
@@ -622,7 +621,7 @@ class OrdenCompraFormato extends FPDI
             $this->complemento=OrdenCompraPartidaComplemento::where("id_item","=",$this->material[0]->id_item)->get();
 
             if(!in_array(Context::getDatabase(), ['SAO1814_TERMINAL_NAICM']))
-                if($count_partidas == ($i+1) && empty($partida_comp[0]->observaciones));
+                if($count_partidas == ($i+1) && empty($p->orden_partida_complemento->observaciones));
             {
                 $this->SetRounds(['','','','','','','','','']);
                 $this->SetRadius([0,0,0,0,0,0,0,0,0]);
@@ -642,25 +641,24 @@ class OrdenCompraFormato extends FPDI
                 number_format($precio_neto * $p->cantidad,2, '.', ',')
             ]);
 
-            // Centro de costo
-            $this->encola="centro_costo";
 
-            if($count_partidas == ($i+1) && (!is_null($p->complemento) && $p->complemento->observaciones ==''))
+
+            if($count_partidas == ($i+1) && (!is_null($p->itemSolicitudCompra->complemento) && $p->itemSolicitudCompra->complemento->observaciones ==''))
             {
                 $this->SetRounds(['4','','','','','','','','3']);
                 $this->SetRadius([0.2,0,0,0,0,0,0,0,0]);
             }
 
+            // Centro de costo
+            $this->encola="centro_costo";
+
             $this->SetWidths([19.5]);
             $this->SetAligns(['L']);
-
             $this->Row([utf8_decode($p->itemSolicitudCompra->entrega->destino_txt)]);
 
-            if(!empty($p->itemSolicitudCompra->complemento->observaciones)){
-                $this->Row([utf8_decode($p->itemSolicitudCompra->complemento->observaciones)]);
-            }
 
-            if(!empty($p->complemento->observaciones))
+
+            if(!empty($p->itemSolicitudCompra->complemento->observaciones))
             {
                 $this->SetTextColors(['150,150,150']);
                 $this->SetWidths([19.5]);
@@ -672,15 +670,15 @@ class OrdenCompraFormato extends FPDI
                 }
 
                 $this->encola="observaciones_partida";
-                $this->Row([html_entity_decode(mb_convert_encoding($p->complemento->observaciones, 'HTML-ENTITIES', 'UTF-8'))]);
+                $this->Row([html_entity_decode(mb_convert_encoding($p->itemSolicitudCompra->complemento->observaciones, 'HTML-ENTITIES', 'UTF-8'))]);
             }
         }
-
-        $this->dim = $this->GetY();
-        if($this->dim>19.8) {
+        $this->encola="";
+        $this->y_subtotal = $this->GetY();
+        /*if($this->dim>19.8) {
             $this->AddPage();
             $this->dim_aux=1;
-        }
+        }*/
     }
 
     public function Footer()
