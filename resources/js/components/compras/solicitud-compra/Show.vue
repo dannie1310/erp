@@ -1,7 +1,7 @@
 <template>
     <span>
         <button @click="find()" v-if="solicitud_consulta != false" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver Solicitud">
-            <i style="width:40px;" v-if="!cargando">{{solicitud_consulta}}</i>
+            <i style="width:40px;" v-if="!cargando">{{solicitud_consulta.numero_folio_format}}</i>
             <i class="fa fa-spinner fa-spin" style="width:40px;" v-else></i>
         </button>
         <button @click="find()" v-else type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Solicitud">
