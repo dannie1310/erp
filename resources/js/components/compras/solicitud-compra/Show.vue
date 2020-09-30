@@ -1,7 +1,7 @@
 <template>
     <span>
-        <button @click="find()" v-if="boton" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver Solicitud">
-            <i style="width:40px;" v-if="!cargando">{{boton.numero_folio_format}}</i>
+        <button @click="find()" v-if="solicitud_consulta != false" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver Solicitud">
+            <i style="width:40px;" v-if="!cargando">{{solicitud_consulta.numero_folio_format}}</i>
             <i class="fa fa-spinner fa-spin" style="width:40px;" v-else></i>
         </button>
         <button @click="find()" v-else type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Solicitud">
@@ -92,8 +92,9 @@
                                                         <td style="text-align: center">{{partida.cantidad}}</td>
                                                         <td style="text-align: center">{{(partida.entrega) ? partida.entrega.fecha_format : '------------'}}</td>
 
-                                                        <td v-if="partida.entrega.destino_path" :title="`${partida.entrega.destino_path}`"><u>{{partida.entrega.destino_descripcion}}</u></td>
-                                                        <td v-else >{{partida.entrega.destino_descripcion}}</td>
+                                                        <td v-if="partida.entrega && partida.entrega.destino_path" :title="`${partida.entrega.destino_path}`"><u>{{partida.entrega.destino_descripcion}}</u></td>
+                                                        <td v-else-if="partida.entrega" >{{partida.entrega.destino_descripcion}}</td>
+                                                        <td v-else></td>
 
                                                         <td style="text-align: left">{{(partida.complemento) ? partida.complemento.observaciones : '------------'}}</td>
                                                     </tr>
@@ -160,10 +161,6 @@
             solicitud() {
                 return this.$store.getters['compras/solicitud-compra/currentSolicitud']
             },
-            boton()
-            {
-                return (this.solicitud_consulta) ? this.solicitud_consulta :false;
-            }
         }
     }
 </script>
