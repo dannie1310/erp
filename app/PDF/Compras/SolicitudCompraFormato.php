@@ -293,7 +293,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             }
 
             /*Observaciones de partida*/
-            if($item->complemento->observaciones != "") {
+            if($item->complemento && $item->complemento->observaciones != "") {
                 $this->SetRounds(['4','','','','','','3']);
                 $this->SetRadius([0,0,0,0,0,0,0,0,0]);
                 $this->SetWidths([19.5]);
