@@ -670,7 +670,7 @@ class OrdenCompraFormato extends FPDI
                 }
 
                 $this->encola="observaciones_partida";
-                $this->Row([html_entity_decode(mb_convert_encoding($p->itemSolicitudCompra->complemento->observaciones, 'HTML-ENTITIES', 'UTF-8'))]);
+                $this->Row([utf8_decode($p->itemSolicitudCompra->complemento->observaciones)]);
             }
         }
         $this->encola="";
