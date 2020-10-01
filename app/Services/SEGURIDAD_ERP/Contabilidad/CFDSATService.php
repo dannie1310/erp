@@ -410,6 +410,7 @@ class CFDSATService
             $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["Fecha"]);
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
             $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
+            $this->arreglo_factura["tipo_cambio"] = (float)$factura_xml["TipoCambio"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
@@ -515,6 +516,8 @@ class CFDSATService
         $this->arreglo_factura["total"] = (float)$factura_xml["total"];
         $this->arreglo_factura["serie"] = (string)$factura_xml["serie"];
         $this->arreglo_factura["folio"] = (string)$factura_xml["folio"];
+        $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
+        $this->arreglo_factura["tipo_cambio"] = (float)$factura_xml["TipoCambio"];
         $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["fecha"]);
 
         $ns = $factura_xml->getNamespaces(true);
