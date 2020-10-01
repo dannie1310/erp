@@ -44,6 +44,7 @@ class CFDSAT extends Model
         ,"estado"
         ,"estado_txt"
         ,"fecha_cancelacion"
+        ,"tipo_cambio"
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
