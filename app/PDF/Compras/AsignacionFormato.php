@@ -32,7 +32,6 @@ class AsignacionFormato extends Rotation
        parent::__construct('L', 'cm', 'Letter');
         $this->obra = Obra::find(Context::getIdObra());
 
-        $this->SetAutoPageBreak(true, 5);
         $this->createQR();
     }
 
@@ -84,7 +83,7 @@ class AsignacionFormato extends Rotation
 
         $this->Ln(.5);
         $this->Cell(19);
-        $this->Cell(4, .5, utf8_decode('REQUISICIÓN SAO: '), 'LB', 0, 'L');
+        $this->Cell(4, .5, utf8_decode('FOLIO SAO SOLICITUD: '), 'LB', 0, 'L');
         $this->Cell(3, .5, $this->asignacion->solicitud->complemento ? $this->asignacion->solicitud->complemento->requisicion_folio_format : '', 'RB', 0, 'L');
 
         $this->Ln(.7);
@@ -752,7 +751,7 @@ class AsignacionFormato extends Rotation
         $this->SetMargins(1, .5, 2);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 5);
+        $this->SetAutoPageBreak(true, 5.5);
         $this->partidas();
 
         try {

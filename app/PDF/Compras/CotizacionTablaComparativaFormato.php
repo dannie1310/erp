@@ -410,9 +410,6 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->setX($x_ini);
                 $this->MultiCell($anchos["og"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? utf8_decode($datos_partidas['cotizaciones'][$i]['observaciones']) : '-', 1, 'J', false);
                 $this->Ln();
-                $this->Ln();
-                $this->Ln();
-                $this->Ln();
                 $this->y_fin_og_arr[] = $this->getY();
                 $x_ini += $anchos["og"];
             }
@@ -509,7 +506,7 @@ class CotizacionTablaComparativaFormato extends Rotation
         $this->SetMargins(0.7, 1, 0.7);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 5);
+        $this->SetAutoPageBreak(true, 4);
         $this->partidas();
 
         try {
