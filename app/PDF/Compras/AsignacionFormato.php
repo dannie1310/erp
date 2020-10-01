@@ -84,7 +84,7 @@ class AsignacionFormato extends Rotation
         $this->Ln(.5);
         $this->Cell(19);
         $this->Cell(4, .5, utf8_decode('FOLIO SAO SOLICITUD: '), 'LB', 0, 'L');
-        $this->Cell(3, .5, $this->asignacion->solicitud->complemento ? $this->asignacion->solicitud->complemento->requisicion_folio_format : '', 'RB', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->solicitud->numero_folio_format, 'RB', 0, 'L');
 
         $this->Ln(.7);
         $this->y_para_descripcion = $this->GetY();
