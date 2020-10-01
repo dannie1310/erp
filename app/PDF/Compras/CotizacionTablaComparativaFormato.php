@@ -506,7 +506,7 @@ class CotizacionTablaComparativaFormato extends Rotation
         $this->SetMargins(0.7, 1, 0.7);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 3);
+        $this->SetAutoPageBreak(true, 4);
         $this->partidas();
 
         try {
