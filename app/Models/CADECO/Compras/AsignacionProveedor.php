@@ -296,4 +296,49 @@ class AsignacionProveedor extends Model
             }
         }
     }
+
+    public function getMejoresOpcionesEncapsuladoPorMaterialAttribute()
+    {
+        $array = [];
+        $valor_calculado = 0;
+        $suma_mejor_por_partida = 0;
+        $id_cotizacion_optima = null;
+        foreach ($this->solicitud->partidas()->groupBy('id_material')->pluck('id_material') as $material) {
+            $partida_asignacion = $this->partidas()->where('id_material', $material)->first();
+            foreach ($this->solicitud->cotizaciones as $cotizacion) {
+                $partida_encontrada = $cotizacion->partidas()->where('id_material', '=', $material)->first();
+                if ($partida_encontrada && $partida_asignacion) {
+                    switch ($partida_encontrada->id_moneda) {
+                        case (1):
+                            $valor_calculado = $partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto;
+                            break;
+                        case (2):
+                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $this->tipo_cambio(2));
+                            break;
+                        case (3):
+                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $this->tipo_cambio(3));
+                            break;
+                        case (4):
+                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $this->tipo_cambio(4));
+                            break;
+                    }
+                    if ($suma_mejor_por_partida === 0) {
+                        $id_cotizacion_optima = $partida_encontrada->id_transaccion;
+                        $suma_mejor_por_partida = $valor_calculado;
+                    }
+                    if ($valor_calculado < $suma_mejor_por_partida) {
+                        $id_cotizacion_optima = $partida_encontrada->id_transaccion;
+                        $suma_mejor_por_partida = $valor_calculado;
+                    }
+                }
+            }
+            if (!array_key_exists($material, $array)) {
+                $array[$material] = $id_cotizacion_optima;
+            }
+            $valor_calculado = 0;
+            $suma_mejor_por_partida = 0;
+            $id_cotizacion_optima = null;
+        }
+        return $array;
+    }
 }
