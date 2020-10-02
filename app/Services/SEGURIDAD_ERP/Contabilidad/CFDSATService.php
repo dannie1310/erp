@@ -14,6 +14,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\PDF\Fiscal\InformeCFDICompleto;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
+use App\Utils\Util;
 use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
 use DateTime;
@@ -393,7 +394,10 @@ class CFDSATService
         if (!$fecha_xml) {
             $fecha_xml = DateTime::createFromFormat('Y-m-d\TH:i:s.u', $fecha);
             if (!$fecha_xml) {
-                $fecha_xml = substr($fecha, 0, 19);
+                $fecha_xml = DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $fecha);
+                if (!$fecha_xml) {
+                    $fecha_xml = substr($fecha, 0, 19);
+                }
             }
         }
         return $fecha_xml;
@@ -414,7 +418,7 @@ class CFDSATService
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
-            $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$emisor["RegimenFiscal"][0];
+            $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)Util::eliminaCaracteresEspeciales($emisor["RegimenFiscal"][0]);
             $this->arreglo_factura["rfc_emisor"] = $this->arreglo_factura["emisor"]["rfc"];
             $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
             $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
@@ -531,14 +535,14 @@ class CFDSATService
             if ($emisor_arr) {
                 if (key_exists(0, $emisor_arr)) {
                     $emisor = $emisor_arr[0];
-                    $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor//cfdi:RegimenFiscal')[0]["Regimen"];
+                    $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string) Util::eliminaCaracteresEspeciales($factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor//cfdi:RegimenFiscal')[0]["Regimen"]);
                 } else {
                     $emisor = $factura_xml->Emisor;
-                    $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$emisor->RegimenFiscal[0]["Regimen"];
+                    $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)Util::eliminaCaracteresEspeciales($emisor->RegimenFiscal[0]["Regimen"]);
                 }
             } else {
                 $emisor = $factura_xml->Emisor;
-                $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)$emisor->RegimenFiscal[0]["Regimen"];
+                $this->arreglo_factura["emisor"]["regimen_fiscal"] = (string)Util::eliminaCaracteresEspeciales($emisor->RegimenFiscal[0]["Regimen"]);
             }
 
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["rfc"][0];
