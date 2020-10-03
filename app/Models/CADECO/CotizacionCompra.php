@@ -21,6 +21,9 @@ class CotizacionCompra  extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
     public const OPCION_ANTECEDENTE = 1;
+    public const TIPO = 18;
+    public const OPCION = 1;
+    public const NOMBRE = "Cotización";
 
     protected $fillable = [
         'id_transaccion',
@@ -114,6 +117,11 @@ class CotizacionCompra  extends Transaccion
     public function transaccionesRelacionadas()
     {
         return $this->hasMany(Transaccion::class, 'id_referente', 'id_transaccion')->where('id_antecedente', '=', $this->id_antecedente);
+    }
+
+    public function ordenesCompra()
+    {
+        return $this->hasMany(OrdenCompra::class,"id_antecedente", "id_transaccion");
     }
 
     /**
@@ -638,5 +646,10 @@ class CotizacionCompra  extends Transaccion
     public function calcular_ki($precio, $precio_menor)
     {
         return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
+    }
+
+    public function getRelaciones()
+    {
+        $ordenes = $this->cotizaciones;
     }
 }

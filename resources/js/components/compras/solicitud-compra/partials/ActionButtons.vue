@@ -5,6 +5,7 @@
         <Consulta v-if="value.show" @click="value.id" v-bind:id="value.id" v-bind:solicitud_consulta="value.solicitud_consulta"/>
         <PDF v-bind:id="value.id"/>
         <Delete v-if="value.delete" v-bind:id="value.id"/>
+        <Relaciones v-bind:relaciones="value.relaciones"/>
     </div>
 </template>
 <script>
@@ -12,9 +13,10 @@
     import PDF from '../FormatoSolicitudCompra.vue';
     import Aprobar from '../Autorizar';
     import Delete from "../Delete";
+    import Relaciones from "../../../globals/Relaciones";
     export default {
         name: "solicitud-compra-buttons",
-        components: {PDF, Consulta, Aprobar, Delete},
+        components: {PDF, Consulta, Aprobar, Delete,Relaciones},
         props: ['value'],
         methods: {
             edit() {

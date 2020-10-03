@@ -37,6 +37,7 @@ class Transaccion extends Model
     public const CREATED_AT = 'FechaHoraRegistro';
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
+    public const SHOW_ROUTE = "";
 
     protected static function boot()
     {
@@ -166,6 +167,16 @@ class Transaccion extends Model
 
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
+    }
+
+    public function antecedente()
+    {
+        return $this->belongsTo(Transaccion::class,"id_antecedente", "id_transaccion");
+    }
+
+    public function referente()
+    {
+        return $this->belongsTo(Transaccion::class,"id_referente", "id_transaccion");
     }
 
     public function getSubtotalAttribute()

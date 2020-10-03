@@ -24,6 +24,9 @@ use Illuminate\Support\Facades\DB;
 class SolicitudCompra extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
+    public const TIPO = 17;
+    public const OPCION = 1;
+    public const NOMBRE = "Solicitud";
 
     protected static function boot()
     {
@@ -505,5 +508,20 @@ class SolicitudCompra extends Transaccion
             return true;
         }
         return false;
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $cotizaciones = $this->cotizaciones;
+        $i = 0;
+        foreach($cotizaciones as $cotizacion)
+        {
+            $relaciones[$i]["tipo"] = CotizacionCompra::NOMBRE.' '.$cotizacion->numero_folio_format;
+            $relaciones[$i]["id"] = $cotizacion->id_transaccion;
+            $i++;
+
+        }
+        return $relaciones;
     }
 }
