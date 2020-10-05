@@ -66,6 +66,9 @@ class PresupuestoContratistaPartida extends Model
             case(3):
                 return ($this->precio_unitario / $this->presupuesto->TcEuro);
             break;
+            case(4):
+                return ($this->precio_unitario / $this->presupuesto->TcLibra);
+            break;
         }
     }
 

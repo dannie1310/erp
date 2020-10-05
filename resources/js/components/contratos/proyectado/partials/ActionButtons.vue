@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
-        <Cambiar-area-subcontratante :id="value.id" :value="value" />
-        <Show v-if="value.show" v-bind:id="value.id" />
+        <Cambiar-area-subcontratante :id="value.id" :value="value" v-if="value.cambiaAreaSubcontratante" />
+        <Show v-if="value.show" v-bind:id="value.id"  v-bind:contrato_proyectado="value.contrato_proyectado" />
         <Editar v-bind:id="value.id" v-if="value.edit" />
         <Delete v-bind:id="value.id" v-if="value.delete" />
         <PDF v-bind:id="value.id" @click="value.id" ></PDF>
