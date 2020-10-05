@@ -34,7 +34,7 @@
                                                                 v-model="id_contrato"
                                                                 :custom-text="idFolioObservaciones"
                                                                 :list="contratos"
-                                                                :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'">
+                                                                :placeholder="!cargando?'Seleccionar o buscar folio o descripcion':'Cargando...'">
                                                             </model-list-select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_contrato')">{{ errors.first('id_contrato') }}</div>
                                         </div>
@@ -43,21 +43,19 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="id_proveedor">Proveedores</label>
-                                            <select class="form-control"
-                                                    name="id_proveedor"
-                                                    data-vv-as="Proveedores"
-                                                    v-model="id_proveedor"
-                                                    v-validate="{required: true}"
-                                                    :error="errors.has('id_proveedor')"
-                                                    id="id_proveedor">
-                                                <option value>-- Seleccionar--</option>
-                                                <option v-for="proveedor in proveedores" :value="proveedor.id" >{{ proveedor.razon_social}}</option>
-                                            </select>
+                                            <label for="id_proveedor">Proveedores/Contratistas</label>
+                                            <model-list-select
+                                                name="id_proveedor"
+                                                option-value="id"                                                               
+                                                v-model="id_proveedor"
+                                                :custom-text="razonSocialRFC"
+                                                :list="proveedores"
+                                                :placeholder="!cargando?'Seleccionar o buscar por RFC o razón social':'Cargando...'">
+                                            </model-list-select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 offset-1" v-if="sucursal">
+                                    <div class="col-md-3 offset-1" v-if="sucursal && id_proveedor">
                                         <div class="form-group">
                                             <label for="id_sucursal">Sucursal</label>
                                             <select class="form-control"
@@ -73,7 +71,7 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_sucursal')">{{ errors.first('id_sucursal') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 offset-1" v-else>
+                                    <div class="col-md-3 offset-1" v-else-if="id_proveedor">
                                         <div class="form-group">
                                             <label for="id_sucursal">Sucursal</label>
                                             <select class="form-control"
@@ -376,8 +374,13 @@
                                 </div>
                             </div>
                              <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" :disabled="id_contrato == ''" class="btn btn-primary">Registrar</button>
+                                 <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                        <i class="fa fa-angle-left"></i>
+                                        Regresar</button>
+                                    <button type="submit" :disabled="id_contrato == ''" class="btn btn-primary">
+                                        <i class="fa fa-save"></i>
+                                        Guardar
+                                    </button>
                              </div>
                         </form>
                     </div>
@@ -467,6 +470,10 @@
             idFolioObservaciones (item)
             {
                 return `[${item.numero_folio_format}] ---- [ ${item.referencia} ]`;
+            },
+            razonSocialRFC (item)
+            {
+                return `[${item.razon_social}] - [ ${item.rfc} ]`;
             },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
