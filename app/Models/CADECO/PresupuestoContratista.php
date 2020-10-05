@@ -113,10 +113,13 @@ class PresupuestoContratista extends Transaccion
                 return ($precio * 1);
             break;
             case(2):
-                return ($precio * $monedas[0]->cambioIgh->tipo_cambio);
+                return ($precio * $monedas[1]);
             break;
             case(3):
-                return ($precio * $monedas[1]->cambioIgh->tipo_cambio);
+                return ($precio * $monedas[2]);
+            break;
+            case(4):
+                return ($precio * $monedas[3]);
             break;
         }
     }
@@ -154,6 +157,7 @@ class PresupuestoContratista extends Transaccion
             $contrato = ContratoProyectado::find($data['id_contrato']);
             $fecha = new DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $monedas = [1,$data['tc_usd'],$data['tc_eur'],$data['tc_libra']];
 
             if(!$data['pendiente'])
             {
@@ -178,7 +182,7 @@ class PresupuestoContratista extends Transaccion
                 $t = 0;
                 foreach($data['partidas'] as $partida)
                 {
-                    $precio_unitario = $this->precioConvercion($data['precio'][$t], $data['moneda'][$t], $moneda);
+                    $precio_unitario = $this->precioConvercion($data['precio'][$t], $data['moneda'][$t], $monedas);
                     $presupuesto->partidas()->create([
                         'id_transaccion' => $presupuesto->id_transaccion,
                         'id_concepto' => $partida['id_concepto'],
@@ -238,7 +242,7 @@ class PresupuestoContratista extends Transaccion
         try
         {
             DB::connection('cadeco')->beginTransaction();
-            // dd($data);
+           
                 $fecha =New DateTime($data['fecha']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $this->update([
@@ -272,12 +276,12 @@ class PresupuestoContratista extends Transaccion
                                 $precio = $data['precio'][$x] * $data['tcLibra'];
                             break;
                         }
-                    //    $precio =  ($data['moneda'][$x] == 2) ? ($data['precio'][$x] * $data['tipo_cambio'][2]) : ($data['precio'][$x] * $data['tipo_cambio'][3]);
+                    
                     }
                     else{
                         $precio = $data['precio'][$x];
                     }
-                    // dd($precio);
+                    
                     $item->update([
                         'precio_unitario' => ($data['enable'][$x]) ? $precio : null,
                         'no_cotizado' => ($data['enable'][$x]) ? 0 : 1,
