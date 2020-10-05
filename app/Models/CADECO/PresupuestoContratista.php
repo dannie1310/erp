@@ -42,7 +42,8 @@ class PresupuestoContratista extends Transaccion
         'fecha',
         'numero_folio',
         'empresa.razon_social',
-        'contratoProyectado.referencia'
+        'contratoProyectado.referencia',
+        'contratoProyectado.numero_folio'
     ];
 
 
