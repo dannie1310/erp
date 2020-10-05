@@ -83,10 +83,25 @@ class PresupuestoContratistaService
             {
                 abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
             }
+            $id_moneda = 0;
+            switch ($celdas[$x][11]){
+                case 'PESO MXP':
+                    $id_moneda = 1;
+                break;
+                case 'DOLAR USD':
+                    $id_moneda = 2;
+                break;
+                case 'EURO':
+                    $id_moneda = 3;
+                break;
+                case 'LIBRA':
+                    $id_moneda = 4;
+                break;
+            }
             $partidas[] = array(
                 'precio_unitario' => $celdas[$x][6],
                 'descuento' => $celdas[$x][8],
-                'id_moneda' => ($celdas[$x][11] == 'PESO MXP') ? 1 : (($celdas[$x][11] == 'DOLAR USD') ? 2 : 3),
+                'id_moneda' => $id_moneda,
                 'observaciones' => $celdas[$x][14],
                 'id_concepto' => (int) $item->id_concepto
             );

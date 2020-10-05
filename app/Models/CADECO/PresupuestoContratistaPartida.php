@@ -50,6 +50,9 @@ class PresupuestoContratistaPartida extends Model
             case(3):
                 return '$ '. number_format(($this->precio_unitario) / $this->presupuesto->TcEuro, 2, '.', ',');
             break;
+            case(4):
+                return '$ '. number_format(($this->precio_unitario) / $this->presupuesto->TcLibra, 2, '.', ',');
+            break;
         }
     }
 
@@ -85,6 +88,9 @@ class PresupuestoContratistaPartida extends Model
             case(3):
                 return ($this->concepto) ? '$ '. number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcEuro)) - ((($this->precio_unitario) / $this->presupuesto->TcEuro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
             break;
+            case(4):
+                return ($this->concepto) ? '$ '. number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcLibra)) - ((($this->precio_unitario) / $this->presupuesto->TcLibra) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
+            break;
         }
     }
 
@@ -100,6 +106,9 @@ class PresupuestoContratistaPartida extends Model
             break;
             case(3):
                 return ($this->concepto) ? '$ '. number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcEuro)) - ((($this->precio_unitario) / $this->presupuesto->TcEuro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcEuro), 2, '.', ',') : $this->precio_unitario_format;
+            break;
+            case(4):
+                return ($this->concepto) ? '$ '. number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcLibra)) - ((($this->precio_unitario) / $this->presupuesto->TcLibra) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcLibra), 2, '.', ',') : $this->precio_unitario_format;
             break;
         }
     }

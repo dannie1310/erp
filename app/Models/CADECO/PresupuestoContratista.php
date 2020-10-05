@@ -259,11 +259,23 @@ class PresupuestoContratista extends Transaccion
                     $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $partida['id'])->where('id_concepto', '=', $partida['concepto']['id_concepto']);
                     if($data['moneda'][$x] > 1)
                     {
-                       $precio =  ($data['moneda'][$x] == 2) ? ($data['precio'][$x] * $data['tipo_cambio'][2]) : ($data['precio'][$x] * $data['tipo_cambio'][3]);
+                        switch ((int)$data['moneda'][$x]){
+                            case 2:
+                                $precio = $data['precio'][$x] * $data['tcUsd'];
+                            break;
+                            case 3:
+                                $precio = $data['precio'][$x] * $data['tdEuro'];
+                            break;
+                            case 4:
+                                $precio = $data['precio'][$x] * $data['tcLibra'];
+                            break;
+                        }
+                    //    $precio =  ($data['moneda'][$x] == 2) ? ($data['precio'][$x] * $data['tipo_cambio'][2]) : ($data['precio'][$x] * $data['tipo_cambio'][3]);
                     }
                     else{
                         $precio = $data['precio'][$x];
                     }
+                    // dd($precio);
                     $item->update([
                         'precio_unitario' => ($data['enable'][$x]) ? $precio : null,
                         'no_cotizado' => ($data['enable'][$x]) ? 0 : 1,
