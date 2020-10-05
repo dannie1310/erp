@@ -171,7 +171,8 @@ class PresupuestoContratista extends Transaccion
                     'TcEuro' => $data['tc_eur'],
                     'TcLibra' => $data['tc_libra'],
                     'DiasCredito' => $data['credito'],
-                    'DiasVigencia' => $data['vigencia']
+                    'DiasVigencia' => $data['vigencia'],
+                    'estado' => 1
                 ]);
 
                 $t = 0;
@@ -205,7 +206,8 @@ class PresupuestoContratista extends Transaccion
                     'TcEuro' => null,
                     'TcLibra' => null,
                     'DiasCredito' => null,
-                    'DiasVigencia' => null
+                    'DiasVigencia' => null,
+                    'estado' => 0
                 ]);
 
                 $t = 0;
