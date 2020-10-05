@@ -1,6 +1,10 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Contrato Proyectado">
+        <button @click="find()" v-if="contrato_proyectado != false" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver Contrato Proyectado">
+            <i style="width:40px;" v-if="!cargando">{{contrato_proyectado.numero_folio_format}}</i>
+            <i class="fa fa-spinner fa-spin" v-else></i>
+        </button>
+        <button @click="find()" v-else type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver Contrato Proyectado">
             <i class="fa fa-eye" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
@@ -80,7 +84,7 @@
 <script>
     export default {
         name: "contrato-proyectado-show",
-        props: ['id'],
+        props: ['id', 'contrato_proyectado'],
         data(){
             return{
                 cargando: false

@@ -30,6 +30,7 @@ class PresupuestoContratista extends Transaccion
         'PorcentajeDescuento',
         'TcUSD',
         'TcEuro',
+        'TcLibra',
         'DiasCredito',
         'DiasVigencia',
         'tipo_transaccion',
@@ -41,7 +42,8 @@ class PresupuestoContratista extends Transaccion
         'fecha',
         'numero_folio',
         'empresa.razon_social',
-        'contratoProyectado.referencia'
+        'contratoProyectado.referencia',
+        'contratoProyectado.numero_folio'
     ];
 
 
@@ -165,8 +167,9 @@ class PresupuestoContratista extends Transaccion
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observacion'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
-                    'TcUSD' => $moneda[0]->cambioIgh->tipo_cambio,
-                    'TcEuro' => $moneda[1]->cambioIgh->tipo_cambio,
+                    'TcUSD' => $data['tc_usd'],
+                    'TcEuro' => $data['tc_eur'],
+                    'TcLibra' => $data['tc_libra'],
                     'DiasCredito' => $data['credito'],
                     'DiasVigencia' => $data['vigencia']
                 ]);
@@ -200,6 +203,7 @@ class PresupuestoContratista extends Transaccion
                     'PorcentajeDescuento' => null,
                     'TcUSD' => null,
                     'TcEuro' => null,
+                    'TcLibra' => null,
                     'DiasCredito' => null,
                     'DiasVigencia' => null
                 ]);
@@ -232,6 +236,7 @@ class PresupuestoContratista extends Transaccion
         try
         {
             DB::connection('cadeco')->beginTransaction();
+            // dd($data);
                 $fecha =New DateTime($data['fecha']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $this->update([
@@ -241,8 +246,9 @@ class PresupuestoContratista extends Transaccion
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observaciones'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
-                    'TcUSD' => $data['tipo_cambio'][2],
-                    'TcEuro' => $data['tipo_cambio'][3],
+                    'TcUSD' => $data['tcUsd'],
+                    'TcEuro' => $data['tdEuro'],
+                    'TcLibra' => $data['tcLibra'],
                     'DiasCredito' => $data['credito'],
                     'DiasVigencia' => $data['vigencia']
                 ]);;
@@ -289,5 +295,10 @@ class PresupuestoContratista extends Transaccion
     public function getEuroFormatAttribute()
     {
         return '$ ' . number_format(abs($this->TcEuro),4);
+    }
+
+    public function getLibraFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcLibra),4);
     }
 }
