@@ -490,7 +490,7 @@
                 }
 
                 if(this.almacenes.length == 0) {
-                    this.getAlmacenes();
+                    this.getAlmacenes().finally(()=>{this.cargando = false});
                 }
                 this.$validator.reset();
                 $(this.$refs.modal_destino).modal('show');
@@ -546,9 +546,7 @@
                 })
                     .then(data => {
                         this.almacenes = data.data
-                    }).finally(data => {
-                        this.cargando = false;
-                    })
+                    });
             },
             getAlmacen() {
                 return this.$store.dispatch('cadeco/almacen/find', {
