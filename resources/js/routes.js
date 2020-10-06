@@ -1418,6 +1418,30 @@ export const routes = [
                             permission: ['editar_cotizacion_compra', 'cargar_layout_cotizacion_compra']
                         }
                     },
+                    {
+                        path: ':id',
+                        name: 'cotizacion-show',
+                        component: require('./components/compras/cotizacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Cotización',
+                            breadcrumb: { parent: 'cotizacion', name: 'VER'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_cotizacion_compra'
+                        }
+                    },
+                    {
+                        path: ':id/modal',
+                        name: 'cotizacion-show-modal',
+                        component: require('./components/compras/cotizacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Cotización',
+                            breadcrumb: { parent: 'cotizacion', name: 'VER'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_cotizacion_compra'
+                        }
+                    },
                 ]
             },
             {

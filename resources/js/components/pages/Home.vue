@@ -22,6 +22,7 @@
                 <!-- /.info-box -->
             </div>
         </div>
+        <router-view name="modal"></router-view>
     </span>
 </template>
 

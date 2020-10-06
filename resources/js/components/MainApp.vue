@@ -2,7 +2,7 @@
     <body class="hold-transition sidebar-mini layout-footer-fixed layout-navbar-fixed" :class="$router.currentRoute.name == 'portal' ? 'sidebar-collapse' : ''">
     <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
-    <div v-if="currentUser && $router.currentRoute.name != 'google-2fa'" class="wrapper">
+    <div v-if="currentUser && $router.currentRoute.name != 'google-2fa' &&  $router.currentRoute.name.indexOf('modal') ===-1" class="wrapper">
         <AppHeader/>
         <AppSidebar/>
         <!-- Content Wrapper. Contains page content -->

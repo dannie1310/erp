@@ -27,6 +27,7 @@
             <!-- /.card -->
         </div>
         <!-- /.col -->
+        <router-view ></router-view>
     </div>
 </template>
 
