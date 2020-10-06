@@ -34,13 +34,26 @@ export const routes = [
     },
     {
         path: '/sao',
-        name: 'home',
-        component: require('./components/pages/Home.vue').default,
-        meta: {
+        /*name: 'home',*/
+        component: require('./components/pages/Layout.vue').default,
+        children: [
+            {
+                path: '',
+                name: 'sao',
+                component: require('./components/pages/Home.vue').default,
+                meta: {
+                    title: 'Sistemas',
+                    middleware: [auth, context],
+                    breadcrumb: {name: 'SAO ERP'}
+                }
+            },
+
+        ],
+        /*meta: {
             title: 'Inicio',
             middleware: [auth, context],
             breadcrumb: {name: 'INICIO'}
-        }
+        }*/
     },
     {
         path: '/configuracion',
