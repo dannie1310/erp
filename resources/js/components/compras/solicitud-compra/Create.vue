@@ -546,6 +546,8 @@
                 })
                     .then(data => {
                         this.almacenes = data.data
+                    }).finally(data => {
+                        this.cargando = false;
                     })
             },
             getAlmacen() {
