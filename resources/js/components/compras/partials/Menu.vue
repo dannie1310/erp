@@ -4,34 +4,34 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">MÓDULOS</li>
+            <li class="nav-header">SISTEMA DE COMPRAS</li>
 
             <li class="nav-item" v-if="$root.can('consultar_requisicion_compra')">
-                <router-link :to="{name: 'requisicion'}" class="nav-link">
+                <router-link :to="{name: 'requisicion'}" class="nav-link" :class="{active: this.$route.name == 'requisicion'}">
                     <i class="fa fa-circle nav-icon"></i>
                     <p>Requisiciones</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_solicitud_compra')">
-                <router-link :to="{name: 'solicitud-compra'}" class="nav-link">
+                <router-link :to="{name: 'solicitud-compra'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-compra'}">
                     <i class="fa fa-circle nav-icon"></i>
                     <p>Solicitudes</p>
                 </router-link>
             </li>
              <li class="nav-item" v-if="$root.can('consultar_cotizacion_compra')">
-                 <router-link :to="{name: 'cotizacion'}" class="nav-link">
+                 <router-link :to="{name: 'cotizacion'}" class="nav-link" :class="{active: this.$route.name == 'cotizacion'}">
                      <i class="fa fa-circle nav-icon"></i>
                      <p>Cotizaciones</p>
                  </router-link>
              </li>
              <li class="nav-item" v-if="$root.can('consultar_asignacion_proveedor')">
-                 <router-link :to="{name: 'asignacion-proveedor'}" class="nav-link">
+                 <router-link :to="{name: 'asignacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'asignacion_proveedor'}">
                      <i class="fa fa-circle nav-icon"></i>
                      <p>Asignación de Proveedores</p>
                  </router-link>
              </li>
             <li class="nav-item" v-if="$root.can('consultar_orden_compra')">
-                <router-link :to="{name: 'orden-compra'}" class="nav-link">
+                <router-link :to="{name: 'orden-compra'}" class="nav-link" :class="{active: this.$route.name == 'orden-compra'}">
                     <i class="fa fa-circle nav-icon"></i>
                     <p>Órdenes de Compra</p>
                 </router-link>

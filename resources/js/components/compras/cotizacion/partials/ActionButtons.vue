@@ -1,9 +1,5 @@
 <template>
     <div class="btn-group">
-        <Show v-bind:value="value" ></Show>
-        <router-link :to="{ name: 'cotizacion-show-modal', params: {id: this.value.id}}" v-if="$root.can('consultar_cotizacion_compra')" type="button" class="btn btn-sm btn-outline-success" title="Consultar">
-            <i class="fa fa-eye"></i>
-        </router-link>
         <router-link :to="{ name: 'cotizacion-show', params: {id: this.value.id}}" v-if="$root.can('consultar_cotizacion_compra')" type="button" class="btn btn-sm btn-outline-info" title="Consultar">
             <i class="fa fa-eye"></i>
         </router-link>
@@ -17,14 +13,13 @@
     </div>
 </template>
 <script>
-import Show from '../ShowModal';
 import Delete from "../Delete";
 import DescargarLayout from '../DescargaLayout';
 import CargaLayout from '../CargaLayout';
 import PDF from '../FormatoTablaComparativa';
     export default {
         name: "cotizacion-buttons",
-        components: {Delete, Show, DescargarLayout, CargaLayout, PDF},
+        components: {Delete, DescargarLayout, CargaLayout, PDF},
         props: ['value'],
         data()
         {

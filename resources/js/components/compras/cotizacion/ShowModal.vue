@@ -45,7 +45,7 @@
         },
         methods: {
             ver() {
-                var url = '/sao/compras/cotizacion/'+this.value.id+'/modal';
+                var url = '/sao/modal/cotizacion/'+this.value.id;
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%"></iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');

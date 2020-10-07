@@ -34,12 +34,14 @@ export const routes = [
     },
     {
         path: '/sao',
-        /*name: 'home',*/
-        component: require('./components/pages/Layout.vue').default,
+        components: {
+            default: require('./components/pages/Layout.vue').default,
+            menu: require('./components/pages/Menu.vue').default,
+        },
         children: [
             {
                 path: '',
-                name: 'sao',
+                name: 'home',
                 component: require('./components/pages/Home.vue').default,
                 meta: {
                     title: 'Sistemas',
@@ -47,13 +49,299 @@ export const routes = [
                     breadcrumb: {name: 'SAO ERP'}
                 }
             },
+            {
+                path: 'modal/cotizacion/:id',
+                name: 'modal-cotizacion',
+                components: {
+                    default: require('./components/compras/partials/Layout.vue').default,
+                    modal_sao: require('./components/compras/cotizacion/Show').default,
+                },
+                props: {
+                    default: true,
+                    modal_sao:true
+                },
+                meta: {
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cotizacion_compra'
+                },
+            },
+            {
+                path: 'compras',
+                component: require('./components/compras/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'compras',
+                        component: require('./components/compras/Index').default,
+                        meta: {
+                            title: 'Compras',
+                            breadcrumb: {parent:'home', name: 'COMPRAS'},
+                            middleware: [auth, context, access]
+                        }
+                    },
+                    {
+                        path: 'asignacion-proveedor',
+                        component: require('./components/compras/asignacion/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'asignacion-proveedor',
+                                component: require('./components/compras/asignacion/Index').default,
+                                meta: {
+                                    title: 'Asignación de Proveedores',
+                                    breadcrumb: {parent: 'compras', name: 'ASIGNACIÓN DE PROVEEDORES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_asignacion_proveedor'
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'asignacion-proveedor-create',
+                                component: require('./components/compras/asignacion/Create').default,
+                                meta: {
+                                    title: 'Registrar Asignación de Proveedores',
+                                    breadcrumb: { parent: 'asignacion-proveedor', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_asignacion_proveedor'
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'asignacion-proveedor-show',
+                                component: require('./components/compras/asignacion/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Asignación de Proveedores',
+                                    breadcrumb: { parent: 'asignacion-proveedor', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_asignacion_proveedor'
+                                }
+                            },
+                            {
+                                path: ':id/edit',
+                                name: 'asignacion-proveedor-edit',
+                                component: require('./components/compras/asignacion/Edit').default,
+                                props: true,
+                                meta: {
+                                    title: 'Editar Asignación de Proveedores',
+                                    breadcrumb: { parent: 'asignacion-proveedor', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_orden_compra'
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        path: 'catalogo-insumo',
+                        component: require('./components/compras/catalogos/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'catalogo-insumo',
+                                component: require('./components/compras/catalogos/Index').default,
+                                meta: {
+                                    title: 'Gestión de Insumos',
+                                    breadcrumb: {parent: 'compras', name: 'GESTIÓN DE INSUMOS'},
+                                    middleware: [auth, context],
+
+                                }
+                            },
+                            {
+                                path: 'familia',
+                                name: 'familia',
+                                component: require('./components/compras/catalogos/familia/Index').default,
+                                meta: {
+                                    title: 'Familia',
+                                    breadcrumb: {
+                                        parent: 'catalogo-insumo',
+                                        name: 'FAMILIA'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_familia_material','consultar_familia_herramienta_equipo']
+                                }
+                            },
+                            {
+                                path: 'material',
+                                name: 'material',
+                                component: require('./components/compras/catalogos/material/Index').default,
+                                meta: {
+                                    title: 'Material',
+                                    breadcrumb: {
+                                        parent: 'catalogo-insumo',
+                                        name: 'MATERIAL'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_insumo_material']
+                                }
+                            },
+                            {
+                                path: 'herramienta',
+                                name: 'herramienta',
+                                component: require('./components/compras/catalogos/herramienta/Index').default,
+                                meta: {
+                                    title: 'Herramienta y Equipo',
+                                    breadcrumb: {
+                                        parent: 'catalogo-insumo',
+                                        name: 'HERRAMIENTA Y EQUIPO'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_insumo_herramienta_equipo']
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        path: 'cotizacion',
+                        component: require('./components/compras/cotizacion/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'cotizacion',
+                                component: require('./components/compras/cotizacion/Index').default,
+                                meta: {
+                                    title: 'Cotizaciones',
+                                    breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_cotizacion_compra']
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'cotizacion-create',
+                                component: require('./components/compras/cotizacion/Create').default,
+                                meta: {
+                                    title: 'Registrar Cotización',
+                                    breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_cotizacion_compra']
+                                }
+                            },
+                            {
+                                path: ':id/editar',
+                                name: 'cotizacion-edit',
+                                props: true,
+                                component: require('./components/compras/cotizacion/Edit').default,
+                                meta: {
+                                    title: 'Editar Cotización',
+                                    breadcrumb: { parent: 'cotizacion', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['editar_cotizacion_compra', 'cargar_layout_cotizacion_compra']
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'cotizacion-show',
+                                component: require('./components/compras/cotizacion/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Cotización',
+                                    breadcrumb: { parent: 'cotizacion', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_cotizacion_compra'
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'orden-compra',
+                        component: require('./components/compras/orden-compra/partials/Layout.vue').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'orden-compra',
+                                component: require('./components/compras/orden-compra/Index').default,
+                                meta: {
+                                    title: 'Órdenes de Compra',
+                                    breadcrumb: { parent: 'compras', name: 'ÓRDENES DE COMPRA' },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_orden_compra']
+                                }
+                            },
+                            {
+                                path: ':id/edit',
+                                name: 'orden-compra-edit',
+                                props: true,
+                                component: require('./components/compras/orden-compra/Edit').default,
+                                meta: {
+                                    title: 'Editar Orden Compra',
+                                    breadcrumb: { parent: 'orden-compra', name: 'EDITAR'},
+                                    middleware: [auth, context],
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'requisicion',
+                        component: require('./components/compras/requisicion/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'requisicion',
+                                component: require('./components/compras/requisicion/Index').default,
+                                meta: {
+                                    title: 'Requisiciones de Compra',
+                                    breadcrumb: {parent: 'compras', name: 'REQUISICIONES'},
+                                    middleware: [auth, context],
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'requisicion-create',
+                                component: require('./components/compras/requisicion/Create').default,
+                                meta: {
+                                    title: 'Registrar Requisición',
+                                    breadcrumb: { parent: 'requisicion', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_requisicion_compra'
+                                }
+                            },
+
+                        ]
+                    },
+                    {
+                        path: 'solicitud-compra',
+                        component: require('./components/compras/solicitud-compra/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'solicitud-compra',
+                                component: require('./components/compras/solicitud-compra/Index').default,
+                                meta: {
+                                    title: 'Solicitudes',
+                                    breadcrumb: {parent: 'compras', name: 'SOLICITUDES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_compra'
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'solicitud-compra-create',
+                                component: require('./components/compras/solicitud-compra/Create').default,
+                                meta: {
+                                    title: 'Registrar Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_solicitud_compra'
+                                }
+                            },
+                            {
+                                path: ':id/editar',
+                                name: 'solicitud-compra-edit',
+                                component: require('./components/compras/solicitud-compra/Edit').default,
+                                props: true,
+                                meta: {
+                                    title: 'Editar Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_solicitud_compra'
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
 
         ],
-        /*meta: {
-            title: 'Inicio',
-            middleware: [auth, context],
-            breadcrumb: {name: 'INICIO'}
-        }*/
     },
     {
         path: '/configuracion',
@@ -1263,296 +1551,6 @@ export const routes = [
                     },
                 ]
             },
-        ]
-    },
-    {
-        path: '/sao/compras',
-        components: {
-            default: require('./components/compras/partials/Layout.vue').default,
-            menu: require('./components/compras/partials/Menu.vue').default
-        },
-        children: [
-            {
-                path: '',
-                name: 'compras',
-                component: require('./components/compras/Index').default,
-                meta: {
-                    title: 'Compras',
-                    breadcrumb: {parent:'home', name: 'COMPRAS'},
-                    middleware: [auth, context, access]
-                }
-            },
-            {
-                path: 'asignacion-proveedor',
-                component: require('./components/compras/asignacion/Layout').default,
-                children: [
-                    {
-                        path: '/',
-                        name: 'asignacion-proveedor',
-                        component: require('./components/compras/asignacion/Index').default,
-                        meta: {
-                            title: 'Asignación de Proveedores',
-                            breadcrumb: {parent: 'compras', name: 'ASIGNACIÓN DE PROVEEDORES'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_asignacion_proveedor'
-                        }
-                    },
-                    {
-                        path: 'create',
-                        name: 'asignacion-proveedor-create',
-                        component: require('./components/compras/asignacion/Create').default,
-                        meta: {
-                            title: 'Registrar Asignación de Proveedores',
-                            breadcrumb: { parent: 'asignacion-proveedor', name: 'REGISTRAR'},
-                            middleware: [auth, context, permission],
-                            permission: 'registrar_asignacion_proveedor'
-                        }
-                    },
-                    {
-                        path: ':id',
-                        name: 'asignacion-proveedor-show',
-                        component: require('./components/compras/asignacion/Show').default,
-                        props: true,
-                        meta: {
-                            title: 'Consultar Asignación de Proveedores',
-                            breadcrumb: { parent: 'asignacion-proveedor', name: 'VER'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_asignacion_proveedor'
-                        }
-                    },
-                    {
-                        path: ':id/edit',
-                        name: 'asignacion-proveedor-edit',
-                        component: require('./components/compras/asignacion/Edit').default,
-                        props: true,
-                        meta: {
-                            title: 'Editar Asignación de Proveedores',
-                            breadcrumb: { parent: 'asignacion-proveedor', name: 'EDITAR'},
-                            middleware: [auth, context, permission],
-                            permission: 'registrar_orden_compra'
-                        }
-                    }
-                ]
-            },
-            {
-                path: 'catalogo-insumo',
-                component: require('./components/compras/catalogos/Layout').default,
-                children: [
-                    {
-                        path: '/',
-                        name: 'catalogo-insumo',
-                        component: require('./components/compras/catalogos/Index').default,
-                        meta: {
-                            title: 'Gestión de Insumos',
-                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE INSUMOS'},
-                            middleware: [auth, context],
-
-                        }
-                    },
-                    {
-                        path: 'familia',
-                        name: 'familia',
-                        component: require('./components/compras/catalogos/familia/Index').default,
-                        meta: {
-                            title: 'Familia',
-                            breadcrumb: {
-                                parent: 'catalogo-insumo',
-                                name: 'FAMILIA'
-                            },
-                            middleware: [auth, context, permission],
-                            permission: ['consultar_familia_material','consultar_familia_herramienta_equipo']
-                        }
-                    },
-                    {
-                        path: 'material',
-                        name: 'material',
-                        component: require('./components/compras/catalogos/material/Index').default,
-                        meta: {
-                            title: 'Material',
-                            breadcrumb: {
-                                parent: 'catalogo-insumo',
-                                name: 'MATERIAL'
-                            },
-                            middleware: [auth, context, permission],
-                            permission: ['consultar_insumo_material']
-                        }
-                    },
-                    {
-                        path: 'herramienta',
-                        name: 'herramienta',
-                        component: require('./components/compras/catalogos/herramienta/Index').default,
-                        meta: {
-                            title: 'Herramienta y Equipo',
-                            breadcrumb: {
-                                parent: 'catalogo-insumo',
-                                name: 'HERRAMIENTA Y EQUIPO'
-                            },
-                            middleware: [auth, context, permission],
-                            permission: ['consultar_insumo_herramienta_equipo']
-                        }
-                    }
-                ]
-            },
-            {
-                path: 'cotizacion',
-                component: require('./components/compras/cotizacion/Layout').default,
-                children: [
-                    {
-                        path: '/',
-                        name: 'cotizacion',
-                        component: require('./components/compras/cotizacion/Index').default,
-                        meta: {
-                            title: 'Cotizaciones',
-                            breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
-                            middleware: [auth, context, permission],
-                            permission: ['consultar_cotizacion_compra']
-                        }
-                    },
-                    {
-                        path: 'create',
-                        name: 'cotizacion-create',
-                        component: require('./components/compras/cotizacion/Create').default,
-                        meta: {
-                            title: 'Registrar Cotización',
-                            breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR'},
-                            middleware: [auth, context, permission],
-                            permission: ['registrar_cotizacion_compra']
-                        }
-                    },
-                    {
-                        path: ':id/editar',
-                        name: 'cotizacion-edit',
-                        props: true,
-                        component: require('./components/compras/cotizacion/Edit').default,
-                        meta: {
-                            title: 'Editar Cotización',
-                            breadcrumb: { parent: 'cotizacion', name: 'EDITAR'},
-                            middleware: [auth, context, permission],
-                            permission: ['editar_cotizacion_compra', 'cargar_layout_cotizacion_compra']
-                        }
-                    },
-                    {
-                        path: ':id',
-                        name: 'cotizacion-show',
-                        component: require('./components/compras/cotizacion/Show').default,
-                        props: true,
-                        meta: {
-                            title: 'Consultar Cotización',
-                            breadcrumb: { parent: 'cotizacion', name: 'VER'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_cotizacion_compra'
-                        }
-                    },
-                    {
-                        path: ':id/modal',
-                        name: 'cotizacion-show-modal',
-                        component: require('./components/compras/cotizacion/Show').default,
-                        props: true,
-                        meta: {
-                            title: 'Consultar Cotización',
-                            breadcrumb: { parent: 'cotizacion', name: 'VER'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_cotizacion_compra'
-                        }
-                    },
-                ]
-            },
-            {
-                path: 'orden-compra',
-                component: require('./components/compras/orden-compra/partials/Layout.vue').default,
-                children: [
-                    {
-                        path: '/',
-                        name: 'orden-compra',
-                        component: require('./components/compras/orden-compra/Index').default,
-                        meta: {
-                            title: 'Órdenes de Compra',
-                            breadcrumb: { parent: 'compras', name: 'ÓRDENES DE COMPRA' },
-                            middleware: [auth, context, permission],
-                            permission: ['consultar_orden_compra']
-                        }
-                    },
-                    {
-                        path: ':id/edit',
-                        name: 'orden-compra-edit',
-                        props: true,
-                        component: require('./components/compras/orden-compra/Edit').default,
-                        meta: {
-                            title: 'Editar Orden Compra',
-                            breadcrumb: { parent: 'orden-compra', name: 'EDITAR'},
-                            middleware: [auth, context],
-                        }
-                    },
-                ]
-            },
-            {
-                path: 'requisicion',
-                component: require('./components/compras/requisicion/Layout').default,
-                children: [
-                    {
-                        path: '/',
-                        name: 'requisicion',
-                        component: require('./components/compras/requisicion/Index').default,
-                        meta: {
-                            title: 'Requisiciones de Compra',
-                            breadcrumb: {parent: 'compras', name: 'REQUISICIONES'},
-                            middleware: [auth, context],
-                        }
-                    },
-                    {
-                        path: 'create',
-                        name: 'requisicion-create',
-                        component: require('./components/compras/requisicion/Create').default,
-                        meta: {
-                            title: 'Registrar Requisición',
-                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR'},
-                            middleware: [auth, context, permission],
-                            permission: 'registrar_requisicion_compra'
-                        }
-                    },
-
-                ]
-            },
-            {
-                path: 'solicitud-compra',
-                component: require('./components/compras/solicitud-compra/Layout').default,
-                children: [
-                    {
-                        path: '/',
-                        name: 'solicitud-compra',
-                        component: require('./components/compras/solicitud-compra/Index').default,
-                        meta: {
-                            title: 'Solicitudes',
-                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_compra'
-                        }
-                    },
-                    {
-                        path: 'create',
-                        name: 'solicitud-compra-create',
-                        component: require('./components/compras/solicitud-compra/Create').default,
-                        meta: {
-                            title: 'Registrar Solicitud',
-                            breadcrumb: { parent: 'solicitud-compra', name: 'REGISTRAR'},
-                            middleware: [auth, context, permission],
-                            permission: 'registrar_solicitud_compra'
-                        }
-                    },
-                    {
-                        path: ':id/editar',
-                        name: 'solicitud-compra-edit',
-                        component: require('./components/compras/solicitud-compra/Edit').default,
-                        props: true,
-                        meta: {
-                            title: 'Editar Solicitud',
-                            breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
-                            middleware: [auth, context, permission],
-                            permission: 'editar_solicitud_compra'
-                        }
-                    }
-                ]
-            }
         ]
     },
     {

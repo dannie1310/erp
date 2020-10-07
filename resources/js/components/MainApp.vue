@@ -69,7 +69,6 @@
     import AppSidebar from "./pages/partials/Sidebar";
     import AppBreadcrumb from "./pages/partials/Breadcrumb";
     import AppFooter from "./pages/partials/Footer";
-
     export default {
         name: 'main-app',
         components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter},

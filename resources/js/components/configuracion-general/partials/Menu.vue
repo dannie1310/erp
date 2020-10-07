@@ -1,6 +1,7 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-header">CONFIGURACIÓN</li>
             <li class="nav-header"><a href="#Configuracion">ASIGNAR USUARIO</a></li>
             <li class="nav-item" >
                 <router-link :to="{name: 'configuracion-area'}" class="nav-link" :class="{active: this.$route.name == 'configuracion-area'}">
