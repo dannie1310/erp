@@ -25,6 +25,10 @@ class EntradaMaterial extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 19;
     public const OPCION_ANTECEDENTE = 1;
+    public const TIPO = 33;
+    public const OPCION = 1;
+    public const NOMBRE = "Entrada de Almacén";
+    public const ICONO = "fa fa-sign-in";
 
     protected $fillable = [
         'id_antecedente',

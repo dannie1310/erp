@@ -54,6 +54,16 @@ class Transaccion extends Model
         });
     }
 
+    public function getUsuarioRegistroAttribute()
+    {
+        if($this->usuario)
+        {
+            return $this->usuario->nombre_completo;
+        } else{
+            return $this->comentario;
+        }
+    }
+
     public function getNumeroFolioFormatAttribute()
     {
         return '# ' . sprintf("%05d", $this->numero_folio);
@@ -126,6 +136,18 @@ class Transaccion extends Model
     {
         $date = date_create($this->FechaHoraRegistro);
         return date_format($date,"d/m/Y H:i");
+    }
+
+    public function getHoraRegistroAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"H:i");
+    }
+
+    public function getFechaRegistroAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"d/m/Y");
     }
 
     public function getFechaHoraRegistroOrdenAttribute()

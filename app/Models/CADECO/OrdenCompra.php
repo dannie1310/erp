@@ -24,6 +24,9 @@ class OrdenCompra extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
     public const OPCION_ANTECEDENTE = 1;
+    public const TIPO = 19;
+    public const NOMBRE = "Órden de Compra";
+    public const ICONO = "fa fa-shopping-cart";
 
     protected static function boot()
     {

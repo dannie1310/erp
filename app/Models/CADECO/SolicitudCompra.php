@@ -26,7 +26,8 @@ class SolicitudCompra extends Transaccion
     public const TIPO_ANTECEDENTE = null;
     public const TIPO = 17;
     public const OPCION = 1;
-    public const NOMBRE = "Solicitud";
+    public const NOMBRE = "Solicitud de Compra";
+    public const ICONO = "fa fa-comment-dots";
 
     protected static function boot()
     {
@@ -77,6 +78,16 @@ class SolicitudCompra extends Transaccion
     public function cotizaciones()
     {
         return $this->hasMany(CotizacionCompra::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function ordenesCompra()
+    {
+        return $this->hasMany(OrdenCompra::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function entradasAlmacen()
+    {
+        return $this->hasManyThrough(EntradaMaterial::class, OrdenCompra::class, "id_antecedente", "id_antecedente", "id_transaccion", "id_transaccion");
     }
 
     public function activoFijo()
@@ -513,12 +524,64 @@ class SolicitudCompra extends Transaccion
     public function getRelacionesAttribute()
     {
         $relaciones = [];
-        $cotizaciones = $this->cotizaciones;
+
         $i = 0;
+        $relaciones[$i]["tipo"] = SolicitudCompra::NOMBRE;
+        $relaciones[$i]["tipo_numero"] = SolicitudCompra::TIPO;
+        $relaciones[$i]["numero_folio"] = $this->numero_folio_format;
+        $relaciones[$i]["id"] = $this->id_transaccion;
+        $relaciones[$i]["icono"] = SolicitudCompra::ICONO;
+        $relaciones[$i]["fecha_hora"] = $this->fecha_hora_registro_format;
+        $relaciones[$i]["hora"] = $this->hora_registro;
+        $relaciones[$i]["fecha"] = $this->fecha_registro;
+        $relaciones[$i]["usuario"] = $this->usuario_registro;
+        $relaciones[$i]["observaciones"] = $this->observaciones;
+        $i++;
+        $cotizaciones = $this->cotizaciones;
         foreach($cotizaciones as $cotizacion)
         {
-            $relaciones[$i]["tipo"] = CotizacionCompra::NOMBRE.' '.$cotizacion->numero_folio_format;
+            $relaciones[$i]["tipo"] = CotizacionCompra::NOMBRE;
+            $relaciones[$i]["tipo_numero"] = CotizacionCompra::TIPO;
+            $relaciones[$i]["numero_folio"] = $cotizacion->numero_folio_format;
             $relaciones[$i]["id"] = $cotizacion->id_transaccion;
+            $relaciones[$i]["icono"] = CotizacionCompra::ICONO;
+            $relaciones[$i]["fecha_hora"] = $cotizacion->fecha_hora_registro_format;
+            $relaciones[$i]["hora"] = $cotizacion->hora_registro;
+            $relaciones[$i]["fecha"] = $cotizacion->fecha_registro;
+            $relaciones[$i]["usuario"] = $cotizacion->usuario_registro;
+            $relaciones[$i]["observaciones"] = $cotizacion->observaciones;
+            $i++;
+
+        }
+        $ordenes_compra = $this->ordenesCompra;
+        foreach($ordenes_compra as $orden_compra)
+        {
+            $relaciones[$i]["tipo"] = OrdenCompra::NOMBRE;
+            $relaciones[$i]["tipo_numero"] = OrdenCompra::TIPO;
+            $relaciones[$i]["numero_folio"] = $orden_compra->numero_folio_format;
+            $relaciones[$i]["id"] = $orden_compra->id_transaccion;
+            $relaciones[$i]["icono"] = OrdenCompra::ICONO;
+            $relaciones[$i]["fecha_hora"] = $orden_compra->fecha_hora_registro_format;
+            $relaciones[$i]["hora"] = $orden_compra->hora_registro;
+            $relaciones[$i]["fecha"] = $orden_compra->fecha_registro;
+            $relaciones[$i]["usuario"] = $orden_compra->usuario_registro;
+            $relaciones[$i]["observaciones"] = $orden_compra->observaciones;
+            $i++;
+
+        }
+        $entradas_almacen = $this->entradasAlmacen();
+        foreach($entradas_almacen as $entrada_almacen)
+        {
+            $relaciones[$i]["tipo"] = EntradaMaterial::NOMBRE;
+            $relaciones[$i]["tipo_numero"] = EntradaMaterial::TIPO;
+            $relaciones[$i]["numero_folio"] = $entrada_almacen->numero_folio_format;
+            $relaciones[$i]["id"] = $entrada_almacen->id_transaccion;
+            $relaciones[$i]["icono"] = EntradaMaterial::ICONO;
+            $relaciones[$i]["fecha_hora"] = $entrada_almacen->fecha_hora_registro_format;
+            $relaciones[$i]["hora"] = $entrada_almacen->hora_registro;
+            $relaciones[$i]["fecha"] = $entrada_almacen->fecha_registro;
+            $relaciones[$i]["usuario"] = $entrada_almacen->usuario_registro;
+            $relaciones[$i]["observaciones"] = $entrada_almacen->observaciones;
             $i++;
 
         }

@@ -1,6 +1,6 @@
 <template>
     <div class="btn-group">
-        <router-link :to="{ name: 'cotizacion-show', params: {id: this.value.id}}" v-if="$root.can('consultar_cotizacion_compra')" type="button" class="btn btn-sm btn-outline-info" title="Consultar">
+        <router-link :to="{ name: 'cotizacion-show', params: {id: this.value.id}}" v-if="$root.can('consultar_cotizacion_compra')" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar">
             <i class="fa fa-eye"></i>
         </router-link>
         <DescargarLayout v-if="$root.can('descargar_layout_cotizacion_compra') && $root.can('editar_cotizacion_compra') && value.edit" v-bind:id="value.id"></DescargarLayout>

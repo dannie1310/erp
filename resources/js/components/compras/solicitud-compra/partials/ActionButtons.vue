@@ -2,18 +2,20 @@
     <div class="btn-group">
         <Aprobar v-if="value.aprobar" v-bind:id="value.id"></Aprobar>
         <button v-if="value.edit" @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar Solicitud"> <i class="fa fa-pencil"></i></button>
-        <Consulta v-if="value.show" @click="value.id" v-bind:id="value.id" v-bind:solicitud_consulta="value.solicitud_consulta"/>
+        <router-link  :to="{ name: 'solicitud-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_compra')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+            <i class="fa fa-eye"></i>
+        </router-link>
         <PDF v-bind:id="value.id"/>
         <Delete v-if="value.delete" v-bind:id="value.id"/>
         <Relaciones v-bind:relaciones="value.relaciones"/>
     </div>
 </template>
 <script>
-    import Consulta from '../Show';
+    import Consulta from '../ShowModal';
     import PDF from '../FormatoSolicitudCompra.vue';
     import Aprobar from '../Autorizar';
     import Delete from "../Delete";
-    import Relaciones from "../../../globals/Relaciones";
+    import Relaciones from "../../../globals/ModalRelaciones";
     export default {
         name: "solicitud-compra-buttons",
         components: {PDF, Consulta, Aprobar, Delete,Relaciones},

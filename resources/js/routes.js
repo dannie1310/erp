@@ -51,18 +51,22 @@ export const routes = [
             },
             {
                 path: 'modal/cotizacion/:id',
-                name: 'modal-cotizacion',
-                components: {
-                    default: require('./components/compras/partials/Layout.vue').default,
-                    modal_sao: require('./components/compras/cotizacion/Show').default,
-                },
-                props: {
-                    default: true,
-                    modal_sao:true
-                },
+                name: 'modal_cotizacion',
+                component: require('./components/compras/cotizacion/Show').default,
+                props: true,
                 meta: {
                     middleware: [auth, context, permission],
                     permission: 'consultar_cotizacion_compra'
+                },
+            },
+            {
+                path: 'modal/solicitud_compra/:id',
+                name: 'modal_solicitud_compra',
+                component: require('./components/compras/solicitud-compra/Show').default,
+                props: true,
+                meta: {
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_solicitud_compra'
                 },
             },
             {
@@ -322,6 +326,18 @@ export const routes = [
                                     breadcrumb: { parent: 'solicitud-compra', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_solicitud_compra'
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'solicitud-show',
+                                component: require('./components/compras/solicitud-compra/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_compra'
                                 }
                             },
                             {

@@ -24,6 +24,7 @@ class CotizacionCompra  extends Transaccion
     public const TIPO = 18;
     public const OPCION = 1;
     public const NOMBRE = "Cotización";
+    public const ICONO = "fa fa-comment-dollar";
 
     protected $fillable = [
         'id_transaccion',

@@ -1,11 +1,11 @@
 <template>
     <!-- Sidebar Menu -->
     <span>
-        <MenuAlmacen></MenuAlmacen>
         <MenuCompras></MenuCompras>
-        <MenuContabilidad></MenuContabilidad>
+        <MenuAlmacen></MenuAlmacen>
         <MenuContratos></MenuContratos>
         <MenuFinanzas></MenuFinanzas>
+        <MenuContabilidad></MenuContabilidad>
         <MenuCatalogos></MenuCatalogos>
         <MenuConfiguracion></MenuConfiguracion>
     </span>

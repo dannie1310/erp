@@ -13,6 +13,14 @@ class RelacionTransformer extends TransformerAbstract
         return [
             'id' => $model["id"],
             'tipo' => $model["tipo"],
+            'tipo_numero' => $model["tipo_numero"],
+            'numero_folio' => $model["numero_folio"],
+            'icono' => $model["icono"],
+            'fecha_hora' => $model["fecha_hora"],
+            'usuario' => $model["usuario"],
+            'observaciones' => $model["observaciones"],
+            'hora' => $model["hora"],
+            'fecha' => $model["fecha"],
         ];
     }
 

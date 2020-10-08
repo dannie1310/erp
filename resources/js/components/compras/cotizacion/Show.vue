@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div  v-if="cargando">
+        <div  v-if="!cotizacion">
             <div class="row" >
                 <div class="col-md-12">
                     <div class="spinner-border text-success" role="status">
@@ -155,10 +155,6 @@
                 }).then(data => {
                     this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
                     this.items = data.partidas.data;
-                    $(this.$refs.modal).appendTo('body')
-                    $(this.$refs.modal).modal('show')
-
-
                 })
                 .finally(() => {
                     this.cargando = false;

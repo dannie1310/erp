@@ -40,7 +40,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
-                    { title: 'Folio SAO Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtons').default},
+                    { title: 'Folio SAO Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtonsConsulta').default},
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
@@ -131,7 +131,7 @@
                         solicitud: $.extend({}, {
                             show: (cotizacion.solicitud) ? true : false,
                             id: (cotizacion.solicitud) ? cotizacion.solicitud.id : null,
-                            solicitud_consulta: (cotizacion.solicitud) ? cotizacion.solicitud : null
+                            numero_folio: (cotizacion.solicitud) ? cotizacion.solicitud.numero_folio_format : null
                         }),
                         buttons: $.extend({}, {
                             show: true,
