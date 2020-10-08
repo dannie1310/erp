@@ -32,7 +32,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
         $this->obra = Obra::find(Context::getIdObra());
         $this->contratista = $contratista;
         $this->encabezado_pdf = utf8_decode($this->obra->facturar);
-        //$this->createQR();
+        $this->createQR();
     }
 
     function Header()
@@ -42,16 +42,16 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
         $this->Cell(17.5, 1, 'TABLA COMPARATIVA DE SUBCONTRATISTAS', 0, 0, 'C', 0);
         $this->SetFont('Arial', 'B', 7);
         $this->SetX(20);
-        $this->Cell(4, .6, 'FOLIO CONTRATO:', 'L T', 0, 'L');
+        $this->Cell(4, .5, 'FOLIO CONTRATO:', 'L T', 0, 'L');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(3, .6,$this->contratista->contratoProyectado->numero_folio_format, 'R T', 0, 'L');
-        $this->Ln(.6);
-        $this->Cell(19.3);
+        $this->Cell(3, .5,$this->contratista->contratoProyectado->numero_folio_format, 'R T', 0, 'L');
+        $this->Ln(.5);
+        $this->Cell(19.102);
         $this->SetFont('Arial', 'B', 7);
-        $this->Cell(4, .6, 'FECHA DE CONSULTA:', 'LB', 0, 'L');
-        $this->Cell(3, .6, date("d-m-Y h:m:i"), 'RB', 0, 'L');
+        $this->Cell(4, .5, 'FECHA DE CONSULTA:', 'LB', 0, 'L');
+        $this->Cell(3, .5, date("d-m-Y h:m:i"), 'RB', 0, 'L');
 
-        $this->Ln(.7);
+        $this->Ln(.2);
         $this->y_para_descripcion = $this->GetY();
         $this->y_para_descripcion_arr = array();
         $this->y_para_obs_partidas = $this->GetY();
@@ -64,31 +64,30 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
 
     public function partidas()
     {
-        /*
-        $datos_partidas = $this->cotizacion->datosComparativos();
+        $datos_partidas = $this->contratista->datosComparativos();
         $this->SetFillColor(150, 150, 150);
         $this->SetTextColor(255, 255, 255);
-        $no_cotizaciones = count($this->cotizacion->solicitud->cotizaciones);
+        $no_cotizaciones = count($this->contratista->contratoProyectado->presupuestos);
         $font = 5;
         $font2 = 4;
         $heigth = 0.306;
-        $cotizacinesXFila = 4;
+        $cotizacinesXFila = 3;
         $anchos["des"] = 4.7;
         $anchos["u"] = $anchos["c"] = 0.77;
         $anchos["aesp"] = $anchos["u"] + $anchos["c"];
         $anchos["espacio_detalles_globales"] = ($anchos["aesp"] + $anchos["des"]) / 2;
 
-        $anchos["pu"] = $anchos["fe"] = 1;
-        $anchos["d"] = $anchos["ant"] = 0.5;
-        $anchos["tc"] = $anchos["it"] = 1.12;
-        $anchos["m"] = 0.5;
-        $anchos["ic"] = 1.13;
+        $anchos["fe"] = $anchos["ar"] = 2;
+        $anchos["dg"] = 2.7;
+        $anchos["d"] = $anchos["ant"] = $anchos["pu"] = $anchos["porc"] = 1;
+        $anchos["tc"] = $anchos["it"] = 1.05;
+        $anchos["m"] = 1;
+        $anchos["ic"] = 1;
+        $anchos["dias"] = 1;
+        $anchos["vig"] = $anchos["cre"] = $anchos['importe'] = 1.1;
+        $anchos["op"] = $anchos["og"] = $anchos["p"] = 6.2;
+        $anchos["desc_g"] = 4.1;
 
-        $anchos["dg"] = $anchos["pu"] + $anchos["d"];
-        $anchos["op"] = $anchos["og"] = $anchos["p"] = $anchos["pu"] + $anchos["d"] + $anchos["it"] + $anchos["m"] + $anchos["ic"];
-        $anchos["fe"] = $anchos["vig"] = $anchos["og"] / 4;
-        $anchos["ant"] = $anchos["cre"] = $anchos["ent"] = $anchos["ivg"] = $anchos["og"] / 4;
-        $anchos["ar"] = $anchos["m"] + $anchos["ic"];
         $no_arreglos = ceil($no_cotizaciones / $cotizacinesXFila);
         $i_e = 0;
         $this->Ln();
@@ -101,67 +100,103 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $inc_ie = abs($no_cotizaciones - $i_e);
             }
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if ($datos_partidas['cotizaciones'][$i]['ivg_partida'] == 0) {
+               // if ($datos_partidas['cotizaciones'][$i]['ivg_partida'] == 0) {
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
-                } else {
+                /*} else {
                     $this->SetFillColor(150, 150, 150);
                     $this->SetTextColor(255, 255, 255);
-                }
+                }*/
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["p"], $heigth, $datos_partidas['cotizaciones'][$i]['empresa'], 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["p"], $heigth, $datos_partidas['presupuestos'][$i]['empresa'], 1, 0, 'C', 1);
             }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if ($datos_partidas['cotizaciones'][$i]['ivg_partida'] == 0) {
-                    $this->SetFillColor(0, 0, 0);
-                    $this->SetTextColor(255, 255, 255);
-                } else {
+                // if ($datos_partidas['cotizaciones'][$i]['ivg_partida'] == 0) {
+                $this->SetFillColor(255, 255, 255);
+                $this->SetTextColor(0, 0, 0);
+                /*} else {
                     $this->SetFillColor(150, 150, 150);
                     $this->SetTextColor(255, 255, 255);
-                }
+                }*/
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["fe"], $heigth, "Fecha:", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["fe"], $heigth, $datos_partidas['cotizaciones'][$i]['fecha'], 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["p"], $heigth, 'CONDICIONES GENERALES', 1, 0, 'C', 1);
+            }
+            $this->Ln();
+            $this->Cell($anchos["aesp"] + $anchos["des"]);
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
+               // $this->SetFillColor(150, 150, 150);
+                //$this->SetTextColor(255, 255, 255);
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
+                $this->SetFont('Arial', '', $font);
+                $this->CellFitScale($anchos["fe"], $heigth, utf8_decode("Fecha Cotización:"), 1, 0, 'C', 1);
+                $this->SetTextColor(130, 130, 130);
+                $this->SetFillColor(255, 255, 255);
+                $this->CellFitScale($anchos["dias"], $heigth, $datos_partidas['presupuestos'][$i]['fecha'], 1, 0, 'C', 1);
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["vig"], $heigth, "Vigencia:", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["vig"], $heigth, $datos_partidas['cotizaciones'][$i]['vigencia'], 1, 0, 'C', 1);
-            }
+                $this->SetTextColor(130, 130, 130);
+                $this->SetFillColor(255, 255, 255);
+                $this->CellFitScale($anchos["vig"], $heigth, $datos_partidas['presupuestos'][$i]['vigencia'], 1, 0, 'C', 1);
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
+                $this->CellFitScale($anchos["dias"], $heigth, utf8_decode("Días"), 1, 0, 'C', 1);
 
+            }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if ($datos_partidas['cotizaciones'][$i]['ivg_partida'] == 0) {
+               /* if ($datos_partidas['cotizaciones'][$i]['ivg_partida'] == 0) {
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
                 } else {
-                    $this->SetFillColor(150, 150, 150);
+                 */   $this->SetFillColor(150, 150, 150);
                     $this->SetTextColor(255, 255, 255);
-                }
-                $this->SetFont('Arial', 'B', $font);
+                //}
+                $this->SetFont('Arial', '', $font);
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["ant"], $heigth, "Anticipo", 1, 0, 'C', 1);
+                $this->SetTextColor(130, 130, 130);
+                $this->SetFillColor(255, 255, 255);
+                $this->CellFitScale($anchos["ant"], $heigth, $datos_partidas['presupuestos'][$i]['anticipo'], 1, 0, 'C', 1);
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
+                $this->CellFitScale($anchos["dias"], $heigth, "%", 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["cre"], $heigth, utf8_decode("Crédito"), 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["ent"], $heigth, "Plazo Ent.", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["ivg"], $heigth, "IVG", 1, 0, 'C', 1);
+                $this->SetTextColor(130, 130, 130);
+                $this->SetFillColor(255, 255, 255);
+                $this->CellFitScale($anchos["cre"], $heigth, $datos_partidas['presupuestos'][$i]['dias_credito'], 1, 0, 'C', 1);
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
+                $this->CellFitScale($anchos["dias"], $heigth, utf8_decode("Días"), 1, 0, 'C', 1);
+            }
+            $this->Ln();
+            $this->Ln();
+            $this->Cell($anchos["aesp"] + $anchos["des"]);
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
+                $this->SetFillColor(0, 0, 0);
+                $this->SetTextColor(255, 255, 255);
+                $this->SetFont('Arial', 'B', $font);
+                $this->CellFitScale($anchos["p"], $heigth, 'Cotizado', 1, 0, 'C', 1);
             }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if ($datos_partidas['cotizaciones'][$i]['ivg_partida'] == 0) {
-                    $this->SetFillColor(0, 0, 0);
-                    $this->SetTextColor(255, 255, 255);
-                } else {
-                    $this->SetFillColor(150, 150, 150);
-                    $this->SetTextColor(255, 255, 255);
-                }
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["ant"], $heigth, $datos_partidas['cotizaciones'][$i]['anticipo'], 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["cre"], $heigth, $datos_partidas['cotizaciones'][$i]['dias_credito'], 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["ent"], $heigth, $datos_partidas['cotizaciones'][$i]['plazo_entrega'], 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["ivg"], $heigth, $datos_partidas['cotizaciones'][$i]['ivg_partida_porcentaje'] > 0 ? number_format($datos_partidas['cotizaciones'][$i]['ivg_partida_porcentaje'] * 100, '2', '.', ',') . '%' : '', 1, 0, 'C', 1);
+                $this->Cell($anchos["pu"], $heigth, "Precio", 1, 0, 'C', 1);
+                $this->Cell($anchos["porc"], $heigth, "%", 1, 0, 'C', 1);
+                $this->Cell($anchos["pu"], $heigth, "Precio", 1, 0, 'C', 1);
+                $this->Cell($anchos['importe'], $heigth, "", 1, 0, 'C', 1);
+                $this->Cell($anchos['importe'], $heigth, "", 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["dias"], $heigth, "Importe Moneda", 1, 0, 'C', 1);
             }
             $this->Ln();
-
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
             $this->SetFont('Arial', 'B', $font);
@@ -172,47 +207,45 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->SetFillColor(100, 100, 100);
                 $this->SetTextColor(255, 255, 255);
                 $this->SetFont('Arial', 'B', $font);
-                $this->CellFitScale($anchos["pu"], $heigth, "Precio U.", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["d"], $heigth, "I V", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["it"], $heigth, "Importe T.", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["m"], $heigth, "M", 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["ic"], $heigth, "Importe T. Conv.", 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["pu"], $heigth, "Unitario AD", 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["porc"], $heigth, "Descto.", 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["pu"], $heigth, "Unitario", 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["importe"], $heigth, "Importe", 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["importe"], $heigth, "Moneda", 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["dias"], $heigth, "Comparable", 1, 0, 'C', 1);
             }
             $this->Ln();
             $this->y_para_descripcion = $this->GetY();
             $this->y_para_descripcion_arr[] = $this->GetY();
+            //dd($datos_partidas['partidas']);
             foreach ($datos_partidas['partidas'] as $key => $partida) {
-                $ki = -1;
                 asort($this->y_para_descripcion_arr);
                 $this->y_para_descripcion = array_pop($this->y_para_descripcion_arr);
                 $this->SetY($this->y_para_descripcion);
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font2);
-                $this->CellFitScale($anchos["des"], $heigth, utf8_decode($partida['material']) . ' ', 1, 0, 'L', 0, '');
+                $this->CellFitScale($anchos["des"], $heigth, utf8_decode($partida['concepto']) . ' ', 1, 0, 'L', 0, '');
                 $this->Cell($anchos["c"], $heigth, $partida['unidad'], 1, 0, 'L', 0, '');
-                $this->Cell($anchos["u"], $heigth, number_format($partida['cantidad'], '2', '.', ','), 1, 0, 'L', 0, '');
+                $this->Cell($anchos["u"], $heigth, number_format($partida['cantidad_presupuestada'], '2', '.', ','), 1, 0, 'L', 0, '');
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     $ki = 0;
-                    if (array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_unitario'] > 0) {
-                        $ki = $this->cotizacion->calcular_ki($partida['cotizaciones'][$i]['precio_unitario_compuesto'], $datos_partidas['precios_menores'][$key]);
-                        if ($ki == 0) {
-                            $this->SetFillColor(150, 150, 150);
-                            $this->SetTextColor(0, 0, 0);
-                        } else {
+                    if (array_key_exists('presupuestos', $partida) && array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario'] != 0) {
+                        $this->SetFillColor(150, 150, 150);
+                        $this->SetTextColor(0, 0, 0);
+
+                        $this->SetFont('Arial', '', $font2);
+                        $this->Cell($anchos["pu"], $heigth, '', "T B L", 0, "R", 1);
+                        $this->CellFitScale($anchos["porc"], $heigth, $partida['presupuestos'][$i]['descuento_partida'] > 0 ? $partida['presupuestos'][$i]['descuento_partida'] : '-', "T B L", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, number_format($partida['presupuestos'][$i]['precio_unitario'], 2, '.', ','), "T B L", 0, "R", 1);
+                        $this->CellFitScale($anchos["importe"], $heigth, '', "T B L", 0, "R", 1);
+                        $this->Cell($anchos["importe"], $heigth, '', "B L R T", 0, "R", 1);
+                        $this->Cell($anchos["dias"], $heigth, '', "B L R T", 0, "R", 1);
+                        /* } else {
                             $this->SetFillColor(255, 255, 255);
                             $this->SetTextColor(0, 0, 0);
-                        }
-                    }else {
-                        $this->SetFillColor(200, 200, 200);
-                        $this->SetTextColor(200, 200, 200);
+                        }*/
                     }
-                    $this->SetFont('Arial', '', $font2);
-                    $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_con_descuento'] ?  number_format($partida['cotizaciones'][$i]['precio_con_descuento'], 3, '.', ',') : '', "T B L", 0, "R", 1);
-                    $this->CellFitScale($anchos["d"], $heigth, $ki == 0 ? '-' : number_format($ki, '4', '.', ','), "T B L", 0, "R", 1);
-                    $this->Cell($anchos["it"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_total_compuesto'] ? number_format($partida['cotizaciones'][$i]['precio_total_compuesto'], 2, '.', ',') : '', "T B L", 0, "R", 1);
-                    $this->CellFitScale($anchos["m"], $heigth, array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_unitario'] > 0 ? $partida['cotizaciones'][$i]['tipo_cambio_descripcion'] : '-', "T B L", 0, "R", 1);
-                    $this->Cell($anchos["ic"], $heigth,array_key_exists($i, $partida['cotizaciones']) && $partida['cotizaciones'][$i]['precio_total_moneda'] ? number_format($partida['cotizaciones'][$i]['precio_total_moneda'], 2, '.', ',') : '', "B L R T", 0, "R", 1);
                 }
 
                 $this->Ln();
@@ -220,34 +253,56 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->y_para_obs_partidas = $this->getY();
                 $xos_ini = $this->getX();
 
-                $this->MultiCell($anchos["des"], $heigth, $partida['observaciones'], 1, 'L', 0, 1);
+                $this->MultiCell($anchos["des"], $heigth, $partida['observaciones'], 0, 'L', 0, 1);
                 $this->y_para_descripcion_arr[] = $this->GetY();
                 $this->y_fin_obs_par_sol_arr[] = $this->GetY();
                 $xos_ini += $anchos["des"];
                 $this->setY($this->y_para_obs_partidas);
                 $this->setX($xos_ini);
-                $this->CellFitScale($anchos["aesp"], $heigth, 'Observaciones de Partida:', 'B', 0, 'R', 0);
+                $this->CellFitScale($anchos["aesp"], $heigth, 'Observaciones de Partida:', '', 0, 'R', 0);
                 $yop_ini = $this->getY();
                 $xop_ini = $this->getX();
 
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                    $this->SetFillColor(255, 255, 255);
-                    $this->SetTextColor(0, 0, 0);
-                    $this->SetFont('Arial', '', $font2);
-                    $this->setY($yop_ini);
-                    $this->setX($xop_ini);
-                    $this->MultiCell($anchos["op"], $heigth, array_key_exists($i, $partida['cotizaciones']) && (float)$partida['cotizaciones'][$i]['precio_unitario'] > 0 ? utf8_decode($partida['cotizaciones'][$i]['observaciones']) : '', "B L R T", "L", 1);
-                    $this->y_para_descripcion_arr[] = $this->GetY();
-                    $xop_ini += $anchos["op"];
+                    if (array_key_exists('presupuestos', $partida) && array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario'] != 0 && $partida['presupuestos'][$i]['observaciones']) {
+                        $this->SetFillColor(255, 255, 255);
+                        $this->SetTextColor(0, 0, 0);
+                        $this->SetFont('Arial', '', $font2);
+                        $this->setY($yop_ini);
+                        $this->setX($xop_ini);
+                        $this->MultiCell($anchos["op"], $heigth, utf8_decode($partida['presupuestos'][$i]['observaciones']), "B L R T", "L", 1);
+                        $this->y_para_descripcion_arr[] = $this->GetY();
+                        $xop_ini += $anchos["op"];
+                    }
                 }
                 $this->Ln();
             }
-
             asort($this->y_fin_obs_par_sol_arr);
             $this->y_fin_obs_par_sol = array_pop($this->y_fin_obs_par_sol_arr);
             $this->SetY($this->y_fin_obs_par_sol);
             $this->Ln();
+            $this->Cell($anchos["aesp"] + $anchos["des"]);
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
+                $this->SetFillColor(0, 0, 0);
+                $this->SetTextColor(255, 255, 255);
+                $this->SetFont('Arial', 'B', $font);
+                $this->CellFitScale($anchos["p"], $heigth, 'Cotizado', 1, 0, 'C', 1);
+            }
             $this->Ln();
+            $this->SetFillColor(100, 100, 100);
+            $this->SetTextColor(255, 255, 255);
+            $this->SetFont('Arial', 'B', $font);
+            $this->Cell($anchos["espacio_detalles_globales"]);
+            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal Antes Descuentos", 1, 0, "R", 1);
+            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
+                $this->SetFillColor(255, 255, 255);
+                $this->SetTextColor(0, 0, 0);
+                $this->SetFont('Arial', 'B', $font);
+                $this->Cell($anchos["desc_g"], $heigth,'', 0, 0, 'R', 1);
+                $this->Cell($anchos["importe"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) ? $datos_partidas['presupuestos'][$i]['tipo_moneda'] : '-', 0, 0, 'C', 1);
+                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'], 2, '.',',') : '-', 0, 0, 'R', 1);
+            }
+            $this->Ln(0.4);
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
             $this->SetFont('Arial', 'B', $font);
@@ -257,21 +312,23 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['descuento_global'] : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["desc_g"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) ? $datos_partidas['presupuestos'][$i]['descuento_global'] : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["importe"], $heigth,'%', 1, 0, 'C', 1);
+                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'], 2, '.',',') : '-', 1, 0, 'R', 1);
             }
-            $this->Ln();
+            $this->Ln(0.4);
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
-            $this->Cell($anchos["espacio_detalles_globales"], $heigth, utf8_decode("Subtotal Moneda  Conversión:"), 1, 0, "R", 1);
+            $this->Cell($anchos["espacio_detalles_globales"], $heigth, utf8_decode("Subtotal:"), 1, 0, "R", 1);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? number_format($datos_partidas['cotizaciones'][$i]['suma_subtotal_partidas'], 2, '.', ',') : '', 1, 0, 'R', 1);
+                $this->Cell($anchos["desc_g"], $heigth);
+                $this->Cell($anchos["importe"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) ? $datos_partidas['presupuestos'][$i]['tipo_moneda'] : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'], 2, '.', ',') : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -283,117 +340,45 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? number_format($datos_partidas['cotizaciones'][$i]['iva_partidas'], 2, '.', ',') : '', 1, 0, 'R', 1);
+                $this->Cell($anchos["desc_g"], $heigth);
+                $this->Cell($anchos["importe"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) ? $datos_partidas['presupuestos'][$i]['tipo_moneda'] : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['iva_partidas'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['iva_partidas'], 2, '.', ',') : '-', 1, 0, 'R', 1);
             }
-
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
-            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Total:", 1, 0, "R", 1);
+            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "TOTAL:", 1, 0, "R", 1);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? number_format($datos_partidas['cotizaciones'][$i]['total_partidas'], 2, '.', ',') : '', 1, 0, 'R', 1);
+                $this->Cell($anchos["desc_g"], $heigth);
+                $this->Cell($anchos["importe"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) ? $datos_partidas['presupuestos'][$i]['tipo_moneda'] : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['total_partidas'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['total_partidas'], 2, '.', ',') : '-', 1, 0, 'R', 1);
             }
-
             $this->Ln();
             $this->Ln();
-            $this->Ln();
-            $this->SetFillColor(100, 100, 100);
-            $this->SetTextColor(255, 255, 255);
-            $this->SetFont('Arial', 'B', $font);
-            $this->Cell($anchos["espacio_detalles_globales"]);
-            $this->Cell($anchos["espacio_detalles_globales"], $heigth, utf8_decode("Moneda  Conversión:"), 1, 0, "R", 1);
+            $this->Cell($anchos["aesp"] + $anchos["des"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                $this->SetFillColor(255, 255, 255);
-                $this->SetTextColor(0, 0, 0);
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ?  $datos_partidas['cotizaciones'][$i]['tipo_moneda'] : '', 1, 0, 'R', 1);
-            }
-
-            $this->Ln();
-            $this->SetFillColor(100, 100, 100);
-            $this->SetTextColor(255, 255, 255);
-            $this->SetFont('Arial', 'B', $font);
-            $this->Cell($anchos["espacio_detalles_globales"]);
-            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal Importe Peso (MXP):", 1, 0, "R", 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                $this->SetFillColor(255, 255, 255);
-                $this->SetTextColor(0, 0, 0);
-                $this->SetFont('Arial', 'B', $font);
-
-                $this->Cell($anchos["ar"] + $anchos["it"], $heigth);
-                $this->Cell($anchos["dg"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['subtotal_peso'] : '', 1, 0, 'R', 1);
+                $this->CellFitScale($anchos["p"], $heigth, 'Observaciones Globales', 1, 0, 'C', 1);
             }
             $this->Ln();
-            $this->SetFillColor(100, 100, 100);
-            $this->SetTextColor(255, 255, 255);
-            $this->SetFont('Arial', 'B', $font);
-            $this->Cell($anchos["espacio_detalles_globales"]);
-            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal Importe Dolar(USD):", 1, 0, "R", 1);
-
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                $this->SetFillColor(255, 255, 255);
-                $this->SetTextColor(0, 0, 0);
-                $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['suma_total_dolar'] : '', 1, 0, 'R', 1);
-                $this->Cell($anchos["tc"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['tc_usd'] : '', 1, 0, 'R', 1);
-                $this->Cell($anchos["dg"], $heigth,array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['subtotal_dolar'] : '', 1, 0, 'R', 1);
-            }
-            $this->Ln();
-            $this->SetFillColor(100, 100, 100);
-            $this->SetTextColor(255, 255, 255);
-            $this->SetFont('Arial', 'B', $font);
-            $this->Cell($anchos["espacio_detalles_globales"]);
-            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal Importe EURO:", 1, 0, "R", 1);
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                $this->SetFillColor(255, 255, 255);
-                $this->SetTextColor(0, 0, 0);
-                $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['suma_total_euro'] : '', 1, 0, 'R', 1);
-                $this->Cell($anchos["tc"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['tc_eur'] : '', 1, 0, 'R', 1);
-                $this->Cell($anchos["dg"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['subtotal_euro'] : '', 1, 0, 'R', 1);
-
-            }
-            $this->Ln();
-            $this->SetFillColor(100, 100, 100);
-            $this->SetTextColor(255, 255, 255);
-            $this->SetFont('Arial', 'B', $font);
-            $this->Cell($anchos["espacio_detalles_globales"]);
-            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal Importe Libra:", 1, 0, "R", 1);
-
-            for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                $this->SetFillColor(255, 255, 255);
-                $this->SetTextColor(0, 0, 0);
-                $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["ar"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['suma_total_libra'] : '', 1, 0, 'R', 1);
-                $this->Cell($anchos["tc"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['tc_libra'] : '', 1, 0, 'R', 1);
-                $this->Cell($anchos["dg"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? $datos_partidas['cotizaciones'][$i]['subtotal_libra'] : '', 1, 0, 'R', 1);
-
-            }
-            $this->Ln();
-            $this->SetFillColor(100, 100, 100);
-            $this->SetTextColor(255, 255, 255);
-            $this->SetFont('Arial', 'B', $font);
-            $this->Cell($anchos["espacio_detalles_globales"]);
-            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Observaciones Globales:", 1, 0, "R", 1);
             $y_ini = $this->getY();
             $x_ini = $this->getX();
+            $this->Cell($anchos["aesp"] + $anchos["des"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
                 $this->setY($y_ini);
                 $this->setX($x_ini);
-                $this->MultiCell($anchos["og"], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? utf8_decode($datos_partidas['cotizaciones'][$i]['observaciones']) : '-', 1, 'J', false);
-                $this->Ln();
-                $this->Ln();
+                $this->Cell($anchos["des"]+$anchos["u"]+$anchos["c"], $heigth);
+                $this->MultiCell($anchos["og"], $heigth, array_key_exists($i, $datos_partidas['presupuestos']) ? utf8_decode($datos_partidas['presupuestos'][$i]['observaciones']) : '', 1, 'J', false);
                 $this->Ln();
                 $this->Ln();
                 $this->y_fin_og_arr[] = $this->getY();
@@ -405,78 +390,65 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
             $i_e += $cotizacinesXFila;
             $this->Ln();
         }
-        */
     }
 
-    function Footer() {
-       /* if (!App::environment('production')) {
+    function Footer()
+    {
+        /*if (!App::environment('production')) {
             $this->SetFont('Arial','B',90);
             $this->SetTextColor(155,155,155);
             $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
             $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
-        }
+        }*/
         $this->SetTextColor(0, 0, 0);
         $this->SetFont('Arial', 'BI', 5.5);
-        $this->SetY(-4);
-
-        if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
-            $this->SetFont('Arial', '', 6);
-            $this->SetFillColor(180, 180, 180);
-            $this->Cell(6.6, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
-            $this->Cell(6.6, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(12.8, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-            $this->Ln();
-            $this->Cell(6.6, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
-            $this->Cell(6.6, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
-            $this->Cell(6.4, .4, 'Control de Costos', 'TRLB', 0, 'C', 1);
-            $this->Cell(6.4, .4, 'Director de proyecto', 'TRLB', 0, 'C', 1);
-            $this->Ln();
-
-            $this->Cell(6.6, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(6.6, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(6.4, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(6.4, 1.2, '', 'TRLB', 0, 'C');
-            $this->Ln();
-            $this->Cell(6.6, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
-            $this->Cell(6.6, .4, 'C.P. ROGELIO HERNANDEZ BELTRAN', 'TRLB', 0, 'C', 1);
-            $this->Cell(6.4, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
-            $this->Cell(6.4, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
-            $this->Ln();
-            $this->Ln();
-        } else {
-            $this->SetY(-3.8);
-            $this->image("data:image/png;base64,".base64_encode(QrCode::format('png')->generate($this->cadena_qr)), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
-            $this->SetY(-3.6);
-            $this->setX(4.5);
-            $this->SetFont('Arial', '', 4.5);
-            $this->MultiCell(22.5, .3, utf8_decode($this->cadena), 0, 'L');
-            $this->Ln(.2);
-            $this->SetY(16.5);
-            $this->setX(4.5);
-
-            $this->SetFont('Arial', 'B', 6.5);
-            $this->SetTextColor('100,100,100');
-            $this->SetY(20.5);
-            $this->Cell(26.5, .4, utf8_decode('Sistema de Administración de Obra'), 0, 0, 'R');
-            $this->SetY(-0.9);
-            $this->SetFont('Arial', 'BI', 6.5);
-            $this->SetTextColor('0,0,0');
-            $this->SetX(4.5);
-            $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de compras. Fecha de registro: ' . date("d-m-Y", strtotime($this->cotizacion->fecha))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
-            $this->Cell(15, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
+        $this->SetY(-5.4);
+        $encabezados[0] = utf8_decode("Elaboró");
+        $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
+        $encabezados[2] = "Gerencia Solicitante";
+        $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
+        for ($i = 0; $i <= 3; $i++) {
+            $this->Cell(6.2, .5, $encabezados[$i], 1, 0, 'C', 0, '');
+            $this->Cell(.4);
         }
+        $this->Ln(.5);
+        for ($i = 0; $i <= 3; $i++) {
+            $this->Cell(6.2, 1, '', 1, 0, 'R', 0, '');
+            $this->Cell(.4);
+        }
+
+        $this->SetY(-3.8);
+        $this->image("data:image/png;base64," . base64_encode(QrCode::format('png')->generate($this->cadena_qr)), $this->GetX(), $this->GetY(), 3.5, 3.5, 'PNG');
+        $this->SetY(-3.6);
+        $this->setX(4.5);
+        $this->SetFont('Arial', '', 4.5);
+        $this->MultiCell(22.5, .3, utf8_decode($this->cadena), 0, 'L');
+        $this->Ln(.2);
+        $this->SetY(16.5);
+        $this->setX(4.5);
+
+        $this->SetFont('Arial', 'B', 6.5);
+        $this->SetTextColor('100,100,100');
+        $this->SetY(20);
+        $this->Cell(26.5, .4, utf8_decode('Sistema de Administración de Obra'), 0, 0, 'R');
+        $this->SetY(-1.2);
+        $this->SetFont('Arial', 'BI', 6.5);
+        $this->SetTextColor('0,0,0');
+        $this->SetX(4.5);
+        $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->contratista->fecha))) . ' Fecha de consulta: ' . date("d-m-Y H:i:s"), 0, 0, 'L');
+        $this->Cell(11.5, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     public function createQR()
     {
         $verifica = new ValidacionSistema();
-        $datos_qr2['titulo'] = "Formato Cotización Tabla Comparativa Compra_".date("d-m-Y")."_solicitud:".($this->cotizacion->solicitud->complemento ? $this->cotizacion->solicitud->complemento->folio_compuesto : '')."_".$this->cotizacion->solicitud->numero_folio_format."_cotizacion:".$this->cotizacion->numero_folio_format;
+        $datos_qr2['titulo'] = "Formato TABLA COMPARATIVA DE CONTRATISTAS_".date("d-m-Y")."_CONTRATO:".$this->contratista->contratoProyectado->numero_folio_format."_presupuesto:".$this->contratista->numero_folio_format;
         $datos_qr2["base"] = Context::getDatabase();
         $datos_qr2["obra"] = $this->obra->nombre;
         $datos_qr2["tabla"] = "transacciones";
         $datos_qr2["campo_id"] = "id_transaccion";
-        $datos_qr2["id"] = $this->cotizacion->solicitud->id_transaccion;
+        $datos_qr2["id"] = $this->contratista->contratoProyectado->id_transaccion;
         $cadena_json_id = json_encode($datos_qr2);
 
         $firmada = $verifica->encripta($cadena_json_id);
@@ -486,15 +458,14 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
         $this->dato = $verifica->encripta($cadena_json_id);
 
         $this->qr_name = 'qrcode_'. mt_rand() .'.png';
-       */
     }
 
     function create()
     {
-        $this->SetMargins(0.7, 1, 0.7);
+        $this->SetMargins(0.9, 1.2, 0.9);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 5);
+        $this->SetAutoPageBreak(true, 5.5);
         $this->partidas();
 
         try {

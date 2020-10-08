@@ -38,7 +38,7 @@ class PresupuestoContratistaPartida extends Model
     }
 
     public function getPrecioUnitarioFormatAttribute()
-    {        
+    {
         switch($this->IdMoneda)
         {
             case(1):
@@ -54,7 +54,7 @@ class PresupuestoContratistaPartida extends Model
     }
 
     public function getPrecioUnitarioConvertAttribute()
-    {        
+    {
         switch($this->IdMoneda)
         {
             case(1):
@@ -70,7 +70,7 @@ class PresupuestoContratistaPartida extends Model
     }
 
     public function getPrecioTotalAttribute()
-    {         
+    {
         switch($this->IdMoneda)
         {
             case(1):
@@ -99,5 +99,29 @@ class PresupuestoContratistaPartida extends Model
                 return ($this->concepto) ? '$ '. number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcEuro)) - ((($this->precio_unitario) / $this->presupuesto->TcEuro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcEuro), 2, '.', ',') : $this->precio_unitario_format;
             break;
         }
+    }
+
+    public function getTotalPrecioMonedaAttribute()
+    {
+        switch ($this->IdMoneda)
+        {
+            case (1):
+                return ($this->concepto) ? (($this->concepto->cantidad_presupuestada * $this->precio_unitario) - (($this->precio_unitario) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) :  ($this->precio_unitario - ($this->precio_unitario  * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0));
+                break;
+            case (2):
+                return ($this->concepto) ? (($this->concepto->cantidad_presupuestada * ($this->precio_unitario / $this->presupuesto->TcUSD)) - ((($this->precio_unitario) / $this->presupuesto->TcUSD) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcUSD) : (($this->precio_unitario / $this->tipo_cambio) - ((($this->precio_unitario) / $this->tipo_cambio) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * $this->tipo_cambio;
+                break;
+            case (3):
+                return ($this->concepto) ? (($this->concepto->cantidad_presupuestada * ($this->precio_unitario / $this->presupuesto->TcEuro)) - ((($this->precio_unitario) / $this->presupuesto->TcEuro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcEuro) : (($this->precio_unitario / $this->tipo_cambio) - ((($this->precio_unitario) / $this->tipo_cambio) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * $this->tipo_cambio;
+                break;
+            case (4):
+                return ($this->concepto) ? (($this->concepto->cantidad_presupuestada * ($this->precio_unitario / $this->presupuesto->TcLibra)) - ((($this->precio_unitario) / $this->presupuesto->TcLibra) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcLibra) : (($this->precio_unitario / $this->tipo_cambio) - ((($this->precio_unitario) / $this->tipo_cambio) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * $this->tipo_cambio;
+                break;
+        }
+    }
+
+    public function getTipoCambioAttribute()
+    {
+        return $this->moneda->cambio ? $this->moneda->cambio->cambio : 1;
     }
 }
