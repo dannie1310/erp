@@ -114,6 +114,12 @@ class OrdenCompra extends Transaccion
         return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function facturas()
+    {
+        return $this->hasManyThrough(Factura::class,FacturaPartida::class,"id_antecedente","id_transaccion","id_transaccion","id_transaccion")
+            ->distinct();
+    }
+
     public function entradasAlmacen()
     {
         return $this->hasMany(EntradaMaterial::class, 'id_antecedente', 'id_transaccion');

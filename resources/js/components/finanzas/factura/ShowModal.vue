@@ -1,8 +1,8 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver" :disabled="cargando">
-        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-eye" v-else></i>
+        <button @click="find(id)" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver">
+            <i style="width:40px;" v-if="!cargando">{{numero_folio}}</i>
+            <i class="fa fa-spinner fa-spin" style="width:40px;" v-else></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -254,7 +254,7 @@
 <script>
     export default {
         name: "Show",
-        props: ['id'],
+        props: ['id' ,'numero_folio'],
         data() {
             return {
                 cargando: false,

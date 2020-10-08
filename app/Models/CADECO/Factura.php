@@ -25,6 +25,9 @@ class Factura extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 67;
     public const OPCION_ANTECEDENTE = 0;
+    public const TIPO = 65;
+    public const NOMBRE = "Factura";
+    public const ICONO = "fa fa-file-invoice";
     protected $fillable = [
         'fecha',
         "id_empresa",
@@ -41,7 +44,7 @@ class Factura extends Transaccion
         parent::boot();
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 65)
-                ->where('estado', '!=', -2);
+                /*->where('estado', '!=', -2)*/;
         });
     }
 
@@ -121,7 +124,7 @@ class Factura extends Transaccion
     public function polizas(){
         return $this->hasMany(Poliza::class, 'id_transaccion_sao', 'id_transaccion');
     }
-    
+
     public function tipoCambioFecha(){
         return $this->hasMany(Cambio::class, 'fecha', 'fecha');
     }

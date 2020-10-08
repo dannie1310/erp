@@ -96,6 +96,12 @@ class EntradaMaterial extends Transaccion
         return $this->belongsTo(Sucursal::class, 'id_sucursal');
     }
 
+    public function facturas()
+    {
+        return $this->hasManyThrough(Factura::class,FacturaPartida::class,"id_antecedente","id_transaccion","id_transaccion","id_transaccion")
+            ->distinct();
+    }
+
     public function eliminar($motivo)
     {
         try {
