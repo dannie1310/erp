@@ -1,8 +1,9 @@
 <template>
     <span>
-         <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-              <i class="fa fa-eye"></i>
-         </button>
+        <button @click="find" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver">
+            <i style="width:40px;" v-if="!cargando">{{numero_folio}}</i>
+            <i class="fa fa-spinner fa-spin" style="width:40px;" v-else></i>
+        </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
@@ -162,14 +163,16 @@
 <script>
     export default {
         name: "entrada-almacen-show",
-        props: ['id' , 'pagina'],
+        props: ['id' , 'pagina','numero_folio'],
         data() {
             return {
-                partidas: ''
+                partidas: '',
+                cargando:false,
             }
         },
         methods: {
             find(){
+                this.cargando=true;
                 this.partidas = '';
                 this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', null);
                 return this.$store.dispatch('almacenes/entrada-almacen/find', {
@@ -180,6 +183,9 @@
                     this.partidas = this.entrada.partidas.data;
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
+                })
+                .finally(() => {
+                    this.cargando=false;
                 })
             },
         },

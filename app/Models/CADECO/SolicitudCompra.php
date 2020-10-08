@@ -85,10 +85,6 @@ class SolicitudCompra extends Transaccion
         return $this->hasMany(OrdenCompra::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function entradasAlmacen()
-    {
-        return $this->hasManyThrough(EntradaMaterial::class, OrdenCompra::class, "id_antecedente", "id_antecedente", "id_transaccion", "id_transaccion");
-    }
 
     public function activoFijo()
     {
@@ -556,6 +552,7 @@ class SolicitudCompra extends Transaccion
         $ordenes_compra = $this->ordenesCompra;
         foreach($ordenes_compra as $orden_compra)
         {
+
             $relaciones[$i]["tipo"] = OrdenCompra::NOMBRE;
             $relaciones[$i]["tipo_numero"] = OrdenCompra::TIPO;
             $relaciones[$i]["numero_folio"] = $orden_compra->numero_folio_format;
@@ -568,21 +565,19 @@ class SolicitudCompra extends Transaccion
             $relaciones[$i]["observaciones"] = $orden_compra->observaciones;
             $i++;
 
-        }
-        $entradas_almacen = $this->entradasAlmacen();
-        foreach($entradas_almacen as $entrada_almacen)
-        {
-            $relaciones[$i]["tipo"] = EntradaMaterial::NOMBRE;
-            $relaciones[$i]["tipo_numero"] = EntradaMaterial::TIPO;
-            $relaciones[$i]["numero_folio"] = $entrada_almacen->numero_folio_format;
-            $relaciones[$i]["id"] = $entrada_almacen->id_transaccion;
-            $relaciones[$i]["icono"] = EntradaMaterial::ICONO;
-            $relaciones[$i]["fecha_hora"] = $entrada_almacen->fecha_hora_registro_format;
-            $relaciones[$i]["hora"] = $entrada_almacen->hora_registro;
-            $relaciones[$i]["fecha"] = $entrada_almacen->fecha_registro;
-            $relaciones[$i]["usuario"] = $entrada_almacen->usuario_registro;
-            $relaciones[$i]["observaciones"] = $entrada_almacen->observaciones;
-            $i++;
+            foreach ($orden_compra->entradas_material as $entrada_almacen){
+                $relaciones[$i]["tipo"] = EntradaMaterial::NOMBRE;
+                $relaciones[$i]["tipo_numero"] = EntradaMaterial::TIPO;
+                $relaciones[$i]["numero_folio"] = $entrada_almacen->numero_folio_format;
+                $relaciones[$i]["id"] = $entrada_almacen->id_transaccion;
+                $relaciones[$i]["icono"] = EntradaMaterial::ICONO;
+                $relaciones[$i]["fecha_hora"] = $entrada_almacen->fecha_hora_registro_format;
+                $relaciones[$i]["hora"] = $entrada_almacen->hora_registro;
+                $relaciones[$i]["fecha"] = $entrada_almacen->fecha_registro;
+                $relaciones[$i]["usuario"] = $entrada_almacen->usuario_registro;
+                $relaciones[$i]["observaciones"] = $entrada_almacen->observaciones;
+                $i++;
+            }
 
         }
         return $relaciones;

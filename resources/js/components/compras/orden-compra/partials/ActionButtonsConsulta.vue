@@ -11,9 +11,6 @@
         name: "action-buttons",
         components: {PDF},
         props: ['value'],
-        data(){
-
-        },
 
     }
 </script>
