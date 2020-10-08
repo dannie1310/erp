@@ -310,7 +310,6 @@ class PresupuestoContratista extends Transaccion
     {
         $partidas = [];
         $presupuestos = [];
-        $precios = [];
 
         foreach ($this->contratoProyectado->conceptos as $key => $item) {
             if (array_key_exists($item->id_concepto, $partidas)) {
@@ -337,49 +336,21 @@ class PresupuestoContratista extends Transaccion
             $presupuestos[$cont]['total_partidas'] = $presupuesto->total_partidas;
             $presupuestos[$cont]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
             $presupuestos[$cont]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
-            /* $presupuestos[$cont]['tc_usd'] = number_format(($presupuesto->TcUSD ? $presupuesto->TcUSD : Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
-             $presupuestos[$cont]['tc_eur'] = number_format(($presupuesto->TcEuro ? $presupuesto->TcEuro : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
-             $presupuestos[$cont]['tc_libra'] = number_format(($presupuesto->TcLibra ? $presupuesto->TcLibra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
-           /* $presupuestos[$cont]['subtotal_peso'] = $presupuesto->sumaSubtotalPartidas(1);
-              $presupuestos[$cont]['subtotal_dolar'] = $presupuesto->sumaSubtotalPartidas(2);
-              $presupuestos[$cont]['subtotal_euro'] = $presupuesto->sumaSubtotalPartidas(3);
-              $presupuestos[$cont]['subtotal_libra'] = $presupuesto->sumaSubtotalPartidas(4);
-           /* $presupuestos[$cont]['suma_total_dolar'] = $presupuesto->sumaPrecioPartidaMoneda(2);
-              $presupuestos[$cont]['suma_total_euro'] = $presupuesto->sumaPrecioPartidaMoneda(3);
-              $presupuestos[$cont]['suma_total_libra'] = $presupuesto->sumaPrecioPartidaMoneda(4);*/
             foreach ($presupuesto->partidas as $p) {
-                if (key_exists($p->id_concepto, $precios)) {
-                    if($p->precio_unitario_compuesto > 0 && $precios[$p->id_concepto] > $p->precio_unitario_compuesto)
-                        $precios[$p->id_concepto] = (float) $p->precio_unitario_compuesto;
-                } else {
-                    if($p->precio_unitario_compuesto > 0) {
-                        $precios[$p->id_concepto] = (float) $p->precio_unitario_compuesto;
-                    }
-                }
                 if (array_key_exists($p->id_concepto, $partidas)) {
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['id_transaccion'] = $presupuesto->id_transaccion;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['cantidad'] = $p->cantidad;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['id_moneda'] = $p->id_moneda;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['cantidad_format'] = $p->cantidad_format;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario_convert;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total_moneda'] = $p->total_precio_moneda;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_con_descuento'] = $p->precio_compuesto;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total_compuesto'] = $p->precio_compuesto_total;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario_compuesto'] = $p->precio_unitario_compuesto;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total'] = $p->precio_unitario_convert * $partidas[$p->id_concepto]['cantidad_presupuestada'];
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['descuento_partida'] = $p->partida ? $p->partida->descuento_partida : 0;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['observaciones'] = $p->partida ? $p->partida->observaciones : '';
                 }
             }
         }
-      /*  foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
-            $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
-            $cotizaciones[$cont]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cont]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
-        }*/
         return [
             'presupuestos' => $presupuestos,
-            'partidas' => $partidas,
-            'precios_menores' => $precios
+            'partidas' => $partidas
         ];
     }
 
