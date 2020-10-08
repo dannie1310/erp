@@ -142,6 +142,23 @@ class Factura extends Transaccion
         return $this->polizas()->orderBy('estatus', 'DESC')->first();
     }
 
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Factura::NOMBRE;
+        $datos["tipo_numero"] = Factura::TIPO;
+        $datos["icono"] = Factura::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
     private function registrarComplemento($factura)
     {
         $complemento = $factura->complemento()->create(["id_transaccion" => $factura->id_transaccion]);

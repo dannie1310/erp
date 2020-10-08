@@ -307,4 +307,18 @@ class Transaccion extends Model
     {
         return $this->belongsTo(self::class, 'id_referente', 'id_transaccion');
     }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
 }

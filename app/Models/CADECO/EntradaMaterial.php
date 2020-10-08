@@ -212,6 +212,23 @@ class EntradaMaterial extends Transaccion
             }
     }
 
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = EntradaMaterial::NOMBRE;
+        $datos["tipo_numero"] = EntradaMaterial::TIPO;
+        $datos["icono"] = EntradaMaterial::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
     public function ordenar($clave)
     {
         return function ($a, $b) use ($clave)

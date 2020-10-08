@@ -517,89 +517,63 @@ class SolicitudCompra extends Transaccion
         return false;
     }
 
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = SolicitudCompra::NOMBRE;
+        $datos["tipo_numero"] = SolicitudCompra::TIPO;
+        $datos["icono"] = SolicitudCompra::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
     public function getRelacionesAttribute()
     {
         $relaciones = [];
         $i = 0;
-        $relaciones[$i]["tipo"] = SolicitudCompra::NOMBRE;
-        $relaciones[$i]["tipo_numero"] = SolicitudCompra::TIPO;
-        $relaciones[$i]["numero_folio"] = $this->numero_folio_format;
-        $relaciones[$i]["id"] = $this->id_transaccion;
-        $relaciones[$i]["icono"] = SolicitudCompra::ICONO;
-        $relaciones[$i]["fecha_hora"] = $this->fecha_hora_registro_format;
-        $relaciones[$i]["hora"] = $this->hora_registro;
-        $relaciones[$i]["fecha"] = $this->fecha_registro;
-        $relaciones[$i]["usuario"] = $this->usuario_registro;
-        $relaciones[$i]["observaciones"] = $this->observaciones;
+
+        #SOLICITUD
+
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
         $i++;
+        #COTIZACIONES
         $cotizaciones = $this->cotizaciones;
         foreach($cotizaciones as $cotizacion)
         {
-            $relaciones[$i]["tipo"] = CotizacionCompra::NOMBRE;
-            $relaciones[$i]["tipo_numero"] = CotizacionCompra::TIPO;
-            $relaciones[$i]["numero_folio"] = $cotizacion->numero_folio_format;
-            $relaciones[$i]["id"] = $cotizacion->id_transaccion;
-            $relaciones[$i]["icono"] = CotizacionCompra::ICONO;
-            $relaciones[$i]["fecha_hora"] = $cotizacion->fecha_hora_registro_format;
-            $relaciones[$i]["hora"] = $cotizacion->hora_registro;
-            $relaciones[$i]["fecha"] = $cotizacion->fecha_registro;
-            $relaciones[$i]["usuario"] = $cotizacion->usuario_registro;
-            $relaciones[$i]["observaciones"] = $cotizacion->observaciones;
+            $relaciones[$i] = $cotizacion->datos_para_relacion;
             $i++;
 
         }
+        #ORDEN COMPRA
         $ordenes_compra = $this->ordenesCompra;
         foreach($ordenes_compra as $orden_compra)
         {
-            $relaciones[$i]["tipo"] = OrdenCompra::NOMBRE;
-            $relaciones[$i]["tipo_numero"] = OrdenCompra::TIPO;
-            $relaciones[$i]["numero_folio"] = $orden_compra->numero_folio_format;
-            $relaciones[$i]["id"] = $orden_compra->id_transaccion;
-            $relaciones[$i]["icono"] = OrdenCompra::ICONO;
-            $relaciones[$i]["fecha_hora"] = $orden_compra->fecha_hora_registro_format;
-            $relaciones[$i]["hora"] = $orden_compra->hora_registro;
-            $relaciones[$i]["fecha"] = $orden_compra->fecha_registro;
-            $relaciones[$i]["usuario"] = $orden_compra->usuario_registro;
-            $relaciones[$i]["observaciones"] = $orden_compra->observaciones;
+            $relaciones[$i] = $orden_compra->datos_para_relacion;
             $i++;
+            #FACTURA DE OC
             foreach ($orden_compra->facturas as $factura){
-                $relaciones[$i]["tipo"] = Factura::NOMBRE;
-                $relaciones[$i]["tipo_numero"] = Factura::TIPO;
-                $relaciones[$i]["numero_folio"] = $factura->numero_folio_format;
-                $relaciones[$i]["id"] = $factura->id_transaccion;
-                $relaciones[$i]["icono"] = Factura::ICONO;
-                $relaciones[$i]["fecha_hora"] = $factura->fecha_hora_registro_format;
-                $relaciones[$i]["hora"] = $factura->hora_registro;
-                $relaciones[$i]["fecha"] = $factura->fecha_registro;
-                $relaciones[$i]["usuario"] = $factura->usuario_registro;
-                $relaciones[$i]["observaciones"] = $factura->observaciones;
+                $relaciones[$i] = $factura->datos_para_relacion;
                 $i++;
             }
 
+            #ENTRADA DE MATERIAL
+
             foreach ($orden_compra->entradas_material as $entrada_almacen){
-                $relaciones[$i]["tipo"] = EntradaMaterial::NOMBRE;
-                $relaciones[$i]["tipo_numero"] = EntradaMaterial::TIPO;
-                $relaciones[$i]["numero_folio"] = $entrada_almacen->numero_folio_format;
-                $relaciones[$i]["id"] = $entrada_almacen->id_transaccion;
-                $relaciones[$i]["icono"] = EntradaMaterial::ICONO;
-                $relaciones[$i]["fecha_hora"] = $entrada_almacen->fecha_hora_registro_format;
-                $relaciones[$i]["hora"] = $entrada_almacen->hora_registro;
-                $relaciones[$i]["fecha"] = $entrada_almacen->fecha_registro;
-                $relaciones[$i]["usuario"] = $entrada_almacen->usuario_registro;
-                $relaciones[$i]["observaciones"] = $entrada_almacen->observaciones;
+                $relaciones[$i] = $entrada_almacen->datos_para_relacion;
                 $i++;
 
+                #FACTURA DE ENTRADA
+
                 foreach ($entrada_almacen->facturas as $factura){
-                    $relaciones[$i]["tipo"] = Factura::NOMBRE;
-                    $relaciones[$i]["tipo_numero"] = Factura::TIPO;
-                    $relaciones[$i]["numero_folio"] = $factura->numero_folio_format;
-                    $relaciones[$i]["id"] = $factura->id_transaccion;
-                    $relaciones[$i]["icono"] = Factura::ICONO;
-                    $relaciones[$i]["fecha_hora"] = $factura->fecha_hora_registro_format;
-                    $relaciones[$i]["hora"] = $factura->hora_registro;
-                    $relaciones[$i]["fecha"] = $factura->fecha_registro;
-                    $relaciones[$i]["usuario"] = $factura->usuario_registro;
-                    $relaciones[$i]["observaciones"] = $factura->observaciones;
+                    $relaciones[$i] = $factura->datos_para_relacion;
                     $i++;
                 }
 

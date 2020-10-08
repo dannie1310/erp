@@ -6,13 +6,14 @@
                     <div class="timeline">
                         <template v-for="(relacion, i) in relaciones">
                             <div class="time-label" v-if="i==0">
-                                <span class="bg-red">{{relacion.fecha}}</span>
+                                <span class="bg-blue">{{relacion.fecha}}</span>
                             </div>
                             <div class="time-label" v-else-if="relacion.fecha != relaciones[i-1].fecha" >
-                                <span class="bg-red">{{relacion.fecha}}</span>
+                                <span class="bg-blue">{{relacion.fecha}}</span>
                             </div>
                             <div>
-                                <i class="bg-blue" :class="relacion.icono"></i>
+                                <i class="bg-green" :class="relacion.icono" v-if="relacion.consulta==1"></i>
+                                <i class="bg-blue" :class="relacion.icono" v-else></i>
                                 <div class="timeline-item">
                                     <span class="time"><i class="fas fa-clock"></i> {{relacion.hora}}</span>
                                     <h3 class="timeline-header">Registro de {{relacion.tipo}} {{relacion.numero_folio}} por {{relacion.usuario}}</h3>

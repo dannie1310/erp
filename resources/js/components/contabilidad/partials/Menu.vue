@@ -7,7 +7,7 @@
             <li class="nav-header" v-if="catalogos">SISTEMA DE CONTABILIDAD</li>
             <li class="nav-item" v-if="catalogos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-money"></i>
+                    <i class="nav-icon fa fa-list"></i>
                     <p>
                         Cuentas Contables
                         <i class="right fa fa-angle-left"></i>
@@ -73,7 +73,7 @@
 
             <li class="nav-item" v-if="$root.can('consultar_cierre_periodo')">
                 <router-link :to="{name: 'cierre-periodo'}" class="nav-link">
-                    <i class="fa fa-file-text nav-icon"></i>
+                    <i class="fa fa-ban nav-icon"></i>
                     <p>Cierres de periodo</p>
                 </router-link>
             </li>

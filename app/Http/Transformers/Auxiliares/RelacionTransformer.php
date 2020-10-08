@@ -21,6 +21,7 @@ class RelacionTransformer extends TransformerAbstract
             'observaciones' => $model["observaciones"],
             'hora' => $model["hora"],
             'fecha' => $model["fecha"],
+            'consulta' => $model["consulta"],
         ];
     }
 

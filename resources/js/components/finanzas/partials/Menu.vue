@@ -9,20 +9,20 @@
 
             <li class="nav-item" v-if="$root.can('consultar_banco')">
                 <router-link :to="{name: 'banco'}" class="nav-link">
-                    <i class="fa fa-circle nav-icon"></i>
+                    <i class="fa fa-piggy-bank nav-icon"></i>
                     <p>Gestión de Bancos</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_fondos')">
                 <router-link :to="{name: 'fondo'}" class="nav-link">
-                    <i class="fa fa-circle nav-icon"></i>
+                    <i class="fa fa-money-check-alt nav-icon"></i>
                     <p>Gestión de Fondos</p>
                 </router-link>
             </li>
 
             <li class="nav-item" v-if="cuenta_bancaria">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-circle"></i>
+                    <i class="nav-icon fa fa-money-check"></i>
                     <p>
                         Gestión de Cuentas Bancarias
                         <i class="right fa fa-angle-left"></i>
@@ -31,7 +31,7 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_cuentas_bancarias_empresa')">
                         <router-link :to="{name: 'cuenta-empresa-bancaria'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-empresa-bancaria'}">
-                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
+                            &nbsp;<i class="fa fa-money-check nav-icon"></i>
                             <p>Cuentas Bancarias</p>
                         </router-link>
                     </li>
@@ -53,7 +53,7 @@
 
             <li class="nav-item" v-if="solicitudes">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-circle"></i>
+                    <i class="nav-icon fa fa-file-powerpoint"></i>
                     <p>
                         Solicitudes de Pago
                         <i class="right fa fa-angle-left"></i>
@@ -101,7 +101,7 @@
             </li>
             <li class="nav-item" v-if="$root.can('consultar_factura')">
                 <router-link :to="{name: 'factura'}" class="nav-link">
-                    <i class="nav-icon fa fa-circle"></i>
+                    <i class="nav-icon fa fa-file-invoice"></i>
                     <p>Facturas</p>
                 </router-link>
             </li>
