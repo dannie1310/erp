@@ -310,8 +310,9 @@ class PresupuestoContratista extends Transaccion
     {
         $partidas = [];
         $presupuestos = [];
+        $precios = [];
 
-        foreach ($this->contratoProyectado->conceptos as $key => $item) {
+        foreach ($this->contratoProyectado->conceptos()->orderBy('descripcion','asc')->get()  as $key => $item) {
             if (array_key_exists($item->id_concepto, $partidas)) {
                 $partidas[$item->id_concepto]['cantidad_presupuestada'] = $partidas[$item->id_concepto]['cantidad_presupuestada'] + $item->cantidad_presupuestada;
                 $partidas[$item->id_concepto]['cantidad_original'] = $partidas[$item->id_concepto]['cantidad_original'] + $item->cantidad_original;
@@ -337,6 +338,14 @@ class PresupuestoContratista extends Transaccion
             $presupuestos[$cont]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
             $presupuestos[$cont]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
             foreach ($presupuesto->partidas as $p) {
+                if (key_exists($p->id_concepto, $precios)) {
+                    if($p->precio_unitario > 0 && $precios[$p->id_concepto] > $p->precio_unitario_convert)
+                        $precios[$p->id_concepto] = (float) $p->precio_unitario_convert;
+                } else {
+                    if($p->precio_unitario > 0) {
+                        $precios[$p->id_concepto] = (float) $p->precio_unitario_convert;
+                    }
+                }
                 if (array_key_exists($p->id_concepto, $partidas)) {
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['id_transaccion'] = $presupuesto->id_transaccion;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario_convert;
@@ -350,7 +359,8 @@ class PresupuestoContratista extends Transaccion
         }
         return [
             'presupuestos' => $presupuestos,
-            'partidas' => $partidas
+            'partidas' => $partidas,
+            'precios_menores' => $precios
         ];
     }
 
@@ -398,5 +408,10 @@ class PresupuestoContratista extends Transaccion
             }
         }
         return $suma;
+    }
+
+    public function calcular_ki($precio, $precio_menor)
+    {
+        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
     }
 }

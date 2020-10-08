@@ -210,19 +210,29 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->Cell($anchos["c"], $heigth, $partida['unidad'], 1, 0, 'L', 0, '');
                 $this->Cell($anchos["u"], $heigth, number_format($partida['cantidad_presupuestada'], '2', '.', ','), 1, 0, 'L', 0, '');
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                    if (array_key_exists('presupuestos', $partida) && array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario'] != 0) {
-                        $this->SetFillColor(150, 150, 150);
-                        $this->SetTextColor(0, 0, 0);
-                        $this->SetFont('Arial', '', $font2);
-                        $this->Cell($anchos["pu"], $heigth, number_format($partida['presupuestos'][$i]['precio_unitario'], 2, '.', ','), "T B L", 0, "R", 1);
-                        $this->CellFitScale($anchos["porc"], $heigth, $partida['presupuestos'][$i]['descuento_partida'] > 0 ? $partida['presupuestos'][$i]['descuento_partida'] : '-', "T B L", 0, "R", 1);
-                        $this->Cell($anchos["pu"], $heigth, number_format($partida['presupuestos'][$i]['precio_unitario'], 2, '.', ','), "T B L", 0, "R", 1);
-                        $this->CellFitScale($anchos["importe"], $heigth, number_format($partida['presupuestos'][$i]['precio_total'], 2, '.', ','), "T B L", 0, "R", 1);
-                        $this->Cell($anchos["importe"], $heigth, $partida['presupuestos'][$i]['tipo_cambio_descripcion'], "B L R T", 0, "R", 1);
-                        $this->Cell($anchos["dias"], $heigth, number_format($partida['presupuestos'][$i]['precio_total_moneda'], 2, '.', ','), "B L R T", 0, "R", 1);
+                    $ki = 0;
+                    if (array_key_exists('presupuestos', $partida)) {
+                        if (array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario'] > 0) {
+                            $ki = $this->contratista->calcular_ki($partida['presupuestos'][$i]['precio_unitario'], $datos_partidas['precios_menores'][$key]);
+                            if ($ki == 0) {
+                                $this->SetFillColor(150, 150, 150);
+                                $this->SetTextColor(0, 0, 0);
+                            } else {
+                                $this->SetFillColor(255, 255, 255);
+                                $this->SetTextColor(0, 0, 0);
+                            }
+                            $this->SetFillColor(150, 150, 150);
+                            $this->SetTextColor(0, 0, 0);
+                            $this->SetFont('Arial', '', $font2);
+                            $this->Cell($anchos["pu"], $heigth, number_format($partida['presupuestos'][$i]['precio_unitario'], 2, '.', ','), "T B L", 0, "R", 1);
+                            $this->CellFitScale($anchos["porc"], $heigth, $partida['presupuestos'][$i]['descuento_partida'] > 0 ? $partida['presupuestos'][$i]['descuento_partida'] : '-', "T B L", 0, "R", 1);
+                            $this->Cell($anchos["pu"], $heigth, number_format($partida['presupuestos'][$i]['precio_unitario'], 2, '.', ','), "T B L", 0, "R", 1);
+                            $this->CellFitScale($anchos["importe"], $heigth, number_format($partida['presupuestos'][$i]['precio_total'], 2, '.', ','), "T B L", 0, "R", 1);
+                            $this->Cell($anchos["importe"], $heigth, $partida['presupuestos'][$i]['tipo_cambio_descripcion'], "B L R T", 0, "R", 1);
+                            $this->Cell($anchos["dias"], $heigth, number_format($partida['presupuestos'][$i]['precio_total_moneda'], 2, '.', ','), "B L R T", 0, "R", 1);
+                        }
                     }
                 }
-
                 $this->Ln();
                 $this->SetTextColor(0, 0, 0);
                 $this->y_para_obs_partidas = $this->getY();
