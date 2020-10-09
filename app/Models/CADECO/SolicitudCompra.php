@@ -538,6 +538,8 @@ class SolicitudCompra extends Transaccion
     public function getRelacionesAttribute()
     {
         $relaciones = [];
+        $salidas_arr = [];
+        $transferencias_arr = [];
         $i = 0;
 
         #SOLICITUD
@@ -589,6 +591,15 @@ class SolicitudCompra extends Transaccion
                 $relaciones[$i] = $entrada_almacen->datos_para_relacion;
                 $i++;
 
+                #SALIDA DE MATERIAL
+                foreach ($entrada_almacen->salidas as $salida){
+                    $salidas_arr[] = $salida;
+                }
+                #TRANSFERENCIA DE MATERIAL
+                foreach ($entrada_almacen->transferencias as $transferencia){
+                    $transferencias_arr[] = $transferencia;
+                }
+
                 #FACTURA DE ENTRADA
                 foreach ($entrada_almacen->facturas as $factura){
                     $relaciones[$i] = $factura->datos_para_relacion;
@@ -613,6 +624,26 @@ class SolicitudCompra extends Transaccion
                         }
                     }
                 }
+            }
+        }
+        $salidas = collect($salidas_arr)->unique();
+        foreach ($salidas as $salida){
+            $relaciones[$i] = $salida->datos_para_relacion;
+            $i++;
+            #POLIZA DE SALIDA
+            if($salida->poliza){
+                $relaciones[$i] = $salida->poliza->datos_para_relacion;
+                $i++;
+            }
+        }
+        $transferencias = collect($transferencias_arr)->unique();
+        foreach ($transferencias as $transferencia){
+            $relaciones[$i] = $transferencia->datos_para_relacion;
+            $i++;
+            #POLIZA DE TRANSFERENCIA
+            if($transferencia->poliza){
+                $relaciones[$i] = $transferencia->poliza->datos_para_relacion;
+                $i++;
             }
         }
         $orden1 = array_column($relaciones, 'orden');

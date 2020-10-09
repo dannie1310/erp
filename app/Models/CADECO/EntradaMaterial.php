@@ -86,6 +86,11 @@ class EntradaMaterial extends Transaccion
         return $this->hasManyThrough(Movimiento::class, ItemEntradaAlmacen::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
     }
 
+    public function inventarios()
+    {
+        return $this->hasManyThrough(Inventario::class, ItemEntradaAlmacen::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
+    }
+
     public function entregasContratista()
     {
         return $this->hasManyThrough(ItemContratista::class,EntradaMaterialPartida::class,"id_transaccion","id_item","id_transaccion","id_item");
@@ -100,6 +105,38 @@ class EntradaMaterial extends Transaccion
     {
         return $this->hasManyThrough(Factura::class,FacturaPartida::class,"id_antecedente","id_transaccion","id_transaccion","id_transaccion")
             ->distinct();
+    }
+
+    public function getSalidasAttribute()
+    {
+        $salidas_arr = [];
+        foreach ($this->inventarios as $inventario)
+        {
+            if($inventario->movimientos->count()>0){
+                foreach ($inventario->movimientos as $movimiento)
+                {
+                    $salidas_arr[] = $movimiento->salida;
+                }
+            }
+        }
+        $salidas = collect($salidas_arr)->unique();
+        return $salidas;
+    }
+
+    public function getTransferenciasAttribute()
+    {
+        $transferencias_arr = [];
+        foreach ($this->inventarios as $inventario)
+        {
+            if($inventario->inventarios_hijos->count()>0){
+                foreach ($inventario->inventarios_hijos as $inventario_hijo)
+                {
+                    $transferencias_arr[] = $inventario_hijo->transferencia;
+                }
+            }
+        }
+        $transferencias = collect($transferencias_arr)->unique();
+        return $transferencias;
     }
 
     public function eliminar($motivo)

@@ -36,10 +36,19 @@ class Movimiento extends Model
     {
         return $this->belongsTo(Item::class, 'id_item', 'id_item');
     }
+    public function itemSalida()
+    {
+        return $this->belongsTo(SalidaAlmacenPartida::class, 'id_item', 'id_item');
+    }
 
     public function inventario()
     {
         return $this->belongsTo(Inventario::class, 'lote_antecedente', 'id_lote');
+    }
+
+    public function getSalidaAttribute()
+    {
+        return $this->itemSalida->salida;
     }
 
     public function getCantidadFormatAttribute()
