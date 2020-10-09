@@ -248,7 +248,7 @@
                                        :data-vv-as="`'Número de Identificación ${i + 1}'`"
                                        v-model="representante_legal.curp"
                                        :class="{'is-invalid': errors.has(`identificacion[${i}]`)}"
-                                       v-validate="{ required: true, min: 18}"
+                                       v-validate="{ required: true}"
                                        :id="`identificacion[${i}]`"
                                        :maxlength="18"/>
                                 <div class="invalid-feedback" v-show="errors.has(`identificacion[${i}]`)">{{ errors.first(`identificacion[${i}]`) }}</div>
