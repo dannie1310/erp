@@ -213,7 +213,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                     $ki = 0;
                     if (array_key_exists('presupuestos', $partida)) {
                         if (array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario'] > 0) {
-                            $ki = $this->contratista->calcular_ki($partida['presupuestos'][$i]['precio_unitario'], $datos_partidas['precios_menores'][$key]);
+                            $ki = $this->contratista->calcular_ki($partida['presupuestos'][$i]['precio_total_moneda'], $datos_partidas['precios_menores'][$key]);
                             if ($ki == 0) {
                                 $this->SetFillColor(150, 150, 150);
                                 $this->SetTextColor(0, 0, 0);
@@ -221,12 +221,10 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                                 $this->SetFillColor(255, 255, 255);
                                 $this->SetTextColor(0, 0, 0);
                             }
-                            $this->SetFillColor(150, 150, 150);
-                            $this->SetTextColor(0, 0, 0);
                             $this->SetFont('Arial', '', $font2);
                             $this->Cell($anchos["pu"], $heigth, number_format($partida['presupuestos'][$i]['precio_unitario'], 2, '.', ','), "T B L", 0, "R", 1);
                             $this->CellFitScale($anchos["porc"], $heigth, $partida['presupuestos'][$i]['descuento_partida'] > 0 ? $partida['presupuestos'][$i]['descuento_partida'] : '-', "T B L", 0, "R", 1);
-                            $this->Cell($anchos["pu"], $heigth, number_format($partida['presupuestos'][$i]['precio_unitario'], 2, '.', ','), "T B L", 0, "R", 1);
+                            $this->Cell($anchos["pu"], $heigth, number_format($partida['presupuestos'][$i]['precio_unitario_c'], 2, '.', ','), "T B L", 0, "R", 1);
                             $this->CellFitScale($anchos["importe"], $heigth, number_format($partida['presupuestos'][$i]['precio_total'], 2, '.', ','), "T B L", 0, "R", 1);
                             $this->Cell($anchos["importe"], $heigth, $partida['presupuestos'][$i]['tipo_cambio_descripcion'], "B L R T", 0, "R", 1);
                             $this->Cell($anchos["dias"], $heigth, number_format($partida['presupuestos'][$i]['precio_total_moneda'], 2, '.', ','), "B L R T", 0, "R", 1);
@@ -249,15 +247,23 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $xop_ini = $this->getX();
 
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                    if (array_key_exists('presupuestos', $partida) && array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario'] != 0 && $partida['presupuestos'][$i]['observaciones']) {
-                        $this->SetFillColor(255, 255, 255);
-                        $this->SetTextColor(0, 0, 0);
-                        $this->SetFont('Arial', '', $font2);
-                        $this->setY($yop_ini);
-                        $this->setX($xop_ini);
-                        $this->MultiCell($anchos["op"], $heigth, utf8_decode($partida['presupuestos'][$i]['observaciones']), "B L R T", "L", 1);
-                        $this->y_para_descripcion_arr[] = $this->GetY();
-                        $xop_ini += $anchos["op"];
+                    if (array_key_exists('presupuestos', $partida)) {
+                        if (array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario'] > 0) {
+                            $ki = $this->contratista->calcular_ki($partida['presupuestos'][$i]['precio_total_moneda'], $datos_partidas['precios_menores'][$key]);
+                            if ($ki == 0) {
+                                $this->SetFillColor(150, 150, 150);
+                                $this->SetTextColor(0, 0, 0);
+                            } else {
+                                $this->SetFillColor(255, 255, 255);
+                                $this->SetTextColor(0, 0, 0);
+                            }
+                            $this->SetFont('Arial', '', $font2);
+                            $this->setY($yop_ini);
+                            $this->setX($xop_ini);
+                            $this->MultiCell($anchos["op"], $heigth, utf8_decode($partida['presupuestos'][$i]['observaciones']), "B L R T", "L", 1);
+                            $this->y_para_descripcion_arr[] = $this->GetY();
+                            $xop_ini += $anchos["op"];
+                        }
                     }
                 }
                 $this->Ln();

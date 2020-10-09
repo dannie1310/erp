@@ -339,24 +339,26 @@ class PresupuestoContratista extends Transaccion
             $presupuestos[$cont]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
             foreach ($presupuesto->partidas as $p) {
                 if (key_exists($p->id_concepto, $precios)) {
-                    if($p->precio_unitario > 0 && $precios[$p->id_concepto] > $p->precio_unitario_convert)
-                        $precios[$p->id_concepto] = (float) $p->precio_unitario_convert;
+                    if($p->total_precio_moneda > 0 && $precios[$p->id_concepto] > $p->total_precio_moneda)
+                        $precios[$p->id_concepto] = (float) $p->total_precio_moneda;
                 } else {
                     if($p->precio_unitario > 0) {
-                        $precios[$p->id_concepto] = (float) $p->precio_unitario_convert;
+                        $precios[$p->id_concepto] = (float) $p->total_precio_moneda;
                     }
                 }
                 if (array_key_exists($p->id_concepto, $partidas)) {
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['id_transaccion'] = $presupuesto->id_transaccion;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario_convert;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario_c'] = $p->precio_unitario_convert;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total_moneda'] = $p->total_precio_moneda;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total'] = $p->precio_unitario_convert * $partidas[$p->id_concepto]['cantidad_presupuestada'];
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['descuento_partida'] = $p->partida ? $p->partida->descuento_partida : 0;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['observaciones'] = $p->partida ? $p->partida->observaciones : '';
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['descuento_partida'] = $p->PorcentajeDescuento ? $p->PorcentajeDescuento : 0;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['observaciones'] = $p->observaciones ? $p->observaciones : '';
                 }
             }
         }
+        //dd($presupuestos, $partidas, $precios);
         return [
             'presupuestos' => $presupuestos,
             'partidas' => $partidas,
