@@ -111,13 +111,43 @@ class Poliza extends Model
     }
     public function getFechaHoraRegistroFormatAttribute()
     {
-        $date = date_create($this->timestamp_regsitro);
+        $date = date_create($this->timestamp_registro);
         return date_format($date,"d/m/Y H:i:s");
     }
 
     public function getFechaHoraRegistroOrdenAttribute()
     {
-        $date = date_create($this->timestamp_regsitro);
+        $date = date_create($this->timestamp_registro);
         return date_format($date,"YmdHis");
+    }
+
+    public function getHoraRegistroAttribute()
+    {
+        $date = date_create($this->timestamp_registro);
+        return date_format($date,"H:i");
+    }
+
+    public function getFechaRegistroAttribute()
+    {
+        $date = date_create($this->timestamp_registro);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->id;
+        $datos["id"] = $this->id;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_solicita;
+        $datos["observaciones"] = $this->concepto;
+        $datos["tipo"] = 'Prepóliza';
+        $datos["tipo_numero"] = 666;
+        $datos["icono"] = 'fa fa-file-text';
+        $datos["consulta"] = 0;
+
+        return $datos;
     }
 }

@@ -12,6 +12,7 @@ namespace App\Models\CADECO;
 class OrdenPago extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 67;
+    public const TIPO = 68;
 
     protected $fillable = [
         'id_antecedente',

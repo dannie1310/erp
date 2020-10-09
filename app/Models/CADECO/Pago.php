@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 class Pago extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
+    public const TIPO = 82;
+    public const NOMBRE = "Pago";
+    public const ICONO = "fa fa-hand-holding-usd";
 
     protected $fillable = [
         'id_antecedente',
@@ -94,6 +97,24 @@ class Pago extends Transaccion
             $estado='Conciliado';
         }
         return $estado;
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Pago::NOMBRE;
+        $datos["tipo_numero"] = Pago::TIPO;
+        $datos["icono"] = Pago::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
     }
 
     public function eliminar($motivo)

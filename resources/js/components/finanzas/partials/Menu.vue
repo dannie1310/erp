@@ -76,7 +76,7 @@
             </li>
             <li class="nav-item" v-if="pagos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-circle"></i>
+                    <i class="nav-icon fa fa-hand-holding-usd"></i>
                     <p>
                         Gestión de Pagos
                         <i class="right fa fa-angle-left"></i>
@@ -105,54 +105,17 @@
                     <p>Facturas</p>
                 </router-link>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_familia_servicio')|| $root.can('consultar_insumo_servicio')">
-                <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-circle"></i>
-                    <p>
-                        Catálogos
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
-                </a>
-
-                <ul class="nav nav-treeview" v-if="$root.can('consultar_familia_servicio')">
-                    <li class="nav-item" >
-                        <router-link :to="{name: 'familia-serv'}" class="nav-link" :class="{active: this.$route.name == 'familia-serv'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Familias de Servicio</p>
-                        </router-link>
-                    </li>
-                </ul>
-                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_servicio')">
-                    <li class="nav-item" >
-                        <router-link :to="{name: 'servicio'}" class="nav-link" :class="{active: this.$route.name == 'servicio'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Servicios</p>
-                        </router-link>
-                    </li>
-                </ul>
+            <li class="nav-item" v-if="$root.can('consultar_movimiento_bancario')">
+                <router-link :to="{name: 'movimiento-bancario'}" class="nav-link" :class="{active: this.$route.name == 'movimiento-bancario'}">
+                    &nbsp;<i class="fa fa-money-bill nav-icon"></i>
+                    <p>Movimientos Bancarios</p>
+                </router-link>
             </li>
-            <li class="nav-item" v-if="tesoreria">
-                <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-circle"></i>
-                    <p>
-                        Tesorería
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_movimiento_bancario')">
-                        <router-link :to="{name: 'movimiento-bancario'}" class="nav-link" :class="{active: this.$route.name == 'movimiento-bancario'}">
-                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
-                            <p>Movimientos Bancarios</p>
-                        </router-link>
-                    </li>
-                    <li class="nav-item" v-if="$root.can('consultar_traspaso_cuenta')">
-                        <router-link :to="{name: 'traspaso-entre-cuentas'}" class="nav-link" :class="{active: this.$route.name == 'traspaso-entre-cuentas'}">
-                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
-                            <p>Traspasos Entre Cuentas</p>
-                        </router-link>
-                    </li>
-                </ul>
+            <li class="nav-item" v-if="$root.can('consultar_traspaso_cuenta')">
+                <router-link :to="{name: 'traspaso-entre-cuentas'}" class="nav-link" :class="{active: this.$route.name == 'traspaso-entre-cuentas'}">
+                    &nbsp;<i class="fa fa-retweet nav-icon"></i>
+                    <p>Traspasos Entre Cuentas</p>
+                </router-link>
             </li>
         </ul>
     </nav>

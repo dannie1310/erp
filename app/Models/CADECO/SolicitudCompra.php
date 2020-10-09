@@ -524,6 +524,7 @@ class SolicitudCompra extends Transaccion
         $datos["fecha_hora"] = $this->fecha_hora_registro_format;
         $datos["hora"] = $this->hora_registro;
         $datos["fecha"] = $this->fecha_registro;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
         $datos["usuario"] = $this->usuario_registro;
         $datos["observaciones"] = $this->observaciones;
         $datos["tipo"] = SolicitudCompra::NOMBRE;
@@ -540,7 +541,6 @@ class SolicitudCompra extends Transaccion
         $i = 0;
 
         #SOLICITUD
-
         $relaciones[$i] = $this->datos_para_relacion;
         $relaciones[$i]["consulta"] = 1;
         $i++;
@@ -550,7 +550,6 @@ class SolicitudCompra extends Transaccion
         {
             $relaciones[$i] = $cotizacion->datos_para_relacion;
             $i++;
-
         }
         #ORDEN COMPRA
         $ordenes_compra = $this->ordenesCompra;
@@ -558,28 +557,67 @@ class SolicitudCompra extends Transaccion
         {
             $relaciones[$i] = $orden_compra->datos_para_relacion;
             $i++;
+            #POLIZA DE OC
+            if($orden_compra->poliza){
+                $relaciones[$i] = $orden_compra->poliza->datos_para_relacion;
+                $i++;
+            }
             #FACTURA DE OC
             foreach ($orden_compra->facturas as $factura){
                 $relaciones[$i] = $factura->datos_para_relacion;
                 $i++;
+                #POLIZA DE FACTURA DE OC
+                if($factura->poliza){
+                    $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                    $i++;
+                }
+                #PAGO DE FACTURA DE OC
+                foreach ($factura->ordenesPago as $orden_pago){
+                    if($orden_pago->pago){
+                        $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                        $i++;
+                        #POLIZA DE PAGO DE FACTURA DE OC
+                        if($orden_pago->pago->poliza){
+                            $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                            $i++;
+                        }
+                    }
+                }
             }
-
             #ENTRADA DE MATERIAL
-
             foreach ($orden_compra->entradas_material as $entrada_almacen){
                 $relaciones[$i] = $entrada_almacen->datos_para_relacion;
                 $i++;
 
                 #FACTURA DE ENTRADA
-
                 foreach ($entrada_almacen->facturas as $factura){
                     $relaciones[$i] = $factura->datos_para_relacion;
                     $i++;
+
+                    #POLIZA DE FACTURA DE ENTRADA
+                    if($factura->poliza){
+                        $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                        $i++;
+                    }
+
+                    #PAGO DE FACTURA DE ENTRADA
+                    foreach ($factura->ordenesPago as $orden_pago){
+                        if($orden_pago->pago){
+                            $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                            $i++;
+                            #POLIZA DE PAGO DE FACTURA DE ENTRADA
+                            if($orden_pago->pago->poliza){
+                                $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                                $i++;
+                            }
+                        }
+                    }
                 }
-
             }
-
         }
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
     }
 }
