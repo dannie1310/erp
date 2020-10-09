@@ -37,7 +37,7 @@ class PresupuestoContratista extends Transaccion
         'id_moneda'
     ];
 
-    public $searchable = [        
+    public $searchable = [
         'fecha',
         'numero_folio',
         'empresa.razon_social',
@@ -54,6 +54,9 @@ class PresupuestoContratista extends Transaccion
         });
     }
 
+    /**
+     * Relaciones
+     */
     public function contratoProyectado()
     {
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
@@ -74,15 +77,42 @@ class PresupuestoContratista extends Transaccion
         return $this->hasOne(AsignacionSubcontratoPartidas::class, 'id_transaccion');
     }
 
+    public function empresa()
+    {
+        return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'id_sucursal');
+    }
+
+    /**
+     * Scopes
+     */
+
+
+
+    /**
+     * Attributes
+     */
+    public function getUsdFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcUSD),4);
+    }
+
+    public function getEuroFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcEuro),4);
+    }
+
+    /**
+     * Métodos
+     */
     public function descargaLayout($id)
     {
         $find = $this::find($id);
         return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
-    }
-
-    public function empresa()
-    {
-        return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
     public function datosPartidas()
@@ -98,7 +128,7 @@ class PresupuestoContratista extends Transaccion
                 'IdMoneda' => $partida->IdMoneda,
                 'Observaciones' => $partida->Observaciones
             );
-            
+
         }
         return $items;
     }
@@ -130,7 +160,7 @@ class PresupuestoContratista extends Transaccion
     public function eliminarPresupuesto($motivo)
     {
         try {
-            DB::connection('cadeco')->beginTransaction();            
+            DB::connection('cadeco')->beginTransaction();
             $this->delete();
             $eliminar = PresupuestoContratistaEliminado::find($this->id_transaccion);
             $eliminar->motivo_elimino = $motivo;
@@ -183,7 +213,7 @@ class PresupuestoContratista extends Transaccion
                         'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
                         'IdMoneda' => $data['moneda'][$t],
                         'Observaciones' => ($data['observaciones'][$t]) ? $data['observaciones'][$t] : ''
-                    ]);           
+                    ]);
                     $t ++;
                 }
             }else
@@ -215,7 +245,7 @@ class PresupuestoContratista extends Transaccion
                         'PorcentajeDescuento' => null,
                         'IdMoneda' => null,
                         'Observaciones' => null
-                    ]);           
+                    ]);
                     $t ++;
                 }
             }
@@ -276,18 +306,114 @@ class PresupuestoContratista extends Transaccion
         }
     }
 
-    public function sucursal()
+    public function datosComparativos()
     {
-        return $this->belongsTo(Sucursal::class, 'id_sucursal');
+        $partidas = [];
+        $presupuestos = [];
+        $precios = [];
+
+        foreach ($this->contratoProyectado->conceptos()->orderBy('descripcion','asc')->get()  as $key => $item) {
+            if (array_key_exists($item->id_concepto, $partidas)) {
+                $partidas[$item->id_concepto]['cantidad_presupuestada'] = $partidas[$item->id_concepto]['cantidad_presupuestada'] + $item->cantidad_presupuestada;
+                $partidas[$item->id_concepto]['cantidad_original'] = $partidas[$item->id_concepto]['cantidad_original'] + $item->cantidad_original;
+            } else {
+                $partidas[$item->id_concepto]['concepto'] = $item->descripcion;
+                $partidas[$item->id_concepto]['unidad'] = $item->unidad;
+                $partidas[$item->id_concepto]['cantidad_presupuestada'] = $item->cantidad_presupuestada;
+                $partidas[$item->id_concepto]['cantidad_original'] = $item->cantidad_original;
+                $partidas[$item->id_concepto]['observaciones'] = $item->observaciones ? $item->observaciones : '';
+            }
+        }
+        foreach ($this->contratoProyectado->presupuestos()->orderBy('id_transaccion', 'desc')->get() as $cont => $presupuesto) {
+            $presupuestos[$cont]['id_transaccion'] = $presupuesto->id_transaccion;
+            $presupuestos[$cont]['empresa'] = $presupuesto->empresa->razon_social;
+            $presupuestos[$cont]['fecha'] = $presupuesto->fecha_format;
+            $presupuestos[$cont]['vigencia'] = $presupuesto->DiasVigencia ? $presupuesto->DiasVigencia : '-';
+            $presupuestos[$cont]['anticipo'] = $presupuesto->anticipo && $presupuesto->anticipo > 0 ? $presupuesto->anticipo : '-';
+            $presupuestos[$cont]['dias_credito'] = $presupuesto->DiasCredito ? $presupuesto->DiasCredito : '-';
+            $presupuestos[$cont]['descuento_global'] = $presupuesto->descuento ? $presupuesto->descuento : '-';
+            $presupuestos[$cont]['suma_subtotal_partidas'] = $presupuesto->suma_subtotal_partidas;
+            $presupuestos[$cont]['iva_partidas'] = $presupuesto->iva_partidas;
+            $presupuestos[$cont]['total_partidas'] = $presupuesto->total_partidas;
+            $presupuestos[$cont]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
+            $presupuestos[$cont]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
+            foreach ($presupuesto->partidas as $p) {
+                if (key_exists($p->id_concepto, $precios)) {
+                    if($p->total_precio_moneda > 0 && $precios[$p->id_concepto] > $p->total_precio_moneda)
+                        $precios[$p->id_concepto] = (float) $p->total_precio_moneda;
+                } else {
+                    if($p->precio_unitario > 0) {
+                        $precios[$p->id_concepto] = (float) $p->total_precio_moneda;
+                    }
+                }
+                if (array_key_exists($p->id_concepto, $partidas)) {
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['id_transaccion'] = $presupuesto->id_transaccion;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario_c'] = $p->precio_unitario_convert;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total_moneda'] = $p->total_precio_moneda;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total'] = $p->precio_unitario_convert * $partidas[$p->id_concepto]['cantidad_presupuestada'];
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['descuento_partida'] = $p->PorcentajeDescuento ? $p->PorcentajeDescuento : 0;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['observaciones'] = $p->observaciones ? $p->observaciones : '';
+                }
+            }
+        }
+        //dd($presupuestos, $partidas, $precios);
+        return [
+            'presupuestos' => $presupuestos,
+            'partidas' => $partidas,
+            'precios_menores' => $precios
+        ];
     }
 
-    public function getUsdFormatAttribute()
+    public function getSumaSubtotalPartidasAttribute()
     {
-        return '$ ' . number_format(abs($this->TcUSD),4);
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            $suma += $partida->total_precio_moneda;
+        }
+        return $suma;
     }
 
-    public function getEuroFormatAttribute()
+    public function getIVAPartidasAttribute()
     {
-        return '$ ' . number_format(abs($this->TcEuro),4);
+        return $this->suma_subtotal_partidas * 0.16;
+    }
+
+    public function getTotalPartidasAttribute()
+    {
+        return $this->suma_subtotal_partidas + $this->iva_Partidas;
+    }
+
+    public function sumaSubtotalPartidas($tipo_moneda)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            if($tipo_moneda == $partida->IdMoneda)
+            {
+                $suma += $partida->total_precio_moneda;
+            }
+        }
+        return $suma;
+    }
+
+    public function sumaPrecioPartidaMoneda($tipo_moneda)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            if($tipo_moneda == $partida->IdMoneda)
+            {
+                $suma += $partida->precio_compuesto_total;
+            }
+        }
+        return $suma;
+    }
+
+    public function calcular_ki($precio, $precio_menor)
+    {
+        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
     }
 }

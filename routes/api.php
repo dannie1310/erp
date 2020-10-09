@@ -726,8 +726,6 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@store');
         });
 
-
-
         /**
          * CONTRATO PROYECTADO
          */
@@ -775,7 +773,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
-
         /**
          * PRESUPUESTO
          */
@@ -787,6 +784,7 @@ $api->version('v1', function ($api) {
             $api->post('/','App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@store');
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@descargaLayout')->where(['id' => '[0-9]+']);
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@cargaLayout');
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@pdf')->where(['id' => '[0-9]+']);
         });
 
 

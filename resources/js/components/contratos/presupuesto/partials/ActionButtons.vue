@@ -7,6 +7,7 @@
         <button v-if="$root.can('editar_presupuesto_contratista')" @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
                 <i class="fa fa-pencil"></i>
         </button>
+        <PDF v-bind:id="value.id" />
     </div>
 </template>
 <script>
@@ -14,23 +15,24 @@ import Show from '../Show';
 import Eliminar from '../Delete';
 import DescargaLayout from '../DescargaLayout';
 import CargaLayout from '../CargaLayout';
+import PDF from '../FormatoTablaComparativa';
     export default {
         name: "presupuesto-buttons",
-        components: {Show, Eliminar, DescargaLayout, CargaLayout},
+        components: {Show, Eliminar, DescargaLayout, CargaLayout, PDF},
         props: ['value'],
 
         methods: {
             edit()
             {
-                this.$router.push({ name: 'presupuesto-edit', params: {id: this.value.id, xls: this.xls}});                
+                this.$router.push({ name: 'presupuesto-edit', params: {id: this.value.id, xls: this.xls}});
             },
             layout(dat)
-            {                
+            {
                 this.xls = (dat) ? dat : null;
                 if(this.xls)
                 {
                     this.edit();
-                }                
+                }
             }
         }
     }
