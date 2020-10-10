@@ -9,14 +9,13 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
-use App\Http\Transformers\CADECO\Compras\OrdenCompraPartidaTransformer;
-use App\Http\Transformers\CADECO\Compras\OrdenCompraComplementoTransformer;
 
 class OrdenCompraTransformer extends TransformerAbstract
 {
@@ -33,6 +32,7 @@ class OrdenCompraTransformer extends TransformerAbstract
         'usuario',
         'moneda',
         'complemento',
+        'relaciones'
     ];
 
     /**
@@ -174,4 +174,12 @@ class OrdenCompraTransformer extends TransformerAbstract
     //     }
     //     return null;
     // }
+    public function includeRelaciones(OrdenCompra $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
 }
