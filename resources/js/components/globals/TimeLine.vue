@@ -6,10 +6,10 @@
                     <div class="timeline">
                         <template v-for="(relacion, i) in relaciones">
                             <div class="time-label" v-if="i==0">
-                                <span class="bg-blue">{{relacion.fecha}}</span>
+                                <span class="bg-gray">{{relacion.fecha}}</span>
                             </div>
                             <div class="time-label" v-else-if="relacion.fecha != relaciones[i-1].fecha" >
-                                <span class="bg-blue">{{relacion.fecha}}</span>
+                                <span class="bg-gray">{{relacion.fecha}}</span>
                             </div>
                             <div>
                                 <i class="bg-green" :class="relacion.icono" v-if="relacion.consulta==1"></i>
