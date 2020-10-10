@@ -10,6 +10,7 @@
         </router-link>
         <Delete v-bind:id="value.id" v-if="value.delete"/>
         <PDF v-bind:id="value.id" />
+        <Relaciones v-bind:relaciones="value.relaciones"/>
     </div>
 </template>
 <script>
@@ -17,9 +18,10 @@ import Delete from "../Delete";
 import DescargarLayout from '../DescargaLayout';
 import CargaLayout from '../CargaLayout';
 import PDF from '../FormatoTablaComparativa';
+import Relaciones from "../../../globals/ModalRelaciones";
     export default {
         name: "cotizacion-buttons",
-        components: {Delete, DescargarLayout, CargaLayout, PDF},
+        components: {Delete, DescargarLayout, CargaLayout, PDF, Relaciones},
         props: ['value'],
         data()
         {

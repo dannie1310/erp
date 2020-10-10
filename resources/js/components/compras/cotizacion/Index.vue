@@ -50,7 +50,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa']},
+                query: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa', 'relaciones']},
                 search: '',
                 cargando: false
             }
@@ -138,6 +138,7 @@
                             id: cotizacion.id,
                             delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
                             edit: (cotizacion.asignada) ? false : true,
+                            relaciones:cotizacion.relaciones.data,
                         })
                     }));
                 },
