@@ -29,6 +29,10 @@ class Estimacion extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 51;
     public const OPCION_ANTECEDENTE = 2;
+    public const TIPO = 52;
+    public const OPCION = 0;
+    public const NOMBRE = "Estimaciones";
+    public const ICONO = "fa fa-building";
 
     protected $fillable = [
         'id_antecedente',
@@ -1130,5 +1134,23 @@ class Estimacion extends Transaccion
         $this->impreso = 0;
         $this->saldo = $this->monto;
         $this->save();
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Estimacion::NOMBRE;
+        $datos["tipo_numero"] = Estimacion::TIPO;
+        $datos["icono"] = Estimacion::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
     }
 }

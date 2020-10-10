@@ -27,6 +27,7 @@
                                         <Entradas  v-bind:value="relacion" v-if="relacion.tipo_numero==33"></Entradas>
                                         <Facturas  v-bind:value="relacion" v-if="relacion.tipo_numero==65"></Facturas>
                                         <Salidas  v-bind:value="relacion" v-if="relacion.tipo_numero==34"></Salidas>
+                                        <ContratosProyectados  v-bind:value="relacion" v-if="relacion.tipo_numero==49"></ContratosProyectados>
                                     </div>
                                 </div>
                             </div>
@@ -45,9 +46,10 @@ import OrdenesCompra from '../compras/orden-compra/partials/ActionButtonsConsult
 import Entradas from '../almacenes/entrada-almacen/partials/ActionButtonsConsulta';
 import Facturas from '../finanzas/factura/partials/ActionButtonsConsulta';
 import Salidas from '../almacenes/salida-almacen/partials/ActionButtonsConsulta';
+import ContratosProyectados from '../contratos/proyectado/partials/ActionButtonsConsulta';
 export default {
     name: "Timeline",
-    components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas},
+    components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas, ContratosProyectados},
     props: ['relaciones'],
     data(){
         return{
