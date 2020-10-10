@@ -7,7 +7,7 @@
         <MenuFinanzas></MenuFinanzas>
         <MenuContabilidad></MenuContabilidad>
         <MenuCatalogos></MenuCatalogos>
-        <MenuConfiguracion></MenuConfiguracion>
+        <MenuFormatos></MenuFormatos>
     </span>
 
 </template>
@@ -19,10 +19,10 @@ import MenuFinanzas from '../finanzas/partials/Menu';
 import MenuContabilidad from '../contabilidad/partials/Menu';
 import MenuAlmacen from '../almacenes/partials/Menu';
 import MenuCatalogos from '../catalogos/partials/Menu';
-import MenuConfiguracion from '../configuracion/partials/Menu';
+import MenuFormatos from '../formato/partials/Menu';
     export default {
         name: "sao-menu",
-        components:{MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuConfiguracion},
+        components:{MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos},
         computed: {
 
             catalogo(){

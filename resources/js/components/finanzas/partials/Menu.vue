@@ -8,13 +8,13 @@
 
 
             <li class="nav-item" v-if="$root.can('consultar_banco')">
-                <router-link :to="{name: 'banco'}" class="nav-link">
+                <router-link :to="{name: 'banco'}" class="nav-link" :class="{active: this.$route.name == 'banco'}">
                     <i class="fa fa-piggy-bank nav-icon"></i>
                     <p>Gestión de Bancos</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_fondos')">
-                <router-link :to="{name: 'fondo'}" class="nav-link">
+                <router-link :to="{name: 'fondo'}" class="nav-link" :class="{active: this.$route.name == 'fondo'}">
                     <i class="fa fa-money-check-alt nav-icon"></i>
                     <p>Gestión de Fondos</p>
                 </router-link>
@@ -49,8 +49,6 @@
                     </li>
                 </ul>
             </li>
-
-
             <li class="nav-item" v-if="solicitudes">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-file-powerpoint"></i>
@@ -69,7 +67,7 @@
                 </ul>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_distribucion_recursos_remesa')">
-                <router-link :to="{name: 'distribuir-recurso-remesa'}" class="nav-link">
+                <router-link :to="{name: 'distribuir-recurso-remesa'}" class="nav-link" :class="{active: this.$route.name == 'distribuir-recurso-remesa'}">
                     <i class="fa fa-circle nav-icon"></i>
                     <p>Dispersión de Recursos</p>
                 </router-link>
@@ -100,7 +98,7 @@
                 </ul>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_factura')">
-                <router-link :to="{name: 'factura'}" class="nav-link">
+                <router-link :to="{name: 'factura'}" class="nav-link" :class="{active: this.$route.name == 'factura'}">
                     <i class="nav-icon fa fa-file-invoice"></i>
                     <p>Facturas</p>
                 </router-link>

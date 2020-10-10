@@ -27,19 +27,19 @@
                         </router-link>
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_cuenta_concepto')">
-                        <router-link :to="{name: 'cuenta-concepto'}" class="nav-link" >
+                        <router-link :to="{name: 'cuenta-concepto'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-concepto'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas de Concepto</p>
                         </router-link>
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_cuenta_costo')">
-                        <router-link :to="{name: 'cuenta-costo'}" class="nav-link" >
+                        <router-link :to="{name: 'cuenta-costo'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-costo'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas de Costo</p>
                         </router-link>
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_cuenta_empresa')">
-                        <router-link :to="{name: 'cuenta-empresa'}" class="nav-link" >
+                        <router-link :to="{name: 'cuenta-empresa'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-empresa'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas de Empresa</p>
                         </router-link>
@@ -72,13 +72,13 @@
             </li>
 
             <li class="nav-item" v-if="$root.can('consultar_cierre_periodo')">
-                <router-link :to="{name: 'cierre-periodo'}" class="nav-link">
+                <router-link :to="{name: 'cierre-periodo'}" class="nav-link" :class="{active: this.$route.name == 'cierre-periodo'}">
                     <i class="fa fa-ban nav-icon"></i>
                     <p>Cierres de periodo</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_prepolizas_generadas')">
-                <router-link :to="{name: 'poliza'}" class="nav-link">
+                <router-link :to="{name: 'poliza'}" class="nav-link" :class="{active: this.$route.name == 'poliza'}">
                     <i class="fa fa-file-text nav-icon"></i>
                     <p>Prepólizas Generadas</p>
                 </router-link>
