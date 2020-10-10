@@ -1,14 +1,14 @@
 <template>
     <span>
         <button @click="find()" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando_relaciones" title="Ver Relaciones">
-            <i class="fa fa-history" v-if="!cargando_relaciones"></i>
+            <i class="fa fa-project-diagram" v-if="!cargando_relaciones"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-history"></i> LÍNEA DE TIEMPO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-project-diagram"></i> Transacciones Relacionadas</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
