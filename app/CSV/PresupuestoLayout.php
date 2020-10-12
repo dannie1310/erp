@@ -26,15 +26,17 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
     protected $verifica;
     protected $tc_partida_euro;
     protected $tc_partida_dlls;
+    protected $tc_partida_libra;
 
     public function __construct(PresupuestoContratista $presupuesto)
     {
         $this->verifica = new ValidacionSistema();
         $this->presupuesto = $presupuesto;
-        $moneda = Moneda::get();
-        
-        $this->tc_partida_dlls = ($presupuesto->TcUSD) ? $presupuesto->TcUSD : $moneda[0]->cambioIgh->tipo_cambio;
-        $this->tc_partida_euro = ($presupuesto->TcEuro) ? $presupuesto->TcEuro : $moneda[1]->cambioIgh->tipo_cambio;
+
+        $moneda = Moneda::orderBy('id_moneda', 'ASC')->get();
+        $this->tc_partida_dlls  = ($presupuesto->TcUSD) ? $presupuesto->TcUSD : $moneda[1]->cambio->cambio;
+        $this->tc_partida_euro  = ($presupuesto->TcEuro) ? $presupuesto->TcEuro : $moneda[2]->cambio->cambio;
+        $this->tc_partida_libra = ($presupuesto->TcLibra) ? $presupuesto->TcLibra : $moneda[3]->cambio->cambio;
     }
 
     /**
@@ -88,9 +90,24 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getColumnDimension('O')->setAutoSize(true);
 
                 $i=2;
+                $t_part = count($this->presupuesto->partidas);
                 foreach ($this->presupuesto->partidas as $cot){
                     $item = Contrato::where('id_transaccion', '=', $cot->presupuesto->contratoProyectado->id_transaccion)->where('id_concepto', '=', $cot->id_concepto)->first();
-                    $id_moneda = ($cot->IdMoneda > 1) ? (($cot->IdMoneda == 2) ? "DOLAR USD" : "EURO") : "PESO MXP";
+                    $id_moneda = '';
+                    switch ((int)$cot->IdMoneda){
+                        case 1:
+                            $id_moneda = 'PESO MXP';
+                        break;
+                        case 2:
+                            $id_moneda = 'DOLAR USD';
+                        break;
+                        case 3:
+                            $id_moneda = 'EURO';
+                        break;
+                        case 4:
+                            $id_moneda = 'LIBRA';
+                        break;
+                    }
                     $datos = $cot->id_concepto;
                     $cadena_json_id = json_encode($datos);
                     $cadena_encriptar = $cadena_json_id . ">";
@@ -119,9 +136,10 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $objValidation->setError('Value is not in list.');
                     $objValidation->setPromptTitle('Choose from list');
                     $objValidation->setPrompt('Please pick a value from the drop-down list.');
-                    $objValidation->setFormula1('"EURO, DOLAR USD, PESO MXP"');
-                    $event->sheet->setCellValue('N'.$i,'=IF(L'.$i.'="EURO",K'.$i.'*'.$this->tc_partida_euro.'/1,IF(L'.$i.'="DOLAR USD",K'.$i.'*'.$this->tc_partida_dlls.'/1, IF(L'.$i.'="PESO MXP",K'.$i.',0)))');
-                    $event->sheet->setCellValue('M'.$i,'=IF(L'.$i.'="EURO",J'.$i.'*'.$this->tc_partida_euro.'/1,IF(L'.$i.'="DOLAR USD",J'.$i.'*'.$this->tc_partida_dlls.'/1, IF(L'.$i.'="PESO MXP",J'.$i.',0)))');
+                    $objValidation->setFormula1('"LIBRA, EURO, DOLAR USD, PESO MXP"');
+
+                    $event->sheet->setCellValue('N'.$i,'=IF(L'.$i.'="EURO",K'.$i.'*G'.($t_part+9).'/1,IF(L'.$i.'="LIBRA",K'.$i.'*G'.($t_part+10).'/1,IF(L'.$i.'="DOLAR USD",K'.$i.'*G'.($t_part+8).'/1, IF(L'.$i.'="PESO MXP",K'.$i.',0))))');
+                    $event->sheet->setCellValue('M'.$i,'=IF(L'.$i.'="EURO",J'.$i.'*G'.($t_part+9).'/1,IF(L'.$i.'="LIBRA",J'.$i.'*G'.($t_part+10).'/1,IF(L'.$i.'="DOLAR USD",J'.$i.'*G'.($t_part+8).'/1, IF(L'.$i.'="PESO MXP",J'.$i.',0))))');
                     $event->sheet->setCellValue("K".$i, '=G'.$i.'*F'.$i.'-((G'.$i.'*F'.$i.'*I'.$i.')/100)');
                     $event->sheet->setCellValue("J".$i, '=G'.$i.'-((G'.$i.'*I'.$i.')/100)');
                     $event->sheet->setCellValue("H".$i, '=G'.$i.'*F'.$i);
@@ -131,47 +149,73 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $event->sheet->getStyle('L'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 }
                 $event->sheet->getStyle('G'.($i+1))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+6))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+7))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+8))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+11))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+13))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+14))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+15))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+16))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getDelegate()->getStyle('F'.($i+1).':F'.($i+15))->applyFromArray([
                     'font' => [
                         'bold' => true
                     ],
                     ]);
-
-                $event->sheet->setCellValue("G".($i+2), '=SUMIF(L3:L'.$i.',"PESO MXP",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"PESO MXP",K3:K'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+3), '=SUMIF(L3:L'.$i.',"DOLAR USD",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"DOLAR USD",K3:K'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+4), '=SUMIF(L3:L'.$i.',"EURO",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"EURO",K3:K'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+8), '=SUM(N3:N'.$i.')-(SUM(N3:N'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+9), '=G'.($i+8).'*0.16');
-                $event->sheet->setCellValue("G".($i+10), '=G'.($i+8).'+G'.($i+9));
+                
                 $event->sheet->setCellValue("F".($i+1), '% Descuento');
                 $event->sheet->setCellValue("G".($i+1), ($this->presupuesto->PorcentajeDescuento) ? $this->presupuesto->PorcentajeDescuento : 0);
+                
                 $event->sheet->setCellValue("F".($i+2), 'Subtotal Precios Peso (MXP)');
+                $event->sheet->setCellValue("G".($i+2), '=SUMIF(L3:L'.$i.',"PESO MXP",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"PESO MXP",K3:K'.$i.')*G'.($i+1).'/100)');
+
                 $event->sheet->setCellValue("F".($i+3), '%Subtotal Precios Dolar (USD)');
+                $event->sheet->setCellValue("G".($i+3), '=SUMIF(L3:L'.$i.',"DOLAR USD",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"DOLAR USD",K3:K'.$i.')*G'.($i+1).'/100)');
+
                 $event->sheet->setCellValue("F".($i+4), 'Subtotal Precios EURO');
-                $event->sheet->setCellValue("F".($i+5), 'TC USD');
-                $event->sheet->setCellValue("F".($i+6), 'TC EURO');
-                $event->sheet->setCellValue("F".($i+7), 'Moneda de Conv.');
-                $event->sheet->setCellValue("F".($i+8), 'Subtotal Moneda Conv.');
-                $event->sheet->setCellValue("F".($i+9), 'IVA');
-                $event->sheet->setCellValue("F".($i+10), 'TOTAL');
-                $event->sheet->setCellValue("F".($i+11), 'Fecha de Presupuesto');
-                $event->sheet->setCellValue("G".($i+11), date("d/m/Y"));
-                $event->sheet->setCellValue("F".($i+12), '% Anticipo');
-                $event->sheet->setCellValue("G".($i+12), ($this->presupuesto->anticipo) ? $this->presupuesto->anticipo : 0);
-                $event->sheet->setCellValue("F".($i+13), 'Credito (dias)');
-                $event->sheet->setCellValue("G".($i+13), ($this->presupuesto->DiasCredito) ? $this->presupuesto->DiasCredito : 0);
-                $event->sheet->setCellValue("F".($i+14), 'Vigencia (dias)');
-                $event->sheet->setCellValue("G".($i+14), ($this->presupuesto->DiasVigencia) ? $this->presupuesto->DiasVigencia : 0);
-                $event->sheet->setCellValue("F".($i+15), 'Observaciones Generales');
-                $event->sheet->setCellValue("G".($i+15), $this->presupuesto->observaciones);
-                $event->sheet->setCellValue("G".($i+5), $this->tc_partida_dlls);
-                $event->sheet->setCellValue("G".($i+6), $this->tc_partida_euro);
-                $event->sheet->setCellValue("G".($i+7), "PESO MX");
+                $event->sheet->setCellValue("G".($i+4), '=SUMIF(L3:L'.$i.',"EURO",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"EURO",K3:K'.$i.')*G'.($i+1).'/100)');
+
+                $event->sheet->setCellValue("F".($i+5), 'Subtotal Precios LIBRA');
+                $event->sheet->setCellValue("G".($i+5), '=SUMIF(L3:L'.$i.',"LIBRA",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"LIBRA",K3:K'.$i.')*G'.($i+1).'/100)');
+
+                $event->sheet->setCellValue("F".($i+6), 'TC USD');
+                $event->sheet->setCellValue("G".($i+6), $this->tc_partida_dlls);
+
+                $event->sheet->setCellValue("F".($i+7), 'TC EURO');
+                $event->sheet->setCellValue("G".($i+7), $this->tc_partida_euro);
+
+                $event->sheet->setCellValue("F".($i+8), 'TC LIBRA');
+                $event->sheet->setCellValue("G".($i+8), $this->tc_partida_libra);
+
+                $event->sheet->setCellValue("F".($i+9), 'Moneda de Conv.');
+                $event->sheet->setCellValue("G".($i+9), "PESO MX");
+
+                $event->sheet->setCellValue("F".($i+10), 'Subtotal Moneda Conv.');
+                $event->sheet->setCellValue("G".($i+10), '=SUM(N3:N'.$i.')-(SUM(N3:N'.$i.')*G'.($i+1).'/100)');
+
+                $event->sheet->setCellValue("F".($i+11), 'IVA');
+                $event->sheet->setCellValue("G".($i+11), '=G'.($i+10).'*0.16');
+
+                $event->sheet->setCellValue("F".($i+12), 'TOTAL');
+                $event->sheet->setCellValue("G".($i+12), '=G'.($i+10).'+G'.($i+11));
+
+                $event->sheet->setCellValue("F".($i+13), 'Fecha de Presupuesto');   
+                $event->sheet->setCellValue("G".($i+13), date("d/m/Y"));
+
+                $event->sheet->setCellValue("F".($i+14), '% Anticipo');
+                $event->sheet->setCellValue("G".($i+14), ($this->presupuesto->anticipo) ? $this->presupuesto->anticipo : 0);
+
+                $event->sheet->setCellValue("F".($i+15), 'Credito (dias)');
+                $event->sheet->setCellValue("G".($i+15), ($this->presupuesto->DiasCredito) ? $this->presupuesto->DiasCredito : 0);
+
+                $event->sheet->setCellValue("F".($i+16), 'Vigencia (dias)');
+                $event->sheet->setCellValue("G".($i+16), ($this->presupuesto->DiasVigencia) ? $this->presupuesto->DiasVigencia : 0);
+
+                $event->sheet->setCellValue("F".($i+17), 'Observaciones Generales');
+                $event->sheet->setCellValue("G".($i+17), $this->presupuesto->observaciones);
 
                 //PESOS
-                $objValidation = $event->sheet->getCell('G'.($i+7))->getDataValidation();
+                $objValidation = $event->sheet->getCell('G'.($i+9))->getDataValidation();
                 $objValidation->setType(DataValidation::TYPE_LIST);
                 $objValidation->setErrorStyle(DataValidation::STYLE_INFORMATION);
                 $objValidation->setAllowBlank(false);
