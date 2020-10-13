@@ -330,6 +330,9 @@
                 $(this.$refs.modal).modal('hide');
             },
             descargarZIP() {
+                this.$refs.carga_layout.value = '';
+                this.file = null;
+                this.$validator.errors.clear();
                 $(this.$refs.modal).modal('show');
             },
             onFileChange(e){

@@ -215,10 +215,23 @@ class PolizaService
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
             $file = $this->getFileXLS($data['name'], $data['file']);
+            $repo = $this->repository;
             $partidas = $this->getPartidas($file);
-            return $this->repository->whereIn(['Ejercicio', $partidas['ejercicios']])->whereIn(['Periodo', $partidas['periodos']])
-                ->whereIn(['Folio', $partidas['folios']])->whereIn(['TipoPol', $partidas['tipo']])->all();
+            $polizas = array();
+            foreach($partidas as $i => $partida){
+                $modelo = Poliza::query();
+                $partida['ejercicio'] > 0?$modelo->where('Ejercicio', '=',$partida['ejercicio']):'';
+                $partida['periodo'] > 0?$modelo->where('Periodo', '=',$partida['periodo']):'';
+                $partida['folio'] > 0?$modelo->where('Folio', '=',$partida['folio']):'';
+                $partida['tipo'] > 0?$modelo->where('TipoPol', '=',$partida['tipo']):'';
+                $resp = $modelo->get();
+                foreach ($resp as $key => $val) {
+                    $polizas[] = $val;
+                }
+            }
+            
         }catch (\Exception $e) {
+            // abort(500, $e);
             abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
             throw $e;
         }
@@ -249,33 +262,39 @@ class PolizaService
     private function getPartidas($file)
     {
         $partidas = Excel::toArray(new PolizaImport, $file);
+        $data = array();
         $ejercicios = array();
         $periodos = array();
         $tipo = array();
         $folios = array();
         foreach ($partidas[0] as $key => $p) {
             if ($key > 0) {
-                if (array_search((int)$p[0], $ejercicios) == false) {
-                    $ejercicios[$key] = (int)$p[0];
-                }
-                if (array_search((int)$p[1], $periodos) == false) {
-                    $periodos[$key] = (int)$p[1];
-                }
-                if (array_search((int)$p[2], $tipo) == false) {
-                    $tipo[$key] = (int)$p[2];
-                }
-                if (array_search((int)$p[3], $folios) == false) {
-                    $folios[$key] = (int)$p[3];
-                }
+                $data[$key]['ejercicio'] = (int)$p[0];
+                $data[$key]['periodo'] = (int)$p[1];
+                $data[$key]['tipo'] = (int)$p[2];
+                $data[$key]['folio'] = (int)$p[3];
+                // if (array_search((int)$p[0], $ejercicios) == false) {
+                //     $ejercicios[$key] = (int)$p[0];
+                // }
+                // if (array_search((int)$p[1], $periodos) == false) {
+                //     $periodos[$key] = (int)$p[1];
+                // }
+                // if (array_search((int)$p[2], $tipo) == false) {
+                //     $tipo[$key] = (int)$p[2];
+                // }
+                // if (array_search((int)$p[3], $folios) == false) {
+                //     $folios[$key] = (int)$p[3];
+                // }
 
             }
         }
 
-        return [
-            'ejercicios' => $ejercicios,
-            'periodos' => $periodos,
-            'tipo' => $tipo,
-            'folios' => $folios
-        ];
+        return $data;
+        // return [
+        //     'ejercicios' => $ejercicios,
+        //     'periodos' => $periodos,
+        //     'tipo' => $tipo,
+        //     'folios' => $folios
+        // ];
     }
 }
