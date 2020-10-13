@@ -32,7 +32,7 @@ class Poliza extends Model
         'poliza_contpaq'
     ];
 
-    protected $dates = ['fecha'];
+    //protected $dates = ['fecha'];
 
     protected static function boot()
     {
@@ -135,8 +135,8 @@ class Poliza extends Model
 
     public function getDatosParaRelacionAttribute()
     {
-        $datos["numero_folio"] = $this->id;
-        $datos["id"] = $this->id;
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_int_poliza;
         $datos["fecha_hora"] = $this->fecha_hora_registro_format;
         $datos["orden"] = $this->fecha_hora_registro_orden;
         $datos["hora"] = $this->hora_registro;
