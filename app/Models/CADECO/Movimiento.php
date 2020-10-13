@@ -48,7 +48,10 @@ class Movimiento extends Model
 
     public function getSalidaAttribute()
     {
-        return $this->itemSalida->salida;
+        if($this->itemSalida){
+            return $this->itemSalida->salida;
+        }
+        return null;
     }
 
     public function getCantidadFormatAttribute()

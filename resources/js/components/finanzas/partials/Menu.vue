@@ -68,7 +68,7 @@
             </li>
             <li class="nav-item" v-if="$root.can('consultar_distribucion_recursos_remesa')">
                 <router-link :to="{name: 'distribuir-recurso-remesa'}" class="nav-link" :class="{active: this.$route.name == 'distribuir-recurso-remesa'}">
-                    <i class="fa fa-circle nav-icon"></i>
+                    <i class="fa fa-coins nav-icon"></i>
                     <p>Dispersión de Recursos</p>
                 </router-link>
             </li>
@@ -105,7 +105,7 @@
             </li>
             <li class="nav-item" v-if="$root.can('consultar_movimiento_bancario')">
                 <router-link :to="{name: 'movimiento-bancario'}" class="nav-link" :class="{active: this.$route.name == 'movimiento-bancario'}">
-                    &nbsp;<i class="fa fa-money-bill nav-icon"></i>
+                    &nbsp;<i class="fa fa-receipt nav-icon"></i>
                     <p>Movimientos Bancarios</p>
                 </router-link>
             </li>

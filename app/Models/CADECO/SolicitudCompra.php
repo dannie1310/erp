@@ -628,12 +628,15 @@ class SolicitudCompra extends Transaccion
         }
         $salidas = collect($salidas_arr)->unique();
         foreach ($salidas as $salida){
-            $relaciones[$i] = $salida->datos_para_relacion;
-            $i++;
-            #POLIZA DE SALIDA
-            if($salida->poliza){
-                $relaciones[$i] = $salida->poliza->datos_para_relacion;
+            if($salida){
+                $relaciones[$i] = $salida->datos_para_relacion;
                 $i++;
+
+                #POLIZA DE SALIDA
+                if($salida->poliza){
+                    $relaciones[$i] = $salida->poliza->datos_para_relacion;
+                    $i++;
+                }
             }
         }
         $transferencias = collect($transferencias_arr)->unique();

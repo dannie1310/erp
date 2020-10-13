@@ -492,8 +492,10 @@ class EntradaMaterial extends Transaccion
         $i++;
 
         #COTIZACIONES
-        $relaciones[$i] = $this->ordenCompra->cotizacion->datos_para_relacion;
-        $i++;
+        if($this->ordenCompra->cotizacion){
+            $relaciones[$i] = $this->ordenCompra->cotizacion->datos_para_relacion;
+            $i++;
+        }
 
         #POLIZA DE OC
         $orden_compra = $this->ordenCompra;
