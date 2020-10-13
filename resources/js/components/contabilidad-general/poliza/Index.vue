@@ -29,6 +29,11 @@
                     <i class="fa fa-plug"></i> Conectar
                 </button>
             </div>
+            <div class="col-md-2">
+                <button @click="abrir" class="btn btn-primary float-right" :disabled="polizas.length == 0">
+                    <i class="fa fa-download"></i> Descargar Formatos.
+                </button>
+            </div>
         </div>
         <span v-if="encontradas">
             <div class="col-12">
@@ -41,7 +46,38 @@
                 </div>
             </div>
         </span>
+        <span>
+            <!-- <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal"> -->
+                <div class="modal fade" ref="modal" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Descargar ZIP Polizas</h4>
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                        </div>
+                        
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button @click="descargar(1)" type="button" class="btn btn-primary" title="Descargar ZIP">
+                                        <i class="fa fa-file-pdf-o"></i>Descargar ZIP A
+                                    </button>
+                                    <button @click="descargar(2)" type="button" class="btn btn-primary" style="margin-left:5px" title="Descargar ZIP">
+                                        <i class="fa fa-file-pdf-o"></i>Descargar ZIP B
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>
     </span>
+    
 </template>
 
 <script>
@@ -148,6 +184,10 @@
             }
         },
         methods: {
+            abrir(){
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
+            },
             changeSelect(){
                 this.conectando = false;
                 var busqueda = this.empresas.find(x=>x.id === this.id_empresa);
@@ -155,6 +195,19 @@
                 {
                     this.empresa_seleccionada = busqueda;
                 }
+            },
+            descargar(tipo){
+                this.cargando = true;
+                return this.$store.dispatch('contabilidadGeneral/poliza/descargaZip',
+                    {
+                        params: this.query,
+                        tipo:tipo
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.cargando = false;
+                    });
             },
             getPolizas(){
                 this.query.id_empresa = this.id_empresa;

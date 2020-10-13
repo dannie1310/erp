@@ -59,6 +59,38 @@ export default {
             });
         },
 
+        descargaZip(context, payload){
+            console.log(payload);
+            var search = 'id_empresa=' + payload.params.id_empresa + '&caida=' + payload.tipo + '&';
+            if (typeof payload.params.ejercicio !== 'undefined') {
+                search = search + 'ejercicio='+ payload.params.ejercicio + '&';  
+            }
+            if (typeof payload.params.periodo !== 'undefined') {
+                search = search + 'periodo='+ payload.params.periodo + '&';  
+            }
+            if (typeof payload.params.tipo !== 'undefined') {
+                search = search + 'tipo='+ payload.params.tipo + '&';  
+            }
+            if (typeof payload.params.folio !== 'undefined') {
+                search = search + 'folio='+ payload.params.folio + '&';  
+            }
+            if (typeof payload.params.concepto !== 'undefined') {
+                search = search + 'concepto='+ payload.params.concepto + '&';  
+            }
+
+            var urr = URI +  'descargar-pdf?'+ search+'access_token=' + this._vm.$session.get('jwt');
+
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Archivo ZIP descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
+
         findEdit(context, payload) {
             return new Promise((resolve, reject) => {
                 axios.get(URI + payload.id + '/editar', { params: payload.params })
