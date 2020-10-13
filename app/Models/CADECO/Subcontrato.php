@@ -13,6 +13,7 @@ use App\Models\CADECO\Subcontratos\Subcontratos;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use Illuminate\Support\Facades\DB;
+use mysql_xdevapi\Collection;
 
 class Subcontrato extends Transaccion
 {
@@ -133,6 +134,12 @@ class Subcontrato extends Transaccion
         return $this->hasManyThrough(Factura::class,FacturaPartida::class,"id_antecedente","id_transaccion","id_transaccion","id_transaccion")
             ->distinct();
     }
+
+    /*public function presupuestos()
+    {
+        return $this->hasManyThrough(PresupuestoContratista::class,ItemSubcontrato::class,"id_transaccion","id_transaccion","id_transaccion","id_antecedente")
+            ->distinct();
+    }*/
 
     public function pago_anticipado()
     {
@@ -348,6 +355,17 @@ class Subcontrato extends Transaccion
         return ($this->monto - $this->impuesto) * $this->retencion / 100;
     }
 
+    public function getPresupuestosAttribute()
+    {
+        /*NO SE USA RELACIÓN ELOQUENT PORQUE HAY CONFLICTOS CON LA SOBREESCRITURA DEL CAMPO id_transaccion*/
+        $presupuestos_arr = [];
+        foreach ($this->partidas as $item){
+            $presupuestos_arr[] = $item->presupuesto;
+        }
+        $presupuestos =  collect($presupuestos_arr)->unique();
+        return $presupuestos;
+    }
+
     public function getDatosParaRelacionAttribute()
     {
         $datos["numero_folio"] = $this->numero_folio_format;
@@ -364,5 +382,89 @@ class Subcontrato extends Transaccion
         $datos["consulta"] = 0;
 
         return $datos;
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #CONTRATOS PROYECTADOS
+        $relaciones[$i] = $this->contratoProyectado->datos_para_relacion;
+        $i++;
+        #PRESUPUESTOS
+        $presupuestos = $this->presupuestos;
+        foreach($presupuestos as $presupuesto)
+        {
+            $relaciones[$i] = $presupuesto->datos_para_relacion;
+            $i++;
+        }
+        #SUBCONTRATO
+        $subcontrato = $this;
+
+        $relaciones[$i] = $subcontrato->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+        #POLIZA DE SUBCONTRATO
+        if($subcontrato->poliza){
+            $relaciones[$i] = $subcontrato->poliza->datos_para_relacion;
+            $i++;
+        }
+        #FACTURA DE SUBCONTRATO
+        foreach ($subcontrato->facturas as $factura){
+            $relaciones[$i] = $factura->datos_para_relacion;
+            $i++;
+            #POLIZA DE FACTURA DE SUBCONTRATO
+            if($factura->poliza){
+                $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                $i++;
+            }
+            #PAGO DE FACTURA DE SUBCONTRATO
+            foreach ($factura->ordenesPago as $orden_pago){
+                if($orden_pago->pago){
+                    $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                    $i++;
+                    #POLIZA DE PAGO DE FACTURA DE SUBCONTRATO
+                    if($orden_pago->pago->poliza){
+                        $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                        $i++;
+                    }
+                }
+            }
+        }
+        #ESTIMACION
+        foreach ($subcontrato->estimaciones as $estimacion){
+            $relaciones[$i] = $estimacion->datos_para_relacion;
+            $i++;
+
+            #FACTURA DE ESTIMACION
+            foreach ($estimacion->facturas as $factura){
+                $relaciones[$i] = $factura->datos_para_relacion;
+                $i++;
+
+                #POLIZA DE FACTURA DE ESTIMACION
+                if($factura->poliza){
+                    $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                    $i++;
+                }
+
+                #PAGO DE FACTURA DE ESTIMACION
+                foreach ($factura->ordenesPago as $orden_pago){
+                    if($orden_pago->pago){
+                        $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                        $i++;
+                        #POLIZA DE PAGO DE FACTURA DE ESTIMACION
+                        if($orden_pago->pago->poliza){
+                            $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                            $i++;
+                        }
+                    }
+                }
+            }
+        }
+
+        $orden1 = array_column($relaciones, 'orden');
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
     }
 }
