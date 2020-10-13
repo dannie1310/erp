@@ -131,6 +131,7 @@ class PolizaService
     }
 
     public function descargaZip($data){
+        Storage::disk('polizas_pdf')->delete(Storage::disk('polizas_pdf')->allFiles());
         ini_set('memory_limit', -1) ;
         ini_set('max_execution_time', '7200') ;
 
@@ -144,7 +145,7 @@ class PolizaService
             if($data["caida"] == 2){
                 $pdf = new PolizaFormatoT1B($poliza, $empresa);
             }
-            $pdf->create(config('filesystems.disks.polizas_pdf.root'));if($i == 3)break;
+            $pdf->create(config('filesystems.disks.polizas_pdf.root'));
         } 
         
         $zip_name = 'Polizas '.date("Ymdhis") . '.zip';
