@@ -30,17 +30,18 @@
                 </button>
             </div>
             <div class="col-md-2">
-                <button @click="abrir" class="btn btn-primary float-right" :disabled="polizas.length == 0">
-                    <i class="fa fa-download"></i> Descargar Formatos.
-                </button>
+                
             </div>
         </div>
         <span v-if="encontradas">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <button @click="descargarZIP" class="btn btn-primary float-right">
+                        <button @click="descargarZIP" class="btn btn-primary float-right" style="margin-left:5px">
                             <i class="fa fa-file-excel-o"></i> Descarga Masiva ZIP
+                        </button>
+                        <button @click="abrir" class="btn btn-primary float-right" :disabled="polizas.length == 0">
+                            <i class="fa fa-download"></i> Descargar Formatos.
                         </button>
                     </div>
                     <div class="card-body">
@@ -58,7 +59,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title">Descargar ZIP Polizas</h4>
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                            <button type="button" class="close" data-dismiss="modalZip"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                         </div>
                         
                         <div class="modal-body">
@@ -75,17 +76,17 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         </div>
                     </div>
                 </div>
             </div>
         </span>
         <div class="modal fade" ref="modal" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-md">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> Descarga Masiva ZIP</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-file-excel-o"></i> Descarga Masiva ZIP</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -108,12 +109,20 @@
                                 <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (xlsx)</div>
                             </div>
                         </div>
+                        <br>
+                        <div class="row">
+                        <div class="col-md-12">
+                            <button @click="validate(2)" type="button" class="btn btn-primary float-right" style="margin-left:5px" title="Descargar ZIP">
+                                <i class="fa fa-file-pdf-o"></i>Descargar ZIP B
+                            </button>
+                            <button @click="validate(1)" type="button" class="btn btn-primary float-right" title="Descargar ZIP">
+                                <i class="fa fa-file-pdf-o"></i>Descargar ZIP A
+                            </button>
+                        </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
-                         <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0">
-                            <i class="fa fa-save"></i> Guardar
-                        </button>
                     </div>
                 </div>
             </div>
@@ -333,18 +342,19 @@
                     this.createImage(files[0]);
                 }
             },
-            validate() {
+            validate(tipo) {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.cargaExcel()
+                        this.cargaExcel(tipo)
                     }
                 });
             },
-            cargaExcel(){
+            cargaExcel(tipo){
                 var formData = new FormData();
                 formData.append('file',  this.file);
                 formData.append('name', this.nombre);
                 formData.append('id_empresa', this.id_empresa);
+                formData.append('caida', tipo);
                 return this.$store.dispatch('contabilidadGeneral/poliza/busquedaExcel', {
                     data: formData,
                     config: {
