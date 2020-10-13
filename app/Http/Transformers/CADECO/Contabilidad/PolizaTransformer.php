@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\Finanzas\TraspasoCuentasTransformer;
 use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Models\CADECO\Contabilidad\Poliza;
@@ -27,7 +28,8 @@ class PolizaTransformer extends TransformerAbstract
         'tipoPolizaContpaq',
         'movimientos',
         'transaccionAntecedente',
-        'traspaso'
+        'traspaso',
+        'relaciones'
     ];
 
     /**
@@ -130,6 +132,15 @@ class PolizaTransformer extends TransformerAbstract
     public function includeTraspaso(Poliza $model) {
         if ($traspaso = $model->traspaso) {
             return $this->item($traspaso, new TraspasoCuentasTransformer);
+        }
+        return null;
+    }
+
+    public function includeRelaciones(Poliza $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }

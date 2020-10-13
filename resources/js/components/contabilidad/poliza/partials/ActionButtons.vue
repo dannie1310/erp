@@ -9,12 +9,15 @@
         <router-link  :to="{ name: 'poliza-historico', params: {id: value.id}}" v-if="$root.can('consultar_prepolizas_generadas')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-clock-o"></i>
         </router-link>
+        <Relaciones v-bind:relaciones="value.relaciones"/>
     </div>
 </template>
 
 <script>
+    import Relaciones from "../../../globals/ModalRelaciones";
     export default {
         name: "action-buttons",
+        components: {Relaciones},
         props: ['value'],
     }
 </script>

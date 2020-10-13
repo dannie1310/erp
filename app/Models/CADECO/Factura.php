@@ -406,7 +406,7 @@ class Factura extends Transaccion
                         }
                     }
                 }
-                else if($transaccion_revisada->tipo_transaccion == 33 || $transaccion_revisada->opciones == 1){
+                else if($transaccion_revisada->tipo_transaccion == 33 && $transaccion_revisada->opciones == 1){
                     $entrada = EntradaMaterial::find($transaccion_revisada->id_transaccion);
                     foreach($entrada->relaciones as $relacion){
                         if($relacion["tipo_numero"]!=65){
@@ -415,7 +415,7 @@ class Factura extends Transaccion
                             $i++;
                         }
                     }
-                } else if($transaccion_revisada->tipo_transaccion == 19){
+                } else if($transaccion_revisada->tipo_transaccion == 19 && $transaccion_revisada->opciones == 1){
                     $orden_compra = OrdenCompra::find($transaccion_revisada->id_transaccion);
                     foreach($orden_compra->relaciones as $relacion){
                         if($relacion["tipo_numero"]!=65){

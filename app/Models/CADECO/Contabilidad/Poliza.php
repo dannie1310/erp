@@ -10,6 +10,14 @@ namespace App\Models\CADECO\Contabilidad;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\EntradaMaterial;
+use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Factura;
+use App\Models\CADECO\OrdenCompra;
+use App\Models\CADECO\Pago;
+use App\Models\CADECO\SalidaAlmacen;
+use App\Models\CADECO\SalidaAlmacenTransferencia;
+use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
 use App\Traits\DateFormatTrait;
@@ -149,5 +157,86 @@ class Poliza extends Model
         $datos["consulta"] = 0;
 
         return $datos;
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #POLIZA
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        $transaccion_revisada =$this->transaccionAntecedente;
+        if($transaccion_revisada){
+            if($transaccion_revisada->tipo_transaccion == 52){
+                $estimacion = Estimacion::find($transaccion_revisada->id_transaccion);
+                foreach($estimacion->relaciones as $relacion){
+                    if($relacion["tipo_numero"]!=666){
+                        $relaciones[$i]=$relacion;
+                        $relaciones[$i]["consulta"] = 0;
+                        $i++;
+                    }
+                }
+            } else if($transaccion_revisada->tipo_transaccion == 82){
+                $subcontrato = Pago::find($transaccion_revisada->id_transaccion);
+                foreach($subcontrato->relaciones as $relacion){
+                    if($relacion["tipo_numero"]!=666){
+                        $relaciones[$i]=$relacion;
+                        $relaciones[$i]["consulta"] = 0;
+                        $i++;
+                    }
+                }
+            }
+            else if($transaccion_revisada->tipo_transaccion == 33 && $transaccion_revisada->opciones == 1){
+                $entrada = EntradaMaterial::find($transaccion_revisada->id_transaccion);
+                foreach($entrada->relaciones as $relacion){
+                    if($relacion["tipo_numero"]!=666){
+                        $relaciones[$i]=$relacion;
+                        $relaciones[$i]["consulta"] = 0;
+                        $i++;
+                    }
+                }
+            } else if($transaccion_revisada->tipo_transaccion == 65){
+                $orden_compra = Factura::find($transaccion_revisada->id_transaccion);
+                foreach($orden_compra->relaciones as $relacion){
+                    if($relacion["tipo_numero"]!=666){
+                        $relaciones[$i]=$relacion;
+                        $relaciones[$i]["consulta"] = 0;
+                        $i++;
+                    }
+                }
+            }
+
+            else if($transaccion_revisada->tipo_transaccion == 34 && $transaccion_revisada->opciones == 1){
+                $orden_compra = SalidaAlmacen::find($transaccion_revisada->id_transaccion);
+                foreach($orden_compra->relaciones as $relacion){
+                    if($relacion["tipo_numero"]!=666){
+                        $relaciones[$i]=$relacion;
+                        $relaciones[$i]["consulta"] = 0;
+                        $i++;
+                    }
+                }
+            }
+
+            else if($transaccion_revisada->tipo_transaccion == 34 && $transaccion_revisada->opciones == 65537){
+                $orden_compra = SalidaAlmacenTransferencia::find($transaccion_revisada->id_transaccion);
+                foreach($orden_compra->relaciones as $relacion){
+                    if($relacion["tipo_numero"]!=666){
+                        $relaciones[$i]=$relacion;
+                        $relaciones[$i]["consulta"] = 0;
+                        $i++;
+                    }
+                }
+            }
+        }
+
+
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
     }
 }
