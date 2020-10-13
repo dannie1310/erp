@@ -7,15 +7,16 @@
  */
 
 namespace App\Services\CTPQ;
+use App\Imports\PolizaImport;
 use App\Models\CTPQ\Poliza;
 use App\Models\CTPQ\Empresa;
 use App\Models\CTPQ\TipoPoliza;
 use App\PDF\CTPQ\PolizaFormatoT1;
 use App\PDF\CTPQ\PolizaFormatoT1A;
-
 use App\PDF\CTPQ\PolizaFormatoT1B;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\CTPQ\PolizaRepository as Repository;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PolizaService
 {
@@ -126,5 +127,76 @@ class PolizaService
         $empresa = Empresa::find($data["id_empresa"]);
         $pdf = new PolizaFormatoT1B($this->show($data, $id), $empresa);
         return $pdf->create();
+    }
+
+    public function busquedaExcel($data)
+    {
+        try {
+            $empresa = Empresa::find($data["id_empresa"]);
+            DB::purge('cntpq');
+            \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+            $file = $this->getFileXLS($data['name'], $data['file']);
+            $partidas = $this->getPartidas($file);
+            return $this->repository->whereIn(['Ejercicio', $partidas['ejercicios']])->whereIn(['Periodo', $partidas['periodos']])
+                ->whereIn(['Folio', $partidas['folios']])->whereIn(['TipoPol', $partidas['tipo']])->all();
+        }catch (\Exception $e) {
+            abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
+            throw $e;
+        }
+    }
+
+    private function getFileXLS($nombre_archivo, $archivo_xls)
+    {
+        $paths = $this->generaDirectorios($nombre_archivo);
+        $exp = explode("base64,", $archivo_xls);
+        $data = base64_decode($exp[1]);
+        $file_xls = public_path($paths["path_xls"]);
+        file_put_contents($file_xls, $data);
+        return $file_xls;
+    }
+
+    private function generaDirectorios($nombre_archivo)
+    {
+        $nombre = str_replace('.xlsx', '-', $nombre_archivo) . date("Ymdhis") . ".xlsx";
+        $dir_xls = "uploads/CTPQ/poliza/";
+        $path_xls = $dir_xls . $nombre;
+
+        if (!file_exists($dir_xls) && !is_dir($dir_xls)) {
+            mkdir($dir_xls, 777, true);
+        }
+        return ["path_xls" => $path_xls, "dir_xls" => $dir_xls];
+    }
+
+    private function getPartidas($file)
+    {
+        $partidas = Excel::toArray(new PolizaImport, $file);
+        $ejercicios = array();
+        $periodos = array();
+        $tipo = array();
+        $folios = array();
+        foreach ($partidas[0] as $key => $p) {
+            if ($key > 0) {
+                if (array_search((int)$p[0], $ejercicios) == false) {
+                    $ejercicios[$key] = (int)$p[0];
+                }
+                if (array_search((int)$p[1], $periodos) == false) {
+                    $periodos[$key] = (int)$p[1];
+                }
+                if (array_search((int)$p[2], $tipo) == false) {
+                    $tipo[$key] = (int)$p[2];
+                }
+                if (array_search((int)$p[3], $folios) == false) {
+                    $folios[$key] = (int)$p[3];
+                }
+
+            }
+        }
+
+        return [
+            'ejercicios' => $ejercicios,
+            'periodos' => $periodos,
+            'tipo' => $tipo,
+            'folios' => $folios
+        ];
     }
 }
