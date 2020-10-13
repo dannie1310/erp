@@ -49,54 +49,26 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="solicitudes">
-                <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-file-powerpoint"></i>
-                    <p>
-                        Solicitudes de Pago
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_solicitud_pago_anticipado')">
-                        <router-link :to="{name: 'pago-anticipado'}" class="nav-link" :class="{active: this.$route.name == 'pago-anticipado'}">
-                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
-                            <p>Pago Anticipado</p>
-                        </router-link>
-                    </li>
-                </ul>
+            <li class="nav-item" v-if="$root.can('consultar_solicitud_pago_anticipado')">
+                <router-link :to="{name: 'pago-anticipado'}" class="nav-link" :class="{active: this.$route.name == 'pago-anticipado'}">
+                    &nbsp;<i class="fa fa-file-powerpoint nav-icon"></i>
+                    <p>Solicitud de Pago Anticipado</p>
+                </router-link>
             </li>
+
             <li class="nav-item" v-if="$root.can('consultar_distribucion_recursos_remesa')">
                 <router-link :to="{name: 'distribuir-recurso-remesa'}" class="nav-link" :class="{active: this.$route.name == 'distribuir-recurso-remesa'}">
                     <i class="fa fa-coins nav-icon"></i>
                     <p>Dispersión de Recursos</p>
                 </router-link>
             </li>
-            <li class="nav-item" v-if="pagos">
-                <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-hand-holding-usd"></i>
-                    <p>
-                        Gestión de Pagos
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_pagos')">
-                        <router-link :to="{name: 'pago'}" class="nav-link" :class="{active: this.$route.name == 'pago'}">
-                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
-                            <p>Pagos</p>
-                        </router-link>
-                    </li>
-                </ul>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_carga_layout_pago')">
-                        <router-link :to="{name: 'carga-masiva'}" class="nav-link" :class="{active: this.$route.name == 'carga-masiva'}">
-                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
-                            <p>Carga Masiva</p>
-                        </router-link>
-                    </li>
-                </ul>
+            <li class="nav-item" v-if="$root.can('consultar_pagos')">
+                <router-link :to="{name: 'pago'}" class="nav-link" :class="{active: this.$route.name == 'pago'}">
+                    &nbsp;<i class="fa fa-hand-holding-usd nav-icon"></i>
+                    <p>Pagos</p>
+                </router-link>
             </li>
+
             <li class="nav-item" v-if="$root.can('consultar_factura')">
                 <router-link :to="{name: 'factura'}" class="nav-link" :class="{active: this.$route.name == 'factura'}">
                     <i class="nav-icon fa fa-file-invoice"></i>

@@ -59,6 +59,11 @@ class Pago extends Transaccion
         return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
     }
 
+    public function ordenPago()
+    {
+        return $this->belongsTo(OrdenPago::class, 'numero_folio', 'numero_folio');
+    }
+
     public function pagoReposicionFF()
     {
         return $this->hasOne(PagoReposicionFF::class, 'id_transaccion', 'id_transaccion');
@@ -115,6 +120,33 @@ class Pago extends Transaccion
         $datos["consulta"] = 0;
 
         return $datos;
+    }
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #PAGO
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+        if($this->ordenPago){
+            if($this->ordenPago->factura){
+                $factura = $this->ordenPago->factura;
+                foreach($factura->relaciones as $relacion){
+                    if($relacion["tipo_numero"]!=82){
+                        $relaciones[$i]=$relacion;
+                        $relaciones[$i]["consulta"] = 0;
+                        $i++;
+                    }
+                }
+            }
+        }
+
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
     }
 
     public function eliminar($motivo)

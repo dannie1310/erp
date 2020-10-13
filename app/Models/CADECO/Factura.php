@@ -378,8 +378,6 @@ class Factura extends Transaccion
     public function getRelacionesAttribute()
     {
         $relaciones = [];
-        $salidas_arr = [];
-        $transferencias_arr = [];
         $i = 0;
 
         #FACTURA
