@@ -211,6 +211,10 @@ class PolizaService
 
     public function busquedaExcel($data){
         try {
+            Storage::disk('polizas_pdf')->delete(Storage::disk('polizas_pdf')->allFiles());
+            ini_set('memory_limit', -1) ;
+            ini_set('max_execution_time', '7200') ;
+
             $empresa = Empresa::find($data["id_empresa"]);
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
@@ -218,6 +222,7 @@ class PolizaService
             $repo = $this->repository;
             $partidas = $this->getPartidas($file);
             $polizas = array();
+            $cantidad = 0;
             foreach($partidas as $i => $partida){
                 $modelo = Poliza::query();
                 $partida['ejercicio'] > 0?$modelo->where('Ejercicio', '=',$partida['ejercicio']):'';
@@ -226,12 +231,27 @@ class PolizaService
                 $partida['tipo'] > 0?$modelo->where('TipoPol', '=',$partida['tipo']):'';
                 $resp = $modelo->get();
                 foreach ($resp as $key => $val) {
-                    $polizas[] = $val;
+                    if($data["caida"] == 1){
+                        $pdf = new PolizaFormatoT1A($val, $empresa);
+                    }
+                    if($data["caida"] == 2){
+                        $pdf = new PolizaFormatoT1B($val, $empresa);
+                    }
+                    $pdf->create(config('filesystems.disks.polizas_pdf.root'));
+                    $cantidad++;
                 }
             }
+
+            if($cantidad == 0){abort(403, "");}
+            $zip_name = 'Polizas '.date("Ymdhis") . '.zip';
+            $zipper = new Zipper;
+            $files = glob(config('filesystems.disks.polizas_pdf.root').'/*');
+            $zipper->make(config('filesystems.disks.polizas_zip.root'). '/' . $zip_name)->add($files)->close();
+
+            Storage::disk('polizas_pdf')->delete(Storage::disk('polizas_pdf')->allFiles());
+            return $zip_name;
             
         }catch (\Exception $e) {
-            // abort(500, $e);
             abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
             throw $e;
         }
@@ -296,5 +316,10 @@ class PolizaService
         //     'tipo' => $tipo,
         //     'folios' => $folios
         // ];
+    }
+
+    public function getZip($data){
+        // dd($data);
+        return Storage::disk('polizas_zip')->download($data['nombreZip']);
     }
 }

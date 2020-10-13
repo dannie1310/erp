@@ -73,6 +73,10 @@ class PolizaController extends Controller
     
     public function busquedaExcel(Request $request)
     {
-        return $this->respondWithCollection($this->service->busquedaExcel($request->all()));
+        return $this->service->busquedaExcel($request->all());
+    }
+
+    public function getZip(Request $request){
+        return $this->service->getZip($request->all());
     }
 }

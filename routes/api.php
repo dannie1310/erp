@@ -233,6 +233,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/pdf-b', 'App\Http\Controllers\v1\CTPQ\PolizaController@pdfCaidaB')->where(['id' => '[0-9]+']);
             $api->get('descargar-pdf', 'App\Http\Controllers\v1\CTPQ\PolizaController@descargaZip')->where(['id' => '[0-9]+']);
             $api->post('busquedaExcel', 'App\Http\Controllers\v1\CTPQ\PolizaController@busquedaExcel');
+            $api->get('descargar-zip', 'App\Http\Controllers\v1\CTPQ\PolizaController@getZip');
         });
         $api->group(['prefix' => 'incidente-poliza'], function ($api) {//buscar-diferencias
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@store');

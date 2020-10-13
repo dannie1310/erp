@@ -60,7 +60,6 @@ export default {
         },
 
         descargaZip(context, payload){
-            console.log(payload);
             var search = 'id_empresa=' + payload.params.id_empresa + '&caida=' + payload.tipo + '&';
             if (typeof payload.params.ejercicio !== 'undefined') {
                 search = search + 'ejercicio='+ payload.params.ejercicio + '&';  
@@ -150,6 +149,17 @@ export default {
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
+                        var urr = URI +  'descargar-zip?nombreZip='+ data+'&access_token=' + this._vm.$session.get('jwt');
+
+                        var win = window.open(urr, "_blank");
+
+                        win.onbeforeunload = () => {
+                            swal("Archivo ZIP descargado correctamente.", {
+                                icon: "success",
+                                timer: 2000,
+                                buttons: false
+                            })
+                        }
                     })
                     .catch(error => {
                         reject(error);

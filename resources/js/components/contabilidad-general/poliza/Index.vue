@@ -76,7 +76,7 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modalZip">Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -87,11 +87,14 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-file-excel-o"></i> Descarga Masiva ZIP</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" :disabled="procesando" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
+                        <p>El archivo debe ser en formato xlsx con una sola hoja y que en las primeras 4 columnas de la línea 1 tengan como encabezado "Ejercicio", "Periodo", "Tipo*" y "Folio" como en la siguiente imágen</p>
+                        <img src="../../../../img/contabilidadGeneral/formato_poliza.png" style="max-width: 400px" class="rounded" alt="Formato de carga de CSV">
+                        <p>*1: Ingreso; 2: Egreso; 3: Diario</p>
                         <div class="col-md-12">
                             <label for="carga_layout" class="col-lg-12 col-form-label">
                                 Cargar Excel
@@ -112,17 +115,21 @@
                         <br>
                         <div class="row">
                         <div class="col-md-12">
-                            <button @click="validate(2)" type="button" class="btn btn-primary float-right" style="margin-left:5px" title="Descargar ZIP">
-                                <i class="fa fa-file-pdf-o"></i>Descargar ZIP B
+                            <button @click="validate(2)" type="button" class="btn btn-primary float-right" :disabled="procesando" style="margin-left:5px" title="Descargar ZIP">
+                                <i class="fa fa-spin fa-spinner" v-if="procesando"></i>
+                                <i class="fa fa-file-pdf-o" v-else></i>Descargar ZIP B
                             </button>
-                            <button @click="validate(1)" type="button" class="btn btn-primary float-right" title="Descargar ZIP">
-                                <i class="fa fa-file-pdf-o"></i>Descargar ZIP A
+                            <button @click="validate(1)" type="button" class="btn btn-primary float-right" :disabled="procesando" title="Descargar ZIP">
+                                <i class="fa fa-spin fa-spinner" v-if="procesando"></i>
+                                <i class="fa fa-file-pdf-o" v-else></i>
+                                Descargar ZIP A
                             </button>
                         </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="closeModal()" :disabled="procesando">Cerrar</button>
+                        
                     </div>
                 </div>
             </div>
@@ -138,6 +145,7 @@
         components: {ModelListSelect},
         data() {
             return {
+                procesando:false,
                 cargando: false,
                 conectando:false,
                 conectado:false,
@@ -353,6 +361,7 @@
                 });
             },
             cargaExcel(tipo){
+                this.procesando = true;
                 var formData = new FormData();
                 formData.append('file',  this.file);
                 formData.append('name', this.nombre);
@@ -364,11 +373,14 @@
                         params: { _method: 'POST'}
                     }
                 }).then((data) => {
-                    this.encontradas = true;
-                    this.$store.commit('contabilidadGeneral/poliza/SET_POLIZAS', data.data);
-                    this.$store.commit('contabilidadGeneral/poliza/SET_META', data.meta);
+                    // this.encontradas = true;
+                    // this.$store.commit('contabilidadGeneral/poliza/SET_POLIZAS', data.data);
+                    // this.$store.commit('contabilidadGeneral/poliza/SET_META', data.meta);
+                    this.$emit('success');
                     $(this.$refs.modal).modal('hide');
-                })
+                }).finally(()=>{
+                    this.procesando = false;
+                });
             },
         }
     }
