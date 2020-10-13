@@ -38,6 +38,11 @@
         <span v-if="encontradas">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header">
+                        <button @click="descargarZIP" class="btn btn-primary float-right">
+                            <i class="fa fa-file-excel-o"></i> Descarga Masiva ZIP
+                        </button>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <datatable v-bind="$data" />
@@ -48,7 +53,7 @@
         </span>
         <span>
             <!-- <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal"> -->
-                <div class="modal fade" ref="modal" data-backdrop="static" data-keyboard="false">
+                <div class="modal fade" ref="modalZip" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog modal-sm">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -76,6 +81,43 @@
                 </div>
             </div>
         </span>
+        <div class="modal fade" ref="modal" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> Descarga Masiva ZIP</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <label for="carga_layout" class="col-lg-12 col-form-label">
+                                Cargar Excel
+                            </label>
+                            <div class="col-lg-12">
+                                 <input type="file" class="form-control" id="carga_layout"
+                                        accept=".xlsx"
+                                        @change="onFileChange"
+                                        row="3"
+                                        v-validate="{required: true, ext: ['xlsx','xls']}"
+                                        name="carga_layout"
+                                        data-vv-as="Layout"
+                                        ref="carga_layout"
+                                        :class="{'is-invalid': errors.has('carga_layout')}">
+                                <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (xlsx)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
+                         <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0">
+                            <i class="fa fa-save"></i> Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </span>
     
 </template>
@@ -111,6 +153,8 @@
                 total: 0,
                 query: {},
                 search: '',
+                file:'',
+                nombre: ''
             }
         },
         mounted(){
@@ -185,8 +229,8 @@
         },
         methods: {
             abrir(){
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show');
+                $(this.$refs.modalZip).appendTo('body')
+                $(this.$refs.modalZip).modal('show');
             },
             changeSelect(){
                 this.conectando = false;
@@ -263,6 +307,55 @@
                         this.empresas = data.data;
                         this.cargando = false;
                     })
+            },
+            createImage(file, tipo) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.file = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+            closeModal() {
+                $(this.$refs.modal).modal('hide');
+            },
+            descargarZIP() {
+                $(this.$refs.modal).modal('show');
+            },
+            onFileChange(e){
+                this.file = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.nombre = files[0].name;
+                if(e.target.id == 'carga_layout') {
+                    this.createImage(files[0]);
+                }
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.cargaExcel()
+                    }
+                });
+            },
+            cargaExcel(){
+                var formData = new FormData();
+                formData.append('file',  this.file);
+                formData.append('name', this.nombre);
+                formData.append('id_empresa', this.id_empresa);
+                return this.$store.dispatch('contabilidadGeneral/poliza/busquedaExcel', {
+                    data: formData,
+                    config: {
+                        params: { _method: 'POST'}
+                    }
+                }).then((data) => {
+                    this.encontradas = true;
+                    this.$store.commit('contabilidadGeneral/poliza/SET_POLIZAS', data.data);
+                    this.$store.commit('contabilidadGeneral/poliza/SET_META', data.meta);
+                    $(this.$refs.modal).modal('hide');
+                })
             },
         }
     }
