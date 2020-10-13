@@ -4,7 +4,7 @@
             <i class="fa fa-eye" v-if="!cargando && !value.numero_folio"></i>
             <i style="width:40px;" v-else-if="!cargando && value.numero_folio">{{value.numero_folio}}</i>
             <i class="fa fa-spinner fa-spin" v-else></i>
-        </button>
+         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">

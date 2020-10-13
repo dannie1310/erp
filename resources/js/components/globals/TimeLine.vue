@@ -30,6 +30,7 @@
                                         <ContratosProyectados  v-bind:value="relacion" v-if="relacion.tipo_numero==49"></ContratosProyectados>
                                         <Subcontratos  v-bind:value="relacion" v-if="relacion.tipo_numero==51"></Subcontratos>
                                         <Presupuestos  v-bind:value="relacion" v-if="relacion.tipo_numero==50"></Presupuestos>
+                                        <Estimaciones  v-bind:value="relacion" v-if="relacion.tipo_numero==52"></Estimaciones>
                                     </div>
                                 </div>
                             </div>
@@ -51,9 +52,10 @@ import Salidas from '../almacenes/salida-almacen/partials/ActionButtonsConsulta'
 import ContratosProyectados from '../contratos/proyectado/partials/ActionButtonsConsulta';
 import Subcontratos from '../contratos/subcontrato/partials/ActionButtonsConsulta';
 import Presupuestos from '../contratos/presupuesto/partials/ActionButtonsConsulta';
+import Estimaciones from '../contratos/estimacion/partials/ActionButtonsConsulta';
 export default {
     name: "Timeline",
-    components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas, ContratosProyectados, Subcontratos,Presupuestos},
+    components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas, ContratosProyectados, Subcontratos,Presupuestos,Estimaciones},
     props: ['relaciones'],
     data(){
         return{
