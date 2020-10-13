@@ -142,9 +142,15 @@ class Estimacion extends Transaccion
         return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function facturas()
+    /*public function facturas()
     {
         return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
+    }*/
+
+    public function facturas()
+    {
+        return $this->hasManyThrough(Factura::class,FacturaPartida::class,"id_antecedente","id_transaccion","id_transaccion","id_transaccion")
+            ->distinct();
     }
 
     public function prepoliza()
