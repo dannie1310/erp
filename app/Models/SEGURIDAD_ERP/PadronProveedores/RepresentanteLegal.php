@@ -17,6 +17,7 @@ class RepresentanteLegal extends Model
         'apellido_paterno',
         'apellido_materno',
         'curp',
+        'es_nacional'
     ];
 
     public function archivos()

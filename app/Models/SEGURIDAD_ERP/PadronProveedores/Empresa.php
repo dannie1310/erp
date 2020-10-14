@@ -326,6 +326,7 @@ class Empresa extends Model
                     'nombre' => $representante['nombre'],
                     'apellido_paterno' => $representante['apellido_paterno'],
                     'apellido_materno' => $representante['apellido_materno'],
+                    'es_nacional'      => $representante['es_nacional']
                 ]);
                 $archivos = $representante_legal->archivos;
                 foreach($archivos as $archivo){
