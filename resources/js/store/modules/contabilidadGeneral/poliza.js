@@ -90,7 +90,7 @@ export default {
                     icon: "warning",
                     buttons: {
                         cancel: {
-                            text: 'Cancelar',
+                            text: 'Cerrar',
                             visible: true
                         }
                     }
