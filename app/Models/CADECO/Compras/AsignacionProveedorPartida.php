@@ -5,11 +5,12 @@ namespace App\Models\CADECO\Compras;
 
 
 use App\Models\CADECO\Cambio;
+use App\Models\IGH\TipoCambio;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\OrdenCompra;
+use App\Models\CADECO\ItemOrdenCompra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompra;
-use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
@@ -59,6 +60,11 @@ class AsignacionProveedorPartida extends Model
     public function itemSolicitud()
     {
         return $this->belongsTo(ItemSolicitudCompra::class, 'id_item_solicitud', 'id_item');
+    }
+
+    public function itemOrdenCompra()
+    {
+        return $this->belongsTo(ItemOrdenCompra::class, 'id_item_solicitud', 'item_antecedente');
     }
 
     public function ordenCompra()

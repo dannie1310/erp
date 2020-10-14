@@ -55,10 +55,11 @@ class AsignacionProveedorService
                 $transf_orden_compra = new OrdenCompraTransformer();
                 $orden_compra_transf = [];
 
-
-                if(count($partida->ordenCompra) > 0){
+                if(count($partida->ordenCompra) > 0){    
                     foreach($partida->ordenCompra as $key => $orden){
-                        $orden_compra_transf[$key] = $transf_orden_compra->transform($orden);
+                        if($orden->complemento->id_asignacion_proveedor == $partida->id_asignacion_proveedores){
+                            $orden_compra_transf[$key] = $transf_orden_compra->transform($orden);
+                        }
                     }
                 }
 
