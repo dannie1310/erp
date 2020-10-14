@@ -1189,36 +1189,42 @@ class Estimacion extends Transaccion
 
         #SUBCONTRATO
         $subcontrato = $this->subcontrato;
+        if($this->subcontrato) {
+            $relaciones[$i] = $subcontrato->datos_para_relacion;
+            $i++;
 
-        $relaciones[$i] = $subcontrato->datos_para_relacion;
-        $i++;
-        #POLIZA DE SUBCONTRATO
-        if($subcontrato->poliza){
-            $relaciones[$i] = $subcontrato->poliza->datos_para_relacion;
-            $i++;
-        }
-        #FACTURA DE SUBCONTRATO
-        foreach ($subcontrato->facturas as $factura){
-            $relaciones[$i] = $factura->datos_para_relacion;
-            $i++;
-            #POLIZA DE FACTURA DE SUBCONTRATO
-            if($factura->poliza){
-                $relaciones[$i] = $factura->poliza->datos_para_relacion;
+            #POLIZA DE SUBCONTRATO
+            if($subcontrato->poliza){
+                $relaciones[$i] = $subcontrato->poliza->datos_para_relacion;
                 $i++;
             }
-            #PAGO DE FACTURA DE SUBCONTRATO
-            foreach ($factura->ordenesPago as $orden_pago){
-                if($orden_pago->pago){
-                    $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+            #FACTURA DE SUBCONTRATO
+            foreach ($subcontrato->facturas as $factura){
+                $relaciones[$i] = $factura->datos_para_relacion;
+                $i++;
+                #POLIZA DE FACTURA DE SUBCONTRATO
+                if($factura->poliza){
+                    $relaciones[$i] = $factura->poliza->datos_para_relacion;
                     $i++;
-                    #POLIZA DE PAGO DE FACTURA DE SUBCONTRATO
-                    if($orden_pago->pago->poliza){
-                        $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                }
+                #PAGO DE FACTURA DE SUBCONTRATO
+                foreach ($factura->ordenesPago as $orden_pago){
+                    if($orden_pago->pago){
+                        $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
                         $i++;
+                        #POLIZA DE PAGO DE FACTURA DE SUBCONTRATO
+                        if($orden_pago->pago->poliza){
+                            $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                            $i++;
+                        }
                     }
                 }
             }
         }
+
+
+
+
         #ESTIMACION
         $relaciones[$i] = $estimacion->datos_para_relacion;
         $relaciones[$i]["consulta"] = 1;
