@@ -25,6 +25,9 @@ class Factura extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 67;
     public const OPCION_ANTECEDENTE = 0;
+    public const TIPO = 65;
+    public const NOMBRE = "Factura";
+    public const ICONO = "fa fa-file-invoice";
     protected $fillable = [
         'fecha',
         "id_empresa",
@@ -41,7 +44,7 @@ class Factura extends Transaccion
         parent::boot();
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 65)
-                ->where('estado', '!=', -2);
+                /*->where('estado', '!=', -2)*/;
         });
     }
 
@@ -121,7 +124,7 @@ class Factura extends Transaccion
     public function polizas(){
         return $this->hasMany(Poliza::class, 'id_transaccion_sao', 'id_transaccion');
     }
-    
+
     public function tipoCambioFecha(){
         return $this->hasMany(Cambio::class, 'fecha', 'fecha');
     }
@@ -135,8 +138,50 @@ class Factura extends Transaccion
         return $cr;
     }
 
+    /*public function transaccionesRevisadas()
+    {
+        return $this->hasManyThrough(Transaccion::class,FacturaPartida::class,"id_transaccion","id_transaccion","id_transaccion","id_antecedente")
+            ->distinct();
+    }*/
+
     public function prepolizaActiva(){
         return $this->polizas()->orderBy('estatus', 'DESC')->first();
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Factura::NOMBRE;
+        $datos["tipo_numero"] = Factura::TIPO;
+        $datos["icono"] = Factura::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
+    public function getTransaccionesRevisadasAttribute()
+    {
+        /*NO SE USA RELACIÓN ELOQUENT PORQUE HAY CONFLICTOS CON LA SOBREESCRITURA DEL CAMPO id_transaccion*/
+        $transacciones_arr = [];
+        $transacciones = null;
+        foreach ($this->items as $item){
+            if($item->antecedente){
+                $transacciones_arr[] = $item->antecedente;
+            }
+        }
+
+        if(count($transacciones_arr)>0){
+            $transacciones =  collect($transacciones_arr)->unique();
+        }
+
+        return $transacciones;
     }
 
     private function registrarComplemento($factura)
@@ -335,6 +380,91 @@ class Factura extends Transaccion
             $tipo = 'Materiales / Servicios';
         }
         return $tipo;
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #FACTURA
+        $factura = $this;
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        if($this->transacciones_revisadas){
+            foreach ($this->transacciones_revisadas as $transaccion_revisada) {
+                if ($transaccion_revisada) {
+                    if ($transaccion_revisada->tipo_transaccion == 52) {
+                        $estimacion = Estimacion::find($transaccion_revisada->id_transaccion);
+                        if($estimacion){
+                            foreach ($estimacion->relaciones as $relacion) {
+                                if ($relacion["tipo_numero"] != 65) {
+                                    $relaciones[$i] = $relacion;
+                                    $relaciones[$i]["consulta"] = 0;
+                                    $i++;
+                                }
+                            }
+                        }
+                    } else if ($transaccion_revisada->tipo_transaccion == 51) {
+                        $subcontrato = Subcontrato::find($transaccion_revisada->id_transaccion);
+                        if($subcontrato){
+                            foreach ($subcontrato->relaciones as $relacion) {
+                                if ($relacion["tipo_numero"] != 65) {
+                                    $relaciones[$i] = $relacion;
+                                    $relaciones[$i]["consulta"] = 0;
+                                    $i++;
+                                }
+                            }
+                        }
+                    } else if ($transaccion_revisada->tipo_transaccion == 33 && $transaccion_revisada->opciones == 1) {
+                        $entrada = EntradaMaterial::find($transaccion_revisada->id_transaccion);
+                        foreach ($entrada->relaciones as $relacion) {
+                            if ($relacion["tipo_numero"] != 65) {
+                                $relaciones[$i] = $relacion;
+                                $relaciones[$i]["consulta"] = 0;
+                                $i++;
+                            }
+                        }
+                    } else if ($transaccion_revisada->tipo_transaccion == 19 && $transaccion_revisada->opciones == 1) {
+                        $orden_compra = OrdenCompra::find($transaccion_revisada->id_transaccion);
+                        foreach ($orden_compra->relaciones as $relacion) {
+                            if ($relacion["tipo_numero"] != 65) {
+                                $relaciones[$i] = $relacion;
+                                $relaciones[$i]["consulta"] = 0;
+                                $i++;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        } else {
+            #POLIZA DE FACTURA
+            if ($factura->poliza) {
+                $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                $i++;
+            }
+            #PAGO DE FACTURA
+            foreach ($factura->ordenesPago as $orden_pago) {
+                if ($orden_pago->pago) {
+                    $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                    $i++;
+                    #POLIZA DE PAGO DE FACTURA
+                    if ($orden_pago->pago->poliza) {
+                        $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                        $i++;
+                    }
+                }
+            }
+        }
+
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
     }
 
     private function validaSaldos($saldo_esperado, $saldo_esperado_cuenta, $pago)

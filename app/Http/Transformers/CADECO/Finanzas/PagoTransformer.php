@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\CuentaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
@@ -29,7 +30,8 @@ class PagoTransformer extends TransformerAbstract
             'moneda',
             'cuenta',
             'empresa',
-            'usuario'
+            'usuario',
+            'relaciones'
     ];
 
 
@@ -107,6 +109,15 @@ class PagoTransformer extends TransformerAbstract
         if($registro = $model->usuario)
         {
             return $this->item($registro, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    public function includeRelaciones(Pago $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }
