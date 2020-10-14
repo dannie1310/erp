@@ -16,6 +16,8 @@ use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
+use App\Http\Transformers\CADECO\Compras\OrdenCompraPartidaTransformer;
+use App\Http\Transformers\CADECO\Compras\OrdenCompraComplementoTransformer;
 
 class OrdenCompraTransformer extends TransformerAbstract
 {
