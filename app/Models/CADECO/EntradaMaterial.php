@@ -564,22 +564,26 @@ class EntradaMaterial extends Transaccion
 
         $salidas = collect($salidas_arr)->unique();
         foreach ($salidas as $salida){
-            $relaciones[$i] = $salida->datos_para_relacion;
-            $i++;
-            #POLIZA DE SALIDA
-            if($salida->poliza){
-                $relaciones[$i] = $salida->poliza->datos_para_relacion;
+            if($salida){
+                $relaciones[$i] = $salida->datos_para_relacion;
                 $i++;
+                #POLIZA DE SALIDA
+                if($salida->poliza){
+                    $relaciones[$i] = $salida->poliza->datos_para_relacion;
+                    $i++;
+                }
             }
         }
         $transferencias = collect($transferencias_arr)->unique();
         foreach ($transferencias as $transferencia){
-            $relaciones[$i] = $transferencia->datos_para_relacion;
-            $i++;
-            #POLIZA DE TRANSFERENCIA
-            if($transferencia->poliza){
-                $relaciones[$i] = $transferencia->poliza->datos_para_relacion;
+            if($transferencia){
+                $relaciones[$i] = $transferencia->datos_para_relacion;
                 $i++;
+                #POLIZA DE TRANSFERENCIA
+                if($transferencia->poliza){
+                    $relaciones[$i] = $transferencia->poliza->datos_para_relacion;
+                    $i++;
+                }
             }
         }
         $orden1 = array_column($relaciones, 'orden');
