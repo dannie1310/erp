@@ -79,6 +79,9 @@ class TipoCuentaContable extends Model
     }
 
     public function getFechaAttribute(){
-        return $this->created_at->format('Y-m-d G:i:s a');
+        if($this->created_at){
+            return $this->created_at->format('Y-m-d G:i:s a');
+        }
+        return $this->created_at;
     }
 }
