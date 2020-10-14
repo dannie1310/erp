@@ -170,10 +170,17 @@ class Factura extends Transaccion
     {
         /*NO SE USA RELACIÓN ELOQUENT PORQUE HAY CONFLICTOS CON LA SOBREESCRITURA DEL CAMPO id_transaccion*/
         $transacciones_arr = [];
+        $transacciones = null;
         foreach ($this->items as $item){
-            $transacciones_arr[] = $item->antecedente;
+            if($item->antecedente){
+                $transacciones_arr[] = $item->antecedente;
+            }
         }
-        $transacciones =  collect($transacciones_arr)->unique();
+
+        if(count($transacciones_arr)>0){
+            $transacciones =  collect($transacciones_arr)->unique();
+        }
+
         return $transacciones;
     }
 
@@ -385,69 +392,69 @@ class Factura extends Transaccion
         $relaciones[$i] = $this->datos_para_relacion;
         $relaciones[$i]["consulta"] = 1;
         $i++;
-        foreach ($this->transacciones_revisadas as $transaccion_revisada)
-        {
-            if($transaccion_revisada){
-                if($transaccion_revisada->tipo_transaccion == 52){
-                    $estimacion = Estimacion::find($transaccion_revisada->id_transaccion);
-                    foreach($estimacion->relaciones as $relacion){
-                        if($relacion["tipo_numero"]!=65){
-                            $relaciones[$i]=$relacion;
-                            $relaciones[$i]["consulta"] = 0;
-                            $i++;
-                        }
-                    }
-                } else if($transaccion_revisada->tipo_transaccion == 51){
-                    $subcontrato = Subcontrato::find($transaccion_revisada->id_transaccion);
-                    foreach($subcontrato->relaciones as $relacion){
-                        if($relacion["tipo_numero"]!=65){
-                            $relaciones[$i]=$relacion;
-                            $relaciones[$i]["consulta"] = 0;
-                            $i++;
-                        }
-                    }
-                }
-                else if($transaccion_revisada->tipo_transaccion == 33 && $transaccion_revisada->opciones == 1){
-                    $entrada = EntradaMaterial::find($transaccion_revisada->id_transaccion);
-                    foreach($entrada->relaciones as $relacion){
-                        if($relacion["tipo_numero"]!=65){
-                            $relaciones[$i]=$relacion;
-                            $relaciones[$i]["consulta"] = 0;
-                            $i++;
-                        }
-                    }
-                } else if($transaccion_revisada->tipo_transaccion == 19 && $transaccion_revisada->opciones == 1){
-                    $orden_compra = OrdenCompra::find($transaccion_revisada->id_transaccion);
-                    foreach($orden_compra->relaciones as $relacion){
-                        if($relacion["tipo_numero"]!=65){
-                            $relaciones[$i]=$relacion;
-                            $relaciones[$i]["consulta"] = 0;
-                            $i++;
-                        }
-                    }
-                }
-            } else {
-                #POLIZA DE FACTURA DE ENTRADA
-                if($factura->poliza){
-                    $relaciones[$i] = $factura->poliza->datos_para_relacion;
-                    $i++;
-                }
 
-                #PAGO DE FACTURA DE ENTRADA
-                foreach ($factura->ordenesPago as $orden_pago){
-                    if($orden_pago->pago){
-                        $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
-                        $i++;
-                        #POLIZA DE PAGO DE FACTURA DE ENTRADA
-                        if($orden_pago->pago->poliza){
-                            $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
-                            $i++;
+        if($this->transacciones_revisadas){
+            foreach ($this->transacciones_revisadas as $transaccion_revisada) {
+                if ($transaccion_revisada) {
+                    if ($transaccion_revisada->tipo_transaccion == 52) {
+                        $estimacion = Estimacion::find($transaccion_revisada->id_transaccion);
+                        foreach ($estimacion->relaciones as $relacion) {
+                            if ($relacion["tipo_numero"] != 65) {
+                                $relaciones[$i] = $relacion;
+                                $relaciones[$i]["consulta"] = 0;
+                                $i++;
+                            }
+                        }
+                    } else if ($transaccion_revisada->tipo_transaccion == 51) {
+                        $subcontrato = Subcontrato::find($transaccion_revisada->id_transaccion);
+                        foreach ($subcontrato->relaciones as $relacion) {
+                            if ($relacion["tipo_numero"] != 65) {
+                                $relaciones[$i] = $relacion;
+                                $relaciones[$i]["consulta"] = 0;
+                                $i++;
+                            }
+                        }
+                    } else if ($transaccion_revisada->tipo_transaccion == 33 && $transaccion_revisada->opciones == 1) {
+                        $entrada = EntradaMaterial::find($transaccion_revisada->id_transaccion);
+                        foreach ($entrada->relaciones as $relacion) {
+                            if ($relacion["tipo_numero"] != 65) {
+                                $relaciones[$i] = $relacion;
+                                $relaciones[$i]["consulta"] = 0;
+                                $i++;
+                            }
+                        }
+                    } else if ($transaccion_revisada->tipo_transaccion == 19 && $transaccion_revisada->opciones == 1) {
+                        $orden_compra = OrdenCompra::find($transaccion_revisada->id_transaccion);
+                        foreach ($orden_compra->relaciones as $relacion) {
+                            if ($relacion["tipo_numero"] != 65) {
+                                $relaciones[$i] = $relacion;
+                                $relaciones[$i]["consulta"] = 0;
+                                $i++;
+                            }
                         }
                     }
                 }
 
             }
 
+        } else {
+            #POLIZA DE FACTURA
+            if ($factura->poliza) {
+                $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                $i++;
+            }
+            #PAGO DE FACTURA
+            foreach ($factura->ordenesPago as $orden_pago) {
+                if ($orden_pago->pago) {
+                    $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                    $i++;
+                    #POLIZA DE PAGO DE FACTURA
+                    if ($orden_pago->pago->poliza) {
+                        $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                        $i++;
+                    }
+                }
+            }
         }
 
         $orden1 = array_column($relaciones, 'orden');

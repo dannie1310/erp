@@ -1174,8 +1174,10 @@ class Estimacion extends Transaccion
         $presupuestos = $this->subcontrato->presupuestos;
         foreach($presupuestos as $presupuesto)
         {
-            $relaciones[$i] = $presupuesto->datos_para_relacion;
-            $i++;
+            if($presupuesto){
+                $relaciones[$i] = $presupuesto->datos_para_relacion;
+                $i++;
+            }
         }
         #SUBCONTRATO
         $subcontrato = $this->subcontrato;
