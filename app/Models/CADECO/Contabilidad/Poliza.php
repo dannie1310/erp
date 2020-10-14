@@ -13,6 +13,7 @@ use App\Facades\Context;
 use App\Models\CADECO\EntradaMaterial;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Factura;
+use App\Models\CADECO\Obra;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\SalidaAlmacen;
@@ -20,9 +21,12 @@ use App\Models\CADECO\SalidaAlmacenTransferencia;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
+use App\Models\CTPQ\Empresa;
 use App\Traits\DateFormatTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class Poliza extends Model
 {
@@ -40,7 +44,7 @@ class Poliza extends Model
         'poliza_contpaq'
     ];
 
-    //protected $dates = ['fecha'];
+    protected $dates = ['fecha'];
 
     protected static function boot()
     {
@@ -74,6 +78,23 @@ class Poliza extends Model
     public function movimientos()
     {
         return $this->hasMany(PolizaMovimiento::class, 'id_int_poliza');
+    }
+
+    public function polizaContpaq()
+    {
+        $obra = Obra::find(Context::getIdObra());
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
+        return $this->hasOne(\App\Models\CTPQ\Poliza::class,"id_poliza_contpaq","Id");
+    }
+
+    public function getIdEmpresaAttribute()
+    {
+        $obra = Obra::find(Context::getIdObra());
+        $empresa = Empresa::where("AliasBDD","=",$obra->datosContables->BDContPaq)->first();
+        if($empresa){
+            return $empresa->Id;
+        }
     }
 
     public function getUsuarioSolicitaAttribute()

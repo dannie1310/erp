@@ -151,6 +151,8 @@
                             historico: false,
                             estatus: (poliza.estatusPrepoliza.estatus != 2 && poliza.estatusPrepoliza.estatus != 3 && poliza.estatusPrepoliza.estatus != 1 && poliza.estatusPrepoliza.estatus != -3) ?  true : undefined,
                             id: poliza.id,
+                            id_poliza:poliza.id_poliza,
+                            id_empresa:poliza.id_empresa,
                             relaciones:poliza.relaciones.data
                         })
                     }));

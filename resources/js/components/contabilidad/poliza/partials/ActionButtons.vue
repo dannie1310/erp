@@ -9,15 +9,17 @@
         <router-link  :to="{ name: 'poliza-historico', params: {id: value.id}}" v-if="$root.can('consultar_prepolizas_generadas')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-clock-o"></i>
         </router-link>
+        <PDFPolizaConsulta v-bind:value="value" v-if="value.id_poliza"></PDFPolizaConsulta>
         <Relaciones v-bind:relaciones="value.relaciones"/>
     </div>
 </template>
 
 <script>
     import Relaciones from "../../../globals/ModalRelaciones";
+    import PDFPolizaConsulta from "../../../contabilidad-general/poliza/partials/PDFPolizaConsulta";
     export default {
         name: "action-buttons",
-        components: {Relaciones},
+        components: {PDFPolizaConsulta, Relaciones},
         props: ['value'],
     }
 </script>

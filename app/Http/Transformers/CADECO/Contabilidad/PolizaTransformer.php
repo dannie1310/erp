@@ -54,6 +54,8 @@ class PolizaTransformer extends TransformerAbstract
             'tiene_historico' => $model->historicos()->count() > 0,
             'usuario_solicita' => $model->UsuarioSolicita,
             'poliza_contpaq' => $model->poliza_contpaq,
+            'id_poliza' => $model->id_poliza_contpaq,
+            'id_empresa' => $model->id_empresa,
             'estatus' => $model->estatus
         ];
     }
