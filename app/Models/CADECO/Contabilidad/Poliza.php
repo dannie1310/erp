@@ -236,8 +236,8 @@ class Poliza extends Model
             }
 
             else if($transaccion_revisada->tipo_transaccion == 34 && $transaccion_revisada->opciones == 1){
-                $orden_compra = SalidaAlmacen::find($transaccion_revisada->id_transaccion);
-                foreach($orden_compra->relaciones as $relacion){
+                $salida = SalidaAlmacen::find($transaccion_revisada->id_transaccion);
+                foreach($salida->relaciones as $relacion){
                     if($relacion["tipo_numero"]!=666){
                         $relaciones[$i]=$relacion;
                         $relaciones[$i]["consulta"] = 0;
@@ -247,8 +247,8 @@ class Poliza extends Model
             }
 
             else if($transaccion_revisada->tipo_transaccion == 34 && $transaccion_revisada->opciones == 65537){
-                $orden_compra = SalidaAlmacenTransferencia::find($transaccion_revisada->id_transaccion);
-                foreach($orden_compra->relaciones as $relacion){
+                $transferencia = SalidaAlmacenTransferencia::find($transaccion_revisada->id_transaccion);
+                foreach($transferencia->relaciones as $relacion){
                     if($relacion["tipo_numero"]!=666){
                         $relaciones[$i]=$relacion;
                         $relaciones[$i]["consulta"] = 0;

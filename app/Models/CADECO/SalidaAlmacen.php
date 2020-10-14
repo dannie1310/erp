@@ -135,6 +135,22 @@ class SalidaAlmacen extends Transaccion
         }
     }
 
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #SALIDA
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
+    }
+
     public function ordenar($clave)
     {
         return function ($a, $b) use ($clave)

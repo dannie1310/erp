@@ -24,6 +24,22 @@ class SalidaAlmacenTransferencia extends Transaccion
         return $this->hasMany(ItemTransferenciaAlmacen::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #TRANSFERENCIA
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
+    }
+
     public function getDatosParaRelacionAttribute()
     {
         $datos["numero_folio"] = $this->numero_folio_format;
