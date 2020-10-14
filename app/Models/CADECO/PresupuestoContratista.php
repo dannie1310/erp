@@ -15,6 +15,10 @@ class PresupuestoContratista extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 49;
     public const OPCION_ANTECEDENTE = 1026;
+    public const TIPO = 50;
+    public const OPCION = 0;
+    public const NOMBRE = "Presupuesto";
+    public const ICONO = "fa fa-comments-dollar";
 
 
     protected $fillable = [
@@ -37,7 +41,7 @@ class PresupuestoContratista extends Transaccion
         'id_moneda'
     ];
 
-    public $searchable = [        
+    public $searchable = [
         'fecha',
         'numero_folio',
         'empresa.razon_social',
@@ -98,7 +102,7 @@ class PresupuestoContratista extends Transaccion
                 'IdMoneda' => $partida->IdMoneda,
                 'Observaciones' => $partida->Observaciones
             );
-            
+
         }
         return $items;
     }
@@ -130,7 +134,7 @@ class PresupuestoContratista extends Transaccion
     public function eliminarPresupuesto($motivo)
     {
         try {
-            DB::connection('cadeco')->beginTransaction();            
+            DB::connection('cadeco')->beginTransaction();
             $this->delete();
             $eliminar = PresupuestoContratistaEliminado::find($this->id_transaccion);
             $eliminar->motivo_elimino = $motivo;
@@ -183,7 +187,7 @@ class PresupuestoContratista extends Transaccion
                         'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
                         'IdMoneda' => $data['moneda'][$t],
                         'Observaciones' => ($data['observaciones'][$t]) ? $data['observaciones'][$t] : ''
-                    ]);           
+                    ]);
                     $t ++;
                 }
             }else
@@ -215,7 +219,7 @@ class PresupuestoContratista extends Transaccion
                         'PorcentajeDescuento' => null,
                         'IdMoneda' => null,
                         'Observaciones' => null
-                    ]);           
+                    ]);
                     $t ++;
                 }
             }
@@ -289,5 +293,23 @@ class PresupuestoContratista extends Transaccion
     public function getEuroFormatAttribute()
     {
         return '$ ' . number_format(abs($this->TcEuro),4);
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = PresupuestoContratista::NOMBRE;
+        $datos["tipo_numero"] = PresupuestoContratista::TIPO;
+        $datos["icono"] = PresupuestoContratista::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
     }
 }

@@ -14,6 +14,7 @@ use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
 use App\Models\CADECO\Subcontrato;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 
 class SubcontratoTransformer extends TransformerAbstract
 {
@@ -28,7 +29,8 @@ class SubcontratoTransformer extends TransformerAbstract
         'estimaciones',
         'partidas',
         'partidas_ordenadas',
-        'subcontratos'
+        'subcontratos',
+        'relaciones'
     ];
 
     /**
@@ -146,6 +148,14 @@ class SubcontratoTransformer extends TransformerAbstract
         if($partidas = $model->partidasOrdenadas)
         {
             return $this->collection($partidas, new SubcontratoPartidaTransformer);
+        }
+        return null;
+    }
+    public function includeRelaciones(Subcontrato $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }

@@ -11,9 +11,9 @@
                 <i v-if="revirtiendo" class="fa fa-spin fa-spinner"></i>
                 <i v-else class="fa fa-thumbs-down"></i>
             </button>
-            <button @click="show"  type="button" class="btn btn-sm btn-outline-secondary" title="Ver Estimación ">
+            <router-link  :to="{ name: 'estimacion-show', params: {id: value.id}}" v-if="$root.can('consultar_estimacion_subcontrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
                 <i class="fa fa-eye"></i>
-            </button>
+            </router-link>
             <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit && (value.estado == 0)">
                 <i class="fa fa-pencil"></i>
             </button>
@@ -21,6 +21,7 @@
                 <i class="fa fa-trash"></i>
             </button>
             <PDF v-bind:id="value.id"></PDF>
+            <Relaciones v-bind:relaciones="value.relaciones"/>
         </div>
 
 
@@ -130,9 +131,10 @@
 
 <script>
     import PDF from '../FormatoEstimacion';
+    import Relaciones from "../../../globals/ModalRelaciones";
     export default {
         name: "action-buttons",
-        components: {PDF},
+        components: {PDF, Relaciones},
         props: ['value'],
         data() {
             return {

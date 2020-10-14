@@ -31,6 +31,7 @@ class TipoCuentaContable extends Model
         'tipo',
         'id_naturaleza_poliza'
     ];
+    //protected $dateFormat = 'Y-m-d H:i:s';
 
     public function cuentaContable()
     {
@@ -75,5 +76,12 @@ class TipoCuentaContable extends Model
         })->pluck('id_tipo_cuenta_contable');
 
         return $query->whereNotIn('id_tipo_cuenta_contable', $existentes);
+    }
+
+    public function getFechaAttribute(){
+        if($this->created_at){
+            return $this->created_at->format('Y-m-d G:i:s a');
+        }
+        return $this->created_at;
     }
 }

@@ -3,6 +3,7 @@
         <PDF v-bind:id="value.id" @click="value.id"></PDF>
         <button @click="editar" type="button"  :disabled="value.tiene_entradas" class="btn btn-sm btn-outline-success" v-if="$root.can('modificar_orden_compra') && !value.tiene_entradas" :title="value.tiene_entradas?'Orden con Entrada de Almacen':'Editar'"><i class="fa fa-pencil"></i></button>
         <Eliminar @created="paginate()" v-bind:id="value.id" v-if="$root.can('eliminar_orden_compra') && !value.tiene_entradas"></Eliminar>
+        <Relaciones v-bind:relaciones="value.relaciones"/>
     </div>
 </template>
 
@@ -10,9 +11,10 @@
 
     import PDF from './FormatoOrdenCompra';
     import Eliminar from '../Delete';
+    import Relaciones from "../../../globals/ModalRelaciones";
     export default {
         name: "action-buttons",
-        components: {PDF, Eliminar},
+        components: {PDF, Eliminar,Relaciones},
         props: ['value'],
         data(){
             return{

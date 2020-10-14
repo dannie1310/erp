@@ -5,6 +5,7 @@
         <Editar v-bind:id="value.id" v-if="value.edit" />
         <Delete v-bind:id="value.id" v-if="value.delete" />
         <PDF v-bind:id="value.id" @click="value.id" ></PDF>
+        <Relaciones v-bind:relaciones="value.relaciones"/>
     </div>
 </template>
 
@@ -13,10 +14,11 @@
     import Show from '../Show';
     import Editar from '../Edit';
     import Delete from "../Delete";
-    import PDF from "../FormatoContratoProyectado"
+    import PDF from "../FormatoContratoProyectado";
+    import Relaciones from "../../../globals/ModalRelaciones";
     export default {
         name: "action-buttons",
-        components: {CambiarAreaSubcontratante, Show, Editar, Delete, PDF},
+        components: {CambiarAreaSubcontratante, Show, Editar, Delete, PDF, Relaciones},
         props: ['value'],
         methods: {
             cambiar_area() {

@@ -51,7 +51,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC'},
+                query: {sort: 'numero_folio', order: 'DESC', include:['relaciones']},
                 search: '',
                 cargando: false
             }
@@ -80,7 +80,7 @@
             },
 
             getEstado(estado) {
-                
+
                 let val = parseInt(estado);
                 switch (val) {
                     case 0:
@@ -134,6 +134,7 @@
                         buttons: $.extend({}, {
                             show: true,
                             id: subcontrato.id,
+                            relaciones: subcontrato.relaciones.data,
                         })
                     }));
                 },
@@ -141,7 +142,7 @@
             },
             meta: {
                 handler (meta) {
-                    
+
                     let total = meta.pagination.total
                     this.$data.total = total
                 },
@@ -159,7 +160,7 @@
                     this.timer = null;
                 }
                 this.timer = setTimeout(() => {
-                    
+
                     this.query.search = val;
                     this.query.offset = 0;
                     this.paginate();
