@@ -4,15 +4,16 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\IGH\Usuario;
 use App\Models\CADECO\Cambio;
 use App\Models\IGH\TipoCambio;
-use App\Models\IGH\Usuario;
-use App\Models\CADECO\SolicitudCompra;
-use Dingo\Blueprint\Annotation\Attributes;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\CADECO\Compras\AsignacionProveedorPartida;
-use App\Models\CADECO\CotizacionCompra;
+use App\Models\CADECO\OrdenCompra;
 use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\SolicitudCompra;
+use App\Models\CADECO\CotizacionCompra;
+use Illuminate\Database\Eloquent\Model;
+use Dingo\Blueprint\Annotation\Attributes;
+use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 
 class AsignacionProveedor extends Model
 {
@@ -63,6 +64,10 @@ class AsignacionProveedor extends Model
         return $this->belongsTo(OrdenCompraComplemento::class, 'id', 'id_asignacion_proveedor');
     }
 
+    public function ordenCompra(){
+        return $this->hasMany(OrdenCompra::class, 'id_antecedente', 'id_transaccion_solicitud');
+    }
+
     /**
      * Scopes
      */
@@ -107,7 +112,7 @@ class AsignacionProveedor extends Model
         $partidas = $this->partidas;
         $cant = 0;
         foreach($partidas as $partida){
-            if(!$partida->con_orden_compra){
+            if(!$partida->itemOrdenCompra){
                 $cant++;
             }
         }
