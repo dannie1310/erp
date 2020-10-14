@@ -37,6 +37,7 @@ class Transaccion extends Model
     public const CREATED_AT = 'FechaHoraRegistro';
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
+    public const SHOW_ROUTE = "";
 
     protected static function boot()
     {
@@ -51,6 +52,16 @@ class Transaccion extends Model
             }
             return $query->where('id_obra', '=', Context::getIdObra());
         });
+    }
+
+    public function getUsuarioRegistroAttribute()
+    {
+        if($this->usuario)
+        {
+            return $this->usuario->nombre_completo;
+        } else{
+            return $this->comentario;
+        }
     }
 
     public function getNumeroFolioFormatAttribute()
@@ -127,6 +138,18 @@ class Transaccion extends Model
         return date_format($date,"d/m/Y H:i");
     }
 
+    public function getHoraRegistroAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"H:i");
+    }
+
+    public function getFechaRegistroAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"d/m/Y");
+    }
+
     public function getFechaHoraRegistroOrdenAttribute()
     {
         $date = date_create($this->FechaHoraRegistro);
@@ -166,6 +189,16 @@ class Transaccion extends Model
 
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
+    }
+
+    public function antecedente()
+    {
+        return $this->belongsTo(Transaccion::class,"id_antecedente", "id_transaccion");
+    }
+
+    public function referente()
+    {
+        return $this->belongsTo(Transaccion::class,"id_referente", "id_transaccion");
     }
 
     public function getSubtotalAttribute()
@@ -273,5 +306,20 @@ class Transaccion extends Model
     public function transaccionReferente()
     {
         return $this->belongsTo(self::class, 'id_referente', 'id_transaccion');
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["consulta"] = 0;
+
+        return $datos;
     }
 }

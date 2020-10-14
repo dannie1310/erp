@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="row">
+        <div class="row" v-if="$router.currentRoute.name == 'home'">
             <div class="col-12 col-sm-6 col-md-3" v-for="(sistema, i) in sistemas">
                 <div class="info-box">
                     <span :class="'info-box-icon '+sistema.color+' elevation-1'"><i :class="sistema.icon" :title="sistema.description"></i></span>
@@ -22,6 +22,7 @@
                 <!-- /.info-box -->
             </div>
         </div>
+        <router-view ></router-view>
     </span>
 </template>
 

@@ -38,7 +38,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include:'areasSubcontratantes'},
+                query: {include:['areasSubcontratantes','relaciones']},
                 search: '',
                 cargando: false
             }
@@ -102,7 +102,8 @@
                             contratoProyectado: contratoProyectado,
                             delete : (this.$root.can('eliminar_contrato_proyectado')) ? true : false,
                             show : this.$root.can('consultar_contrato_proyectado') ? true : false,
-                            edit : this.$root.can('editar_contrato_proyectado') ? true : false
+                            edit : this.$root.can('editar_contrato_proyectado') ? true : false,
+                            relaciones: contratoProyectado.relaciones.data,
                         })
                     }));
                 },

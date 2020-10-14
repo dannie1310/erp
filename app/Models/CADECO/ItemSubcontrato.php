@@ -22,6 +22,11 @@ class ItemSubcontrato extends Item
         return $this->belongsTo(Destino::class, 'id_concepto','id_concepto_contrato');
     }
 
+    public function presupuesto()
+    {
+        return $this->belongsTo(PresupuestoContratista::class,"id_antecedente","id_transaccion");
+    }
+
     public function partidaEstimacion()
     {
         return $this->belongsTo(ItemEstimacion::class, 'id_transaccion', 'id_antecedente');

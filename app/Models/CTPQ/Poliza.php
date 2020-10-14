@@ -39,6 +39,7 @@ class Poliza extends Model
     ];
 
     protected $dates = ["Fecha"];
+    //protected $dateFormat = 'Y-m-d H:i:s';
 
     public $timestamps = false;
 

@@ -57,7 +57,7 @@
             }
         },
         mounted() {
-            this.query.include = 'subcontrato.empresa';
+            this.query.include = ['subcontrato.empresa','relaciones'];
             this.query.sort = 'numero_folio';
             this.query.order = 'DESC';
 
@@ -140,7 +140,8 @@
                             estimacion: estimacion,
                             estado: estimacion.estado,
                             delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : false,
-                            edit: self.$root.can('editar_estimacion_subcontrato') ? true : false
+                            edit: self.$root.can('editar_estimacion_subcontrato') ? true : false,
+                            relaciones: estimacion.relaciones.data,
                         })
 
                     }));
