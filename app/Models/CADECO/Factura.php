@@ -398,20 +398,24 @@ class Factura extends Transaccion
                 if ($transaccion_revisada) {
                     if ($transaccion_revisada->tipo_transaccion == 52) {
                         $estimacion = Estimacion::find($transaccion_revisada->id_transaccion);
-                        foreach ($estimacion->relaciones as $relacion) {
-                            if ($relacion["tipo_numero"] != 65) {
-                                $relaciones[$i] = $relacion;
-                                $relaciones[$i]["consulta"] = 0;
-                                $i++;
+                        if($estimacion){
+                            foreach ($estimacion->relaciones as $relacion) {
+                                if ($relacion["tipo_numero"] != 65) {
+                                    $relaciones[$i] = $relacion;
+                                    $relaciones[$i]["consulta"] = 0;
+                                    $i++;
+                                }
                             }
                         }
                     } else if ($transaccion_revisada->tipo_transaccion == 51) {
                         $subcontrato = Subcontrato::find($transaccion_revisada->id_transaccion);
-                        foreach ($subcontrato->relaciones as $relacion) {
-                            if ($relacion["tipo_numero"] != 65) {
-                                $relaciones[$i] = $relacion;
-                                $relaciones[$i]["consulta"] = 0;
-                                $i++;
+                        if($subcontrato){
+                            foreach ($subcontrato->relaciones as $relacion) {
+                                if ($relacion["tipo_numero"] != 65) {
+                                    $relaciones[$i] = $relacion;
+                                    $relaciones[$i]["consulta"] = 0;
+                                    $i++;
+                                }
                             }
                         }
                     } else if ($transaccion_revisada->tipo_transaccion == 33 && $transaccion_revisada->opciones == 1) {

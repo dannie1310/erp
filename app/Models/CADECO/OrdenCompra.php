@@ -361,8 +361,10 @@ class OrdenCompra extends Transaccion
         $i++;
 
         #COTIZACIONES
-        $relaciones[$i] = $this->cotizacion->datos_para_relacion;
-        $i++;
+        if($this->cotizacion){
+            $relaciones[$i] = $this->cotizacion->datos_para_relacion;
+            $i++;
+        }
 
         #POLIZA DE OC
         $orden_compra = $this;

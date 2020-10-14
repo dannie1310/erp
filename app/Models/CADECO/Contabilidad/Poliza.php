@@ -193,21 +193,25 @@ class Poliza extends Model
         $transaccion_revisada =$this->transaccionAntecedente;
         if($transaccion_revisada){
             if($transaccion_revisada->tipo_transaccion == 52){
-                $estimacion = Estimacion::find($transaccion_revisada->id_transaccion);
-                foreach($estimacion->relaciones as $relacion){
-                    if($relacion["tipo_numero"]!=666){
-                        $relaciones[$i]=$relacion;
-                        $relaciones[$i]["consulta"] = 0;
-                        $i++;
+                $estimacion = Estimacion::withoutGlobalScopes()->find($transaccion_revisada->id_transaccion);
+                if($estimacion){
+                    foreach($estimacion->relaciones as $relacion){
+                        if($relacion["tipo_numero"]!=666){
+                            $relaciones[$i]=$relacion;
+                            $relaciones[$i]["consulta"] = 0;
+                            $i++;
+                        }
                     }
                 }
             } else if($transaccion_revisada->tipo_transaccion == 82){
                 $subcontrato = Pago::find($transaccion_revisada->id_transaccion);
-                foreach($subcontrato->relaciones as $relacion){
-                    if($relacion["tipo_numero"]!=666){
-                        $relaciones[$i]=$relacion;
-                        $relaciones[$i]["consulta"] = 0;
-                        $i++;
+                if($subcontrato){
+                    foreach($subcontrato->relaciones as $relacion){
+                        if($relacion["tipo_numero"]!=666){
+                            $relaciones[$i]=$relacion;
+                            $relaciones[$i]["consulta"] = 0;
+                            $i++;
+                        }
                     }
                 }
             }
