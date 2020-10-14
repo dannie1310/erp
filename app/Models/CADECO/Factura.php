@@ -381,6 +381,7 @@ class Factura extends Transaccion
         $i = 0;
 
         #FACTURA
+        $factura = $this;
         $relaciones[$i] = $this->datos_para_relacion;
         $relaciones[$i]["consulta"] = 1;
         $i++;
@@ -425,7 +426,28 @@ class Factura extends Transaccion
                         }
                     }
                 }
+            } else {
+                #POLIZA DE FACTURA DE ENTRADA
+                if($factura->poliza){
+                    $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                    $i++;
+                }
+
+                #PAGO DE FACTURA DE ENTRADA
+                foreach ($factura->ordenesPago as $orden_pago){
+                    if($orden_pago->pago){
+                        $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                        $i++;
+                        #POLIZA DE PAGO DE FACTURA DE ENTRADA
+                        if($orden_pago->pago->poliza){
+                            $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                            $i++;
+                        }
+                    }
+                }
+
             }
+
         }
 
         $orden1 = array_column($relaciones, 'orden');
