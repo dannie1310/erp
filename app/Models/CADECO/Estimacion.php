@@ -1168,8 +1168,13 @@ class Estimacion extends Transaccion
         $estimacion = $this;
 
         #CONTRATOS PROYECTADOS
-        $relaciones[$i] = $this->subcontrato->contratoProyectado->datos_para_relacion;
-        $i++;
+        if($this->subcontrato){
+            if($this->subcontrato->contratoProyectado){
+                $relaciones[$i] = $this->subcontrato->contratoProyectado->datos_para_relacion;
+                $i++;
+            }
+        }
+
         #PRESUPUESTOS
         $presupuestos = $this->subcontrato->presupuestos;
         foreach($presupuestos as $presupuesto)
