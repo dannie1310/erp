@@ -4,6 +4,7 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Models\CADECO\Factura;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\CambioTransformer;
@@ -26,6 +27,7 @@ class FacturaTransformer extends TransformerAbstract
         'complemento',
         'cambio',
         'poliza',
+        'relaciones'
 
     ];
 
@@ -129,6 +131,15 @@ class FacturaTransformer extends TransformerAbstract
     public function includeCambio(Factura $model){
         if($cambio = $model->tipoCambioFecha) {
             return $this->collection($cambio, new CambioTransformer);
+        }
+        return null;
+    }
+
+    public function includeRelaciones(Factura $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }

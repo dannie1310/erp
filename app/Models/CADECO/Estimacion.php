@@ -29,6 +29,10 @@ class Estimacion extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 51;
     public const OPCION_ANTECEDENTE = 2;
+    public const TIPO = 52;
+    public const OPCION = 0;
+    public const NOMBRE = "Estimaciones";
+    public const ICONO = "fa fa-building";
 
     protected $fillable = [
         'id_antecedente',
@@ -138,9 +142,15 @@ class Estimacion extends Transaccion
         return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function facturas()
+    /*public function facturas()
     {
         return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
+    }*/
+
+    public function facturas()
+    {
+        return $this->hasManyThrough(Factura::class,FacturaPartida::class,"id_antecedente","id_transaccion","id_transaccion","id_transaccion")
+            ->distinct();
     }
 
     public function prepoliza()
@@ -1130,5 +1140,123 @@ class Estimacion extends Transaccion
         $this->impreso = 0;
         $this->saldo = $this->monto;
         $this->save();
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Estimacion::NOMBRE;
+        $datos["tipo_numero"] = Estimacion::TIPO;
+        $datos["icono"] = Estimacion::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        $estimacion = $this;
+
+        #CONTRATOS PROYECTADOS
+        if($this->subcontrato){
+            if($this->subcontrato->contratoProyectado){
+                $relaciones[$i] = $this->subcontrato->contratoProyectado->datos_para_relacion;
+                $i++;
+            }
+        }
+
+        #PRESUPUESTOS
+        if($this->subcontrato){
+            $presupuestos = $this->subcontrato->presupuestos;
+            foreach($presupuestos as $presupuesto)
+            {
+                if($presupuesto){
+                    $relaciones[$i] = $presupuesto->datos_para_relacion;
+                    $i++;
+                }
+            }
+        }
+
+        #SUBCONTRATO
+        $subcontrato = $this->subcontrato;
+        if($this->subcontrato) {
+            $relaciones[$i] = $subcontrato->datos_para_relacion;
+            $i++;
+
+            #POLIZA DE SUBCONTRATO
+            if($subcontrato->poliza){
+                $relaciones[$i] = $subcontrato->poliza->datos_para_relacion;
+                $i++;
+            }
+            #FACTURA DE SUBCONTRATO
+            foreach ($subcontrato->facturas as $factura){
+                $relaciones[$i] = $factura->datos_para_relacion;
+                $i++;
+                #POLIZA DE FACTURA DE SUBCONTRATO
+                if($factura->poliza){
+                    $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                    $i++;
+                }
+                #PAGO DE FACTURA DE SUBCONTRATO
+                foreach ($factura->ordenesPago as $orden_pago){
+                    if($orden_pago->pago){
+                        $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                        $i++;
+                        #POLIZA DE PAGO DE FACTURA DE SUBCONTRATO
+                        if($orden_pago->pago->poliza){
+                            $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                            $i++;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        #ESTIMACION
+        $relaciones[$i] = $estimacion->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        #FACTURA DE ESTIMACION
+        foreach ($estimacion->facturas as $factura){
+            $relaciones[$i] = $factura->datos_para_relacion;
+            $i++;
+
+            #POLIZA DE FACTURA DE ESTIMACION
+            if($factura->poliza){
+                $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                $i++;
+            }
+
+            #PAGO DE FACTURA DE ESTIMACION
+            foreach ($factura->ordenesPago as $orden_pago){
+                if($orden_pago->pago){
+                    $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                    $i++;
+                    #POLIZA DE PAGO DE FACTURA DE ESTIMACION
+                    if($orden_pago->pago->poliza){
+                        $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                        $i++;
+                    }
+                }
+            }
+        }
+
+        $orden1 = array_column($relaciones, 'orden');
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
     }
 }

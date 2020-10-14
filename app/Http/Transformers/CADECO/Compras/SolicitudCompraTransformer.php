@@ -4,6 +4,7 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\Compras\SolicitudComplementoTransformer;
 use App\Http\Transformers\CADECO\Compras\CotizacionCompraTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
@@ -21,7 +22,8 @@ class SolicitudCompraTransformer extends TransformerAbstract
         'complemento',
         'partidas',
         'usuario',
-        'cotizaciones'
+        'cotizaciones',
+        'relaciones'
     ];
 
     /**
@@ -100,6 +102,15 @@ class SolicitudCompraTransformer extends TransformerAbstract
     {
         if ($usuario = $model->usuario) {
             return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    public function includeRelaciones(SolicitudCompra $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }

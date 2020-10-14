@@ -42,7 +42,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope: 'areasCompradorasAsignadas', include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'},
+                query: {scope: 'areasCompradorasAsignadas', include: ['solicitud','empresa','relaciones'], sort: 'id_transaccion', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -100,6 +100,7 @@
                                 pdf: self.$root.can('consultar_orden_compra') ? true : false,
                                 id: orden.id,
                                 tiene_entradas: orden.entradas_almacen,
+                                relaciones: orden.relaciones.data,
                             })
                         })
                     });

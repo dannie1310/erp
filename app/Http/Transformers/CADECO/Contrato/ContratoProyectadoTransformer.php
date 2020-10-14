@@ -8,6 +8,7 @@
 
 namespace App\Http\Transformers\CADECO\Contrato;
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\TipoAreaSubcontratanteTransformer;
 use App\Models\CADECO\ContratoProyectado;
@@ -18,7 +19,8 @@ class ContratoProyectadoTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
         'areasSubcontratantes',
-        'conceptos'
+        'conceptos',
+        'relaciones'
     ];
     public function transform(ContratoProyectado $model)
     {
@@ -57,6 +59,15 @@ class ContratoProyectadoTransformer extends TransformerAbstract
         if($concepto = $model->conceptos)
         {
             return $this->collection($concepto, new ContratoTransformer);
+        }
+        return null;
+    }
+
+    public function includeRelaciones(ContratoProyectado $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }

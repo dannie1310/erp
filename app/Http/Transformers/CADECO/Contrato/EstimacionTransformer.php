@@ -9,10 +9,9 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\Finanzas\ConfiguracionEstimacionTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
-use App\Http\Transformers\CADECO\ItemTransformer;
 use App\Http\Transformers\CADECO\SubcontratosEstimaciones\SubcontratoEstimacionTrasnformer;
 use App\Models\CADECO\Estimacion;
 use League\Fractal\TransformerAbstract;
@@ -30,7 +29,8 @@ class EstimacionTransformer extends TransformerAbstract
         'subcontrato',
         'empresa',
         'moneda',
-        'partidas'
+        'partidas',
+        'relaciones'
     ];
 
     /**
@@ -145,6 +145,15 @@ class EstimacionTransformer extends TransformerAbstract
     {
         if($item = $model->partidas){
             return $this->collection($item, new EstimacionPartidaTransformer);
+        }
+        return null;
+    }
+
+    public function includeRelaciones(Estimacion $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }

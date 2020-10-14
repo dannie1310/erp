@@ -4,15 +4,15 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">CATÁLOGOS</li>
+            <li class="nav-header">SISTEMA DE CATÁLOGOS</li>
 
             <li class="nav-item" v-if="$root.can('consultar_unidad')">
-                <router-link :to="{name: 'unidad'}" class="nav-link">
-                            <i class="fas fa-ruler-combined nav-icon"></i>
-                            <p>Catálogo de Unidades</p>
-                        </router-link>
+                <router-link :to="{name: 'unidad'}" class="nav-link" :class="{active: this.$route.name == 'unidad'}">
+                    <i class="fas fa-ruler-combined nav-icon"></i>
+                    <p>Catálogo de Unidades</p>
+                </router-link>
             </li>
-            
+
             <li class="nav-item" v-if="catalogo_maquinaria">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-tractor"></i>
@@ -140,7 +140,7 @@
                 </ul>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_unificacion_proveedores')">
-                <router-link :to="{name: 'unificacion-proveedores'}" class="nav-link">
+                <router-link :to="{name: 'unificacion-proveedores'}" class="nav-link" :class="{active: this.$route.name == 'unificacion-proveedores'}">
                     <i class="fas fa-crosshairs nav-icon"></i>
                     <p>Unificación de Empresas</p>
                 </router-link>
