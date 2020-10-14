@@ -528,6 +528,12 @@ class EntradaMaterial extends Transaccion
         #ENTRADA DE MATERIAL
         $entrada_almacen = $this;
 
+        #POLIZA DE ENTRADA
+        if($entrada_almacen->poliza){
+            $relaciones[$i] = $entrada_almacen->poliza->datos_para_relacion;
+            $i++;
+        }
+
         #SALIDA DE MATERIAL
         foreach ($entrada_almacen->salidas as $salida){
             $salidas_arr[] = $salida;

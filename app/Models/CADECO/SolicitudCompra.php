@@ -591,6 +591,12 @@ class SolicitudCompra extends Transaccion
                 $relaciones[$i] = $entrada_almacen->datos_para_relacion;
                 $i++;
 
+                #POLIZA DE ENTRADA
+                if($entrada_almacen->poliza){
+                    $relaciones[$i] = $entrada_almacen->poliza->datos_para_relacion;
+                    $i++;
+                }
+
                 #SALIDA DE MATERIAL
                 foreach ($entrada_almacen->salidas as $salida){
                     $salidas_arr[] = $salida;
