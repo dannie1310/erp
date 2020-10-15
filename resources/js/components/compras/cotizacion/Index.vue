@@ -138,7 +138,7 @@
                             id: cotizacion.id,
                             delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
                             edit: (cotizacion.asignada) ? false : true,
-                            relaciones:cotizacion.relaciones.data,
+                            transaccion: {id:cotizacion.id, tipo:18},
                         })
                     }));
                 },

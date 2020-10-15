@@ -141,7 +141,7 @@
                             estado: estimacion.estado,
                             delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : false,
                             edit: self.$root.can('editar_estimacion_subcontrato') ? true : false,
-                            relaciones: estimacion.relaciones.data,
+                            transaccion: {id:estimacion.id, tipo:52},
                         })
 
                     }));

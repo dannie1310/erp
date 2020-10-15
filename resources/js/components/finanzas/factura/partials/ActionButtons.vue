@@ -5,7 +5,7 @@
             <PDF v-bind:id="value.id" @click="value.id" ></PDF>
             <Eliminar v-if="value.borrar" v-bind:id="value.id" v-bind:pagina="value.pagina" />
             <Revertir v-if="value.revertir" v-bind:id="value.id" />
-            <Relaciones v-bind:relaciones="value.relaciones"/>
+            <Relaciones v-bind:transaccion="value.transaccion"/>
         </div>
     </span>
 </template>

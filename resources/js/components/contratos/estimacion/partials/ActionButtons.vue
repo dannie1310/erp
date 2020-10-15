@@ -21,7 +21,7 @@
                 <i class="fa fa-trash"></i>
             </button>
             <PDF v-bind:id="value.id"></PDF>
-            <Relaciones v-bind:relaciones="value.relaciones"/>
+            <Relaciones v-bind:transaccion="value.transaccion"/>
         </div>
 
 
