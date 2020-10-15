@@ -100,7 +100,7 @@
                                 pdf: self.$root.can('consultar_orden_compra') ? true : false,
                                 id: orden.id,
                                 tiene_entradas: orden.entradas_almacen,
-                                transaccion: {id:factura.id, tipo:19},
+                                transaccion: {id:orden.id, tipo:19},
                             })
                         })
                     });
