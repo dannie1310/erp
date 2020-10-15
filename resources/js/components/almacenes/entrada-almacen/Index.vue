@@ -104,7 +104,7 @@
                                 estado: entrada.estado,
                                 pagina: self.query.offset,
                                 delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
-                                relaciones: entrada.relaciones.data,
+                                transaccion: {id:entrada.id, tipo:33, opcion:1},
                             })
                         })
                     });

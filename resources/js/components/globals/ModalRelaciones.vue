@@ -62,6 +62,9 @@ export default {
             if(this.transaccion.tipo == 19){
                 this.ordenCompra();
             }
+            if(this.transaccion.tipo == 33){
+                this.entrada();
+            }
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show')
         },
@@ -132,6 +135,19 @@ export default {
         },
         ordenCompra(){
             return this.$store.dispatch('compras/orden-compra/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        entrada(){
+            return this.$store.dispatch('almacenes/entrada-almacen/find', {
                 id: this.transaccion.id,
                 params:{include: [
                         'relaciones'
