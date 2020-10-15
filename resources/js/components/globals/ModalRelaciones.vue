@@ -14,7 +14,7 @@
                         </button>
                     </div>
                     <div class="modal-body" style="height: 800px; overflow-y: scroll" >
-                        <Relaciones v-bind:relaciones="relaciones"></Relaciones>
+                        <Relaciones v-bind:relaciones="relaciones" v-bind:transaccion="transaccion"></Relaciones>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -33,7 +33,7 @@ import Relaciones from './TimeLine';
 export default {
     name: "ModalRelaciones",
     components:{Relaciones},
-    props: ['relaciones'],
+    props: ['relaciones','transaccion'],
     data(){
         return{
             cargando_relaciones: false,
