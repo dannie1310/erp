@@ -53,6 +53,15 @@ export default {
             if(this.transaccion.tipo == 666){
                 this.poliza();
             }
+            if(this.transaccion.tipo == 17){
+                this.solicitud();
+            }
+            if(this.transaccion.tipo == 18){
+                this.cotizacion();
+            }
+            if(this.transaccion.tipo == 19){
+                this.ordenCompra();
+            }
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show')
         },
@@ -84,6 +93,45 @@ export default {
         },
         poliza(){
             return this.$store.dispatch('contabilidad/poliza/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        solicitud(){
+            return this.$store.dispatch('compras/solicitud-compra/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        cotizacion(){
+            return this.$store.dispatch('compras/cotizacion/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        ordenCompra(){
+            return this.$store.dispatch('compras/orden-compra/find', {
                 id: this.transaccion.id,
                 params:{include: [
                         'relaciones'

@@ -10,7 +10,7 @@
         </router-link>
         <Delete v-bind:id="value.id" v-if="value.delete"/>
         <PDF v-bind:id="value.id" />
-        <Relaciones v-bind:relaciones="value.relaciones"/>
+        <Relaciones v-bind:transaccion="value.transaccion"/>
     </div>
 </template>
 <script>
