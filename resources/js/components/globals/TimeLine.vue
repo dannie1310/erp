@@ -58,74 +58,24 @@ import Polizas from '../contabilidad/poliza/partials/ActionButtonsConsulta';
 export default {
     name: "Timeline",
     components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas, ContratosProyectados, Subcontratos,Presupuestos,Estimaciones,Polizas},
-    props: ['transaccion'],
+    props: ['transaccion','relaciones'],
     data(){
         return{
             cargando_relaciones: false,
             configuracion: '',
             fecha:'',
-            relaciones: null,
+            //relaciones: null,
         }
     },
-    mounted() {
+    /*mounted() {
         this.find();
-    },
-    methods: {
+    },*/
+    /*methods: {
         find() {
             this.cargando_relaciones = true;
-            if(this.transaccion.tipo == 65){
-                this.factura();
-            }
-            if(this.transaccion.tipo == 82){
-                this.pago();
-            }
-            if(this.transaccion.tipo == 666){
-                this.poliza();
-            }
-
-
-
         },
-        factura(){
-            return this.$store.dispatch('finanzas/factura/find', {
-                id: this.transaccion.id,
-                params:{include: [
-                        'relaciones'
-                    ]}
-            }).then(data => {
-                this.relaciones = data.relaciones.data
-            })
-                .finally(()=> {
-                    this.cargando_relaciones = false;
-                });
-        },
-        pago(){
-            return this.$store.dispatch('finanzas/pago/find', {
-                id: this.transaccion.id,
-                params:{include: [
-                        'relaciones'
-                    ]}
-            }).then(data => {
-                this.relaciones = data.relaciones.data
-            })
-                .finally(()=> {
-                    this.cargando_relaciones = false;
-                });
-        },
-        poliza(){
-            return this.$store.dispatch('contabilidad/poliza/find', {
-                id: this.transaccion.id,
-                params:{include: [
-                        'relaciones'
-                    ]}
-            }).then(data => {
-                this.relaciones = data.relaciones.data
-            })
-                .finally(()=> {
-                    this.cargando_relaciones = false;
-                });
-        }
-    },
+
+    },*/
 }
 </script>
 

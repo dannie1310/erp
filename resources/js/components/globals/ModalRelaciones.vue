@@ -14,7 +14,7 @@
                         </button>
                     </div>
                     <div class="modal-body" style="height: 800px; overflow-y: scroll" >
-                        <Relaciones v-bind:relaciones="relaciones" v-bind:transaccion="transaccion"></Relaciones>
+                        <Relaciones v-bind:relaciones="relaciones" v-if="relaciones"></Relaciones>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -33,19 +33,68 @@ import Relaciones from './TimeLine';
 export default {
     name: "ModalRelaciones",
     components:{Relaciones},
-    props: ['relaciones','transaccion'],
+    props: ['transaccion'],
     data(){
         return{
             cargando_relaciones: false,
             configuracion: '',
             fecha:'',
+            relaciones:null
         }
     },
     methods: {
         find() {
+            if(this.transaccion.tipo == 65){
+                this.factura();
+            }
+            if(this.transaccion.tipo == 82){
+                this.pago();
+            }
+            if(this.transaccion.tipo == 666){
+                this.poliza();
+            }
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show')
         },
+        factura(){
+            return this.$store.dispatch('finanzas/factura/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        pago(){
+            return this.$store.dispatch('finanzas/pago/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        poliza(){
+            return this.$store.dispatch('contabilidad/poliza/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        }
     },
 }
 </script>
