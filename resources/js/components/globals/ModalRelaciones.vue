@@ -44,6 +44,7 @@ export default {
     },
     methods: {
         find() {
+            this.cargando_relaciones = true;
             if(this.transaccion.tipo == 65){
                 this.factura();
             }
