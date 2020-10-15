@@ -153,7 +153,7 @@
                             id: poliza.id,
                             id_poliza:poliza.id_poliza,
                             id_empresa:poliza.id_empresa,
-                            transaccion: {id:pago.id, tipo:666},
+                            transaccion: {id:poliza.id, tipo:666},
                         })
                     }));
                 },
