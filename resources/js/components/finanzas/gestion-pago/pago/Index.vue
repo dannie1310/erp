@@ -117,7 +117,7 @@
                             buttons: $.extend({}, {
                                 id: pago.id,
                                 delete: self.$root.can('eliminar_pagos') ? true : false,
-                                relaciones: pago.relaciones.data,
+                                transaccion: {id:pago.id, tipo:82},
                             })
                         })
                     });

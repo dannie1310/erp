@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
         <Show v-bind:id="value.id" v-bind:show="value.show"></Show>
-        <Relaciones v-bind:relaciones="value.relaciones"/>
+        <Relaciones v-bind:transaccion="value.transaccion"/>
     </div>
 </template>
 

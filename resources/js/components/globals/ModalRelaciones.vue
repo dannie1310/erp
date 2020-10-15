@@ -14,7 +14,7 @@
                         </button>
                     </div>
                     <div class="modal-body" style="height: 800px; overflow-y: scroll" >
-                        <Relaciones v-bind:relaciones="relaciones"></Relaciones>
+                        <Relaciones v-bind:relaciones="relaciones" v-if="relaciones"></Relaciones>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -33,19 +33,181 @@ import Relaciones from './TimeLine';
 export default {
     name: "ModalRelaciones",
     components:{Relaciones},
-    props: ['relaciones'],
+    props: ['transaccion'],
     data(){
         return{
             cargando_relaciones: false,
             configuracion: '',
             fecha:'',
+            relaciones:null
         }
     },
     methods: {
         find() {
+            this.cargando_relaciones = true;
+            if(this.transaccion.tipo == 65){
+                this.factura();
+            }
+            if(this.transaccion.tipo == 82){
+                this.pago();
+            }
+            if(this.transaccion.tipo == 666){
+                this.poliza();
+            }
+            if(this.transaccion.tipo == 17){
+                this.solicitud();
+            }
+            if(this.transaccion.tipo == 18){
+                this.cotizacion();
+            }
+            if(this.transaccion.tipo == 19){
+                this.ordenCompra();
+            }
+            if(this.transaccion.tipo == 33){
+                this.entrada();
+            }
+            if(this.transaccion.tipo == 49){
+                this.contratoProyectado();
+            }
+            if(this.transaccion.tipo == 51){
+                this.subcontrato();
+            }
+            if(this.transaccion.tipo == 52){
+                this.estimacion();
+            }
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show')
         },
+        factura(){
+            return this.$store.dispatch('finanzas/factura/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        pago(){
+            return this.$store.dispatch('finanzas/pago/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        poliza(){
+            return this.$store.dispatch('contabilidad/poliza/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        solicitud(){
+            return this.$store.dispatch('compras/solicitud-compra/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        cotizacion(){
+            return this.$store.dispatch('compras/cotizacion/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        ordenCompra(){
+            return this.$store.dispatch('compras/orden-compra/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        entrada(){
+            return this.$store.dispatch('almacenes/entrada-almacen/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        contratoProyectado(){
+            return this.$store.dispatch('contratos/contrato-proyectado/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        subcontrato(){
+            return this.$store.dispatch('contratos/subcontrato/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        estimacion(){
+            return this.$store.dispatch('contratos/estimacion/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        }
     },
 }
 </script>

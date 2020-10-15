@@ -3,7 +3,7 @@
         <Show v-bind:id="value.id" v-if="value.show" v-bind:pagina="value.pagina"/>
         <Delete v-if="value.delete && value.estado == 0" v-bind:id="value.id" v-bind:pagina="value.pagina"/>
         <PDF v-bind:id="value.id" @click="value.id"  v-if="$root.can('consultar_entrada_almacen')"></PDF>
-        <Relaciones v-bind:relaciones="value.relaciones"/>
+        <Relaciones v-bind:transaccion="value.transaccion"/>
     </div>
 </template>
 

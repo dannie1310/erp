@@ -10,7 +10,7 @@
             <i class="fa fa-clock-o"></i>
         </router-link>
         <PDFPolizaConsulta v-bind:value="value" v-if="value.id_poliza"></PDFPolizaConsulta>
-        <Relaciones v-bind:relaciones="value.relaciones"/>
+        <Relaciones v-bind:transaccion="value.transaccion"/>
     </div>
 </template>
 
