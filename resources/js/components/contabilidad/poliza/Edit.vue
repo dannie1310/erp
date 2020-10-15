@@ -29,18 +29,17 @@
                                         </td>
                                         <td class="bg-gray-light"><b>Fecha de Prepóliza:</b><br>
                                             <span v-if="$root.can('editar_fecha_prepoliza')">
-                                                <input
-                                                        type="date"
-                                                        class="form-control"
-                                                        name="fecha"
-                                                        v-model="poliza.fecha"
-                                                        v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
-                                                        data-vv-as="Fecha de Prepóliza"
-                                                        :class="{'is-invalid': errors.has('fecha')}"
-                                                />
-                                                <div class="invalid-feedback" v-show="errors.has('fecha')">
-                                                    {{ errors.first('fecha') }}
-                                                </div>
+                                                <datepicker v-model = "poliza.fecha_completa.date"
+                                                            name = "fecha"
+                                                            :format = "formatoFecha"
+                                                            :language = "es"
+                                                            :bootstrap-styling = "true"
+                                                            class = "form-control"
+                                                            v-validate="{required: true}"
+                                                            :disabled-dates="fechasDeshabilitadas"
+                                                            :class="{'is-invalid': errors.has('fecha')}"
+                                                ></datepicker>
+                                                <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                             </span>
                                             <span v-else>
                                                 {{ poliza.fecha}}
@@ -283,6 +282,8 @@
 </template>
 
 <script>
+    import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
     import EstatusLabel from "./partials/EstatusLabel";
     import AddMovimiento from "./partials/AddMovimiento";
     import PolizaValidar from "./partials/Validar";
@@ -294,16 +295,21 @@
         name: "poliza-edit",
         components: {
             PolizaIngresarCuentas,
-            PolizaIngresarFolio, PolizaOmitir, PolizaValidar, AddMovimiento, EstatusLabel},
+            PolizaIngresarFolio, PolizaOmitir, PolizaValidar, AddMovimiento, EstatusLabel,Datepicker,es},
         props: ['id'],
         data() {
             return {
                 poliza: null,
                 original: null,
-                cargando: false
+                cargando: false,
+                es:es,
+                fechasDeshabilitadas:{},
+                fecha_hoy : '',
             }
         },
         mounted() {
+            this.fecha_hoy = new Date();
+            this.fechasDeshabilitadas.from = new Date();
             this.$Progress.start();
             this.find()
                 .finally(() => {
@@ -312,6 +318,9 @@
         },
 
         methods: {
+            formatoFecha(date){
+                return moment(date).format('DD/MM/YYYY');
+            },
             find() {
                 this.cargando = true;
                 this.$store.commit('contabilidad/poliza/SET_POLIZA', null);
