@@ -134,7 +134,7 @@
                         buttons: $.extend({}, {
                             show: true,
                             id: subcontrato.id,
-                            relaciones: subcontrato.relaciones.data,
+                            transaccion: {id:subcontrato.id, tipo:51},
                         })
                     }));
                 },

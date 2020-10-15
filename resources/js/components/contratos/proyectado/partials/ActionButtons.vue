@@ -5,7 +5,7 @@
         <Editar v-bind:id="value.id" v-if="value.edit" />
         <Delete v-bind:id="value.id" v-if="value.delete" />
         <PDF v-bind:id="value.id" @click="value.id" ></PDF>
-        <Relaciones v-bind:relaciones="value.relaciones"/>
+        <Relaciones v-bind:transaccion="value.transaccion"/>
     </div>
 </template>
 

@@ -65,6 +65,15 @@ export default {
             if(this.transaccion.tipo == 33){
                 this.entrada();
             }
+            if(this.transaccion.tipo == 49){
+                this.contratoProyectado();
+            }
+            if(this.transaccion.tipo == 51){
+                this.subcontrato();
+            }
+            if(this.transaccion.tipo == 52){
+                this.estimacion();
+            }
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show')
         },
@@ -148,6 +157,45 @@ export default {
         },
         entrada(){
             return this.$store.dispatch('almacenes/entrada-almacen/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        contratoProyectado(){
+            return this.$store.dispatch('contratos/contrato-proyectado/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        subcontrato(){
+            return this.$store.dispatch('contratos/subcontrato/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        estimacion(){
+            return this.$store.dispatch('contratos/estimacion/find', {
                 id: this.transaccion.id,
                 params:{include: [
                         'relaciones'

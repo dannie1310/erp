@@ -103,7 +103,7 @@
                             delete : (this.$root.can('eliminar_contrato_proyectado')) ? true : false,
                             show : this.$root.can('consultar_contrato_proyectado') ? true : false,
                             edit : this.$root.can('editar_contrato_proyectado') ? true : false,
-                            relaciones: contratoProyectado.relaciones.data,
+                            transaccion: {id:contratoProyectado.id, tipo:49, opcion:1},
                         })
                     }));
                 },
