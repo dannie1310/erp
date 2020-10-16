@@ -55,6 +55,9 @@ class Poliza extends Model
         });
     }
 
+    /**
+     * Relaciones
+     */
     public function estatusPrepoliza()
     {
         return $this->belongsTo(EstatusPrepoliza::class, 'estatus', 'estatus');
@@ -88,6 +91,23 @@ class Poliza extends Model
         return $this->hasOne(\App\Models\CTPQ\Poliza::class,"id_poliza_contpaq","Id");
     }
 
+    public function transaccionAntecedente()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_transaccion_sao');
+    }
+
+    public function traspaso()
+    {
+        return $this->belongsTo(TraspasoCuentas::class, 'id_traspaso');
+    }
+
+    public function valido() {
+        return $this->hasOne(PolizaValido::class, 'id_int_poliza');
+    }
+
+    /**
+     * Attribute
+     */
     public function getIdEmpresaAttribute()
     {
         $obra = Obra::find(Context::getIdObra());
@@ -112,20 +132,6 @@ class Poliza extends Model
             }
         }
         return $usuario;
-    }
-
-    public function transaccionAntecedente()
-    {
-        return $this->belongsTo(Transaccion::class, 'id_transaccion_sao');
-    }
-
-    public function traspaso()
-    {
-        return $this->belongsTo(TraspasoCuentas::class, 'id_traspaso');
-    }
-
-    public function valido() {
-        return $this->hasOne(PolizaValido::class, 'id_int_poliza');
     }
 
     public function getNumeroFolioFormatAttribute()

@@ -48,6 +48,7 @@ class PolizaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'concepto' => $model->concepto,
             'fecha' => $model->fecha_format,
+            'fecha_completa' => $model->fecha,
             'numero_folio' => $model->numero_folio_format,
             'total' => $model->total,
             'cuadre' => $model->cuadre,

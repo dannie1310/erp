@@ -64,7 +64,7 @@ class PolizaService
     public function update($data, $id)
     {
 
-        $data = auth()->user()->can('editar_fecha_prepoliza') ? $data : array_except($data, 'fecha');
+        $data = auth()->user()->can('editar_fecha_prepoliza') ? $data : array_except($data, 'fecha_completa');
 
         try {
             DB::connection('cadeco')->beginTransaction();
@@ -74,12 +74,12 @@ class PolizaService
                 throw new \Exception("No se puede modificar la prepóliza ya que su estatus es {$poliza->estatusPrepoliza->descripcion}", 400);
             }
 
-            if (isset($data['fecha'])) {
+            if (isset($data['fecha_completa'])) {
                 $data['fecha_original'] = $poliza->fecha;
+                $data['fecha'] = substr($data['fecha_completa']['date'], 0, 10);
             }
 
             $poliza = $this->repository->update($data, $id);
-
 
             if (isset($data['movimientos']['data'])) {
                 $ids = [];
@@ -119,7 +119,6 @@ class PolizaService
                 $poliza->total = $suma_debe > $suma_haber ? $suma_debe : $suma_haber;
                 $poliza->save();
             }
-
             DB::connection('cadeco')->commit();
             return $poliza;
         } catch (\Exception $e) {
