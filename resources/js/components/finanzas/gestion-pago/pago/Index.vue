@@ -117,7 +117,6 @@
                             buttons: $.extend({}, {
                                 id: pago.id,
                                 delete: self.$root.can('eliminar_pagos') ? true : false,
-                                show: self.$root.can('consultar_pagos') ? true : false,
                                 transaccion: {id:pago.id, tipo:82},
                             })
                         })
