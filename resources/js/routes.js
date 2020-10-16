@@ -351,6 +351,18 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'editar_solicitud_compra'
                                 }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'solicitud-compra-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_compra'
+                                }
                             }
                         ]
                     }

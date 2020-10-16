@@ -8,6 +8,9 @@
         <PDF v-bind:id="value.id"/>
         <Delete v-if="value.delete" v-bind:id="value.id"/>
         <Relaciones v-bind:transaccion="value.transaccion"/>
+        <router-link  :to="{ name: 'solicitud-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_compra')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+            <i class="fa fa-eye"></i>
+        </router-link>
     </div>
 </template>
 <script>
