@@ -9,6 +9,15 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12">
+                         <button  @click="modalCarga(archivo)" type="button" class="btn btn-app btn-primary pull-right" title="Cargar" v-if="$root.can('consultar_solicitud_compra')">
+                             <i class="fa fa-upload"></i>
+                             Subir Archivo
+                         </button>
+
+                    </div>
+                </div>
                 <div class="row" v-if="documentos" >
                     <div class="col-md-12">
                         <div class="table-responsive">
@@ -25,57 +34,44 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template v-for="area in areas" v-if="validaArea(area.id)">
-                                        <tr style="background-color:rgba(0, 0, 0, 0.3)">
-                                            <td style="font-weight: bold" colspan="10">{{area.descripcion}}</td>
-                                        </tr>
-                                        <tr v-for="(archivo, i) in archivos" v-if="area.id == archivo.id_area">
-                                            <template v-if="archivo.info">
-                                                <td></td>
-                                                <td></td>
-                                                <td colspan="8" ><b>Especificación:</b> {{archivo.especificacion}}</td>
-                                            </template>
-                                            <template v-else>
-                                                <td>{{orden[i]}}</td>
-                                                <td>
-                                                    <small class="label bg-success" v-if="archivo.estatus" style="padding: 3px 2px 3px 5px">
-                                                        <i class="fa fa-check"></i>
-                                                    </small>
-                                                    <small class="label bg-danger" v-else-if="archivo.obligatorio == 1" style="padding: 2px 2px 2px 5px">
-                                                        <i class="fa fa-times"></i>
-                                                    </small>
-                                                </td>
-                                                <td :title="archivo.tipo_archivo_descripcion_larga">
-                                                    <i @click="verEspecificaciones(archivo, i)" v-if="archivo.especificacion" title="Ver Especificaciones" class="fa fa-info-circle"></i>
-                                                    {{archivo.tipo_archivo_descripcion}}
-                                                </td>
-                                                <td>{{archivo.tipo_documento}}</td>
-                                                <td><i class="fa fa-check" v-if="archivo.obligatorio == 1"></i></td>
-                                                <td>{{archivo.seccion}}</td>
-                                                <td>{{archivo.registro}}</td>
-                                                <td>{{archivo.fecha_registro_format}}</td>
-                                                <td>
-                                                    <div class="btn-group">
-                                                        <button  @click="modalCarga(archivo)" type="button" class="btn btn-sm btn-outline-primary" title="Cargar"  v-if="$root.can('actualizar_expediente_proveedor', true)"><i class="fa fa-upload"></i></button>
-                                                        <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo && archivo.extension == 'pdf'"></Documento>
-                                                        <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
-                                                            <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
-                                                                <i class="fa fa-spin fa-spinner"></i>
-                                                            </span>
-                                                            <span v-else>
-                                                                <i class="fa fa-picture-o"></i>
-                                                            </span>
-                                                        </button>
-                                                        <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </template>
-
-                                        </tr>
-                                    </template>
-
+                                    <tr v-for="(archivo, i) in archivos" >
+                                        <template >
+                                            <td>{{orden[i]}}</td>
+                                            <td>
+                                                <small class="label bg-success" v-if="archivo.estatus" style="padding: 3px 2px 3px 5px">
+                                                    <i class="fa fa-check"></i>
+                                                </small>
+                                                <small class="label bg-danger" v-else-if="archivo.obligatorio == 1" style="padding: 2px 2px 2px 5px">
+                                                    <i class="fa fa-times"></i>
+                                                </small>
+                                            </td>
+                                            <td :title="archivo.tipo_archivo_descripcion_larga">
+                                                <i @click="verEspecificaciones(archivo, i)" v-if="archivo.especificacion" title="Ver Especificaciones" class="fa fa-info-circle"></i>
+                                                {{archivo.tipo_archivo_descripcion}}
+                                            </td>
+                                            <td>{{archivo.tipo_documento}}</td>
+                                            <td><i class="fa fa-check" v-if="archivo.obligatorio == 1"></i></td>
+                                            <td>{{archivo.seccion}}</td>
+                                            <td>{{archivo.registro}}</td>
+                                            <td>{{archivo.fecha_registro_format}}</td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo && archivo.extension == 'pdf'"></Documento>
+                                                    <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
+                                                        <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
+                                                            <i class="fa fa-spin fa-spinner"></i>
+                                                        </span>
+                                                        <span v-else>
+                                                            <i class="fa fa-picture-o"></i>
+                                                        </span>
+                                                    </button>
+                                                    <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </template>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -94,12 +90,10 @@
                         </button>
                     </div>
                     <div class="modal-body">
-
                         <div class="row justify-content-between">
                             <div class="col-md-12">
-                                <label for="cargar_file" class="col-lg-12 col-form-label">
-                                     Cargar</label>
-                                <div class="col-lg-12">
+                                <div class="form-group error-content">
+                                    <label class="col-form-label">Archivos:</label>
                                     <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                            @change="onFileChange"
                                            row="3"
@@ -110,6 +104,26 @@
                                            :class="{'is-invalid': errors.has('cargar_file')}"
                                     >
                                     <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} <span>(PDF, JPG, JPEG, PNG, ZIP)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-between">
+                            <div class="col-md-12">
+                                <div class="form-group error-content">
+                                    <label class="col-form-label">Descripción:</label>
+                                    <input
+                                        type="text"
+                                        id="descripcion_archivo"
+                                        name="descripcion_archivo"
+                                        data-vv-as="Descripción"
+                                        class="form-control"
+                                        :class="{'is-invalid': errors.has('descripcion_archivo')}"
+                                        placeholder="Descripción"
+                                        v-validate="{required:true, max:30}"
+                                        v-model="descripcion"
+                                        maxlength="30"
+                                    />
+                                    <div class="invalid-feedback" v-show="errors.has('descripcion_archivo')">{{ errors.first('descripcion_archivo') }}</div>
                                 </div>
                             </div>
                         </div>
@@ -150,6 +164,7 @@ export default {
         return{
             id_archivo:'',
             documentos:[],
+            descripcion:'',
             archivo:'',
             imagenes:[],
             file:'',
@@ -210,7 +225,7 @@ export default {
 
         },
         find() {
-            return this.$store.dispatch('padronProveedores/empresa/getDoctosGenerales', {
+            return this.$store.dispatch('documentacion/archivo/getArchivosTransaccion', {
                 id: this.id,
                 params: {include: []}
             }).then(data => {
@@ -228,7 +243,7 @@ export default {
             this.getImagenes(archivo.id);
         },
         getImagenes(id) {
-            return this.$store.dispatch('padronProveedores/archivo/getImagenes', {
+            return this.$store.dispatch('documentacion/archivo/getImagenes', {
                 id: id,
                 params: {include: []}
             }).then(data => {
@@ -255,10 +270,8 @@ export default {
         upload(){
             var formData = new FormData();
 
-            formData.append('id_empresa',  this.id);
-            formData.append('rfc',  this.empresa.rfc);
-            formData.append('id_archivo',  this.archivo.id);
-            if(this.validateArchivos(this.names)){
+            formData.append('id',  this.id);
+            if(this.esZip(this.names)){
                 formData.append('archivo',  this.files[0].archivo);
                 formData.append('archivo_nombre',  this.names[0].nombre);
                 this.uploadZIP(formData);
@@ -269,24 +282,24 @@ export default {
             }
         },
         uploadPDF(data){
-            return this.$store.dispatch('padronProveedores/archivo/cargarArchivo', {
-                data: data,
-                config: {
-                    params: { _method: 'POST', include:['integrantes']}
-                }
-            }).then((data) => {
-                this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
-                $(this.$refs.modal).modal('hide');
-            })
-        },
-        uploadZIP(data){
-            return this.$store.dispatch('padronProveedores/archivo/cargarArchivoZIP', {
+            return this.$store.dispatch('documentacion/archivo/cargarArchivo', {
                 data: data,
                 config: {
                     params: { _method: 'POST'}
                 }
             }).then((data) => {
-                this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
+                this.$store.commit('documentacion/archivo/UPDATE_ARCHIVO', data);
+                $(this.$refs.modal).modal('hide');
+            })
+        },
+        uploadZIP(data){
+            return this.$store.dispatch('documentacion/archivo/cargarArchivoZIP', {
+                data: data,
+                config: {
+                    params: { _method: 'POST'}
+                }
+            }).then((data) => {
+                this.$store.commit('documentacion/archivo/UPDATE_ARCHIVO', data);
                 $(this.$refs.modal).modal('hide');
             })
         },
@@ -297,7 +310,7 @@ export default {
                 }
             });
         },
-        validateArchivos(nombres){
+        esZip(nombres){
             if(nombres.length === 1){
                 let split = nombres[0].nombre.split('.');
                 if(split[split.length -1].toLowerCase() == 'zip'){
@@ -313,27 +326,27 @@ export default {
                 id_area:archivo.id_area,
             };
             if(this.archivos[index+1].info){
-                this.$store.commit('padronProveedores/archivo/DELETE_ARCHIVO', data);
+                this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
                 this.orden.splice(index+1, 1);
             }else{
                 this.orden.splice(index+1, 0, ['']);
-                this.$store.commit('padronProveedores/archivo/INSERT_ARCHIVO', data);
+                this.$store.commit('documentacion/archivo/INSERT_ARCHIVO', data);
             }
         },
         eliminar(archivo){
             if(archivo.nombre_archivo != null) {
-                return this.$store.dispatch('padronProveedores/archivo/eliminar', {
+                return this.$store.dispatch('documentacion/archivo/eliminar', {
                     id: archivo.id,
                     params: {}
                 }).then(data => {
-                    this.$store.commit('padronProveedores/archivo/UPDATE_ARCHIVO', data);
+                    this.$store.commit('documentacion/archivo/UPDATE_ARCHIVO', data);
                 })
             }
         },
     },
     computed: {
         archivos(){
-            return this.$store.getters['padronProveedores/archivo/archivos'];
+            return this.$store.getters['documentacion/archivo/archivos'];
         },
     }
 }

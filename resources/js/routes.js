@@ -1172,51 +1172,7 @@ export const routes = [
                             }
                         ]
                     },
-                    {
-                        path: 'insumo-servicio',
-                        component: require('./components/finanzas/insumo-servicio/Layout').default,
-                        children: [
-                            {
-                                path: '/',
-                                name: 'insumo-servicio',
-                                component: require('./components/finanzas/insumo-servicio/Index').default,
-                                meta: {
-                                    title: 'Insumo de Servicios',
-                                    breadcrumb: {parent: 'finanzas', name: 'INSUMO SERVICIO'},
-                                    middleware: [auth, context],
 
-                                }
-                            },
-                            {
-                                path: 'familia-serv',
-                                name: 'familia-serv',
-                                component: require('./components/finanzas/insumo-servicio/familia/Index').default,
-                                meta: {
-                                    title: 'Familia',
-                                    breadcrumb: {
-                                        parent: 'insumo-servicio',
-                                        name: 'FAMILIA'
-                                    },
-                                    middleware: [auth, context, permission],
-                                    permission: ['consultar_familia_servicio']
-                                }
-                            },
-                            {
-                                path: 'servicio',
-                                name: 'servicio',
-                                component: require('./components/finanzas/insumo-servicio/servicio/Index').default,
-                                meta: {
-                                    title: 'Servicio',
-                                    breadcrumb: {
-                                        parent: 'insumo-servicio',
-                                        name: 'SERVICIO'
-                                    },
-                                    middleware: [auth, context, permission],
-                                    permission: ['consultar_insumo_servicio']
-                                }
-                            }
-                        ]
-                    },
                     {
                         path: 'solicitud',
                         component: require('./components/finanzas/solicitud/Layout').default,
