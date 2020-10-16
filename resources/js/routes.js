@@ -1100,6 +1100,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id',
+                                name: 'pago-show',
+                                props: true,
+                                component: require('./components/finanzas/gestion-pago/pago/Show').default,
+                                meta: {
+                                    title: 'Consultar Pago',
+                                    breadcrumb: {name: 'VER', parent: 'pago'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_pagos'
+                                }
+                            },
+                            {
                                 path: 'registro-pago',
                                 name: 'gestion-registro-pago',
                                 component: require('./components/finanzas/gestion-pago/pago/RegistrarPago').default,
