@@ -13,10 +13,8 @@ use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\CuentaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Pago;
-use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 class PagoTransformer extends TransformerAbstract
@@ -31,7 +29,8 @@ class PagoTransformer extends TransformerAbstract
             'cuenta',
             'empresa',
             'usuario',
-            'relaciones'
+            'relaciones',
+            'antecedente'
     ];
 
 
@@ -57,6 +56,7 @@ class PagoTransformer extends TransformerAbstract
           'observaciones'=>$model->observaciones,
           'id_moneda'=>$model->id_moneda,
           'estado_string'=>$model->estado_string,
+          'tipo_pago' => $model->tipo_pago
       ];
     }
 
@@ -113,11 +113,28 @@ class PagoTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Pago $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeRelaciones(Pago $model)
     {
         if($relaciones = $model->relaciones)
         {
             return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Pago $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeAntecedente(Pago $model)
+    {
+        if($antecedente = $model->antecedente)
+        {
+            return $this->item($antecedente, new RelacionTransformer);
         }
         return null;
     }

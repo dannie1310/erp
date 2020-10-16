@@ -149,6 +149,36 @@ class Pago extends Transaccion
         return $relaciones;
     }
 
+    public function getTipoPagoAttribute()
+    {
+        switch ($this->tipo_antecedente)
+        {
+            case 0:
+                if($this->opciones == 0)
+                {
+                    return 'Pago Factura';
+                }
+                return 'Pago';
+                break;
+
+            case 1:
+                return 'Pago Varios';
+                break;
+
+            case 327681:
+                if(is_null($this->id_antecedente) && is_null($this->id_referente))
+                {
+                    return 'Pago a Cuenta por Aplicar';
+                }
+                return 'Pago a Cuenta';
+                break;
+
+            case 131073:
+                return 'Pago Anticipo Destajo';
+                break;
+        }
+    }
+
     public function eliminar($motivo)
     {
         try {
