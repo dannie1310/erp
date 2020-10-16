@@ -87,7 +87,7 @@ class AsignacionProveedorPartida extends Model
     }
 
     public function getConOrdenCompraAttribute(){
-        return $this->cotizacion?$this->ordenCompra()->where('id_moneda', '=', $this->cotizacion->id_moneda)->count() > 0:0;
+        return $this->itemOrdenCompra?$this->itemOrdenCompra->count() > 0:0;
     }
 
     public function getTotalPrecioMonedaAttribute()
