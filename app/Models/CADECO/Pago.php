@@ -130,14 +130,16 @@ class Pago extends Transaccion
         $relaciones[$i] = $this->datos_para_relacion;
         $relaciones[$i]["consulta"] = 1;
         $i++;
-        if($this->ordenPago){
-            if($this->ordenPago->factura){
-                $factura = $this->ordenPago->factura;
-                foreach($factura->relaciones as $relacion){
-                    if($relacion["tipo_numero"]!=82){
-                        $relaciones[$i]=$relacion;
-                        $relaciones[$i]["consulta"] = 0;
-                        $i++;
+        if($this->ordenesPago){
+            foreach ($this->ordenesPago as $ordenPago) {
+                if ($ordenPago->factura) {
+                    $factura = $ordenPago->factura;
+                    foreach ($factura->relaciones as $relacion) {
+                        if ($relacion["tipo_numero"] != 82) {
+                            $relaciones[$i] = $relacion;
+                            $relaciones[$i]["consulta"] = 0;
+                            $i++;
+                        }
                     }
                 }
             }
