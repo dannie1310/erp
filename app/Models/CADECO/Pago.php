@@ -59,9 +59,9 @@ class Pago extends Transaccion
         return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
     }
 
-    public function ordenPago()
+    public function ordenesPago()
     {
-        return $this->belongsTo(OrdenPago::class, 'numero_folio', 'numero_folio');
+        return $this->hasMany(OrdenPago::class, 'numero_folio', 'numero_folio');
     }
 
     public function pagoReposicionFF()

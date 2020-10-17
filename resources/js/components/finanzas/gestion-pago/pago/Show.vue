@@ -37,19 +37,23 @@
                                 <tr>
                                     <td class="bg-gray-light"><b>Estado:</b></td>
                                     <td class="bg-gray-light">{{pago.estado_string}}</td>
-                                    <td class="bg-gray-light"><b>Usuario Registró:</b></td>
-                                    <td class="bg-gray-light">{{(pago.usuario) ? pago.usuario.nombre : '------------'}}</td>
                                     <td class="bg-gray-light"><b>Tipo:</b></td>
                                     <td class="bg-gray-light">{{pago.tipo_pago}}</td>
+                                    <td class="bg-gray-light"><b>Importe Pagado:</b></td>
+                                    <td class="bg-gray-light">{{pago.monto_format}}</td>
+                                </tr>
+                                <tr v-if="pago.usuario">
+                                    <td class="bg-gray-light"><b>Usuario Registró:</b></td>
+                                    <td class="bg-gray-light" colspan="5">{{pago.usuario.nombre}}</td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <hr>
-                    <div class="row" v-if="pago.antecedente">
+                    <div class="row" v-if="pago.antecedente || pago.ordenesCompra">
                             <div class="col-md-12">
-                                <h6><b>Antecedente</b></h6>
+                                <h6><b>Transacción Pagada</b></h6>
                             </div>
                     </div>
                     <div class="row" v-if="pago.antecedente">
@@ -62,11 +66,35 @@
                                     <td class="bg-gray-light"><b>Fecha:</b></td>
                                     <td class="bg-gray-light">{{pago.antecedente.fecha.substr(0, 10)}}</td>
                                     <td class="bg-gray-light"><b>Tipo:</b></td>
-                                    <td class="bg-gray-light">{{pago.antecedente.tipo.Descripcion}}</td>
+                                    <td class="bg-gray-light">{{pago.antecedente.tipo.descripcion}}</td>
+                                    <td class="bg-gray-light"><b>Importe:</b></td>
+                                    <td class="bg-gray-light">{{ '$ '+parseFloat(pago.antecedente.monto).formatMoney(2)}}</td>
                                 </tr>
                                 <tr>
                                     <td class="bg-gray-light"><b>Observaciones:</b></td>
-                                    <td class="bg-gray-light" colspan="5">{{pago.antecedente.observaciones}}</td>
+                                    <td class="bg-gray-light" colspan="7">{{pago.antecedente.observaciones}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row" v-if="pago.ordenesCompra">
+                        <div class="table-responsive col-md-12">
+                            <table class="table">
+                                <tbody v-for="(partida, i) in pago.ordenesCompra.data" >
+                                <tr>
+                                    <td class="bg-gray-light"><b>Folio:</b></td>
+                                    <td class="bg-gray-light">{{partida.factura.numero_folio}}</td>
+                                    <td class="bg-gray-light"><b>Fecha:</b></td>
+                                    <td class="bg-gray-light">{{partida.factura.fecha.substr(0, 10)}}</td>
+                                    <td class="bg-gray-light"><b>Tipo:</b></td>
+                                    <td class="bg-gray-light">{{partida.factura.tipo}}</td>
+                                    <td class="bg-gray-light"><b>Importe:</b></td>
+                                    <td class="bg-gray-light">{{partida.factura.monto_format}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-light"><b>Observaciones:</b></td>
+                                    <td class="bg-gray-light" colspan="8">{{partida.factura.observaciones}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -95,7 +123,7 @@
                 this.$store.commit('finanzas/pago/SET_PAGO', null);
                 return this.$store.dispatch('finanzas/pago/find', {
                     id: this.id,
-                    params: {include: ['moneda', 'cuenta', 'empresa', 'usuario', 'antecedente']}
+                    params: {include: ['moneda', 'cuenta', 'empresa', 'usuario', 'antecedente', 'ordenesCompra.factura']}
                 })
                     .then(data => {
                         this.$store.commit('finanzas/pago/SET_PAGO', data);
