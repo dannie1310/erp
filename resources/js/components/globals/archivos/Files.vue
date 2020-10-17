@@ -2,81 +2,71 @@
     <span>
         <div class="card">
             <div class="card-body">
-                <div class="row" v-if="!documentos">
+                <div class="row" v-if="cargando">
                     <div class="col-md-12">
                         <div class="spinner-border text-success" role="status">
                            <span class="sr-only">Cargando...</span>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                         <button  @click="modalCarga(archivo)" type="button" class="btn btn-app btn-primary pull-right" title="Cargar" v-if="$root.can('consultar_solicitud_compra')">
-                             <i class="fa fa-upload"></i>
-                             Subir Archivo
-                         </button>
+                <span v-else>
+                    <div class="row">
+                        <div class="col-md-12">
+                             <button  @click="modalCarga(archivo)" type="button" class="btn btn-app btn-primary pull-right" title="Cargar" v-if="$root.can('consultar_solicitud_compra')">
+                                 <i class="fa fa-upload"></i>
+                                 Subir Archivo
+                             </button>
 
-                    </div>
-                </div>
-                <div class="row" v-if="documentos" >
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped" id="documentos" name="documentos">
-                                <thead>
-                                    <tr>
-                                        <th class="index_corto">#</th>
-                                        <th class="icono"></th>
-                                        <th >Documento</th>
-                                        <th >Tipo Documento</th>
-                                        <th >Usuario Cargo</th>
-                                        <th >Fecha Hora Carga</th>
-                                        <th >Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(archivo, i) in archivos" >
-                                        <template >
-                                            <td>{{orden[i]}}</td>
-                                            <td>
-                                                <small class="label bg-success" v-if="archivo.estatus" style="padding: 3px 2px 3px 5px">
-                                                    <i class="fa fa-check"></i>
-                                                </small>
-                                                <small class="label bg-danger" v-else-if="archivo.obligatorio == 1" style="padding: 2px 2px 2px 5px">
-                                                    <i class="fa fa-times"></i>
-                                                </small>
-                                            </td>
-                                            <td :title="archivo.tipo_archivo_descripcion_larga">
-                                                <i @click="verEspecificaciones(archivo, i)" v-if="archivo.especificacion" title="Ver Especificaciones" class="fa fa-info-circle"></i>
-                                                {{archivo.tipo_archivo_descripcion}}
-                                            </td>
-                                            <td>{{archivo.tipo_documento}}</td>
-                                            <td><i class="fa fa-check" v-if="archivo.obligatorio == 1"></i></td>
-                                            <td>{{archivo.seccion}}</td>
-                                            <td>{{archivo.registro}}</td>
-                                            <td>{{archivo.fecha_registro_format}}</td>
-                                            <td>
-                                                <div class="btn-group">
-                                                    <Documento v-bind:id="archivo.id" v-if="archivo.nombre_archivo && archivo.extension == 'pdf'"></Documento>
-                                                    <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
-                                                        <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
-                                                            <i class="fa fa-spin fa-spinner"></i>
-                                                        </span>
-                                                        <span v-else>
-                                                            <i class="fa fa-picture-o"></i>
-                                                        </span>
-                                                    </button>
-                                                    <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="$root.can('eliminar_archivo_expediente', true) && archivo.nombre_archivo">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </template>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
                     </div>
-                </div>
+                    <div class="row" v-if="documentos" >
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="documentos" name="documentos">
+                                    <thead>
+                                        <tr>
+                                            <th class="index_corto">#</th>
+                                            <th >Tipo Documento</th>
+                                            <th >Documento</th>
+                                            <th >Descripción</th>
+                                            <th >Usuario Cargo</th>
+                                            <th >Fecha Hora Carga</th>
+                                            <th >Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(archivo, i) in documentos" >
+                                            <template >
+                                                <td>{{i+1}}</td>
+                                                <td>{{archivo.tipo_archivo}}</td>
+                                                <td>{{archivo.nombre}}</td>
+                                                <td>{{archivo.descripcion}}</td>
+                                                <td>{{archivo.registro}}</td>
+                                                <td>{{archivo.fecha_registro_format}}</td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <Documento v-bind:url="url" v-bind:id="archivo.id" v-if="archivo.extension == 'pdf'"></Documento>
+                                                        <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
+                                                            <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
+                                                                <i class="fa fa-spin fa-spinner"></i>
+                                                            </span>
+                                                            <span v-else>
+                                                                <i class="fa fa-picture-o"></i>
+                                                            </span>
+                                                        </button>
+                                                        <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre_archivo">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </template>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </span>
             </div>
         </div>
 
@@ -162,6 +152,7 @@ export default {
     components:{Documento, Imagen},
     data(){
         return{
+            url : '/api/archivo/{id}/documento?access_token='+this.$session.get('jwt'),
             id_archivo:'',
             documentos:[],
             descripcion:'',
@@ -176,6 +167,7 @@ export default {
         }
     },
     mounted() {
+        this.find();
 
     },
     methods: {
@@ -225,11 +217,13 @@ export default {
 
         },
         find() {
+            this.cargando = true;
             return this.$store.dispatch('documentacion/archivo/getArchivosTransaccion', {
                 id: this.id,
                 params: {include: []}
             }).then(data => {
-                this.documentos = data;
+                this.documentos = data.data;
+            }).finally(()=> {
                 this.cargando = false;
             })
         },
@@ -265,7 +259,7 @@ export default {
             $(this.$refs.modal).modal('show');
         },
         validarExtensiones(){
-            return ['pdf', 'zip', 'jpg', 'jpeg', 'png'];
+            return ['pdf'/*, 'zip', 'jpg', 'jpeg', 'png'*/];
         },
         upload(){
             var formData = new FormData();
@@ -289,8 +283,8 @@ export default {
                     params: { _method: 'POST'}
                 }
             }).then((data) => {
-                this.$store.commit('documentacion/archivo/UPDATE_ARCHIVO', data);
                 $(this.$refs.modal).modal('hide');
+                this.find();
             })
         },
         uploadZIP(data){

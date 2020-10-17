@@ -57,13 +57,13 @@ class ArchivoController extends Controller
         return $this->respondWithItem($archivo);
     }
 
-    public function documento(Request $request,$id){
-        return $this->service->documento($request,$id);
+    public function documento($id){
+        return $this->service->documento($id);
     }
 
-    public function getArchivosTransaccion(Request $request)
+    public function getArchivosTransaccion($id)
     {
-        $archivos_prestadora = $this->service->getArchivosTransaccion($request);
+        $archivos_prestadora = $this->service->getArchivosTransaccion($id);
         return $this->respondWithCollection($archivos_prestadora);
     }
 

@@ -102,6 +102,11 @@ class ArchivoService
 
     }
 
+    public function getArchivosTransaccion($id_transaccion)
+    {
+        return $this->repository->where([['id_transaccion', '=', $id_transaccion]])->all();;
+    }
+
     public function cargarArchivosPDF($data){
         $archivos_nombres = \json_decode($data['archivos_nombres']);
         $archivos_pdf = \json_decode($data['archivos']);
@@ -140,8 +145,6 @@ class ArchivoService
             $pdf_file = fopen($paths["dir_tempo"].$files[0], 'r');
             $hashfile = hash_file('sha1', $paths["dir_tempo"].$files[0]);
         }
-
-        $repetidos = $this->repository->where([['hashfile', '=', $hashfile]])->all();
 
         /*if($repetidos->count() > 0 && $repetidos[0] != $archivo){
             abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
@@ -187,10 +190,9 @@ class ArchivoService
         $data_registro["hashfile"] = $hashfile;
         $data_registro["nombre"] = $archivo;
         $data_registro["extension"] = $nombre_archivo[count($nombre_archivo)-1];
-
-        $archivo_integrante = $this->repository->registrarArchivo($data_registro);
-        Storage::disk('archivos_transacciones')->put( $hashfile.'.'.$nombre_archivo[count($nombre_archivo)-1],  $path.$archivo);
-
+        $this->repository->registrarArchivo($data_registro);
+        $file = fopen($path.$archivo, 'r');
+        Storage::disk('archivos_transacciones')->put( $hashfile.'.'.$nombre_archivo[count($nombre_archivo)-1], $file );
     }
 
     public function cargarArchivoZIP($data){
@@ -262,7 +264,7 @@ class ArchivoService
 
     private function generaDirectorioTemporal()
     {
-        $dir_tempo = "uploads/padron_contratistas/pdf_temporal/".date("Ymdhis")."/";
+        $dir_tempo = "uploads/archivos_transacciones/pdf_temporal/".date("Ymdhis")."/";
         if (!file_exists($dir_tempo) && !is_dir($dir_tempo)) {
             mkdir($dir_tempo, 0777, true);
         }
@@ -286,16 +288,10 @@ class ArchivoService
         return ["path_zip" => $path_zip, "path_pdf" => $path_pdf, "dir_tempo" => $dir_tempo];
     }
 
-    public function documento($data, $id){
+    public function documento($id){
         $archivo = $this->repository->show($id);
-        if($archivo->prestadora)
-        {
-            $directorio = $archivo->proveedor->rfc .'/'. $archivo->prestadora->rfc;
-        } else {
-            $directorio = $archivo->empresa->rfc;
-        }
-        $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
-        return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo . '.' . $archivo->extension_archivo );
+        $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
+        return response()->file($storagePath . $archivo->hashfile . '.' . $archivo->extension );
     }
 
     public function delete($data, $id)

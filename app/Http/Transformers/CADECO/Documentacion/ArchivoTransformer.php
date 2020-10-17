@@ -23,7 +23,7 @@ class ArchivoTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'tipo_archivo' => $model->tipoArchivo->descripcion,
             'categoria' => $model->categoria->descripcion,
-            'nombre_archivo' => $model->nombre,
+            'nombre' => $model->nombre,
             'extension' => $model->extension,
             'descripcion' => $model->descripcion,
             'estatus' => $model->estatus,

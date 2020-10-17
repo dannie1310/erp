@@ -25,14 +25,15 @@
 
 <script>
     export default {
-        props: ['id', 'rfc', 'rfc_empresa'],
+        props: ['id', 'url'],
         methods: {
             init() {
                 this.pdf()
             },
             pdf(){
-                var url = '/api/padron-proveedores/archivo/' + this.id +'/documento?access_token='+this.$session.get('jwt');
-                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Polizas</iframe>');
+                var url = this.url.replace("{id}", this.id);
+
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Archivo</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             }
