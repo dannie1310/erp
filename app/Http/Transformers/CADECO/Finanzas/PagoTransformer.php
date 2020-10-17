@@ -33,7 +33,7 @@ class PagoTransformer extends TransformerAbstract
             'usuario',
             'relaciones',
             'antecedente',
-            'ordenesCompra'
+            'ordenesPago'
     ];
 
 
@@ -146,7 +146,7 @@ class PagoTransformer extends TransformerAbstract
      * @param Pago $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeOrdenesCompra(Pago $model)
+    public function includeOrdenesPago(Pago $model)
     {
         if($orden = $model->ordenesPago)
         {

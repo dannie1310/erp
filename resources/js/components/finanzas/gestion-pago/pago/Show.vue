@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="row" v-if="pago.antecedente || pago.ordenesCompra">
+                    <div class="row" v-if="pago.antecedente || pago.ordenesPago">
                             <div class="col-md-12">
                                 <h6><b>Transacción Pagada</b></h6>
                             </div>
@@ -78,10 +78,10 @@
                             </table>
                         </div>
                     </div>
-                    <div class="row" v-if="pago.ordenesCompra">
+                    <div class="row" v-if="pago.ordenesPago">
                         <div class="table-responsive col-md-12">
                             <table class="table">
-                                <tbody v-for="(partida, i) in pago.ordenesCompra.data" >
+                                <tbody v-for="(partida, i) in pago.ordenesPago.data" >
                                 <tr>
                                     <td class="bg-gray-light"><b>Folio:</b></td>
                                     <td class="bg-gray-light">{{partida.factura.numero_folio}}</td>
@@ -123,7 +123,7 @@
                 this.$store.commit('finanzas/pago/SET_PAGO', null);
                 return this.$store.dispatch('finanzas/pago/find', {
                     id: this.id,
-                    params: {include: ['moneda', 'cuenta', 'empresa', 'usuario', 'antecedente', 'ordenesCompra.factura']}
+                    params: {include: ['moneda', 'cuenta', 'empresa', 'usuario', 'antecedente', 'ordenesPago.factura']}
                 })
                     .then(data => {
                         this.$store.commit('finanzas/pago/SET_PAGO', data);
