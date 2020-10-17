@@ -271,6 +271,7 @@ export default {
             var formData = new FormData();
 
             formData.append('id',  this.id);
+            formData.append('descripcion',  this.descripcion);
             if(this.esZip(this.names)){
                 formData.append('archivo',  this.files[0].archivo);
                 formData.append('archivo_nombre',  this.names[0].nombre);
