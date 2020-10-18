@@ -50,6 +50,15 @@ export const routes = [
                 }
             },
             {
+                path: 'modal/lista_archivos/:id',
+                name: 'modal_lista_archivos',
+                component: require('./components/globals/archivos/Files').default,
+                props: true,
+                meta: {
+                    middleware: [auth, context],
+                },
+            },
+            {
                 path: 'modal/cotizacion/:id',
                 name: 'modal_cotizacion',
                 component: require('./components/compras/cotizacion/Show').default,

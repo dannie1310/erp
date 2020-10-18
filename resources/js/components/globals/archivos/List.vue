@@ -36,8 +36,8 @@
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                                        <Documento v-bind:url="url" v-bind:id="archivo.id" v-if="archivo.extension == 'pdf'"></Documento>
-                                                        <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
+                                                        <Documento v-bind:url="url" v-bind:id="archivo.id" v-if="archivo.extension.toLowerCase() == 'pdf'"></Documento>
+                                                        <button v-if="archivo.extension && archivo.extension.toLowerCase()  != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
                                                             <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
                                                                 <i class="fa fa-spin fa-spinner"></i>
                                                             </span>
@@ -76,7 +76,7 @@ import Documento from './Documento';
 import Imagen from './Imagen';
 export default {
     name: "List",
-    props: ['id'],
+    props: ['id','cargar'],
     components:{Documento, Imagen},
     data(){
         return{
