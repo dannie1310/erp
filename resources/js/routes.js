@@ -253,6 +253,18 @@ export const routes = [
                                     permission: 'consultar_cotizacion_compra'
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'cotizacion-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Cotización',
+                                    breadcrumb: { parent: 'cotizacion', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_cotizacion_compra'
+                                }
+                            }
                         ]
                     },
                     {
