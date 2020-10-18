@@ -293,6 +293,18 @@ export const routes = [
                                     middleware: [auth, context],
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'orden-compra-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Orden de Compra',
+                                    breadcrumb: { parent: 'orden-compra', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_orden_compra'
+                                }
+                            }
                         ]
                     },
                     {
