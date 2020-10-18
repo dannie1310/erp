@@ -34,7 +34,7 @@ export default {
         },
 
         INSERT_ARCHIVO(state, data){
-            state.archivos.splice(data.index, 0, {info:true, especificacion:data.text, id_area:data.id_area});
+            state.archivos.splice(0, 0, data);
         },
         DELETE_ARCHIVO(state, data){
             state.archivos.splice(data.index, 1);
@@ -71,6 +71,7 @@ export default {
                                         buttons: false
                                     })
                                         .then(() => {
+                                            context.commit("INSERT_ARCHIVO", data);
                                             resolve(data);
                                         })
                                 })
@@ -126,6 +127,7 @@ export default {
                     .get(URI + payload.id + '/getArchivosTransaccion',payload)
                     .then(r => r.data)
                     .then(data => {
+                        context.commit("SET_ARCHIVOS", data.data);
                         resolve(data);
                     })
                     .catch(error => {

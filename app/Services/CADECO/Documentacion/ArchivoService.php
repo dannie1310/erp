@@ -141,9 +141,13 @@ class ArchivoService
             $pdf_file = fopen($paths["dir_tempo"].'temp_pdf.pdf', 'r');
             $hashfile = hash_file('sha1', $paths["dir_tempo"].'temp_pdf.pdf');
         }else{
-            $this->guardarArchivo($data,$paths["dir_tempo"], $files[0]);
+            $archivo = $this->guardarArchivo($data,$paths["dir_tempo"], $files[0]);
             $pdf_file = fopen($paths["dir_tempo"].$files[0], 'r');
             $hashfile = hash_file('sha1', $paths["dir_tempo"].$files[0]);
+            $pdf = null;
+            fclose($pdf_file);
+            Files::eliminaDirectorio($paths["dir_tempo"]);
+            return $archivo;
         }
 
         /*if($repetidos->count() > 0 && $repetidos[0] != $archivo){
@@ -163,10 +167,7 @@ class ArchivoService
             abort(403, 'Hubo un error al cargar el archivo, intente mas tarde y si el problema persiste reportelo a soporte_aplicaciones@grupohi.mx');
         }*/
 
-        $pdf = null;
-        fclose($pdf_file);
-        Files::eliminaDirectorio($paths["dir_tempo"]);
-        return $this->repository->where([['id_transaccion', '=', $data["id"]]])->all();;
+
     }
 
     private function validaRepetido($hashfile,$id_transaccion,$archivo)
@@ -190,9 +191,10 @@ class ArchivoService
         $data_registro["hashfile"] = $hashfile;
         $data_registro["nombre"] = $archivo;
         $data_registro["extension"] = $nombre_archivo[count($nombre_archivo)-1];
-        $this->repository->registrarArchivo($data_registro);
+
         $file = fopen($path.$archivo, 'r');
         Storage::disk('archivos_transacciones')->put( $hashfile.'.'.$nombre_archivo[count($nombre_archivo)-1], $file );
+        return $this->repository->registrarArchivo($data_registro);
     }
 
     public function cargarArchivoZIP($data){

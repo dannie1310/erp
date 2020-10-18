@@ -174,8 +174,9 @@ export default {
                     params: { _method: 'POST'}
                 }
             }).then((data) => {
+
+            }).finally(()=> {
                 $(this.$refs.modal).modal('hide');
-                this.$emit('uploaded',data)
             })
         },
         uploadZIP(data){
