@@ -12,11 +12,7 @@
                 <span v-else>
                     <div class="row">
                         <div class="col-md-12">
-                             <button  @click="modalCarga(archivo)" type="button" class="btn btn-app btn-primary pull-right" title="Cargar" v-if="$root.can('consultar_solicitud_compra')">
-                                 <i class="fa fa-upload"></i>
-                                 Subir Archivo
-                             </button>
-
+                            <Upload v-bind:id="id" @uploaded="find"></Upload>
                         </div>
                     </div>
                     <div class="row" v-if="documentos" >
@@ -70,69 +66,6 @@
             </div>
         </div>
 
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-upload"></i> CARGAR ARCHIVO</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row justify-content-between">
-                            <div class="col-md-12">
-                                <div class="form-group error-content">
-                                    <label class="col-form-label">Archivos:</label>
-                                    <input type="file" class="form-control" id="cargar_file" multiple="multiple"
-                                           @change="onFileChange"
-                                           row="3"
-                                           v-validate="{required:true, ext: validarExtensiones(),  size: 5120}"
-                                           name="cargar_file"
-                                           data-vv-as="Cargar"
-                                           ref="cargar_file"
-                                           :class="{'is-invalid': errors.has('cargar_file')}"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} <span>(PDF, JPG, JPEG, PNG, ZIP)</span></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row justify-content-between">
-                            <div class="col-md-12">
-                                <div class="form-group error-content">
-                                    <label class="col-form-label">Descripción:</label>
-                                    <input
-                                        type="text"
-                                        id="descripcion_archivo"
-                                        name="descripcion_archivo"
-                                        data-vv-as="Descripción"
-                                        class="form-control"
-                                        :class="{'is-invalid': errors.has('descripcion_archivo')}"
-                                        placeholder="Descripción"
-                                        v-validate="{required:true, max:30}"
-                                        v-model="descripcion"
-                                        maxlength="30"
-                                    />
-                                    <div class="invalid-feedback" v-show="errors.has('descripcion_archivo')">{{ errors.first('descripcion_archivo') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
-                        <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
-                            <span v-if="cargando==true">
-                                <i class="fa fa-spin fa-spinner"></i>
-                            </span>
-                            <span v-else>
-                                <i class="fa fa-save"></i>
-                            </span> Guardar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
             <div class="modal-dialog modal-xl modal-dialog-centered"  role="document" id="mdialTamanio">
                 <div class="modal-content" >
@@ -146,10 +79,11 @@
 <script>
 import Documento from './Documento';
 import Imagen from './Imagen';
+import Upload from "./Upload";
 export default {
     name: "documentos",
     props: ['id'],
-    components:{Documento, Imagen},
+    components:{Upload, Documento, Imagen},
     data(){
         return{
             url : '/api/archivo/{id}/documento?access_token='+this.$session.get('jwt'),
@@ -168,7 +102,6 @@ export default {
     },
     mounted() {
         this.find();
-
     },
     methods: {
         createImage(file, tipo) {
@@ -178,43 +111,6 @@ export default {
                 vm.files[tipo] = {archivo:e.target.result}
             };
             reader.readAsDataURL(file);
-        },
-        onFileChange(e){
-            var size = 0;
-            this.files = [];
-            this.names = [];
-            var files = e.target.files || e.dataTransfer.files;
-            if (!files.length)
-                return;
-            if(e.target.id == 'cargar_file') {
-                for(let i=0; i<files.length; i++) {
-                    this.createImage(files[i]);
-                    size = +size + +files[i].size;
-                    this.names[i] = {
-                        nombre: files[i].name,
-                    };
-                    this.createImage(files[i], i);
-                }
-            }
-            if(size > 5120000){
-                swal("El tamaño máximo permitido para la carga de archivos es de 5 MB.", {
-                    icon: "warning",
-                    buttons: {
-                        confirm: {
-                            text: 'Enterado',
-                            closeModal: true,
-                        }
-                    }
-                }) .then(() => {
-                    if(this.$refs.cargar_file !== undefined){
-                        this.$refs.cargar_file.value = '';
-                    }
-                    this.names = [];
-                    this.files = [];
-                    $(this.$refs.modal).modal('hide');
-                })
-            }
-
         },
         find() {
             this.cargando = true;
@@ -226,15 +122,6 @@ export default {
             }).finally(()=> {
                 this.cargando = false;
             })
-        },
-        modalCarga(archivo){
-            this.openModal(archivo);
-        },
-        modalImagen(archivo){
-            this.cargando_imagenes = true;
-            this.id_archivo = archivo.id;
-            this.imagenes = []
-            this.getImagenes(archivo.id);
         },
         getImagenes(id) {
             return this.$store.dispatch('documentacion/archivo/getImagenes', {
@@ -248,86 +135,7 @@ export default {
                 $(this.$refs.modalImagen).modal('show');
             })
         },
-        openModal(archivo){
-            this.archivo = archivo;
-            if(this.$refs.cargar_file !== undefined){
-                this.$refs.cargar_file.value = '';
-            }
-            this.names = [];
-            this.files = [];
-            $(this.$refs.modal).appendTo('body')
-            $(this.$refs.modal).modal('show');
-        },
-        validarExtensiones(){
-            return ['pdf'/*, 'zip', 'jpg', 'jpeg', 'png'*/];
-        },
-        upload(){
-            var formData = new FormData();
 
-            formData.append('id',  this.id);
-            formData.append('descripcion',  this.descripcion);
-            if(this.esZip(this.names)){
-                formData.append('archivo',  this.files[0].archivo);
-                formData.append('archivo_nombre',  this.names[0].nombre);
-                this.uploadZIP(formData);
-            }else{
-                formData.append('archivos',  JSON.stringify(this.files));
-                formData.append('archivos_nombres',  JSON.stringify(this.names));
-                this.uploadPDF(formData);
-            }
-        },
-        uploadPDF(data){
-            return this.$store.dispatch('documentacion/archivo/cargarArchivo', {
-                data: data,
-                config: {
-                    params: { _method: 'POST'}
-                }
-            }).then((data) => {
-                $(this.$refs.modal).modal('hide');
-                this.find();
-            })
-        },
-        uploadZIP(data){
-            return this.$store.dispatch('documentacion/archivo/cargarArchivoZIP', {
-                data: data,
-                config: {
-                    params: { _method: 'POST'}
-                }
-            }).then((data) => {
-                this.$store.commit('documentacion/archivo/UPDATE_ARCHIVO', data);
-                $(this.$refs.modal).modal('hide');
-            })
-        },
-        validate() {
-            this.$validator.validate().then(result => {
-                if (result) {
-                    this.upload();
-                }
-            });
-        },
-        esZip(nombres){
-            if(nombres.length === 1){
-                let split = nombres[0].nombre.split('.');
-                if(split[split.length -1].toLowerCase() == 'zip'){
-                    return true;
-                }
-            }
-            return false;
-        },
-        verEspecificaciones(archivo, index){
-            let data = {
-                index:index+1,
-                text:archivo.especificacion,
-                id_area:archivo.id_area,
-            };
-            if(this.archivos[index+1].info){
-                this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
-                this.orden.splice(index+1, 1);
-            }else{
-                this.orden.splice(index+1, 0, ['']);
-                this.$store.commit('documentacion/archivo/INSERT_ARCHIVO', data);
-            }
-        },
         eliminar(archivo){
             if(archivo.nombre_archivo != null) {
                 return this.$store.dispatch('documentacion/archivo/eliminar', {
