@@ -4,7 +4,7 @@
         <Delete v-if="value.delete && value.estado == 0" v-bind:id="value.id" v-bind:pagina="value.pagina"/>
         <PDF v-bind:id="value.id" @click="value.id"  v-if="$root.can('consultar_entrada_almacen')"></PDF>
         <Relaciones v-bind:transaccion="value.transaccion"/>
-        <router-link  :to="{ name: 'entrada-almacen-documentos', params: {id: value.id}}" v-if="$root.can('consultar_entrada_almacen')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+        <router-link  :to="{ name: 'entrada-almacen-documentos', params: {id: value.id}}" v-if="$root.can('consultar_entrada_almacen') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
             <i class="fa fa-folder-open"></i>
         </router-link>
     </div>

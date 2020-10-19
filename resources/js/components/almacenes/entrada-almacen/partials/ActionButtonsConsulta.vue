@@ -2,7 +2,7 @@
     <div class="btn-group">
         <Show v-bind:id="value.id" v-bind:numero_folio="value.numero_folio" v-if="$root.can('consultar_entrada_almacen')"/>
         <PDF v-bind:id="value.id"  v-if="$root.can('consultar_entrada_almacen')"></PDF>
-        <ModalArchivos v-bind:id="value.id" v-bind:url="'/sao/modal/lista_archivos/{id}'"></ModalArchivos>
+        <ModalArchivos v-bind:id="value.id" v-bind:url="'/sao/modal/lista_archivos/{id}'" v-if="$root.can('consultar_entrada_almacen') && $root.can('consultar_archivos_transaccion')"></ModalArchivos>
     </div>
 </template>
 
