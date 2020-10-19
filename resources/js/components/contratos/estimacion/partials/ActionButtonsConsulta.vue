@@ -4,9 +4,9 @@
             <router-link  :to="{ name: 'estimacion-show', params: {id: value.id}}" v-if="$root.can('consultar_estimacion_subcontrato')" type="button" class="btn btn-sm btn-primary" title="Ver" target="_blank">
                 <i style="width:40px;" >{{value.numero_folio}}</i>
             </router-link>
-            <PDF v-bind:id="value.id"></PDF>
-            <FormatoOrdenPago v-bind:id="value.id"></FormatoOrdenPago>
-            <ModalArchivos v-bind:id="value.id" v-bind:url="'/sao/modal/lista_archivos/{id}'"></ModalArchivos>
+            <PDF v-bind:id="value.id" v-if="$root.can('consultar_estimacion_subcontrato')"></PDF>
+            <FormatoOrdenPago v-bind:id="value.id" v-if="$root.can('consultar_estimacion_subcontrato')"></FormatoOrdenPago>
+            <ModalArchivos v-bind:id="value.id" v-bind:url="'/sao/modal/lista_archivos/{id}'" v-if="$root.can('consultar_estimacion_subcontrato') && $root.can('consultar_archivos_transaccion')"></ModalArchivos>
         </div>
 
 
