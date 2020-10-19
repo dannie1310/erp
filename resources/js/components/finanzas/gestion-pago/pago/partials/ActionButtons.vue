@@ -6,6 +6,9 @@
         <DatosPago v-if="value.pagar" v-bind:id="value.id" />
         <Delete v-if="value.delete" v-bind:id="value.id" />
         <Relaciones v-bind:transaccion="value.transaccion"/>
+        <router-link  :to="{ name: 'pago-documentos', params: {id: value.id}}" v-if="$root.can('consultar_pagos')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+            <i class="fa fa-folder-open"></i>
+        </router-link>
     </div>
 </template>
 

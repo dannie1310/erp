@@ -1012,8 +1012,19 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_factura']
                                 }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'factura-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Factura',
+                                    breadcrumb: { parent: 'factura', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_factura'
+                                }
                             }
-
                         ]
                     },
                     {
@@ -1169,6 +1180,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id/documentos',
+                                name: 'pago-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Pago',
+                                    breadcrumb: { parent: 'pago', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_pagos'
+                                }
+                            },
+                            {
                                 path: 'registro-pago',
                                 name: 'gestion-registro-pago',
                                 component: require('./components/finanzas/gestion-pago/pago/RegistrarPago').default,
@@ -1259,6 +1282,18 @@ export const routes = [
                                     permission: 'consultar_solicitud_pago_anticipado'
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'solicitud-pago-anticipado-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Solicitud de Pago Anticipado',
+                                    breadcrumb: { parent: 'solicitud', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_pago_anticipado'
+                                }
+                            }
                         ]
                     },
                     {

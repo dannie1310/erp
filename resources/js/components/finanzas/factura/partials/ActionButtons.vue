@@ -6,6 +6,9 @@
             <Eliminar v-if="value.borrar" v-bind:id="value.id" v-bind:pagina="value.pagina" />
             <Revertir v-if="value.revertir" v-bind:id="value.id" />
             <Relaciones v-bind:transaccion="value.transaccion"/>
+            <router-link  :to="{ name: 'factura-documentos', params: {id: value.id}}" v-if="$root.can('consultar_factura')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+                <i class="fa fa-folder-open"></i>
+            </router-link>
         </div>
     </span>
 </template>
