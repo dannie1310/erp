@@ -467,6 +467,18 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_entrada_almacen']
                                 }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'entrada-almacen-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Entrada de Almacén',
+                                    breadcrumb: { parent: 'entrada-almacen', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_entrada_almacen'
+                                }
                             }
                         ]
                     },
@@ -495,6 +507,18 @@ export const routes = [
                                     breadcrumb: {parent: 'salida-almacen', name: 'SALIDA - TRANSFERENCIA ALMACEN'},
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_salida_almacen'
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'salida-almacen-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Salida de Almacén',
+                                    breadcrumb: { parent: 'salida-almacen', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_salida_almacen'
                                 }
                             }
                         ]
