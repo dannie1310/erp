@@ -9,9 +9,9 @@
             <i class="fa fa-pencil"></i>
         </router-link>
         <Delete v-bind:id="value.id" v-if="value.delete"/>
-        <PDF v-bind:id="value.id" />
+        <PDF v-bind:id="value.id" v-if="$root.can('consultar_cotizacion_compra')" />
         <Relaciones v-bind:transaccion="value.transaccion"/>
-        <router-link  :to="{ name: 'cotizacion-documentos', params: {id: value.id}}" v-if="$root.can('consultar_cotizacion_compra')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+        <router-link  :to="{ name: 'cotizacion-documentos', params: {id: value.id}}" v-if="$root.can('consultar_cotizacion_compra')  && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
             <i class="fa fa-folder-open"></i>
         </router-link>
     </div>

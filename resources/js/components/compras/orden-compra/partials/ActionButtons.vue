@@ -6,7 +6,7 @@
         </router-link>
         <Eliminar @created="paginate()" v-bind:id="value.id" v-if="$root.can('eliminar_orden_compra') && !value.tiene_entradas"></Eliminar>
         <Relaciones v-bind:transaccion="value.transaccion"/>
-        <router-link  :to="{ name: 'orden-compra-documentos', params: {id: value.id}}" v-if="$root.can('consultar_orden_compra')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+        <router-link  :to="{ name: 'orden-compra-documentos', params: {id: value.id}}" v-if="$root.can('consultar_orden_compra') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
             <i class="fa fa-folder-open"></i>
         </router-link>
     </div>
