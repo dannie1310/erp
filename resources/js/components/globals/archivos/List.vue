@@ -80,7 +80,7 @@ export default {
     components:{Documento, Imagen},
     data(){
         return{
-            url : '/api/archivo/{id}/documento?access_token='+this.$session.get('jwt'),
+            url : '/api/archivo/{id}/documento?access_token='+this.$session.get('jwt')+'&db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra'),
             id_archivo:'',
             descripcion:'',
             archivo:'',
