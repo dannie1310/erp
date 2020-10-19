@@ -2,6 +2,9 @@
     <div class="btn-group">
         <Show v-bind:id="value.id" v-bind:show="value.show"></Show>
         <Relaciones v-bind:transaccion="value.transaccion"/>
+        <router-link  :to="{ name: 'subcontrato-documentos', params: {id: value.id}}" v-if="$root.can('consultar_subcontrato')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
+            <i class="fa fa-folder-open"></i>
+        </router-link>
     </div>
 </template>
 
