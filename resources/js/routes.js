@@ -79,6 +79,16 @@ export const routes = [
                 },
             },
             {
+                path: 'modal/pago/:id',
+                name: 'modal_pago',
+                component: require('./components/finanzas/gestion-pago/pago/Show').default,
+                props: true,
+                meta: {
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_pagos'
+                },
+            },
+            {
                 path: 'compras',
                 component: require('./components/compras/partials/Layout.vue').default,
                 children: [
