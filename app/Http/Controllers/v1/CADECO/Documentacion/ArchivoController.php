@@ -39,8 +39,10 @@ class ArchivoController extends Controller
     public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
         $this->middleware('auth:api');
-        /*$this->middleware('permiso:cargar_archivo_transaccion')->only('cargarArchivo');
-        $this->middleware('permiso:eliminar_archivo_transaccion')->only('destroy');*/
+        $this->middleware('context');
+        $this->middleware('permiso:cargar_archivos_transaccion')->only('cargarArchivo');
+        $this->middleware('permiso:eliminar_archivos_transaccion')->only('destroy');
+        $this->middleware('permiso:consultar_archivos_transaccion')->only(['documento', 'getArchivosTransaccion','imagenes']);
 
         $this->fractal = $fractal;
         $this->service = $service;
