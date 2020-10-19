@@ -1,7 +1,7 @@
 <template>
     <span>
         <div class="btn-group">
-            <FacturaShow v-if="value.show" v-bind:id="value.id" v-if="$root.can('consultar_factura')" />
+            <FacturaShow v-if="value.show" v-bind:id="value.id" />
             <PDF v-bind:id="value.id" @click="value.id" v-if="$root.can('consultar_factura')"></PDF>
             <Eliminar v-if="value.borrar" v-bind:id="value.id" v-bind:pagina="value.pagina" />
             <Revertir v-if="value.revertir" v-bind:id="value.id" />
