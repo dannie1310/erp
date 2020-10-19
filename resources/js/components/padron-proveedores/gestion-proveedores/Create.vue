@@ -174,7 +174,8 @@
                             <th class="bg-gray-light">Nombre(s)</th>
                             <th class="bg-gray-light">Apellido Paterno</th>
                             <th class="bg-gray-light">Apellido Materno</th>
-                            <th class="bg-gray-light">CURP</th>
+                            <th class="bg-gray-light">Nacionalidad</th>
+                            <th class="bg-gray-light">CURP ó Número de Identificación</th>
                             <th class="bg-gray-light icono">
                                 <button type="button" class="btn btn-sm btn-outline-success" @click="agregarRepresentanteLegal" :disabled="cargando">
                                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
@@ -222,8 +223,15 @@
                                        :maxlength="50"/>
                                 <div class="invalid-feedback" v-show="errors.has(`apellido_materno[${i}]`)">{{ errors.first(`apellido_materno[${i}]`) }}</div>
                             </td>
-
-                            <td >
+                            <td>
+                                <input type="radio" :id="`nacional[${i}]`" value="0" v-model="representante_legal.es_nacional">
+                                <label :for="`nacional[${i}]`">Nacional</label>
+                                <br>
+                                <input type="radio" :id="`extranjero[${i}]`" value="1" v-model="representante_legal.es_nacional">
+                                <label :for="`extranjero[${i}]`">Extranjero</label>
+                                <br>
+                            </td>
+                            <td v-if="representante_legal.es_nacional == 0">
                                 <input class="form-control"
                                        :name="`curp[${i}]`"
                                        :data-vv-as="`'CURP ${i + 1}'`"
@@ -234,7 +242,17 @@
                                        :maxlength="18"/>
                                 <div class="invalid-feedback" v-show="errors.has(`curp[${i}]`)">{{ errors.first(`curp[${i}]`) }}</div>
                             </td>
-
+                            <td v-if="representante_legal.es_nacional == 1">
+                                <input class="form-control"
+                                       :name="`identificacion[${i}]`"
+                                       :data-vv-as="`'Número de Identificación ${i + 1}'`"
+                                       v-model="representante_legal.curp"
+                                       :class="{'is-invalid': errors.has(`identificacion[${i}]`)}"
+                                       v-validate="{ required: true}"
+                                       :id="`identificacion[${i}]`"
+                                       :maxlength="18"/>
+                                <div class="invalid-feedback" v-show="errors.has(`identificacion[${i}]`)">{{ errors.first(`identificacion[${i}]`) }}</div>
+                            </td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarRepresentanteLegal(i)" :disabled="registro_proveedor.representantes_legales.length == 1" >
                                     <i class="fa fa-trash"></i>
@@ -388,7 +406,8 @@
                             'nombre' : '',
                             'apellido_paterno' : '',
                             'apellido_materno' : '',
-                            'curp' : ''
+                            'curp' : '',
+                            'es_nacional' : 0
                         }
                     ],
                     contactos : [
@@ -452,7 +471,8 @@
                     'nombre' : '',
                     'apellido_paterno' : '',
                     'apellido_materno' : '',
-                    'curp' : ''
+                    'curp' : '',
+                    'es_nacional' : 0,
                 }
                 this.registro_proveedor.representantes_legales.push(array);
             },
@@ -517,14 +537,16 @@
                             var BreakException = {};
                             try{
                                 this.registro_proveedor.representantes_legales.forEach(e => {
-                                    if(!this.validaCurp(e.curp)){
-                                        swal(
-                                            'CURP inválido',
-                                            e.curp,
-                                            'error'
-                                        );
-                                        error_curp = 1;
-                                        throw BreakException;
+                                    if(e.es_nacional == 0) {
+                                        if (!this.validaCurp(e.curp)) {
+                                            swal(
+                                                'CURP inválido',
+                                                e.curp,
+                                                'error'
+                                            );
+                                            error_curp = 1;
+                                            throw BreakException;
+                                        }
                                     }
                                 });
                             } catch (e){

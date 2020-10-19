@@ -58,14 +58,24 @@ import Polizas from '../contabilidad/poliza/partials/ActionButtonsConsulta';
 export default {
     name: "Timeline",
     components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas, ContratosProyectados, Subcontratos,Presupuestos,Estimaciones,Polizas},
-    props: ['relaciones'],
+    props: ['transaccion','relaciones'],
     data(){
         return{
             cargando_relaciones: false,
             configuracion: '',
             fecha:'',
+            //relaciones: null,
         }
     },
+    /*mounted() {
+        this.find();
+    },*/
+    /*methods: {
+        find() {
+            this.cargando_relaciones = true;
+        },
+
+    },*/
 }
 </script>
 

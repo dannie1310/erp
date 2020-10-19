@@ -2,12 +2,12 @@
     <div class="btn-group">
         <Aprobar v-if="value.aprobar" v-bind:id="value.id"></Aprobar>
         <button v-if="value.edit" @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar Solicitud"> <i class="fa fa-pencil"></i></button>
-        <router-link  :to="{ name: 'solicitud-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_compra')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+        <router-link  :to="{ name: 'solicitud-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_compra')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </router-link>
         <PDF v-bind:id="value.id"/>
         <Delete v-if="value.delete" v-bind:id="value.id"/>
-        <Relaciones v-bind:relaciones="value.relaciones"/>
+        <Relaciones v-bind:transaccion="value.transaccion"/>
     </div>
 </template>
 <script>

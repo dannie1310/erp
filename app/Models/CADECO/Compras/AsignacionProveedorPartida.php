@@ -5,11 +5,12 @@ namespace App\Models\CADECO\Compras;
 
 
 use App\Models\CADECO\Cambio;
+use App\Models\IGH\TipoCambio;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\OrdenCompra;
+use App\Models\CADECO\ItemOrdenCompra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompra;
-use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
@@ -61,6 +62,11 @@ class AsignacionProveedorPartida extends Model
         return $this->belongsTo(ItemSolicitudCompra::class, 'id_item_solicitud', 'id_item');
     }
 
+    public function itemOrdenCompra()
+    {
+        return $this->belongsTo(ItemOrdenCompra::class, 'id_item_solicitud', 'item_antecedente');
+    }
+
     public function ordenCompra()
     {
         return $this->hasMany(OrdenCompra::class, 'id_referente', 'id_transaccion_cotizacion');
@@ -81,7 +87,7 @@ class AsignacionProveedorPartida extends Model
     }
 
     public function getConOrdenCompraAttribute(){
-        return $this->cotizacion?$this->ordenCompra()->where('id_moneda', '=', $this->cotizacion->id_moneda)->count() > 0:0;
+        return $this->itemOrdenCompra?$this->itemOrdenCompra->count() > 0:0;
     }
 
     public function getTotalPrecioMonedaAttribute()

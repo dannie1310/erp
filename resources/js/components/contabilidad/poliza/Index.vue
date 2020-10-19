@@ -153,7 +153,7 @@
                             id: poliza.id,
                             id_poliza:poliza.id_poliza,
                             id_empresa:poliza.id_empresa,
-                            relaciones:poliza.relaciones.data
+                            transaccion: {id:poliza.id, tipo:666},
                         })
                     }));
                 },

@@ -117,7 +117,7 @@
                             delete: (self.$root.can('eliminar_solicitud_compra') && (solicitud.estado == 0) && solicitud.complemento) ? true : false,
                             edit: (self.$root.can('editar_solicitud_compra') && solicitud.estado == 0  && solicitud.complemento) ? true : false,
                             id: solicitud.id,
-                            relaciones:solicitud.relaciones.data,
+                            transaccion: {id:solicitud.id, tipo:17},
                         })
                     }));
                 },
