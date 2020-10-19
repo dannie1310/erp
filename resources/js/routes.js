@@ -628,6 +628,18 @@ export const routes = [
 
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'proyectado-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Contratos Proyectados',
+                                    breadcrumb: { parent: 'proyectado', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_contrato_proyectado'
+                                }
+                            }
                         ]
                     },
                     {
@@ -666,6 +678,18 @@ export const routes = [
                                     breadcrumb: { parent: 'presupuesto', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_presupuesto_contratista']
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'presupuesto-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Presupuesto',
+                                    breadcrumb: { parent: 'presupuesto', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_presupuesto_contratista'
                                 }
                             }
                         ]
@@ -713,6 +737,18 @@ export const routes = [
                                     permission: 'consultar_subcontrato'
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'subcontrato-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Subcontrato',
+                                    breadcrumb: { parent: 'subcontrato', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_subcontrato'
+                                }
+                            }
                         ]
                     },
                     {
@@ -776,6 +812,18 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'editar_estimacion_subcontrato'
 
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'estimacion-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: true,
+                                meta: {
+                                    title: 'Documentos de Estimacion',
+                                    breadcrumb: { parent: 'estimacion', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_estimacion_subcontrato'
                                 }
                             },
                             {

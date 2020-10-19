@@ -6,6 +6,9 @@
         <Delete v-bind:id="value.id" v-if="value.delete" />
         <PDF v-bind:id="value.id" @click="value.id" ></PDF>
         <Relaciones v-bind:transaccion="value.transaccion"/>
+        <router-link  :to="{ name: 'proyectado-documentos', params: {id: value.id}}" v-if="$root.can('consultar_contrato_proyectado')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+            <i class="fa fa-folder-open"></i>
+        </router-link>
     </div>
 </template>
 
