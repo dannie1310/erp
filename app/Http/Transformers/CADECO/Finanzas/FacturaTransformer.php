@@ -28,7 +28,6 @@ class FacturaTransformer extends TransformerAbstract
         'cambio',
         'poliza',
         'relaciones'
-
     ];
 
     /**
@@ -58,6 +57,7 @@ class FacturaTransformer extends TransformerAbstract
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
+            'fecha' => (string)$model->fecha,
             'fecha_format' => (string)$model->fecha_format,
             'estado_format'=>$model->estado_string,
             'estado' => (int)$model->estado,
@@ -76,6 +76,7 @@ class FacturaTransformer extends TransformerAbstract
             'fondo_garantia_format' => $model->fondo_garantia_format,
             'retenciones_format' => $model->retenciones_subcontrato_format,
             'devoluciones_format' => $model->devoluciones_subcontrato_format,
+            'tipo' => $model->tipo->Descripcion
 
         ];
     }
@@ -143,5 +144,4 @@ class FacturaTransformer extends TransformerAbstract
         }
         return null;
     }
-
 }

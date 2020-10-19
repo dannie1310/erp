@@ -13,6 +13,8 @@ use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\CuentaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\OrdenPagoTransformer;
+use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Pago;
 use League\Fractal\TransformerAbstract;
@@ -30,7 +32,8 @@ class PagoTransformer extends TransformerAbstract
             'empresa',
             'usuario',
             'relaciones',
-            'antecedente'
+            'antecedente',
+            'ordenesPago'
     ];
 
 
@@ -134,7 +137,20 @@ class PagoTransformer extends TransformerAbstract
     {
         if($antecedente = $model->antecedente)
         {
-            return $this->item($antecedente, new RelacionTransformer);
+            return $this->item($antecedente, new TransaccionTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Pago $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeOrdenesPago(Pago $model)
+    {
+        if($orden = $model->ordenesPago)
+        {
+            return $this->collection($orden, new OrdenPagoTransformer);
         }
         return null;
     }
