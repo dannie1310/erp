@@ -1115,7 +1115,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'factura-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_factura'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Factura',
                                     breadcrumb: { parent: 'factura', name: 'DOCUMENTOS'},
@@ -1281,7 +1284,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'pago-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['consultar_pagos'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Pago',
                                     breadcrumb: { parent: 'pago', name: 'DOCUMENTOS'},
@@ -1384,7 +1390,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'solicitud-pago-anticipado-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_solicitud_pago_anticipado'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Solicitud de Pago Anticipado',
                                     breadcrumb: { parent: 'solicitud', name: 'DOCUMENTOS'},
