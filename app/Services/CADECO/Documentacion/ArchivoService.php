@@ -317,22 +317,8 @@ class ArchivoService
         $archivo = $this->repository->show($id);
         $imagenes = array();
 
-        if(count($archivo->archivosIntegrantes) > 0) {
-            foreach ($archivo->archivosIntegrantes as $key => $imagen) {
-                if (is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix() .  'hashfiles/' . $imagen->hashfile.".".$imagen->extension_archivo)) {
-                    if ($imagen->extension_archivo != 'pdf') {
-                        $imagenes[$key]['imagen'] = "data:image/" . $imagen->extension_archivo . ";base64," . base64_encode(file_get_contents(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix() .  'hashfiles/' . $imagen->hashfile.".".$imagen->extension_archivo));
-                        $imagenes[$key]['descripcion'] = $archivo->descripcion_complementada;
-                    }
-                }
-            }
-        }else{
-            if($archivo->nombre_archivo)
-            {
-                $imagenes['0']['imagen'] = "data:image/" . $archivo->extension_archivo. ";base64," . base64_encode(file_get_contents(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix() .  'hashfiles/' . $archivo->hashfile.".".$archivo->extension_archivo));
-                $imagenes['0']['descripcion'] = $archivo->descripcion_complementada;
-            }
-        }
+        $imagenes['0']['imagen'] = "data:image/" . $archivo->extension_archivo. ";base64," . base64_encode(file_get_contents(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix() . $archivo->hashfile.".".$archivo->extension));
+        $imagenes['0']['descripcion'] = $archivo->descripcion;
         return $imagenes;
     }
 }

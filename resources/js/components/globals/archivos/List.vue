@@ -111,10 +111,15 @@ export default {
                 id: this.id,
                 params: {include: []}
             }).then(data => {
-                //this.documentos = data.data;
             }).finally(()=> {
                 this.cargando = false;
             })
+        },
+        modalImagen(archivo){
+            this.cargando_imagenes = true;
+            this.id_archivo = archivo.id;
+            this.imagenes = []
+            this.getImagenes(archivo.id);
         },
         getImagenes(id) {
             return this.$store.dispatch('documentacion/archivo/getImagenes', {
