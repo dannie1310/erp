@@ -32,7 +32,6 @@
             },
             pdf(){
                 var url = this.url.replace("{id}", this.id);
-
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Archivo</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');

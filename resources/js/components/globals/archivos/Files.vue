@@ -5,7 +5,7 @@
                 <span >
                     <div class="row">
                         <div class="col-md-12">
-                            <Upload v-bind:id="id" @uploaded="find"></Upload>
+                            <Upload v-bind:id="id" v-bind:permiso="permiso"></Upload>
                         </div>
                     </div>
                     <div class="row">
@@ -24,13 +24,8 @@ import Upload from "./Upload";
 import List from "./List";
 export default {
     name: "documentos",
-    props: ['id'],
+    props: ['id','permiso'],
     components:{List, Upload},
-    methods:{
-        find(){
-
-        }
-    }
 }
 </script>
 

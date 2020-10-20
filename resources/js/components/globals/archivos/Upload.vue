@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button  @click="openModal" type="button" class="btn btn-app btn-primary pull-right" title="Cargar" v-if="$root.can('cargar_archivos_transaccion')">
+        <button  @click="openModal" type="button" class="btn btn-app btn-primary pull-right" title="Cargar" v-if="$root.can('cargar_archivos_transaccion') && $root.can(permiso)">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-upload" v-else></i>
             Subir Archivo
@@ -75,7 +75,7 @@
 
 export default {
     name: "upload",
-    props: ['id'],
+    props: ['id','permiso'],
 
     data(){
         return{

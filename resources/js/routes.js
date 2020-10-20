@@ -482,7 +482,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'entrada-almacen-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_entrada_almacen'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Entrada de Almacén',
                                     breadcrumb: { parent: 'entrada-almacen', name: 'DOCUMENTOS'},
@@ -523,7 +526,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'salida-almacen-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_salida_almacen'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Salida de Almacén',
                                     breadcrumb: { parent: 'salida-almacen', name: 'DOCUMENTOS'},
