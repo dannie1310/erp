@@ -125,11 +125,11 @@ export default {
                     self.$data.data = []
                     self.$data.data = asignaciones.map((asignacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        id_asignacion: asignacion.numero_folio_asignacion,
-                        fecha_hora_registro: asignacion.fecha_registro,
-                        numero_folio: asignacion.contrato.numero_folio_format,
-                        fecha: asignacion.contrato.fecha,
-                        referencia: asignacion.contrato.referencia,
+                        id_asignacion: asignacion.numero_folio,
+                        fecha_hora_registro: asignacion.fecha_format,
+                        numero_folio: asignacion.contrato ? asignacion.contrato.numero_folio_format : '',
+                        fecha: asignacion.contrato ? asignacion.contrato.fecha : '',
+                        referencia: asignacion.contrato ? asignacion.contrato.referencia : '',
                         buttons: $.extend({}, {
                             id: asignacion.id,
                         })

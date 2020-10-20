@@ -60,7 +60,8 @@ class AsignacionContratista extends Model
         return '# ' . sprintf("%05d", $this->id_asignacion);
     }
 
-    public function getUsuarioRegistroNombreAttribute(){
-        return $this->usuarioRegistro['nombre'] . ' ' . $this->usuarioRegistro['apaterno'] . ' ' . $this->usuarioRegistro['amaterno'];
+    public function getUsuarioRegistroNombreAttribute()
+    {
+        return $this->usuarioRegistro->nombre_completo;
     }
 }

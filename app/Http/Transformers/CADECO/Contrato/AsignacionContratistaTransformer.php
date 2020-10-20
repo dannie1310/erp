@@ -37,9 +37,9 @@ class AsignacionContratistaTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'numero_folio_asignacion' => $model->numero_folio_format,
-            'fecha_registro' => $model->fecha_registro_format,
-            'usuario_registro' => $model->Usuario_registro_nombre,
+            'numero_folio' => $model->numero_folio_format,
+            'fecha_format' => $model->fecha_registro_format,
+            'usuario' => $model->Usuario_registro_nombre,
         ];
     }
 

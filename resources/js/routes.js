@@ -616,7 +616,19 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_asignacion_contratista']
                                 }
-                            }
+                            },
+                            {
+                                path: ':id',
+                                name: 'asignacion-proveedor-delete',
+                                props: true,
+                                component: require('./components/contratos/asignacion-contratista/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Asignación Proveedores',
+                                    breadcrumb: {parent: 'asignacion-contratista', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['eliminar_asignacion_contratista']
+                                }
+                            },
                         ]
                     },
                     {

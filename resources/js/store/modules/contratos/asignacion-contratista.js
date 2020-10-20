@@ -20,7 +20,7 @@ export default{
         },
 
         UPDATE_ASIGNACIONES(state, data) {
-            state.asignaciones = state.asignaciones.map(inventario => {
+            state.asignaciones = state.asignaciones.map(asignacion => {
                 if (asignacion.id === data.id) {
                     return Object.assign({}, asignacion, data)
                 }
