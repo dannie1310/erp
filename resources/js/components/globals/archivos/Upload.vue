@@ -20,7 +20,7 @@
                             <div class="col-md-12">
                                 <div class="form-group error-content">
                                     <label class="col-form-label">Archivos:</label>
-                                    <input type="file" class="form-control" id="cargar_file" multiple="multiple"
+                                    <input type="file" class="form-control" id="cargar_file"
                                            @change="onFileChange"
                                            row="3"
                                            v-validate="{required:true, ext: validarExtensiones(),  size: 5120}"

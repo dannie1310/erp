@@ -45,7 +45,7 @@
                                                                 <i class="fa fa-picture-o"></i>
                                                             </span>
                                                         </button>
-                                                        <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre">
+                                                        <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre && 1==0">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </div>
