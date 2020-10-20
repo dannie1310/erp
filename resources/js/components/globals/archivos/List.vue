@@ -45,7 +45,7 @@
                                                                 <i class="fa fa-picture-o"></i>
                                                             </span>
                                                         </button>
-                                                        <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre && 1==0">
+                                                        <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre" :disabled="eliminando_imagenes">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -90,7 +90,8 @@ export default {
             names:[],
             files:[],
             cargando: false,
-            cargando_imagenes: false
+            cargando_imagenes: false,
+            eliminando_imagenes : false,
         }
     },
     mounted() {
@@ -135,14 +136,15 @@ export default {
         },
 
         eliminar(archivo){
-            if(archivo.nombre_archivo != null) {
-                return this.$store.dispatch('documentacion/archivo/eliminar', {
-                    id: archivo.id,
-                    params: {}
-                }).then(data => {
-                    this.$store.commit('documentacion/archivo/UPDATE_ARCHIVO', data);
-                })
-            }
+            this.eliminando_imagenes = true;
+            return this.$store.dispatch('documentacion/archivo/eliminar', {
+                id: archivo.id,
+                params: {}
+            }).then(data => {
+                //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
+            }).finally( ()=>{
+                this.eliminando_imagenes = false;
+            })
         },
     },
     computed: {

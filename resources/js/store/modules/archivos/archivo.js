@@ -36,8 +36,10 @@ export default {
         INSERT_ARCHIVO(state, data){
             state.archivos.splice(0, 0, data);
         },
-        DELETE_ARCHIVO(state, data){
-            state.archivos.splice(data.index, 1);
+        DELETE_ARCHIVO(state, id){
+            state.archivos = state.archivos.filter(archivo => {
+                return archivo.id != id
+            });
         },
     },
 
@@ -164,6 +166,7 @@ export default {
                                         timer: 1500,
                                         buttons: false
                                     }).then(() => {
+                                        context.commit("DELETE_ARCHIVO", payload.id);
                                         resolve(data);
                                     })
                                 })
