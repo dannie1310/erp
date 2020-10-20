@@ -150,7 +150,7 @@ export default {
             $(this.$refs.modal).modal('show');
         },
         validarExtensiones(){
-            return ['pdf'/*, 'zip', 'jpg', 'jpeg', 'png'*/];
+            return ['pdf', 'jpg', 'jpeg', 'png'];
         },
         upload(){
             var formData = new FormData();

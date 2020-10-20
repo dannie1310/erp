@@ -55,28 +55,25 @@ class ArchivoService
     public function cargarArchivosImagen($data){
         $archivos_nombres = \json_decode($data['archivos_nombres']);
         $archivos_img = \json_decode($data['archivos']);
-        $archivo = $this->repository->show($data['id_archivo']);
 
 
         if(count($archivos_nombres) == 1){
-            $nombre_explode = explode('.', $archivos_nombres[0]->nombre);
             $hashfile = hash_file('sha1', $archivos_img[0]->archivo);
-            $this->validaRepetido($hashfile,$archivos_nombres[0]->nombre, $archivo);
+            $this->validaRepetido($hashfile, $data["id"], $data["descripcion"]);
+            $nombre_archivo = explode('.', $archivos_nombres[0]->nombre);
+
+            $data_registro["id_transaccion"] = $data["id"];
+            $data_registro["id_tipo_archivo"] = 1;
+            $data_registro["id_categoria"] = 1;
+            $data_registro["descripcion"] = $data["descripcion"];
+            $data_registro["hashfile"] = $hashfile;
+            $data_registro["nombre"] = $archivos_nombres[0]->nombre;
+            $data_registro["extension"] = $nombre_archivo[count($nombre_archivo)-1];
+
             $exp = explode("base64,", $archivos_img[0]->archivo);
             $decode = base64_decode($exp[1]);
-
-            if($ok = Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hashfile.'.' . $nombre_explode[count($nombre_explode)-1], $decode)){
-                $archivo->hashfile = $hashfile;
-                $archivo->nombre_archivo = $archivo->nombre_descarga;
-                $archivo->extension_archivo = $nombre_explode[count($nombre_explode)-1];
-                $archivo->nombre_archivo_usuario = $archivos_nombres[0]->nombre;
-                $archivo->save();
-
-
-            }else{
-
-                abort(403, 'Hubo un error al cargar el archivo, intente mas tarde');
-            }
+            Storage::disk('archivos_transacciones')->put( $hashfile.'.'.$nombre_archivo[count($nombre_archivo)-1], $decode);
+            return $this->repository->registrarArchivo($data_registro);
         }else{
 
             foreach($archivos_img as $key => $archivo_img){
@@ -97,9 +94,6 @@ class ArchivoService
             }
 
         }
-        Files::eliminaDirectorio(public_path('uploads/padron_contratistas/pdf_temporal'));
-        return $archivo;
-
     }
 
     public function getArchivosTransaccion($id_transaccion)
@@ -143,7 +137,6 @@ class ArchivoService
         }else{
             $archivo = $this->guardarArchivo($data,$paths["dir_tempo"], $files[0]);
             $pdf_file = fopen($paths["dir_tempo"].$files[0], 'r');
-            $hashfile = hash_file('sha1', $paths["dir_tempo"].$files[0]);
             $pdf = null;
             fclose($pdf_file);
             Files::eliminaDirectorio($paths["dir_tempo"]);
