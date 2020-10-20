@@ -271,9 +271,20 @@ class OrdenCompra extends Transaccion
 
     public function getNumeroFolioCotizacionFormatAttribute()
     {
-        if($this->cotizacion){
+        try {
             return $this->cotizacion->numero_folio;
-        } else return null;
+        } catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getNumeroFolioAsignacionFormatAttribute()
+    {
+        try {
+            return $this->complemento->asignacion->folio_format;
+        } catch (\Exception $e){
+            return null;
+        }
     }
 
     /**
