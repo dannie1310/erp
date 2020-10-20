@@ -101,11 +101,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer" align="right">
-                    <button type="button" class="btn btn-secondary" v-on:click="salir">
-                        <i class="fa fa-angle-left"></i>Regresar
-                    </button>
-                </div>
             </div>
         </div>
     </span>
@@ -132,9 +127,6 @@
                     .finally(() => {
                         this.cargando = false;
                     })
-            },
-            salir(){
-                this.$router.push({name: 'pago'});
             },
         },
         computed: {

@@ -130,6 +130,10 @@ return [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_ERRORES')),
         ],
+        'archivos_transacciones' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_ARCHIVOS_TRANSACCIONES')),
+        ],
         'polizas_pdf' =>[
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_CONTABILIDAD_GENERAL_POLIZAS')),

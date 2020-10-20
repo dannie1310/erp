@@ -27,6 +27,15 @@ $api->version('v1', function ($api) {
      * DBO
      */
     $api->group(['middleware' => 'api'], function ($api) {
+        // ARCHIVO
+        $api->group(['prefix' => 'archivo'], function ($api){
+            $api->post('cargarArchivo', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@cargarArchivo');
+            $api->post('cargarArchivoZIP', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@cargarArchivoZIP');
+            $api->get('{id}/documento', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getArchivosTransaccion', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosTransaccion')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/imagenes', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
+        });
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');

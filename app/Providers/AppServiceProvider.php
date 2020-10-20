@@ -336,6 +336,10 @@ class AppServiceProvider extends ServiceProvider
         /**
          * CADECO
          */
+            /**
+             * Archivos
+             * */
+            \App\Models\CADECO\Documentacion\Archivo::observe(\App\Observers\CADECO\Documentacion\ArchivoObserver::class);
 
             /**
              * Almacenes
