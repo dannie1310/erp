@@ -61,9 +61,22 @@ class PolizaController extends Controller
     {
         return $this->service->pdf($request,$id);
     }
-    
+
     public function pdfCaidaB(Request $request, $id)
     {
         return $this->service->pdfCaidaB($request->all(), $id);
+    }
+
+    public function descargaZip(Request $request){
+        return $this->service->descargaZip($request->all());
+    }
+    
+    public function busquedaExcel(Request $request)
+    {
+        return $this->service->busquedaExcel($request->all());
+    }
+
+    public function getZip(Request $request){
+        return $this->service->getZip($request->all());
     }
 }

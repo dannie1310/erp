@@ -133,6 +133,14 @@ return [
         'archivos_transacciones' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_ARCHIVOS_TRANSACCIONES')),
-        ]
+        ],
+        'polizas_pdf' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_CONTABILIDAD_GENERAL_POLIZAS')),
+        ],
+        'polizas_zip' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_CONTABILIDAD_GENERAL_POLIZAS_ZIP')),
+        ],
     ],
 ];
