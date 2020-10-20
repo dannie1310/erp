@@ -7,6 +7,9 @@
         <button v-if="$root.can('editar_presupuesto_contratista')" @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
                 <i class="fa fa-pencil"></i>
         </button>
+        <router-link  :to="{ name: 'presupuesto-documentos', params: {id: value.id}}" v-if="$root.can('consultar_presupuesto_contratista')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
+            <i class="fa fa-folder-open"></i>
+        </router-link>
     </div>
 </template>
 <script>
@@ -22,15 +25,15 @@ import CargaLayout from '../CargaLayout';
         methods: {
             edit()
             {
-                this.$router.push({ name: 'presupuesto-edit', params: {id: this.value.id, xls: this.xls}});                
+                this.$router.push({ name: 'presupuesto-edit', params: {id: this.value.id, xls: this.xls}});
             },
             layout(dat)
-            {                
+            {
                 this.xls = (dat) ? dat : null;
                 if(this.xls)
                 {
                     this.edit();
-                }                
+                }
             }
         }
     }
