@@ -267,7 +267,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'cotizacion-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_cotizacion_compra'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Cotización',
                                     breadcrumb: { parent: 'cotizacion', name: 'DOCUMENTOS'},
@@ -307,7 +310,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'orden-compra-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_orden_compra'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Orden de Compra',
                                     breadcrumb: { parent: 'orden-compra', name: 'DOCUMENTOS'},
@@ -342,7 +348,21 @@ export const routes = [
                                     permission: 'registrar_requisicion_compra'
                                 }
                             },
-
+                            {
+                                path: ':id/documentos',
+                                name: 'requisicion-compra-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_requisicion_compra'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_compra'
+                                }
+                            }
                         ]
                     },
                     {
@@ -399,7 +419,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'solicitud-compra-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_solicitud_compra'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Solicitud',
                                     breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
