@@ -653,15 +653,18 @@ export const routes = [
                                 meta: {
                                     title: 'Registrar Contratos Proyectados',
                                     breadcrumb: {parent: 'proyectado', name: 'REGISTRAR'},
-                                    middleware: [auth, context],
-
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_contrato_proyectado'
                                 }
                             },
                             {
                                 path: ':id/documentos',
                                 name: 'proyectado-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_orden_compra'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Contratos Proyectados',
                                     breadcrumb: { parent: 'proyectado', name: 'DOCUMENTOS'},
@@ -713,7 +716,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'presupuesto-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_presupuesto_contratista'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Presupuesto',
                                     breadcrumb: { parent: 'presupuesto', name: 'DOCUMENTOS'},
@@ -770,7 +776,10 @@ export const routes = [
                                 path: ':id/documentos',
                                 name: 'subcontrato-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_subcontrato'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Subcontrato',
                                     breadcrumb: { parent: 'subcontrato', name: 'DOCUMENTOS'},
@@ -826,8 +835,8 @@ export const routes = [
                                 meta: {
                                     title: 'Información de Estimación',
                                     breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
-                                    middleware: [auth, context],
-
+                                    middleware: [auth, context, permission],
+                                    permission :'consultar_estimacion_subcontrato'
                                 }
                             },
                             {
@@ -840,14 +849,16 @@ export const routes = [
                                     breadcrumb: {parent: 'estimacion', name: 'EDITAR'},
                                     middleware: [auth, context, permission],
                                     permission: 'editar_estimacion_subcontrato'
-
                                 }
                             },
                             {
                                 path: ':id/documentos',
                                 name: 'estimacion-documentos',
                                 component: require('./components/globals/archivos/Files').default,
-                                props: true,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_estimacion_subcontrato'],
+                                }),
                                 meta: {
                                     title: 'Documentos de Estimacion',
                                     breadcrumb: { parent: 'estimacion', name: 'DOCUMENTOS'},
