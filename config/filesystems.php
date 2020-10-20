@@ -129,6 +129,14 @@ return [
         'xml_errores' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_ERRORES')),
-        ]
+        ],
+        'polizas_pdf' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_CONTABILIDAD_GENERAL_POLIZAS')),
+        ],
+        'polizas_zip' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_CONTABILIDAD_GENERAL_POLIZAS_ZIP')),
+        ],
     ],
 ];
