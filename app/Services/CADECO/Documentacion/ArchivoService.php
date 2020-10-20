@@ -292,23 +292,12 @@ class ArchivoService
     public function delete($data, $id)
     {
         $archivo = $this->repository->show($id);
-        if($archivo->usuario_registro && auth()->id() != $archivo->usuario_registro){
-            abort(403, 'No puede eliminar un archivo cargado por otro usuario.');
-        }
-        if($archivo->empresa->id_tipo_empresa == 3){
-            $rfc_proveedora = $archivo->empresa->proveedor[0]->rfc.'/'.$archivo->empresa->rfc;
-        }else {
-            $rfc_proveedora = $archivo->empresa->rfc;
-        }
-        $nombre_archivo = $archivo->nombre_archivo.".". $archivo->extension_archivo;
-        if(is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix().$rfc_proveedora.'/'.$nombre_archivo)) {
-            $datos_arch = $archivo->eliminar();
-            Storage::disk('padron_contratista')->delete($rfc_proveedora.'/'.$nombre_archivo);
-            return $datos_arch;
+        $nombre_archivo = $archivo->hashfile.".". $archivo->extension;
+        if(is_file(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix().'/'.$nombre_archivo)) {
+            Storage::disk('archivos_transacciones')->delete($nombre_archivo);
+            return $archivo->delete();
         }else{
-            Files::eliminaDirectorio(public_path('uploads/padron_contratistas/'. $rfc_proveedora . '/'. $archivo->nombre_archivo ));
-            $datos_arch = $archivo->eliminar();
-            return $datos_arch;
+            return $archivo->delete();
         }
     }
 

@@ -69,11 +69,11 @@ class ArchivoController extends Controller
         return $this->respondWithCollection($archivos_prestadora);
     }
 
-    public function destroy(Request $request, $id)
+    /*public function destroy(Request $request, $id)
     {
         $item = $this->service->delete($request->all(), $id);
         return $this->respondWithItem($item);
-    }
+    }*/
 
     public function imagenes(Request $request, $id)
     {
