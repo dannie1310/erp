@@ -727,12 +727,14 @@ class CFDSATService
 
         $path = "downloads/fiscal/descarga/";
         $nombre_zip = $path.date("Ymd_his").".zip";
-        Files::eliminaDirectorio($dir_descarga);
+
 
         $zipper = new Zipper;
         $zipper->make(public_path($nombre_zip))
             ->add(public_path($dir_descarga));
         $zipper->close();
+
+        Files::eliminaDirectorio($dir_descarga);
 
         if(file_exists(public_path($nombre_zip))){
             return response()->download(public_path($nombre_zip));
