@@ -13,21 +13,30 @@
                     <div class="row" v-if="documentos" >
                         <div class="col-md-12">
                             <div class="table-responsive">
-                                <table class="table table-striped" id="documentos" name="documentos">
-                                    <thead>
-                                        <tr>
-                                            <th class="index_corto">#</th>
-                                            <th >Tipo Documento</th>
-                                            <th >Documento</th>
-                                            <th >Descripción</th>
-                                            <th >Usuario Cargo</th>
-                                            <th >Fecha Hora Carga</th>
-                                            <th >Acciones</th>
-                                        </tr>
-                                    </thead>
+
+                                <table class="table" id="documentos" name="documentos">
+
+
                                     <tbody>
-                                        <tr v-for="(archivo, i) in documentos" >
-                                            <template >
+                                        <template v-for="(archivo, i) in documentos" >
+                                            <tr v-if="i ==0">
+                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
+                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
+                                            </tr>
+                                            <tr v-else-if="archivo.id_transaccion != documentos[i-1].id_transaccion">
+                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
+                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
+                                            </tr>
+                                            <tr v-if="i ==0" style="background-color: #cccccc">
+                                                <td class="index_corto">#</td>
+                                                <td>Tipo Documento</td>
+                                                <td >Documento</td>
+                                                <td >Descripción</td>
+                                                <td >Usuario Cargo</td>
+                                                <td class="fecha_hora">Fecha Hora Carga</td>
+                                                <td >Acciones</td>
+                                            </tr>
+                                            <tr  >
                                                 <td>{{i+1}}</td>
                                                 <td>{{archivo.tipo_archivo}}</td>
                                                 <td>{{archivo.nombre}}</td>
@@ -50,10 +59,11 @@
                                                         </button>
                                                     </div>
                                                 </td>
-                                            </template>
-                                        </tr>
+                                            </tr>
+                                        </template>
                                     </tbody>
                                 </table>
+
                             </div>
                         </div>
                     </div>
