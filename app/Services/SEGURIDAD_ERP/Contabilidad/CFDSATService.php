@@ -67,6 +67,28 @@ class CFDSATService
 
     public function paginate($data)
     {
+
+        if (isset($data['startDate'])) {
+            $this->repository->where([['fecha', '>=', $data['startDate']]]);
+        }
+        if (isset($data['endDate'])) {
+            $this->repository->where([['fecha', '<=', $data['endDate']]]);
+        }
+        if (isset($data['rfc_emisor'])) {
+            $this->repository->where([['rfc_emisor', 'LIKE', '%' . $data['rfc_emisor'] . '%']]);
+        }
+        if (isset($data['rfc_receptor'])) {
+            $this->repository->where([['rfc_receptor', 'LIKE', '%' . $data['rfc_receptor'] . '%']]);
+        }
+        if (isset($data['uuid'])) {
+            $this->repository->where([['uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
+        }
+        if (isset($data['total'])) {
+            $this->repository->where([['total', '=', $data['total'] ]]);
+        }
+        if (isset($data['fecha'])) {
+            $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
         return $this->repository->paginate($data);
     }
 
@@ -665,47 +687,58 @@ class CFDSATService
         return $contenido;
     }
 
-    public function generaCarpeta()
-    {
-        $uuid[]='035FB544-FE22-41CF-9346-B6428609A7B1';
-        $uuid[]='1E476299-FA8E-49B6-865E-5BE16F31773C';
-        $uuid[]='2394828A-C09D-491F-85F2-EE24B3F4DD54';
-        $uuid[]='2AD1D24A-A619-4AC4-91B4-735602D9FFD5';
-        $uuid[]='33703176-E3E7-4B11-83CE-6B9FC87FBAAE';
-        $uuid[]='33E533E7-3BF3-4CF9-8495-D85D01F81429';
-        $uuid[]='3449437A-B186-4352-8A84-009B9EC2A27F';
-        $uuid[]='404BD825-20CA-4902-8389-EE6CED0598A5';
-        $uuid[]='46C7E441-68FD-4D86-B290-CE4397E97C71';
-        $uuid[]='4EB8565D-169E-414D-8FD8-7DEF54715458';
-        $uuid[]='5911F1AF-682C-4233-A021-98A5034FAF47';
-        $uuid[]='60C46519-E5A6-4543-BB36-DF5583E732E1';
-        $uuid[]='6185419C-974A-4416-BDE7-7E4114CAB068';
-        $uuid[]='67F159B3-B8CB-4568-91C2-8C7A33F2473E';
-        $uuid[]='719EC6E0-B14A-48D3-A0D7-0AD68E690964';
-        $uuid[]='7DA76C32-2E72-424E-B729-4656D760138D';
-        $uuid[]='7E73FF5B-B7C4-42FE-8055-C18BBC017EC7';
-        $uuid[]='8041362E-ECD2-4E68-9225-EAAD9692CD6B';
-        $uuid[]='8089E9D3-EAEE-42AC-BC61-C9B9835F6223';
-        $uuid[]='81E324E0-58F4-4B2B-AE33-296226A76BC8';
-        $uuid[]='8ACA9111-1875-4C15-972E-6910347BBBE6';
-        $uuid[]='99AF5E53-4C0C-448E-9F41-A231A8EF4140';
-        $uuid[]='A7ED512A-85F4-4977-8741-A5F8D4747E26';
-        $uuid[]='B0119CB2-8A28-41E5-9F33-2C833A45F5B8';
-        $uuid[]='B0FD04A6-8DEE-4786-85E6-B5F4500B37B2';
-        $uuid[]='D6A1534F-CBF4-4A58-A3CD-AF9881E7D853';
-        $uuid[]='DA9D0A4B-2FFB-47B8-9437-943A6CE39F94';
-        $uuid[]='E652ADF0-9193-49BC-B9EB-6449E30F46D0';
-        $uuid[]='EDB963B1-78A5-469C-8707-C4F59106779C';
-        $uuid[]='F4DE72CA-1845-4FDF-B253-F30CF2F61EF8';
-        $uuid[]='FC57C9A6-52D2-423E-9E19-F6D5FB90D50F';
+    public function descargar($data){
+        if (isset($data['startDate'])) {
+            $this->repository->where([['fecha', '>=', $data['startDate']]]);
+        }
+        if (isset($data['endDate'])) {
+            $this->repository->where([['fecha', '<=', $data['endDate']]]);
+        }
+        if (isset($data['rfc_emisor'])) {
+            $this->repository->where([['rfc_emisor', 'LIKE', '%' . $data['rfc_emisor'] . '%']]);
+        }
+        if (isset($data['rfc_receptor'])) {
+            $this->repository->where([['rfc_receptor', 'LIKE', '%' . $data['rfc_receptor'] . '%']]);
+        }
+        if (isset($data['uuid'])) {
+            $this->repository->where([['uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
+        }
+        if (isset($data['total'])) {
+            $this->repository->where([['total', '=', $data['total'] ]]);
+        }
+        if (isset($data['fecha'])) {
+            $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
+        $uuid =  $this->repository->all();
 
         $dir_xml = "uploads/contabilidad/XML_SAT/";
-        $dir_descarga = "downloads/fiscal/descarga/";
+        $dir_descarga = "downloads/fiscal/descarga/".date("Ymdhis")."/";
         if (!file_exists($dir_descarga) && !is_dir($dir_descarga)) {
             mkdir($dir_descarga, 777, true);
         }
         foreach ($uuid as $uuid_individual){
-            copy($dir_xml.$uuid_individual.".xml", $dir_descarga.$uuid_individual.".xml");
+            try{
+                copy($dir_xml.$uuid_individual->uuid.".xml", $dir_descarga.$uuid_individual->uuid.".xml");
+            }catch (\Exception $e){
+
+            }
+
+        }
+
+        $path = "downloads/fiscal/descarga/";
+        $nombre_zip = $path.date("Ymd_his").".zip";
+        Files::eliminaDirectorio($dir_descarga);
+
+        $zipper = new Zipper;
+        $zipper->make(public_path($nombre_zip))
+            ->add(public_path($dir_descarga));
+        $zipper->close();
+
+        if(file_exists(public_path($nombre_zip))){
+            return response()->download(public_path($nombre_zip));
+        } else {
+            return response()->json(["mensaje"=>"No hay CFDI para la descarga "]);
         }
     }
+
 }
