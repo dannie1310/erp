@@ -3,6 +3,7 @@
 
 namespace App\Repositories\CADECO\Documentacion;
 
+use App\Models\CADECO\Transaccion;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 use App\Models\CADECO\Documentacion\Archivo as Model;
@@ -24,6 +25,17 @@ class ArchivoRepository extends Repository implements RepositoryInterface
     public function registrarArchivo($data)
     {
         return $this->model->create($data);
+    }
+
+    public function getArchivosRelacionadosTransaccion($id_transaccion)
+    {
+        $id_transacciones = [];
+        $transaccion = Transaccion::find($id_transaccion);
+        $relaciones = $transaccion->relaciones;
+        foreach ($relaciones as $relacion){
+            $id_transacciones[] = $relacion["id"];
+        }
+        return Archivo::whereIn("id_transaccion",$id_transacciones)->orderBy("id_transaccion")->get();
     }
 
 }

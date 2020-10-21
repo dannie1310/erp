@@ -183,6 +183,63 @@ class Transaccion extends Model
         return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
     }
 
+    public function getTipoTransaccionStrAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::NOMBRE;
+            case  18: return CotizacionCompra::NOMBRE;
+            case  19: return OrdenCompra::NOMBRE;
+            case  33: return EntradaMaterial::NOMBRE;
+            case  34: return SalidaAlmacen::NOMBRE;
+            case  49: return ContratoProyectado::NOMBRE;
+            case  50: return PresupuestoContratista::NOMBRE;
+            case  51: return Subcontrato::NOMBRE;
+            case  52: return Estimacion::NOMBRE;
+            case  65: return Factura::NOMBRE;
+            case  82: return Pago::NOMBRE;
+            case  72: return SolicitudPagoAnticipado::NOMBRE;
+            default: try{return $this->tipo->Descripcion;} catch (\Exception $e){ return "";}
+        }
+    }
+
+    public function getIconoAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::ICONO;
+            case  18: return CotizacionCompra::ICONO;
+            case  19: return OrdenCompra::ICONO;
+            case  33: return EntradaMaterial::ICONO;
+            case  34: return SalidaAlmacen::ICONO;
+            case  49: return ContratoProyectado::ICONO;
+            case  50: return PresupuestoContratista::ICONO;
+            case  51: return Subcontrato::ICONO;
+            case  52: return Estimacion::ICONO;
+            case  65: return Factura::ICONO;
+            case  82: return Pago::ICONO;
+            case  72: return SolicitudPagoAnticipado::ICONO;
+            default:  return "";
+        }
+    }
+
+    public function getRelacionesAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::find($this->id_transaccion)->relaciones;
+            case  18: return CotizacionCompra::find($this->id_transaccion)->relaciones;
+            case  19: return OrdenCompra::find($this->id_transaccion)->relaciones;
+            case  33: return EntradaMaterial::find($this->id_transaccion)->relaciones;
+            case  34: return SalidaAlmacen::find($this->id_transaccion)->relaciones;
+            case  49: return ContratoProyectado::find($this->id_transaccion)->relaciones;
+            case  50: return PresupuestoContratista::find($this->id_transaccion)->relaciones;
+            case  51: return Subcontrato::find($this->id_transaccion)->relaciones;
+            case  52: return Estimacion::find($this->id_transaccion)->relaciones;
+            case  65: return Factura::find($this->id_transaccion)->relaciones;
+            case  82: return Pago::find($this->id_transaccion)->relaciones;
+            case  72: return SolicitudPagoAnticipado::find($this->id_transaccion)->relaciones;
+            default:  return "";
+        }
+    }
+
     public  function costo(){
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }

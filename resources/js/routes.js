@@ -53,7 +53,22 @@ export const routes = [
                 path: 'modal/lista_archivos/:id',
                 name: 'modal_lista_archivos',
                 component: require('./components/globals/archivos/Files').default,
-                props: true,
+                props: route => ({
+                    id: route.params.id,
+                    relacionadas: false,
+                }),
+                meta: {
+                    middleware: [auth, context],
+                },
+            },
+            {
+                path: 'modal/lista_archivos_relacionados/:id',
+                name: 'modal_lista_archivos_relacionados',
+                component: require('./components/globals/archivos/Files').default,
+                props: route => ({
+                    id: route.params.id,
+                    relacionadas: true,
+                }),
                 meta: {
                     middleware: [auth, context],
                 },

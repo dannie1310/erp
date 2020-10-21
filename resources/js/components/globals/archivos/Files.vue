@@ -10,7 +10,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <List v-bind:id="id"></List>
+                            <List v-bind:id="id" v-bind:relacionadas="relacionadas"></List>
                         </div>
                     </div>
                 </span>
@@ -24,7 +24,7 @@ import Upload from "./Upload";
 import List from "./List";
 export default {
     name: "documentos",
-    props: ['id','permiso'],
+    props: ['id','permiso','relacionadas'],
     components:{List, Upload},
 }
 </script>
