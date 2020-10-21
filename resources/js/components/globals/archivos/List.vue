@@ -10,7 +10,7 @@
                     </div>
                 </div>
                 <span v-else>
-                    <div class="row" v-if="documentos" >
+                    <div class="row" v-if="archivos.length>0" >
                         <div class="col-md-12">
                             <div class="table-responsive">
 
@@ -18,7 +18,7 @@
 
 
                                     <tbody>
-                                        <template v-for="(archivo, i) in documentos" >
+                                        <template v-for="(archivo, i) in archivos" >
                                             <tr v-if="i ==0">
                                                 <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
                                                 <td colspan="5">{{archivo.observaciones_transaccion}}</td>
@@ -66,6 +66,9 @@
 
                             </div>
                         </div>
+                    </div>
+                    <div class="row" v-else >
+                        No hay archivos cargados.
                     </div>
                 </span>
             </div>
@@ -158,7 +161,7 @@ export default {
         },
     },
     computed: {
-        documentos(){
+        archivos(){
             return this.$store.getters['documentacion/archivo/archivos'];
         },
     }
