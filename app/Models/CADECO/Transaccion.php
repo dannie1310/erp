@@ -221,6 +221,25 @@ class Transaccion extends Model
         }
     }
 
+    public function getRelacionesAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::find($this->id_transaccion)->relaciones;
+            case  18: return CotizacionCompra::find($this->id_transaccion)->relaciones;
+            case  19: return OrdenCompra::find($this->id_transaccion)->relaciones;
+            case  33: return EntradaMaterial::find($this->id_transaccion)->relaciones;
+            case  34: return SalidaAlmacen::find($this->id_transaccion)->relaciones;
+            case  49: return ContratoProyectado::find($this->id_transaccion)->relaciones;
+            case  50: return PresupuestoContratista::find($this->id_transaccion)->relaciones;
+            case  51: return Subcontrato::find($this->id_transaccion)->relaciones;
+            case  52: return Estimacion::find($this->id_transaccion)->relaciones;
+            case  65: return Factura::find($this->id_transaccion)->relaciones;
+            case  82: return Pago::find($this->id_transaccion)->relaciones;
+            case  72: return SolicitudPagoAnticipado::find($this->id_transaccion)->relaciones;
+            default:  return "";
+        }
+    }
+
     public  function costo(){
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }

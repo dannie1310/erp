@@ -15,15 +15,13 @@
                             <div class="table-responsive">
 
                                 <table class="table" id="documentos" name="documentos">
-
-
                                     <tbody>
                                         <template v-for="(archivo, i) in archivos" >
                                             <tr v-if="i ==0">
                                                 <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
                                                 <td colspan="5">{{archivo.observaciones_transaccion}}</td>
                                             </tr>
-                                            <tr v-else-if="archivo.id_transaccion != documentos[i-1].id_transaccion">
+                                            <tr v-else-if="archivo.id_transaccion != archivos[i-1].id_transaccion">
                                                 <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
                                                 <td colspan="5">{{archivo.observaciones_transaccion}}</td>
                                             </tr>
@@ -89,7 +87,7 @@ import Documento from './Documento';
 import Imagen from './Imagen';
 export default {
     name: "List",
-    props: ['id','cargar'],
+    props: ['id','cargar','relacionadas'],
     components:{Documento, Imagen},
     data(){
         return{
@@ -121,13 +119,24 @@ export default {
         },
         find() {
             this.cargando = true;
-            return this.$store.dispatch('documentacion/archivo/getArchivosTransaccion', {
-                id: this.id,
-                params: {include: []}
-            }).then(data => {
-            }).finally(()=> {
-                this.cargando = false;
-            })
+            if(!this.relacionadas){
+                return this.$store.dispatch('documentacion/archivo/getArchivosTransaccion', {
+                    id: this.id,
+                    params: {include: []}
+                }).then(data => {
+                }).finally(()=> {
+                    this.cargando = false;
+                })
+            }else{
+                return this.$store.dispatch('documentacion/archivo/getArchivosRelacionadosTransaccion', {
+                    id: this.id,
+                    params: {include: []}
+                }).then(data => {
+                }).finally(()=> {
+                    this.cargando = false;
+                })
+            }
+
         },
         modalImagen(archivo){
             this.cargando_imagenes = true;

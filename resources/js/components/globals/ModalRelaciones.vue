@@ -21,6 +21,7 @@
                             <i class="fa fa-times-circle"></i>
                             Cerrar
                         </button>
+                        <ModalArchivos v-bind:relacionados="true" v-bind:id="transaccion.id" v-bind:url="'/sao/modal/lista_archivos_relacionados/{id}'" ></ModalArchivos>
                     </div>
                 </div>
             </div>
@@ -30,9 +31,10 @@
 
 <script>
 import Relaciones from './TimeLine';
+import ModalArchivos from './archivos/Modal';
 export default {
     name: "ModalRelaciones",
-    components:{Relaciones},
+    components:{Relaciones, ModalArchivos},
     props: ['transaccion'],
     data(){
         return{
