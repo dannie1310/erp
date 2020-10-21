@@ -137,6 +137,20 @@ export default {
                     });
             });
         },
+        getArchivosRelacionadosTransaccion(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/getArchivosRelacionadosTransaccion',payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit("SET_ARCHIVOS", data.data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

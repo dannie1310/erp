@@ -29,6 +29,11 @@ class ArchivoTransformer extends TransformerAbstract
             'estatus' => $model->estatus,
             'registro' => $model->registro,
             'fecha_registro_format' => $model->fecha_registro_format,
+            'tipo_transaccion' => $model->transaccion->tipo_transaccion_str,
+            'folio_transaccion' => $model->transaccion->numero_folio_format,
+            'observaciones_transaccion' => $model->transaccion->observaciones,
+            'icono_transaccion' => $model->transaccion->icono,
+            'id_transaccion' => $model->transaccion->id_transaccion,
         ];
     }
 }

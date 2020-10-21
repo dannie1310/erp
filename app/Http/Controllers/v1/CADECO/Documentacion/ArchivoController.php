@@ -65,15 +65,15 @@ class ArchivoController extends Controller
 
     public function getArchivosTransaccion($id)
     {
-        $archivos_prestadora = $this->service->getArchivosTransaccion($id);
-        return $this->respondWithCollection($archivos_prestadora);
+        $archivos = $this->service->getArchivosTransaccion($id);
+        return $this->respondWithCollection($archivos);
     }
 
-    /*public function destroy(Request $request, $id)
+    public function getArchivosRelacionadosTransaccion($id)
     {
-        $item = $this->service->delete($request->all(), $id);
-        return $this->respondWithItem($item);
-    }*/
+        $archivos = $this->service->getArchivosRelacionadosTransaccion($id);
+        return $this->respondWithCollection($archivos);
+    }
 
     public function imagenes(Request $request, $id)
     {

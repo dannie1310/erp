@@ -101,6 +101,11 @@ class ArchivoService
         return $this->repository->where([['id_transaccion', '=', $id_transaccion]])->all();;
     }
 
+    public function getArchivosRelacionadosTransaccion($id_transaccion)
+    {
+        return $this->repository->getArchivosRelacionadosTransaccion($id_transaccion);
+    }
+
     public function cargarArchivosPDF($data){
         $archivos_nombres = \json_decode($data['archivos_nombres']);
         $archivos_pdf = \json_decode($data['archivos']);

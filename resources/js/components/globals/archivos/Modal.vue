@@ -1,6 +1,10 @@
 <template>
     <span>
-        <button @click="abrir()" type="button" class="btn btn-sm btn-outline-primary" title="Ver Archivos">
+        <button @click="abrir()" type="button" class="btn btn-outline-primary" v-if="relacionados" title="Ver Archivos">
+            <i class="fa fa-folder-open"></i>
+            Ver Archivos
+        </button>
+        <button @click="abrir()" type="button" class="btn btn-sm btn-outline-primary" title="Ver Archivos" v-else>
             <i class="fa fa-folder-open"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -30,7 +34,7 @@
 <script>
 export default {
     name: "ModalArchivos",
-    props: ['id', 'url'],
+    props: ['id', 'url', 'relacionados'],
     methods: {
         abrir(){
             var url = this.url.replace("{id}", this.id);
