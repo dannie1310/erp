@@ -34,7 +34,7 @@
 <script>
 export default {
     name: "ModalArchivos",
-    props: ['id', 'url', 'relacionados'],
+    props: ['id', 'url', 'relacionados','transaccion'],
     methods: {
         abrir(){
             var url = this.url.replace("{id}", this.id);

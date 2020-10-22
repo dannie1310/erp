@@ -52,7 +52,7 @@ export const routes = [
             {
                 path: 'modal/lista_archivos/:id',
                 name: 'modal_lista_archivos',
-                component: require('./components/globals/archivos/Files').default,
+                component: require('./components/globals/archivos/List').default,
                 props: route => ({
                     id: route.params.id,
                     relacionadas: false,
@@ -62,10 +62,11 @@ export const routes = [
                 },
             },
             {
-                path: 'modal/lista_archivos_relacionados/:id',
+                path: 'modal/lista_archivos_relacionados/:tipo/:id',
                 name: 'modal_lista_archivos_relacionados',
-                component: require('./components/globals/archivos/Files').default,
+                component: require('./components/globals/archivos/List').default,
                 props: route => ({
+                    tipo: route.params.tipo,
                     id: route.params.id,
                     relacionadas: true,
                 }),
