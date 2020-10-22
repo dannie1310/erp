@@ -3,6 +3,7 @@
 
 namespace App\Models\CADECO\Subcontratos;
 
+use App\Models\CADECO\Contrato;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 

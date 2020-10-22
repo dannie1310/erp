@@ -53,9 +53,8 @@
 <script>
 import {ModelListSelect} from 'vue-search-select';
     export default {
-        name: "orden-compra-create",
+        name: "subcontrato-create",
         components:{ModelListSelect},
-        // props: ['id'],
         data() {
             return {
                 asignaciones : [],
@@ -84,7 +83,7 @@ import {ModelListSelect} from 'vue-search-select';
                 return `Asignación: [${item.numero_folio_asignacion}] Contrato: [${item.contrato.numero_folio_format}] - [${item.contrato.referencia}]`
             },
             registrar(){
-                return this.$store.dispatch('compras/asignacion/generarOC', {
+                return this.$store.dispatch('contratos/asignacion-contratista/generarSubcontrato', {
                     data: {
                         id: this.id_asignacion
                     }

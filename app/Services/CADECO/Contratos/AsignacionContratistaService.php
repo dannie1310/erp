@@ -8,8 +8,10 @@
 
 namespace App\Services\CADECO\Contratos;
 
+use Exception;
 use App\Facades\Context;
 use App\Repositories\Repository;
+use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
@@ -95,5 +97,29 @@ class AsignacionContratistaService
             return $asignacion->contratoProyectado == null || $asignacion->contratoProyectado->id_obra != Context::getIdObra();
         });       
         return $filtered->all();
+    }
+
+    public function generarSubcontrato($data){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $asignacion = $this->repository->show($data['id']);
+            $partidas = $asignacion->partidas()->orderBy('id_concepto')->get();
+            foreach($partidas as $partida){
+                // dd($asignacion->presupuestoContratista->id_antecedente);
+                $subcontratos = Subcontrato::where('id_antecedente', '=', $asignacion->presupuestoContratista->id_antecedente)
+                                        ->where('id_empresa', '=', $asignacion->presupuestoContratista->id_empresa)
+                                        ->where('id_sucursal', '=', $asignacion->presupuestoContratista->id_sucursal)
+                                        ->where('id_moneda', '=', $asignacion->presupuestoContratista->id_moneda)->get();
+                
+            }
+            dd('Pando',$partidas);
+            dd('stop');
+            DB::connection('cadeco')->commit();
+            return $asignacion;
+        }catch(Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 }

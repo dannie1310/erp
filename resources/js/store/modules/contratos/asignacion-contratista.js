@@ -107,6 +107,44 @@ export default{
                     });
             });
         },
+        generarSubcontrato(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Generar Subcontrato",
+                    text: "¿Está seguro/a de que desea generar el subcontrato(s)?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Generar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'generarSubcontrato', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Subcontrato generado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
     },
     getters: {
         asignaciones(state) {

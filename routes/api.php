@@ -754,6 +754,7 @@ $api->version('v1', function ($api) {
             $api->get('getAsignaciones', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@getAsignaciones');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@store');
+            $api->post('generarSubcontrato', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@generarSubcontrato');
         });
 
 

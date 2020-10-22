@@ -57,4 +57,8 @@ class AsignacionContratistaController extends Controller
         $asignaciones = $this->service->getAsignaciones($request->all());
         return $this->respondWithCollection($asignaciones);
     }
+
+    public function generarSubcontrato(Request $request){
+        return $this->service->generarSubcontrato($request->all());
+    }
 }
