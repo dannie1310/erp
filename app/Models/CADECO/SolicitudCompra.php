@@ -128,9 +128,11 @@ class SolicitudCompra extends Transaccion
 
     public function scopeAreasCompradorasAsignadasParaSolicitudes($query)
     {
+
         if (ConfiguracionObra::pluck('migrado_compras')->first() == 1) {
             return $query->whereHas('complemento', function ($q) {
-                return $q->areasCompradorasPorUsuario();
+                $transacciones = SolicitudCompra::where("id_usuario","=",auth()->id())->pluck("id_transaccion");
+                return $q->areasCompradorasPorUsuario()->orWhereIn("id_transaccion",$transacciones);
             });
         }
         return $query;
