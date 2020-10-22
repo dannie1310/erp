@@ -1,0 +1,51 @@
+<?php
+
+
+namespace App\Http\Controllers\v1\ACARREOS\Catalogos;
+
+
+use App\Facades\Context;
+use App\Http\Controllers\Controller;
+use App\Http\Transformers\ACARREOS\Catalogos\TiroTransformer;
+use App\Services\ACARREOS\Catalogos\TiroService;
+use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use League\Fractal\Manager;
+
+class TiroController extends Controller
+{
+    use ControllerTrait;
+
+    /**
+     * @var Manager
+     */
+    protected $fractal;
+
+    /**
+     * @var TiroService
+     */
+    protected $service;
+
+    /**
+     * @var TiroTransformer
+     */
+    protected $transformer;
+
+    /**
+     * TiroController constructor.
+     * @param Manager $fractal
+     * @param TiroService $service
+     * @param TiroTransformer $transformer
+     */
+    public function __construct(Manager $fractal, TiroService $service, TiroTransformer $transformer)
+    {
+        $this->middleware('auth:api');
+        $this->middleware('context');
+        $this->middleware('permiso:consultar_tiro')->only(['show','paginate','index','find']);
+
+        $this->fractal = $fractal;
+        $this->service = $service;
+        $this->transformer = $transformer;
+    }
+}
