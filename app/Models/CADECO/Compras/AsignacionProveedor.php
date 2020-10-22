@@ -94,26 +94,20 @@ class AsignacionProveedor extends Model
         return '#' . sprintf("%05d", $this->id);
     }
 
-    public function getEstadoAsignacionFormatAttribute(){
-        $total = count($this->partidas);
-        $con_Orden = 0;
-        foreach($this->partidas as $partida){
-            if($partida->con_orden_compra){
-                $con_Orden++;
-            }
-        }
-        $res = $con_Orden == 0?1:2;
-        $this->estado = $res;
-        $this->save();
+    public function getEstadoAsignacionFormatAttribute(){       
         return $this->estadoAsignacion->descripcion;
     }
 
     public function getOrdenCompraPendienteAttribute(){
         $partidas = $this->partidas;
-        $cant = 0;
+        $cant = $partidas->count();
         foreach($partidas as $partida){
-            if(!$partida->itemOrdenCompra){
-                $cant++;
+            $ordenes_c = $partida->ordenCompra;
+            foreach($ordenes_c as $orden){
+                if($orden->complemento->id_asignacion_proveedor == $this->id){
+                    $cant--;
+                    break;
+                }
             }
         }
         return $cant;
