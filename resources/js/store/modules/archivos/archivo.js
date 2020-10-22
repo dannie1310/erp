@@ -3,6 +3,7 @@ const URI = '/api/archivo/';
 export default {
     namespaced: true,
     state: {
+        currentTransaccion: null,
         archivos: [],
         currentArchivo: null,
         meta: {}
@@ -15,6 +16,10 @@ export default {
 
         SET_ARCHIVO(state, data) {
             state.currentArchivo = data;
+        },
+
+        SET_TRANSACCION(state, data) {
+            state.currentTransaccion = data;
         },
 
         SET_META(state, data) {
@@ -126,7 +131,7 @@ export default {
         getArchivosTransaccion(context, payload){
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id + '/getArchivosTransaccion',payload)
+                    .get(URI + payload.id + '/transaccion',payload)
                     .then(r => r.data)
                     .then(data => {
                         context.commit("SET_ARCHIVOS", data.data);
@@ -140,7 +145,7 @@ export default {
         getArchivosRelacionadosTransaccion(context, payload){
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id + '/getArchivosRelacionadosTransaccion',payload)
+                    .get(URI + payload.tipo+ '/' + payload.id + '/transaccion-relacionados',payload)
                     .then(r => r.data)
                     .then(data => {
                         context.commit("SET_ARCHIVOS", data.data);

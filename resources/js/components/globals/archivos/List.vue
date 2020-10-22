@@ -17,15 +17,7 @@
                                 <table class="table" id="documentos" name="documentos">
                                     <tbody>
                                         <template v-for="(archivo, i) in archivos" >
-                                            <tr v-if="i ==0">
-                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
-                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
-                                            </tr>
-                                            <tr v-else-if="archivo.id_transaccion != archivos[i-1].id_transaccion">
-                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
-                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
-                                            </tr>
-                                            <tr v-if="i ==0" style="background-color: #cccccc">
+                                            <tr v-if="i ==0" style="background-color: #ddd">
                                                 <td class="index_corto">#</td>
                                                 <td>Tipo Documento</td>
                                                 <td >Documento</td>
@@ -34,6 +26,15 @@
                                                 <td class="fecha_hora">Fecha Hora Carga</td>
                                                 <td >Acciones</td>
                                             </tr>
+                                            <tr v-if="i ==0">
+                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
+                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
+                                            </tr>
+                                            <tr v-else-if="archivo.id_transaccion != archivos[i-1].id_transaccion">
+                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
+                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
+                                            </tr>
+
                                             <tr  >
                                                 <td>{{i+1}}</td>
                                                 <td>{{archivo.tipo_archivo}}</td>
@@ -87,7 +88,7 @@ import Documento from './Documento';
 import Imagen from './Imagen';
 export default {
     name: "List",
-    props: ['id','cargar','relacionadas'],
+    props: ['id','tipo','cargar','relacionadas'],
     components:{Documento, Imagen},
     data(){
         return{
@@ -130,6 +131,7 @@ export default {
             }else{
                 return this.$store.dispatch('documentacion/archivo/getArchivosRelacionadosTransaccion', {
                     id: this.id,
+                    tipo: this.tipo,
                     params: {include: []}
                 }).then(data => {
                 }).finally(()=> {
@@ -172,6 +174,9 @@ export default {
     computed: {
         archivos(){
             return this.$store.getters['documentacion/archivo/archivos'];
+        },
+        transaccion(){
+            return this.$store.getters['documentacion/archivo/transaccion'];
         },
     }
 }
