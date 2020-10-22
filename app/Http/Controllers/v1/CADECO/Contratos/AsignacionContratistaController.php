@@ -52,4 +52,9 @@ class AsignacionContratistaController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
+
+    public function getAsignaciones(Request $request){
+        $asignaciones = $this->service->getAsignaciones($request->all());
+        return $this->respondWithCollection($asignaciones);
+    }
 }

@@ -88,4 +88,12 @@ class AsignacionContratistaService
             throw $e;
         }
     }
+
+    public function getAsignaciones($data){
+        $asignaciones = $this->repository->all();
+        $filtered = $asignaciones->reject(function ($asignacion, $key) {
+            return $asignacion->contratoProyectado == null || $asignacion->contratoProyectado->id_obra != Context::getIdObra();
+        });       
+        return $filtered->all();
+    }
 }

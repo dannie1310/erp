@@ -66,9 +66,10 @@ import {ModelListSelect} from 'vue-search-select';
         methods: {
             init() {
                 this.cargando = true;
-                return this.$store.dispatch('contratos/asignacion-contratista/paginate', {
+                return this.$store.dispatch('contratos/asignacion-contratista/getAsignaciones', {
                     params: {
                         scope:['pendienteSubcontrato'],
+                        include:['contrato'],
                         sort: 'id_asignacion',
                         order: 'desc'
                     }
@@ -80,7 +81,7 @@ import {ModelListSelect} from 'vue-search-select';
                 })
             },
             idAndDescripcion (item) {
-                return `Asignación: [${item.folio_asignacion_format}] Solicitud: [${item.solicitud.numero_folio_format}] - [${item.solicitud.concepto}] - [${item.solicitud.observaciones}]`
+                return `Asignación: [${item.numero_folio_asignacion}] Contrato: [${item.contrato.numero_folio_format}] - [${item.contrato.referencia}]`
             },
             registrar(){
                 return this.$store.dispatch('compras/asignacion/generarOC', {
