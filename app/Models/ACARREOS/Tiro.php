@@ -160,25 +160,10 @@ class Tiro extends Model
         }
     }
 
-    public function registrar($data)
+    public function validarRegistro()
     {
-        try {
-            DB::connection('acarreos')->beginTransaction();
-            $tiro_unico = self::where('Descripcion', $this->Descripcion)->first();
-            dd($tiro_unico, $data);
-            if($tiro_unico)
-            {
-                abort(400, "El tiro (".$data.") ya se encuentra registrado previamente.");
-            }
-            $this->create([
-               'Descripcion' => $data
-            ]);
-            DB::connection('acarreos')->commit();
-            return $this;
-        } catch (\Exception $e) {
-            DB::connection('acarreos')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
+        if (self::where('Descripcion', $this->Descripcion)->first()) {
+            abort(400, "El tiro (" . $this->Descripcion . ") ya se encuentra registrado previamente.");
         }
     }
 }

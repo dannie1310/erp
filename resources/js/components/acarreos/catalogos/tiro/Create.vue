@@ -33,7 +33,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="store"><i class="fa fa-save"></i> Guardar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
                         </div>
                     </form>
                 </div>
@@ -55,12 +55,21 @@
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
+            validate() {
+                this.$validator.validate().then(result => {
+                    this.descripcion = this.descripcion.toUpperCase();
+                    if (result) {
+                        this.store();
+                    }
+                });
+            },
             store() {
                 return this.$store.dispatch('acarreos/tiro/store', {
-                    descripcion: this.descripcion,
+                    Descripcion: this.descripcion,
                 })
                     .then((data) => {
-                        this.$router.push({name: 'tiro'});
+                        $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data)
                     });
             },
         }
