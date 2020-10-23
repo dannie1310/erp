@@ -1,7 +1,7 @@
 <template>
     <span>
-         <button @click="find" type="button" class="btn btn-sm btn-outline-danger" title="Asignar Concepto">
-               <i class="fa fa-trash"></i>
+         <button @click="find" type="button" class="btn btn-sm btn-outline-primary" title="Asignar Concepto">
+               <i class="fa fa-map-marker"></i>
          </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">

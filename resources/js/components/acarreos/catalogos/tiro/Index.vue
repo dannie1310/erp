@@ -93,7 +93,7 @@
                         concepto: tiro.path__corta_concepto,
                         buttons: $.extend({}, {
                             id: tiro.id,
-                            concepto : true,
+                            concepto: self.$root.can('editar_tiro') ? true : false,
                         })
                     }));
                 },

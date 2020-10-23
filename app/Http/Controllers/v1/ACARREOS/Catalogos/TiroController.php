@@ -43,6 +43,7 @@ class TiroController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:consultar_tiro')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:editar_tiro')->only(['asignarConcepto']);
 
         $this->fractal = $fractal;
         $this->service = $service;
