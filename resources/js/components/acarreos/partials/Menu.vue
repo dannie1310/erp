@@ -8,7 +8,7 @@
 
             <li class="nav-item" v-if="catalogos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-list"></i>
+                    <i class="nav-icon fa fa-layer-group"></i>
                     <p>
                         Catálogos
                         <i class="right fa fa-angle-left"></i>
