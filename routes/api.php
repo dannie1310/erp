@@ -411,6 +411,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/asignar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@asignarConcepto')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@store');
         });
     });
 

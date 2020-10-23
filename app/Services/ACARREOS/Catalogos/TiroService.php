@@ -48,6 +48,12 @@ class TiroService
         return  $this->show($id)->asignarConcepto($data[0]);;
     }
 
+    public function store($data)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->create($data);
+    }
+
     private function conexionAcarreos()
     {
         try{

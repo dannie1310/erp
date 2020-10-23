@@ -14,8 +14,14 @@ class Tiro extends Model
 {
     protected $connection = 'acarreos';
     protected $table = 'tiros';
-    public $timestamps = false;
     public $primaryKey = 'IdTiro';
+    protected $fillable = [
+        'Descripcion',
+        'FechaAlta',
+        'HoraAlta',
+        'Estatus',
+        'usuario_registro',
+    ];
 
     /**
      * Relaciones Eloquent
@@ -145,6 +151,28 @@ class Tiro extends Model
                     'id_concepto' => $data
                 ]);
             }
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function registrar($data)
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $tiro_unico = self::where('Descripcion', $this->Descripcion)->first();
+            dd($tiro_unico, $data);
+            if($tiro_unico)
+            {
+                abort(400, "El tiro (".$data.") ya se encuentra registrado previamente.");
+            }
+            $this->create([
+               'Descripcion' => $data
+            ]);
             DB::connection('acarreos')->commit();
             return $this;
         } catch (\Exception $e) {
