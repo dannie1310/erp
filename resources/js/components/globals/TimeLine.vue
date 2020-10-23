@@ -33,6 +33,7 @@
                                         <Estimaciones  v-bind:value="relacion" v-if="relacion.tipo_numero==52"></Estimaciones>
                                         <Polizas  v-bind:value="relacion" v-if="relacion.tipo_numero==666"></Polizas>
                                         <Pagos  v-bind:value="relacion" v-if="relacion.tipo_numero==82"></Pagos>
+                                        <SolicitudPagoAnticipado  v-bind:value="relacion" v-if="relacion.tipo_numero==72"></SolicitudPagoAnticipado>
                                     </div>
                                 </div>
                             </div>
@@ -57,9 +58,10 @@ import Presupuestos from '../contratos/presupuesto/partials/ActionButtonsConsult
 import Estimaciones from '../contratos/estimacion/partials/ActionButtonsConsulta';
 import Polizas from '../contabilidad/poliza/partials/ActionButtonsConsulta';
 import Pagos from '../finanzas/gestion-pago/pago/partials/ActionButtonsConsulta';
+import SolicitudPagoAnticipado from '../finanzas/solicitud/pago-anticipado/partials/ActionButtonsConsulta';
 export default {
     name: "Timeline",
-    components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas, ContratosProyectados, Subcontratos,Presupuestos,Estimaciones,Polizas, Pagos},
+    components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas, ContratosProyectados, Subcontratos,Presupuestos,Estimaciones,Polizas, Pagos,SolicitudPagoAnticipado},
     props: ['transaccion','relaciones'],
     data(){
         return{
