@@ -132,7 +132,7 @@
                         estado: this.getEstado(estimacion.estado),
                         total: estimacion.monto_pagar_format,
                         impuesto:estimacion.impuesto_format,
-                        subtotal: estimacion.subtotal_format,
+                        subtotal: estimacion.subtotal_orden_pago,
                         buttons: $.extend({}, {
                             aprobar: (this.$root.can('aprobar_estimacion_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
                             desaprobar: (this.$root.can('revertir_aprobacion_estimacion_subcontrato') && estimacion.estado == 1 ) ? true : undefined ,
