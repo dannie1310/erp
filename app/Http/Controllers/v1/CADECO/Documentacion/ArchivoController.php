@@ -66,12 +66,12 @@ class ArchivoController extends Controller
     public function getArchivosTransaccion($id)
     {
         $archivos = $this->service->getArchivosTransaccion($id);
-        return $this->respondWithCollection($archivos);
+        return $this->respondWithCollection($archivos["archivos"]);
     }
 
-    public function getArchivosRelacionadosTransaccion($id)
+    public function getArchivosRelacionadosTransaccion($tipo,$id)
     {
-        $archivos = $this->service->getArchivosRelacionadosTransaccion($id);
+        $archivos = $this->service->getArchivosRelacionadosTransaccion($tipo,$id);
         return $this->respondWithCollection($archivos);
     }
 

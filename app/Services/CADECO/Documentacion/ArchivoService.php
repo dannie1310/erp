@@ -98,12 +98,20 @@ class ArchivoService
 
     public function getArchivosTransaccion($id_transaccion)
     {
-        return $this->repository->where([['id_transaccion', '=', $id_transaccion]])->all();;
+        $salida = [];
+        $salida["archivos"] = $this->repository->where([['id_transaccion', '=', $id_transaccion]])->all();
+        $salida["transaccion"] = $this->repository->getTransaccion($id_transaccion);
+        return $salida;
     }
 
-    public function getArchivosRelacionadosTransaccion($id_transaccion)
+    public function getArchivosRelacionadosTransaccion($tipo, $id)
     {
-        return $this->repository->getArchivosRelacionadosTransaccion($id_transaccion);
+        if($tipo!=666){
+            return $this->repository->getArchivosRelacionadosTransaccion($id);
+        } else {
+            return $this->repository->getArchivosRelacionadosPoliza($id);
+        }
+
     }
 
     public function cargarArchivosPDF($data){

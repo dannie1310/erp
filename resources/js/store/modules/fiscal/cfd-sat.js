@@ -50,6 +50,8 @@ export default {
                     .get(URI + 'paginate', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
+                        context.commit("SET_CFDSAT", data.data);
+                        context.commit("SET_META", data.meta);
                         resolve(data);
                     })
                     .catch(error => {
@@ -69,6 +71,64 @@ export default {
                         reject(error);
                     })
             });
+        },
+
+        descargar(context, payload){
+            let filtros = 0;
+            var search = '?';
+            if (typeof payload.params.rfc_emisor !== 'undefined') {
+                search = search + 'rfc_emisor='+ payload.params.rfc_emisor + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.rfc_receptor !== 'undefined') {
+                search = search + 'rfc_receptor='+ payload.params.rfc_receptor + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.startDate !== 'undefined') {
+                search = search + 'startDate='+ payload.params.startDate + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.endDate !== 'undefined') {
+                search = search + 'endDate='+ payload.params.endDate + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.fecha !== 'undefined') {
+                search = search + 'fecha='+ payload.params.fecha + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.uuid !== 'undefined') {
+                search = search + 'uuid='+ payload.params.uuid + '&';
+                filtros = +filtros + 1;
+            }
+
+            if(filtros == 0){
+                swal({
+                    title: "Aviso",
+                    text: "Debe utilizar al menos un filtro de búsqueda",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cerrar',
+                            visible: true
+                        }
+                    }
+                })
+            }else{
+                var urr = URI +  'descargar'+ search+'access_token=' + this._vm.$session.get('jwt');
+
+                var win = window.open(urr, "_blank");
+
+                win.onbeforeunload = () => {
+                    swal("CFDI descargados correctamente.", {
+                        icon: "success",
+                        timer: 2000,
+                        buttons: false
+                    })
+                }
+            }
+
+
         },
 
         update(context, payload) {
