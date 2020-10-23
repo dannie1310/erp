@@ -30,7 +30,7 @@
                 <label for="nombre" class="col-lg-2 col-form-label">Abreviatura</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="nombre" v-model="form.nombre"
-                           v-validate="{max: 16}"
+                           v-validate="{required:true, max: 16}"
                            name="nombre"
                            data-vv-as="Abreviatura"
                            :class="{'is-invalid': errors.has('nombre')}"
@@ -43,7 +43,7 @@
                 <label for="descripcion" class="col-lg-2 col-form-label">Descripción</label>
                 <div class="col-lg-4">
                     <textarea class="form-control" id="descripcion" v-model="form.descripcion"
-                              v-validate="{max: 255}"
+                              v-validate="{required:true, max: 255}"
                               name="descripcion"
                               data-vv-as="Descripción"
                               :class="{'is-invalid': errors.has('descripcion')}"
@@ -71,7 +71,7 @@
                 <label for="cliente" class="col-lg-2 col-form-label">Cliente</label>
                 <div class="col-lg-5">
                     <input type="text" class="form-control" id="cliente" v-model="form.cliente"
-                           v-validate="{max: 255}"
+                           v-validate="{required:true, max: 255}"
                            name="cliente"
                            data-vv-as="Cliente"
                            :class="{'is-invalid': errors.has('cliente')}"
@@ -84,7 +84,7 @@
                 <label for="facturar" class="col-lg-2 col-form-label">Facturar a</label>
                 <div class="col-lg-5">
                     <input type="text" class="form-control" id="facturar" v-model="form.facturar"
-                           v-validate="{max: 255}"
+                           v-validate="{required:true, max: 255}"
                            name="facturar"
                            data-vv-as="Facturar a"
                            :class="{'is-invalid': errors.has('facturar')}"
@@ -145,7 +145,7 @@
                 <label for="id_moneda" class="col-lg-2 col-form-label">Moneda</label>
                 <div class="col-lg-4">
                     <select class="form-control" id="id_moneda" v-model="form.id_moneda"
-                            v-validate="{integer: true}"
+                            v-validate="{required:true, integer: true}"
                             name="id_moneda"
                             data-vv-as="Moneda"
                             :class="{'is-invalid': errors.has('id_moneda')}"
@@ -159,7 +159,7 @@
                 <label for="iva" class="col-lg-2 col-form-label">Porcentaje de IVA</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="iva" v-model="form.iva"
-                           v-validate="{ decimal: true,  max_value: 100, min_value: 0}"
+                           v-validate="{required:true, decimal: true,  max_value: 100, min_value: 0}"
                            name="iva"
                            data-vv-as="Porcentaje de IVA"
                            :class="{'is-invalid': errors.has('iva')}"
@@ -252,7 +252,7 @@
                 <label for="direccion" class="col-lg-2 col-form-label">Dirección</label>
                 <div class="col-lg-10">
                     <textarea id="direccion" class="form-control" v-model="form.direccion"
-                              v-validate="{max: 255}"
+                              v-validate="{required:true, max: 255}"
                               name="direccion"
                               data-vv-as="Dirección"
                               :class="{'is-invalid': errors.has('direccion')}"
@@ -264,7 +264,7 @@
                 <label for="ciudad" class="col-lg-2 col-form-label">Ciudad</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="ciudad" v-model="form.ciudad"
-                           v-validate="{max: 255}"
+                           v-validate="{required:true, max: 255}"
                            name="ciudad"
                            data-vv-as="Ciudad"
                            :class="{'is-invalid': errors.has('ciudad')}"
@@ -277,7 +277,7 @@
                 <label for="estado" class="col-lg-2 col-form-label">Estado</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="estado" v-model="form.estado"
-                           v-validate="{max: 255}"
+                           v-validate="{required:true, max: 255}"
                            name="estado"
                            data-vv-as="Estado"
                            :class="{'is-invalid': errors.has('estado')}"
@@ -290,7 +290,7 @@
                 <label for="codigo_postal" class="col-lg-2 col-form-label">Código Postal</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="codigo_postal" v-model="form.codigo_postal"
-                           v-validate="{integer: true, digits: 5}"
+                           v-validate="{required:true, integer: true, digits: 5}"
                            name="codigo_postal"
                            data-vv-as="Código Postal"
                            :class="{'is-invalid': errors.has('codigo_postal')}"
