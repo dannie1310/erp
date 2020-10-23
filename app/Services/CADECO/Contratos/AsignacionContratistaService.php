@@ -104,6 +104,7 @@ class AsignacionContratistaService
             DB::connection('cadeco')->beginTransaction();
             $asignacion = $this->repository->show($data['id']);
             $partidas = $asignacion->partidas()->orderBy('id_concepto')->get();
+            $subcontrato = null;
             foreach($partidas as $partida){
                 // dd($asignacion->presupuestoContratista->id_antecedente);
                 $subcontratos = Subcontrato::where('id_antecedente', '=', $asignacion->presupuestoContratista->id_antecedente)
@@ -111,6 +112,26 @@ class AsignacionContratistaService
                                         ->where('id_sucursal', '=', $asignacion->presupuestoContratista->id_sucursal)
                                         ->where('id_moneda', '=', $asignacion->presupuestoContratista->id_moneda)->get();
                 
+                foreach ($subcontratos as $key => $subcont) {
+                    if($orden->complemento->id_asignacion_proveedor == $asignacion->id){
+                        $orden_c = $orden;
+                        break;
+                    }
+                }
+                
+                if(!$orden_c){
+                    $orden_c = OrdenCompra::Create([
+                        'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
+                        'id_referente' => $partida->cotizacionCompra->id_transaccion,
+                        'id_empresa' => $partida->cotizacionCompra->id_empresa,
+                        'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
+                        'id_moneda' => $partida->cotizacion->id_moneda,
+                        'observaciones' => $partida->cotizacionCompra->observaciones,
+                        'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
+                    ]);
+
+                    $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion, 'id_asignacion_proveedor'=>$asignacion->id]);
+                }
             }
             dd('Pando',$partidas);
             dd('stop');
