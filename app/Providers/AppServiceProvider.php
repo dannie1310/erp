@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\ACARREOS\TiroConcepto;
 use App\Models\CADECO\AjusteNegativo;
 use App\Models\CADECO\AjusteNegativoPartida;
 use App\Models\CADECO\AjustePositivo;
@@ -150,6 +151,7 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
+use App\Observers\ACARREOS\TiroConceptoObserver;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjusteNegativoPartidaObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
@@ -326,7 +328,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /*
+        /**
+         * ACARREOS
+         */
+        TiroConcepto::observe(TiroConceptoObserver::class);
+
+        /**
          * CTPQ
          * */
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);

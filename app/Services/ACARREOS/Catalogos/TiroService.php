@@ -42,6 +42,12 @@ class TiroService
         return  $this->repository->paginate($data);
     }
 
+    public function asignarConcepto(array $data, $id)
+    {
+        $this->conexionAcarreos();
+        return  $this->show($id)->asignarConcepto($data[0]);;
+    }
+
     private function conexionAcarreos()
     {
         try{

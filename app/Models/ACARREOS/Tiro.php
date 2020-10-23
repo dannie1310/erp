@@ -123,4 +123,34 @@ class Tiro extends Model
             return null;
         }
     }
+
+    public function asignarConcepto($data)
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            if ($this->concepto()) {
+                if ($this->concepto()->id_concepto == $data) {
+                    abort(400, "El concepto es el actual.");
+                }
+                $this->tiroConcepto()->whereRaw('fin_vigencia is null')->update([
+                    'fin_vigencia' => date('Y-m-d H:i:s')
+                ]);
+                TiroConcepto::create([
+                    'id_tiro' => $this->IdTiro,
+                    'id_concepto' => $data
+                ]);
+            }else{
+                TiroConcepto::create([
+                    'id_tiro' => $this->IdTiro,
+                    'id_concepto' => $data
+                ]);
+            }
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
 }

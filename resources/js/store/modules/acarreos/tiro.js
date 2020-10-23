@@ -18,6 +18,20 @@ export default {
         SET_META(state, data) {
             state.meta = data;
         },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentTiro, data.attribute, data.value);
+        },
+
+        UPDATE_TIRO(state, data) {
+            state.tiros = state.tiros.map(tiro => {
+                if (tiro.id === data.id) {
+                    return Object.assign({}, tiro, data)
+                }
+                return tiro
+            })
+            state.currentTiro = data;
+        },
     },
 
     actions: {
@@ -61,11 +75,10 @@ export default {
             })
         },
         agregarConcepto(context, payload) {
-            console.log(payload.params)
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Ajuste Negativo de Inventario",
-                    text: "¿Está seguro de que desea eliminar este Ajuste de Inventario?",
+                    title: payload.params.data.concepto == 1 ? "Sustituir el concepto" : "Asignar el concepto",
+                    text: payload.params.data.concepto == 1 ?  "¿Está seguro de que desea sustituir el concepto del tiro?" : "¿Está seguro de que desea asignar el concepto al tiro?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -74,7 +87,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Eliminar',
+                            text: payload.params.data.concepto == 1 ?  'Si, Sustituir' : 'Si, Asignar',
                             closeModal: false,
                         }
                     }
@@ -82,10 +95,10 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .delete(URI + payload.id, { params: payload.params })
+                                .get(URI+ payload.id+'/asignar', { params: payload.params.data.id_concepto })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Ajuste de Inventario eliminado correctamente", {
+                                    swal("Concepto asignado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

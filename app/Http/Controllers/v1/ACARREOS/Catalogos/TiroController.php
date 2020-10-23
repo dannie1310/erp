@@ -48,4 +48,9 @@ class TiroController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function asignarConcepto(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->asignarConcepto($request->all(), $id));
+    }
 }

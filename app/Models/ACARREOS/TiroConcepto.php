@@ -12,4 +12,13 @@ class TiroConcepto extends Model
     protected $connection = 'acarreos';
     protected $table = 'tiros_conceptos';
     protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'id_tiro',
+        'id_concepto',
+        'inicio_vigencia',
+        'fin_vigencia',
+        'registro',
+        'created_at'
+    ];
 }

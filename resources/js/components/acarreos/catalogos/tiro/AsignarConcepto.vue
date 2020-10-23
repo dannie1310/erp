@@ -120,16 +120,7 @@
                })
                    .then(data => {
                        $(this.$refs.modal).modal('hide');
-                       /*return this.$store.dispatch('almacenes/ajuste-inventario/paginate', {
-                                params: {
-                                    sort: 'numero_folio',
-                                    order: 'desc'
-                                }
-                            })
-                                .then(data => {
-                                    this.$store.commit('almacenes/ajuste-inventario/SET_AJUSTES', data.data);
-                                    this.$store.commit('almacenes/ajuste-inventario/SET_META', data.meta);
-                                })*/
+                       this.$store.commit('acarreos/tiro/UPDATE_TIRO', data);
                    })
                    .finally(() => {
                        this.carga = false;
