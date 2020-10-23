@@ -13,6 +13,7 @@ class PagoACuenta extends Pago
 {
     public const TIPO_ANTECEDENTE = 72;
     public const OPCION_ANTECEDENTE = 327681;
+    public const OPCION = 327681;
 
     protected $fillable = [
         'id_antecedente',

@@ -367,9 +367,35 @@ class OrdenCompra extends Transaccion
         $relaciones[$i]["consulta"] = 1;
         $i++;
 
-        #SOLICITUD
+        #SOLICITUD  COMPRA
         $relaciones[$i] = $this->solicitud->datos_para_relacion;
         $i++;
+
+        #SOLICITUD PAGO
+        try{
+            $relaciones[$i] = $this->pago_anticipado->datos_para_relacion;
+            $i++;
+
+        }catch (\Exception $e){
+
+        }
+
+        #PAGO DE SOLICITUD
+        try{
+
+            $relaciones[$i] = $this->pago_anticipado->pago->datos_para_relacion;
+            $i++;
+        }catch (\Exception $e){
+
+        }
+
+        #POLIZA DE PAGO DE SOLICITUD
+        try{
+            $relaciones[$i] = $this->pago_anticipado->pago->poliza->datos_para_relacion;
+            $i++;
+        }catch (\Exception $e){
+
+        }
 
         #COTIZACIONES
         if($this->cotizacion){

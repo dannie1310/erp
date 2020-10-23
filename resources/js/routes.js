@@ -95,6 +95,16 @@ export const routes = [
                 },
             },
             {
+                path: 'modal/solicitud_pago_anticipado/:id',
+                name: 'modal_solicitud_pago_anticipado',
+                component: require('./components/finanzas/solicitud/pago-anticipado/Show').default,
+                props: true,
+                meta: {
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_solicitud_pago_anticipado'
+                },
+            },
+            {
                 path: 'modal/pago/:id',
                 name: 'modal_pago',
                 component: require('./components/finanzas/gestion-pago/pago/Show').default,
@@ -1403,6 +1413,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id',
+                                name: 'solicitud-pago-anticipado-show',
+                                props: true,
+                                component: require('./components/finanzas/solicitud/pago-anticipado/Show').default,
+                                meta: {
+                                    title: 'Ver Solicitud',
+                                    breadcrumb: {name: 'VER', parent: 'pago-anticipado'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_pago_anticipado'
+                                }
+                            },
+                            {
                                 path: ':id/documentos',
                                 name: 'solicitud-pago-anticipado-documentos',
                                 component: require('./components/globals/archivos/Files').default,
@@ -1412,7 +1434,7 @@ export const routes = [
                                 }),
                                 meta: {
                                     title: 'Documentos de Solicitud de Pago Anticipado',
-                                    breadcrumb: { parent: 'solicitud', name: 'DOCUMENTOS'},
+                                    breadcrumb: { parent: 'pago-anticipado', name: 'DOCUMENTOS'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_solicitud_pago_anticipado'
                                 }

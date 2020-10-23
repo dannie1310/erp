@@ -9,12 +9,12 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use App\Http\Transformers\CADECO\CostoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
-use App\Models\CADECO\Costo;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use League\Fractal\TransformerAbstract;
 
@@ -32,7 +32,8 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
         'subcontrato',
         'usuario',
         'empresa',
-        'costo'
+        'costo',
+        'relaciones'
     ];
 
     /**
@@ -134,5 +135,13 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
         }
         return null;
 
+    }
+    public function includeRelaciones(SolicitudPagoAnticipado $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
     }
 }
