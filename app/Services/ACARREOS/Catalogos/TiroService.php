@@ -32,6 +32,7 @@ class TiroService
 
     public function show($id)
     {
+        $this->conexionAcarreos();
         return $this->repository->show($id);
     }
 

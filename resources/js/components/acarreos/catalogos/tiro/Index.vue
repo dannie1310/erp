@@ -30,13 +30,13 @@
                     { title: 'Clave', field: 'clave',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Fecha Registro', field: 'fecha', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Estado', field: 'estatus', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Concepto', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Concepto', field: 'concepto', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Estatus', field: 'estado_tiro', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'', sort: 'IdTiro', order: 'asc'},
+                query: {scope:'', include: ['concepto'], sort: 'IdTiro', order: 'asc'},
                 estado: "",
                 cargando: false
             }
@@ -60,7 +60,13 @@
                     .finally(() => {
                         this.cargando = false;
                     })
-            }
+            },
+            getEstado(estado, color) {
+                return {
+                    color: color,
+                    descripcion: estado
+                }
+            },
         },
         computed: {
             tiros(){
@@ -78,15 +84,18 @@
                 handler(tiros) {
                     let self = this
                     self.$data.data = []
-                    tiros.forEach(function (tiro, i) {
-                        self.$data.data.push({
-                            index: (i + 1) + self.query.offset,
-                            clave: tiro.clave_format,
-                            descripcion: tiro.descripcion,
-                            fecha: tiro.fecha_registro_format,
-                            estatus: tiro.estado_format,
+                    self.$data.data = tiros.map((tiro, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        clave: tiro.clave_format,
+                        descripcion: tiro.descripcion,
+                        fecha: tiro.fecha_registro_format,
+                        estado_tiro: this.getEstado(tiro.estado_format, tiro.estado_color),
+                        concepto: tiro.path__corta_concepto,
+                        buttons: $.extend({}, {
+                            id: tiro.id,
+                            concepto : true,
                         })
-                    });
+                    }));
                 },
                 deep: true
             },

@@ -4,6 +4,8 @@
 namespace App\Models\ACARREOS;
 
 
+use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
+use App\Models\CADECO\Concepto;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +16,6 @@ class Tiro extends Model
     protected $table = 'tiros';
     public $timestamps = false;
     public $primaryKey = 'IdTiro';
-
 
     /**
      * Relaciones Eloquent
@@ -27,6 +28,11 @@ class Tiro extends Model
     public function proyecto()
     {
         return $this->belongsTo(Proyecto::class, 'IdProyecto', 'IdProyecto');
+    }
+
+    public function tiroConcepto()
+    {
+        return $this->hasMany(TiroConcepto::class, 'id_tiro','IdTiro');
     }
 
     /**
@@ -56,6 +62,25 @@ class Tiro extends Model
             case 0:
                 return 'INACTIVO';
                 break;
+            default:
+                return '';
+                break;
+        }
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->Estatus)
+        {
+            case 1:
+                return '#00a65a';
+                break;
+            case 0:
+                return '#706e70';
+                break;
+            default:
+                return '#d1cfd1';
+                break;
         }
     }
 
@@ -70,8 +95,32 @@ class Tiro extends Model
         return date_format($date,"d/m/Y H:i");
     }
 
+    public function getConceptoArrayAttribute()
+    {
+        return $this->concepto() ? $this->concepto()->toArray() : null;
+    }
+
+    public function getPathConceptoAttribute()
+    {
+        return $this->concepto() ? $this->concepto()->path : null;
+    }
+
+    public function getPathCortaConceptoAttribute()
+    {
+        return $this->concepto() ? $this->concepto()->path_corta : null;
+    }
+
     /**
      * Métodos
      */
-
+    public function concepto()
+    {
+        try {
+            $id_concepto = $this->tiroConcepto()->whereRaw('fin_vigencia is null')->pluck('id_concepto')->first();
+            return Concepto::find($id_concepto);
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
 }

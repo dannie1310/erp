@@ -4,6 +4,7 @@
 namespace App\Http\Transformers\ACARREOS\Catalogos;
 
 
+use App\Http\Transformers\CADECO\ConceptoTransformer;
 use App\Models\ACARREOS\Tiro;
 use League\Fractal\TransformerAbstract;
 
@@ -28,7 +29,11 @@ class TiroTransformer extends TransformerAbstract
             'usuario_registro' => (string) $model->nombre_usuario,
             'estado' => (int) $model->Estatus,
             'estado_format' => $model->estado_format,
-            'fecha_registro_format' => $model->fecha_registro_completa_format
+            'estado_color' => $model->color_estado,
+            'fecha_registro_format' => $model->fecha_registro_completa_format,
+            'concepto' => $model->concepto_array,
+            'path__corta_concepto' => $model->path_corta_concepto,
+            'path_concepto' => $model->path_concepto
         ];
     }
 }
