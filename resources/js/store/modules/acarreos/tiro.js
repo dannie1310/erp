@@ -153,6 +153,84 @@ export default {
                     });
             });
         },
+        activar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Activar el Tiro",
+                    text: "¿Está seguro de que deseas activar el tiro?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Activar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id+'/activar', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Tiro activado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        desactivar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Desactivar el Tiro",
+                    text: "¿Está seguro de que deseas desactivar el tiro?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Desactivar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id+'/desactivar', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Tiro desactivado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
     },
 
     getters: {
@@ -165,6 +243,5 @@ export default {
         meta(state) {
             return state.meta;
         },
-
     }
 }

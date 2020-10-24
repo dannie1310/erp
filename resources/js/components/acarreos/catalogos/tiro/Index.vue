@@ -96,6 +96,8 @@
                         buttons: $.extend({}, {
                             id: tiro.id,
                             concepto: self.$root.can('editar_tiro') ? true : false,
+                            activar: (tiro.estado === 0 && self.$root.can('editar_tiro')) ? true : false,
+                            desactivar: (tiro.estado === 1 && self.$root.can('editar_tiro')) ? true : false,
                         })
                     }));
                 },

@@ -52,6 +52,7 @@
         },
         methods : {
             init() {
+                this.descripcion = '';
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },

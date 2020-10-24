@@ -136,7 +136,7 @@ class Tiro extends Model
             DB::connection('acarreos')->beginTransaction();
             if ($this->concepto()) {
                 if ($this->concepto()->id_concepto == $data) {
-                    abort(400, "El concepto es el actual.");
+                    abort(400, "El concepto ya esta asignado a este tiro.");
                 }
                 $this->tiroConcepto()->whereRaw('fin_vigencia is null')->update([
                     'fin_vigencia' => date('Y-m-d H:i:s')

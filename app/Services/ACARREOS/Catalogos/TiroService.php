@@ -54,6 +54,50 @@ class TiroService
         return $this->repository->create($data);
     }
 
+    public function activar($id)
+    {
+        $this->conexionAcarreos();
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $tiro = $this->show($id);
+            if ($tiro->Estatus == 1) {
+                abort(400, "El tiro se encuentra " . $tiro->estado_format . " previamente.");
+            }
+            $tiro->Estatus = 1;
+            $tiro->usuario_desactivo = NULL;
+            $tiro->motivo = NULL;
+            $tiro->save();
+            DB::connection('acarreos')->commit();
+            return $tiro;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function desactivar(array  $data, $id)
+    {
+        $this->conexionAcarreos();
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $tiro = $this->show($id);
+            if ($tiro->Estatus == 0) {
+                abort(400, "El tiro se encuentra " . $tiro->estado_format . " previamente.");
+            }
+            $tiro->Estatus = 0;
+            $tiro->usuario_desactivo = auth()->id();
+            $tiro->motivo = $data['motivo'];
+            $tiro->save();
+            DB::connection('acarreos')->commit();
+            return $tiro;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
     private function conexionAcarreos()
     {
         try{

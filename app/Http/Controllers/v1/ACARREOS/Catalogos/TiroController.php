@@ -55,4 +55,14 @@ class TiroController extends Controller
     {
         return $this->respondWithItem($this->service->asignarConcepto($request->all(), $id));
     }
+
+    public function activar(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->activar($id));
+    }
+
+    public function desactivar(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->desactivar($request->all(),$id));
+    }
 }
