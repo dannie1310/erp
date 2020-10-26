@@ -104,6 +104,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" @click="borrarVolumenes()" class="btn btn-default pull-right" style="margin-left:5px">Borrar los Volúmenes del Proveedor</button>
+                                <button type="button" @click="cargarVolumenes()" class="btn btn-default pull-right">Cargar Todos los Volúmenes a Proveedor</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" @click=cerrar() class="btn btn-secondary">Cerrar</button>
@@ -155,6 +161,26 @@ export default {
             .then((value) => {
                 if (value) {
                     this.$router.push({name: 'asignacion-contratista'});
+                }
+            });
+        },
+        cargarVolumenes(){
+            let self = this;
+            self.data.items.forEach(function (item, i){
+                if(item.cantidad_disponible > 0){
+                    self.data.presupuestos[self.id_transaccion].partidas[i]? self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
+                    self.data.presupuestos[self.id_transaccion].partidas[i]?item.cantidad_disponible = parseFloat(0).toFixed(4):'';
+                }
+            });
+        },
+        borrarVolumenes(){
+            let self = this;
+            self.data.items.forEach(function (item, i){
+                if(self.data.presupuestos[self.id_transaccion].partidas[i]){
+                    if(self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada > 0){
+                        self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada = '';
+                        item.cantidad_disponible = parseFloat(item.cantidad_base).toFixed(4);
+                    }
                 }
             });
         },
