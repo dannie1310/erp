@@ -104,8 +104,24 @@ class AsignacionContratistaService
             DB::connection('cadeco')->beginTransaction();
             $asignacion = $this->repository->show($data['id']);
             $partidas = $asignacion->partidas()->orderBy('id_concepto')->get();
-            $subcontrato = null;
+            $subcontratos = [];
             foreach($partidas as $partida){
+                $subcontrato = null;
+                if(array_key_exists($asignacion->presupuestoContratista->id_moneda, $subcontratos)){
+                    $subcontrato = $subcontratos[$asignacion->presupuestoContratista->id_moneda];
+                }else{
+                    $subcontratos[$asignacion->presupuestoContratista->id_moneda] = 
+                    Subcontrato::Create([
+                        'id_antecedente' => $asignacion->presupuestoContratista->id_antecedente,
+                        'id_referente' => $partida->cotizacionCompra->id_transaccion,
+                        'id_empresa' => $partida->cotizacionCompra->id_empresa,
+                        'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
+                        'id_moneda' => $partida->cotizacion->id_moneda,
+                        'observaciones' => $partida->cotizacionCompra->observaciones,
+                        'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
+                    ]);
+                }
+                dd('pandita', array_key_exists(1, $subcontratos));
                 // dd($asignacion->presupuestoContratista->id_antecedente);
                 $subcontratos = Subcontrato::where('id_antecedente', '=', $asignacion->presupuestoContratista->id_antecedente)
                                         ->where('id_empresa', '=', $asignacion->presupuestoContratista->id_empresa)
