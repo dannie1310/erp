@@ -78,4 +78,8 @@ class CFDSATController extends Controller
         $this->service->obtenerInformeCompletoPDF()->create();
     }
 
+    public function descargar(Request $request){
+        return $this->service->descargar($request->all());
+    }
+
 }

@@ -271,9 +271,20 @@ class OrdenCompra extends Transaccion
 
     public function getNumeroFolioCotizacionFormatAttribute()
     {
-        if($this->cotizacion){
+        try {
             return $this->cotizacion->numero_folio;
-        } else return null;
+        } catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getNumeroFolioAsignacionFormatAttribute()
+    {
+        try {
+            return $this->complemento->asignacion->folio_format;
+        } catch (\Exception $e){
+            return null;
+        }
     }
 
     /**
@@ -356,9 +367,35 @@ class OrdenCompra extends Transaccion
         $relaciones[$i]["consulta"] = 1;
         $i++;
 
-        #SOLICITUD
+        #SOLICITUD  COMPRA
         $relaciones[$i] = $this->solicitud->datos_para_relacion;
         $i++;
+
+        #SOLICITUD PAGO
+        try{
+            $relaciones[$i] = $this->pago_anticipado->datos_para_relacion;
+            $i++;
+
+        }catch (\Exception $e){
+
+        }
+
+        #PAGO DE SOLICITUD
+        try{
+
+            $relaciones[$i] = $this->pago_anticipado->pago->datos_para_relacion;
+            $i++;
+        }catch (\Exception $e){
+
+        }
+
+        #POLIZA DE PAGO DE SOLICITUD
+        try{
+            $relaciones[$i] = $this->pago_anticipado->pago->poliza->datos_para_relacion;
+            $i++;
+        }catch (\Exception $e){
+
+        }
 
         #COTIZACIONES
         if($this->cotizacion){

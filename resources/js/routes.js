@@ -50,6 +50,31 @@ export const routes = [
                 }
             },
             {
+                path: 'modal/lista_archivos/:id',
+                name: 'modal_lista_archivos',
+                component: require('./components/globals/archivos/List').default,
+                props: route => ({
+                    id: route.params.id,
+                    relacionadas: false,
+                }),
+                meta: {
+                    middleware: [auth, context],
+                },
+            },
+            {
+                path: 'modal/lista_archivos_relacionados/:tipo/:id',
+                name: 'modal_lista_archivos_relacionados',
+                component: require('./components/globals/archivos/List').default,
+                props: route => ({
+                    tipo: route.params.tipo,
+                    id: route.params.id,
+                    relacionadas: true,
+                }),
+                meta: {
+                    middleware: [auth, context],
+                },
+            },
+            {
                 path: 'modal/cotizacion/:id',
                 name: 'modal_cotizacion',
                 component: require('./components/compras/cotizacion/Show').default,
@@ -67,6 +92,26 @@ export const routes = [
                 meta: {
                     middleware: [auth, context, permission],
                     permission: 'consultar_solicitud_compra'
+                },
+            },
+            {
+                path: 'modal/solicitud_pago_anticipado/:id',
+                name: 'modal_solicitud_pago_anticipado',
+                component: require('./components/finanzas/solicitud/pago-anticipado/Show').default,
+                props: true,
+                meta: {
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_solicitud_pago_anticipado'
+                },
+            },
+            {
+                path: 'modal/pago/:id',
+                name: 'modal_pago',
+                component: require('./components/finanzas/gestion-pago/pago/Show').default,
+                props: true,
+                meta: {
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_pagos'
                 },
             },
             {
@@ -244,6 +289,21 @@ export const routes = [
                                     permission: 'consultar_cotizacion_compra'
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'cotizacion-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_cotizacion_compra'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Cotización',
+                                    breadcrumb: { parent: 'cotizacion', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_cotizacion_compra'
+                                }
+                            }
                         ]
                     },
                     {
@@ -272,6 +332,21 @@ export const routes = [
                                     middleware: [auth, context],
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'orden-compra-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_orden_compra'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Orden de Compra',
+                                    breadcrumb: { parent: 'orden-compra', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_orden_compra'
+                                }
+                            }
                         ]
                     },
                     {
@@ -299,7 +374,21 @@ export const routes = [
                                     permission: 'registrar_requisicion_compra'
                                 }
                             },
-
+                            {
+                                path: ':id/documentos',
+                                name: 'requisicion-compra-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_requisicion_compra'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_compra'
+                                }
+                            }
                         ]
                     },
                     {
@@ -350,6 +439,21 @@ export const routes = [
                                     breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
                                     middleware: [auth, context, permission],
                                     permission: 'editar_solicitud_compra'
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'solicitud-compra-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_solicitud_compra'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_compra'
                                 }
                             }
                         ]
@@ -422,6 +526,21 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_entrada_almacen']
                                 }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'entrada-almacen-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_entrada_almacen'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Entrada de Almacén',
+                                    breadcrumb: { parent: 'entrada-almacen', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_entrada_almacen'
+                                }
                             }
                         ]
                     },
@@ -450,6 +569,21 @@ export const routes = [
                                     breadcrumb: {parent: 'salida-almacen', name: 'SALIDA - TRANSFERENCIA ALMACEN'},
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_salida_almacen'
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'salida-almacen-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_salida_almacen'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Salida de Almacén',
+                                    breadcrumb: { parent: 'salida-almacen', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_salida_almacen'
                                 }
                             }
                         ]
@@ -545,10 +679,25 @@ export const routes = [
                                 meta: {
                                     title: 'Registrar Contratos Proyectados',
                                     breadcrumb: {parent: 'proyectado', name: 'REGISTRAR'},
-                                    middleware: [auth, context],
-
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_contrato_proyectado'
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'proyectado-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_orden_compra'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Contratos Proyectados',
+                                    breadcrumb: { parent: 'proyectado', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_contrato_proyectado'
+                                }
+                            }
                         ]
                     },
                     {
@@ -587,6 +736,21 @@ export const routes = [
                                     breadcrumb: { parent: 'presupuesto', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_presupuesto_contratista']
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'presupuesto-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_presupuesto_contratista'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Presupuesto',
+                                    breadcrumb: { parent: 'presupuesto', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_presupuesto_contratista'
                                 }
                             }
                         ]
@@ -646,6 +810,21 @@ export const routes = [
                                     permission: 'consultar_subcontrato'
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'subcontrato-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_subcontrato'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Subcontrato',
+                                    breadcrumb: { parent: 'subcontrato', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_subcontrato'
+                                }
+                            }
                         ]
                     },
                     {
@@ -694,8 +873,8 @@ export const routes = [
                                 meta: {
                                     title: 'Información de Estimación',
                                     breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
-                                    middleware: [auth, context],
-
+                                    middleware: [auth, context, permission],
+                                    permission :'consultar_estimacion_subcontrato'
                                 }
                             },
                             {
@@ -708,7 +887,21 @@ export const routes = [
                                     breadcrumb: {parent: 'estimacion', name: 'EDITAR'},
                                     middleware: [auth, context, permission],
                                     permission: 'editar_estimacion_subcontrato'
-
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'estimacion-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_estimacion_subcontrato'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Estimacion',
+                                    breadcrumb: { parent: 'estimacion', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_estimacion_subcontrato'
                                 }
                             },
                             {
@@ -955,8 +1148,22 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_factura']
                                 }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'factura-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_factura'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Factura',
+                                    breadcrumb: { parent: 'factura', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_factura'
+                                }
                             }
-
                         ]
                     },
                     {
@@ -1112,6 +1319,21 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id/documentos',
+                                name: 'pago-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['consultar_pagos'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Pago',
+                                    breadcrumb: { parent: 'pago', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_pagos'
+                                }
+                            },
+                            {
                                 path: 'registro-pago',
                                 name: 'gestion-registro-pago',
                                 component: require('./components/finanzas/gestion-pago/pago/RegistrarPago').default,
@@ -1172,51 +1394,7 @@ export const routes = [
                             }
                         ]
                     },
-                    {
-                        path: 'insumo-servicio',
-                        component: require('./components/finanzas/insumo-servicio/Layout').default,
-                        children: [
-                            {
-                                path: '/',
-                                name: 'insumo-servicio',
-                                component: require('./components/finanzas/insumo-servicio/Index').default,
-                                meta: {
-                                    title: 'Insumo de Servicios',
-                                    breadcrumb: {parent: 'finanzas', name: 'INSUMO SERVICIO'},
-                                    middleware: [auth, context],
 
-                                }
-                            },
-                            {
-                                path: 'familia-serv',
-                                name: 'familia-serv',
-                                component: require('./components/finanzas/insumo-servicio/familia/Index').default,
-                                meta: {
-                                    title: 'Familia',
-                                    breadcrumb: {
-                                        parent: 'insumo-servicio',
-                                        name: 'FAMILIA'
-                                    },
-                                    middleware: [auth, context, permission],
-                                    permission: ['consultar_familia_servicio']
-                                }
-                            },
-                            {
-                                path: 'servicio',
-                                name: 'servicio',
-                                component: require('./components/finanzas/insumo-servicio/servicio/Index').default,
-                                meta: {
-                                    title: 'Servicio',
-                                    breadcrumb: {
-                                        parent: 'insumo-servicio',
-                                        name: 'SERVICIO'
-                                    },
-                                    middleware: [auth, context, permission],
-                                    permission: ['consultar_insumo_servicio']
-                                }
-                            }
-                        ]
-                    },
                     {
                         path: 'solicitud',
                         component: require('./components/finanzas/solicitud/Layout').default,
@@ -1246,6 +1424,33 @@ export const routes = [
                                     permission: 'consultar_solicitud_pago_anticipado'
                                 }
                             },
+                            {
+                                path: ':id',
+                                name: 'solicitud-pago-anticipado-show',
+                                props: true,
+                                component: require('./components/finanzas/solicitud/pago-anticipado/Show').default,
+                                meta: {
+                                    title: 'Ver Solicitud',
+                                    breadcrumb: {name: 'VER', parent: 'pago-anticipado'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_pago_anticipado'
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'solicitud-pago-anticipado-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_solicitud_pago_anticipado'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Solicitud de Pago Anticipado',
+                                    breadcrumb: { parent: 'pago-anticipado', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_pago_anticipado'
+                                }
+                            }
                         ]
                     },
                     {

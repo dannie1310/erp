@@ -27,6 +27,16 @@ $api->version('v1', function ($api) {
      * DBO
      */
     $api->group(['middleware' => 'api'], function ($api) {
+        // ARCHIVO
+        $api->group(['prefix' => 'archivo'], function ($api){
+            $api->post('cargarArchivo', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@cargarArchivo');
+            $api->post('cargarArchivoZIP', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@cargarArchivoZIP');
+            $api->get('{id}/documento', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->get('{id}/transaccion', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosTransaccion')->where(['id' => '[0-9]+']);
+            $api->get('{tipo}/{id}/transaccion-relacionados', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosRelacionadosTransaccion')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/imagenes', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
+        });
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
@@ -231,6 +241,9 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CTPQ\PolizaController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CTPQ\PolizaController@pdf')->where(['id' => '[0-9]+']);
             $api->get('{id}/pdf-b', 'App\Http\Controllers\v1\CTPQ\PolizaController@pdfCaidaB')->where(['id' => '[0-9]+']);
+            $api->get('descargar-pdf', 'App\Http\Controllers\v1\CTPQ\PolizaController@descargaZip')->where(['id' => '[0-9]+']);
+            $api->post('busquedaExcel', 'App\Http\Controllers\v1\CTPQ\PolizaController@busquedaExcel');
+            $api->get('descargar-zip', 'App\Http\Controllers\v1\CTPQ\PolizaController@getZip');
         });
         $api->group(['prefix' => 'incidente-poliza'], function ($api) {//buscar-diferencias
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@store');
@@ -290,6 +303,7 @@ $api->version('v1', function ($api) {
             $api->post('obtener-informe-completo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeCompleto');
             $api->get('obtener-informe-completo/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeCompletoPDF');
             $api->post('obtener-contenido-directorio', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@getContenidoDirectorio');
+            $api->get('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargar');
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');

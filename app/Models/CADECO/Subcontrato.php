@@ -462,6 +462,31 @@ class Subcontrato extends Transaccion
                 }
             }
         }
+        #SOLICITUD PAGO
+        try{
+            $relaciones[$i] = $this->pago_anticipado->datos_para_relacion;
+            $i++;
+
+        }catch (\Exception $e){
+
+        }
+
+        #PAGO DE SOLICITUD
+        try{
+
+            $relaciones[$i] = $this->pago_anticipado->pago->datos_para_relacion;
+            $i++;
+        }catch (\Exception $e){
+
+        }
+
+        #POLIZA DE PAGO DE SOLICITUD
+        try{
+            $relaciones[$i] = $this->pago_anticipado->pago->poliza->datos_para_relacion;
+            $i++;
+        }catch (\Exception $e){
+
+        }
 
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);

@@ -190,7 +190,7 @@ class PolizaFormatoT1B extends Rotation
         
     }
 
-    function create() {
+    function create($path = '') {
         DB::purge('cntpq');
         \Config::set('database.connections.cntpq.database',$this->empresa->AliasBDD);
         $this->poliza = Poliza::find($this->data->Id);
@@ -205,6 +205,9 @@ class PolizaFormatoT1B extends Rotation
         $this->partidas();
 
         try {
+            if($path != ''){
+                return $this->Output('F', $path . "/Formato - Ejercicio ".$this->poliza->Ejercicio." - Periodo ".$this->poliza->Periodo." - Tipo ".$this->poliza->tipo_poliza->Nombre." - Folio ".$this->poliza->Folio .".pdf", 1);
+            }
             $this->Output('I', "Formato - poliza.pdf", 1);
         } catch (\Exception $ex) {
             dd("error",$ex);

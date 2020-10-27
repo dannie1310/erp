@@ -14,6 +14,10 @@ import nuevoLote from  './modules/almacenes/nuevo-lote';
 import tipoConteo from './modules/almacenes/ctg-tipo-conteo';
 import salidaAlmacen from './modules/almacenes/salida-almacen';
 
+//ARCHIVOS
+
+import archivo from './modules/archivos/archivo'
+
 //CADECO
 
 import almacen from './modules/cadeco/almacen';
@@ -208,6 +212,8 @@ export default new Vuex.Store({
         'cadeco/suministrado': suministrado,
         'cadeco/unidad': unidad,
 
+        'documentacion/archivo' : archivo,
+
         'catalogos/unificacion-proveedores' : unificacionProveedores,
 
         'compras/asignacion' : asignacion,
@@ -217,7 +223,7 @@ export default new Vuex.Store({
         'compras/requisicion' : requisicion,
         'compras/solicitud-compra' : solicitudCompra,
         'compras/forma-pago-credito' : formaPagoCredito,
-        
+
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,

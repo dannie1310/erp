@@ -79,6 +79,9 @@ class ItemSubcontrato extends Item
         $precio_unitario = $estimacion ? $estimacion->precio_unitario : $this->precio_unitario;
         $cantidad_estimada_total = $this->cantidad_total_estimada ? $this->cantidad_total_estimada : 0;
         $cantidad_estimado_anterior = $estimacion ?  $cantidad_estimada_total - $estimacion->cantidad : $cantidad_estimada_total;
+        $porcentaje_avance = $this->cantidad > 0? $cantidad_estimado_anterior / $this->cantidad:0;
+        $porcentaje_estimado = 0;
+        $estimacion && $this->cantidad > 0 ? $porcentaje_estimado = $estimacion->cantidad  / $this->cantidad:'';
         $destino = Destino::where('id_transaccion', '=', $id_contrato)->where('id_concepto_contrato', '=', $contrato->id_concepto)->first();
 
         return array(
@@ -93,14 +96,14 @@ class ItemSubcontrato extends Item
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_estimacion' =>  $estimacion ? $estimacion->id_item : 0,
             'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 2, '.', '') : 0,
-            'porcentaje_avance' => (float) number_format((($cantidad_estimado_anterior / $this->cantidad) * 100), 2, '.', ''),
+            'porcentaje_avance' => (float) number_format((($porcentaje_avance) * 100), 2, '.', ''),
             'cantidad_estimada_total' => $cantidad_estimada_total ? $cantidad_estimada_total : 0,
             'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
             'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
             'importe_acumulado' => ($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario,
             'cantidad_por_estimar' => $this->cantidad -$cantidad_estimado_anterior,
             'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
-            'porcentaje_estimado' => (float) number_format(((($estimacion ? $estimacion->cantidad : 0) / $this->cantidad) * 100), 2, '.', ''),
+            'porcentaje_estimado' => (float) number_format((($porcentaje_estimado) * 100), 2, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
             'destino_path' => $destino->ruta_destino,
             'id_destino' => $destino->id_concepto,

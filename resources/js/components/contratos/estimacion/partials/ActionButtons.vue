@@ -22,6 +22,9 @@
             </button>
             <PDF v-bind:id="value.id"></PDF>
             <Relaciones v-bind:transaccion="value.transaccion"/>
+            <router-link  :to="{ name: 'estimacion-documentos', params: {id: value.id}}" v-if="$root.can('consultar_estimacion_subcontrato') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
+                <i class="fa fa-folder-open"></i>
+            </router-link>
         </div>
 
 

@@ -12,6 +12,7 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
+
                     </div>
                     <div class="modal-body" style="height: 800px; overflow-y: scroll" >
                         <Relaciones v-bind:relaciones="relaciones" v-if="relaciones"></Relaciones>
@@ -21,6 +22,7 @@
                             <i class="fa fa-times-circle"></i>
                             Cerrar
                         </button>
+                        <ModalArchivos v-bind:relacionados="true" v-bind:id="transaccion.tipo+'/'+transaccion.id" v-bind:url="'/sao/modal/lista_archivos_relacionados/{id}'" ></ModalArchivos>
                     </div>
                 </div>
             </div>
@@ -30,9 +32,10 @@
 
 <script>
 import Relaciones from './TimeLine';
+import ModalArchivos from './archivos/Modal';
 export default {
     name: "ModalRelaciones",
-    components:{Relaciones},
+    components:{Relaciones, ModalArchivos},
     props: ['transaccion'],
     data(){
         return{
@@ -74,6 +77,9 @@ export default {
             }
             if(this.transaccion.tipo == 52){
                 this.estimacion();
+            }
+            if(this.transaccion.tipo == 72){
+                this.solicitud_pago_anticipado();
             }
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show')
@@ -197,6 +203,19 @@ export default {
         },
         estimacion(){
             return this.$store.dispatch('contratos/estimacion/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        solicitud_pago_anticipado(){
+            return this.$store.dispatch('finanzas/solicitud-pago-anticipado/find', {
                 id: this.transaccion.id,
                 params:{include: [
                         'relaciones'
