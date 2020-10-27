@@ -13,6 +13,7 @@ use App\Facades\Context;
 use App\Repositories\Repository;
 use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\ItemSubcontrato;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
@@ -107,50 +108,49 @@ class AsignacionContratistaService
             $subcontratos = [];
             foreach($partidas as $partida){
                 $subcontrato = null;
-                if(array_key_exists($asignacion->presupuestoContratista->id_moneda, $subcontratos)){
-                    $subcontrato = $subcontratos[$asignacion->presupuestoContratista->id_moneda];
+                if(array_key_exists( $partida->presupuestoPartida->IdMoneda, $subcontratos) && array_key_exists($partida->id_transaccion, $subcontratos[1])){
+                    $subcontrato = $subcontratos[ $partida->presupuestoPartida->IdMoneda][$partida->id_transaccion];
                 }else{
-                    $subcontratos[$asignacion->presupuestoContratista->id_moneda] = 
-                    Subcontrato::Create([
-                        'id_antecedente' => $asignacion->presupuestoContratista->id_antecedente,
-                        'id_referente' => $partida->cotizacionCompra->id_transaccion,
-                        'id_empresa' => $partida->cotizacionCompra->id_empresa,
-                        'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
-                        'id_moneda' => $partida->cotizacion->id_moneda,
-                        'observaciones' => $partida->cotizacionCompra->observaciones,
-                        'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
+                    $subcontratos[ $partida->presupuestoPartida->IdMoneda] = array();
+                    $resp =  
+                     Subcontrato::Create([
+                        'id_antecedente' => $asignacion->id_transaccion,
+                        'id_empresa' => $partida->presupuesto->id_empresa,
+                        'id_sucursal' => $partida->presupuesto->id_sucursal,
+                        'id_moneda' =>  $partida->presupuestoPartida->IdMoneda,
+                        'observaciones' => $partida->presupuesto->observaciones,
                     ]);
+                    $subcontratos[ $partida->presupuestoPartida->IdMoneda][$partida->id_transaccion] = $resp;
+                    $subcontrato = $resp;
                 }
-                dd('pandita', array_key_exists(1, $subcontratos));
-                // dd($asignacion->presupuestoContratista->id_antecedente);
-                $subcontratos = Subcontrato::where('id_antecedente', '=', $asignacion->presupuestoContratista->id_antecedente)
-                                        ->where('id_empresa', '=', $asignacion->presupuestoContratista->id_empresa)
-                                        ->where('id_sucursal', '=', $asignacion->presupuestoContratista->id_sucursal)
-                                        ->where('id_moneda', '=', $asignacion->presupuestoContratista->id_moneda)->get();
-                
-                foreach ($subcontratos as $key => $subcont) {
-                    if($orden->complemento->id_asignacion_proveedor == $asignacion->id){
-                        $orden_c = $orden;
-                        break;
-                    }
-                }
-                
-                if(!$orden_c){
-                    $orden_c = OrdenCompra::Create([
-                        'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
-                        'id_referente' => $partida->cotizacionCompra->id_transaccion,
-                        'id_empresa' => $partida->cotizacionCompra->id_empresa,
-                        'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
-                        'id_moneda' => $partida->cotizacion->id_moneda,
-                        'observaciones' => $partida->cotizacionCompra->observaciones,
-                        'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
-                    ]);
 
-                    $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion, 'id_asignacion_proveedor'=>$asignacion->id]);
-                }
+                $descuento = $partida->presupuestoPartida->porcentajeDescuento / 100 * $partida->presupuestoPartida->precio_unitario;
+                $importe = ($partida->presupuestoPartida->precio_unitario - $descuento) * $partida->cantidad_asignada;
+
+                $partida_subc = ItemSubcontrato::create([
+                    'id_transaccion' => $subcontrato->id_transaccion,
+                    'id_antecedente' => $partida->id_transaccion,
+                    'id_concepto' => $partida->id_concepto,
+                    'cantidad' => $partida->cantidad_asignada,
+                    'precio_unitario' => $partida->presupuestoPartida->precio_unitario - $descuento,
+                    'descuento' => $partida->presupuestoPartida->porcentajeDescuento,
+                    'cantidad_original1' => $partida->cantidad_asignada,
+                    'precio_original1' => $partida->presupuestoPartida->precio_unitario - $descuento,
+                    'id_asignacion' => $partida->id_asignacion,
+                ]);
+
+                $subtotal = $importe;
+                $impuesto = $subtotal  * 0.16;
+                $monto = $subtotal + $impuesto;
+
+                $subcontrato->monto = $subcontrato->monto + $monto;
+                $subcontrato->saldo = $subcontrato->saldo + $monto;
+                $subcontrato->impuesto = $subcontrato->impuesto + $impuesto;
+                $subcontrato->save();
+                
             }
-            dd('Pando',$partidas);
-            dd('stop');
+            $asignacion->estado = 2;
+            $asignacion->save();
             DB::connection('cadeco')->commit();
             return $asignacion;
         }catch(Exception $e){

@@ -100,6 +100,7 @@ class Transaccion extends Model
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
             $antecedente = Transaccion::query()->withoutGlobalScope('tipo')->find($this->id_antecedente);
+            // dd($antecedente, $this::TIPO_ANTECEDENTE, $this::OPCION_ANTECEDENTE);
             if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opciones != $this::OPCION_ANTECEDENTE)
             {
                 return false;

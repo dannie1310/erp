@@ -1,7 +1,8 @@
 <template>
     <span>
         <button @click="init"  class="btn btn-app pull-right" v-if="$root.can('registrar_orden_compra')">
-            <i class="fa fa-plus"></i> Generar
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i> Generar
         </button>
          <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -23,7 +24,7 @@
                                             option-value="id"
                                             :custom-text="idAndDescripcion"
                                             :list="asignaciones"
-                                            :placeholder="!cargando?'Seleccionar o buscar por folio, concepto u observaciones de solicitud':'Cargando...'"
+                                            :placeholder="!cargando?'Seleccionar o buscar por folio, observaciones de contrato proyectado':'Cargando...'"
                                             :isError="errors.has(`asignacion`)">
                                     </model-list-select>
                                     <input v-else-if="cargando" value="Cargando..." type="text" class="form-control" readonly="readonly">
@@ -74,10 +75,11 @@ import {ModelListSelect} from 'vue-search-select';
                     }
                 }).then(data => {
                     this.asignaciones = data.data;
-                    this.cargando= false;
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
-                })
+                }).finally(()=>{
+                    this.cargando= false;
+                });
             },
             idAndDescripcion (item) {
                 return `Asignación: [${item.numero_folio_asignacion}] Contrato: [${item.contrato.numero_folio_format}] - [${item.contrato.referencia}]`
