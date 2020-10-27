@@ -309,14 +309,16 @@ export default {
         },
         validarVolumenItems(){
             let self = this;
+            let resp = false;
             Object.values(this.data.presupuestos).forEach(presupuesto =>{
                 presupuesto.partidas.forEach(function (partida, i){
                     if(partida.cantidad_asignada > 0){
-                        return true;
+                        console.log(partida.cantidad_asignada);
+                        resp = true;
                     }
                 })                   
             });
-            return false;
+            return resp;
         },
     },
     watch:{
