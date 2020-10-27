@@ -1,6 +1,7 @@
 <template>
     <!-- Sidebar Menu -->
     <span>
+        <MenuAcarreos />
         <MenuCompras></MenuCompras>
         <MenuAlmacen></MenuAlmacen>
         <MenuContratos></MenuContratos>
@@ -20,9 +21,10 @@ import MenuContabilidad from '../contabilidad/partials/Menu';
 import MenuAlmacen from '../almacenes/partials/Menu';
 import MenuCatalogos from '../catalogos/partials/Menu';
 import MenuFormatos from '../formato/partials/Menu';
+import MenuAcarreos from '../acarreos/partials/Menu';
     export default {
         name: "sao-menu",
-        components:{MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos},
+        components:{MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos},
         computed: {
 
             catalogo(){

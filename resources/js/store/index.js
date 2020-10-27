@@ -2,6 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import auth from './modules/auth';
 
+//ACARREOS
+import tiro from './modules/acarreos/tiro';
+
 //ALMACENES
 import ajusteInventario from './modules/almacenes/ajuste-inventario';
 import ajusteNegativo from './modules/almacenes/ajuste-negativo';
@@ -181,6 +184,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
+        'acarreos/tiro' : tiro,
+
         'almacenes/conteo' : conteo,
         'almacenes/ctg-tipo-conteo' : tipoConteo,
         'almacenes/ajuste-inventario' : ajusteInventario,

@@ -2039,7 +2039,53 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path: 'acarreos',
+                component: require('./components/acarreos/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'acarreos',
+                        component: require('./components/acarreos/Index').default,
+                        meta: {
+                            title: 'Acarreos',
+                            breadcrumb: {parent:'home', name: 'ACARREOS'},
+                            middleware: [auth, context, access]
+                        }
+                    },
+                    {
+                        path: 'catalogo',
+                        component: require('./components/acarreos/catalogos/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'catalogo',
+                                component: require('./components/acarreos/catalogos/Index').default,
+                                meta: {
+                                    title: 'Catálogos',
+                                    breadcrumb: {parent: 'acarreos', name: 'CATÁLOGOS'},
+                                    middleware: [auth, context],
 
+                                }
+                            },
+                            {
+                                path: 'tiro',
+                                name: 'tiro',
+                                component: require('./components/acarreos/catalogos/tiro/Index').default,
+                                meta: {
+                                    title: 'Tiro',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'TIRO'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_tiro']
+                                }
+                            },
+                        ]
+                    },
+                ]
+            },
         ],
     },
     {
