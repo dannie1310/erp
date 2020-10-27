@@ -172,7 +172,7 @@ export default {
         },
         cargarVolumenes(){
             let self = this;
-            self.data.items.forEach(function (item, i){
+            Object.values(self.data.items).forEach((item, i)=>{
                 if(item.cantidad_disponible > 0){
                     self.data.presupuestos[self.id_transaccion].partidas[i]? self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
                     self.data.presupuestos[self.id_transaccion].partidas[i]?item.cantidad_disponible = parseFloat(0).toFixed(4):'';
@@ -181,7 +181,7 @@ export default {
         },
         borrarVolumenes(){
             let self = this;
-            self.data.items.forEach(function (item, i){
+            Object.values(self.data.items).forEach((item, i)=>{
                 if(self.data.presupuestos[self.id_transaccion].partidas[i]){
                     if(self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada > 0){
                         self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada = '';
