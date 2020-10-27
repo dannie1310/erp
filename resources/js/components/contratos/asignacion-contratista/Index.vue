@@ -132,6 +132,7 @@ export default {
                         referencia: asignacion.contrato ? asignacion.contrato.referencia : '',
                         buttons: $.extend({}, {
                             id: asignacion.id,
+                            eliminar: (self.$root.can('eliminar_asignacion_contratista') && asignacion.estado == 1) ? true: false
                         })
 
                     }));

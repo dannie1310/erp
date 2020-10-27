@@ -23,7 +23,8 @@ class AsignacionContratistaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'contrato',
-        'asignacionEstimacion'
+        'asignacionEstimacion',
+        'partidas'
     ];
 
     /**
@@ -40,6 +41,7 @@ class AsignacionContratistaTransformer extends TransformerAbstract
             'numero_folio' => $model->numero_folio_format,
             'fecha_format' => $model->fecha_registro_format,
             'usuario' => $model->Usuario_registro_nombre,
+            'estado' => $model->estado
         ];
     }
 
@@ -69,4 +71,16 @@ class AsignacionContratistaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(AsignacionContratista $model)
+    {
+        if($partidas = $model->partidas)
+        {
+            return $this->collection($partidas, new AsignacionContratistaPartidaTransformer);
+        }
+        return null;
+    }
 }
