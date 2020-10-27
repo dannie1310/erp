@@ -404,6 +404,21 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * ACARREOS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'acarreos'], function ($api) {
+        //TIRO
+        $api->group(['prefix' => 'tiro'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/asignar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@asignarConcepto')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@store');
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@desactivar')->where(['id' => '[0-9]+']);
+        });
+    });
+
+    /**
      * ALMACENES
      */
     $api->group(['middleware' => 'api', 'prefix' => 'almacenes'], function ($api) {
@@ -1175,8 +1190,7 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /*SCI*/
-
+    /**SCI*/
     $api->group(['middleware'=>'api', 'prefix'=> 'SCI'], function ($api){
 
         $api->group(['prefix' => 'marca'], function ($api) {
