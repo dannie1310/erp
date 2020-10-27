@@ -8,7 +8,7 @@
 
             <li class="nav-item" v-if="catalogos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-layer-group"></i>
+                    <i class="nav-icon fa fa fa-circle nav-icon"></i>
                     <p>
                         Catálogos
                         <i class="right fa fa-angle-left"></i>
@@ -17,8 +17,8 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_tiro')">
                         <router-link :to="{name: 'tiro'}" class="nav-link" :class="{active: this.$route.name == 'tiro'}">
-                            <i class="fa fa-circle nav-icon"></i>
-                            <p>Tiro</p>
+                            <i class="fa fa-layer-group"></i>
+                            <p> Tiros</p>
                         </router-link>
                     </li>
                 </ul>
