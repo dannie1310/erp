@@ -1024,6 +1024,21 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * PRESUPUESTO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'presupuesto'], function ($api) {
+        //CONCEPTO
+        $api->group(['prefix' => 'concepto'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@show')->where(['id' => '[0-9]+']);
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@list');
+            $api->get('{nivel_padre}', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@list');
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@desactivar')->where(['id' => '[0-9]+']);
+        });
+    });
+
+    /**
      * PERSONALIZADO
      */
     $api->group(['middleware' => 'api', 'prefix' => 'seguridad'], function($api){

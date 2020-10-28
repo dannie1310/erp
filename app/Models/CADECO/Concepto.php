@@ -9,8 +9,9 @@
 namespace App\Models\CADECO;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaConcepto;
+use App\Scopes\ActivoScope;
+use App\Scopes\ObraScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Concepto extends Model
@@ -24,10 +25,8 @@ class Concepto extends Model
     protected static function boot()
     {
         parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra())->where('activo','=',1);
-        });
+        static::addGlobalScope(new ActivoScope);
+        static::addGlobalScope(new ObraScope);
     }
 
 
