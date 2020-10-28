@@ -2073,10 +2073,10 @@ export const routes = [
                                 name: 'tiro',
                                 component: require('./components/acarreos/catalogos/tiro/Index').default,
                                 meta: {
-                                    title: 'Tiro',
+                                    title: 'Tiros',
                                     breadcrumb: {
                                         parent: 'catalogo',
-                                        name: 'TIRO'
+                                        name: 'TIROS'
                                     },
                                     middleware: [auth, context, permission],
                                     permission: ['consultar_tiro']
