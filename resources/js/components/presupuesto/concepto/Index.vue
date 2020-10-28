@@ -14,7 +14,7 @@
                         <div class="col-md-12">
                             <div class="table-responsive">
 
-                                <table class="table">
+                                <table class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th class="index_corto"></th>
@@ -28,12 +28,22 @@
                                     </thead>
                                     <tbody>
                                     <template v-for="(concepto, i) in conceptos" >
-                                        <tr >
+                                        <tr v-if="concepto.visible==1">
                                             <td>
-
-                                                <small class="label bg-secondary" style="padding: 3px 2px 3px 5px">
-                                                    <i class="fa fa-plus"></i>
-                                                </small>
+                                                <span v-if="concepto.tiene_hijos">
+                                                    <button @click="cargaHijos(concepto.id)" :disabled="cargando_hijos" v-if="concepto.expandido == 0 && concepto.hijos_cargados == 0" type="button" class="btn btn-sm-sp btn-secondary">
+                                                        <i class="fa fa-spin fa-spinner" v-if="cargando_hijos"></i>
+                                                        <i class="fa fa-plus" v-else></i>
+                                                    </button>
+                                                    <button @click="muestraHijos(concepto)" :disabled="cargando_hijos" v-else-if="concepto.expandido == 0 && concepto.hijos_cargados == 1" type="button" class="btn btn-sm-sp btn-outline-secondary">
+                                                        <i class="fa fa-spin fa-spinner" v-if="cargando_hijos"></i>
+                                                        <i class="fa fa-plus" v-else></i>
+                                                    </button>
+                                                    <button @click="ocultaHijos(concepto)" :disabled="cargando_hijos" v-else type="button" class="btn btn-sm-sp btn-outline-secondary">
+                                                        <i class="fa fa-spin fa-spinner" v-if="cargando_hijos"></i>
+                                                        <i class="fa fa-minus" v-else></i>
+                                                    </button>
+                                                </span>
                                             </td>
                                             <td>
                                                 <small class="label bg-success" v-if="concepto.activo == 1" style="padding: 3px 2px 3px 5px">
@@ -60,8 +70,8 @@
                                                 </div>
 
                                             </td>
-                                            <td>{{concepto.descripcion}}</td>
-                                            <td>{{concepto.cantidad_presupuestada}}</td>
+                                            <td>{{concepto.anidacion}}{{concepto.descripcion}}</td>
+                                            <td style="text-align: right">{{concepto.cantidad_presupuestada}}</td>
                                             <td>{{concepto.unidad}}</td>
                                             <td></td>
                                         </tr>
@@ -87,6 +97,7 @@ export default {
         return{
             conceptos_listados:[],
             cargando: false,
+            cargando_hijos: false,
         }
     },
     mounted() {
@@ -95,12 +106,44 @@ export default {
     methods: {
         find() {
             this.cargando = true;
-            return this.$store.dispatch('presupuesto/concepto/list', {
-                nivel_padre: '',
+            return this.$store.dispatch('presupuesto/concepto/getHijos', {
+                id_padre: '0',
                 params: {include: []}
             }).then(data => {
             }).finally(()=> {
                 this.cargando = false;
+            })
+        },
+        cargaHijos(id) {
+            this.cargando_hijos = true;
+            return this.$store.dispatch('presupuesto/concepto/getHijos', {
+                id_padre: id,
+                params: {include: []}
+            }).then(data => {
+            }).finally(()=> {
+                this.cargando_hijos = false;
+            })
+        },
+        ocultaHijos(concepto) {
+            this.cargando_hijos = true;
+            return this.$store.dispatch('presupuesto/concepto/ocultaHijos', {
+                id_padre: concepto.id,
+                nivel: concepto.nivel,
+                params: {include: []}
+            }).then(data => {
+            }).finally(()=> {
+                this.cargando_hijos = false;
+            })
+        },
+        muestraHijos(concepto) {
+            this.cargando_hijos = true;
+            return this.$store.dispatch('presupuesto/concepto/muestraHijos', {
+                id_padre: concepto.id,
+                nivel: concepto.nivel,
+                params: {include: []}
+            }).then(data => {
+            }).finally(()=> {
+                this.cargando_hijos = false;
             })
         },
     },
@@ -113,5 +156,16 @@ export default {
 </script>
 
 <style scoped>
+.btn-sm-sp, .btn-group-sm > .btn {
+    padding: 2px 2px 2px 5px;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
+.table th, .table td {
+    padding: 2px 2px 2px 2px;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
 
 </style>

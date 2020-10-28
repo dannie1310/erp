@@ -24,7 +24,7 @@ class ConceptoTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'clave_concepto' => $model->clave_concepto,
             'descripcion' => $model->descripcion,
-            'tiene_hijos' => $model->tieneHijos,
+            'tiene_hijos' => $model->conHijos,
             'nivel' => $model->nivel,
             'unidad' => $model->unidad,
             'cantidad_presupuestada' => $model->cantidad_presupuestada,
@@ -32,7 +32,11 @@ class ConceptoTransformer extends TransformerAbstract
             'precio_unitario' => $model->precio_unitario,
             'id_padre' => $model->id_padre,
             'activo' => $model->activo,
-            'path' => $model->path
+            'path' => $model->path,
+            'expandido' => 0,
+            'hijos_cargados' => 0,
+            'visible' => 1,
+            'anidacion' => $model->anidacion
         ];
     }
 

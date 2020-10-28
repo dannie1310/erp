@@ -46,8 +46,8 @@ class ConceptoController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function list($nivel_padre=''){
-        $conceptos= $this->service->list($nivel_padre);
+    public function list($id_padre=''){
+        $conceptos= $this->service->list($id_padre);
         return $this->respondWithCollection($conceptos);
     }
 }

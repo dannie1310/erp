@@ -17,21 +17,78 @@ export default {
         SET_CONCEPTO(state, data) {
             state.currentConcepto = data;
         },
+        AGREGA_CONCEPTOS(state, data) {
+            state.conceptos = state.conceptos.concat(data);
+            state.conceptos.sort(function (a, b) {
+                if (a.nivel > b.nivel) {
+                    return 1;
+                }
+                if (a.nivel < b.nivel) {
+                    return -1;
+                }
+                return 0;
+            });
+        },
+        UPDATE_CONCEPTO(state, data) {
+            state.conceptos = state.conceptos.map(concepto => {
+                if (concepto.id === data.id) {
+                    return Object.assign( concepto, data)
+                }
+                return concepto
+            })
+        },
+        OCULTA_CONCEPTOS(state, nivel) {
+            state.conceptos = state.conceptos.map(concepto => {
+                var nivel_recortado;
+                nivel_recortado = concepto.nivel.substring(0,nivel.length);
+                if (nivel_recortado === nivel && concepto.nivel != nivel) {
+                    return Object.assign( concepto, {visible:0})
+                }
+                return concepto
+            })
+
+        },
+        MUESTRA_CONCEPTOS(state, nivel) {
+            state.conceptos = state.conceptos.map(concepto => {
+                var nivel_recortado;
+                nivel_recortado = concepto.nivel.substring(0,nivel.length);
+                if (nivel_recortado === nivel && concepto.nivel != nivel) {
+                    return Object.assign( concepto, {visible:1})
+                }
+                return concepto
+            })
+
+        },
     },
 
     actions: {
-        list(context, payload) {
+        getHijos(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.nivel_padre, { params: payload.params })
+                    .get(URI + payload.id_padre+'/hijos', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
-                        context.commit("SET_CONCEPTOS", data.data);
+                        context.commit("UPDATE_CONCEPTO", {expandido:1,hijos_cargados:1,id:payload.id_padre});
+                        context.commit("AGREGA_CONCEPTOS", data.data);
                         resolve(data);
                     })
                     .catch(error => {
                         reject(error)
                     });
+            });
+        },
+        ocultaHijos(context, payload) {
+            return new Promise((resolve, reject) => {
+                context.commit("UPDATE_CONCEPTO", {expandido:0,id:payload.id_padre});
+                context.commit("OCULTA_CONCEPTOS", payload.nivel);
+                resolve();
+            });
+        },
+        muestraHijos(context, payload) {
+            return new Promise((resolve, reject) => {
+                context.commit("UPDATE_CONCEPTO", {expandido:1,id:payload.id_padre});
+                context.commit("MUESTRA_CONCEPTOS", payload.nivel);
+                resolve();
             });
         },
     },

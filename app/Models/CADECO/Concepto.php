@@ -87,6 +87,22 @@ class Concepto extends Model
         return $this->hijos()->count() ? true : false;
     }
 
+    public function getConHijosAttribute()
+    {
+        return $this->hijosCompletos()->count() ? true : false;
+    }
+
+    public function getAnidacionAttribute()
+    {
+        $anidacion = "";
+        $longitud = (strlen($this->nivel)/4);
+        for($i=0; $i<$longitud; $i++)
+        {
+            $anidacion .= "___";
+        }
+        return $anidacion;
+    }
+
     public function scopeRoots($query)
     {
         return $query->whereRaw('LEN(nivel) = 4');
@@ -128,6 +144,14 @@ class Concepto extends Model
             ->whereNull('id_material')
             ->orderBy('nivel', 'ASC');
     }
+
+    public function hijosCompletos()
+    {
+        return $this->hasMany(self::class, 'id_obra', 'id_obra')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ->orderBy('nivel', 'ASC');
+    }
+
 
     /**
      *  Se muestra la ruta desde 3er nivel (000.000.000.)

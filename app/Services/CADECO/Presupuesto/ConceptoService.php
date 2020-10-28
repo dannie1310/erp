@@ -37,8 +37,8 @@ class ConceptoService
         return $this->repository->paginate($data);
     }
 
-    public function list($nivel_padre)
+    public function list($id_padre)
     {
-        return $this->repository->list($nivel_padre);
+        return $this->repository->list($id_padre);
     }
 }

@@ -22,8 +22,14 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $this->model = $model;
     }
 
-    public function list($nivel_padre)
+    public function list($id_padre)
     {
+        if($id_padre>0){
+            $concepto = Concepto::find($id_padre);
+            $nivel_padre = $concepto->nivel;
+        } else{
+            $nivel_padre = '';
+        }
         return $this->model->withoutGlobalScope(ActivoScope::class)
             ->whereRaw("substring(conceptos.nivel,1,len(conceptos.nivel)-4) = ?", [$nivel_padre])
             ->whereRaw("(len(conceptos.nivel)-4) >= 0", [])
