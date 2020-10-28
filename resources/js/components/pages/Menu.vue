@@ -1,9 +1,9 @@
 <template>
     <!-- Sidebar Menu -->
     <span>
-        <MenuAcarreos />
         <MenuCompras></MenuCompras>
         <MenuAlmacen></MenuAlmacen>
+        <MenuAcarreos />
         <MenuContratos></MenuContratos>
         <MenuFinanzas></MenuFinanzas>
         <MenuContabilidad></MenuContabilidad>
