@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> DESACTIVAR TIRO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-close"></i> DESACTIVAR TIRO</h5>
                         <button type="button" class="close" @click="salir" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
