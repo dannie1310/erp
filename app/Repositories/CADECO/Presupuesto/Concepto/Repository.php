@@ -44,4 +44,12 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $item->update(["clave_concepto"=>$dato["clave"]]);
         }
     }
+
+    public function toggleActivo($id)
+    {
+        $item = Concepto::withoutGlobalScope(ActivoScope::class)->find($id);
+        $activo = ($item->activo==0)?1:0;
+        $item->update(["activo"=>$activo]);
+        return $item;
+    }
 }

@@ -99,6 +99,27 @@ export default {
                 });
             });
         },
+        toggleActivo(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI +payload.id+ '/toggle-activo', payload.data)
+                    .then(r => r.data)
+                    .then(data => {
+                        swal("Concepto actualizado correctamente", {
+                            icon: "success",
+                            timer: 1500,
+                            buttons: false
+                        })
+                            .then(() => {
+                                context.commit("UPDATE_CONCEPTO", data);
+                                resolve(data);
+                            })
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         getHijos(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

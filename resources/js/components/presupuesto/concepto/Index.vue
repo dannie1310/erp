@@ -46,12 +46,12 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <small class="label bg-success" v-if="concepto.activo == 1" style="padding: 3px 2px 3px 5px">
-                                                        <i class="fa fa-check"></i>
-                                                    </small>
-                                                    <small class="label bg-danger" v-else-if="concepto.activo == 0" style="padding: 2px 2px 2px 5px">
-                                                        <i class="fa fa-times"></i>
-                                                    </small>
+                                                    <button @click="toggleActivo(concepto.id)" :disabled="cargando_hijos" v-if="concepto.activo == 1" type="button" class="btn btn-sm-sp btn-success">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                    <button @click="toggleActivo(concepto.id)" :disabled="cargando_hijos" v-else type="button" class="btn btn-sm-sp btn-danger">
+                                                        <i class="fa fa-eye-slash"></i>
+                                                    </button>
                                                 </td>
                                                 <td>
                                                     <input type="hidden" :value="concepto.id" :name="`id_concepto[${i}]`" >
@@ -123,6 +123,16 @@ export default {
             this.cargando_hijos = true;
             return this.$store.dispatch('presupuesto/concepto/getHijos', {
                 id_padre: id,
+                params: {include: []}
+            }).then(data => {
+            }).finally(()=> {
+                this.cargando_hijos = false;
+            })
+        },
+        toggleActivo(id) {
+            this.cargando_hijos = true;
+            return this.$store.dispatch('presupuesto/concepto/toggleActivo', {
+                id: id,
                 params: {include: []}
             }).then(data => {
             }).finally(()=> {
