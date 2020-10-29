@@ -20,6 +20,11 @@ class Concepto extends Model
     protected $table = 'dbo.conceptos';
     protected $primaryKey = 'id_concepto';
 
+    public $fillable = [
+        'activo',
+        'clave_concepto',
+    ];
+
     public $timestamps = false;
 
     protected static function boot()

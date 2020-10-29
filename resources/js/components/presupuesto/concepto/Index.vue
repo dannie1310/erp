@@ -13,71 +13,76 @@
                     <div class="row" v-if="conceptos.length>0" >
                         <div class="col-md-12">
                             <div class="table-responsive">
-
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th class="index_corto"></th>
-                                            <th class="index_corto"></th>
-                                            <th class="th_c200" >Clave Concepto</th>
-                                            <th >Descripción</th>
-                                            <th >Cantidad</th>
-                                            <th >Unidad</th>
-                                            <th >Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <template v-for="(concepto, i) in conceptos" >
-                                        <tr v-if="concepto.visible==1">
-                                            <td>
-                                                <span v-if="concepto.tiene_hijos">
-                                                    <button @click="cargaHijos(concepto.id)" :disabled="cargando_hijos" v-if="concepto.expandido == 0 && concepto.hijos_cargados == 0" type="button" class="btn btn-sm-sp btn-secondary">
-                                                        <i class="fa fa-spin fa-spinner" v-if="cargando_hijos"></i>
-                                                        <i class="fa fa-plus" v-else></i>
-                                                    </button>
-                                                    <button @click="muestraHijos(concepto)" :disabled="cargando_hijos" v-else-if="concepto.expandido == 0 && concepto.hijos_cargados == 1" type="button" class="btn btn-sm-sp btn-outline-secondary">
-                                                        <i class="fa fa-spin fa-spinner" v-if="cargando_hijos"></i>
-                                                        <i class="fa fa-plus" v-else></i>
-                                                    </button>
-                                                    <button @click="ocultaHijos(concepto)" :disabled="cargando_hijos" v-else type="button" class="btn btn-sm-sp btn-outline-secondary">
-                                                        <i class="fa fa-spin fa-spinner" v-if="cargando_hijos"></i>
-                                                        <i class="fa fa-minus" v-else></i>
-                                                    </button>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <small class="label bg-success" v-if="concepto.activo == 1" style="padding: 3px 2px 3px 5px">
-                                                    <i class="fa fa-check"></i>
-                                                </small>
-                                                <small class="label bg-danger" v-else-if="concepto.activo == 0" style="padding: 2px 2px 2px 5px">
-                                                    <i class="fa fa-times"></i>
-                                                </small>
-                                            </td>
-                                            <td>
-                                                <div class="form-group error-content">
+                                 <form role="form" @submit.prevent="store">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="index_corto"></th>
+                                                <th class="index_corto"></th>
+                                                <th class="th_c200" >Clave Concepto</th>
+                                                <th >Descripción</th>
+                                                <th >Cantidad</th>
+                                                <th >Unidad</th>
+                                                <th >Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <template v-for="(concepto, i) in conceptos" >
+                                            <tr v-if="concepto.visible==1">
+                                                <td>
+                                                    <span v-if="concepto.tiene_hijos">
+                                                        <button @click="cargaHijos(concepto.id)" :disabled="cargando_hijos" v-if="concepto.expandido == 0 && concepto.hijos_cargados == 0" type="button" class="btn btn-sm-sp btn-secondary">
+                                                            <i class="fa fa-spin fa-spinner" v-if="cargando_hijos"></i>
+                                                            <i class="fa fa-plus" v-else></i>
+                                                        </button>
+                                                        <button @click="muestraHijos(concepto)" :disabled="cargando_hijos" v-else-if="concepto.expandido == 0 && concepto.hijos_cargados == 1" type="button" class="btn btn-sm-sp btn-outline-secondary">
+                                                            <i class="fa fa-spin fa-spinner" v-if="cargando_hijos"></i>
+                                                            <i class="fa fa-plus" v-else></i>
+                                                        </button>
+                                                        <button @click="ocultaHijos(concepto)" :disabled="cargando_hijos" v-else type="button" class="btn btn-sm-sp btn-outline-secondary">
+                                                            <i class="fa fa-spin fa-spinner" v-if="cargando_hijos"></i>
+                                                            <i class="fa fa-minus" v-else></i>
+                                                        </button>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <small class="label bg-success" v-if="concepto.activo == 1" style="padding: 3px 2px 3px 5px">
+                                                        <i class="fa fa-check"></i>
+                                                    </small>
+                                                    <small class="label bg-danger" v-else-if="concepto.activo == 0" style="padding: 2px 2px 2px 5px">
+                                                        <i class="fa fa-times"></i>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <input type="hidden" :value="concepto.id" :name="`id_concepto[${i}]`" >
                                                     <input
+                                                        :value="concepto.clave_concepto"
                                                         maxlength="140"
                                                         type="text"
                                                         data-vv-as="Clave de Concepto"
-                                                        v-validate="{required:true}"
                                                         class="form-control"
                                                         :name="`clave_concepto[${i}]`"
                                                         placeholder="Clave de Concepto"
-                                                        v-model="concepto.clave_concepto"
                                                         :class="{'is-invalid': errors.has(`clave_concepto[${i}]`)}"
-                                                        >
-                                                    <div class="invalid-feedback" v-show="errors.has(`clave_concepto[${i}]`)">{{ errors.first(`clave_concepto[${i}]`) }}</div>
-                                                </div>
-
-                                            </td>
-                                            <td>{{concepto.anidacion}}{{concepto.descripcion}}</td>
-                                            <td style="text-align: right">{{concepto.cantidad_presupuestada}}</td>
-                                            <td>{{concepto.unidad}}</td>
-                                            <td></td>
-                                        </tr>
-                                    </template>
-                                    </tbody>
-                                </table>
+                                                    >
+                                                </td>
+                                                <td>{{concepto.anidacion}}{{concepto.descripcion}}</td>
+                                                <td style="text-align: right">{{concepto.cantidad_presupuestada}}</td>
+                                                <td>{{concepto.unidad}}</td>
+                                                <td></td>
+                                            </tr>
+                                        </template>
+                                        </tbody>
+                                    </table>
+                                    <button type="submit" class="btn btn-secondary pull-right" >
+                                        <span v-if="cargando">
+                                            <i class="fa fa-spin fa-spinner"></i>
+                                        </span>
+                                        <span v-else>
+                                            <i class="fa fa-save"></i>Actualizar
+                                        </span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -95,7 +100,7 @@ export default {
     name: "index-concepto",
     data(){
         return{
-            conceptos_listados:[],
+            datos_store : {},
             cargando: false,
             cargando_hijos: false,
         }
@@ -145,6 +150,22 @@ export default {
             }).finally(()=> {
                 this.cargando_hijos = false;
             })
+        },
+        store() {
+            this.datos_store = [];
+            var elements = document.getElementsByTagName("input");
+            for (var i = 0; i < elements.length; i++) {
+                if(elements[i].name.indexOf("id_concepto",0) >=0 ) {
+                    var element = {id: elements[i].value, clave:elements[i+1].value};
+                    this.datos_store.push(element);
+                }
+            }
+            return this.$store.dispatch('presupuesto/concepto/actualizaClaves', {
+                data: this.datos_store
+            })
+            .then((data) => {
+            }).finally(()=> {
+            });
         },
     },
     computed: {

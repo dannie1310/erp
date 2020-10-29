@@ -50,4 +50,10 @@ class ConceptoController extends Controller
         $conceptos= $this->service->list($id_padre);
         return $this->respondWithCollection($conceptos);
     }
+
+    public function actualizarClaves(Request $request)
+    {
+        $item = $this->service->actualizarClaves($request->all());
+        return $this->respondWithItem($item);
+    }
 }

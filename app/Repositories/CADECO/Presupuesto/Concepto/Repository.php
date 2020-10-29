@@ -36,4 +36,12 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             ->orderBy("nivel")
             ->get();
     }
+
+    public function actualizarClaves($datos)
+    {
+        foreach ($datos as $dato){
+            $item = $this->show($dato["id"]);
+            $item->update(["clave_concepto"=>$dato["clave"]]);
+        }
+    }
 }

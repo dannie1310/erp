@@ -41,4 +41,9 @@ class ConceptoService
     {
         return $this->repository->list($id_padre);
     }
+
+    public function actualizarClaves($data)
+    {
+        return $this->repository->actualizarClaves($data);
+    }
 }
