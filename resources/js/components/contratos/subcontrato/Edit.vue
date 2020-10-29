@@ -55,53 +55,6 @@
                                 <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                             </div>
                         </div>
-                        <!-- <div class="table-responsive col-md-12">
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <td class="bg-gray-light" align="center" colspan="12"><b>{{subcontratos.empresa}}</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bg-gray-light"><b>Referencia:</b></td>
-                                        <td class="bg-gray-light" colspan="9">
-                                            <input
-                                                    style="text-transform:uppercase;"
-                                                    type="text"
-                                                    name="referencia"
-                                                    data-vv-as="Referencia"
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
-                                                    id="referencia"
-                                                    placeholder="Referencia"
-                                                    v-model="subcontratos.referencia"
-                                                    :class="{'is-invalid': errors.has('referencia')}">
-                                            <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
-                                        </td>
-                                        <td class="bg-gray-light"><b>Fecha:</b></td>
-                                        <td class="bg-gray-light">
-                                            <datepicker v-model = "subcontratos.fecha"
-                                                        name = "fecha"
-                                                        :format = "formatoFecha"
-                                                        :language = "es"
-                                                        :bootstrap-styling = "true"
-                                                        class = "form-control"
-                                                        v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('fecha')}"
-                                            ></datepicker>
-                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bg-gray-light"><b>Tipo de Gasto:</b></td>
-                                        <td class="bg-gray-light">{{subcontratos.costo}}</td>
-                                        <td class="bg-gray-light"><b>Tipo de Contrato:</b></td>
-                                        <td class="bg-gray-light">{{subcontratos.tipo_subcontrato}}</td>
-                                        <td class="bg-gray-light"><b>Personalidad Contratista:</b></td>
-                                        <td class="bg-gray-light">{{subcontratos.personalidad_contratista}}</td>
-                                    </tr> 
-                                </tbody>
-                            </table>
-                        </div> -->
                     </div>
                     <hr>
                     <div class="row">
@@ -160,8 +113,8 @@
                                 step="any"
                                 name="iva"
                                 v-model="subcontratos.impuesto"
-                                v-validate="{required: true}"
-                                class="col-sm-6 form-control"
+                                v-validate="{required: true, min_value:0}"
+                                class="col-sm-8 form-control"
                                 id="iva"
                                 :class="{'is-invalid': errors.has('iva')}">
                         </div>
@@ -174,14 +127,14 @@
                                 step="any"
                                 name="retencion_iva"
                                 v-model="subcontratos.retencion_iva"
-                                v-validate="{required: true}"
-                                class="col-sm-6 form-control"
+                                v-validate="{required: true, min_value:0, max_value:subcontratos.impuesto}"
+                                class="col-sm-8 form-control"
                                 id="retencion_iva"
                                 :class="{'is-invalid': errors.has('retencion_iva')}">
                         </div>
                          <div class=" col-md-12" align="right">
                             <label class="col-sm-2 col-form-label" style="text-align: right">Total:</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.monto_format}}</label>
+                            <label class="col-sm-2 col-form-label" style="text-align: right">{{total}}</label>
                         </div>
                         <div class=" col-md-12" align="right">
                             <label class="col-sm-2 col-form-label" style="text-align: right">Moneda:</label>
@@ -202,7 +155,7 @@
                                 name="retencion_fg"
                                 v-model="subcontratos.retencion_fg"
                                 v-validate="{required: true}"
-                                class="col-sm-6 form-control"
+                                class="col-sm-8 form-control"
                                 id="retencion_fg"
                                 :class="{'is-invalid': errors.has('retencion_fg')}">
                         </div>
@@ -237,70 +190,68 @@
                                             :language = "es"
                                             :bootstrap-styling = "true"
                                             class = "col-sm-10 form-control"
+                                            
                                             v-validate="{required: true}"
+                                            :disabled-dates="fechasDeshabilitadas"
                                             :class="{'is-invalid': errors.has('fecha_fin')}"
                                 ></datepicker>
                                 <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha_fin') }}</div>
                             </div>
                         </div> 
                     </div>
+                    
+                    <div class="row">
+                        <div class=" col-md-2" align="left">
+                            <label class="col-sm-12 col-form-label" style="text-align: right">Tipo de Gasto:</label>
+                        </div>
+                        <div class=" col-md-4" align="left">
+                            <costo-select
+                                    name="id_costo"
+                                    data-vv-as="Costo"
+                                    v-validate="{}"
+                                    id="id_costo"
+                                    v-model="subcontratos.id_costo"
+                                    :error="errors.has('id_costo')"
+                                    ref="costoSelect"
+                            ></costo-select>
+                            <div class="error-label" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
+                        </div>
+                        <div class=" col-md-2" align="left">
+                            <label class="col-sm-12 col-form-label" style="text-align: right">Tipo de Contrato:</label>
+                        </div>
+                        <div class=" col-md-4" align="left" >
+                            <model-list-select 
+                                    :disabled="cargando"
+                                    name="id_tipo_contrato"
+                                    v-model="subcontratos.id_tipo_contrato"
+                                    option-value="id"
+                                    option-text="descripcion"
+                                    :list="tipo_contrato"
+                                     v-validate="{required: true}"
+                                    :placeholder="!cargando?'Seleccionar o buscar por descripcion':'Cargando...'"
+                                    :isError="errors.has(`id_tipo_contrato`)">
+                            </model-list-select>
+                            <div class="invalid-feedback" v-show="errors.has('id_tipo_contrato')">{{ errors.first('id_tipo_contrato') }}</div>
+                        </div>
+                    </div><br>
                     <div class="row">
                         <div class=" col-md-2" align="left">
                             <label class="col-sm-12 col-form-label" style="text-align: right">Descripción:</label>
                         </div>
                         <div class=" col-md-10" align="left">
                             <input
-                                    style="text-transform:uppercase;"
                                     type="text"
-                                    name="referencia"
-                                    data-vv-as="Referencia"
+                                    name="observaciones"
+                                    data-vv-as="Observaciones"
                                     v-validate="{required: true}"
                                     class="form-control"
-                                    id="referencia"
-                                    placeholder="Referencia"
-                                    v-model="subcontratos.referencia"
-                                    :class="{'is-invalid': errors.has('referencia')}">
-                                <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
+                                    id="observaciones"
+                                    placeholder="Observaciones"
+                                    v-model="subcontratos.observaciones"
+                                    :class="{'is-invalid': errors.has('observaciones')}">
+                                <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                         </div>
                     </div> <br>
-                    <div class="row">
-                        <div class=" col-md-2" align="left">
-                            <label class="col-sm-12 col-form-label" style="text-align: right">Tipo de Gasto:</label>
-                        </div>
-                        <div class=" col-md-4" align="left">
-                            <input
-                                    style="text-transform:uppercase;"
-                                    type="text"
-                                    name="referencia"
-                                    data-vv-as="Referencia"
-                                    v-validate="{required: true}"
-                                    class="form-control"
-                                    id="referencia"
-                                    placeholder="Referencia"
-                                    v-model="subcontratos.referencia"
-                                    :class="{'is-invalid': errors.has('referencia')}">
-                                <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
-                        </div>
-                        <div class=" col-md-2" align="left">
-                            <label class="col-sm-12 col-form-label" style="text-align: right">Tipo de Contrato:</label>
-                        </div>
-                        <div class=" col-md-4" align="left">
-                            <input
-                                    style="text-transform:uppercase;"
-                                    type="text"
-                                    name="referencia"
-                                    data-vv-as="Referencia"
-                                    v-validate="{required: true}"
-                                    class="form-control"
-                                    id="referencia"
-                                    placeholder="Referencia"
-                                    v-model="subcontratos.referencia"
-                                    :class="{'is-invalid': errors.has('referencia')}">
-                                <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
-                        </div>
-                    </div>
-                    <!-- <td class="bg-gray-light"><b>Personalidad Contratista:</b></td>
-                    <td class="bg-gray-light">{{subcontratos.personalidad_contratista}}</td> -->
                     <div class="row">
                         <div class=" col-md-2" align="left">
                             <label class="col-sm-12 col-form-label" style="text-align: right">Personalidad Contratista:</label>
@@ -309,13 +260,12 @@
                             <label class="col-form-label" style="text-align: left">{{subcontratos.personalidad_contratista}}</label>
                         </div>
                     </div>
-                
-               
+                    <br><br>
                     <hr>
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="button" class="btn btn-primary float-right" style="margin-left:5px">Guardar</button>
-                            <button type="button" class="btn btn-secondary float-right">Cerrar</button>
+                            <button type="button" class="btn btn-primary float-right" style="margin-left:5px" @click="validate"> Guardar</button>
+                            <button type="button" class="btn btn-secondary float-right" @click=cerrar()>Cerrar</button>
                             
                         </div>
                     </div>
@@ -328,49 +278,128 @@
 <script>
     import datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import CostoSelect from "../../cadeco/costo/Select";
+    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "subcontrato-edit",
-        components: {datepicker},
+        components: {datepicker, CostoSelect, ModelListSelect},
         props: ['id'],
         data() {
             return {
                 es: es,
                 cargando:false,
                 subcontratos: '',
-                tipo_gasto:[],
+                tipo_contrato:[],
+                id_tipo_contrato:'',
             }
         },
         mounted(){
-            this.getTipoGasto();
+            this.getTipoContrato();
             this.find();
+            
         },
         methods: {
             formatoFecha(date){
-                return moment(date).format('DD-MM-YYYY');
+                return moment(date).format('DD/MM/YYYY');
             },
             find() {
                 this.cargando = true;
-                this.$store.commit('contratos/subcontrato/SET_SUBCONTRATO', null);
                 return this.$store.dispatch('contratos/subcontrato/find', {
                     id: this.id,
                     params: {include: ['partidas', 'moneda', 'partidas.contratos', 'subcontratos']}
                 }).then(data => {
-                    this.$store.commit('contratos/subcontrato/SET_SUBCONTRATO', data);
                     this.subcontratos = data;
                 }).finally(()=>{
                     this.cargando = false;
                 });
             },
-            getTipoGasto(){
-                this.tipo_gasto = [];
-                return this.$store.dispatch('cadeco/costo/index', {
+            getTipoContrato(){
+                this.tipo_contrato = [];
+                return this.$store.dispatch('contratos/tipo-contrato/index', {
                         id: this.id,
                         params:{
-                           sort: 'descripcion', order: 'ASC'
+                           sort: 'id_tipo_contrato', order: 'ASC'
                         }
                     }).then(data => {
-                        this.tipo_gasto = data.data;
+                        this.tipo_contrato = data;
                     })
+            },
+            cerrar(){
+                swal({
+                    title: "Cerrar Editar Subcontrato",
+                    text: "¿Está seguro/a de que quiere salir de la edición de subcontrato?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Salir',
+                            closeModal: true,
+                        }
+                    }
+                })
+                .then((value) => {
+                    if (value) {
+                        this.$router.push({name: 'subcontrato'});
+                    }
+                });
+            },
+            updateSubcontrato(){
+                this.cargando = true;
+                let data = {
+                    referencia: this.subcontratos.referencia,
+                    fecha:  this.subcontratos.fecha,
+                    impuesto:  this.subcontratos.impuesto,
+                    retencion_iva:  this.subcontratos.retencion_iva,
+                    monto:  this.monto,
+                    retencion_fg:  this.subcontratos.retencion_fg,
+                    fecha_ini_ejec:  this.subcontratos.subcontratos.fecha_ini_ejec,
+                    fecha_fin_ejec:  this.subcontratos.subcontratos.fecha_fin_ejec,
+                    id_costo: this.subcontratos.id_costo,
+                    id_tipo_contrato:  this.subcontratos.id_tipo_contrato,
+                    observaciones: this.subcontratos.observaciones,
+                };
+                return this.$store.dispatch('contratos/subcontrato/updateContrato',
+                    {
+                        id:this.id,
+                        data: data,
+                    })
+                    .then(data => {
+                        this.$router.push({name: 'subcontrato'});
+                    }).finally(() => {
+                        this.cargando = false;
+                    })
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.updateSubcontrato();
+                    }
+                });
+            },
+        },
+        computed: {
+            fechasDeshabilitadas() {
+                if(this.subcontratos){
+                    return{
+                        to: new Date( this.subcontratos.subcontratos.fecha_ini_ejec)
+                    }; 
+                }
+                return {};
+            },
+            total(){
+                if(this.subcontratos){
+                    return '$ '+parseFloat(this.subcontratos.subtotal + (this.subcontratos.impuesto - this.subcontratos.retencion_iva)).formatMoney(2,'.',','); 
+                }
+                return 0;
+            },
+            monto(){
+                if(this.subcontratos){
+                    return this.subcontratos.subtotal + (this.subcontratos.impuesto - this.subcontratos.retencion_iva); 
+                }
+                return 0;
             },
         }
     }

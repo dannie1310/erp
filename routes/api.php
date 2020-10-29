@@ -827,7 +827,16 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@paginate');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@updateContrato')->where(['id' => '[0-9]+']);
         });
+
+        /**
+         * TIPOS CONTRATOS
+         */
+        $api->group(['prefix' => 'tipo-contrato'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\TipoContratoController@index');
+        });
+
 
         //FONDO DE GARANTÍA
         $api->group(['prefix' => 'fondo-garantia'], function ($api) {

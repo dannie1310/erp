@@ -62,6 +62,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'retencion_iva' => $model->impuesto_retenido,
             'monto'=>(float)$model->monto,
             'costo'=>(string)($model->costo) ? $model->costo->descripcion : '-----',
+            'id_costo'=>$model->id_costo,
             'tipo_subcontrato'=>(string)($model->clasificacionSubcontrato) ? $model->clasificacionSubcontrato->tipo->descripcion : '------',
             'personalidad_contratista'=>(string)$model->empresa->personalidad_definicion,
             'estado' => (int)$model->estado,
@@ -81,7 +82,8 @@ class SubcontratoTransformer extends TransformerAbstract
             'monto_solicitado' => (float) $model->montoPagoAnticipado,
             'monto_facturado_oc' => (float) $model->montoFacturadoSubcontrato,
             'monto_facturado_ea' => (float) $model->montoFacturadoEstimacion,
-            'empresa'=>(string) $model->empresa->razon_social
+            'empresa'=>(string) $model->empresa->razon_social,
+            'id_tipo_contrato' =>($model->clasificacionSubcontrato) ? (int)$model->clasificacionSubcontrato->id_tipo_contrato:'',
         ];
     }
     /**

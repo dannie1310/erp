@@ -1,18 +1,17 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: EMartinez
- * Date: 25/02/2019
+ * User: JLopezA
+ * Date: 28/10/2020
  * Time: 06:58 PM
  */
 
 namespace App\Services\CADECO\Contratos;
 
+use App\Repositories\Repository;
+use App\Models\CADECO\Subcontratos\TipoContrato;
 
-use App\Models\CADECO\Subcontrato;
-use App\Repositories\CADECO\Subcontratos\Subcontrato\Repository;
-
-class SubcontratoService
+class TipoContratoService
 {
     /**
      * @var Repository
@@ -20,10 +19,10 @@ class SubcontratoService
     protected $repository;
 
     /**
-     * SubcontratoService constructor.
-     * @param Subcontrato $model
+     * TipoContratoService constructor.
+     * @param TipoContrato $model
      */
-    public function __construct(Subcontrato $model)
+    public function __construct(TipoContrato $model)
     {
         $this->repository = new Repository($model);
     }
@@ -43,21 +42,8 @@ class SubcontratoService
         return $this->repository->show($id);
     }
 
-    public function store($data)
-    {
-        return $this->repository->create($data);
-    }
-
-    public function ordenado($id)
-    {
-        return $this->show($id)->subcontratoParaEstimar(null);
-    }
-
     public function paginate($data)
     {
         return $this->repository->paginate($data);
-    }
-    public function updateContrato($data, $id){
-        return $this->repository->show($id)->updateContrato($data);
     }
 }

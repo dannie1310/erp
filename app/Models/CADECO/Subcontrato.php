@@ -7,6 +7,8 @@
  */
 
 namespace App\Models\CADECO;
+use DateTime;
+use DateTimeZone;
 use App\Facades\Context;
 use App\Models\CADECO\Subcontratos\ClasificacionSubcontrato;
 use App\Models\CADECO\Subcontratos\Subcontratos;
@@ -491,5 +493,35 @@ class Subcontrato extends Transaccion
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
+    }
+
+    public function updateContrato($data){
+        $fecha =New DateTime($data['fecha']);
+        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $fecha_ini_ejec =New DateTime($data['fecha_ini_ejec']);
+        $fecha_ini_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $fecha_fin_ejec =New DateTime($data['fecha_fin_ejec']);
+        $fecha_fin_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $this->referencia = $data['referencia'];
+        $this->fecha = $data['fecha'];
+        $this->impuesto = $data['impuesto'];
+        $this->impuesto_retenido = $data['retencion_iva'];
+        $this->monto = $data['monto'];
+        $this->saldo = $data['monto'];
+        $this->retencion = $data['retencion_fg'];
+        $this->observaciones = $data['observaciones'];
+        $data['id_costo']?$this->id_costo = $data['id_costo']:'';
+        $this->save();
+
+        $this->subcontratos->fecha_ini_ejec = $fecha_ini_ejec->format("Y-m-d "). date('H:i:s');
+        $this->subcontratos->fecha_fin_ejec = $fecha_fin_ejec->format("Y-m-d "). date('H:i:s');
+        $this->subcontratos->save();
+        
+        $this->clasificacionSubcontrato->id_tipo_contrato = $data['id_tipo_contrato'];
+        $this->clasificacionSubcontrato->actualizarFolio();
+        $this->clasificacionSubcontrato->save();
+
+        return $this;
     }
 }
