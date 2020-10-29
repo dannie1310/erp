@@ -53,8 +53,8 @@ class ConceptoController extends Controller
 
     public function actualizarClaves(Request $request)
     {
-        $item = $this->service->actualizarClaves($request->all());
-        return $this->respondWithItem($item);
+        $items = $this->service->actualizarClaves($request->all());
+        return $this->respondWithCollection($items);
     }
     public function toggleActivo($id)
     {

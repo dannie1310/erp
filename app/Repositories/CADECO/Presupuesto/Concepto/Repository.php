@@ -39,10 +39,13 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function actualizarClaves($datos)
     {
+        $items = [];
         foreach ($datos as $dato){
+            $items[] = $dato["id"];
             $item = $this->show($dato["id"]);
             $item->update(["clave_concepto"=>$dato["clave"]]);
         }
+        return Concepto::withoutGlobalScope(ActivoScope::class)->whereIn("id_concepto",$items)->get();
     }
 
     public function toggleActivo($id)

@@ -89,6 +89,9 @@ export default {
                                 buttons: false
                             })
                                 .then(() => {
+                                    data.data.forEach(function (dato, i) {
+                                        context.commit("UPDATE_CONCEPTO", dato);
+                                    });
                                     resolve(data);
                                 })
                         })

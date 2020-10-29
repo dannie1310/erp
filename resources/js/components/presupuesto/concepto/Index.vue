@@ -23,7 +23,7 @@
                                                 <th >Descripción</th>
                                                 <th >Cantidad</th>
                                                 <th >Unidad</th>
-                                                <th >Acciones</th>
+                                                <th ></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -57,6 +57,7 @@
                                                     <input type="hidden" :value="concepto.id" :name="`id_concepto[${i}]`" >
                                                     <input
                                                         :value="concepto.clave_concepto"
+                                                        @input="actualizaClave($event,concepto.id)"
                                                         maxlength="140"
                                                         type="text"
                                                         data-vv-as="Clave de Concepto"
@@ -160,6 +161,9 @@ export default {
             }).finally(()=> {
                 this.cargando_hijos = false;
             })
+        },
+        actualizaClave(e,id){
+            this.$store.commit('presupuesto/concepto/UPDATE_CONCEPTO', {clave_concepto : e.target.value, id : id})
         },
         store() {
             this.datos_store = [];

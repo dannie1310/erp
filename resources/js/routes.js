@@ -466,7 +466,7 @@ export const routes = [
                 children: [
                     {
                         path: '',
-                        name: 'presupuesto',
+                        name: 'presupuesto-obra',
                         component: require('./components/presupuesto/Index').default,
                         meta: {
                             title: 'Presupuesto',
@@ -484,7 +484,7 @@ export const routes = [
                                 component: require('./components/presupuesto/concepto/Index').default,
                                 meta: {
                                     title: 'Conceptos',
-                                    breadcrumb: {parent: 'presupuesto', name: 'CONCEPTOS'},
+                                    breadcrumb: {parent: 'presupuesto-obra', name: 'CONCEPTOS'},
                                     middleware: [auth, context, permission],
                                     permission: ['consultar_presupuesto']
                                 }
@@ -496,7 +496,7 @@ export const routes = [
                                 component: require('./components/presupuesto/concepto/Edit').default,
                                 meta: {
                                     title: 'Editar Conceptos',
-                                    breadcrumb: { parent: 'presupuesto', name: 'EDITAR'},
+                                    breadcrumb: { parent: 'presupuesto-obra', name: 'EDITAR'},
                                     middleware: [auth, context, permission],
                                     permission: ['editar_clave_concepto']
                                 }
@@ -508,7 +508,7 @@ export const routes = [
                                 props: true,
                                 meta: {
                                     title: 'Consultar Concepto',
-                                    breadcrumb: { parent: 'presupuesto', name: 'VER'},
+                                    breadcrumb: { parent: 'presupuesto-obra', name: 'VER'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_presupuesto'
                                 }
