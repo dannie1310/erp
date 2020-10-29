@@ -28,4 +28,9 @@ class Destino extends Model
     {
         return $this->concepto->path_corta;
     }
+
+    public function getRutaAttribute()
+    {
+        return $this->concepto->path;
+    }
 }
