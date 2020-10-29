@@ -51,15 +51,18 @@
                                                     <tr>
                                                         <th>Descripción</th>
                                                         <th class="unidad">Unidad</th>
-                                                        <th style="width:35%;">Destino</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody v-if="contrato.conceptos">
-                                                    <tr v-for="(partida, i) in contrato.conceptos.data">
+                                                <template v-for="(partida, i) in contrato.conceptos.data">
+                                                    <tr>
                                                         <td style="text-align: left" v-html="partida.descripcion_formato"></td>
                                                         <td style="text-align: center">{{partida.unidad}}</td>
-                                                        <td style="text-align: center">{{(partida.destino) ? partida.destino.descripcion : null}}</td>
                                                     </tr>
+                                                    <tr>
+                                                        <td  colspan="2" style="color: #4f5962">{{partida.destino.path}}</td>
+                                                    </tr>
+                                                </template>
                                                 </tbody>
                                             </table>
                                         </div>
