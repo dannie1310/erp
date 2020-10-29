@@ -114,7 +114,7 @@ export default {
                             buttons: false
                         })
                             .then(() => {
-                                context.commit("UPDATE_CONCEPTO", data);
+                                context.commit("UPDATE_CONCEPTO", {id : data.id, activo : data.activo});
                                 resolve(data);
                             })
                     })
@@ -129,9 +129,7 @@ export default {
                     .get(URI + payload.id_padre+'/hijos', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
-
                         context.commit("SET_CONCEPTOS", data.data);
-
                         resolve(data);
                     })
                     .catch(error => {
