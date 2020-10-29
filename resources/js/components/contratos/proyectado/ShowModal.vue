@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver">
+        <button @click="ver()" type="button" class="btn btn-sm btn-primary" :disabled="cargando" title="Ver">
             <i class="fa fa-eye" v-if="!cargando && !value.numero_folio"></i>
             <i style="width:40px;" v-else-if="!cargando && value.numero_folio">{{value.numero_folio}}</i>
             <i class="fa fa-spinner fa-spin" v-else></i>
@@ -14,63 +14,20 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" v-if="contrato">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="invoice p-3 mb-3">
-                                    <div class="row col-md-12">
-                                        <div class="col-md-6">
-                                            <h5>Folio: &nbsp; <b>{{contrato.numero_folio_format}}</b></h5>
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive col-md-12">
-                                        <table class="table">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="bg-gray-light"><b>Fecha:</b></td>
-                                                    <td class="bg-gray-light"> {{contrato.fecha}} </td>
-                                                    <td class="bg-gray-light"><b>Área Subcontratante:</b></td>
-                                                    <td class="bg-gray-light">{{contrato.area_subcontratante}}</td>
-                                                    <td class="bg-gray-light"><b>Usuario Asignó:</b></td>
-                                                    <td class="bg-gray-light">{{contrato.usuario}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="bg-gray-light" align="center" colspan="6"><h6><b>{{contrato.referencia}}</b></h6></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <h6><b>Detalle de las partidas</b></h6>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="table-responsive col-md-12">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Descripción</th>
-                                                        <th class="unidad">Unidad</th>
-                                                        <th style="width:35%;">Destino</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody v-if="contrato.conceptos">
-                                                    <tr v-for="(partida, i) in contrato.conceptos.data">
-                                                        <td style="text-align: left" v-html="partida.descripcion_formato"></td>
-                                                        <td style="text-align: center">{{partida.unidad}}</td>
-                                                        <td style="text-align: center">{{(partida.destino) ? partida.destino.descripcion : null}}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                    <div class="modal-body" style="height: 800px" ref="body">
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="spinner-border text-success" role="status">
+                                   <span class="sr-only">Cargando...</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fa fa-times-circle"></i>
+                            Cerrar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -88,30 +45,13 @@
             }
         },
         methods: {
-            find() {
-
-                this.cargando = true;
-                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
-                return this.$store.dispatch('contratos/contrato-proyectado/find', {
-                    id: this.value.id,
-                    params:{include: [
-                        'conceptos.destino'
-                    ]}
-                }).then(data => {
-                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
-
-                    $(this.$refs.modal).appendTo('body')
-                    $(this.$refs.modal).modal('show')
-                    this.cargando = false;
-
-                })
+            ver() {
+                var url = '/sao/modal/contrato_proyectado/'+this.value.id;
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%"></iframe>');
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
             }
         },
-        computed: {
-            contrato() {
-                return this.$store.getters['contratos/contrato-proyectado/currentContrato']
-            },
-        }
     }
 </script>
 

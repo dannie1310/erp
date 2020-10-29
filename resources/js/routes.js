@@ -85,6 +85,16 @@ export const routes = [
                 },
             },
             {
+                path: 'modal/contrato_proyectado/:id',
+                name: 'modal_contrato_proyectado',
+                component: require('./components/contratos/proyectado/Show').default,
+                props: true,
+                meta: {
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_contrato_proyectado'
+                },
+            },
+            {
                 path: 'modal/solicitud_compra/:id',
                 name: 'modal_solicitud_compra',
                 component: require('./components/compras/solicitud-compra/Show').default,
@@ -738,6 +748,18 @@ export const routes = [
                                     breadcrumb: {parent: 'proyectado', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_contrato_proyectado'
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'proyectado-show',
+                                component: require('./components/contratos/proyectado/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Contrato Proyectado',
+                                    breadcrumb: { parent: 'proyectado', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_contrato_proyectado'
                                 }
                             },
                             {
