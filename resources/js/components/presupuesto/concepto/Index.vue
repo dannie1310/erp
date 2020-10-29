@@ -112,7 +112,7 @@ export default {
     methods: {
         find() {
             this.cargando = true;
-            return this.$store.dispatch('presupuesto/concepto/getHijos', {
+            return this.$store.dispatch('presupuesto/concepto/getRaiz', {
                 id_padre: '0',
                 params: {include: []}
             }).then(data => {
