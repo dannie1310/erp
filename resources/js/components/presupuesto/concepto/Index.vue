@@ -166,16 +166,8 @@ export default {
             this.$store.commit('presupuesto/concepto/UPDATE_CONCEPTO', {clave_concepto : e.target.value, id : id})
         },
         store() {
-            this.datos_store = [];
-            var elements = document.getElementsByTagName("input");
-            for (var i = 0; i < elements.length; i++) {
-                if(elements[i].name.indexOf("id_concepto",0) >=0 ) {
-                    var element = {id: elements[i].value, clave:elements[i+1].value};
-                    this.datos_store.push(element);
-                }
-            }
             return this.$store.dispatch('presupuesto/concepto/actualizaClaves', {
-                data: this.datos_store
+                data : this.$store.getters['presupuesto/concepto/conceptos']
             })
             .then((data) => {
             }).finally(()=> {

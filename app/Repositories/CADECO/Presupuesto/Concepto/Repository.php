@@ -43,7 +43,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         foreach ($datos as $dato){
             $items[] = $dato["id"];
             $item = $this->show($dato["id"]);
-            $item->update(["clave_concepto"=>$dato["clave"]]);
+            $item->update(["clave_concepto"=>$dato["clave_concepto"]]);
         }
         return Concepto::withoutGlobalScope(ActivoScope::class)->whereIn("id_concepto",$items)->get();
     }

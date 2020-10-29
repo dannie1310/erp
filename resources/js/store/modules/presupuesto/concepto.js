@@ -90,7 +90,7 @@ export default {
                             })
                                 .then(() => {
                                     data.data.forEach(function (dato, i) {
-                                        context.commit("UPDATE_CONCEPTO", dato);
+                                        context.commit("UPDATE_CONCEPTO", {id : dato.id, clave_concepto : dato.clave_concepto});
                                     });
                                     resolve(data);
                                 })
