@@ -123,6 +123,22 @@ export default {
                     })
             });
         },
+        getRaiz(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id_padre+'/hijos', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+
+                        context.commit("SET_CONCEPTOS", data.data);
+
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    });
+            });
+        },
         getHijos(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
