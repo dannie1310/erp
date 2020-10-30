@@ -48,7 +48,7 @@
                                                         <td class="bg-gray-light"><b>Contrato:</b></td>
                                                         <td class="bg-gray-light">{{subcontratos.contrato_folio_format}}</td>
                                                     </tr> -->
-                                                    
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -113,18 +113,18 @@
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Moneda:</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.moneda.nombre}}</i></label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.moneda.nombre}}</label>
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Anticipo({{subcontratos.anticipo_format}}):</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.anticipo_monto_format}}</i></label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.anticipo_monto_format}}</label>
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Fondo de Garantia:</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.retencion}}</i></label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.retencion}}</label>
                                          </div>
                                     </div>
-                                    
+
                                     <hr>
                                     <div class="row col-md-12">
                                         <div class="col-md-2"><b>Plazo de Ejecución:</b></div>
@@ -152,7 +152,7 @@
                                                         <td class="bg-dark" align="left"><b>Descripción:</b></td>
                                                         <td align="left" v-if="subcontratos.subcontratos">{{subcontratos.subcontratos.descripcion}}</td>
                                                         <td align="left" v-else></td>
-                                                    </tr>                                           
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -190,7 +190,7 @@
                 }).then(data => {
                     this.$store.commit('contratos/subcontrato/SET_SUBCONTRATO', data);
                     this.subcontratos = data;
-                    
+
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })

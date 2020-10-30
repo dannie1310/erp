@@ -8,7 +8,11 @@
 
 namespace App\Models\CADECO;
 use App\Facades\Context;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontratoEliminado;
 use App\Models\CADECO\Subcontratos\ClasificacionSubcontrato;
+use App\Models\CADECO\Subcontratos\SubcontratoEliminado;
+use App\Models\CADECO\Subcontratos\SubcontratoPartidaEliminada;
 use App\Models\CADECO\Subcontratos\Subcontratos;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
@@ -149,6 +153,21 @@ class Subcontrato extends Transaccion
     public function partidas_facturadas()
     {
         return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function subcontratoEliminado()
+    {
+        return $this->belongsTo(SubcontratoEliminado::class, 'id_transaccion');
+    }
+
+    public function asignacionSubcontrato()
+    {
+        return $this->belongsTo(AsignacionSubcontrato::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function transaccionesRelacionadas()
+    {
+        return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function getAnticipoFormatAttribute()
@@ -491,5 +510,107 @@ class Subcontrato extends Transaccion
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
+    }
+
+    /**
+     * Eliminar Subcontrato
+     * @param $motivo
+     * @throws \Exception
+     */
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->respaldar($motivo);
+            foreach ($this->partidas()->get() as $partida) {
+                $partida->delete();
+            }
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function respaldar($motivo)
+    {
+        /**
+         * Respaldar partidas
+         */
+        foreach ($this->partidas as $partida) {
+            SubcontratoPartidaEliminada::create([
+                'id_item' => $partida->id_item,
+                'id_transaccion' => $partida->id_transaccion,
+                'id_antecedente' => $partida->id_antecedente,
+                'item_antecedente' => $partida->item_antecedente,
+                'id_concepto' => $partida->id_concepto,
+                'id_material' => $partida->id_material,
+                'unidad' => $partida->unidad,
+                'cantidad' => $partida->cantidad,
+                'cantidad_material' => $partida->cantidad_material,
+                'cantidad_mano_obra' => $partida->cantidad_mano_obra,
+                'importe' => $partida->importe,
+                'saldo' => $partida->saldo,
+                'anticipo' => $partida->anticipo,
+                'descuento' => $partida->descuento,
+                'precio_unitario' => $partida->precio_unitario,
+                'precio_material' => $partida->precio_material,
+                'precio_mano_obra' => $partida->precio_mano_obra,
+            ]);
+        }
+
+        /**
+         * Respaldar subcontrato
+         */
+        SubcontratoEliminado::create([
+            'id_transaccion' => $this->id_transaccion,
+            'id_antecedente' => $this->id_antecedente,
+            'fecha' => $this->fecha,
+            'id_obra' => $this->id_obra,
+            'id_empresa' => $this->id_empresa,
+            'id_moneda' => $this->id_moneda,
+            'anticipo' => $this->anticipo,
+            'anticipo_monto' => $this->anticipo_monto,
+            'anticipo_saldo' => $this->anticipo_saldo,
+            'monto' => $this->monto,
+            'PorcentajeDescuento' => $this->PorcentajeDescuento,
+            'impuesto' => $this->impuesto,
+            'impuesto_retenido' => $this->impuesto_retenido,
+            'id_costo' => $this->id_costo,
+            'retencion' => $this->retencion,
+            'referencia' => $this->referencia,
+            'observaciones' => $this->observaciones,
+            'id_usuario' => $this->id_usuario
+        ]);
+
+        /**
+         * Respaldar Asignación Subcontrato
+         */
+        AsignacionSubcontratoEliminado::create([
+            'id_asignacion' => $this->asignacionSubcontrato->id_asignacion,
+            'id_transaccion' => $this->asignacionSubcontrato->id_transaccion,
+            'motivo_eliminacion' => $motivo,
+        ]);
+    }
+
+    /**
+     * Reglas de negocio que debe cumplir la eliminación
+     */
+    public function validarParaEliminar()
+    {
+        if ($this->estado != 1) {
+            abort(400, "No se puede eliminar este subcontrato porque se encuentra Autorizada.");
+        }
+        $mensaje = "";
+        if($this->transaccionesRelacionadas()->count('id_transaccion') > 0)
+        {
+            foreach ($this->transaccionesRelacionadas()->get() as $antecedente)
+            {
+                $mensaje .= "-".$antecedente->tipo->Descripcion." #".$antecedente->numero_folio."\n";
+            }
+            abort(500, "Este subcontrato tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
+        }
     }
 }

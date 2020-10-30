@@ -22,4 +22,9 @@ class AsignacionSubcontrato extends Model
     public function subcontrato(){
         return $this->belongsTo(Subcontrato::class, 'id_transaccion', 'id_transaccion');
     }
+
+    public function asignacionSubcontratoEliminado()
+    {
+        return $this->belongsTo(AsignacionSubcontratoEliminado::class, 'id_transaccion', 'id_transaccion');
+    }
 }

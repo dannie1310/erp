@@ -135,6 +135,7 @@
                             show: true,
                             id: subcontrato.id,
                             transaccion: {id:subcontrato.id, tipo:51},
+                            eliminar: (self.$root.can('eliminar_subcontrato')) ? true: false
                         })
                     }));
                 },

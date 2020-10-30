@@ -5,6 +5,9 @@
         <router-link  :to="{ name: 'subcontrato-documentos', params: {id: value.id}}" v-if="$root.can('consultar_subcontrato') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
             <i class="fa fa-folder-open"></i>
         </router-link>
+        <router-link  :to="{ name: 'subcontrato-delete', params: {id: value.id}}" v-if="value.eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar">
+            <i class="fa fa-trash"></i>
+        </router-link>
     </div>
 </template>
 

@@ -755,8 +755,6 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@store');
         });
 
-
-
         /**
          * CONTRATO PROYECTADO
          */
@@ -804,7 +802,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
-
         /**
          * PRESUPUESTO
          */
@@ -827,6 +824,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@paginate');
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@destroy')->where(['id' => '[0-9]+']);
         });
 
         //FONDO DE GARANTÍA
