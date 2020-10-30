@@ -17,5 +17,8 @@ class AsignacionSubcontratoEliminado extends Model
     protected $fillable = [
         'id_asignacion',
         'id_transaccion',
+        'usuario_elimina',
+        'motivo_eliminacion',
+        'fecha_eliminacion'
     ];
 }

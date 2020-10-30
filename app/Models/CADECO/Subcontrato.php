@@ -170,6 +170,11 @@ class Subcontrato extends Transaccion
         return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function presupuestosContratista()
+    {
+        return $this->hasMany(PresupuestoContratista::class, 'id_antecedente', 'id_antecedente');
+    }
+
     public function getAnticipoFormatAttribute()
     {
         return number_format(abs($this->anticipo), 2) . '%';
@@ -567,22 +572,45 @@ class Subcontrato extends Transaccion
         SubcontratoEliminado::create([
             'id_transaccion' => $this->id_transaccion,
             'id_antecedente' => $this->id_antecedente,
+            'id_referente' => $this->id_referente,
+            'tipo_transaccion' => $this->tipo_transaccion,
+            'numero_folio' => $this->numero_folio,
             'fecha' => $this->fecha,
+            'estado' => $this->estado,
             'id_obra' => $this->id_obra,
             'id_empresa' => $this->id_empresa,
             'id_moneda' => $this->id_moneda,
+            'opciones' => $this->opciones,
+            'monto' => $this->monto,
+            'saldo' => $this->saldo,
+            'autorizado' => $this->autorizado,
+            'impuesto' => $this->impuesto,
+            'impuesto_retenido' => $this->impuesto_retenido,
+            'diferencia' => $this->diferencia,
             'anticipo' => $this->anticipo,
             'anticipo_monto' => $this->anticipo_monto,
             'anticipo_saldo' => $this->anticipo_saldo,
-            'monto' => $this->monto,
             'PorcentajeDescuento' => $this->PorcentajeDescuento,
             'impuesto' => $this->impuesto,
             'impuesto_retenido' => $this->impuesto_retenido,
-            'id_costo' => $this->id_costo,
             'retencion' => $this->retencion,
             'referencia' => $this->referencia,
             'observaciones' => $this->observaciones,
-            'id_usuario' => $this->id_usuario
+            'tipo_cambio' => $this->tipo_cambio,
+            'comentario' => $this->comentario,
+            'TipoLiberacion' => $this->TipoLiberacion,
+            'FechaHoraRegistro' => $this->FechaHoraRegistro,
+            'TcUSD' => $this->TcUSD,
+            'TcEuro' => $this->TcEuro,
+            'DiasCredito' => $this->DiasCredito,
+            'DiasVigencia' => $this->DiasVigencia,
+            'descuento' => $this->DiasVigencia,
+            'porcentaje_anticipo_pactado' => $this->porcentaje_anticipo_pactado,
+            'fecha_ejecucion' => $this->fecha_ejecucion,
+            'fecha_contable' => $this->fecha_contable,
+            'anticipo_pactado_monto' => $this->anticipo_pactado_monto,
+            'id_usuario' => $this->id_usuario,
+            'retencionIVA_2_3' => $this->retencionIVA_2_3,
         ]);
 
         /**
@@ -611,6 +639,29 @@ class Subcontrato extends Transaccion
                 $mensaje .= "-".$antecedente->tipo->Descripcion." #".$antecedente->numero_folio."\n";
             }
             abort(500, "Este subcontrato tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
+        }
+    }
+
+    /**
+     * Cambiar estado de Presupuesto y Contrato Proyectado
+     */
+    public function cambiaEstados()
+    {
+        foreach ($this->presupuestos as $presupuesto)
+        {
+            if($presupuesto->estado == 2)
+            {
+                $presupuesto->update([
+                    'estado' => 1
+                ]);
+            }
+        }
+
+        if($this->contratoProyectado->estado == 1)
+        {
+            $this->contratoProyectado->update([
+                'estado' => 0
+            ]);
         }
     }
 }
