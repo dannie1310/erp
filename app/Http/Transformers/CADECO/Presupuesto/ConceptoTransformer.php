@@ -3,7 +3,9 @@
 namespace App\Http\Transformers\CADECO\Presupuesto;
 
 
+use App\Http\Transformers\CADECO\Presupuesto\DatoConceptoTransformer;
 use App\Models\CADECO\Concepto;
+use App\Models\CADECO\PresupuestoObra\DatoConcepto;
 use League\Fractal\TransformerAbstract;
 
 class ConceptoTransformer extends TransformerAbstract
@@ -15,7 +17,8 @@ class ConceptoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'hijos',
-        'cuentaConcepto'
+        'cuentaConcepto',
+        'dato'
     ];
 
     public function transform(Concepto $model)
@@ -30,11 +33,13 @@ class ConceptoTransformer extends TransformerAbstract
             'cantidad_presupuestada' => $model->cantidad_presupuestada,
             'concepto_medible' => $model->concepto_medible,
             'precio_unitario' => $model->precio_unitario,
+            'monto_presupuestado' => $model->monto_presupuestado,
             'id_padre' => $model->id_padre,
             'activo' => $model->activo,
             'path' => $model->path,
             'expandido' => 0,
             'hijos_cargados' => 0,
+            'tipo' => $model->tipo,
             'visible' => 1,
             'anidacion' => $model->anidacion
         ];
@@ -45,6 +50,17 @@ class ConceptoTransformer extends TransformerAbstract
         if ($hijos = $model->hijos) {
             return $this->collection($hijos, new ConceptoTransformer);
         }
+        return null;
+    }
+
+    public function includeDato(Concepto $model)
+    {
+        if ($dato = $model->dato) {
+            return $this->item($dato, new DatoConceptoTransformer);
+        } /*else {
+            $dato = new DatoConcepto();
+            return $this->item($dato, new DatoConceptoTransformer);
+        }*/
         return null;
     }
 }

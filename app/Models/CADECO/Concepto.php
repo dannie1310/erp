@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Contabilidad\CuentaConcepto;
+use App\Models\CADECO\PresupuestoObra\DatoConcepto;
 use App\Scopes\ActivoScope;
 use App\Scopes\ObraScope;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,11 @@ class Concepto extends Model
         parent::boot();
         static::addGlobalScope(new ActivoScope);
         static::addGlobalScope(new ObraScope);
+    }
+
+    public function dato()
+    {
+        return $this->hasOne(DatoConcepto::class, 'id_concepto', 'id_concepto');
     }
 
 
@@ -85,6 +91,23 @@ class Concepto extends Model
             return self::where('nivel', '=', $this->nivel_padre)->first()->concepto_medible == 3;
         }
         return false;
+    }
+
+    public function getTipoAttribute()
+    {
+        $tipo = '';
+        switch ($this->concepto_medible){
+            case 0:
+                if($this->id_material){
+                    $tipo= 'Material';
+                } else {
+                    $tipo= 'Agrupador';
+                }
+                break;
+            case 3: $tipo= 'Medible';
+                break;
+        }
+        return $tipo;
     }
 
     public function getTieneHijosAttribute()

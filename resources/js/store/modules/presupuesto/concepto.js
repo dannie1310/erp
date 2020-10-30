@@ -37,6 +37,14 @@ export default {
                 return concepto
             })
         },
+        UPDATE_CONCEPTO_DATO(state, data) {
+            state.conceptos = state.conceptos.map(concepto => {
+                if (concepto.id === data.id) {
+                    return Object.assign( concepto.dato, data)
+                }
+                return concepto
+            })
+        },
         OCULTA_CONCEPTOS(state, nivel) {
             state.conceptos = state.conceptos.map(concepto => {
                 var nivel_recortado;
@@ -60,6 +68,20 @@ export default {
     },
 
     actions: {
+        find (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+                        context.commit("SET_CONCEPTO", data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         actualizaClaves(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

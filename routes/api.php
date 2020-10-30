@@ -1031,6 +1031,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'concepto'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/editar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@show')->where(['id' => '[0-9]+']);
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@list');
             $api->get('/{id}/hijos', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@list')->where(['id' => '[0-9]+']);;
             $api->get('{id}/activar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@activar')->where(['id' => '[0-9]+']);
