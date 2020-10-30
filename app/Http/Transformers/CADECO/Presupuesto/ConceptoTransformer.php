@@ -18,7 +18,8 @@ class ConceptoTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'hijos',
         'cuentaConcepto',
-        'dato'
+        'dato',
+        'responsables'
     ];
 
     public function transform(Concepto $model)
@@ -31,9 +32,12 @@ class ConceptoTransformer extends TransformerAbstract
             'nivel' => $model->nivel,
             'unidad' => $model->unidad,
             'cantidad_presupuestada' => $model->cantidad_presupuestada,
+            'cantidad_presupuestada_format' => $model->cantidad_presupuestada_format,
             'concepto_medible' => $model->concepto_medible,
             'precio_unitario' => $model->precio_unitario,
+            'precio_unitario_format' => $model->precio_unitario_format,
             'monto_presupuestado' => $model->monto_presupuestado,
+            'monto_presupuestado_format' => $model->monto_presupuestado_format,
             'id_padre' => $model->id_padre,
             'activo' => $model->activo,
             'path' => $model->path,
@@ -53,14 +57,19 @@ class ConceptoTransformer extends TransformerAbstract
         return null;
     }
 
+    public function includeResponsables(Concepto $model)
+    {
+        if ($responsables = $model->responsables) {
+            return $this->collection($responsables, new ResponsableTransformer);
+        }
+        return null;
+    }
+
     public function includeDato(Concepto $model)
     {
         if ($dato = $model->dato) {
             return $this->item($dato, new DatoConceptoTransformer);
-        } /*else {
-            $dato = new DatoConcepto();
-            return $this->item($dato, new DatoConceptoTransformer);
-        }*/
+        }
         return null;
     }
 }

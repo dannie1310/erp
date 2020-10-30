@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Contabilidad\CuentaConcepto;
 use App\Models\CADECO\PresupuestoObra\DatoConcepto;
+use App\Models\CADECO\PresupuestoObra\Responsable;
 use App\Scopes\ActivoScope;
 use App\Scopes\ObraScope;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +39,11 @@ class Concepto extends Model
     public function dato()
     {
         return $this->hasOne(DatoConcepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function responsables()
+    {
+        return $this->hasMany(Responsable::class, 'id_concepto', 'id_concepto');
     }
 
 
@@ -129,6 +135,21 @@ class Concepto extends Model
             $anidacion .= "___";
         }
         return $anidacion;
+    }
+
+    public function getPrecioUnitarioFormatAttribute()
+    {
+        return '$ ' . number_format($this->precio_unitario,2);
+    }
+
+    public function getMontoPresupuestadoFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_presupuestado,2);
+    }
+
+    public function getCantidadPresupuestadaFormatAttribute()
+    {
+        return number_format($this->cantidad_presupuestada,4);
     }
 
     public function scopeRoots($query)

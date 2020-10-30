@@ -6,12 +6,9 @@
  * Time: 07:13 PM
  */
 
-namespace App\Models\CADECO\Seguridad;
+namespace App\Models\CADECO\PresupuestoObra;
 
-
-use App\Facades\Context;
-use App\Models\SEGURIDAD_ERP\Permiso;
-use App\Scopes\ObraScope;
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class Responsable extends Model
@@ -27,5 +24,13 @@ class Responsable extends Model
     ];
 
     protected $table = 'PresupuestoObra.responsables';
+
+    public function usuario(){
+        return $this->belongsTo(Usuario::class,"id_usuario_responsable","idusuario");
+    }
+
+    public function tipoResponsable(){
+        return $this->belongsTo(ResponsableTipo::class,"tipo","tipo");
+    }
 
 }

@@ -6,7 +6,7 @@
  * Time: 07:13 PM
  */
 
-namespace App\Models\CADECO\Seguridad;
+namespace App\Models\CADECO\PresupuestoObra;
 
 
 use App\Facades\Context;

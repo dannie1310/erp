@@ -6,15 +6,6 @@ use League\Fractal\TransformerAbstract;
 
 class DatoConceptoTransformer extends TransformerAbstract
 {
-    /**
-     * List of resources possible to include
-     *
-     * @var array
-     */
-    protected $availableIncludes = [
-        'responsables',
-    ];
-
     public function transform(DatoConcepto $model)
     {
         return [
@@ -26,13 +17,5 @@ class DatoConceptoTransformer extends TransformerAbstract
             'revision_semanal' => $model->revision_semanal,
             'revision_mensual' => $model->revision_mensual,
         ];
-    }
-
-    public function includeResponsables(DatoConcepto $model)
-    {
-        if ($responsable = $model->responsables) {
-            return $this->collection($responsable, new ConceptoTransformer);
-        }
-        return null;
     }
 }
