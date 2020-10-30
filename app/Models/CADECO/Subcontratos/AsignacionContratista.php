@@ -115,9 +115,6 @@ class AsignacionContratista extends Model
             'autorizo' => $this->autorizo,
             'fecha_hora_autorizacion' => $this->fecha_hora_autorizacion,
             'estado' => $this->estado,
-            'usuario_elimina' => $this->usuario_elimina,
-            'motivo_eliminacion' => $this->motivo_eliminacion,
-            'fecha_eliminacion' => $this->fecha_eliminacion,
             'motivo_eliminacion' => $motivo,
         ]);
     }
