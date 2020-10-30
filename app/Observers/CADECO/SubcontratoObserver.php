@@ -40,11 +40,11 @@ class SubcontratoObserver extends TransaccionObserver
         {
             abort(400, "Error al eliminar, respaldo incorrecto.");
         }
+        $subcontrato->asignacionSubcontrato->delete();
     }
 
     public function deleted(Subcontrato $subcontrato)
     {
-        $subcontrato->asignacionSubcontrato->delete();
-        $subcontrato->cambiaEstadoContrato();
+        $subcontrato->cambiaEstados();
     }
 }

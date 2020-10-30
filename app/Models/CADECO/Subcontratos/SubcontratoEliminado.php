@@ -38,7 +38,6 @@ class SubcontratoEliminado extends Model
         'impuesto',
         'impuesto_retenido',
         'retencion',
-        'referencia',
         'observaciones',
         'tipo_cambio',
         'comentario',

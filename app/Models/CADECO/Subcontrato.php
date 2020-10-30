@@ -594,7 +594,6 @@ class Subcontrato extends Transaccion
             'impuesto' => $this->impuesto,
             'impuesto_retenido' => $this->impuesto_retenido,
             'retencion' => $this->retencion,
-            'referencia' => $this->referencia,
             'observaciones' => $this->observaciones,
             'tipo_cambio' => $this->tipo_cambio,
             'comentario' => $this->comentario,
@@ -628,7 +627,7 @@ class Subcontrato extends Transaccion
      */
     public function validarParaEliminar()
     {
-        if ($this->estado != 1) {
+        if ($this->estado != 0) {
             abort(400, "No se puede eliminar este subcontrato porque se encuentra Autorizada.");
         }
         $mensaje = "";
