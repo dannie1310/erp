@@ -26,6 +26,7 @@ use App\Models\CADECO\Compras\MovimientoEliminado;
 use App\Models\CADECO\Compras\OrdenCompraComplemento;
 use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
+use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Configuracion\NodoTipo;
 use App\Models\CADECO\Contabilidad\Apertura;
 use App\Models\CADECO\Contabilidad\Cierre;
@@ -175,6 +176,7 @@ use App\Observers\CADECO\Compras\RequisicionPartidaComplementoObserver;
 use App\Observers\CADECO\Compras\RequisicionPartidaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Compras\SolicitudComplementoObserver;
+use App\Observers\CADECO\ConceptoObserver;
 use App\Observers\CADECO\Configuracion\NodotipoObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
 use App\Observers\CADECO\Contabilidad\CierreObserver;
@@ -441,6 +443,12 @@ class AppServiceProvider extends ServiceProvider
             LayoutConteoPartida::observe(LayoutConteoPartidaObserver::class);
             Marbete::observe(MarbeteObserver::class);
             MarbeteLog::observe(MarbeteLogObserver::class);
+
+            /**
+             *Presupuesto
+             */
+
+            Concepto::observe(ConceptoObserver::class);
 
             /**
              * Subcontratos
