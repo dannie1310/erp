@@ -32,4 +32,19 @@ class SubcontratoObserver extends TransaccionObserver
             $subcontrato->generaFondoGarantia();
         }
     }
+
+    public function deleting(Subcontrato $subcontrato)
+    {
+        $subcontrato->validarParaEliminar();
+        if($subcontrato->subcontratoEliminado == null)
+        {
+            abort(400, "Error al eliminar, respaldo incorrecto.");
+        }
+        $subcontrato->asignacionSubcontrato->delete();
+    }
+
+    public function deleted(Subcontrato $subcontrato)
+    {
+        $subcontrato->cambiaEstados();
+    }
 }

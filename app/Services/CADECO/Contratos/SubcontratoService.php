@@ -57,4 +57,9 @@ class SubcontratoService
     {
         return $this->repository->paginate($data);
     }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data']);
+    }
 }
