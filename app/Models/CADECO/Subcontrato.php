@@ -8,12 +8,14 @@
 
 namespace App\Models\CADECO;
 use App\Facades\Context;
-use App\Models\CADECO\Subcontratos\ClasificacionSubcontrato;
+use mysql_xdevapi\Collection;
+use App\Models\CADECO\Sucursal;
+use Illuminate\Support\Facades\DB;
+use App\PDF\Contratos\SubcontratoFormato;
 use App\Models\CADECO\Subcontratos\Subcontratos;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
-use Illuminate\Support\Facades\DB;
-use mysql_xdevapi\Collection;
+use App\Models\CADECO\Subcontratos\ClasificacionSubcontrato;
 
 class Subcontrato extends Transaccion
 {
@@ -127,6 +129,10 @@ class Subcontrato extends Transaccion
     public function empresa()
     {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function sucursal(){
+        return $this->belongsTo(Sucursal::class, 'id_sucursal', 'id_sucursal');
     }
 
     public function facturas()
@@ -491,5 +497,10 @@ class Subcontrato extends Transaccion
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
+    }
+
+    public function pdf(){
+        $pdf = new SubcontratoFormato($this);
+        return $pdf->create();
     }
 }

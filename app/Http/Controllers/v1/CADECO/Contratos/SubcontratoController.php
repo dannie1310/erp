@@ -46,7 +46,7 @@ class SubcontratoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:consultar_subcontrato')->only(['show', 'paginate']);
+        $this->middleware('permiso:consultar_subcontrato')->only(['show', 'paginate', 'pdf']);
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -56,5 +56,10 @@ class SubcontratoController extends Controller
     public function ordenarConceptos($id)
     {
         return $this->service->ordenado($id);
+    }
+
+    public function pdf($id)
+    {
+        return $this->service->pdf($id);
     }
 }

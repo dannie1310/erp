@@ -57,4 +57,9 @@ class SubcontratoService
     {
         return $this->repository->paginate($data);
     }
+
+    public function pdf($id)
+    {
+        return $this->repository->show($id)->pdf();
+    }
 }
