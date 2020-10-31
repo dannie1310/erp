@@ -3,6 +3,7 @@
 namespace App\Repositories\CADECO\Presupuesto\Concepto;
 
 use App\Models\CADECO\Concepto;
+use App\Models\CADECO\PresupuestoObra\Responsable;
 use App\Repositories\RepositoryInterface;
 use App\Scopes\ActivoScope;
 
@@ -53,6 +54,17 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $item = Concepto::withoutGlobalScope(ActivoScope::class)->find($id);
         $activo = ($item->activo==0)?1:0;
         $item->update(["activo"=>$activo]);
+        return $item;
+    }
+
+    public function eliminaResponsable($id)
+    {
+        $responsable = Responsable::find($id);
+        $id_concepto = $responsable->id_concepto;
+        $responsable->delete();
+
+        $item = Concepto::withoutGlobalScope(ActivoScope::class)->find($id_concepto);
+
         return $item;
     }
 }

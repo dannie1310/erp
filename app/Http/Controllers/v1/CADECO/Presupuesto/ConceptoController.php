@@ -61,4 +61,9 @@ class ConceptoController extends Controller
         $item = $this->service->toggleActivo($id);
         return $this->respondWithItem($item);
     }
+    public function eliminaResponsable($id)
+    {
+        $item = $this->service->eliminaResponsable($id);
+        return $this->respondWithItem($item);
+    }
 }

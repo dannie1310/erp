@@ -196,12 +196,13 @@
                                                     {{responsable.responsabilidad}}
                                                 </td>
                                                 <td>
-
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarResponsable(responsable)" >
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-
                                 </div>
                             </div>
                         </div>
@@ -224,11 +225,8 @@ export default {
         return {
             es:es,
             cargando: true,
-            responsables:{},
+            //responsables:{},
             clave:'',
-            /*concepto_edicion :{
-
-            },*/
             dato:{
                 calificacion:'',
                 fecha_fin:'',
@@ -261,7 +259,7 @@ export default {
                 params: {include: ['dato','responsables.usuario']}
             }).then(data => {
                 this.clave = this.concepto.clave_concepto;
-                this.responsables = this.concepto.responsables.data;
+                //this.responsables = this.concepto.responsables.data;
                 if(this.concepto.dato){
                     this.dato = this.concepto.dato;
                 }
@@ -274,11 +272,22 @@ export default {
         },
         agregarResponsable(){
 
+        },
+        quitarResponsable(responsable){
+            return this.$store.dispatch('presupuesto/concepto/quitarResponsable', {
+                id: responsable.id,
+            }).then((data) => {
+                //this.find();
+
+            })
         }
     },
     computed: {
         concepto() {
             return this.$store.getters['presupuesto/concepto/currentConcepto']
+        },
+        responsables() {
+            return this.$store.getters['presupuesto/concepto/responsables']
         }
     }
 }

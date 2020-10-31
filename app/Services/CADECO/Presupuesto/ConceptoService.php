@@ -51,4 +51,9 @@ class ConceptoService
     {
         return $this->repository->toggleActivo($id);
     }
+
+    public function eliminaResponsable($id)
+    {
+        return $this->repository->eliminaResponsable($id);
+    }
 }

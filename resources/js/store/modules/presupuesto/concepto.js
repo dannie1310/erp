@@ -4,6 +4,7 @@ export default {
     state: {
         conceptos: [],
         currentConcepto: null,
+        responsables:[],
         meta: {},
     },
 
@@ -16,6 +17,14 @@ export default {
         },
         SET_CONCEPTO(state, data) {
             state.currentConcepto = data;
+        },
+        SET_RESPONSABLES(state, data) {
+            state.responsables = data;
+        },
+        DELETE_RESPONSABLE(state, id) {
+            state.responsables = state.responsables.filter( responsable => {
+                return responsable.id != id
+            });
         },
         AGREGA_CONCEPTOS(state, data) {
             state.conceptos = state.conceptos.concat(data);
@@ -75,6 +84,9 @@ export default {
                     .then(r => r.data)
                     .then((data) => {
                         context.commit("SET_CONCEPTO", data);
+                        if(data.responsables != undefined){
+                            context.commit("SET_RESPONSABLES", data.responsables.data);
+                        }
                         resolve(data);
                     })
                     .catch(error => {
@@ -188,11 +200,56 @@ export default {
                 resolve();
             });
         },
+        quitarResponsable(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Responsable",
+                    text: "¿Está seguro de eliminar a este responsable?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI +'responsable/'+ payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Responsable eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit("DELETE_RESPONSABLE", payload.id);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
 
     getters: {
         conceptos(state) {
             return state.conceptos
+        },
+        responsables(state) {
+            return state.responsables
         },
         meta(state) {
             return state.meta
