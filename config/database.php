@@ -123,6 +123,37 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'acarreos' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_ACARREOS', '127.0.0.1'),
+            'port' => env('DB_PORT_ACARREOS', '3306'),
+            'database' => env('DB_DATABASE_ACARREOS', 'forge'),
+            'username' => env('DB_USERNAME_ACARREOS', 'forge'),
+            'password' => env('DB_PASSWORD_ACARREOS', ''),
+            'unix_socket' => env('DB_SOCKET_ACARREOS', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+
+        'scaconf' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_SCACONF', '127.0.0.1'),
+            'port' => env('DB_PORT_SCACONF', '3306'),
+            'database' => env('DB_DATABASE_SCACONF', 'forge'),
+            'username' => env('DB_USERNAME_SCACONF', 'forge'),
+            'password' => env('DB_PASSWORD_SCACONF', ''),
+            'unix_socket' => env('DB_SOCKET_SCACONF', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
     ],
 
     /*

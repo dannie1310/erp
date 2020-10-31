@@ -85,6 +85,16 @@ export const routes = [
                 },
             },
             {
+                path: 'modal/contrato_proyectado/:id',
+                name: 'modal_contrato_proyectado',
+                component: require('./components/contratos/proyectado/Show').default,
+                props: true,
+                meta: {
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_contrato_proyectado'
+                },
+            },
+            {
                 path: 'modal/solicitud_compra/:id',
                 name: 'modal_solicitud_compra',
                 component: require('./components/compras/solicitud-compra/Show').default,
@@ -461,6 +471,63 @@ export const routes = [
                 ]
             },
             {
+                path: 'presupuesto',
+                component: require('./components/presupuesto/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'presupuesto-obra',
+                        component: require('./components/presupuesto/Index').default,
+                        meta: {
+                            title: 'Presupuesto',
+                            breadcrumb: {parent:'home', name: 'PRESUPUESTO'},
+                            middleware: [auth, context, access]
+                        }
+                    },
+                    {
+                        path: 'concepto',
+                        component: require('./components/presupuesto/concepto/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'concepto',
+                                component: require('./components/presupuesto/concepto/Index').default,
+                                meta: {
+                                    title: 'Conceptos',
+                                    breadcrumb: {parent: 'presupuesto-obra', name: 'CONCEPTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_presupuesto']
+                                }
+                            },
+                            {
+                                path: ':id/editar',
+                                name: 'concepto-edit',
+                                props: true,
+                                component: require('./components/presupuesto/concepto/Edit').default,
+                                meta: {
+                                    title: 'Editar Conceptos',
+                                    breadcrumb: { parent: 'presupuesto-obra', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['editar_clave_concepto']
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'concepto-show',
+                                component: require('./components/presupuesto/concepto/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Concepto',
+                                    breadcrumb: { parent: 'presupuesto-obra', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_presupuesto'
+                                }
+                            },
+                        ]
+                    },
+                ]
+            },
+            {
                 path: 'almacenes',
                 component: require('./components/almacenes/partials/Layout.vue').default,
                 children: [
@@ -684,6 +751,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id',
+                                name: 'proyectado-show',
+                                component: require('./components/contratos/proyectado/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Contrato Proyectado',
+                                    breadcrumb: { parent: 'proyectado', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_contrato_proyectado'
+                                }
+                            },
+                            {
                                 path: ':id/documentos',
                                 name: 'proyectado-documentos',
                                 component: require('./components/globals/archivos/Files').default,
@@ -780,7 +859,19 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_asignacion_contratista']
                                 }
-                            }
+                            },
+                            {
+                                path: ':id',
+                                name: 'asignacion-proveedor-delete',
+                                props: true,
+                                component: require('./components/contratos/asignacion-contratista/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Asignación Proveedores',
+                                    breadcrumb: {parent: 'asignacion-contratista', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['eliminar_asignacion_contratista']
+                                }
+                            },
                         ]
                     },
                     {
@@ -2039,7 +2130,53 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path: 'acarreos',
+                component: require('./components/acarreos/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'acarreos',
+                        component: require('./components/acarreos/Index').default,
+                        meta: {
+                            title: 'Acarreos',
+                            breadcrumb: {parent:'home', name: 'ACARREOS'},
+                            middleware: [auth, context, access]
+                        }
+                    },
+                    {
+                        path: 'catalogo',
+                        component: require('./components/acarreos/catalogos/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'catalogo',
+                                component: require('./components/acarreos/catalogos/Index').default,
+                                meta: {
+                                    title: 'Catálogos',
+                                    breadcrumb: {parent: 'acarreos', name: 'CATÁLOGOS'},
+                                    middleware: [auth, context],
 
+                                }
+                            },
+                            {
+                                path: 'tiro',
+                                name: 'tiro',
+                                component: require('./components/acarreos/catalogos/tiro/Index').default,
+                                meta: {
+                                    title: 'Tiros',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'TIROS'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_tiro']
+                                }
+                            },
+                        ]
+                    },
+                ]
+            },
         ],
     },
     {

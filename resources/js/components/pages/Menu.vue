@@ -3,9 +3,11 @@
     <span>
         <MenuCompras></MenuCompras>
         <MenuAlmacen></MenuAlmacen>
+        <MenuAcarreos />
         <MenuContratos></MenuContratos>
         <MenuFinanzas></MenuFinanzas>
         <MenuContabilidad></MenuContabilidad>
+        <MenuPresupuesto></MenuPresupuesto>
         <MenuCatalogos></MenuCatalogos>
         <MenuFormatos></MenuFormatos>
     </span>
@@ -20,9 +22,13 @@ import MenuContabilidad from '../contabilidad/partials/Menu';
 import MenuAlmacen from '../almacenes/partials/Menu';
 import MenuCatalogos from '../catalogos/partials/Menu';
 import MenuFormatos from '../formato/partials/Menu';
+import MenuAcarreos from '../acarreos/partials/Menu';
+import MenuPresupuesto from "../presupuesto/partials/Menu";
     export default {
         name: "sao-menu",
-        components:{MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos},
+        components:{
+            MenuPresupuesto,
+            MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos},
         computed: {
 
             catalogo(){

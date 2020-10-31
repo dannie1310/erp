@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\ACARREOS\Tiro;
+use App\Models\ACARREOS\TiroConcepto;
 use App\Models\CADECO\AjusteNegativo;
 use App\Models\CADECO\AjusteNegativoPartida;
 use App\Models\CADECO\AjustePositivo;
@@ -24,6 +26,7 @@ use App\Models\CADECO\Compras\MovimientoEliminado;
 use App\Models\CADECO\Compras\OrdenCompraComplemento;
 use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
+use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Configuracion\NodoTipo;
 use App\Models\CADECO\Contabilidad\Apertura;
 use App\Models\CADECO\Contabilidad\Cierre;
@@ -110,6 +113,8 @@ use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\SolicitudReposicionFF;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
+use App\Models\CADECO\Subcontratos\AsignacionContratistaEliminada;
+use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
@@ -150,6 +155,8 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
+use App\Observers\ACARREOS\TiroConceptoObserver;
+use App\Observers\ACARREOS\TiroObserver;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjusteNegativoPartidaObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
@@ -171,6 +178,7 @@ use App\Observers\CADECO\Compras\RequisicionPartidaComplementoObserver;
 use App\Observers\CADECO\Compras\RequisicionPartidaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Compras\SolicitudComplementoObserver;
+use App\Observers\CADECO\ConceptoObserver;
 use App\Observers\CADECO\Configuracion\NodotipoObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
 use App\Observers\CADECO\Contabilidad\CierreObserver;
@@ -256,7 +264,9 @@ use App\Observers\CADECO\SolicitudCompraPartidaObserver;
 use App\Observers\CADECO\SolicitudPagoAnticipadoObserver;
 use App\Observers\CADECO\SolicitudReposicionFFObserver;
 use App\Observers\CADECO\SubcontratoObserver;
+use App\Observers\CADECO\Subcontratos\AsignacionContratistaEliminadaObserver;
 use App\Observers\CADECO\Subcontratos\AsignacionContratistaObserver;
+use App\Observers\CADECO\Subcontratos\AsignacionContratistaPartidaObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\DescuentoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\LiberacionObserver;
@@ -326,7 +336,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /*
+        /**
+         * ACARREOS
+         */
+        Tiro::observe(TiroObserver::class);
+        TiroConcepto::observe(TiroConceptoObserver::class);
+
+        /**
          * CTPQ
          * */
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
@@ -433,10 +449,17 @@ class AppServiceProvider extends ServiceProvider
             MarbeteLog::observe(MarbeteLogObserver::class);
 
             /**
+             *Presupuesto
+             */
+
+            Concepto::observe(ConceptoObserver::class);
+
+            /**
              * Subcontratos
              */
             AsignacionContratista::observe(AsignacionContratistaObserver::class);
-
+            AsignacionContratistaEliminada::observe(AsignacionContratistaEliminadaObserver::class);
+            AsignacionContratistaPartida::observe(AsignacionContratistaPartidaObserver::class);
 
             /**
              * SubcontratosEstimaciones

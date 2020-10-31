@@ -9,8 +9,9 @@
 namespace App\Models\CADECO;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaConcepto;
+use App\Scopes\ActivoScope;
+use App\Scopes\ObraScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Concepto extends Model
@@ -19,15 +20,18 @@ class Concepto extends Model
     protected $table = 'dbo.conceptos';
     protected $primaryKey = 'id_concepto';
 
+    public $fillable = [
+        'activo',
+        'clave_concepto',
+    ];
+
     public $timestamps = false;
 
     protected static function boot()
     {
         parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra())->where('activo','=',1);
-        });
+        static::addGlobalScope(new ActivoScope);
+        static::addGlobalScope(new ObraScope);
     }
 
 
@@ -88,6 +92,22 @@ class Concepto extends Model
         return $this->hijos()->count() ? true : false;
     }
 
+    public function getConHijosAttribute()
+    {
+        return $this->hijosCompletos()->count() ? true : false;
+    }
+
+    public function getAnidacionAttribute()
+    {
+        $anidacion = "";
+        $longitud = (strlen($this->nivel)/4);
+        for($i=0; $i<$longitud; $i++)
+        {
+            $anidacion .= "___";
+        }
+        return $anidacion;
+    }
+
     public function scopeRoots($query)
     {
         return $query->whereRaw('LEN(nivel) = 4');
@@ -129,6 +149,14 @@ class Concepto extends Model
             ->whereNull('id_material')
             ->orderBy('nivel', 'ASC');
     }
+
+    public function hijosCompletos()
+    {
+        return $this->hasMany(self::class, 'id_obra', 'id_obra')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ->orderBy('nivel', 'ASC');
+    }
+
 
     /**
      *  Se muestra la ruta desde 3er nivel (000.000.000.)
