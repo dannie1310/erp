@@ -295,6 +295,11 @@ class PresupuestoContratista extends Transaccion
         return '$ ' . number_format(abs($this->TcEuro),4);
     }
 
+    public function getLibraFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcLibra),4);
+    }
+
     public function getDatosParaRelacionAttribute()
     {
         $datos["numero_folio"] = $this->numero_folio_format;

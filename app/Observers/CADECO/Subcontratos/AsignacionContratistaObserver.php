@@ -15,8 +15,7 @@ use App\Models\CADECO\Subcontratos\AsignacionContratista;
 class AsignacionContratistaObserver
 {
     /**
-     * @param Transaccion $transaccion
-     * @throws \Exception
+     * @param AsignacionContratista $asignacion_contratista
      */
     public function creating(AsignacionContratista $asignacion_contratista)
     {
@@ -24,5 +23,14 @@ class AsignacionContratistaObserver
         $asignacion_contratista->fecha_hora_autorizacion = date('Y-m-d H:i:s');
         $asignacion_contratista->registro = auth()->id();
         $asignacion_contratista->autorizo = auth()->id();
+    }
+
+    public function deleting(AsignacionContratista $asignacion_contratista)
+    {
+        $asignacion_contratista->validarParaEliminar();
+        if($asignacion_contratista->asignacionEliminada == null)
+        {
+            abort(400, "Error al eliminar, respaldo incorrecto.");
+        }
     }
 }

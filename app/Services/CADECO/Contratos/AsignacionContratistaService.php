@@ -90,6 +90,11 @@ class AsignacionContratistaService
         }
     }
 
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data']);
+    }
+
     public function pdf($id)
     {
         $pdf = new AsignacionTablaComparativaFormato($this->repository->show($id));
