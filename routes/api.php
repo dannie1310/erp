@@ -1039,6 +1039,7 @@ $api->version('v1', function ($api) {
             $api->patch('actualiza-claves', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@actualizarClaves')->where(['id' => '[0-9]+']);
             $api->patch('{id}/toggle-activo', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@toggleActivo')->where(['id' => '[0-9]+']);
             $api->delete('/responsable/{id}', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@eliminaResponsable')->where(['id' => '[0-9]+']);
+            $api->post('/responsable', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@storeResponsable');
         });
     });
 

@@ -66,4 +66,10 @@ class ConceptoController extends Controller
         $item = $this->service->eliminaResponsable($id);
         return $this->respondWithItem($item);
     }
+    public function storeResponsable(Request $request){
+        $item = $this->service->storeResponsable($request->all());
+        $this->fractal->parseIncludes("responsables.usuario");
+        return $this->respondWithItem($item);
+
+    }
 }

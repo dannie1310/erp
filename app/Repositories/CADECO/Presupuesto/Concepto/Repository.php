@@ -67,4 +67,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
         return $item;
     }
+
+    public function storeResponsable($data)
+    {
+        Responsable::create($data);
+        $item = Concepto::withoutGlobalScope(ActivoScope::class)->find($data["id_concepto"]);
+        return $item;
+    }
 }

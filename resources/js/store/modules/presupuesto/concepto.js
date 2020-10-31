@@ -200,6 +200,47 @@ export default {
                 resolve();
             });
         },
+        storeResponsable(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Responsable",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'responsable', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Responsable registrado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        if(data.responsables != undefined){
+                                            context.commit("SET_RESPONSABLES", data.responsables.data);
+                                        }
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
         quitarResponsable(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

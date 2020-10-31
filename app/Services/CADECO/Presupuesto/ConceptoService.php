@@ -56,4 +56,9 @@ class ConceptoService
     {
         return $this->repository->eliminaResponsable($id);
     }
+
+    public function storeResponsable($data)
+    {
+        return $this->repository->storeResponsable($data);
+    }
 }

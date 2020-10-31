@@ -24,6 +24,7 @@ class Responsable extends Model
     ];
 
     protected $table = 'PresupuestoObra.responsables';
+    public $timestamps = false;
 
     public function usuario(){
         return $this->belongsTo(Usuario::class,"id_usuario_responsable","idusuario");

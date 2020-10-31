@@ -210,27 +210,96 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sn" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> AGREGAR RESPONSABLE</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label for="user_id" class="col-md-3 col-form-label">Usuario:</label>
+                                    <div class="col-md-9">
+                                        <usuario-select
+                                            name="user_id"
+                                            id="user_id"
+                                            data-vv-as="Usuario"
+                                            v-validate="{required: true, integer: true}"
+                                            v-model="responsable.id_usuario"
+                                            :error="errors.has('user_id')"
+                                        >
+                                        </usuario-select>
+                                        <div class="error-label" v-show="errors.has('user_id')">{{ errors.first('user_id') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label for="user_id" class="col-md-3 col-form-label">Responsabilidad:</label>
+                                    <div class="col-md-9">
+                                        <div class="btn-group flex-wrap btn-group-toggle">
+                                            <label class="btn btn-outline-primary" :class="responsable.responsabilidad === Number(llave) ? 'active': ''"  v-for="(responsabilidad, llave) in responsabilidades" :key="llave">
+                                                <input type="radio"
+                                                       class="btn-group-toggle"
+                                                       name="responsabilidad"
+                                                       :id="'responsabilidad' + llave"
+                                                       :value="llave"
+                                                       autocomplete="on"
+                                                       v-model.number="responsable.responsabilidad"
+                                                >
+                                                {{ responsabilidad}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fa fa-times-circle"></i>
+                            Cerrar</button>
+                        <button type="button" class="btn btn-primary" @click="guardarResponsable" >
+                            <i class="fa fa-save"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </span>
 </template>
 
 <script>
 import Datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
+import UsuarioSelect from "../../igh/usuario/Select";
 
 export default {
     name: "edit-concepto",
     props: ['id'],
-    components:{Datepicker, es},
+    components:{Datepicker, es, UsuarioSelect},
     data() {
         return {
             es:es,
             cargando: true,
-            //responsables:{},
+            responsable:{
+                id_usuario:'',
+                responsabilidad:1
+            },
             clave:'',
             dato:{
                 calificacion:'',
-                fecha_fin:'',
-                fecha_inicio:'',
+                fecha_fin:  new Date(),
+                fecha_inicio: new Date(),
                 id:'',
                 revision_diaria:false,
                 revision_mensual:false,
@@ -242,6 +311,11 @@ export default {
                 3: "3",
                 2: "2",
                 1: "1"
+            },
+            responsabilidades: {
+                3: "Responsable",
+                2: "Carga",
+                1: "Autoriza"
             },
         }
     },
@@ -259,7 +333,6 @@ export default {
                 params: {include: ['dato','responsables.usuario']}
             }).then(data => {
                 this.clave = this.concepto.clave_concepto;
-                //this.responsables = this.concepto.responsables.data;
                 if(this.concepto.dato){
                     this.dato = this.concepto.dato;
                 }
@@ -271,13 +344,30 @@ export default {
             return moment(date).format('DD/MM/YYYY');
         },
         agregarResponsable(){
-
+            $(this.$refs.modal).appendTo('body')
+            $(this.$refs.modal).modal('show');
+        },
+        guardarResponsable(){
+            this.$validator.validate().then(result => {
+                if (result) {
+                    return this.$store.dispatch('presupuesto/concepto/storeResponsable',
+                        {
+                            id_usuario_responsable:this.responsable.id_usuario,
+                            tipo:this.responsable.responsabilidad,
+                            id_concepto:this.concepto.id,
+                        })
+                    .then((data) => {
+                        this.responsable.responsabilidad=1;
+                        this.responsable.id_usuario='';
+                        $(this.$refs.modal).modal('hide');
+                    });
+                }
+            });
         },
         quitarResponsable(responsable){
             return this.$store.dispatch('presupuesto/concepto/quitarResponsable', {
                 id: responsable.id,
             }).then((data) => {
-                //this.find();
 
             })
         }
