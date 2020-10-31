@@ -46,6 +46,10 @@ class ConceptoService
     {
         return $this->repository->actualizarClaves($data);
     }
+    public function actualizarClave($data)
+    {
+        return $this->repository->actualizarClave($data);
+    }
 
     public function toggleActivo($id)
     {

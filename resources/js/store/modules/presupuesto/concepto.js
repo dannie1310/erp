@@ -84,6 +84,7 @@ export default {
                     .then(r => r.data)
                     .then((data) => {
                         context.commit("SET_CONCEPTO", data);
+                        context.commit("SET_CONCEPTOS", [data]);
                         if(data.responsables != undefined){
                             context.commit("SET_RESPONSABLES", data.responsables.data);
                         }
@@ -134,6 +135,46 @@ export default {
                         })
                     }
                 });
+            });
+        },
+        actualizaClave(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar la clave del concepto",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + 'actualiza-clave', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Clave actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            context.commit("UPDATE_CONCEPTO", {id : data.id, clave_concepto : data.clave_concepto});
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
             });
         },
         toggleActivo(context, payload) {

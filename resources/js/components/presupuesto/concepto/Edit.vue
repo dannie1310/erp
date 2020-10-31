@@ -20,7 +20,7 @@
                                         <label for="clave" class="col-md-4 col-form-label" style="text-align: left">Clave: </label>
                                         <div class="col-md-8 form-inline">
                                             <input type="text" class="form-control" id="clave" v-model="clave" maxlength="140">
-                                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" @click="actualizaClave">
                                                 <i class="fa fa-save"></i>
                                             </button>
                                         </div>
@@ -324,8 +324,15 @@ export default {
         this.find()
     },
     methods:{
-        actualizaFechaInicio(e,id){
-            this.$store.commit('presupuesto/concepto/UPDATE_CONCEPTO_DATO', {fecha_inicio : e, id : id})
+        actualizaClave(){
+            return this.$store.dispatch('presupuesto/concepto/actualizaClave',
+                {
+                    clave:this.clave,
+                    id_concepto:this.concepto.id,
+                })
+                .then((data) => {
+                    this.clave = this.concepto.clave_concepto;
+                });
         },
         find() {
             return this.$store.dispatch('presupuesto/concepto/find', {

@@ -49,6 +49,13 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return Concepto::withoutGlobalScope(ActivoScope::class)->whereIn("id_concepto",$items)->get();
     }
 
+    public function actualizarClave($datos)
+    {
+        $item = $this->show($datos["id_concepto"]);
+        $item->update(["clave_concepto"=>$datos["clave"]]);
+        return $item;
+    }
+
     public function toggleActivo($id)
     {
         $item = Concepto::withoutGlobalScope(ActivoScope::class)->find($id);
