@@ -29,6 +29,7 @@ class DestinoTransformer extends TransformerAbstract
         return [
             'id_concepto' => $model->getKey(),
             'destino_path' => $model->ruta_destino,
+            'path' => $model->ruta,
             'descripcion' => $model->concepto->descripcion
         ];
     }

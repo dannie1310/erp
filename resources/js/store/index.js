@@ -169,6 +169,9 @@ import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
 
+//PRESUPUESTO
+import conceptoPresupuesto from './modules/presupuesto/concepto';
+
 //REPORTES
 import reporte from './modules/reportes/reporte';
 
@@ -301,6 +304,8 @@ export default new Vuex.Store({
 
         'sci/marca': marca,
         'sci/modelo': modelo,
+
+        'presupuesto/concepto': conceptoPresupuesto,
 
 
         'seguridad/control-interno/incidencia': incidencia,
