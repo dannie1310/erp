@@ -12,6 +12,7 @@
                     <p>Contrato Proyectado</p>
                 </router-link>
             </li>
+
             <li class="nav-item" v-if="$root.can('consultar_presupuesto_contratista')">
                 <router-link :to="{name: 'presupuesto'}" class="nav-link" :class="{active: this.$route.name == 'presupuesto'}">
                     <i class="fa fa-comments-dollar nav-icon"></i>

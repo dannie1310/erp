@@ -6,6 +6,7 @@ namespace App\Models\CADECO\Subcontratos;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\PresupuestoContratista;
 use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
 use Illuminate\Support\Facades\DB;
 
@@ -46,9 +47,19 @@ class AsignacionContratista extends Model
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
     }
 
+    public function presupuestoContratista()
+    {
+        return $this->belongsTo(PresupuestoContratista::class, 'id_transaccion', 'id_antecedente');
+    }
+
     public function asignacionEliminada()
     {
         return $this->belongsTo(AsignacionContratistaEliminada::class, 'id_asignacion');
+    }
+
+    public function scopeProyectado($query)
+    {
+        return $query->has('contratoProyectado');
     }
 
     public function getFechaRegistroFormatAttribute(){
@@ -69,6 +80,17 @@ class AsignacionContratista extends Model
     public function getUsuarioRegistroNombreAttribute()
     {
         return $this->usuarioRegistro->nombre_completo;
+    }
+
+    public function getEstadoFormatAttribute(){
+        switch($this->estado){
+            case 1:
+                return 'Registrada';
+            break;
+            case 2:
+                return 'Aplicada';
+            break;
+        }
     }
 
     public function eliminar($motivo)

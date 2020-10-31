@@ -40,23 +40,24 @@ export default {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio Asignación', field: 'id_asignacion',  sortable: true},
-                    { title: 'Fecha Asignación', field: 'fecha_hora_registro',  sortable: true},
-                    { title: 'Folio Contrato proyectado', field: 'numero_folio'},
-                    { title: 'Fecha Contrato Proyectado', field: 'fecha' },
+                    { title: 'Folio', field: 'folio', tdClass: 'th_numero_folio',  sortable: true},
+                    { title: 'Folio SAO Contrato proyectado', field: 'proyectado',tdClass: 'th_c120', tdComp: require('../proyectado/partials/ActionButtonsConsulta').default, sortable: true},
+                    { title: 'Fecha', field: 'fecha_hora_registro', sortable:true},
+                    { title: 'Contratista', field: 'razon_social', sortable:true},
                     { title: 'Referencia Contrato Proyectado', field: 'referencia' },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Estado', field: 'estado', thClass:'th_c120', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {scope:'proyectado'},
                 search: '',
                 cargando: false,
                 busqueda:''
             }
         },
         mounted() {
-            this.query.include = 'contrato';
+            this.query.include = ['contrato', 'presupuestoContratista.empresa'];
             this.query.sort = 'id_asignacion';
             this.query.order = 'DESC';
 
@@ -84,20 +85,15 @@ export default {
             getEstado(estado) {
                 let val = parseInt(estado);
                 switch (val) {
-                    case 0:
+                    case 1:
                         return {
                             color: '#f39c12',
                             descripcion: 'Registrada'
                         }
-                    case 1:
-                        return {
-                            color: '#0073b7',
-                            descripcion: 'Aprobada'
-                        }
                     case 2:
                         return {
-                            color: '#00a65a',
-                            descripcion: 'Revisada'
+                            color: '#0073b7',
+                            descripcion: 'Aplicada'
                         }
                     default:
                         return {
@@ -125,11 +121,17 @@ export default {
                     self.$data.data = []
                     self.$data.data = asignaciones.map((asignacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        id_asignacion: asignacion.numero_folio,
-                        fecha_hora_registro: asignacion.fecha_format,
-                        numero_folio: asignacion.contrato ? asignacion.contrato.numero_folio_format : '',
-                        fecha: asignacion.contrato ? asignacion.contrato.fecha : '',
-                        referencia: asignacion.contrato ? asignacion.contrato.referencia : '',
+                        folio: asignacion.numero_folio_asignacion,
+                        fecha_hora_registro: asignacion.fecha_registro,
+                        razon_social:asignacion.presupuestoContratista.empresa.razon_social,
+                        estado: this.getEstado(asignacion.estado),
+                        fecha: asignacion.contrato.fecha,
+                        referencia: asignacion.contrato.referencia,
+                        proyectado: $.extend({}, {
+                                show: (asignacion.contrato) ? true : false,
+                                id: (asignacion.contrato) ? asignacion.contrato.id : null,
+                                numero_folio: (asignacion.contrato) ? asignacion.contrato.numero_folio_format : null
+                            }),
                         buttons: $.extend({}, {
                             id: asignacion.id,
                             eliminar: (self.$root.can('eliminar_asignacion_contratista') && asignacion.estado == 1) ? true: false

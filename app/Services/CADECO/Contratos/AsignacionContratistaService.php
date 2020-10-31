@@ -60,12 +60,11 @@ class AsignacionContratistaService
                 'estado' => 1,
             ]);
             $registradas = 0;
-
             foreach($data['presupuestos'] as $presupuesto){
                 foreach($presupuesto['partidas'] as $partida){
                     if($partida && $partida['cantidad_asignada'] > 0){
                         AsignacionContratistaPartida::create([
-                            'id_asignacion' => $asignacion->id,
+                            'id_asignacion' => $asignacion->id_asignacion,
                             'id_transaccion' => $presupuesto['id_transaccion'],
                             'id_concepto' => $partida['id_concepto'],
                             'cantidad_asignada' => $partida['cantidad_asignada'],
