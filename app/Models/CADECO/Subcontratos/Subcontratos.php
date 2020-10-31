@@ -23,4 +23,14 @@ class Subcontratos extends Model
     {
         return $this->hasOne(Subcontrato::class, 'id_antecedente', 'id_transaccion');
     }
+
+    public function getFechaInicioEjecucionAttribute(){
+        $date = date_create($this->fecha_ini_ejec);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaFinEjecucionAttribute(){
+        $date = date_create($this->fecha_fin_ejec);
+        return date_format($date,"d/m/Y");
+    }
 }

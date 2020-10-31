@@ -15,4 +15,8 @@ class ClasificacionSubcontrato extends Model
     {
         return $this->belongsTo(TiposSubcontrato::class, 'id_tipo_contrato');
     }
+
+    public function getFolioFormatAttribute(){
+        return \str_pad($this->folio, 5, 0, 0);
+    }
 }
