@@ -14,6 +14,7 @@ class DatoConcepto extends Model
 {
     protected $connection = 'cadeco';
     protected $primaryKey = 'id_concepto';
+    public $timestamps = false;
     protected $fillable = [
         'calificacion',
         'fecha_inicio',

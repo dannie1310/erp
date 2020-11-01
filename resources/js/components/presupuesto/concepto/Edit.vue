@@ -156,7 +156,7 @@
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <button type="button" class="btn btn-primary pull-right" >
+                                    <button type="button" class="btn btn-primary pull-right" @click="actualizaDatosSeguimiento" >
                                         <i class="fa fa-save"></i>
                                         Guardar
                                     </button>
@@ -300,7 +300,6 @@ export default {
                 calificacion:'',
                 fecha_fin:  new Date(),
                 fecha_inicio: new Date(),
-                id:'',
                 revision_diaria:false,
                 revision_mensual:false,
                 revision_semanal:false,
@@ -332,6 +331,23 @@ export default {
                 })
                 .then((data) => {
                     this.clave = this.concepto.clave_concepto;
+                });
+        },
+        actualizaDatosSeguimiento(){
+            return this.$store.dispatch('presupuesto/concepto/actualizaDatosSeguimiento',
+                {
+                    datos:{
+                        calificacion : this.dato.calificacion,
+                        fecha_fin:  this.dato.fecha_fin,
+                        fecha_inicio: this.dato.fecha_inicio,
+                        revision_diaria:this.dato.revision_diaria,
+                        revision_mensual:this.dato.revision_mensual,
+                        revision_semanal:this.dato.revision_semanal,
+                    },
+                    id:this.concepto.id
+                })
+                .then((data) => {
+                    this.dato = this.concepto.dato;
                 });
         },
         find() {

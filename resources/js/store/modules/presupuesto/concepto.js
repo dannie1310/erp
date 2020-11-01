@@ -4,6 +4,7 @@ export default {
     state: {
         conceptos: [],
         currentConcepto: null,
+        dato: null,
         responsables:[],
         meta: {},
     },
@@ -20,6 +21,9 @@ export default {
         },
         SET_RESPONSABLES(state, data) {
             state.responsables = data;
+        },
+        SET_DATO(state, data) {
+            state.dato = data;
         },
         DELETE_RESPONSABLE(state, id) {
             state.responsables = state.responsables.filter( responsable => {
@@ -87,6 +91,9 @@ export default {
                         context.commit("SET_CONCEPTOS", [data]);
                         if(data.responsables != undefined){
                             context.commit("SET_RESPONSABLES", data.responsables.data);
+                        }
+                        if(data.dato != undefined){
+                            context.commit("SET_DATO", data.dato);
                         }
                         resolve(data);
                     })
@@ -167,6 +174,47 @@ export default {
                                     })
                                         .then(() => {
                                             context.commit("UPDATE_CONCEPTO", {id : data.id, clave_concepto : data.clave_concepto});
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        actualizaDatosSeguimiento(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar datos de seguimiento de concepto",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI+ payload.id +'/'+ 'actualiza-datos-seguimiento', payload.datos)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Datos de seguimiento actualizados correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            //context.commit("SET_RESPONSABLES", data.responsables.data);
+                                            //context.commit("UPDATE_CONCEPTO", {id : data.id, clave_concepto : data.clave_concepto});
                                             resolve(data);
                                         })
                                 })

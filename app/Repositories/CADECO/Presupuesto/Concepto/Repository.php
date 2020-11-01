@@ -56,6 +56,20 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return $item;
     }
 
+    public function actualizaDatosSeguimiento($id,$datos)
+    {
+        $item = $this->show($id);
+        if($item->dato()->count()){
+            $item->dato()->update($datos);
+        } else {
+
+            $item->dato()->create($datos);
+        }
+
+
+        return $item;
+    }
+
     public function toggleActivo($id)
     {
         $item = Concepto::withoutGlobalScope(ActivoScope::class)->find($id);

@@ -51,6 +51,11 @@ class ConceptoService
         return $this->repository->actualizarClave($data);
     }
 
+    public function actualizaDatosSeguimiento($id,$datos)
+    {
+        return $this->repository->actualizaDatosSeguimiento($id,$datos);
+    }
+
     public function toggleActivo($id)
     {
         return $this->repository->toggleActivo($id);
