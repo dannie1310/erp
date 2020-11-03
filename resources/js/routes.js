@@ -843,7 +843,7 @@ export const routes = [
                                 name: 'asignacion-contratista',
                                 component: require('./components/contratos/asignacion-contratista/Index').default,
                                 meta: {
-                                    title: 'Asignaciones Proveedores',
+                                    title: 'Asignación Contratistas',
                                     breadcrumb: {parent: 'contratos', name: 'ASIGNACIONES'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_asignacion_contratista'
@@ -854,12 +854,24 @@ export const routes = [
                                 name: 'asignacion-contratista-create',
                                 component: require('./components/contratos/asignacion-contratista/Create').default,
                                 meta: {
-                                    title: 'Registrar Asignación Proveedores',
+                                    title: 'Registrar Asignación Contratistas',
                                     breadcrumb: { parent: 'asignacion-contratista', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_asignacion_contratista']
                                 }
-                            }
+                            },
+                            {
+                                path: ':id',
+                                name: 'asignacion-proveedor-delete',
+                                props: true,
+                                component: require('./components/contratos/asignacion-contratista/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Asignación Proveedores',
+                                    breadcrumb: {parent: 'asignacion-contratista', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['eliminar_asignacion_contratista']
+                                }
+                            },
                         ]
                     },
                     {
