@@ -20,7 +20,9 @@
                                         <label for="clave" class="col-md-4 col-form-label" style="text-align: left">Clave: </label>
                                         <div class="col-md-8 form-inline">
                                             <input type="text" class="form-control" id="clave" v-model="clave" maxlength="140">
-                                            <button type="button" class="btn btn-sm btn-outline-primary" @click="actualizaClave">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" @click="actualizaClave"
+                                                    v-if="$root.can('editar_clave_concepto')"
+                                            >
                                                 <i class="fa fa-save"></i>
                                             </button>
                                         </div>
@@ -156,7 +158,8 @@
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <button type="button" class="btn btn-primary pull-right" @click="actualizaDatosSeguimiento" >
+                                    <button type="button" class="btn btn-primary pull-right" @click="actualizaDatosSeguimiento"
+                                            v-if="$root.can('editar_datos_seguimiento_concepto')">
                                         <i class="fa fa-save"></i>
                                         Guardar
                                     </button>
