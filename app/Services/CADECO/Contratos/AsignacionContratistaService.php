@@ -9,7 +9,7 @@
 namespace App\Services\CADECO\Contratos;
 
 use App\Facades\Context;
-use App\PDF\Contratos\AsignacionTablaComparativaFormato;
+use App\PDF\Contratos\AsignacionFormato;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ContratoProyectado;
@@ -97,7 +97,7 @@ class AsignacionContratistaService
 
     public function pdf($id)
     {
-        $pdf = new AsignacionTablaComparativaFormato($this->repository->show($id));
+        $pdf = new AsignacionFormato($this->repository->show($id));
         return $pdf;
     }
 }

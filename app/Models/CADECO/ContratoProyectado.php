@@ -84,7 +84,8 @@ class ContratoProyectado extends Transaccion
         return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function presupuestos(){
+    public function presupuestos()
+    {
         return $this->hasMany(PresupuestoContratista::class,'id_antecedente', 'id_transaccion' );
     }
 
