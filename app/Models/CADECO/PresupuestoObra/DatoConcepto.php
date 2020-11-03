@@ -25,7 +25,18 @@ class DatoConcepto extends Model
         'fecha_hora_registro',
         'id_usuario_registro',
     ];
-
     protected $table = 'PresupuestoObra.datos_concepto';
+
+    public function getFechaInicioFormatAttribute()
+    {
+        $date = date_create($this->fecha_inicio);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaFinFormatAttribute()
+    {
+        $date = date_create($this->fecha_fin);
+        return date_format($date,"d/m/Y");
+    }
 
 }

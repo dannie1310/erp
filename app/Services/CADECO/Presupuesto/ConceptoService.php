@@ -5,6 +5,8 @@ namespace App\Services\CADECO\Presupuesto;
 
 use App\Models\CADECO\Concepto;
 use App\Repositories\CADECO\Presupuesto\Concepto\Repository;
+use DateTime;
+use DateTimeZone;
 
 class ConceptoService
 {
@@ -53,6 +55,13 @@ class ConceptoService
 
     public function actualizaDatosSeguimiento($id,$datos)
     {
+        $fecha_inicio = New DateTime($datos['fecha_inicio']);
+        $fecha_inicio->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $datos["fecha_inicio"] = $fecha_inicio->format("Y-m-d");
+
+        $fecha_fin = New DateTime($datos['fecha_fin']);
+        $fecha_fin->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $datos["fecha_fin"] = $fecha_fin->format("Y-m-d");
         return $this->repository->actualizaDatosSeguimiento($id,$datos);
     }
 

@@ -286,7 +286,7 @@ import UsuarioSelect from "../../igh/usuario/Select";
 export default {
     name: "edit-concepto",
     props: ['id'],
-    components:{Datepicker, es, UsuarioSelect},
+    components:{Datepicker, UsuarioSelect},
     data() {
         return {
             es:es,
@@ -298,8 +298,8 @@ export default {
             clave:'',
             dato:{
                 calificacion:'',
-                fecha_fin:  new Date(),
-                fecha_inicio: new Date(),
+                fecha_fin:  '',
+                fecha_inicio: '',
                 revision_diaria:false,
                 revision_mensual:false,
                 revision_semanal:false,
@@ -320,6 +320,8 @@ export default {
     },
     mounted() {
         this.cargando = true;
+        this.dato.fecha_inicio = new Date();
+        this.dato.fecha_fin = new Date();
         this.find()
     },
     methods:{
@@ -333,22 +335,40 @@ export default {
                     this.clave = this.concepto.clave_concepto;
                 });
         },
+        validate() {
+            if(moment(this.dato.fecha_fin).format('YYYY/MM/DD') < moment(this.dato.fecha_inicio).format('YYYY/MM/DD'))
+            {
+                swal('¡Error!', 'La fecha inicial no puede ser posterior a la fecha final.', 'error')
+                return false;
+            } else if(this.dato.calificacion == ''){
+                swal('¡Error!', 'Debe seleccionar la importancia para el concepto', 'error')
+                return false;
+            } else if(this.dato.revision_diaria == false && this.dato.revision_mensual == false && this.dato.revision_semanal == false){
+                swal('¡Error!', 'Debe seleccionar al menos una periodicidad de revisión para el concepto', 'error')
+                return false;
+            }
+            else {
+                return true;
+            }
+        },
         actualizaDatosSeguimiento(){
-            return this.$store.dispatch('presupuesto/concepto/actualizaDatosSeguimiento',
-                {
-                    datos:{
-                        calificacion : this.dato.calificacion,
-                        fecha_fin:  this.dato.fecha_fin,
-                        fecha_inicio: this.dato.fecha_inicio,
-                        revision_diaria:this.dato.revision_diaria,
-                        revision_mensual:this.dato.revision_mensual,
-                        revision_semanal:this.dato.revision_semanal,
-                    },
-                    id:this.concepto.id
-                })
-                .then((data) => {
-                    this.dato = this.concepto.dato;
-                });
+            if(this.validate()){
+                return this.$store.dispatch('presupuesto/concepto/actualizaDatosSeguimiento',
+                    {
+                        datos:{
+                            calificacion : this.dato.calificacion,
+                            fecha_fin:  this.dato.fecha_fin,
+                            fecha_inicio: this.dato.fecha_inicio,
+                            revision_diaria:this.dato.revision_diaria,
+                            revision_mensual:this.dato.revision_mensual,
+                            revision_semanal:this.dato.revision_semanal,
+                        },
+                        id:this.concepto.id
+                    })
+                    .then((data) => {
+                        this.dato = data.dato;
+                    });
+            }
         },
         find() {
             return this.$store.dispatch('presupuesto/concepto/find', {

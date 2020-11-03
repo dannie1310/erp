@@ -11,8 +11,8 @@ class DatoConceptoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'calificacion' => $model->calificacion,
-            'fecha_inicio' => $model->fecha_inicio,
-            'fecha_fin' => $model->fecha_fin,
+            'fecha_inicio' => $model->fecha_inicio_format,
+            'fecha_fin' => $model->fecha_fin_format,
             'revision_diaria' => $model->revision_diaria,
             'revision_semanal' => $model->revision_semanal,
             'revision_mensual' => $model->revision_mensual,
