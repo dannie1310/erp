@@ -56,9 +56,32 @@ class ConceptoController extends Controller
         $items = $this->service->actualizarClaves($request->all());
         return $this->respondWithCollection($items);
     }
+    public function actualizarClave(Request $request)
+    {
+        $item = $this->service->actualizarClave($request->all());
+        return $this->respondWithItem($item);
+    }
+    //
+    public function actualizaDatosSeguimiento($id,Request $request)
+    {
+        $item = $this->service->actualizaDatosSeguimiento($id,$request->all());
+        $this->fractal->parseIncludes("dato");
+        return $this->respondWithItem($item);
+    }
     public function toggleActivo($id)
     {
         $item = $this->service->toggleActivo($id);
         return $this->respondWithItem($item);
+    }
+    public function eliminaResponsable($id)
+    {
+        $item = $this->service->eliminaResponsable($id);
+        return $this->respondWithItem($item);
+    }
+    public function storeResponsable(Request $request){
+        $item = $this->service->storeResponsable($request->all());
+        $this->fractal->parseIncludes("responsables.usuario");
+        return $this->respondWithItem($item);
+
     }
 }

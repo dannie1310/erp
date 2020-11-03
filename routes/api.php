@@ -1033,12 +1033,17 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'concepto'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/editar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@show')->where(['id' => '[0-9]+']);
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@list');
             $api->get('/{id}/hijos', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@list')->where(['id' => '[0-9]+']);;
             $api->get('{id}/activar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@activar')->where(['id' => '[0-9]+']);
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@desactivar')->where(['id' => '[0-9]+']);
             $api->patch('actualiza-claves', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@actualizarClaves')->where(['id' => '[0-9]+']);
+            $api->patch('actualiza-clave', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@actualizarClave')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/actualiza-datos-seguimiento', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@actualizaDatosSeguimiento')->where(['id' => '[0-9]+']);
             $api->patch('{id}/toggle-activo', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@toggleActivo')->where(['id' => '[0-9]+']);
+            $api->delete('/responsable/{id}', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@eliminaResponsable')->where(['id' => '[0-9]+']);
+            $api->post('/responsable', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@storeResponsable');
         });
     });
 

@@ -11,6 +11,8 @@ try {
     require('moment/locale/es');
     moment.locale('es');
     require('admin-lte/plugins/daterangepicker/daterangepicker');
+    require('admin-lte/plugins/bootstrap-slider/css/bootstrap-slider.css');
+    require('admin-lte/plugins/ion-rangeslider/css/ion.rangeSlider.css');
     /*require('admin-lte/plugins/datepicker/bootstrap-datepicker')*/
     /*require('admin-lte/plugins/datepicker/locales/bootstrap-datepicker.es')*/
     window.Chart = require('chart.js');

@@ -3,6 +3,7 @@
 namespace App\Repositories\CADECO\Presupuesto\Concepto;
 
 use App\Models\CADECO\Concepto;
+use App\Models\CADECO\PresupuestoObra\Responsable;
 use App\Repositories\RepositoryInterface;
 use App\Scopes\ActivoScope;
 
@@ -48,11 +49,50 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return Concepto::withoutGlobalScope(ActivoScope::class)->whereIn("id_concepto",$items)->get();
     }
 
+    public function actualizarClave($datos)
+    {
+        $item = $this->show($datos["id_concepto"]);
+        $item->update(["clave_concepto"=>$datos["clave"]]);
+        return $item;
+    }
+
+    public function actualizaDatosSeguimiento($id,$datos)
+    {
+        $item = $this->show($id);
+        if($item->dato()->count()){
+            $item->dato()->update($datos);
+        } else {
+
+            $item->dato()->create($datos);
+        }
+
+
+        return $item;
+    }
+
     public function toggleActivo($id)
     {
         $item = Concepto::withoutGlobalScope(ActivoScope::class)->find($id);
         $activo = ($item->activo==0)?1:0;
         $item->update(["activo"=>$activo]);
+        return $item;
+    }
+
+    public function eliminaResponsable($id)
+    {
+        $responsable = Responsable::find($id);
+        $id_concepto = $responsable->id_concepto;
+        $responsable->delete();
+
+        $item = Concepto::withoutGlobalScope(ActivoScope::class)->find($id_concepto);
+
+        return $item;
+    }
+
+    public function storeResponsable($data)
+    {
+        Responsable::create($data);
+        $item = Concepto::withoutGlobalScope(ActivoScope::class)->find($data["id_concepto"]);
         return $item;
     }
 }

@@ -99,6 +99,7 @@ use App\Models\CADECO\PagoACuenta;
 use App\Models\CADECO\PagoACuentaPorAplicar;
 use App\Models\CADECO\PagoAnticipoDestajo;
 use App\Models\CADECO\PagoVario;
+use App\Models\CADECO\PresupuestoObra\Responsable;
 use App\Models\CADECO\ProveedorContratista;
 use App\Models\CADECO\Requisicion;
 use App\Models\CADECO\RequisicionPartida;
@@ -251,6 +252,7 @@ use App\Observers\CADECO\PagoACuentaPorAplicarObserver;
 use App\Observers\CADECO\PagoAnticipoDestajoObserver;
 use App\Observers\CADECO\PagoObserver;
 use App\Observers\CADECO\PagoVarioObserver;
+use App\Observers\CADECO\PresupuestoObra\ResponsableObserver;
 use App\Observers\CADECO\ProveedorContratistaObserver;
 use App\Observers\CADECO\RequisicionObserver;
 use App\Observers\CADECO\SalidaAlmacenObserver;
@@ -453,6 +455,7 @@ class AppServiceProvider extends ServiceProvider
              */
 
             Concepto::observe(ConceptoObserver::class);
+            Responsable::observe(ResponsableObserver::class);
 
             /**
              * Subcontratos
