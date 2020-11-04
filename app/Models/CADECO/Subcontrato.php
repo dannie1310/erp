@@ -542,17 +542,35 @@ class Subcontrato extends Transaccion
         $this->monto = $data['monto'];
         $this->saldo = $data['monto'];
         $this->retencion = $data['retencion_fg'];
-        $this->observaciones = $data['observaciones'];
         $data['id_costo']?$this->id_costo = $data['id_costo']:'';
         $this->save();
 
-        $this->subcontratos->fecha_ini_ejec = $fecha_ini_ejec->format("Y-m-d "). date('H:i:s');
-        $this->subcontratos->fecha_fin_ejec = $fecha_fin_ejec->format("Y-m-d "). date('H:i:s');
-        $this->subcontratos->save();
-
-        $this->clasificacionSubcontrato->id_tipo_contrato = $data['id_tipo_contrato'];
-        $this->clasificacionSubcontrato->actualizarFolio();
-        $this->clasificacionSubcontrato->save();
+        if($this->subcontratos){
+            $this->subcontratos->fecha_ini_ejec = $fecha_ini_ejec->format("Y-m-d "). date('H:i:s');
+            $this->subcontratos->fecha_fin_ejec = $fecha_fin_ejec->format("Y-m-d "). date('H:i:s');
+            $this->subcontratos->observacion = $data['observacion'];
+            $this->subcontratos->save();
+        }else{
+            Subcontratos::create([
+                'id_transaccion' => $this->id_transaccion,
+                'id_clasificador' => 1,
+                'fecha_ini_ejec' => $fecha_ini_ejec->format("Y-m-d "). date('H:i:s'),
+                'fecha_fin_ejec' => $fecha_fin_ejec->format("Y-m-d "). date('H:i:s'),
+                'observacion' => $data['observacion'],
+            ]);
+        }
+        
+        if($this->clasificacionSubcontrato){
+            $this->clasificacionSubcontrato->id_tipo_contrato = $data['id_tipo_contrato'];
+            $this->clasificacionSubcontrato->actualizarFolio();
+            $this->clasificacionSubcontrato->save();
+        }else{
+            ClasificacionSubcontrato::create([
+                'id_transaccion' => $this->id_transaccion,
+                'id_tipo_contrato' => $data['id_tipo_contrato']
+            ]);
+        }
+        
 
         return $this;
     }

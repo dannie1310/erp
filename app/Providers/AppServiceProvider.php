@@ -119,6 +119,8 @@ use App\Models\CADECO\Subcontratos\AsignacionContratistaEliminada;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
 use App\Models\CADECO\Subcontratos\AsignacionSubcontratoEliminado;
+use App\Models\CADECO\Subcontratos\Subcontratos;
+use App\Models\CADECO\Subcontratos\ClasificacionSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
@@ -275,6 +277,8 @@ use App\Observers\CADECO\Subcontratos\AsignacionContratistaObserver;
 use App\Observers\CADECO\Subcontratos\AsignacionContratistaPartidaObserver;
 use App\Observers\CADECO\Subcontratos\AsignacionSubcontratoEliminadoObserver;
 use App\Observers\CADECO\Subcontratos\AsignacionSubcontratoObserver;
+use App\Observers\CADECO\Subcontratos\SubcontratosObserver;
+use App\Observers\CADECO\Subcontratos\ClasificacionSubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\DescuentoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\LiberacionObserver;
@@ -471,6 +475,8 @@ class AppServiceProvider extends ServiceProvider
             AsignacionContratistaPartida::observe(AsignacionContratistaPartidaObserver::class);
             AsignacionSubcontratoEliminado::observe(AsignacionSubcontratoEliminadoObserver::class);
             AsignacionSubcontrato::observe(AsignacionSubcontratoObserver::class);
+            Subcontratos::observe(SubcontratosObserver::class);
+            ClasificacionSubcontrato::observe(ClasificacionSubcontratoObserver::class);
 
 
             /**
