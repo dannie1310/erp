@@ -40,24 +40,30 @@ class SubcontratoFormato extends FPDI
         $this->txtFooterTam = 6;
         $this->encabezado_pdf = utf8_decode('SUBCONTRATO');
 
-        if(Context::getDatabase()  == "SAO1814_TERMINAL_NAICM"){
-            $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_ctvm.pdf'));
-        }
-        else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7){
-            $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS.pdf'));
-        }else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
-            $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
-        }
-        else{
-            $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc.pdf'));
-        }
-        $this->clausulado = $this->importPage(1);
-        $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
-        $this->sin_texto =  $this->importPage(1);
+        
     }
 
     function Header(){
+        $ln = 0;
         if($this->encola == 'clausulado'){
+            if(Context::getDatabase()  == "SAO1814_TERMINAL_NAICM"){
+                $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_ctvm.pdf'));
+            }
+            else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7){
+                $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS.pdf'));
+                $ln = 11.23;
+
+            }else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
+                $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
+                $ln = 14.6;
+            }
+            else{
+                $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc.pdf'));
+            }
+            $this->clausulado = $this->importPage(1);
+            $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
+            $this->sin_texto =  $this->importPage(1);
+
             $this->SetTextColor('0,0,0');
             $this->SetFont('Arial', 'B', 10);
 
@@ -89,19 +95,24 @@ class SubcontratoFormato extends FPDI
             $this->Cell(2.5,.5,'TOTAL ','LB',0,'L');
             $this->Cell(5.5,.5, "$ ". number_format($this->subcontrato->monto, 2, ',', '.'),'RB',1,'R');
 
-            $this->Ln(11.23);
-            $this->SetFont('Arial', 'B', 5);
-            $this->Cell(18.15);
-            $this->Cell(2.5,.5,'31 ','',0,'L');
-            
-            $this->Ln(.22);
-            $this->Cell(10.3);
-            $this->Cell(1.5,.5,'Octubre ','',0,'L');
-            
-            $this->Ln(.18);
-            $this->Cell(12.4);
-            $this->SetFillColor('255,255,255');
-            $this->Cell(.7,.15,'2020 ','',0,'L', 1);
+            if($ln > 0){
+                $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+                $fecha_exp = explode('/', $this->subcontrato->fecha_format);
+
+                $this->Ln($ln);
+                $this->SetFont('Arial', 'B', 5);
+                $this->Cell(18.15);
+                $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
+                
+                $this->Ln(.22);
+                $this->Cell(10.3);
+                $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
+                
+                $this->Ln(.18);
+                $this->Cell(12.4);
+                $this->SetFillColor('255,255,255');
+                $this->Cell(.7,.15,$fecha_exp[2],'',0,'L', 1);
+            }
         }else{
             $postTitle=.7;
             if( Context::getDatabase() == "SAO1814" && ID_OBRA == 41){
@@ -144,8 +155,6 @@ class SubcontratoFormato extends FPDI
             $this->MultiCell(19.5, 1, 'PROYECTO: '. $this->obra->nombre, '', 'C');
 
             $this->Ln(.3);
-
-            // dd($this->subcontrato->id_sucursal, $this->subcontrato->sucursal);
             $this->SetFont('Arial', 'B', 13);
             $this->SetWidths(array(19.5));
             $this->SetRounds(array('1234'));
@@ -197,7 +206,8 @@ class SubcontratoFormato extends FPDI
             $x_inicial = $this->getX();
 
             //$this->datos_encabezado["observacion"] = substr($this->datos_encabezado["observacion"],1,200);
-            $long = strlen($this->subcontrato->subcontratos->observacion);
+            $long = 0;
+             $this->subcontrato->subcontratos?$long =strlen($this->subcontrato->subcontratos->observacion):'';
             if($long <= 104){
                 $alto = .5;
             }
@@ -225,7 +235,7 @@ class SubcontratoFormato extends FPDI
             $this->setY($y_inicial);
             $this->setX($x_inicial);
             $this->CellFit(2.5, 1, '', 0, 0, 'C', 0);
-            $this->MultiCell(17, .5,  utf8_decode($this->subcontrato->subcontratos->observacion), '', 'L');
+            $this->MultiCell(17, .5,  $this->subcontrato->subcontratos?utf8_decode($this->subcontrato->subcontratos->observacion):'', '', 'L');
             $this->encabezados();
         }
         
@@ -327,7 +337,6 @@ class SubcontratoFormato extends FPDI
         
         $subtotal = 0;
         foreach ($this->subcontrato->partidas as $key => $partida) {
-            // dd($partida->contrato->destino->concepto->clave_concepto);
             $precio_neto = $partida->precio_unitario - ($partida->precio_unitario * $partida->descuento / 100);
             $importe = $precio_neto * $partida->cantidad;
             $this->Row(array($key+1,
@@ -397,9 +406,9 @@ class SubcontratoFormato extends FPDI
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(3, .5, utf8_decode('Plazo de Ejecución: Del'), 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(2, .5, ' '.$this->subcontrato->subcontratos->fecha_inicio_ejecucion, 1, 0,'L');
+        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_inicio_ejecucion:''), 1, 0,'L');
         $this->CellFitScale(.5, .5, utf8_decode(' al'), 0, 0,'L');
-        $this->CellFitScale(2, .5, ' '.$this->subcontrato->subcontratos->fecha_fin_ejecucion, 1, 0,'L');
+        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_fin_ejecucion:''), 1, 0,'L');
         $this->Ln(.7);
 
         $this->SetWidths(array(19.5));
@@ -422,7 +431,7 @@ class SubcontratoFormato extends FPDI
         $this->SetFont('Arial', '', 9);
         $this->SetWidths(array(19.5));
         $this->encola="observaciones";
-        $this->Row(array($this->subcontrato->observaciones));
+        $this->Row(array(utf8_decode($this->subcontrato->observaciones)));
         $this->encola = 'clausulado';
 
     }
@@ -538,7 +547,7 @@ class SubcontratoFormato extends FPDI
         $this->AddPage();
         $this->SetAutoPageBreak(true,6.80);
         $this->partidas();
-        if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7){
+        if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
             $this->AddPage();
             $this->useTemplate($this->clausulado,0, -0.5, 22);
         }
@@ -554,9 +563,13 @@ class SubcontratoFormato extends FPDI
 
     public function agregaPagina()
     {
-        $this->AddPageSH($this->CurOrientation, $this->CurPageSize, $this->CurRotation);
-        $this->useTemplate($this->sin_texto, 0, -0.5, 22);
-        $this->AddPage($this->CurOrientation,  $this->CurPageSize, $this->CurRotation);
+        if($this->encola == 'clausulado'){
+            $this->AddPageSH($this->CurOrientation, $this->CurPageSize, $this->CurRotation);
+            $this->useTemplate($this->sin_texto, 0, -0.5, 22);
+            $this->AddPage($this->CurOrientation,  $this->CurPageSize, $this->CurRotation);
+        }else{
+            $this->AddPage();
+        }
     }
 
     function CheckPageBreak($h)
