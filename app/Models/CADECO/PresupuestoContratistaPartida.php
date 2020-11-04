@@ -38,7 +38,7 @@ class PresupuestoContratistaPartida extends Model
     }
 
     public function getPrecioUnitarioFormatAttribute()
-    {        
+    {
         switch($this->IdMoneda)
         {
             case(1):
@@ -54,7 +54,7 @@ class PresupuestoContratistaPartida extends Model
     }
 
     public function getPrecioUnitarioConvertAttribute()
-    {        
+    {
         switch($this->IdMoneda)
         {
             case(1):
@@ -70,7 +70,7 @@ class PresupuestoContratistaPartida extends Model
     }
 
     public function getPrecioTotalAttribute()
-    {         
+    {
         switch($this->IdMoneda)
         {
             case(1):
@@ -99,5 +99,72 @@ class PresupuestoContratistaPartida extends Model
                 return ($this->concepto) ? '$ '. number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcEuro)) - ((($this->precio_unitario) / $this->presupuesto->TcEuro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcEuro), 2, '.', ',') : $this->precio_unitario_format;
             break;
         }
+    }
+
+    /**
+     * Precio total contemplando cantidad, tipo de cambio y descuento
+     * @return float|int
+     */
+    public function getTotalPrecioMonedaAttribute()
+    {
+        switch ($this->IdMoneda)
+        {
+            case (1):
+                return ($this->concepto ? $this->concepto->cantidad_presupuestada : 1) * $this->precio_compuesto;
+                break;
+            case (2):
+                return($this->presupuesto->TcUSD) ? ($this->concepto ? $this->concepto->cantidad_presupuestada : 1) * $this->precio_compuesto * $this->presupuesto->TcUSD : $this->cantidad * $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            case (3):
+                return ($this->presupuesto->TcEuro) ? ($this->concepto ? $this->concepto->cantidad_presupuestada : 1) * $this->precio_compuesto * $this->presupuesto->TcEuro : ($this->concepto ? $this->concepto->cantidad_presupuestada : 1) * $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            /*case (4):
+                return ($this->concepto ? $this->concepto->cantidad_presupuestada : 1) * $this->precio_compuesto * $this->tipo_cambio;
+                break;*/
+        }
+    }
+
+
+    /**
+     * Precio contemplando descuento y tipo de cambio
+     * @return float|int|mixed
+     */
+    public function getPrecioUnitarioCompuestoAttribute()
+    {
+        switch ($this->IdMoneda)
+        {
+            case (1):
+                return $this->precio_compuesto;
+                break;
+            case (2):
+                return ($this->presupuesto->TcUSD) ? $this->precio_compuesto * $this->presupuesto->TcUSD : $this->precio_compuesto * $this->tipo_cambio;
+                break;
+            case (3):
+                return ($this->presupuesto->TcEuro) ? $this->precio_compuesto * $this->presupuesto->TcEuro : $this->precio_compuesto * $this->tipo_cambio;
+                break;
+        }
+    }
+
+    /**
+     * Precio Compuesto contemplando descuentos al precio unitario.
+     * @return float|int|mixed
+     */
+    public function getPrecioCompuestoAttribute()
+    {
+        return $this->PorcentajeDescuento != 0 ? $this->precio_unitario - ($this->precio_unitario * $this->PorcentajeDescuento / 100) : $this->precio_unitario;
+    }
+
+    /**
+     * Precio compuesto descuentos, precio unitario y la cantidad
+     * @return float|int
+     */
+    public function getPrecioCompuestoTotalAttribute()
+    {
+        return $this->precio_compuesto * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
+    }
+
+    public function getTipoCambioAttribute()
+    {
+        return $this->moneda->cambio ? $this->moneda->cambio->cambio : 1;
     }
 }
