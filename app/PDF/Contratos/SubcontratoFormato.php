@@ -104,10 +104,10 @@ class SubcontratoFormato extends FPDI
             $this->Cell(.7,.15,'2020 ','',0,'L', 1);
         }else{
             $postTitle=.7;
-            // if( BASE == "SAO1814" && ID_OBRA == 41){
-            //     $this->image('../../site_media/img/LOGOTIPO_REHABILITACION_ATLACOMULCO.png',1,.3,5,2);
-            //     $postTitle=3.5;
-            // }
+            if( Context::getDatabase() == "SAO1814" && ID_OBRA == 41){
+                $this->image('../../img/subcontrato/LOGOTIPO_REHABILITACION_ATLACOMULCO.png',1,.3,5,2);
+                $postTitle=3.5;
+            }
             $this->SetTextColor('0,0,0');
             $this->SetFont('Arial', 'B', 12);
 
@@ -538,9 +538,11 @@ class SubcontratoFormato extends FPDI
         $this->AddPage();
         $this->SetAutoPageBreak(true,6.80);
         $this->partidas();
-
-        $this->AddPage();
-        $this->useTemplate($this->clausulado,0, -0.5, 22);
+        if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7){
+            $this->AddPage();
+            $this->useTemplate($this->clausulado,0, -0.5, 22);
+        }
+        
 
         try {
             $this->Output('I', "Formato - Subcontrato ".$this->subcontrato->numero_folio_format.".pdf", 1);
