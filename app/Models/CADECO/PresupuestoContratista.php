@@ -142,9 +142,8 @@ class PresupuestoContratista extends Transaccion
     public function getSumaSubtotalPartidasAttribute()
     {
         $suma = 0;
-        foreach ($this->partidas as $partida)
-        {
-            $suma += $partida->total_precio_moneda;
+        foreach ($this->partidas as $partida) {
+            $suma += $partida->precio_sin_descuento;
         }
         return $suma;
     }

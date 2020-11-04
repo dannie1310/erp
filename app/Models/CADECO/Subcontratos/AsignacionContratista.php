@@ -254,11 +254,10 @@ class AsignacionContratista extends Model
                 if (array_key_exists($partida->id_concepto, $partidas)) {
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['id_transaccion'] = $presupuesto->id_transaccion;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario'] = $partida->precio_unitario;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_simple'] = $partida->precio_unitario_simple;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['id_moneda'] = $partida->IdMoneda;
-                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_total_moneda'] = $partida->total_precio_moneda;
-                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_con_descuento'] = $partida->precio_compuesto;
-                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_total_compuesto'] = $partida->precio_compuesto_total;
-                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_compuesto'] = $partida->precio_unitario_compuesto;
+                   $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_total_compuesto'] = $partida->precio_compuesto_total;
+                   $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_compuesto'] = $partida->precio_unitario_compuesto;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['tipo_cambio_descripcion'] = $partida->moneda ? $partida->moneda->abreviatura : '';
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['descuento_partida'] = $partida->PorcentajeDescuento;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['observaciones'] = $partida->Observaciones;
