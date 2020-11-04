@@ -515,7 +515,7 @@ class AsignacionFormato extends Rotation
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["pu"], $heigth, 'DOLAR(USD)', 1, 0, 'C', 1);
                 $this->SetTextColor(0, 0, 0);
-                $this->CellFitScale($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? $datos['presupuestos'][$i]['suma_total_dolar'] : '-', 1, 0, 'R', 0);
+                $this->CellFitScale($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? $datos['presupuestos'][$i]['dolares'] : '-', 1, 0, 'R', 0);
             }
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
@@ -531,7 +531,7 @@ class AsignacionFormato extends Rotation
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["pu"], $heigth, 'EUROS', 1, 0, 'C', 1);
                 $this->SetTextColor(0, 0, 0);
-                $this->CellFitScale($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? $datos['presupuestos'][$i]['suma_total_euro'] : '-', 1, 0, 'R', 0);
+                $this->CellFitScale($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? $datos['presupuestos'][$i]['euros'] : '-', 1, 0, 'R', 0);
             }
 
             $this->Ln();
@@ -548,7 +548,7 @@ class AsignacionFormato extends Rotation
                 $this->SetTextColor(255, 255, 255);
                 $this->CellFitScale($anchos["pu"], $heigth, 'LIBRAS', 1, 0, 'C', 1);
                 $this->SetTextColor(0, 0, 0);
-                $this->CellFitScale($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? $datos['presupuestos'][$i]['suma_total_libra'] : '-', 1, 0, 'R', 0);
+                $this->CellFitScale($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? $datos['presupuestos'][$i]['libras'] : '-', 1, 0, 'R', 0);
             }
 
             $this->Ln();

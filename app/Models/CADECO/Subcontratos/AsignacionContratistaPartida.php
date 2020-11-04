@@ -50,26 +50,7 @@ class AsignacionContratistaPartida extends Model
      */
     public function getImporteCalculadoAttribute()
     {
-        return $this->cantidad_autorizada * $this->partidaPresupuesto->precio_compuesto;
-    }
-
-    public function getTotalPrecioMonedaAttribute()
-    {
-        switch ($this->partidaPresupuesto->IdMoneda)
-        {
-            case (1):
-                return $this->importe_calculado;
-                break;
-            case (2):
-                return($this->partidaPresupuesto->presupuesto->TcUSD) ? $this->importe_calculado * $this->partidaPresupuesto->presupuesto->TcUSD : $this->importe_calculado * $this->partidaPresupuesto->tipo_cambio;
-                break;
-            case (3):
-                return ($this->partidaPresupuesto->presupuesto->TcEuro) ? $this->importe_calculado * $this->partidaPresupuesto->presupuesto->TcEuro : $this->importe_calculado * $this->partidaPresupuesto->tipo_cambio;
-                break;
-            /*case (4):
-                return ($this->partidaPresupuesto->presupuesto->TcLibra) ? $this->importe_calculado * $this->partidaPresupuesto->presupuesto->TcLibra : $this->importe_calculado * $this->partidaPresupuesto->tipo_cambio;
-                break;*/
-        }
+        return $this->cantidad_autorizada * $this->partidaPresupuesto->precio_unitario_compuesto;
     }
 
     public function getSumaCantidadAsignadaAttribute()

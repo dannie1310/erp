@@ -44,10 +44,13 @@ class PresupuestoContratistaPartida extends Model
                 return '$ ' . number_format($this->precio_unitario, 2, '.', ',');
                 break;
             case(2):
-                return '$ ' . number_format(($this->precio_unitario) / $this->presupuesto->TcUSD, 2, '.', ',');
+                return '$ ' . number_format(($this->precio_unitario) / $this->presupuesto->dolar, 2, '.', ',');
                 break;
             case(3):
-                return '$ ' . number_format(($this->precio_unitario) / $this->presupuesto->TcEuro, 2, '.', ',');
+                return '$ ' . number_format(($this->precio_unitario) / $this->presupuesto->euro, 2, '.', ',');
+                break;
+            case(4):
+                return '$ ' . number_format(($this->precio_unitario) / $this->presupuesto->libra, 2, '.', ',');
                 break;
         }
     }
@@ -59,10 +62,13 @@ class PresupuestoContratistaPartida extends Model
                 return $this->precio_unitario;
                 break;
             case(2):
-                return ($this->precio_unitario / $this->presupuesto->TcUSD);
+                return ($this->precio_unitario / $this->presupuesto->dolar);
                 break;
             case(3):
-                return ($this->precio_unitario / $this->presupuesto->TcEuro);
+                return ($this->precio_unitario / $this->presupuesto->euro);
+                break;
+            case(4):
+                return ($this->precio_unitario / $this->presupuesto->libra);
                 break;
         }
     }
@@ -74,10 +80,13 @@ class PresupuestoContratistaPartida extends Model
                 return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * $this->precio_unitario) - ($this->precio_unitario * $this->PorcentajeDescuento), 2, '.', ',') : $this->precio_unitario_format;
                 break;
             case(2):
-                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcUSD)) - ((($this->precio_unitario) / $this->presupuesto->TcUSD) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
+                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->dolar)) - ((($this->precio_unitario) / $this->presupuesto->dolar) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
                 break;
             case(3):
-                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcEuro)) - ((($this->precio_unitario) / $this->presupuesto->TcEuro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
+                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->euro)) - ((($this->precio_unitario) / $this->presupuesto->euro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
+                break;
+            case(4):
+                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->libra)) - ((($this->precio_unitario) / $this->presupuesto->libra) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
                 break;
         }
     }
@@ -89,10 +98,13 @@ class PresupuestoContratistaPartida extends Model
                 return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * $this->precio_unitario) - ($this->precio_unitario * $this->PorcentajeDescuento), 2, '.', ',') : $this->precio_unitario_format;
                 break;
             case(2):
-                return ($this->concepto) ? '$ ' . number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcUSD)) - ((($this->precio_unitario) / $this->presupuesto->TcUSD) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcUSD), 2, '.', ',') : $this->precio_unitario_format;
+                return ($this->concepto) ? '$ ' . number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->dolar)) - ((($this->precio_unitario) / $this->presupuesto->dolar) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->dolar), 2, '.', ',') : $this->precio_unitario_format;
                 break;
             case(3):
-                return ($this->concepto) ? '$ ' . number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcEuro)) - ((($this->precio_unitario) / $this->presupuesto->TcEuro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcEuro), 2, '.', ',') : $this->precio_unitario_format;
+                return ($this->concepto) ? '$ ' . number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->euro)) - ((($this->precio_unitario) / $this->presupuesto->euro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->euro), 2, '.', ',') : $this->precio_unitario_format;
+                break;
+            case(4):
+                return ($this->concepto) ? '$ ' . number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->libra)) - ((($this->precio_unitario) / $this->presupuesto->libra) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->libra), 2, '.', ',') : $this->precio_unitario_format;
                 break;
         }
     }
@@ -108,10 +120,13 @@ class PresupuestoContratistaPartida extends Model
                 return $this->precio_compuesto;
                 break;
             case (2):
-                return ($this->presupuesto->TcUSD) ? $this->precio_compuesto * $this->presupuesto->TcUSD : $this->precio_compuesto * $this->tipo_cambio;
+                return $this->precio_compuesto * $this->presupuesto->dolar;
                 break;
             case (3):
-                return ($this->presupuesto->TcEuro) ? $this->precio_compuesto * $this->presupuesto->TcEuro : $this->precio_compuesto * $this->tipo_cambio;
+                return $this->precio_compuesto * $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_compuesto * $this->presupuesto->libra;
                 break;
         }
     }
@@ -143,11 +158,6 @@ class PresupuestoContratistaPartida extends Model
         return $this->precio_unitario * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
     }
 
-    public function getTipoCambioAttribute()
-    {
-        return $this->moneda->cambio ? $this->moneda->cambio->cambio : 1;
-    }
-
     /**
      * Precio unitario simple
      * @return float|int|mixed
@@ -159,10 +169,13 @@ class PresupuestoContratistaPartida extends Model
                 return $this->precio_unitario;
                 break;
             case (2):
-                return ($this->presupuesto->TcUSD) ? $this->precio_unitario / $this->presupuesto->TcUSD : $this->precio_unitario / $this->tipo_cambio;
+                return $this->precio_unitario / $this->presupuesto->dolar;
                 break;
             case (3):
-                return ($this->presupuesto->TcEuro) ? $this->precio_unitario / $this->presupuesto->TcEuro : $this->precio_unitario / $this->tipo_cambio;
+                return $this->precio_unitario / $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_unitario / $this->presupuesto->libra;
                 break;
         }
     }
