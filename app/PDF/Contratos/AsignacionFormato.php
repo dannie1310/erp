@@ -665,9 +665,9 @@ class AsignacionFormato extends Rotation
         $this->SetY(-0.9);
         $this->SetFont('Arial', 'BI', 6.5);
         $this->SetTextColor('0,0,0');
-        $this->SetX(4.5);
+        $this->SetX(4);
         $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->asignacion->fecha_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
-        $this->Cell(15, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
+        $this->Cell(11, .5, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     function create()
