@@ -113,7 +113,7 @@ class AsignacionContratista extends Model
         {
             foreach ($presupuesto->partidasAsignaciones->where('id_asignacion', $this->id_asignacion) as $asignacion)
             {
-                $suma += $asignacion->importe_calculado;
+                $suma += $asignacion->importe_con_descuento;
             }
 
             $suma_global += $suma;
@@ -137,29 +137,13 @@ class AsignacionContratista extends Model
         $suma_mejor_asignado = 0;
         $valor_calculado = 0;
         $suma_mejor_por_partida = 0;
-        $dolar = $this->tipo_cambio(2);
-        $euro = $this->tipo_cambio(3);
-        $libra = $this->tipo_cambio(4);
         $conceptos = $this->partidas()->groupBy('id_concepto')->pluck('id_concepto');
         foreach ($conceptos as $concepto) {
             $partida_asignacion = $this->partidas()->where('id_concepto', $concepto)->first();
             foreach ($this->contratoProyectado->presupuestos as $presupuesto) {
                 $partida_encontrada = $presupuesto->partidas()->where('id_concepto', '=', $concepto)->first();
                 if ($partida_encontrada) {
-                    switch ($partida_encontrada->IdMoneda) {
-                        case (1):
-                            $valor_calculado = $partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_unitario;
-                            break;
-                        case (2):
-                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_unitario * $dolar);
-                            break;
-                        case (3):
-                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_unitario * $euro);
-                            break;
-                        case (4):
-                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_unitario * $libra);
-                            break;
-                    }
+                    $valor_calculado = $partida_asignacion->suma_importes_con_descuento;
 
                     if ($suma_mejor_por_partida === 0) {
                         $suma_mejor_por_partida = $valor_calculado;
@@ -198,6 +182,38 @@ class AsignacionContratista extends Model
     public function getDiferenciaTotalAttribute()
     {
         return $this->diferencia + $this->diferencia_iva;
+    }
+
+    public function getMejoresOpcionesPorConceptoAttribute()
+    {
+        $array = [];
+        $valor_calculado = 0;
+        $suma_mejor_por_partida = 0;
+        $id_presupuesto_optima = null;
+        foreach ($this->contratoProyectado->conceptosSinOrden()->groupBy('id_concepto')->pluck('id_concepto') as $concepto) {
+            $partida_asignacion = $this->partidas()->where('id_concepto', $concepto)->first();
+            foreach ($this->contratoProyectado->presupuestos as $presupuesto) {
+                $partida_encontrada = $presupuesto->partidas()->where('id_concepto', '=', $concepto)->first();
+                if ($partida_encontrada && $partida_asignacion) {
+                    $valor_calculado = $partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_unitario_compuesto;
+                    if ($suma_mejor_por_partida === 0) {
+                        $id_presupuesto_optima = $partida_encontrada->id_transaccion;
+                        $suma_mejor_por_partida = $valor_calculado;
+                    }
+                    if ($valor_calculado < $suma_mejor_por_partida) {
+                        $id_presupuesto_optima = $partida_encontrada->id_transaccion;
+                        $suma_mejor_por_partida = $valor_calculado;
+                    }
+                }
+            }
+            if (!array_key_exists($concepto, $array)) {
+                $array[$concepto] = $id_presupuesto_optima;
+            }
+            $valor_calculado = 0;
+            $suma_mejor_por_partida = 0;
+            $id_cotizacion_optima = null;
+        }
+        return $array;
     }
 
     /**
@@ -315,16 +331,17 @@ class AsignacionContratista extends Model
             $partidas_asignadas = $this->partidas->where('id_transaccion', $presupuesto->id_transaccion);
             if(count($partidas_asignadas)>0) {
                 $suma = 0;
+                $suma_sin_descuento = 0;
                 foreach ($partidas_asignadas as $asignada) {
-                    $suma += $asignada->importe_calculado;
+                    $suma += $asignada->importe_con_descuento;
+                    $suma_sin_descuento += $asignada->importe_calculado;
                 }
-                $descuento = ($suma * $presupuesto->PorcentajeDescuento)/100;
-                $subtotal_descuento = $suma - $descuento;
-                $presupuestos[$p]['asignacion_subtotal_partidas'] = $suma;
+                $descuento = $suma_sin_descuento - $suma;
+                $presupuestos[$p]['asignacion_subtotal_partidas'] = $suma_sin_descuento;
                 $presupuestos[$p]['asignacion_descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $descuento : '-';
-                $presupuestos[$p]['asignacion_subtotal_descuento'] = $subtotal_descuento;
-                $presupuestos[$p]['asignacion_iva'] = $subtotal_descuento * 0.16;
-                $presupuestos[$p]['asignacion_total'] = $subtotal_descuento + ($subtotal_descuento * 0.16);
+                $presupuestos[$p]['asignacion_subtotal_descuento'] = $suma;
+                $presupuestos[$p]['asignacion_iva'] = $suma * 0.16;
+                $presupuestos[$p]['asignacion_total'] = $suma + ($suma * 0.16);
                 $peso = $this->sumaSubtotalPartidas(1);
                 $dolar = $this->sumaSubtotalPartidas(2);
                 $euro = $this->sumaSubtotalPartidas(3);
@@ -380,11 +397,12 @@ class AsignacionContratista extends Model
     public function sumaSubtotalPartidas($tipo_moneda)
     {
         $suma = 0;
+        $descuento = 0;
         foreach ($this->partidas as $partida)
         {
             if($tipo_moneda == $partida->partidaPresupuesto->IdMoneda)
             {
-                $suma += $partida->importe_calculado;
+                $suma += $partida->importe_con_descuento;
             }
         }
         return $suma;
