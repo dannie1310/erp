@@ -58,4 +58,9 @@ class SubcontratoController extends Controller
     {
         return $this->service->ordenado($id);
     }
+
+    public function updateContrato(Request $request, $id){
+        $resp = $this->service->updateContrato($request->all(), $id);
+        return $this->respondWithItem($resp);
+    }
 }

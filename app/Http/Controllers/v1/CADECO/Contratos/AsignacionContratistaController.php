@@ -53,4 +53,13 @@ class AsignacionContratistaController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
+
+    public function getAsignaciones(Request $request){
+        $asignaciones = $this->service->getAsignaciones($request->all());
+        return $this->respondWithCollection($asignaciones);
+    }
+
+    public function generarSubcontrato(Request $request){
+        return $this->service->generarSubcontrato($request->all());
+    }
 }

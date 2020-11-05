@@ -905,6 +905,20 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id/edit',
+                                name: 'subcontrato-edit',
+                                component: require('./components/contratos/subcontrato/Edit').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                }),
+                                meta: {
+                                    title: 'Editar Subcontrato',
+                                    breadcrumb: { parent: 'subcontrato', name: 'EDITAR'},
+                                    middleware: [auth, context],
+                                    permission: ['editar_subcontrato']
+                                }
+                            },
+                            {
                                 path: ':id',
                                 name: 'subcontrato-delete',
                                 props: true,

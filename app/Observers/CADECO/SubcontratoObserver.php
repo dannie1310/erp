@@ -24,6 +24,7 @@ class SubcontratoObserver extends TransaccionObserver
         parent::creating($subcontrato);
         $subcontrato->tipo_transaccion = 51;
         $subcontrato->opciones = 2;
+        $subcontrato->fecha = date('Y-m-d');
     }
 
     public function created(Subcontrato $subcontrato)

@@ -57,6 +57,10 @@ class SubcontratoService
     {
         return $this->repository->paginate($data);
     }
+    
+    public function updateContrato($data, $id){
+        return $this->repository->show($id)->updateContrato($data);
+    }
 
     public function delete($data, $id)
     {

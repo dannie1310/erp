@@ -70,7 +70,11 @@
                                                 <td>{{concepto.anidacion}}{{concepto.descripcion}}</td>
                                                 <td style="text-align: right">{{concepto.cantidad_presupuestada}}</td>
                                                 <td>{{concepto.unidad}}</td>
-                                                <td></td>
+                                                <td>
+                                                    <router-link  :to="{ name: 'concepto-edit', params: {id: concepto.id}}" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </router-link>
+                                                </td>
                                             </tr>
                                         </template>
                                         </tbody>
