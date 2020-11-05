@@ -85,6 +85,16 @@ export const routes = [
                 },
             },
             {
+                path: 'modal/contrato_proyectado/:id',
+                name: 'modal_contrato_proyectado',
+                component: require('./components/contratos/proyectado/Show').default,
+                props: true,
+                meta: {
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_contrato_proyectado'
+                },
+            },
+            {
                 path: 'modal/solicitud_compra/:id',
                 name: 'modal_solicitud_compra',
                 component: require('./components/compras/solicitud-compra/Show').default,
@@ -741,6 +751,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id',
+                                name: 'proyectado-show',
+                                component: require('./components/contratos/proyectado/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Contrato Proyectado',
+                                    breadcrumb: { parent: 'proyectado', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_contrato_proyectado'
+                                }
+                            },
+                            {
                                 path: ':id/documentos',
                                 name: 'proyectado-documentos',
                                 component: require('./components/globals/archivos/Files').default,
@@ -821,7 +843,7 @@ export const routes = [
                                 name: 'asignacion-contratista',
                                 component: require('./components/contratos/asignacion-contratista/Index').default,
                                 meta: {
-                                    title: 'Asignaciones Proveedores',
+                                    title: 'Asignación Contratistas',
                                     breadcrumb: {parent: 'contratos', name: 'ASIGNACIONES'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_asignacion_contratista'
@@ -832,12 +854,24 @@ export const routes = [
                                 name: 'asignacion-contratista-create',
                                 component: require('./components/contratos/asignacion-contratista/Create').default,
                                 meta: {
-                                    title: 'Registrar Asignación Proveedores',
+                                    title: 'Registrar Asignación Contratistas',
                                     breadcrumb: { parent: 'asignacion-contratista', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_asignacion_contratista']
                                 }
-                            }
+                            },
+                            {
+                                path: ':id',
+                                name: 'asignacion-proveedor-delete',
+                                props: true,
+                                component: require('./components/contratos/asignacion-contratista/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Asignación Proveedores',
+                                    breadcrumb: {parent: 'asignacion-contratista', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['eliminar_asignacion_contratista']
+                                }
+                            },
                         ]
                     },
                     {
@@ -869,7 +903,33 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_subcontrato'
                                 }
-                            }
+                            },
+                            {
+                                path: ':id/edit',
+                                name: 'subcontrato-edit',
+                                component: require('./components/contratos/subcontrato/Edit').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                }),
+                                meta: {
+                                    title: 'Editar Subcontrato',
+                                    breadcrumb: { parent: 'subcontrato', name: 'EDITAR'},
+                                    middleware: [auth, context],
+                                    permission: ['editar_subcontrato']
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'subcontrato-delete',
+                                props: true,
+                                component: require('./components/contratos/subcontrato/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Subcontrato',
+                                    breadcrumb: {parent: 'subcontrato', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['eliminar_subcontrato']
+                                }
+                            },
                         ]
                     },
                     {

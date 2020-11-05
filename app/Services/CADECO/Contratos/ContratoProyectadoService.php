@@ -353,8 +353,8 @@ class ContratoProyectadoService
                             $presupuestos[$presupuesto->id_transaccion] = [
                                 'id_transaccion' => $presupuesto->id_transaccion,
                                 'razon_social' => $presupuesto->empresa->razon_social,
-                                'sucursal' => $presupuesto->sucursal->descripcion,
-                                'direccion' => $presupuesto->sucursal->direccion,
+                                'sucursal' => $presupuesto->sucursal?$presupuesto->sucursal->descripcion:'',
+                                'direccion' => $presupuesto->sucursal?$presupuesto->sucursal->direccion:'',
                             ];
                             $presupuestos[$presupuesto->id_transaccion]['partidas'] = array();
                         }

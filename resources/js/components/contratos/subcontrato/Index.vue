@@ -1,11 +1,7 @@
 <template>
     <div class="row">
-        <div class="col-12">
-            <!-- <router-link :to="{name: 'estimacion-create'}" v-if="$root.can('registrar_estimacion_subcontrato')" class="btn btn-app btn-info float-right" :disabled="cargando">
-                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                <i class="fa fa-plus" v-else></i>
-                Registrar
-            </router-link> -->
+        <div class="col-md-12">
+            <Registro @created="paginate()"></Registro>
         </div>
         <div class="col-12">
             <div class="card">
@@ -33,8 +29,10 @@
 </template>
 
 <script>
+    import Registro from "./partials/Registrar";
     export default {
         name: "estimacion-index",
+        components:{Registro},
         data() {
             return {
                 HeaderSettings: false,
@@ -135,6 +133,7 @@
                             show: true,
                             id: subcontrato.id,
                             transaccion: {id:subcontrato.id, tipo:51},
+                            eliminar: (self.$root.can('eliminar_subcontrato') && subcontrato.estado == 0) ? true: false
                         })
                     }));
                 },
