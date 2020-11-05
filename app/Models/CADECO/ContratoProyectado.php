@@ -74,6 +74,11 @@ class ContratoProyectado extends Transaccion
         return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante');
     }
 
+    public function conceptosSinOrden()
+    {
+        return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion')->whereNotNull('unidad');
+    }
+
     public function conceptos()
     {
         return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion')->OrderBy('nivel')->whereNotNull('unidad');
@@ -84,7 +89,8 @@ class ContratoProyectado extends Transaccion
         return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function presupuestos(){
+    public function presupuestos()
+    {
         return $this->hasMany(PresupuestoContratista::class,'id_antecedente', 'id_transaccion' );
     }
 

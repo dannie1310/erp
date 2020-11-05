@@ -756,6 +756,7 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@store');
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@destroy')->where(['id' => '[0-9]+']);
             $api->post('generarSubcontrato', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@generarSubcontrato');
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@pdf')->where(['id' => '[0-9]+']);
         });
 
         /**

@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 use App\CSV\PresupuestoLayout;
 use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
 use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
+use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 use App\Models\IGH\Usuario;
 use DateTime;
 use DateTimeZone;
@@ -58,6 +59,9 @@ class PresupuestoContratista extends Transaccion
         });
     }
 
+    /**
+     * Relaciones
+     */
     public function contratoProyectado()
     {
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
@@ -78,17 +82,110 @@ class PresupuestoContratista extends Transaccion
         return $this->hasOne(AsignacionSubcontratoPartidas::class, 'id_transaccion');
     }
 
-    public function descargaLayout($id)
-    {
-        $find = $this::find($id);
-        return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
-    }
-
     public function empresa()
     {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'id_sucursal');
+    }
+
+    public function partidasAsignaciones()
+    {
+        return $this->hasMany(AsignacionContratistaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    /**
+     * Atributos
+     */
+    public function getUsdFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcUSD),4);
+    }
+
+    public function getEuroFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcEuro),4);
+    }
+
+    public function getLibraFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcLibra),4);
+    }
+
+    public function getDolarAttribute()
+    {
+        return $this->tc_usd ? $this->tc_usd :Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getEuroAttribute()
+    {
+        return $this->tc_euro ? $this->tc_euro :Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getLibraAttribute()
+    {
+        return $this->tc_libra ? $this->tc_libra :Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = PresupuestoContratista::NOMBRE;
+        $datos["tipo_numero"] = PresupuestoContratista::TIPO;
+        $datos["icono"] = PresupuestoContratista::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
+    public function getFechaGuionFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d-m-Y");
+    }
+
+    public function getSumaSubtotalPartidasAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida) {
+            $suma += $partida->precio_sin_descuento;
+        }
+        return $suma;
+    }
+
+    public function getDescuentoAttribute()
+    {
+        return $this->suma_subtotal_partidas * $this->PorcentajeDescuento/100;
+    }
+
+    public function getSubtotalConDescuentoAttribute()
+    {
+        return $this->suma_subtotal_partidas - $this->descuento;
+    }
+
+    public function getIvaConDescuentoAttribute()
+    {
+        return $this->subtotal_con_descuento * 0.16;
+    }
+
+    public function getTotalConDescuentoAttribute()
+    {
+        return $this->subtotal_con_descuento + $this->iva_con_descuento;
+    }
+
+    /**
+     * Métodos
+     */
     public function datosPartidas()
     {
         $items = array();
@@ -280,41 +377,9 @@ class PresupuestoContratista extends Transaccion
         }
     }
 
-    public function sucursal()
+    public function descargaLayout($id)
     {
-        return $this->belongsTo(Sucursal::class, 'id_sucursal');
-    }
-
-    public function getUsdFormatAttribute()
-    {
-        return '$ ' . number_format(abs($this->TcUSD),4);
-    }
-
-    public function getEuroFormatAttribute()
-    {
-        return '$ ' . number_format(abs($this->TcEuro),4);
-    }
-
-    public function getLibraFormatAttribute()
-    {
-        return '$ ' . number_format(abs($this->TcLibra),4);
-    }
-
-    public function getDatosParaRelacionAttribute()
-    {
-        $datos["numero_folio"] = $this->numero_folio_format;
-        $datos["id"] = $this->id_transaccion;
-        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
-        $datos["hora"] = $this->hora_registro;
-        $datos["fecha"] = $this->fecha_registro;
-        $datos["orden"] = $this->fecha_hora_registro_orden;
-        $datos["usuario"] = $this->usuario_registro;
-        $datos["observaciones"] = $this->observaciones;
-        $datos["tipo"] = PresupuestoContratista::NOMBRE;
-        $datos["tipo_numero"] = PresupuestoContratista::TIPO;
-        $datos["icono"] = PresupuestoContratista::ICONO;
-        $datos["consulta"] = 0;
-
-        return $datos;
+        $find = $this::find($id);
+        return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
     }
 }
