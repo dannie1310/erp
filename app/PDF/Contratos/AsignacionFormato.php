@@ -91,14 +91,11 @@ class AsignacionFormato extends Rotation
         $no_presupuestos = count($this->asignacion->contratoProyectado->presupuestos);
         $datos = $this->asignacion->datosComparativos();
 
-        $datos_partidas_globales = [];
-
         $font = 5;
         $font2 = 4;
         $font_importes = 5;
         $heigth = 0.3;
         $presupuestosXFila = 2;
-        $bandera_asignacion = 0;
         $anchos["des"] = 4.5;
         $anchos["u"] = $anchos["c"] = $anchos["ca"] = 0.71;
         $anchos["aesp"] = $anchos["des"] + $anchos["u"] + $anchos["c"];
@@ -143,7 +140,6 @@ class AsignacionFormato extends Rotation
             }
             $this->Ln();
             $this->Cell($anchos["aesp"] + $anchos["des"]);
-            $asignados = array();
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(100, 100, 100);
                 $this->SetTextColor(0, 0, 0);
@@ -499,7 +495,7 @@ class AsignacionFormato extends Rotation
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if($i == 0) {
+                if($i%2==0) {
                     $this->SetFillColor(100, 100, 100);
                     $this->SetTextColor(0, 0, 0);
                     $this->Cell($anchos["espacio_detalles_globales"], $heigth, $datos['presupuestos'][$i]['tc_usd'], 1, 0, 'C', 0);
@@ -515,7 +511,7 @@ class AsignacionFormato extends Rotation
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if($i == 0) {
+                if($i%2==0) {
                     $this->SetFillColor(100, 100, 100);
                     $this->SetTextColor(0, 0, 0);
                     $this->Cell($anchos["espacio_detalles_globales"], $heigth, $datos['presupuestos'][$i]['tc_eur'], 1, 0, 'C', 0);
@@ -532,7 +528,7 @@ class AsignacionFormato extends Rotation
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if($i == 0) {
+                if($i%2==0) {
                     $this->SetFillColor(100, 100, 100);
                     $this->SetTextColor(0, 0, 0);
                     $this->Cell($anchos["espacio_detalles_globales"], $heigth, $datos['presupuestos'][$i]['tc_libra'], 1, 0, 'C', 0);
@@ -623,8 +619,8 @@ class AsignacionFormato extends Rotation
         if (!App::environment('production')) {
             $this->SetFont('Arial','B',90);
             $this->SetTextColor(155,155,155);
-        //    $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
-          //  $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
+            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
         }
         $this->SetTextColor(0, 0, 0);
@@ -662,7 +658,7 @@ class AsignacionFormato extends Rotation
         $this->SetFont('Arial', 'BI', 6.5);
         $this->SetTextColor('0,0,0');
         $this->SetX(4);
-        $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->asignacion->fecha_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
+        $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ') . $this->asignacion->fecha_registro_format.' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
         $this->Cell(11, .5, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
@@ -671,7 +667,7 @@ class AsignacionFormato extends Rotation
         $this->SetMargins(0.7, 1, 0.7);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 4);
+        $this->SetAutoPageBreak(true, 5);
         $this->partidas();
 
         try {
