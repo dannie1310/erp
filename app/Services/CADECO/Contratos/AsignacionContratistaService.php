@@ -127,6 +127,10 @@ class AsignacionContratistaService
                     ]);
                     $subcontratos[ $partida->presupuestoPartida->IdMoneda][$partida->id_transaccion] = $resp;
                     $subcontrato = $resp;
+                    AsignacionSubcontrato::create([
+                        'id_asignacion' => $asignacion->id_asignacion,
+                        'id_transaccion' => $resp->id_transaccion,
+                    ]);
                 }
 
                 $descuento = $partida->presupuestoPartida->porcentajeDescuento / 100 * $partida->presupuestoPartida->precio_unitario;
