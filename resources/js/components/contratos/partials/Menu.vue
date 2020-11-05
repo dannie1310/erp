@@ -12,7 +12,7 @@
                     <p>Contrato Proyectado</p>
                 </router-link>
             </li>
-            
+
             <li class="nav-item" v-if="$root.can('consultar_presupuesto_contratista')">
                 <router-link :to="{name: 'presupuesto'}" class="nav-link" :class="{active: this.$route.name == 'presupuesto'}">
                     <i class="fa fa-comments-dollar nav-icon"></i>
@@ -25,7 +25,7 @@
                     <p>Asignación Contratistas</p>
                 </router-link>
             </li>
-           
+
             <li class="nav-item">
                 <router-link :to="{name: 'subcontrato'}" v-if="$root.can(['consultar_subcontrato'])" class="nav-link" :class="{active: this.$route.name == 'subcontrato'}">
                     <i class="fa fa-file-contract nav-icon"></i>

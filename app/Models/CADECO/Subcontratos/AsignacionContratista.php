@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\PresupuestoContratista;
 use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
+use Illuminate\Support\Facades\DB;
 
 class AsignacionContratista extends Model
 {
@@ -46,8 +47,14 @@ class AsignacionContratista extends Model
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
     }
 
-    public function presupuestoContratista(){
+    public function presupuestoContratista()
+    {
         return $this->belongsTo(PresupuestoContratista::class, 'id_transaccion', 'id_antecedente');
+    }
+
+    public function asignacionEliminada()
+    {
+        return $this->belongsTo(AsignacionContratistaEliminada::class, 'id_asignacion');
     }
 
     public function scopeProyectado($query)
@@ -70,8 +77,9 @@ class AsignacionContratista extends Model
         return '# ' . sprintf("%05d", $this->id_asignacion);
     }
 
-    public function getUsuarioRegistroNombreAttribute(){
-        return $this->usuarioRegistro['nombre'] . ' ' . $this->usuarioRegistro['apaterno'] . ' ' . $this->usuarioRegistro['amaterno'];
+    public function getUsuarioRegistroNombreAttribute()
+    {
+        return $this->usuarioRegistro->nombre_completo;
     }
 
     public function getEstadoFormatAttribute(){
@@ -82,6 +90,68 @@ class AsignacionContratista extends Model
             case 2:
                 return 'Aplicada';
             break;
+        }
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->respaldar($motivo);
+            foreach ($this->partidas()->get() as $partida) {
+                $partida->delete();
+            }
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function respaldar($motivo)
+    {
+        /**
+         * Respaldar partidas
+         */
+        foreach ($this->partidas as $partida) {
+            AsignacionContratistaPartidaEliminada::create([
+                'id_partida_asignacion' => $partida->id_partida_asignacion,
+                'id_transaccion' => $partida->id_transaccion,
+                'id_asignacion' => $partida->id_asignacion,
+                'id_concepto' => $partida->id_concepto,
+                'cantidad_asignada' => $partida->cantidad_asignada,
+                'cantidad_autorizada' => $partida->cantidad_autorizada,
+            ]);
+        }
+
+        /**
+         * Respaldar asignación
+         */
+        AsignacionContratistaEliminada::create([
+            'id_asignacion' => $this->id_asignacion,
+            'id_transaccion' => $this->id_transaccion,
+            'registro' => $this->registro,
+            'fecha_hora_registro' => $this->fecha_hora_registro,
+            'autorizo' => $this->autorizo,
+            'fecha_hora_autorizacion' => $this->fecha_hora_autorizacion,
+            'estado' => $this->estado,
+            'motivo_eliminacion' => $motivo,
+        ]);
+    }
+
+    /**
+     * Reglas de negocio que debe cumplir la eliminación
+     */
+    public function validarParaEliminar()
+    {
+        if ($this->estado != 1) {
+            abort(400, "No se puede eliminar esta asignación porque se encuentra Autorizada.");
+        }
+
+        if ($this->asignacionSubcontrato != null) {
+            abort(400, "No se puede eliminar esta asignacion porque cuenta con subcontrato.");
         }
     }
 }

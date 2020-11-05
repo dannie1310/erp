@@ -350,7 +350,6 @@ class ContratoProyectadoService
                     $cantidad_pendiente = $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada');
                     foreach($presupuesto_contratistas as $presupuesto){
                         if(!array_key_exists($presupuesto->id_transaccion, $presupuestos)){
-                            // dd($presupuesto->sucursal);
                             $presupuestos[$presupuesto->id_transaccion] = [
                                 'id_transaccion' => $presupuesto->id_transaccion,
                                 'razon_social' => $presupuesto->empresa->razon_social,

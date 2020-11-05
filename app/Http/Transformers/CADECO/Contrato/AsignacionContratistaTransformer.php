@@ -26,6 +26,7 @@ class AsignacionContratistaTransformer extends TransformerAbstract
         'contrato',
         'asignacionEstimacion',
         'presupuestoContratista',
+        'partidas'
     ];
 
     /**
@@ -86,4 +87,16 @@ class AsignacionContratistaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(AsignacionContratista $model)
+    {
+        if($partidas = $model->partidas)
+        {
+            return $this->collection($partidas, new AsignacionContratistaPartidaTransformer);
+        }
+        return null;
+    }
 }
