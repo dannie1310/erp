@@ -310,7 +310,7 @@ export default {
         validarVolumenItems(){
             let self = this;
             let resp = false;
-            Object.values(this.data.presupuestos).forEach(presupuesto =>{
+            Object.entries(this.data.presupuestos).forEach(([i, presupuesto], index) => { 
                 presupuesto.partidas.forEach(function (partida, i){
                     if(partida.cantidad_asignada > 0){
                         console.log(partida.cantidad_asignada);
