@@ -829,6 +829,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@paginate');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@updateContrato')->where(['id' => '[0-9]+']);
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@pdf')->where(['id' => '[0-9]+']);
         });
 
         /**

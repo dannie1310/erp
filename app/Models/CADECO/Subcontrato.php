@@ -15,6 +15,8 @@ use App\Models\CADECO\Subcontratos\AsignacionSubcontratoEliminado;
 use App\Models\CADECO\Subcontratos\ClasificacionSubcontrato;
 use App\Models\CADECO\Subcontratos\SubcontratoEliminado;
 use App\Models\CADECO\Subcontratos\SubcontratoPartidaEliminada;
+use App\Models\CADECO\Sucursal;
+use App\PDF\Contratos\SubcontratoFormato;
 use App\Models\CADECO\Subcontratos\Subcontratos;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
@@ -135,6 +137,10 @@ class Subcontrato extends Transaccion
     public function empresa()
     {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function sucursal(){
+        return $this->belongsTo(Sucursal::class, 'id_sucursal', 'id_sucursal');
     }
 
     public function facturas()
@@ -696,5 +702,10 @@ class Subcontrato extends Transaccion
                 'estado' => 0
             ]);
         }
+    }
+
+    public function pdf(){
+        $pdf = new SubcontratoFormato($this);
+        return $pdf->create();
     }
 }

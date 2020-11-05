@@ -28,15 +28,15 @@ class Subcontratos extends Model
         if($this->fecha_ini_ejec){
             $date = date_create($this->fecha_ini_ejec);
             return date_format($date,"d/m/Y");
-        } 
+        }
         return '--------';
     }
-    
+
     public function getFechaFinEjecucionFormatAttribute(){
         if($this->fecha_fin_ejec){
             $date = date_create($this->fecha_fin_ejec);
             return date_format($date,"d/m/Y");
-        } 
+        }
         return '--------';
     }
 }

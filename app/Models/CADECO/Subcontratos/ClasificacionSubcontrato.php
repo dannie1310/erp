@@ -29,4 +29,8 @@ class ClasificacionSubcontrato extends Model
         $this->folio =  $this->where('id_tipo_contrato', '=', $this->id_tipo_contrato)->count();
         $this->save();
     }
+
+    public function getFolioFormatAttribute(){
+        return \str_pad($this->folio, 5, 0, 0);
+    }
 }
