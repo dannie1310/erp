@@ -5,7 +5,7 @@
              <div class="modal-dialog modal-lg" id="mdialTamanio">
                  <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Tabla comparativa de asigaciones a contratista</h4>
+                        <h4 class="modal-title">Tabla comparativa de asignaciones a contratista</h4>
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                     </div>
                     <div class="modal-body modal-lg" style="height: 800px" ref="body">
