@@ -288,37 +288,9 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result){
-                    if(this.validarVolumenItems()){
-                        this.store();
-                    }else{
-                        swal({
-                            title: "Asignación de Contratista",
-                            text: "Debe asignar al menos una partida.",
-                            icon: "warning",
-                            buttons: {
-                                cancel: {
-                                    text: 'Cerrar',
-                                    visible: true
-                                },
-                            }
-                        })
-                    }
-                    
+                    this.store(); 
                 }
             });
-        },
-        validarVolumenItems(){
-            let self = this;
-            let resp = false;
-            Object.entries(this.data.presupuestos).forEach(([i, presupuesto], index) => {
-                Object.entities(presupuesto.partidas).forEach(([i, partida], index)=>{
-                    if(partida.cantidad_asignada > 0){
-                        console.log(partida.cantidad_asignada);
-                        resp = true;
-                    }
-                });                   
-            });
-            return resp;
         },
     },
     watch:{
