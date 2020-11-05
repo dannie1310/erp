@@ -406,9 +406,9 @@ class SubcontratoFormato extends FPDI
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(3, .5, utf8_decode('Plazo de Ejecución: Del'), 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_inicio_ejecucion:''), 1, 0,'L');
+        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_inicio_ejecucion_format:''), 1, 0,'L');
         $this->CellFitScale(.5, .5, utf8_decode(' al'), 0, 0,'L');
-        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_fin_ejecucion:''), 1, 0,'L');
+        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_fin_ejecucion_format:''), 1, 0,'L');
         $this->Ln(.7);
 
         $this->SetWidths(array(19.5));
