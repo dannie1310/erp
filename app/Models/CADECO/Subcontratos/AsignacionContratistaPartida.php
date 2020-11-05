@@ -33,6 +33,11 @@ class AsignacionContratistaPartida extends Model
         return $this->belongsTo(Contrato::class, 'id_concepto', 'id_concepto');
     }
 
+    public function partidaEliminada()
+    {
+        return $this->belongsTo(AsignacionContratistaPartidaEliminada::class, 'id_partida_asignacion');
+    }
+
     public function presupuestoPartida(){
         return $this->belongsTo(PresupuestoContratistaPartida::class, 'id_transaccion', 'id_transaccion')->where('id_concepto', '=', $this->id_concepto);
     }

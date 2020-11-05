@@ -27,11 +27,11 @@
                                                 <tbody>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Folio Asignación:</b></td>
-                                                        <td class="bg-gray-light">{{info.numero_folio_asignacion}}</td>
+                                                        <td class="bg-gray-light">{{info.numero_folio}}</td>
                                                         <td class="bg-gray-light"><b>Fecha Registro:</b></td>
-                                                        <td class="bg-gray-light">{{info.fecha_registro}}</td>
+                                                        <td class="bg-gray-light">{{info.fecha_format}}</td>
                                                         <td class="bg-gray-light"><b>Registro:</b></td>
-                                                        <td class="bg-gray-light">{{info.usuario_registro}}</td>
+                                                        <td class="bg-gray-light">{{info.usuario}}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Folio Contrato:</b></td>
@@ -45,17 +45,17 @@
                                                         <td class="bg-gray-light"><b>Contrato:</b></td>
                                                         <td class="bg-gray-light">{{subcontratos.contrato_folio_format}}</td>
                                                     </tr> -->
-                                                    
+
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="info.subcontrato">
+                                    <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
                                         <div class="col-12">
                                             <h5>Asignación Subcontrato: </h5>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="info.subcontrato">
+                                    <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
                                         <div class="table-responsive col-md-12">
                                             <table class="table">
                                                 <tbody>
@@ -82,17 +82,17 @@
                                                         <td class="bg-gray-light"><b>Contrato:</b></td>
                                                         <td class="bg-gray-light">{{subcontratos.contrato_folio_format}}</td>
                                                     </tr> -->
-                                                    
+
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                     <div class="row" v-if="info.subcontrato">
+                                     <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
                                         <div class="col-12">
                                             <h6><b>Detalle de las partidas</b></h6>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="info.subcontrato">
+                                    <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
                                         <div class="table-responsive col-md-12">
                                             <table class="table table-striped">
                                                 <thead>
@@ -120,7 +120,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="info.subcontrato">
+                                    <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
                                         <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Subtotal Antes Descuento:</label>
                                             <label class="col-sm-2 col-form-label" style="text-align: right">{{info.asignacionEstimacion.subcontrato.subtotal_antes_descuento}}</label>
@@ -158,9 +158,9 @@
                                             <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{info.asignacionEstimacion.subcontrato.retencion}}</i></label>
                                          </div>
                                     </div>
-                                    
+
                                     <hr>
-                                    <div class="row col-md-12" v-if="info.subcontrato">
+                                    <div class="row col-md-12" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
                                         <div class="col-md-2"><b>Plazo de Ejecución:</b></div>
                                         <div class="col-md-4" v-if="info.asignacionEstimacion.subcontrato.subcontratos"><b>Del</b>&nbsp; {{info.asignacionEstimacion.subcontrato.subcontratos.fecha_ini}} &nbsp;<b>Al</b>&nbsp; {{info.asignacionEstimacion.subcontrato.subcontratos.fecha_fin}}</div>
                                         <div class="col-md-4" v-else><b>Del</b>&nbsp; -------- &nbsp;<b>Al</b>&nbsp; --------</div>
@@ -169,7 +169,7 @@
                                         <div class="col-md-4" v-if="info.asignacionEstimacion.subcontrato.subcontratos">{{info.asignacionEstimacion.subcontrato.subcontratos.descripcion}}</div>
                                     </div>
                                     <br>
-                                    <div class="row col-md-12" v-if="info.subcontrato">
+                                    <div class="row col-md-12" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
                                         <div class="col-md-2"><b>Observaciones:</b></div>
                                         <div class="col-md-10">{{info.asignacionEstimacion.subcontrato.observaciones}}</div>
                                     </div>
@@ -186,7 +186,7 @@
                                                         <td class="bg-dark" align="left"><b>Descripción:</b></td>
                                                         <td align="left" v-if="subcontratos.subcontratos">{{subcontratos.subcontratos.descripcion}}</td>
                                                         <td align="left" v-else></td>
-                                                    </tr>                                           
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -224,7 +224,7 @@
                 }).then(data => {
                     this.$store.commit('contratos/asignacion-contratista/SET_ASIGNACION', data);
                     this.info = data;
-                    
+
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })

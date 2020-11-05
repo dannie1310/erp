@@ -20,7 +20,7 @@ export default{
         },
 
         UPDATE_ASIGNACIONES(state, data) {
-            state.asignaciones = state.asignaciones.map(inventario => {
+            state.asignaciones = state.asignaciones.map(asignacion => {
                 if (asignacion.id === data.id) {
                     return Object.assign({}, asignacion, data)
                 }
@@ -141,6 +141,47 @@ export default{
                                 .catch(error => {
                                     reject(error);
                                 })
+                        }
+                    });
+            });
+        },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar la Asignación a Contratista",
+                    text: "¿Está seguro de que desea eliminar esta asignación?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Asignación eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
                         }
                     });
             });

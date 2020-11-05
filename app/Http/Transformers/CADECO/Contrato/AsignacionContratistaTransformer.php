@@ -13,6 +13,7 @@ use League\Fractal\TransformerAbstract;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
 use App\Http\Transformers\CADECO\Contrato\AsignacionSubcontratoTransformer;
+use App\Http\Transformers\CADECO\Contrato\PresupuestoContratistaTransformer;
 
 class AsignacionContratistaTransformer extends TransformerAbstract
 {
@@ -23,7 +24,9 @@ class AsignacionContratistaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'contrato',
-        'asignacionEstimacion'
+        'asignacionEstimacion',
+        'presupuestoContratista',
+        'partidas'
     ];
 
     /**
@@ -40,6 +43,8 @@ class AsignacionContratistaTransformer extends TransformerAbstract
             'numero_folio_asignacion' => $model->numero_folio_format,
             'fecha_registro' => $model->fecha_registro_format,
             'usuario_registro' => $model->Usuario_registro_nombre,
+            'estado' => $model->estado,
+            'estado_format' => $model->estado_format,
         ];
     }
 
@@ -69,4 +74,29 @@ class AsignacionContratistaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includePresupuestoContratista(AsignacionContratista $model)
+    {
+        if($asignacion_presupuesto = $model->presupuestoContratista)
+        {
+            return $this->item($asignacion_presupuesto, new PresupuestoContratistaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(AsignacionContratista $model)
+    {
+        if($partidas = $model->partidas)
+        {
+            return $this->collection($partidas, new AsignacionContratistaPartidaTransformer);
+        }
+        return null;
+    }
 }

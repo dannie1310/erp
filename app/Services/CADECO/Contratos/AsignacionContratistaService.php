@@ -63,12 +63,11 @@ class AsignacionContratistaService
                 'estado' => 1,
             ]);
             $registradas = 0;
-
             foreach($data['presupuestos'] as $presupuesto){
                 foreach($presupuesto['partidas'] as $partida){
                     if($partida && $partida['cantidad_asignada'] > 0){
                         AsignacionContratistaPartida::create([
-                            'id_asignacion' => $asignacion->id,
+                            'id_asignacion' => $asignacion->id_asignacion,
                             'id_transaccion' => $presupuesto['id_transaccion'],
                             'id_concepto' => $partida['id_concepto'],
                             'cantidad_asignada' => $partida['cantidad_asignada'],
@@ -92,11 +91,16 @@ class AsignacionContratistaService
         }
     }
 
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data']);
+    }
+
     public function getAsignaciones($data){
         $asignaciones = $this->repository->all();
         $filtered = $asignaciones->reject(function ($asignacion, $key) {
             return $asignacion->contratoProyectado == null || $asignacion->contratoProyectado->id_obra != Context::getIdObra();
-        });       
+        });
         return $filtered->all();
     }
 
@@ -112,7 +116,7 @@ class AsignacionContratistaService
                     $subcontrato = $subcontratos[ $partida->presupuestoPartida->IdMoneda][$partida->id_transaccion];
                 }else{
                     $subcontratos[ $partida->presupuestoPartida->IdMoneda] = array();
-                    $resp =  
+                    $resp =
                      Subcontrato::Create([
                         'id_antecedente' => $asignacion->id_transaccion,
                         'id_empresa' => $partida->presupuesto->id_empresa,
@@ -147,7 +151,7 @@ class AsignacionContratistaService
                 $subcontrato->saldo = $subcontrato->saldo + $monto;
                 $subcontrato->impuesto = $subcontrato->impuesto + $impuesto;
                 $subcontrato->save();
-                
+
             }
             $asignacion->estado = 2;
             $asignacion->save();
