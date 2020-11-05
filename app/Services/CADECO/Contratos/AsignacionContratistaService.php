@@ -10,13 +10,14 @@ namespace App\Services\CADECO\Contratos;
 
 use Exception;
 use App\Facades\Context;
-use App\PDF\Contratos\AsignacionFormato;
 use App\Repositories\Repository;
 use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ItemSubcontrato;
+use App\PDF\Contratos\AsignacionFormato;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 
 class AsignacionContratistaService

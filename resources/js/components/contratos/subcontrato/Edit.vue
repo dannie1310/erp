@@ -169,7 +169,7 @@
                         <div class="col-md-3 mt-2">
                             <div class="form-group  ">
                                 <label for="fecha_ini" class="mr-1" ><b>De: </b> </label>
-                                <datepicker v-model = "subcontratos.subcontratos.fecha_ini_ejec"
+                                <datepicker v-model = "plazo_ejecucion.fecha_ini_ejec"
                                             name = "fecha_ini"
                                             :format = "formatoFecha"
                                             :language = "es"
@@ -184,7 +184,7 @@
                         <div class="col-md-3 mt-2">
                             <div class="form-group  ">
                                 <label for="fecha_fin" class="mr-1" ><b>Al: </b> </label>
-                                <datepicker v-model = "subcontratos.subcontratos.fecha_fin_ejec"
+                                <datepicker v-model = "plazo_ejecucion.fecha_fin_ejec"
                                             name = "fecha_fin"
                                             :format = "formatoFecha"
                                             :language = "es"
@@ -291,6 +291,10 @@
                 subcontratos: '',
                 tipo_contrato:[],
                 id_tipo_contrato:'',
+                plazo_ejecucion:{
+                    fecha_ini_ejec:'',
+                    fecha_fin_ejec:'',
+                }
             }
         },
         mounted(){
@@ -313,9 +317,10 @@
                         data.subcontratos = {
                             id:null,
                             descripcion:'',
-                            fecha_fin_format:'',
-                            fecha_fin_ejec:'',
                         };
+                    }else{
+                        this.plazo_ejecucion.fecha_ini_ejec = data.subcontratos.fecha_ini_ejec;
+                        this.plazo_ejecucion.fecha_fin_ejec = data.subcontratos.fecha_fin_ejec;
                     }
                 }).finally(()=>{
                     this.cargando = false;
@@ -363,8 +368,8 @@
                     retencion_iva:  this.subcontratos.retencion_iva,
                     monto:  this.monto,
                     retencion_fg:  this.subcontratos.retencion_fg,
-                    fecha_ini_ejec:  this.subcontratos.subcontratos.fecha_ini_ejec,
-                    fecha_fin_ejec:  this.subcontratos.subcontratos.fecha_fin_ejec,
+                    fecha_ini_ejec:  this.plazo_ejecucion.fecha_ini_ejec,
+                    fecha_fin_ejec:  this.plazo_ejecucion.fecha_fin_ejec,
                     id_costo: this.subcontratos.id_costo,
                     id_tipo_contrato:  this.subcontratos.id_tipo_contrato,
                     observacion: this.subcontratos.subcontratos.descripcion,
@@ -390,9 +395,10 @@
         },
         computed: {
             fechasDeshabilitadas() {
-                if(this.subcontratos){
+                if(this.plazo_ejecucion.fecha_ini_ejec != ''){
+                    
                     return{
-                        to: new Date( this.subcontratos.subcontratos.fecha_ini_ejec)
+                        to: new Date( this.plazo_ejecucion.fecha_ini_ejec)
                     }; 
                 }
                 return {};
