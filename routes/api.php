@@ -758,8 +758,6 @@ $api->version('v1', function ($api) {
             $api->post('generarSubcontrato', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@generarSubcontrato');
         });
 
-
-
         /**
          * CONTRATO PROYECTADO
          */
@@ -807,7 +805,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
-
         /**
          * PRESUPUESTO
          */
@@ -831,6 +828,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@paginate');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@updateContrato')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@destroy')->where(['id' => '[0-9]+']);
         });
 
         /**

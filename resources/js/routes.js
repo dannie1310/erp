@@ -918,7 +918,18 @@ export const routes = [
                                     permission: ['editar_subcontrato']
                                 }
                             },
-
+                            {
+                                path: ':id',
+                                name: 'subcontrato-delete',
+                                props: true,
+                                component: require('./components/contratos/subcontrato/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Subcontrato',
+                                    breadcrumb: {parent: 'subcontrato', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['eliminar_subcontrato']
+                                }
+                            },
                         ]
                     },
                     {

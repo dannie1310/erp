@@ -4,6 +4,7 @@
 namespace App\Models\CADECO;
 
 use App\Models\CADECO\Contrato;
+use App\Models\CADECO\Subcontratos\SubcontratoPartidaEliminada;
 
 class ItemSubcontrato extends Item
 {
@@ -30,6 +31,11 @@ class ItemSubcontrato extends Item
     public function partidaEstimacion()
     {
         return $this->belongsTo(ItemEstimacion::class, 'id_transaccion', 'id_antecedente');
+    }
+
+    public function partidaSubcontratoEliminada()
+    {
+        return $this->belongsTo(SubcontratoPartidaEliminada::class, 'id_item');
     }
 
     public function getCantidadTotalEstimadaAttribute()

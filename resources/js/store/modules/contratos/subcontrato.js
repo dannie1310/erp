@@ -64,7 +64,7 @@ export default {
             });
         },
         paginate (context, payload){
-            
+
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', { params: payload.params })
@@ -116,8 +116,49 @@ export default {
                     });
             });
         },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el Subcontrato",
+                    text: "¿Está seguro de que desea eliminar este Subcontrato?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Subcontrato eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
-    
+
 
     getters: {
         subcontratos(state) {
