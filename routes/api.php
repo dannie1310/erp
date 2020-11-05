@@ -751,9 +751,11 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'asignacion-contratista'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@paginate');
+            $api->get('getAsignaciones', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@getAsignaciones');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@store');
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('generarSubcontrato', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@generarSubcontrato');
         });
 
 

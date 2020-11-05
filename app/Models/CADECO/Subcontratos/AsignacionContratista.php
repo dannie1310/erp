@@ -4,6 +4,7 @@
 namespace App\Models\CADECO\Subcontratos;
 
 use App\Models\IGH\Usuario;
+use App\Models\CADECO\Subcontrato;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\PresupuestoContratista;
@@ -55,6 +56,14 @@ class AsignacionContratista extends Model
     public function asignacionEliminada()
     {
         return $this->belongsTo(AsignacionContratistaEliminada::class, 'id_asignacion');
+    }
+
+    public function subcontrato(){
+        return $this->belongsTo(Subcontrato::class, 'id_transaccion', 'id_antecedente');
+    }
+
+    public function scopePendienteSubcontrato($query){
+        return $query->whereDoesntHave('asignacionSubcontrato')->whereDoesntHave('subcontrato');
     }
 
     public function scopeProyectado($query)

@@ -20,6 +20,7 @@ class Subcontrato extends Transaccion
     public const TIPO_ANTECEDENTE = 49;
     public const TIPO = 51;
     public const OPCION = 2;
+    public const OPCION_ANTECEDENTE = 1026;
     public const NOMBRE = "Subcontrato";
     public const ICONO = "fa fa-file-contract";
 
@@ -28,6 +29,7 @@ class Subcontrato extends Transaccion
         'fecha',
         'id_obra',
         'id_empresa',
+        'id_sucursal',
         'id_moneda',
         'anticipo',
         'anticipo_monto',
