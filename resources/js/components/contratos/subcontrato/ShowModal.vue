@@ -130,7 +130,7 @@
                                     <hr>
                                     <div class="row col-md-12">
                                         <div class="col-md-2"><b>Plazo de Ejecución:</b></div>
-                                        <div class="col-md-4" v-if="subcontratos.subcontratos"><b>Del</b>&nbsp; {{subcontratos.subcontratos.fecha_ini}} &nbsp;<b>Al</b>&nbsp; {{subcontratos.subcontratos.fecha_fin}}</div>
+                                        <div class="col-md-4" v-if="subcontratos.subcontratos"><b>Del</b>&nbsp; {{subcontratos.subcontratos.fecha_ini_format}} &nbsp;<b>Al</b>&nbsp; {{subcontratos.subcontratos.fecha_fin_format}}</div>
                                         <div class="col-md-4" v-else><b>Del</b>&nbsp; -------- &nbsp;<b>Al</b>&nbsp; --------</div>
 
                                         <div class="col-md-2" v-if="subcontratos.subcontratos"><b>Descripción:</b></div>

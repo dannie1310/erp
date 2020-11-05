@@ -5,6 +5,7 @@ namespace App\Models\CADECO\Subcontratos;
 
 use App\Models\CADECO\Cambio;
 use App\Models\IGH\Usuario;
+use App\Models\CADECO\Subcontrato;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\PresupuestoContratista;
@@ -62,9 +63,17 @@ class AsignacionContratista extends Model
         return $this->belongsTo(AsignacionContratistaEliminada::class, 'id_asignacion');
     }
 
+    public function subcontrato(){
+        return $this->belongsTo(Subcontrato::class, 'id_transaccion', 'id_antecedente');
+    }
+
     /**
      * Scopes
      */
+    public function scopePendienteSubcontrato($query){
+        return $query->whereDoesntHave('asignacionSubcontrato')->whereDoesntHave('subcontrato');
+    }
+
     public function scopeProyectado($query)
     {
         return $query->has('contratoProyectado');
@@ -295,7 +304,6 @@ class AsignacionContratista extends Model
     {
         $partidas = [];
         $presupuestos = [];
-        $precios = [];
 
 
         foreach ($this->contratoProyectado->conceptos as $key => $item) {
@@ -357,47 +365,32 @@ class AsignacionContratista extends Model
 
 
             foreach ($presupuesto->partidas as $partida) {
-                if (key_exists($partida->id_concepto, $precios)) {
-                    if($partida->precio_unitario_compuesto > 0 && $precios[$partida->id_concepto] > $partida->precio_unitario_compuesto)
-                        $precios[$partida->id_concepto] = (float) $partida->precio_unitario_compuesto;
-                } else {
-                    if($partida->precio_unitario_compuesto > 0) {
-                        $precios[$partida->id_concepto] = (float) $partida->precio_unitario_compuesto;
-                    }
-                }
-
                 if (array_key_exists($partida->id_concepto, $partidas)) {
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['id_transaccion'] = $presupuesto->id_transaccion;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario'] = $partida->precio_unitario;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_simple'] = $partida->precio_unitario_simple;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['id_moneda'] = $partida->IdMoneda;
-                   $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_total_compuesto'] = $partida->precio_compuesto_total;
-                   $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_compuesto'] = $partida->precio_unitario_compuesto;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_total_compuesto'] = $partida->precio_compuesto_total;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_compuesto'] = $partida->precio_unitario_compuesto;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['tipo_cambio_descripcion'] = $partida->moneda ? $partida->moneda->abreviatura : '';
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['descuento_partida'] = $partida->PorcentajeDescuento;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['observaciones'] = $partida->Observaciones;
                     $partida_asignada = $this->partidas->where('id_concepto', $partida->id_concepto)->where('id_transaccion', $presupuesto->id_transaccion)->first();
-                    $partidas[$partida->id_concepto]['presupuestos'][$p]['cantidad_asignada'] = $partida_asignada ? number_format($partida_asignada->cantidad_autorizada,2, '.', ',') : '-';
-                    $partidas[$partida->id_concepto]['presupuestos'][$p]['importe_asignado'] = $partida_asignada ? number_format($partida_asignada->importe_calculado, 2, '.',',') : '-';
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['cantidad_asignada'] = $partida_asignada ? number_format($partida_asignada->cantidad_autorizada, 2, '.', ',') : '-';
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['importe_asignado'] = $partida_asignada ? number_format($partida_asignada->importe_calculado, 2, '.', ',') : '-';
                 }
             }
         }
 
-       /* foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
-            $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
-            $cotizaciones[$cont]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cont]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
-        }*/
         return [
             'presupuestos' => $presupuestos,
-            'partidas' => $partidas,
-            //'precios_menores' => $precios
+            'partidas' => $partidas
         ];
     }
 
     public function sumaSubtotalPartidas($tipo_moneda)
     {
         $suma = 0;
-        $descuento = 0;
         foreach ($this->partidas as $partida)
         {
             if($tipo_moneda == $partida->partidaPresupuesto->IdMoneda)

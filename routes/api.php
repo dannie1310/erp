@@ -751,13 +751,13 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'asignacion-contratista'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@paginate');
+            $api->get('getAsignaciones', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@getAsignaciones');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@store');
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('generarSubcontrato', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@generarSubcontrato');
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@pdf')->where(['id' => '[0-9]+']);
         });
-
-
 
         /**
          * CONTRATO PROYECTADO
@@ -806,7 +806,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
-
         /**
          * PRESUPUESTO
          */
@@ -829,7 +828,18 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@paginate');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@updateContrato')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@pdf')->where(['id' => '[0-9]+']);
         });
+
+        /**
+         * TIPOS CONTRATOS
+         */
+        $api->group(['prefix' => 'tipo-contrato'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\TipoContratoController@index');
+        });
+
 
         //FONDO DE GARANTÍA
         $api->group(['prefix' => 'fondo-garantia'], function ($api) {

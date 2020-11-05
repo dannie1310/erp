@@ -86,6 +86,7 @@ use App\Models\CADECO\Inventarios\Marbete;
 use App\Models\CADECO\Inventarios\MarbeteLog;
 use App\Models\CADECO\ItemEstimacion;
 use App\Models\CADECO\ItemSolicitudCompra;
+use App\Models\CADECO\ItemSubcontrato;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\Movimiento;
@@ -116,6 +117,8 @@ use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaEliminada;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontratoEliminado;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
@@ -239,6 +242,7 @@ use App\Observers\CADECO\Inventarios\LayoutConteoObserver;
 use App\Observers\CADECO\Inventarios\LayoutConteoPartidaObserver;
 use App\Observers\CADECO\Inventarios\MarbeteLogObserver;
 use App\Observers\CADECO\Inventarios\MarbeteObserver;
+use App\Observers\CADECO\ItemSubcontratoObserver;
 use App\Observers\CADECO\LiberacionFondoGarantiaObserver;
 use App\Observers\CADECO\MaterialObserver;
 use App\Observers\CADECO\MovimientoObserver;
@@ -269,6 +273,8 @@ use App\Observers\CADECO\SubcontratoObserver;
 use App\Observers\CADECO\Subcontratos\AsignacionContratistaEliminadaObserver;
 use App\Observers\CADECO\Subcontratos\AsignacionContratistaObserver;
 use App\Observers\CADECO\Subcontratos\AsignacionContratistaPartidaObserver;
+use App\Observers\CADECO\Subcontratos\AsignacionSubcontratoEliminadoObserver;
+use App\Observers\CADECO\Subcontratos\AsignacionSubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\DescuentoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\LiberacionObserver;
@@ -463,6 +469,9 @@ class AppServiceProvider extends ServiceProvider
             AsignacionContratista::observe(AsignacionContratistaObserver::class);
             AsignacionContratistaEliminada::observe(AsignacionContratistaEliminadaObserver::class);
             AsignacionContratistaPartida::observe(AsignacionContratistaPartidaObserver::class);
+            AsignacionSubcontratoEliminado::observe(AsignacionSubcontratoEliminadoObserver::class);
+            AsignacionSubcontrato::observe(AsignacionSubcontratoObserver::class);
+
 
             /**
              * SubcontratosEstimaciones
@@ -524,6 +533,7 @@ class AppServiceProvider extends ServiceProvider
             Familia::observe(FamiliaObserver::class);
             Fondo::observe(FondoObserver::class);
             Inventario::observe(InventarioObserver::class);
+            ItemSubcontrato::observe(ItemSubcontratoObserver::class);
             LiberacionFondoGarantia::observe(LiberacionFondoGarantiaObserver::class);
             Material::observe(MaterialObserver::class);
             Movimiento::observe(MovimientoObserver::class);

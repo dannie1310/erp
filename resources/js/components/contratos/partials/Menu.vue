@@ -18,7 +18,7 @@
                     <i class="fa fa-comments-dollar nav-icon"></i>
                     <p>Presupuesto Contratista</p>
                 </router-link>
-            </li>
+            </li>-->
             <li class="nav-item" v-if="$root.can(['consultar_asignacion_contratista'])">
                 <router-link :to="{name: 'asignacion-contratista'}" class="nav-link" :class="{active: this.$route.name == 'asignacion-contratista'}">
                     <i class="fa fa-user-check nav-icon"></i>

@@ -4,8 +4,9 @@
 namespace App\Models\CADECO\Subcontratos;
 
 use App\Models\CADECO\Contrato;
-use App\Models\CADECO\PresupuestoContratistaPartida;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\PresupuestoContratista;
+use App\Models\CADECO\PresupuestoContratistaPartida;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 
 class AsignacionContratistaPartida extends Model
@@ -40,9 +41,12 @@ class AsignacionContratistaPartida extends Model
         return $this->belongsTo(AsignacionContratistaPartidaEliminada::class, 'id_partida_asignacion');
     }
 
-    public function partidaPresupuesto()
-    {
-        return $this->belongsTo(PresupuestoContratistaPartida::class, 'id_transaccion', 'id_transaccion')->where('id_concepto', $this->id_concepto);
+    public function presupuestoPartida(){
+        return $this->belongsTo(PresupuestoContratistaPartida::class, 'id_transaccion', 'id_transaccion')->where('id_concepto', '=', $this->id_concepto);
+    }
+
+    public function presupuesto(){
+        return $this->belongsTo(PresupuestoContratista::class, 'id_transaccion', 'id_transaccion');
     }
 
     /**
