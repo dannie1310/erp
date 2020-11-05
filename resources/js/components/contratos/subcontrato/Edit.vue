@@ -247,7 +247,7 @@
                                     class="form-control"
                                     id="observaciones"
                                     placeholder="Observaciones"
-                                    v-model="subcontratos.observaciones"
+                                    v-model="subcontratos.subcontratos.descripcion"
                                     :class="{'is-invalid': errors.has('observaciones')}">
                                 <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                         </div>
@@ -309,6 +309,14 @@
                     params: {include: ['partidas', 'moneda', 'partidas.contratos', 'subcontratos']}
                 }).then(data => {
                     this.subcontratos = data;
+                    if(!data.subcontratos){
+                        data.subcontratos = {
+                            id:null,
+                            descripcion:'',
+                            fecha_fin_format:'',
+                            fecha_fin_ejec:'',
+                        };
+                    }
                 }).finally(()=>{
                     this.cargando = false;
                 });
@@ -359,7 +367,7 @@
                     fecha_fin_ejec:  this.subcontratos.subcontratos.fecha_fin_ejec,
                     id_costo: this.subcontratos.id_costo,
                     id_tipo_contrato:  this.subcontratos.id_tipo_contrato,
-                    observaciones: this.subcontratos.observaciones,
+                    observacion: this.subcontratos.subcontratos.descripcion,
                 };
                 return this.$store.dispatch('contratos/subcontrato/updateContrato',
                     {

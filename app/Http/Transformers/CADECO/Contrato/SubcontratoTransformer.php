@@ -124,12 +124,6 @@ class SubcontratoTransformer extends TransformerAbstract
         {
             return $this->item($subcontrato, new SubcontratosTransformer);
         }
-        return [
-            'id' => null,
-            'descripcion' => '',
-            'fecha_ini' => ($model->fecha_ini_ejec) ? date("d/m/Y", strtotime($model->fecha_ini_ejec)) : '--------',
-            'fecha_fin' => ($model->fecha_fin_ejec) ? date("d/m/Y", strtotime($model->fecha_fin_ejec)) : '--------'
-        ];
     }
 
     /**

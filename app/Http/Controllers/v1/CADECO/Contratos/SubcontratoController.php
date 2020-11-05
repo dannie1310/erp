@@ -48,6 +48,7 @@ class SubcontratoController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_subcontrato')->only(['show', 'paginate', 'pdf']);
         $this->middleware('permiso:eliminar_subcontrato')->only('destroy');
+        $this->middleware('permiso:editar_subcontrato')->only(['updateContrato']);
 
         $this->service = $service;
         $this->fractal = $fractal;
