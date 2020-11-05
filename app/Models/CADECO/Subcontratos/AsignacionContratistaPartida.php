@@ -54,7 +54,7 @@ class AsignacionContratistaPartida extends Model
      */
     public function getImporteCalculadoAttribute()
     {
-        return $this->cantidad_autorizada * $this->partidaPresupuesto->precio_unitario_compuesto;
+        return $this->cantidad_autorizada * $this->presupuestoPartida->precio_unitario_compuesto;
     }
 
     public function getSumaCantidadAsignadaAttribute()
@@ -72,7 +72,7 @@ class AsignacionContratistaPartida extends Model
 
     public function getSumaImportesAsignadosAttribute()
     {
-        return $this->suma_cantidad_asignada * $this->partidaPresupuesto->precio_unitario_compuesto;
+        return $this->suma_cantidad_asignada * $this->presupuestoPartida->precio_unitario_compuesto;
     }
 
     public function getSumaImportesConDescuentoAttribute()
@@ -82,7 +82,7 @@ class AsignacionContratistaPartida extends Model
 
     public function getDescuentoAttribute()
     {
-        return $this->partidaPresupuesto->presupuesto->PorcentajeDescuento;
+        return $this->presupuestoPartida->presupuesto->PorcentajeDescuento;
     }
 
     public function getImporteConDescuentoAttribute()

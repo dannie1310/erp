@@ -393,7 +393,7 @@ class AsignacionContratista extends Model
         $suma = 0;
         foreach ($this->partidas as $partida)
         {
-            if($tipo_moneda == $partida->partidaPresupuesto->IdMoneda)
+            if($tipo_moneda == $partida->presupuestoPartida->IdMoneda)
             {
                 $suma += $partida->importe_con_descuento;
             }
