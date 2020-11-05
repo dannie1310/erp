@@ -71,7 +71,7 @@ class AsignacionContratista extends Model
      * Scopes
      */
     public function scopePendienteSubcontrato($query){
-        return $query->whereDoesntHave('asignacionSubcontrato')->whereDoesntHave('subcontrato');
+        return $query->whereDoesntHave('asignacionSubcontrato');
     }
 
     public function scopeProyectado($query)

@@ -534,6 +534,9 @@ class Subcontrato extends Transaccion
         $fecha_ini_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
         $fecha_fin_ejec =New DateTime($data['fecha_fin_ejec']);
         $fecha_fin_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
+        if($fecha_ini_ejec->format("Y-m-d ") >$fecha_fin_ejec->format("Y-m-d ")){
+            abort(403, 'La fecha de inicio de ejecución no puede ser posterior a la fecha de fin de ejección.');
+        }
 
         $this->referencia = $data['referencia'];
         $this->fecha = $data['fecha'];
