@@ -67,7 +67,7 @@ class PresupuestoContratistaService
         {
             abort(400,'Archivo XLS no compatible');
         }
-        if(count($celdas) != count($presupuesto->partidas) + 17)
+        if(count($celdas) != count($presupuesto->partidas) + 19)
         {
             abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
         }    
@@ -83,10 +83,25 @@ class PresupuestoContratistaService
             {
                 abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
             }
+            $id_moneda = 0;
+            switch ($celdas[$x][11]){
+                case 'PESO MXP':
+                    $id_moneda = 1;
+                break;
+                case 'DOLAR USD':
+                    $id_moneda = 2;
+                break;
+                case 'EURO':
+                    $id_moneda = 3;
+                break;
+                case 'LIBRA':
+                    $id_moneda = 4;
+                break;
+            }
             $partidas[] = array(
                 'precio_unitario' => $celdas[$x][6],
                 'descuento' => $celdas[$x][8],
-                'id_moneda' => ($celdas[$x][11] == 'PESO MXP') ? 1 : (($celdas[$x][11] == 'DOLAR USD') ? 2 : 3),
+                'id_moneda' => $id_moneda,
                 'observaciones' => $celdas[$x][14],
                 'id_concepto' => (int) $item->id_concepto
             );
@@ -95,12 +110,13 @@ class PresupuestoContratistaService
         
         $respuesta = [
             'descuento_cot' => $celdas[$x][6],
-            'tc_usd' => $celdas[$x + 4][6],
-            'tc_euro' => $celdas[$x + 5][6],
-            'anticipo' => $celdas[$x + 11][6],
-            'credito' => $celdas[$x + 12][6],
-            'vigencia' => $celdas[$x + 13][6],
-            'observaciones_generales' => $celdas[$x + 14][6],
+            'tc_usd' => $celdas[$x + 5][6],
+            'tc_euro' => $celdas[$x + 6][6],
+            'tc_libra' => $celdas[$x + 7][6],
+            'anticipo' => $celdas[$x + 13][6],
+            'credito' => $celdas[$x + 14][6],
+            'vigencia' => $celdas[$x + 15][6],
+            'observaciones_generales' => $celdas[$x + 16][6],
             'partidas' => $partidas
         ];
 
