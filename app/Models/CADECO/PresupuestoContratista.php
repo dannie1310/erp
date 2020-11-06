@@ -406,9 +406,4 @@ class PresupuestoContratista extends Transaccion
         $find = $this::find($id);
         return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
     }
-
-    public function getLibraFormatAttribute()
-    {
-        return '$ ' . number_format(abs($this->TcLibra),4);
-    }
 }
