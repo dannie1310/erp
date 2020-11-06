@@ -431,15 +431,6 @@ class PresupuestoContratista extends Transaccion
         ];
     }
 
-    public function getSumaSubtotalPartidasAttribute()
-    {
-        $suma = 0;
-        foreach ($this->partidas as $partida) {
-            $suma += $partida->total_precio_moneda;
-        }
-        return $suma;
-    }
-
     public function getIVAPartidasAttribute()
     {
         return $this->suma_subtotal_partidas * 0.16;
