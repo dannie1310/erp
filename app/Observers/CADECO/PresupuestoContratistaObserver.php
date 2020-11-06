@@ -23,7 +23,10 @@ class PresupuestoContratistaObserver extends TransaccionObserver
 
      public function updating(PresupuestoContratista $presupuestoContratista)
      {
-         $presupuestoContratista->validarAsignacion('editar');
+        if($presupuestoContratista->getOriginal('estado') == $presupuestoContratista->estado)
+        {
+            $presupuestoContratista->validarAsignacion('editar');
+        }
      }
 
      public function deleting(PresupuestoContratista $presupuestoContratista)
