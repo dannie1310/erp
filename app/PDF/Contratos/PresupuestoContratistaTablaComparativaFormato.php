@@ -15,7 +15,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class PresupuestoContratistaTablaComparativaFormato extends Rotation
 {
     protected $obra;
-    protected $contratista;
+    protected $presupuesto;
     private $encabezado_pdf = '';
 
     const DPI = 96;
@@ -26,11 +26,11 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
     const MAX_WIDTH = 225;
     const MAX_HEIGHT = 180;
 
-    public function __construct(PresupuestoContratista $contratista)
+    public function __construct(PresupuestoContratista $presupuesto)
     {
         parent::__construct('L', 'cm', 'Letter');
         $this->obra = Obra::find(Context::getIdObra());
-        $this->contratista = $contratista;
+        $this->presupuesto = $presupuesto;
         $this->encabezado_pdf = utf8_decode($this->obra->facturar);
         $this->createQR();
     }
@@ -44,7 +44,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
         $this->SetX(20);
         $this->Cell(4, .5, 'FOLIO CONTRATO:', 'L T', 0, 'L');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(3, .5,$this->contratista->contratoProyectado->numero_folio_format, 'R T', 0, 'L');
+        $this->Cell(3, .5,$this->presupuesto->contratoProyectado->numero_folio_format, 'R T', 0, 'L');
         $this->Ln(.5);
         $this->Cell(19.102);
         $this->SetFont('Arial', 'B', 7);
@@ -67,7 +67,8 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
         $datos_partidas = $this->contratista->datosComparativos();
         $this->SetFillColor(150, 150, 150);
         $this->SetTextColor(255, 255, 255);
-        $no_cotizaciones = count($this->contratista->contratoProyectado->presupuestos);
+        $no_cotizaciones = count($this->presupuesto->contratoProyectado->presupuestos);
+        dd($this->presupuesto->contratoProyectado->numero_presupuestos);
         $font = 5;
         $font2 = 4;
         $heigth = 0.306;

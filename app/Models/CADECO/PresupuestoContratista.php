@@ -183,6 +183,16 @@ class PresupuestoContratista extends Transaccion
         return $this->subtotal_con_descuento + $this->iva_con_descuento;
     }
 
+    public function getIvaPartidasAttribute()
+    {
+        return $this->suma_subtotal_partidas * 0.16;
+    }
+
+    public function getTotalPartidasAttribute()
+    {
+        return $this->suma_subtotal_partidas + $this->iva_Partidas;
+    }
+
     /**
      * Métodos
      */
@@ -429,16 +439,6 @@ class PresupuestoContratista extends Transaccion
             'partidas' => $partidas,
             'precios_menores' => $precios
         ];
-    }
-
-    public function getIVAPartidasAttribute()
-    {
-        return $this->suma_subtotal_partidas * 0.16;
-    }
-
-    public function getTotalPartidasAttribute()
-    {
-        return $this->suma_subtotal_partidas + $this->iva_Partidas;
     }
 
     public function sumaSubtotalPartidas($tipo_moneda)
