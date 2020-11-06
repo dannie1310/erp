@@ -27,11 +27,11 @@
                                                 <tbody>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Folio Asignación:</b></td>
-                                                        <td class="bg-gray-light">{{asignacion.numero_folio}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.numero_folio_asignacion}}</td>
                                                         <td class="bg-gray-light"><b>Fecha Registro:</b></td>
-                                                        <td class="bg-gray-light">{{asignacion.fecha_format}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.fecha_registro}}</td>
                                                         <td class="bg-gray-light"><b>Registro:</b></td>
-                                                        <td class="bg-gray-light">{{asignacion.usuario}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.usuario_registro}}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Folio Contrato:</b></td>
