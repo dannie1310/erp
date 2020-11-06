@@ -7,10 +7,10 @@
         <button v-if="$root.can('editar_presupuesto_contratista')" @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
                 <i class="fa fa-pencil"></i>
         </button>
+        <PDF v-bind:id="value.id" />
         <router-link  :to="{ name: 'presupuesto-documentos', params: {id: value.id}}" v-if="$root.can('consultar_presupuesto_contratista')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
             <i class="fa fa-folder-open"></i>
         </router-link>
-        <PDF v-bind:id="value.id" />
     </div>
 </template>
 <script>

@@ -30,7 +30,7 @@
                                             <label for="id_contrato">Buscar Contrato Proyectado:</label>
                                                  <model-list-select
                                                                 name="id_contrato"
-                                                                option-value="id"                                                               
+                                                                option-value="id"
                                                                 v-model="id_contrato"
                                                                 :custom-text="idFolioObservaciones"
                                                                 :list="contratos"
@@ -46,7 +46,7 @@
                                             <label for="id_proveedor">Proveedores/Contratistas</label>
                                             <model-list-select
                                                 name="id_proveedor"
-                                                option-value="id"                                                               
+                                                option-value="id"
                                                 v-model="id_proveedor"
                                                 :custom-text="razonSocialRFC"
                                                 :list="proveedores"
@@ -91,12 +91,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="row">   
+                                <!-- <div class="row">
                                     <div class="col-md-12">
                                         <label for="concepto" class="col-form-label">Concepto: </label>
                                     </div>
                                 </div> -->
-                                <!-- <div class="row">   
+                                <!-- <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
                                             <textarea
@@ -113,7 +113,7 @@
                                     </div>
                                 </div> -->
                                 <hr />
-                                
+
                                 <div class="row" v-if="id_contrato != '' && !pendiente">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
@@ -125,7 +125,7 @@
                                                     <th class="unidad">Unidad</th>
                                                     <th></th>
                                                     <th class="money">Cantidad Solicitada</th>
-                                                    <th class="money">Cantidad Aprobada</th>                                                     
+                                                    <th class="money">Cantidad Aprobada</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
                                                     <th class="money">Precio Total Antes Descto.</th>
                                                     <th class="money">% Descuento</th>
@@ -147,7 +147,7 @@
                                                                 <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
-                                                        </td>                                                        
+                                                        </td>
                                                         <td style="text-align:center;">{{partida.cantidad_original_format}}</td>
                                                         <td style="text-align:center;">{{partida.cantidad_presupuestada_format}}</td>
                                                         <td>
@@ -213,7 +213,7 @@
                                         </div>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Descuento:</label>                                        
+                                        <label class="col-sm-2 col-form-label">% Descuento:</label>
                                     </div>
                                     <div class=" col-md-2" align="right">
                                         <input
@@ -305,7 +305,7 @@
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>                                        
+                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -321,7 +321,7 @@
                                                                 :class="{'is-invalid': errors.has('anticipo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -336,7 +336,7 @@
                                                                 :class="{'is-invalid': errors.has('credito')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -455,7 +455,7 @@
                 vigencia: 0,
                 descuento: [],
                 enable: []
-                             
+
             }
         },
         mounted() {
@@ -464,7 +464,7 @@
             this.getProveedores();
             this.getMonedas();
             this.getContratos();
-            
+
         },
         methods : {
             idFolioObservaciones (item)
@@ -495,7 +495,7 @@
                     this.monedas = data.data;
                     this.dolar = parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
                     this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
-                    this.libra = parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    this.libra = this.monedas[3] ? parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '') : 0;
                 }).finally(()=>{
 
                 })
@@ -520,7 +520,7 @@
             salir()
             {
                  this.$router.push({name: 'presupuesto'});
-                
+
             },
             find() {
                 this.enable = [];
@@ -576,15 +576,15 @@
                         {
                             this.euros = (this.euros + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
                              * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
-                        }                       
+                        }
                         if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
                         {
                             this.libras = (this.libras + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
                              * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
-                        }                       
+                        }
                     }
-                    this.x ++;                    
-                }                   
+                    this.x ++;
+                }
             },
             getContratos() {
                 this.solicitudes = [];
@@ -597,12 +597,12 @@
                     }
                 })
                     .then(data => {
-                        this.contratos = data.data;                        
+                        this.contratos = data.data;
                         this.cargando = false;
                     })
             },
             validate() {
-                
+
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.post.partidas = this.contrato.conceptos.data;
@@ -632,7 +632,7 @@
                 });
             },
             store() {
-                
+
                 if(this.total == 0 && this.pendiente === false)
                 {
                     swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
@@ -641,7 +641,7 @@
                 {   return this.$store.dispatch('contratos/presupuesto/store', this.post)
                     .then((data) => {
                         this.$router.push({name: 'presupuesto'});
-                    });                
+                    });
                 }
             },
         },
@@ -667,11 +667,11 @@
         watch: {
             id_contrato(value)
             {
-                
+
                 if(value !== '' && value !== null && value !== undefined)
                 {
                     this.find();
-                    
+
                 }
             },
             id_proveedor(value){
@@ -708,9 +708,9 @@
                 if(this.enable.length > 0)
                 {
                     this.calcular();
-                }                
+                }
             }
-            
+
         }
     }
 </script>

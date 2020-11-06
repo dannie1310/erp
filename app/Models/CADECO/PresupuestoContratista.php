@@ -216,21 +216,21 @@ class PresupuestoContratista extends Transaccion
         return $items;
     }
 
-    public function precioConvercion($precio, $id_moneda, $monedas)
+    public function precioConversion($precio, $id_moneda)
     {
         switch($id_moneda)
         {
             case(1):
-                return ($precio * 1);
+                return ($precio);
             break;
             case(2):
-                return ($precio * $monedas[1]);
+                return ($precio * $this->dolar);
             break;
             case(3):
-                return ($precio * $monedas[2]);
+                return ($precio * $this->euro);
             break;
             case(4):
-                return ($precio * $monedas[3]);
+                return ($precio * $this->libra);
             break;
         }
     }
@@ -264,12 +264,9 @@ class PresupuestoContratista extends Transaccion
         try
         {
             DB::connection('cadeco')->beginTransaction();
-            $moneda = Moneda::get();
             $contrato = ContratoProyectado::find($data['id_contrato']);
             $fecha = new DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $monedas = [1,$data['tc_usd'],$data['tc_eur'],$data['tc_libra']];
-
             if(!$data['pendiente'])
             {
                 $presupuesto = $this->create([
@@ -286,24 +283,20 @@ class PresupuestoContratista extends Transaccion
                     'TcEuro' => $data['tc_eur'],
                     'TcLibra' => $data['tc_libra'],
                     'DiasCredito' => $data['credito'],
-                    'DiasVigencia' => $data['vigencia'],
-                    'estado' => 1
+                    'DiasVigencia' => $data['vigencia']
                 ]);
 
-                $t = 0;
-                foreach($data['partidas'] as $partida)
+                foreach($data['partidas'] as $t => $partida)
                 {
-                    $precio_unitario = $this->precioConvercion($data['precio'][$t], $data['moneda'][$t], $monedas);
                     $presupuesto->partidas()->create([
                         'id_transaccion' => $presupuesto->id_transaccion,
                         'id_concepto' => $partida['id_concepto'],
-                        'precio_unitario' => ($data['enable'][$t]) ? $precio_unitario : null,
+                        'precio_unitario' => ($data['enable'][$t]) ? $this->precioConversion($data['precio'][$t], $data['moneda'][$t]) : null,
                         'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
                         'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
                         'IdMoneda' => $data['moneda'][$t],
-                        'Observaciones' => ($data['observaciones'][$t]) ? $data['observaciones'][$t] : ''
+                        'Observaciones' => ($data['enable'][$t]) ? $data['observaciones'][$t] : ''
                     ]);
-                    $t ++;
                 }
             }else
             {
@@ -344,7 +337,7 @@ class PresupuestoContratista extends Transaccion
                 return $this;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
+            abort(400, $e);
         }
     }
 
