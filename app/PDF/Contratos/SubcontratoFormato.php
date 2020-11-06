@@ -45,7 +45,7 @@ class SubcontratoFormato extends FPDI
 
     function Header(){
         $ln = 0;
-        if($this->encola == 'clausulado'){
+        if($this->encola == 'clausulado' &&$this->subcontrato->clasificacionSubcontrato){
             if(Context::getDatabase()  == "SAO1814_TERMINAL_NAICM"){
                 $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_ctvm.pdf'));
             }
@@ -119,16 +119,17 @@ class SubcontratoFormato extends FPDI
                 $this->image('../../img/subcontrato/LOGOTIPO_REHABILITACION_ATLACOMULCO.png',1,.3,5,2);
                 $postTitle=3.5;
             }
+            $referencia = \substr($this->subcontrato->referencia, 0, 24) ;
+
             $this->SetTextColor('0,0,0');
             $this->SetFont('Arial', 'B', 12);
-
             $this->Cell(11.5);
-            $this->Cell(1.5,.7,'No.'.$this->subcontrato->clasificacionSubcontrato->tipo->descripcion_corta.':','LT',0,'L');
-            $this->CellFit(6.5,.7, $this->subcontrato->referencia,'RT',0,'L');
+            $this->Cell(1.5,.7,'No.'.($this->subcontrato->clasificacionSubcontrato?$this->subcontrato->clasificacionSubcontrato->tipo->descripcion_corta:'').':','LT',0,'L');
+            $this->CellFit(6.5,.7, $referencia,'RT',0,'L');
             $this->Ln(.7);
 
             $this->SetFont('Arial', 'B', 20);
-            $this->Cell(11.5, $postTitle, utf8_decode($this->subcontrato->clasificacionSubcontrato->tipo->descripcion) , 0, 0, 'C', 0);
+            $this->Cell(11.5, $postTitle, ($this->subcontrato->clasificacionSubcontrato?utf8_decode($this->subcontrato->clasificacionSubcontrato->tipo->descripcion):'SUBCONTRATO') , 0, 0, 'C', 0);
             $this->SetFont('Arial', 'B', 10);
             $this->Cell(4.5,.7, 'FECHA :','BL',0,'L');
             $this->Cell(3.5,.7, $this->subcontrato->fecha_format.' ','RB',0,'L');
@@ -172,7 +173,7 @@ class SubcontratoFormato extends FPDI
             $this->Ln(.6);
             $y_inicial = $this->getY();
             $x_inicial = $this->getX();
-            $this->MultiCell(9.5, .5,$this->subcontrato->empresa->razon_social.''. $this->subcontrato->sucursal->direccion . ', C.P.'. $this->subcontrato->sucursal->codigo_postal  .', '. $this->subcontrato->sucursal->estado .', '.$this->subcontrato->empresa->rfc, '', 'L');
+            $this->MultiCell(9.5, .5,$this->subcontrato->empresa->razon_social.''. ($this->subcontrato->sucursal? $this->subcontrato->sucursal->direccion . ', C.P.'. $this->subcontrato->sucursal->codigo_postal  .', '. $this->subcontrato->sucursal->estado:'') .', '.$this->subcontrato->empresa->rfc, '', 'L');
             $y_final_1 = $this->getY();
             $this->setY($y_inicial);
             $this->setX($x_inicial+10);
@@ -193,7 +194,7 @@ class SubcontratoFormato extends FPDI
             $this->Row(array(""));
             $this->setY($y_inicial);
             $this->setX($x_inicial);
-            $this->MultiCell(9.5, .5,$this->subcontrato->empresa->razon_social.''. $this->subcontrato->sucursal->direccion . ', C.P.'. $this->subcontrato->sucursal->codigo_postal  .', '. $this->subcontrato->sucursal->estado .', '.$this->subcontrato->empresa->rfc, '1', 'L');
+            $this->MultiCell(9.5, .5,$this->subcontrato->empresa->razon_social.''. ($this->subcontrato->sucursal? $this->subcontrato->sucursal->direccion . ', C.P.'. $this->subcontrato->sucursal->codigo_postal  .', '. $this->subcontrato->sucursal->estado:'') .', '.$this->subcontrato->empresa->rfc, '1', 'L');
             $this->setY($y_inicial);
             $this->setX($x_inicial+10);
             $this->Row(array(""));
@@ -439,7 +440,7 @@ class SubcontratoFormato extends FPDI
     function footer(){
         $residuo = $this->PageNo() % 2;
         $this->SetTextColor('0,0,0');
-        if($residuo > 0 || ($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 4 && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 3 &&$this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 7)){
+        if($this->encola != 'clausulado' || ($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 4 && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 3 &&$this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 7)){
             if(Context::getDatabase() == "SAO1814_TERMINAL_NAICM"){
                 $this->SetFont('Arial', 'B', 6);
                 $this->SetFont('Arial', 'B', 5);
@@ -531,7 +532,7 @@ class SubcontratoFormato extends FPDI
 
         $this->SetY(-0.8);
         $this->SetFont('Arial','B',8);
-        if($residuo>0 && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
+        if($residuo>0 && ($this->subcontrato->clasificacionSubcontrato &&$this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4)){
             $this->Cell(10,.3,('Terminos y condiciones adicionales al reverso.'),0,1,'L');
         }else{
             $this->Cell(10,.3,(''),0,1,'L');
@@ -547,7 +548,7 @@ class SubcontratoFormato extends FPDI
         $this->AddPage();
         $this->SetAutoPageBreak(true,6.80);
         $this->partidas();
-        if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
+        if($this->subcontrato->clasificacionSubcontrato && ($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4)){
             $this->AddPage();
             $this->useTemplate($this->clausulado,0, -0.5, 22);
         }
