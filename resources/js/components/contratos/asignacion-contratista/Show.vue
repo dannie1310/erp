@@ -45,7 +45,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                     <div class="card" v-if="asignacion.partidas">
+                                     <div class="card" v-if="!asignacion.asignacionEstimacion && asignacion.partidas">
                                         <div class="card-header">
                                             <h6><b>Detalle de las partidas</b></h6>
                                         </div>
