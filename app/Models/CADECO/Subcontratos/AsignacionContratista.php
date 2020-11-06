@@ -202,7 +202,9 @@ class AsignacionContratista extends Model
         foreach ($this->contratoProyectado->conceptosSinOrden()->groupBy('id_concepto')->pluck('id_concepto') as $concepto) {
             $partida_asignacion = $this->partidas()->where('id_concepto', $concepto)->first();
             foreach ($this->contratoProyectado->presupuestos as $presupuesto) {
-                $partida_encontrada = $presupuesto->partidas()->where('id_concepto', '=', $concepto)->first();
+                $partida_encontrada = $presupuesto->partidas()->where('id_concepto', '=', $concepto)
+                    ->where('precio_unitario', '!=', 0)
+                    ->whereNotNull('precio_unitario')->first();
                 if ($partida_encontrada && $partida_asignacion) {
                     $valor_calculado = $partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_unitario_compuesto;
                     if ($suma_mejor_por_partida === 0) {
@@ -325,7 +327,7 @@ class AsignacionContratista extends Model
             $presupuestos[$p]['anticipo'] = $presupuesto->anticipo != 0 ? $presupuesto->anticipo :'-';
             $presupuestos[$p]['dias_credito'] = $presupuesto->DiasCredito != 0 ? $presupuesto->DiasCredito : '-';
             $presupuestos[$p]['descuento_global'] = $presupuesto->PorcentajeDescuento != 0 ? $presupuesto->PorcentajeDescuento : '-';
-            $presupuestos[$p]['descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $presupuesto->descuento : '-';
+            $presupuestos[$p]['descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $this->numeroFormato($presupuesto->descuento) : '-';
             $presupuestos[$p]['suma_subtotal_partidas'] = $presupuesto->suma_subtotal_partidas;
             $presupuestos[$p]['suma_con_descuento'] = $presupuesto->subtotal_con_descuento;
             $presupuestos[$p]['iva_partidas'] = $presupuesto->iva_con_descuento;
@@ -334,7 +336,6 @@ class AsignacionContratista extends Model
             $presupuestos[$p]['tc_usd'] = number_format($presupuesto->dolar, 2, '.', ',');
             $presupuestos[$p]['tc_eur'] = number_format($presupuesto->euro, 2, '.', ',');
             $presupuestos[$p]['tc_libra'] = number_format($presupuesto->libra, 2, '.', ',');
-
 
             $partidas_asignadas = $this->partidas->where('id_transaccion', $presupuesto->id_transaccion);
             if(count($partidas_asignadas)>0) {
@@ -346,7 +347,7 @@ class AsignacionContratista extends Model
                 }
                 $descuento = $suma_sin_descuento - $suma;
                 $presupuestos[$p]['asignacion_subtotal_partidas'] = $suma_sin_descuento;
-                $presupuestos[$p]['asignacion_descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $descuento : '-';
+                $presupuestos[$p]['asignacion_descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $this->numeroFormato($descuento) : '-';
                 $presupuestos[$p]['asignacion_subtotal_descuento'] = $suma;
                 $presupuestos[$p]['asignacion_iva'] = $suma * 0.16;
                 $presupuestos[$p]['asignacion_total'] = $suma + ($suma * 0.16);

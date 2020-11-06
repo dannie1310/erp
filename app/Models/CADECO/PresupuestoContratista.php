@@ -117,17 +117,17 @@ class PresupuestoContratista extends Transaccion
 
     public function getDolarAttribute()
     {
-        return $this->tc_usd ? $this->tc_usd :Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio;
+        return $this->tc_usd ? $this->tc_usd : Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio;
     }
 
     public function getEuroAttribute()
     {
-        return $this->tc_euro ? $this->tc_euro :Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio;
+        return $this->tc_euro ? $this->tc_euro : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio;
     }
 
     public function getLibraAttribute()
     {
-        return $this->tc_libra ? $this->tc_libra :Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
+        return $this->tc_libra ? $this->tc_libra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
     }
 
     public function getDatosParaRelacionAttribute()

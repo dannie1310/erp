@@ -249,7 +249,7 @@ class AsignacionFormato extends Rotation
                 $this->Cell($anchos["u"], $heigth, number_format($partida['cantidad'], '2', '.', ','), 1, 0, 'L', 0, '');
 
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                    if (array_key_exists($key, $mejor_opcion_partida) && $mejor_opcion_partida[$key] == $partida['presupuestos'][$i]['id_transaccion']) {
+                    if (array_key_exists($key, $mejor_opcion_partida) && !is_null($mejor_opcion_partida[$key]) && $mejor_opcion_partida[$key] == $partida['presupuestos'][$i]['id_transaccion']) {
                         $this->SetFillColor(150, 150, 150);
                         $this->SetTextColor(0, 0, 0);
                     } else {
@@ -258,12 +258,21 @@ class AsignacionFormato extends Rotation
                     }
                     $this->SetFont('Arial', '', $font_importes);
 
-                    $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario_simple'] ? number_format($partida['presupuestos'][$i]['precio_unitario_simple'], 2, '.', ',') : '', "T B L R", 0, "R", 1);
-                    $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_total_compuesto'] ? number_format($partida['presupuestos'][$i]['precio_total_compuesto'], 2, '.', ',') : '', "T B L R", 0, "R", 1);
-                    $this->CellFitScale($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['tipo_cambio_descripcion'] ? $partida['presupuestos'][$i]['tipo_cambio_descripcion'] : '', "T B L R", 0, "R", 1);
-                    $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario_compuesto'] ? number_format($partida['presupuestos'][$i]['precio_unitario_compuesto'], 2, '.', ',') : '', "B L R T", 0, "R", 1);
-                    $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) ? $partida['presupuestos'][$i]['cantidad_asignada'] : '-', "B L R T", 0, "R", 1);
-                    $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) ? $partida['presupuestos'][$i]['importe_asignado'] : '-', "B L R T", 0, "R", 1);
+                    if (array_key_exists('presupuestos', $partida)) {
+                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario_simple'] ? number_format($partida['presupuestos'][$i]['precio_unitario_simple'], 2, '.', ',') : '', "T B L R", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_total_compuesto'] ? number_format($partida['presupuestos'][$i]['precio_total_compuesto'], 2, '.', ',') : '', "T B L R", 0, "R", 1);
+                        $this->CellFitScale($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['tipo_cambio_descripcion'] ? $partida['presupuestos'][$i]['tipo_cambio_descripcion'] : '', "T B L R", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario_compuesto'] ? number_format($partida['presupuestos'][$i]['precio_unitario_compuesto'], 2, '.', ',') : '', "B L R T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) ? $partida['presupuestos'][$i]['cantidad_asignada'] : '-', "B L R T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) ? $partida['presupuestos'][$i]['importe_asignado'] : '-', "B L R T", 0, "R", 1);
+                    }else {
+                        $this->Cell($anchos["pu"], $heigth,'', "T B L R", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, '', "T B L R", 0, "R", 1);
+                        $this->CellFitScale($anchos["pu"], $heigth,'', "T B L R", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, '', "B L R T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, '-', "B L R T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, '-', "B L R T", 0, "R", 1);
+                    }
                 }
                 $this->Ln();
 
@@ -287,7 +296,7 @@ class AsignacionFormato extends Rotation
                 $yop_ini = $this->getY();
                 $xop_ini = $this->getX();
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                    if (array_key_exists($key, $mejor_opcion_partida) && $mejor_opcion_partida[$key] == $partida['presupuestos'][$i]['id_transaccion']) {
+                    if (array_key_exists($key, $mejor_opcion_partida) &&  !is_null($mejor_opcion_partida[$key]) &&  $mejor_opcion_partida[$key] == $partida['presupuestos'][$i]['id_transaccion']) {
                         $this->SetFillColor(150, 150, 150);
                         $this->SetTextColor(0, 0, 0);
                     }else {
@@ -297,7 +306,11 @@ class AsignacionFormato extends Rotation
                     $this->SetFont('Arial', '', $font);
                     $this->setY($yop_ini);
                     $this->setX($xop_ini);
-                    $this->MultiCell($anchos["op"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['observaciones'] ? utf8_decode($partida['presupuestos'][$i]['observaciones']) : '-', "T R L B", "L", 1);
+                    if (array_key_exists('presupuestos', $partida)) {
+                        $this->MultiCell($anchos["op"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['observaciones'] ? utf8_decode($partida['presupuestos'][$i]['observaciones']) : '-', "T R L B", "L", 1);
+                    }else{
+                        $this->MultiCell($anchos["op"], $heigth, '-', "T R L B", "L", 1);
+                    }
                     $this->y_para_descripcion_arr[] = $this->GetY();
                     $xop_ini += $anchos["op"];
                 }
@@ -350,12 +363,12 @@ class AsignacionFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? $datos['presupuestos'][$i]['descuento_global'] : '-', 1, 0, 'R', 1);
                 $this->Cell($anchos["pu"], $heigth, "%", 1, 0, "C");
-                $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? number_format(($datos['presupuestos'][$i]['descuento']), 2, ".", ",") : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? $datos['presupuestos'][$i]['descuento'] : '-', 1, 0, 'R', 1);
                 if (array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i])) {
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
                 }
-                $this->Cell($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? number_format($datos['presupuestos'][$i]['asignacion_descuento'], 2, ".", ",") : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? $datos['presupuestos'][$i]['asignacion_descuento'] : '-', 1, 0, 'R', 1);
             }
 
             $this->Ln();

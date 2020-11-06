@@ -116,7 +116,7 @@
                         <div class="card-body">
                             <div class="row col-md-12">
                                 <div class="col-md-2"><b>Plazo de Ejecución:</b></div>
-                                <div class="col-md-4" v-if="subcontrato.subcontratos"><b>Del</b>&nbsp; {{subcontrato.subcontratos.fecha_ini}} &nbsp;<b>Al</b>&nbsp; {{subcontrato.subcontratos.fecha_fin}}</div>
+                                <div class="col-md-4" v-if="subcontrato.subcontratos"><b>Del</b>&nbsp; {{subcontrato.subcontratos.fecha_ini_format}} &nbsp;<b>Al</b>&nbsp; {{subcontrato.subcontratos.fecha_fin_format}}</div>
                                 <div class="col-md-4" v-else><b>Del</b>&nbsp; -------- &nbsp;<b>Al</b>&nbsp; --------</div>
                                 <div class="col-md-2" v-if="subcontrato.subcontratos"><b>Descripción:</b></div>
                                 <div class="col-md-4" v-if="subcontrato.subcontratos">{{subcontrato.subcontratos.descripcion}}</div>
@@ -176,7 +176,7 @@
                 this.$store.commit('contratos/subcontrato/SET_SUBCONTRATO', null);
                 return this.$store.dispatch('contratos/subcontrato/find', {
                     id: this.id,
-                    params: {include: ['partidas', 'moneda', 'partidas.contratos', 'subcontrato']}
+                    params: {include: ['partidas', 'moneda', 'partidas.contratos', 'subcontratos']}
                 }).then(data => {
                     this.$store.commit('contratos/subcontrato/SET_SUBCONTRATO', data);
                 })
