@@ -233,7 +233,7 @@ class ContratoProyectado extends Transaccion
 
     public function getNumeroPresupuestosAttribute()
     {
-        return $this->presupuestos->sum();
+        return $this->presupuestos->count('id_transaccion');
     }
 
     /**

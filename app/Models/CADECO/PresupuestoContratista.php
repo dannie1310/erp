@@ -443,18 +443,18 @@ class PresupuestoContratista extends Transaccion
             $presupuestos[$cont]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
             foreach ($presupuesto->partidas as $p) {
                 if (key_exists($p->id_concepto, $precios)) {
-                    if ($p->total_precio_moneda > 0 && $precios[$p->id_concepto] > $p->total_precio_moneda)
-                        $precios[$p->id_concepto] = (float)$p->total_precio_moneda;
+                    if ($p->precio_sin_descuento > 0 && $precios[$p->id_concepto] > $p->precio_sin_descuento)
+                        $precios[$p->id_concepto] = (float)$p->precio_sin_descuento;
                 } else {
                     if ($p->precio_unitario > 0) {
-                        $precios[$p->id_concepto] = (float)$p->total_precio_moneda;
+                        $precios[$p->id_concepto] = (float)$p->precio_sin_descuento;
                     }
                 }
                 if (array_key_exists($p->id_concepto, $partidas)) {
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['id_transaccion'] = $presupuesto->id_transaccion;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario_c'] = $p->precio_unitario_convert;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total_moneda'] = $p->total_precio_moneda;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total_moneda'] = $p->precio_sin_descuento;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total'] = $p->precio_unitario_convert * $partidas[$p->id_concepto]['cantidad_presupuestada'];
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['descuento_partida'] = $p->PorcentajeDescuento ? $p->PorcentajeDescuento : 0;
@@ -468,17 +468,6 @@ class PresupuestoContratista extends Transaccion
             'partidas' => $partidas,
             'precios_menores' => $precios
         ];
-    }
-
-    public function sumaSubtotalPartidas($tipo_moneda)
-    {
-        $suma = 0;
-        foreach ($this->partidas as $partida) {
-            if ($tipo_moneda == $partida->IdMoneda) {
-                $suma += $partida->total_precio_moneda;
-            }
-        }
-        return $suma;
     }
 
     public function sumaPrecioPartidaMoneda($tipo_moneda)
@@ -496,5 +485,4 @@ class PresupuestoContratista extends Transaccion
     {
         return $precio_menor == 0 ? ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
     }
-
 }

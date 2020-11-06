@@ -51,7 +51,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
         $this->Cell(4, .5, 'FECHA DE CONSULTA:', 'LB', 0, 'L');
         $this->Cell(3, .5, date("d-m-Y h:m:i"), 'RB', 0, 'L');
 
-        $this->Ln(.2);
+        $this->Ln(.8);
         $this->y_para_descripcion = $this->GetY();
         $this->y_para_descripcion_arr = array();
         $this->y_para_obs_partidas = $this->GetY();
@@ -64,15 +64,15 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
 
     public function partidas()
     {
-        $datos_partidas = $this->contratista->datosComparativos();
+        $datos_partidas = $this->presupuesto->datosComparativos();
         $this->SetFillColor(150, 150, 150);
         $this->SetTextColor(255, 255, 255);
-        $no_cotizaciones = count($this->presupuesto->contratoProyectado->presupuestos);
-        dd($this->presupuesto->contratoProyectado->numero_presupuestos);
+        $no_presupuestos = $this->presupuesto->contratoProyectado->numero_presupuestos;
+
         $font = 5;
         $font2 = 4;
         $heigth = 0.306;
-        $cotizacinesXFila = 3;
+        $presupuestoXFila = 3;
         $anchos["des"] = 4.7;
         $anchos["u"] = $anchos["c"] = 0.77;
         $anchos["aesp"] = $anchos["u"] + $anchos["c"];
@@ -89,16 +89,16 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
         $anchos["op"] = $anchos["og"] = $anchos["p"] = 6.2;
         $anchos["desc_g"] = 4.1;
 
-        $no_arreglos = ceil($no_cotizaciones / $cotizacinesXFila);
+        $no_arreglos = ceil($no_presupuestos / $presupuestoXFila);
         $i_e = 0;
         $this->Ln();
         for ($x = 0; $x < $no_arreglos; $x++) {
             $this->SetDrawColor('200', '200', '200');
             $this->Cell($anchos["aesp"] + $anchos["des"]);
-            if (($no_cotizaciones - $i_e) > $cotizacinesXFila) {
-                $inc_ie = $cotizacinesXFila;
+            if (($no_presupuestos - $i_e) > $presupuestoXFila) {
+                $inc_ie = $presupuestoXFila;
             } else {
-                $inc_ie = abs($no_cotizaciones - $i_e);
+                $inc_ie = abs($no_presupuestos - $i_e);
             }
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(0, 0, 0);
@@ -214,7 +214,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                     $ki = 0;
                     if (array_key_exists('presupuestos', $partida)) {
                         if (array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario'] > 0) {
-                            $ki = $this->contratista->calcular_ki($partida['presupuestos'][$i]['precio_total_moneda'], $datos_partidas['precios_menores'][$key]);
+                            $ki = $this->presupuesto->calcular_ki($partida['presupuestos'][$i]['precio_total_moneda'], $datos_partidas['precios_menores'][$key]);
                             if ($ki == 0) {
                                 $this->SetFillColor(150, 150, 150);
                                 $this->SetTextColor(0, 0, 0);
@@ -250,7 +250,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     if (array_key_exists('presupuestos', $partida)) {
                         if (array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario'] > 0) {
-                            $ki = $this->contratista->calcular_ki($partida['presupuestos'][$i]['precio_total_moneda'], $datos_partidas['precios_menores'][$key]);
+                            $ki = $this->presupuesto->calcular_ki($partida['presupuestos'][$i]['precio_total_moneda'], $datos_partidas['precios_menores'][$key]);
                             if ($ki == 0) {
                                 $this->SetFillColor(150, 150, 150);
                                 $this->SetTextColor(0, 0, 0);
@@ -378,8 +378,8 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
             asort($this->y_fin_og_arr);
             $this->y_fin_og = array_pop($this->y_fin_og_arr);
             $this->SetY($this->y_fin_og);
-            $i_e += $cotizacinesXFila;
-            $this->Ln();
+            $this->Ln(1);
+            $i_e += $presupuestoXFila;
         }
     }
 
@@ -427,19 +427,19 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
         $this->SetFont('Arial', 'BI', 6.5);
         $this->SetTextColor('0,0,0');
         $this->SetX(4.5);
-        $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->contratista->fecha))) . ' Fecha de consulta: ' . date("d-m-Y H:i:s"), 0, 0, 'L');
+        $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->presupuesto->fecha))) . ' Fecha de consulta: ' . date("d-m-Y H:i:s"), 0, 0, 'L');
         $this->Cell(11.5, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     public function createQR()
     {
         $verifica = new ValidacionSistema();
-        $datos_qr2['titulo'] = "Formato TABLA COMPARATIVA DE CONTRATISTAS_".date("d-m-Y")."_CONTRATO:".$this->contratista->contratoProyectado->numero_folio_format."_presupuesto:".$this->contratista->numero_folio_format;
+        $datos_qr2['titulo'] = "Formato TABLA COMPARATIVA DE CONTRATISTAS_".date("d-m-Y")."_CONTRATO:".$this->presupuesto->contratoProyectado->numero_folio_format."_presupuesto:".$this->presupuesto->numero_folio_format;
         $datos_qr2["base"] = Context::getDatabase();
         $datos_qr2["obra"] = $this->obra->nombre;
         $datos_qr2["tabla"] = "transacciones";
         $datos_qr2["campo_id"] = "id_transaccion";
-        $datos_qr2["id"] = $this->contratista->contratoProyectado->id_transaccion;
+        $datos_qr2["id"] = $this->presupuesto->contratoProyectado->id_transaccion;
         $cadena_json_id = json_encode($datos_qr2);
 
         $firmada = $verifica->encripta($cadena_json_id);
@@ -460,7 +460,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
         $this->partidas();
 
         try {
-            $this->Output('I', 'Formato - Tabla Comparativa Presupuesto Subcontratista '.$this->contratista->numero_folio_format.'-Contrato Proyectado:'.$this->contratista->contratoProyectado->numero_folio_format.'.pdf', 1);
+            $this->Output('I', 'Formato - Tabla Comparativa Presupuesto Subcontratista '.$this->presupuesto->numero_folio_format.'-Contrato Proyectado:'.$this->presupuesto->contratoProyectado->numero_folio_format.'.pdf', 1);
         } catch (\Exception $ex) {
             dd("error", $ex);
         }
