@@ -13,7 +13,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row"  v-if="info">
+                        <div class="row"  v-if="asignacion">
                             <div class="col-12">
                                 <div class="invoice p-3 mb-3">
                                     <div class="row">
@@ -27,56 +27,78 @@
                                                 <tbody>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Folio Asignación:</b></td>
-                                                        <td class="bg-gray-light">{{info.numero_folio}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.numero_folio}}</td>
                                                         <td class="bg-gray-light"><b>Fecha Registro:</b></td>
-                                                        <td class="bg-gray-light">{{info.fecha_format}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.fecha_format}}</td>
                                                         <td class="bg-gray-light"><b>Registro:</b></td>
-                                                        <td class="bg-gray-light">{{info.usuario}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.usuario}}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Folio Contrato:</b></td>
-                                                        <td class="bg-gray-light">{{info.contrato.numero_folio_format}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.contrato.numero_folio_format}}</td>
                                                         <td class="bg-gray-light"><b>Fecha:</b></td>
-                                                        <td class="bg-gray-light">{{info.contrato.fecha}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.contrato.fecha}}</td>
                                                         <td class="bg-gray-light"><b>Referencia:</b></td>
-                                                        <td class="bg-gray-light">{{info.contrato.referencia}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.contrato.referencia}}</td>
                                                     </tr>
-                                                    <!-- <tr>
-                                                        <td class="bg-gray-light"><b>Contrato:</b></td>
-                                                        <td class="bg-gray-light">{{subcontratos.contrato_folio_format}}</td>
-                                                    </tr> -->
-
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
+                                     <div class="card" v-if="asignacion.partidas">
+                                        <div class="card-header">
+                                            <h6><b>Detalle de las partidas</b></h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive col-md-12">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Descripción</th>
+                                                            <th>Unidad</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(doc, i) in asignacion.partidas.data">
+                                                            <td>{{i+1}}</td>
+                                                            <td align="center">{{doc.concepto.descripcion}}</td>
+                                                            <td>{{doc.concepto.unidad}}</td>
+                                                            <td class="td_money">{{doc.cantidad_asignada}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
                                         <div class="col-12">
                                             <h5>Asignación Subcontrato: </h5>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
+                                    <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
                                         <div class="table-responsive col-md-12">
                                             <table class="table">
                                                 <tbody>
                                                     <tr>
-                                                        <td class="bg-gray-light" align="center" colspan="6"><b>{{info.asignacionEstimacion.subcontrato.empresa}}</b></td>
+                                                        <td class="bg-gray-light" align="center" colspan="6"><b>{{asignacion.asignacionEstimacion.subcontrato.empresa}}</b></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Referencia:</b></td>
-                                                        <td class="bg-gray-light">{{info.asignacionEstimacion.subcontrato.referencia}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.referencia}}</td>
                                                         <td class="bg-gray-light"><b>Subcontrato:</b></td>
-                                                        <td class="bg-gray-light">{{info.asignacionEstimacion.subcontrato.numero_folio_format}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.numero_folio_format}}</td>
                                                         <td class="bg-gray-light"><b>Fecha:</b></td>
-                                                        <td class="bg-gray-light">{{info.asignacionEstimacion.subcontrato.fecha_format}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.fecha_format}}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Tipo de Gasto:</b></td>
-                                                        <td class="bg-gray-light">{{info.asignacionEstimacion.subcontrato.costo}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.costo}}</td>
                                                         <td class="bg-gray-light"><b>Tipo de Contrato:</b></td>
-                                                        <td class="bg-gray-light">{{info.asignacionEstimacion.subcontrato.tipo_subcontrato}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.tipo_subcontrato}}</td>
                                                         <td class="bg-gray-light"><b>Personalidad Contratista:</b></td>
-                                                        <td class="bg-gray-light">{{info.asignacionEstimacion.subcontrato.personalidad_contratista}}</td>
+                                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.personalidad_contratista}}</td>
                                                     </tr>
                                                     <!-- <tr>
                                                         <td class="bg-gray-light"><b>Contrato:</b></td>
@@ -87,12 +109,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                     <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
+                                     <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
                                         <div class="col-12">
                                             <h6><b>Detalle de las partidas</b></h6>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
+                                    <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
                                         <div class="table-responsive col-md-12">
                                             <table class="table table-striped">
                                                 <thead>
@@ -107,7 +129,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(doc, i) in info.asignacionEstimacion.subcontrato.partidas.data">
+                                                    <tr v-for="(doc, i) in asignacion.asignacionEstimacion.subcontrato.partidas.data">
                                                         <td>{{i+1}}</td>
                                                         <td class="td_numero_folio"></td>
                                                         <td>{{doc.contratos.descripcion}}</td>
@@ -120,58 +142,58 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
+                                    <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
                                         <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Subtotal Antes Descuento:</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{info.asignacionEstimacion.subcontrato.subtotal_antes_descuento}}</label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.subtotal_antes_descuento}}</label>
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Descuento(%):</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{info.asignacionEstimacion.subcontrato.descuento}}</label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.descuento}}</label>
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Subtotal:</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{info.asignacionEstimacion.subcontrato.subtotal_format}}</label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.subtotal_format}}</label>
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">IVA:</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{info.asignacionEstimacion.subcontrato.impuesto_format}}</label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.impuesto_format}}</label>
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Retención IVA:</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{info.asignacionEstimacion.subcontrato.impuesto_retenido}}</label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.impuesto_retenido}}</label>
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Total:</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{info.asignacionEstimacion.subcontrato.monto_format}}</label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.monto_format}}</label>
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Moneda:</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{info.asignacionEstimacion.subcontrato.moneda.nombre}}</i></label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{asignacion.asignacionEstimacion.subcontrato.moneda.nombre}}</i></label>
                                          </div>
                                          <div class=" col-md-12" align="right">
-                                            <label class="col-sm-2 col-form-label" style="text-align: left">Anticipo({{info.asignacionEstimacion.subcontrato.anticipo_format}}):</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{info.asignacionEstimacion.subcontrato.anticipo_monto_format}}</i></label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: left">Anticipo({{asignacion.asignacionEstimacion.subcontrato.anticipo_format}}):</label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{asignacion.asignacionEstimacion.subcontrato.anticipo_monto_format}}</i></label>
                                          </div>
                                          <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">Fondo de Garantia:</label>
-                                            <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{info.asignacionEstimacion.subcontrato.retencion}}</i></label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{asignacion.asignacionEstimacion.subcontrato.retencion}}</i></label>
                                          </div>
                                     </div>
 
                                     <hr>
-                                    <div class="row col-md-12" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
+                                    <div class="row col-md-12" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
                                         <div class="col-md-2"><b>Plazo de Ejecución:</b></div>
-                                        <div class="col-md-4" v-if="info.asignacionEstimacion.subcontrato.subcontratos"><b>Del</b>&nbsp; {{info.asignacionEstimacion.subcontrato.subcontratos.fecha_ini_format}} &nbsp;<b>Al</b>&nbsp; {{info.asignacionEstimacion.subcontrato.subcontratos.fecha_fin_format}}</div>
+                                        <div class="col-md-4" v-if="asignacion.asignacionEstimacion.subcontrato.subcontratos"><b>Del</b>&nbsp; {{asignacion.asignacionEstimacion.subcontrato.subcontratos.fecha_ini_format}} &nbsp;<b>Al</b>&nbsp; {{asignacion.asignacionEstimacion.subcontrato.subcontratos.fecha_fin_format}}</div>
                                         <div class="col-md-4" v-else><b>Del</b>&nbsp; -------- &nbsp;<b>Al</b>&nbsp; --------</div>
 
-                                        <div class="col-md-2" v-if="info.asignacionEstimacion.subcontrato.subcontratos"><b>Descripción:</b></div>
-                                        <div class="col-md-4" v-if="info.asignacionEstimacion.subcontrato.subcontratos">{{info.asignacionEstimacion.subcontrato.subcontratos.descripcion}}</div>
+                                        <div class="col-md-2" v-if="asignacion.asignacionEstimacion.subcontrato.subcontratos"><b>Descripción:</b></div>
+                                        <div class="col-md-4" v-if="asignacion.asignacionEstimacion.subcontrato.subcontratos">{{asignacion.asignacionEstimacion.subcontrato.subcontratos.descripcion}}</div>
                                     </div>
                                     <br>
-                                    <div class="row col-md-12" v-if="info.asignacionEstimacion && info.asignacionEstimacion.subcontrato">
+                                    <div class="row col-md-12" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
                                         <div class="col-md-2"><b>Observaciones:</b></div>
-                                        <div class="col-md-10">{{info.asignacionEstimacion.subcontrato.observaciones}}</div>
+                                        <div class="col-md-10">{{asignacion.asignacionEstimacion.subcontrato.observaciones}}</div>
                                     </div>
                                     <!-- <div class="row">
                                         <div class="table-responsive col-md-12">
@@ -209,27 +231,26 @@
     export default {
         name: "subcontrato-show",
         props: ['id'],
-        data() {
-            return {
-                info:''
-            }
-        },
         methods: {
             find() {
 
                 this.$store.commit('contratos/asignacion-contratista/SET_ASIGNACION', null);
                 return this.$store.dispatch('contratos/asignacion-contratista/find', {
                     id: this.id,
-                    params: {include: ['asignacionEstimacion.subcontrato.partidas.contratos', 'asignacionEstimacion.subcontrato.moneda', 'asignacionEstimacion.subcontrato.subcontratos', 'contrato']}
+                    params: {include: ['asignacionEstimacion.subcontrato.partidas.contratos', 'asignacionEstimacion.subcontrato.moneda', 'asignacionEstimacion.subcontrato.subcontratos', 'contrato', 'partidas.concepto']}
                 }).then(data => {
                     this.$store.commit('contratos/asignacion-contratista/SET_ASIGNACION', data);
-                    this.info = data;
 
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
                 })
             }
-        }
+        },
+        computed: {
+            asignacion() {
+                return this.$store.getters['contratos/asignacion-contratista/currentAsignacion'];
+            }
+        },
     }
 </script>
 
