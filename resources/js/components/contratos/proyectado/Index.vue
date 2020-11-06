@@ -93,7 +93,7 @@
                         fecha: contratoProyectado.fecha,
                         referencia: contratoProyectado.referencia,
                         buttons: $.extend({}, {
-                            cambiaAreaSubcontratante: (this.$root.can('modificar_area_subcontratante_cp')) ? true : undefined,
+                            cambiaAreaSubcontratante: (this.$root.can('modificar_area_subcontratante_cp') || true) ? true : undefined,
                             id: contratoProyectado.id,
                             numero_folio: `# ${contratoProyectado.numeroFolio}`,
                             fecha: contratoProyectado.fecha,

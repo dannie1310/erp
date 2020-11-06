@@ -10,6 +10,7 @@
         <router-link  :to="{ name: 'presupuesto-documentos', params: {id: value.id}}" v-if="$root.can('consultar_presupuesto_contratista')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
             <i class="fa fa-folder-open"></i>
         </router-link>
+        <PDF v-bind:id="value.id" />
     </div>
 </template>
 <script>
@@ -17,9 +18,10 @@ import Show from '../Show';
 import Eliminar from '../Delete';
 import DescargaLayout from '../DescargaLayout';
 import CargaLayout from '../CargaLayout';
+import PDF from '../FormatoTablaComparativa';
     export default {
         name: "presupuesto-buttons",
-        components: {Show, Eliminar, DescargaLayout, CargaLayout},
+        components: {Show, Eliminar, DescargaLayout, CargaLayout, PDF},
         props: ['value'],
 
         methods: {
