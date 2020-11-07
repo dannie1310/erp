@@ -9,12 +9,13 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 
-use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\MonedaTransformer;
-use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
 use App\Models\CADECO\Subcontrato;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\CADECO\CostoTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
+use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
 
 class SubcontratoTransformer extends TransformerAbstract
 {
@@ -30,7 +31,8 @@ class SubcontratoTransformer extends TransformerAbstract
         'partidas',
         'partidas_ordenadas',
         'subcontratos',
-        'relaciones'
+        'relaciones',
+        'costo'
     ];
 
     /**
@@ -161,6 +163,15 @@ class SubcontratoTransformer extends TransformerAbstract
         if($relaciones = $model->relaciones)
         {
             return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
+
+    public function includeCosto(Subcontrato $model)
+    {
+        if($costo = $model->costo)
+        {
+            return $this->item($costo, new CostoTransformer);
         }
         return null;
     }
