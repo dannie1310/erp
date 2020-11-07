@@ -204,17 +204,14 @@
                         <div class=" col-md-2" align="left">
                             <label class="col-sm-12 col-form-label" style="text-align: right">Tipo de Gasto:</label>
                         </div>
-                        <div class=" col-md-4" align="left">
-                            <costo-select
-                                    name="id_costo"
-                                    data-vv-as="Costo"
-                                    v-validate="{}"
-                                    id="id_costo"
-                                    v-model="subcontratos.id_costo"
-                                    :error="errors.has('id_costo')"
-                                    ref="costoSelect"
-                            ></costo-select>
-                            <div class="error-label" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
+                        <div class=" col-md-3" align="left">
+                            <label class="col-form-label" style="text-align: left">{{costo}}</label>
+                        </div>
+                        <div class=" col-md-1" >
+                            <small class="badge badge-secondary">
+                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="cambiarGasto()" ></i>
+                            </small>
+                            <!-- <button type="button" class="btn btn-app btn-info float-right" @click="cambiarGasto()"><i class="fa fa-sign-in button"></i></button> -->
                         </div>
                         <div class=" col-md-2" align="left">
                             <label class="col-sm-12 col-form-label" style="text-align: right">Tipo de Contrato:</label>
@@ -272,6 +269,40 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">CAMBIAR TIPO GASTO</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form" @submit.prevent="validate">
+                        <div class="modal-body">
+                            <div role="form">
+                                <costo-select
+                                    name="id_costo"
+                                    data-vv-as="Costo"
+                                    v-validate="{}"
+                                    id="id_costo"
+                                    v-model="id_costo"
+                                    :error="errors.has('id_costo')"
+                                    ref="costoSelect"
+                                ></costo-select>
+                                <div class="error-label" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" @click="cambiar()" class="btn btn-primary"><i class="fa fa-spin fa-spinner" v-if="buscando"></i>Cambiar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
     </span>
 </template>
 
@@ -288,9 +319,11 @@
             return {
                 es: es,
                 cargando:false,
+                buscando:false,
                 subcontratos: '',
                 tipo_contrato:[],
                 id_tipo_contrato:'',
+                id_costo:'',
                 plazo_ejecucion:{
                     fecha_ini_ejec:'',
                     fecha_fin_ejec:'',
@@ -310,7 +343,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('contratos/subcontrato/find', {
                     id: this.id,
-                    params: {include: ['partidas', 'moneda', 'partidas.contratos', 'subcontratos']}
+                    params: {include: ['partidas', 'moneda', 'partidas.contratos', 'subcontratos', 'costo']}
                 }).then(data => {
                     this.subcontratos = data;
                     if(!data.subcontratos){
@@ -336,6 +369,23 @@
                     }).then(data => {
                         this.tipo_contrato = data;
                     })
+            },
+            cambiarGasto(){
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
+            },
+            cambiar(){
+                this.buscando = true;
+                return this.$store.dispatch('cadeco/costo/find', {
+                    id: this.id_costo,
+                }).then(data => {
+                    this.subcontratos.costo = data;
+                }).finally(()=>{
+                    this.subcontratos.id_costo = this.id_costo;
+                    this.id_costo = '';
+                    this.buscando = false;
+                    $(this.$refs.modal).modal('hide');
+                });
             },
             cerrar(){
                 swal({
@@ -414,6 +464,12 @@
                     return this.subcontratos.subtotal + (this.subcontratos.impuesto - this.subcontratos.retencion_iva); 
                 }
                 return 0;
+            },
+            costo(){
+                if(this.subcontratos.costo){
+                    return this.subcontratos.costo.descripcion;
+                }
+                return '';
             },
         }
     }
