@@ -5,6 +5,7 @@ namespace App\Services\CADECO\Contratos;
 
 use App\Imports\PresupuestoImport;
 use App\Models\CADECO\PresupuestoContratista;
+use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 use App\Repositories\CADECO\PresupuestoContratista\Repository;
 use App\Utils\ValidacionSistema;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,13 +19,13 @@ class PresupuestoContratistaService
 
     /**
      * PresupuestoContratistaService constructor
-     * 
+     *
      * @param PresupuestoContratista $model
      */
-    
+
      public function __construct(PresupuestoContratista $model)
      {
-         $this->repository = new Repository($model);         
+         $this->repository = new Repository($model);
      }
 
      public function paginate($data)
@@ -60,7 +61,7 @@ class PresupuestoContratistaService
         $celdas = $this->getDatosPartidas($file_xls);
         $this->verifica = new ValidacionSistema();
         $presupuesto = $this->show($id);
-        
+
         $x = 2;
         $partidas = array();
         if(count($celdas[0]) != 15)
@@ -70,7 +71,7 @@ class PresupuestoContratistaService
         if(count($celdas) != count($presupuesto->partidas) + 19)
         {
             abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
-        }    
+        }
         while($x < count($presupuesto->partidas) + 2)
         {
             $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
@@ -107,7 +108,7 @@ class PresupuestoContratistaService
             );
             $x++;
         }
-        
+
         $respuesta = [
             'descuento_cot' => $celdas[$x][6],
             'tc_usd' => $celdas[$x + 5][6],
@@ -155,5 +156,11 @@ class PresupuestoContratistaService
             'path_xls' => $path_xls,
             'dir_xls' => $dir_xls
         ];
+    }
+
+    public function pdf($id)
+    {
+        $pdf = new PresupuestoContratistaTablaComparativaFormato($this->repository->show($id));
+        return $pdf;
     }
 }

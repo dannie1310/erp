@@ -16,6 +16,7 @@ class PresupuestoContratistaObserver extends TransaccionObserver
      {
          parent::creating($presupuestoContratista);
 
+         $presupuestoContratista->estado = 1;
          $presupuestoContratista->tipo_transaccion = 50;
          $presupuestoContratista->id_moneda = 1;
      }

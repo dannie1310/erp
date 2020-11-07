@@ -42,7 +42,7 @@
                     { title: 'Folio SAO Contrato P.', tdClass: 'folio', field: 'contrato',  tdComp: require('../proyectado/partials/ActionButtons').default},
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Contratista', field: 'contratista', sortable: false },
-                    { title: ' Referencia Contrato Proyectado ', field: 'observaciones', sortable: false },
+                    { title: 'Referencia Contrato Proyectado ', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: ['th_money', 'text-right'], sortable: false },
                     { title: 'Usuario Registró', tdClass: 'folio', field: 'usuario', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
@@ -78,7 +78,7 @@
 
                     })
             },
-            
+
             create() {
                 this.$router.push({name: 'presupuesto-create'});
             },
@@ -137,7 +137,7 @@
                         }),
                         buttons: $.extend({}, {
                             id: presupuesto.id
-                        })                         
+                        })
                     }));
                 },
                 deep: true

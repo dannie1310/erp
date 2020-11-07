@@ -71,7 +71,7 @@
 <script>
     export default {
         name: "contrato-proyectado-show",
-        props: ['id', 'contrato_proyectado'],
+        props: ['id'],
         data(){
             return{
                 cargando: false
