@@ -372,7 +372,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
                 }
             }
         }
-        $this->SetY(-5.35);
+        $this->SetY(-6);
         $this->SetFont('Arial', '', 6);
         if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
             //if(true){
@@ -423,7 +423,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             //$this->SetFillColor(180, 180, 180);
             //$this->Cell(4, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
             $this->Cell(4.8, .4, '', 'TRLB', 0, 'C', 0);
-            $this->Cell(4.8, .4, utf8_decode($this->usuario_registro), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode($this->solicitud->usuario_registro), 'TRLB', 0, 'C', 0);
             $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 0);
             $this->Cell(5, .4, '', 'TRLB', 0, 'C', 0);
         } else {
@@ -511,7 +511,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetMargins(1, 0.5, 1);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 5.5);
+        $this->SetAutoPageBreak(true, 6);
         $this->partidas();
 
         try {
