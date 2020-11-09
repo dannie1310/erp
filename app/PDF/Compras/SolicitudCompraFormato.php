@@ -372,7 +372,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
                 }
             }
         }
-        $this->SetY(-6);
+        $this->SetY(-5.9);
         $this->SetFont('Arial', '', 6);
         if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
             //if(true){
