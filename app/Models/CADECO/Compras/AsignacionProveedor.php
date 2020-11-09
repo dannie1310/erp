@@ -37,10 +37,12 @@ class AsignacionProveedor extends Model
             return $query->whereHas('solicitud');
         });
     }
+
     /**
      * Relaciones
      */
-    public function estadoAsignacion(){
+    public function estadoAsignacion()
+    {
         return $this->belongsTo(CtgEstadoAsignacionProveedor::class, 'estado', 'id');
     }
 
@@ -64,14 +66,16 @@ class AsignacionProveedor extends Model
         return $this->belongsTo(OrdenCompraComplemento::class, 'id', 'id_asignacion_proveedor');
     }
 
-    public function ordenCompra(){
+    public function ordenCompra()
+    {
         return $this->hasMany(OrdenCompra::class, 'id_antecedente', 'id_transaccion_solicitud');
     }
 
     /**
      * Scopes
      */
-    public function scopePendientes($query){
+    public function scopePendientes($query)
+    {
         return $query->where('estado', '=', 1);
     }
 
@@ -85,26 +89,30 @@ class AsignacionProveedor extends Model
     /**
      * Attributes
      */
-    public function getFechaFormatAttribute(){
+    public function getFechaFormatAttribute()
+    {
         $date = date_create($this->timestamp_registro);
-        return date_format($date,"d/m/Y H:i");
+        return date_format($date, "d/m/Y H:i");
     }
 
-    public function getFolioFormatAttribute(){
+    public function getFolioFormatAttribute()
+    {
         return '#' . sprintf("%05d", $this->id);
     }
 
-    public function getEstadoAsignacionFormatAttribute(){       
+    public function getEstadoAsignacionFormatAttribute()
+    {
         return $this->estadoAsignacion->descripcion;
     }
 
-    public function getOrdenCompraPendienteAttribute(){
+    public function getOrdenCompraPendienteAttribute()
+    {
         $partidas = $this->partidas;
         $cant = $partidas->count();
-        foreach($partidas as $partida){
+        foreach ($partidas as $partida) {
             $ordenes_c = $partida->ordenCompra;
-            foreach($ordenes_c as $orden){
-                if($orden->complemento->id_asignacion_proveedor == $this->id){
+            foreach ($ordenes_c as $orden) {
+                if ($orden->complemento->id_asignacion_proveedor == $this->id) {
                     $cant--;
                     break;
                 }
@@ -116,8 +124,7 @@ class AsignacionProveedor extends Model
     public function getSumaSubtotalPartidasAttribute()
     {
         $suma = 0;
-        foreach ($this->partidas as $partida)
-        {
+        foreach ($this->partidas as $partida) {
             $suma += $partida->total_precio_moneda;
         }
         return $suma;
@@ -195,15 +202,13 @@ class AsignacionProveedor extends Model
     {
         $suma_global = 0;
         $suma = 0;
-        foreach ($this->solicitud->cotizaciones as $cotizacion)
-        {
-            foreach ($cotizacion->asignacionPartida->where('id_asignacion_proveedores', $this->id) as $asignacion)
-            {
+        foreach ($this->solicitud->cotizaciones as $cotizacion) {
+            foreach ($cotizacion->asignacionPartida->where('id_asignacion_proveedores', $this->id) as $asignacion) {
                 $suma += $asignacion->total_precio_moneda;
             }
 
-            if($suma != 0 && $cotizacion->complemento) {
-                $suma -= $suma * $cotizacion->complemento->descuento/100;
+            if ($suma != 0 && $cotizacion->complemento) {
+                $suma -= $suma * $cotizacion->complemento->descuento / 100;
             }
             $suma_global += $suma;
             $suma = 0;
@@ -221,74 +226,10 @@ class AsignacionProveedor extends Model
         return $this->suma_total_con_descuento + $this->suma_subtotal_partidas_iva;
     }
 
-    /**
-     * Métodos
-     */
-    public function datosPartidas()
-    {
-        $items = array();
-        foreach($this->partidas as $partida)
-        {
-            $items[] = array(
-                'item_solicitud' => $partida->id_item_solicitud,
-                'id_material' => $partida->id_material,
-                'id_transaccion_cotizacion' => $partida->id_transaccion_cotizacion,
-                'cantidad_asignada' => $partida->cantidad_asignada,
-                'id_empresa' => $partida->cotizacionCompra->id_empresa,
-                'usuario_registro' => $partida->registro
-            );
-        }
-        return $items;
-    }
-
-    public function validaAsociadaOrdenCompra()
-    {
-        if($this->ordenCompraComplemento)
-        {
-            throw New \Exception("La Asignacion ". $this->folio_format. " ya se encuentra asociada a una Orden de Compra");
-        }
-    }
-
-    public function eliminarAsignacion($motivo)
-    {
-        try {
-            DB::connection('cadeco')->beginTransaction();
-            $this->delete();
-            $eliminada = AsignacionProveedorEliminada::find($this->id);
-            $eliminada->motivo_elimino = $motivo;
-            $eliminada->save();
-            DB::connection('cadeco')->commit();
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
-    }
-
-    public function subtotalPorCotizacion($id_cotizacion)
-    {
-        $suma = 0;
-        foreach ($this->partidas as $partida)
-        {
-            if($partida->id_transaccion_cotizacion == $id_cotizacion)
-            {
-                $suma += $partida->total_precio_moneda;
-            }
-        }
-        return $suma;
-    }
-
-    public function tipo_cambio($tipo)
-    {
-        $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
-        return $tipo_cambio ? $tipo_cambio->cambio : $tipo_cambio = Cambio::where('id_moneda','=', $tipo)->orderByDesc('fecha')->first()->cambio;
-    }
-
     public function getAplicadaAttribute()
     {
-        if($this->ordenCompraComplemento){
-            if($this->ordenCompraComplemento->count()>0)
-            {
+        if ($this->ordenCompraComplemento) {
+            if ($this->ordenCompraComplemento->count() > 0) {
                 return true;
             } else {
                 return false;
@@ -339,5 +280,73 @@ class AsignacionProveedor extends Model
             $id_cotizacion_optima = null;
         }
         return $array;
+    }
+
+    public function getUsuarioAttribute()
+    {
+        if ($this->usuarioRegistro) {
+            return $this->usuarioRegistro->nombre_completo;
+        } else {
+            return $this->comentario;
+        }
+    }
+
+    /**
+     * Métodos
+     */
+    public function datosPartidas()
+    {
+        $items = array();
+        foreach ($this->partidas as $partida) {
+            $items[] = array(
+                'item_solicitud' => $partida->id_item_solicitud,
+                'id_material' => $partida->id_material,
+                'id_transaccion_cotizacion' => $partida->id_transaccion_cotizacion,
+                'cantidad_asignada' => $partida->cantidad_asignada,
+                'id_empresa' => $partida->cotizacionCompra->id_empresa,
+                'usuario_registro' => $partida->registro
+            );
+        }
+        return $items;
+    }
+
+    public function validaAsociadaOrdenCompra()
+    {
+        if ($this->ordenCompraComplemento) {
+            throw New \Exception("La Asignacion " . $this->folio_format . " ya se encuentra asociada a una Orden de Compra");
+        }
+    }
+
+    public function eliminarAsignacion($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->delete();
+            $eliminada = AsignacionProveedorEliminada::find($this->id);
+            $eliminada->motivo_elimino = $motivo;
+            $eliminada->save();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function subtotalPorCotizacion($id_cotizacion)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida) {
+            if ($partida->id_transaccion_cotizacion == $id_cotizacion) {
+                $suma += $partida->total_precio_moneda;
+            }
+        }
+        return $suma;
+    }
+
+    public function tipo_cambio($tipo)
+    {
+        $tipo_cambio = Cambio::where('id_moneda', '=', $tipo)->where('fecha', '=', $this->timestamp_registro)->first();
+        return $tipo_cambio ? $tipo_cambio->cambio : $tipo_cambio = Cambio::where('id_moneda', '=', $tipo)->orderByDesc('fecha')->first()->cambio;
     }
 }
