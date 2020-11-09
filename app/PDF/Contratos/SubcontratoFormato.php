@@ -440,7 +440,7 @@ class SubcontratoFormato extends FPDI
     function footer(){
         $residuo = $this->PageNo() % 2;
         $this->SetTextColor('0,0,0');
-        if($this->encola != 'clausulado' || ($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 4 && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 3 &&$this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 7)){
+        if($this->encola != 'clausulado' || ($this->subcontrato->clasificacionSubcontrato && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 4 && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 3 &&$this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 7)){
             if(Context::getDatabase() == "SAO1814_TERMINAL_NAICM"){
                 $this->SetFont('Arial', 'B', 6);
                 $this->SetFont('Arial', 'B', 5);
