@@ -177,6 +177,14 @@ class SolicitudCompra extends Transaccion
         return $encabezado;
     }
 
+    public function getIdAreaCompradoraAttribute()
+    {
+        try{
+            return $this->complemento->id_area_compradora;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
 
     /**
      * Métodos
