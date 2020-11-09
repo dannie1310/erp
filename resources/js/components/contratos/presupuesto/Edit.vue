@@ -28,7 +28,7 @@
                                         <table class="table">
                                             <tbody>
                                                 <tr>
-                                                    <td class="bg-gray-light" align="center" colspan="6"><b>{{(presupuesto.empresa) ? presupuesto.empresa.razon_social : '----------'}}</b></td>
+                                                    <td class="bg-gray-light" align="center" colspan="8"><b>{{(presupuesto.empresa) ? presupuesto.empresa.razon_social : '----------'}}</b></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
@@ -37,10 +37,12 @@
                                                     <td class="bg-gray-light">{{'$ ' + parseFloat(tipo_cambio[2]).formatMoney(4, '.', ',')}}</td>
                                                     <td class="bg-gray-light"><b>TC EURO:</b></td>
                                                     <td class="bg-gray-light">{{'$ ' + parseFloat(tipo_cambio[3]).formatMoney(4, '.', ',')}}</td>
+                                                    <td class="bg-gray-light"><b>TC LIBRA:</b></td>
+                                                    <td class="bg-gray-light">{{'$ ' + parseFloat(tipo_cambio[3]).formatMoney(4, '.', ',')}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Direccion:</b></td>
-                                                    <td class="bg-gray-light">{{(presupuesto.sucursal) ? presupuesto.sucursal.direccion : '----------'}}</td>
+                                                    <td class="bg-gray-light" colspan="3">{{(presupuesto.sucursal) ? presupuesto.sucursal.direccion : '----------'}}</td>
                                                     <td class="bg-gray-light"><b>Folio:</b></td>
                                                     <td class="bg-gray-light">{{presupuesto.numero_folio}}</td>
                                                     <td class="bg-gray-light"><b>Importe:</b></td>
@@ -133,8 +135,8 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{'$ ' + parseFloat((precio[i] * tipo_cambio[moneda_input[i]]) - ((descuento[i] * precio[i] * tipo_cambio[moneda_input[i]]) / 100)).formatMoney(2, '.', ',')}}</td>
-                                                        <td style="text-align:right;">{{'$ ' + parseFloat((partida.concepto.cantidad_presupuestada * precio[i] * tipo_cambio[moneda_input[i]]) - ((partida.concepto.cantidad_presupuestada * precio[i] * tipo_cambio[moneda_input[i]] * descuento[i]) / 100)).formatMoney(2, '.', ',')}}</td>
+                                                        <td style="text-align:right;">{{'$ ' + parseFloat(getPrecioUnitarioMC(i,precio[i])).formatMoney(2, '.', ',')}}</td>
+                                                        <td style="text-align:right;">{{'$ ' + parseFloat(partida.concepto.cantidad_presupuestada * getPrecioUnitarioMC(i,precio[i])).formatMoney(2, '.', ',')}}</td>
                                                        <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -180,12 +182,56 @@
                                         <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">TC USD:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{dolar}}</label>
+                                        <label class="col-sm-2 col-form-label">Subtotal Precios LIBRA:</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(libras)).formatMoney(4,'.',',')}}</label>
                                     </div>
-                                    <div class=" col-md-12" align="right">
+                                     <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">TC USD:</label>
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                name="tc_usd"
+                                                v-model="dolar"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_usd"
+                                                @change ="actualizaTC(2)"
+                                                :class="{'is-invalid': errors.has('tc_usd')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">TC EURO:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{euro}}</label>
+                                    </div>
+                                     <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                name="tc_eur"
+                                                v-model="euro"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_eur"
+                                                @change ="actualizaTC(3)"
+                                                :class="{'is-invalid': errors.has('tc_eur')}">
+                                    </div>
+                                     <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">TC LIBRA:</label>
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                name="tc_libra"
+                                                v-model="libra"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_libra"
+                                                @change ="actualizaTC(4)"
+                                                :class="{'is-invalid': errors.has('tc_libra')}">
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
@@ -272,8 +318,10 @@
                                 </div>
                             </div>
                              <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Registrar</button>
+                                    <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>
+                                        Regresar</button>
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>
+                                        Guardar</button>
                              </div>
                         </form>
                     </div>
@@ -305,6 +353,10 @@
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
+                libras:0,
+                dolar:0,
+                euro:0,
+                libra:0,
                 presupuesto: '',
                 moneda_input:[],
                 observaciones_inputs:[],
@@ -348,6 +400,37 @@
             
         },
         methods : {
+            actualizaTC(index){
+                switch (index){
+                    case 2:
+                        this.tipo_cambio[index] = this.dolar;
+                        break;
+                    case 3:
+                        this.tipo_cambio[index] = this.euro;
+                        break;
+                    case 4:
+                        this.tipo_cambio[index] = this.libra;
+                        break;
+                }
+                this.calcular();
+            },
+            getPrecioUnitarioMC(i, precio) {
+                var suma_total = 0;
+                if(this.moneda_input.length != 0) {
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 1) {
+                       return  suma_total = precio != undefined ? precio - (precio * this.descuento[i]/100) : '1.00'
+                    }
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 2) {
+                        return suma_total = precio != undefined ? (precio * this.dolar) - (precio * this.dolar * this.descuento[i]/100) :  this.dolar
+                    }
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 3) {
+                        return suma_total = precio != undefined ? (precio * this.euro) - (precio * this.euro * this.descuento[i]/100) : this.euro
+                    }
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 4) {
+                        return suma_total = precio != undefined ? (precio * this.libra) - (precio * this.libra * this.descuento[i]/100) : this.libra
+                    }
+                }
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
@@ -389,6 +472,7 @@
                 this.pesos = 0;
                 this.dolares = 0;
                 this.euros = 0;
+                this.libras = 0;
                 while(this.x < this.presupuesto.partidas.data.length)
                 {                    
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
@@ -408,6 +492,11 @@
                             this.euros = (this.euros + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] - 
                             ((this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] * this.descuento[this.x]) / 100)));
                         }                       
+                        if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
+                        {
+                            this.libras = (this.libras + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] - 
+                            ((this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] * this.descuento[this.x]) / 100)));
+                        }                       
                     }
                     this.x ++;                    
                 }                     
@@ -423,6 +512,7 @@
                         this.precio[this.x] = this.presupuesto.partidas.data[this.x].precio_unitario_convert;
                         this.moneda_input[this.x] = (this.presupuesto.partidas.data[this.x].id_moneda != 0) ? this.presupuesto.partidas.data[this.x].id_moneda : 1;
                         this.descuento[this.x] = (this.presupuesto.partidas.data[this.x].descuento > 0) ? this.presupuesto.partidas.data[this.x].descuento : 0;
+
                     }else
                     {
                         var busqueda = this.carga.partidas.find(x=>x.id_concepto == this.presupuesto.partidas.data[this.x].concepto.id_concepto)                        
@@ -441,11 +531,17 @@
                     this.credito = (this.presupuesto.dias_credito > 0) ? this.presupuesto.dias_credito : 0;
                     this.vigencia = (this.presupuesto.dias_vigencia > 0) ? this.presupuesto.dias_vigencia : 0;
                     this.descuento_cot = (this.presupuesto.descuento > 0) ? this.presupuesto.descuento : 0;
+                    this.dolar = this.presupuesto.tc_usd;
+                    this.euro = this.presupuesto.tc_euro;
+                    this.libra = this.presupuesto.tc_libra;
                 
                     
                 }else
                 {
                     this.anticipo = this.carga.anticipo;
+                    this.dolar = this.carga.tc_usd;
+                    this.euro = this.carga.tc_euro;
+                    this.libra = this.carga.tc_libra;
                     this.credito = this.carga.credito;
                     this.vigencia = this.carga.vigencia;
                     this.descuento_cot = this.carga.descuento_cot;
@@ -478,6 +574,9 @@
                         this.post.impuesto = this.iva;
                         this.post.observaciones = this.presupuesto.observaciones;
                         this.post.tipo_cambio = this.tipo_cambio;
+                        this.post.tcUsd = this.dolar;
+                        this.post.tdEuro = this.euro;
+                        this.post.tcLibra = this.libra;
                         this.save()
                     }                    
                 });
@@ -503,8 +602,8 @@
         computed: {
             subtotal()
             {
-                return ((this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3])) - 
-                ((this.descuento_cot * (this.pesos + (this.dolares * this.tipo_cambio[2]) + (this.euros * this.tipo_cambio[3]))) / 100 ));
+                return ((this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra)) - 
+                ((this.descuento_cot * (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra))) / 100 ));
             },
             iva()
             {
@@ -514,14 +613,14 @@
             {
                 return this.subtotal + this.iva;
             },
-            dolar()
-            {
-                return '$ ' + parseFloat(this.tipo_cambio[2]).formatMoney(4,'.',',');
-            },
-            euro()
-            {
-                return '$ ' + parseFloat(this.tipo_cambio[3]).formatMoney(4,'.',',');
-            },
+            // dolar()
+            // {
+            //     return '$ ' + parseFloat(this.tipo_cambio[2]).formatMoney(4,'.',',');
+            // },
+            // euro()
+            // {
+            //     return '$ ' + parseFloat(this.tipo_cambio[3]).formatMoney(4,'.',',');
+            // },
             importe()
             {
                 return '$ ' + (parseFloat(this.presupuesto.subtotal) + parseFloat(this.presupuesto.impuesto)).formatMoney(2,'.',',');

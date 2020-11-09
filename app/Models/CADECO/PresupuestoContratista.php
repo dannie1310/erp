@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 use App\CSV\PresupuestoLayout;
 use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
 use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
+use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 use App\Models\IGH\Usuario;
 use DateTime;
 use DateTimeZone;
@@ -34,6 +35,7 @@ class PresupuestoContratista extends Transaccion
         'PorcentajeDescuento',
         'TcUSD',
         'TcEuro',
+        'TcLibra',
         'DiasCredito',
         'DiasVigencia',
         'tipo_transaccion',
@@ -45,7 +47,8 @@ class PresupuestoContratista extends Transaccion
         'fecha',
         'numero_folio',
         'empresa.razon_social',
-        'contratoProyectado.referencia'
+        'contratoProyectado.referencia',
+        'contratoProyectado.numero_folio'
     ];
 
 
@@ -58,6 +61,9 @@ class PresupuestoContratista extends Transaccion
         });
     }
 
+    /**
+     * Relaciones
+     */
     public function contratoProyectado()
     {
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
@@ -78,17 +84,120 @@ class PresupuestoContratista extends Transaccion
         return $this->hasOne(AsignacionSubcontratoPartidas::class, 'id_transaccion');
     }
 
-    public function descargaLayout($id)
-    {
-        $find = $this::find($id);
-        return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
-    }
-
     public function empresa()
     {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'id_sucursal');
+    }
+
+    public function partidasAsignaciones()
+    {
+        return $this->hasMany(AsignacionContratistaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    /**
+     * Atributos
+     */
+    public function getUsdFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcUSD),4);
+    }
+
+    public function getEuroFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcEuro),4);
+    }
+
+    public function getLibraFormatAttribute()
+    {
+        return '$ ' . number_format(abs($this->TcLibra),4);
+    }
+
+    public function getDolarAttribute()
+    {
+        return $this->tc_usd ? $this->tc_usd : Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getEuroAttribute()
+    {
+        return $this->tc_euro ? $this->tc_euro : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getLibraAttribute()
+    {
+        return $this->tc_libra ? $this->tc_libra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = PresupuestoContratista::NOMBRE;
+        $datos["tipo_numero"] = PresupuestoContratista::TIPO;
+        $datos["icono"] = PresupuestoContratista::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
+    public function getFechaGuionFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d-m-Y");
+    }
+
+    public function getSumaSubtotalPartidasAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida) {
+            $suma += $partida->precio_sin_descuento;
+        }
+        return $suma;
+    }
+
+    public function getDescuentoAttribute()
+    {
+        return $this->suma_subtotal_partidas * $this->PorcentajeDescuento/100;
+    }
+
+    public function getSubtotalConDescuentoAttribute()
+    {
+        return $this->suma_subtotal_partidas - $this->descuento;
+    }
+
+    public function getIvaConDescuentoAttribute()
+    {
+        return $this->subtotal_con_descuento * 0.16;
+    }
+
+    public function getTotalConDescuentoAttribute()
+    {
+        return $this->subtotal_con_descuento + $this->iva_con_descuento;
+    }
+
+    public function getIvaPartidasAttribute()
+    {
+        return $this->suma_subtotal_partidas * 0.16;
+    }
+
+    public function getTotalPartidasAttribute()
+    {
+        return $this->suma_subtotal_partidas + $this->iva_Partidas;
+    }
+
+    /**
+     * Métodos
+     */
     public function datosPartidas()
     {
         $items = array();
@@ -107,18 +216,21 @@ class PresupuestoContratista extends Transaccion
         return $items;
     }
 
-    public function precioConvercion($precio, $id_moneda, $monedas)
+    public function precioConversion($precio, $id_moneda)
     {
         switch($id_moneda)
         {
             case(1):
-                return ($precio * 1);
+                return ($precio);
             break;
             case(2):
-                return ($precio * $monedas[0]->cambioIgh->tipo_cambio);
+                return ($precio * $this->dolar);
             break;
             case(3):
-                return ($precio * $monedas[1]->cambioIgh->tipo_cambio);
+                return ($precio * $this->euro);
+            break;
+            case(4):
+                return ($precio * $this->libra);
             break;
         }
     }
@@ -152,11 +264,9 @@ class PresupuestoContratista extends Transaccion
         try
         {
             DB::connection('cadeco')->beginTransaction();
-            $moneda = Moneda::get();
             $contrato = ContratoProyectado::find($data['id_contrato']);
             $fecha = new DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-
             if(!$data['pendiente'])
             {
                 $presupuesto = $this->create([
@@ -169,26 +279,24 @@ class PresupuestoContratista extends Transaccion
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observacion'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
-                    'TcUSD' => $moneda[0]->cambioIgh->tipo_cambio,
-                    'TcEuro' => $moneda[1]->cambioIgh->tipo_cambio,
+                    'TcUSD' => $data['tc_usd'],
+                    'TcEuro' => $data['tc_eur'],
+                    'TcLibra' => $data['tc_libra'],
                     'DiasCredito' => $data['credito'],
                     'DiasVigencia' => $data['vigencia']
                 ]);
 
-                $t = 0;
-                foreach($data['partidas'] as $partida)
+                foreach($data['partidas'] as $t => $partida)
                 {
-                    $precio_unitario = $this->precioConvercion($data['precio'][$t], $data['moneda'][$t], $moneda);
                     $presupuesto->partidas()->create([
                         'id_transaccion' => $presupuesto->id_transaccion,
                         'id_concepto' => $partida['id_concepto'],
-                        'precio_unitario' => ($data['enable'][$t]) ? $precio_unitario : null,
+                        'precio_unitario' => ($data['enable'][$t]) ? $this->precioConversion($data['precio'][$t], $data['moneda'][$t]) : null,
                         'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
                         'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
                         'IdMoneda' => $data['moneda'][$t],
-                        'Observaciones' => ($data['observaciones'][$t]) ? $data['observaciones'][$t] : ''
+                        'Observaciones' => ($data['enable'][$t]) ? $data['observaciones'][$t] : ''
                     ]);
-                    $t ++;
                 }
             }else
             {
@@ -204,8 +312,10 @@ class PresupuestoContratista extends Transaccion
                     'PorcentajeDescuento' => null,
                     'TcUSD' => null,
                     'TcEuro' => null,
+                    'TcLibra' => null,
                     'DiasCredito' => null,
-                    'DiasVigencia' => null
+                    'DiasVigencia' => null,
+                    'estado' => 0
                 ]);
 
                 $t = 0;
@@ -227,7 +337,7 @@ class PresupuestoContratista extends Transaccion
                 return $this;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
+            abort(400, $e);
         }
     }
 
@@ -236,6 +346,7 @@ class PresupuestoContratista extends Transaccion
         try
         {
             DB::connection('cadeco')->beginTransaction();
+
                 $fecha =New DateTime($data['fecha']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $this->update([
@@ -245,8 +356,9 @@ class PresupuestoContratista extends Transaccion
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observaciones'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
-                    'TcUSD' => $data['tipo_cambio'][2],
-                    'TcEuro' => $data['tipo_cambio'][3],
+                    'TcUSD' => $data['tcUsd'],
+                    'TcEuro' => $data['tdEuro'],
+                    'TcLibra' => $data['tcLibra'],
                     'DiasCredito' => $data['credito'],
                     'DiasVigencia' => $data['vigencia']
                 ]);;
@@ -257,11 +369,23 @@ class PresupuestoContratista extends Transaccion
                     $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $partida['id'])->where('id_concepto', '=', $partida['concepto']['id_concepto']);
                     if($data['moneda'][$x] > 1)
                     {
-                       $precio =  ($data['moneda'][$x] == 2) ? ($data['precio'][$x] * $data['tipo_cambio'][2]) : ($data['precio'][$x] * $data['tipo_cambio'][3]);
+                        switch ((int)$data['moneda'][$x]){
+                            case 2:
+                                $precio = $data['precio'][$x] * $data['tcUsd'];
+                            break;
+                            case 3:
+                                $precio = $data['precio'][$x] * $data['tdEuro'];
+                            break;
+                            case 4:
+                                $precio = $data['precio'][$x] * $data['tcLibra'];
+                            break;
+                        }
+
                     }
                     else{
                         $precio = $data['precio'][$x];
                     }
+
                     $item->update([
                         'precio_unitario' => ($data['enable'][$x]) ? $precio : null,
                         'no_cotizado' => ($data['enable'][$x]) ? 0 : 1,
@@ -280,36 +404,85 @@ class PresupuestoContratista extends Transaccion
         }
     }
 
-    public function sucursal()
+    public function descargaLayout($id)
     {
-        return $this->belongsTo(Sucursal::class, 'id_sucursal');
+        $find = $this::find($id);
+        return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
     }
 
-    public function getUsdFormatAttribute()
+    public function datosComparativos()
     {
-        return '$ ' . number_format(abs($this->TcUSD),4);
+        $partidas = [];
+        $presupuestos = [];
+        $precios = [];
+
+        foreach ($this->contratoProyectado->conceptos()->orderBy('descripcion', 'asc')->get() as $key => $item) {
+            if (array_key_exists($item->id_concepto, $partidas)) {
+                $partidas[$item->id_concepto]['cantidad_presupuestada'] = $partidas[$item->id_concepto]['cantidad_presupuestada'] + $item->cantidad_presupuestada;
+                $partidas[$item->id_concepto]['cantidad_original'] = $partidas[$item->id_concepto]['cantidad_original'] + $item->cantidad_original;
+            } else {
+                $partidas[$item->id_concepto]['concepto'] = $item->descripcion;
+                $partidas[$item->id_concepto]['unidad'] = $item->unidad;
+                $partidas[$item->id_concepto]['cantidad_presupuestada'] = $item->cantidad_presupuestada;
+                $partidas[$item->id_concepto]['cantidad_original'] = $item->cantidad_original;
+                $partidas[$item->id_concepto]['observaciones'] = $item->observaciones ? $item->observaciones : '';
+            }
+        }
+        foreach ($this->contratoProyectado->presupuestos()->orderBy('id_transaccion', 'desc')->get() as $cont => $presupuesto) {
+            $presupuestos[$cont]['id_transaccion'] = $presupuesto->id_transaccion;
+            $presupuestos[$cont]['empresa'] = $presupuesto->empresa->razon_social;
+            $presupuestos[$cont]['fecha'] = $presupuesto->fecha_format;
+            $presupuestos[$cont]['vigencia'] = $presupuesto->DiasVigencia ? $presupuesto->DiasVigencia : '-';
+            $presupuestos[$cont]['anticipo'] = $presupuesto->anticipo && $presupuesto->anticipo > 0 ? $presupuesto->anticipo : '-';
+            $presupuestos[$cont]['dias_credito'] = $presupuesto->DiasCredito ? $presupuesto->DiasCredito : '-';
+            $presupuestos[$cont]['descuento_global'] = $presupuesto->descuento ? $presupuesto->descuento : '-';
+            $presupuestos[$cont]['suma_subtotal_partidas'] = $presupuesto->suma_subtotal_partidas;
+            $presupuestos[$cont]['iva_partidas'] = $presupuesto->iva_partidas;
+            $presupuestos[$cont]['total_partidas'] = $presupuesto->total_partidas;
+            $presupuestos[$cont]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
+            $presupuestos[$cont]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
+            foreach ($presupuesto->partidas as $p) {
+                if (key_exists($p->id_concepto, $precios)) {
+                    if ($p->precio_sin_descuento > 0 && $precios[$p->id_concepto] > $p->precio_sin_descuento)
+                        $precios[$p->id_concepto] = (float)$p->precio_sin_descuento;
+                } else {
+                    if ($p->precio_unitario > 0) {
+                        $precios[$p->id_concepto] = (float)$p->precio_sin_descuento;
+                    }
+                }
+                if (array_key_exists($p->id_concepto, $partidas)) {
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['id_transaccion'] = $presupuesto->id_transaccion;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario_c'] = $p->precio_unitario_convert;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total_moneda'] = $p->precio_sin_descuento;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total'] = $p->precio_unitario_convert * $partidas[$p->id_concepto]['cantidad_presupuestada'];
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['descuento_partida'] = $p->PorcentajeDescuento ? $p->PorcentajeDescuento : 0;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['observaciones'] = $p->observaciones ? $p->observaciones : '';
+                }
+            }
+        }
+        //dd($presupuestos, $partidas, $precios);
+        return [
+            'presupuestos' => $presupuestos,
+            'partidas' => $partidas,
+            'precios_menores' => $precios
+        ];
     }
 
-    public function getEuroFormatAttribute()
+    public function sumaPrecioPartidaMoneda($tipo_moneda)
     {
-        return '$ ' . number_format(abs($this->TcEuro),4);
+        $suma = 0;
+        foreach ($this->partidas as $partida) {
+            if ($tipo_moneda == $partida->IdMoneda) {
+                $suma += $partida->precio_compuesto_total;
+            }
+        }
+        return $suma;
     }
 
-    public function getDatosParaRelacionAttribute()
+    public function calcular_ki($precio, $precio_menor)
     {
-        $datos["numero_folio"] = $this->numero_folio_format;
-        $datos["id"] = $this->id_transaccion;
-        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
-        $datos["hora"] = $this->hora_registro;
-        $datos["fecha"] = $this->fecha_registro;
-        $datos["orden"] = $this->fecha_hora_registro_orden;
-        $datos["usuario"] = $this->usuario_registro;
-        $datos["observaciones"] = $this->observaciones;
-        $datos["tipo"] = PresupuestoContratista::NOMBRE;
-        $datos["tipo_numero"] = PresupuestoContratista::TIPO;
-        $datos["icono"] = PresupuestoContratista::ICONO;
-        $datos["consulta"] = 0;
-
-        return $datos;
+        return $precio_menor == 0 ? ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
     }
 }

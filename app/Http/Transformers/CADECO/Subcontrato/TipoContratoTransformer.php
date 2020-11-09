@@ -2,12 +2,12 @@
 
 namespace App\Http\Transformers\CADECO\Subcontrato;
 
-use App\Models\CADECO\Subcontratos\TiposSubcontrato;
+use App\Models\CADECO\Subcontratos\TipoContrato;
 use League\Fractal\TransformerAbstract;
 
-class TiposSubcontratoTransformer extends TransformerAbstract
+class TipoContratoTransformer extends TransformerAbstract
 {
-    public function transform(TiposSubcontrato $model)
+    public function transform(TipoContrato $model)
     {
         return [
             'id' => $model->getKey(),

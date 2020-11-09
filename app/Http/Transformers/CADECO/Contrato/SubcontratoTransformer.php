@@ -9,12 +9,13 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 
-use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\MonedaTransformer;
-use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
 use App\Models\CADECO\Subcontrato;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\CADECO\CostoTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
+use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
 
 class SubcontratoTransformer extends TransformerAbstract
 {
@@ -30,7 +31,8 @@ class SubcontratoTransformer extends TransformerAbstract
         'partidas',
         'partidas_ordenadas',
         'subcontratos',
-        'relaciones'
+        'relaciones',
+        'costo'
     ];
 
     /**
@@ -49,6 +51,7 @@ class SubcontratoTransformer extends TransformerAbstract
         return [
             'id' => (int)$model->getKey(),
             'fecha_format' => (string)$model->fecha_format,
+            'fecha' => (string)$model->fecha,
             'numero_folio_format'=>(string)$model->numero_folio_format,
             'contrato_folio_format' => (string)$model->contratoProyectado->numero_folio_format,
             'subtotal'=>(float)$model->subtotal,
@@ -58,14 +61,17 @@ class SubcontratoTransformer extends TransformerAbstract
             'impuesto'=>(float)$model->impuesto,
             'impuesto_format'=>(string) '$ '.number_format($model->impuesto,2,".",","),
             'impuesto_retenido' =>(string) '$ '.number_format($model->impuesto_retenido,2,".",","),
+            'retencion_iva' => $model->impuesto_retenido,
             'monto'=>(float)$model->monto,
             'costo'=>(string)($model->costo) ? $model->costo->descripcion : '-----',
+            'id_costo'=>$model->id_costo,
             'tipo_subcontrato'=>(string)($model->clasificacionSubcontrato) ? $model->clasificacionSubcontrato->tipo->descripcion : '------',
             'personalidad_contratista'=>(string)$model->empresa->personalidad_definicion,
             'estado' => (int)$model->estado,
             'monto_format'=>(string)$model->monto_format,
             'referencia'=>(string)$model->referencia,
             'retencion'=>(string)$model->retencion.' %',
+            'retencion_fg'=>$model->retencion,
             'anticipo'=>(float)$model->anticipo,
             'anticipo_format' => $model->anticipo_format,
             'anticipo_monto_format'=>(string) '$ '.number_format($model->anticipo_monto, 2, ".", ","),
@@ -78,7 +84,8 @@ class SubcontratoTransformer extends TransformerAbstract
             'monto_solicitado' => (float) $model->montoPagoAnticipado,
             'monto_facturado_oc' => (float) $model->montoFacturadoSubcontrato,
             'monto_facturado_ea' => (float) $model->montoFacturadoEstimacion,
-            'empresa'=>(string) $model->empresa->razon_social
+            'empresa'=>(string) $model->empresa->razon_social,
+            'id_tipo_contrato' =>($model->clasificacionSubcontrato) ? (int)$model->clasificacionSubcontrato->id_tipo_contrato:'',
         ];
     }
     /**
@@ -156,6 +163,15 @@ class SubcontratoTransformer extends TransformerAbstract
         if($relaciones = $model->relaciones)
         {
             return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
+
+    public function includeCosto(Subcontrato $model)
+    {
+        if($costo = $model->costo)
+        {
+            return $this->item($costo, new CostoTransformer);
         }
         return null;
     }
