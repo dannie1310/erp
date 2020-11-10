@@ -77,6 +77,7 @@ class OrdenCompraTransformer extends TransformerAbstract
             'monto_solicitado' => (float) $model->monto_pago_anticipado,
             'entradas_almacen' =>  $model->tiene_entrada_almacen,
             'porcentaje_anticipo_pactado' => $model->porcentaje_anticipo_pactado,
+            'usuario_registro' => $model->usuario_registro
         ];
     }
 
