@@ -3,6 +3,7 @@
 
 namespace App\Http\Transformers\CADECO\Contrato;
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
@@ -21,7 +22,8 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         'empresa',
         'partidas',
         'sucursal',
-        'usuario'
+        'usuario',
+        'relaciones'
     ];
 
     public function transform(PresupuestoContratista $model)
@@ -88,7 +90,7 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
      */
     public function includeEmpresa(PresupuestoContratista $model)
     {
-        if($empresa = $model->empresa)               
+        if($empresa = $model->empresa)
         {
             return $this->item($empresa, new EmpresaTransformer);
         }
@@ -121,6 +123,21 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         if($partidas = $model->partidas)
         {
             return $this->collection($partidas, new PresupuestoContratistaPartidaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Relaciones
+     *
+     * @param PresupuestoContratista $model
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeRelaciones(PresupuestoContratista $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }
