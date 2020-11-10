@@ -6,6 +6,7 @@ use App\CSV\PresupuestoLayout;
 use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
 use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
 use App\Models\IGH\Usuario;
 use DateTime;
 use DateTimeZone;
@@ -102,6 +103,23 @@ class PresupuestoContratista extends Transaccion
     /**
      * Atributos
      */
+
+    public function getSubcontratosAttribute(){
+        $subcontratos_arr = [];
+        $partidas_asignaciones = $this->partidasAsignaciones;
+        foreach($partidas_asignaciones as $partida_asignacion){
+            $subcontratos_arr[] =$partida_asignacion->asignacion->subcontrato;
+
+        }
+
+        if(count($subcontratos_arr)>0){
+            $subcontratos =  collect($subcontratos_arr)->unique();
+        }
+
+        return $subcontratos;
+
+    }
+
     public function getUsdFormatAttribute()
     {
         return '$ ' . number_format(abs($this->TcUSD),4);
@@ -484,5 +502,88 @@ class PresupuestoContratista extends Transaccion
     public function calcular_ki($precio, $precio_menor)
     {
         return $precio_menor == 0 ? ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #CONTRATO PROYECTADO
+        $relaciones[$i] = $this->contratoProyectado->datos_para_relacion;
+        $i++;
+
+        #PRESUPUESTOS
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        #SUBCONTRATOS
+        $subcontratos = $this->subcontratos;
+        foreach($subcontratos as $subcontrato)
+        {
+            $relaciones[$i] = $subcontrato->datos_para_relacion;
+            $i++;
+            #POLIZA DE SUBCONTRATO
+            if($subcontrato->poliza){
+                $relaciones[$i] = $subcontrato->poliza->datos_para_relacion;
+                $i++;
+            }
+            #FACTURA DE SUBCONTRATO
+            foreach ($subcontrato->facturas as $factura){
+                $relaciones[$i] = $factura->datos_para_relacion;
+                $i++;
+                #POLIZA DE FACTURA DE SUBCONTRATO
+                if($factura->poliza){
+                    $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                    $i++;
+                }
+                #PAGO DE FACTURA DE SUBCONTRATO
+                foreach ($factura->ordenesPago as $orden_pago){
+                    if($orden_pago->pago){
+                        $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                        $i++;
+                        #POLIZA DE PAGO DE FACTURA DE OC
+                        if($orden_pago->pago->poliza){
+                            $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                            $i++;
+                        }
+                    }
+                }
+            }
+            #ESTIMACION
+            foreach ($subcontrato->estimaciones as $estimacion){
+                $relaciones[$i] = $estimacion->datos_para_relacion;
+                $i++;
+
+                #FACTURA DE ESTIMACIÓN
+                foreach ($estimacion->facturas as $factura){
+                    $relaciones[$i] = $factura->datos_para_relacion;
+                    $i++;
+
+                    #POLIZA DE FACTURA DE ESTIMACIÓN
+                    if($factura->poliza){
+                        $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                        $i++;
+                    }
+
+                    #PAGO DE FACTURA DE ESTIMACIÓN
+                    foreach ($factura->ordenesPago as $orden_pago){
+                        if($orden_pago->pago){
+                            $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                            $i++;
+                            #POLIZA DE PAGO DE FACTURA DE ESTIMACIÓN
+                            if($orden_pago->pago->poliza){
+                                $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                                $i++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $orden1 = array_column($relaciones, 'orden');
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
     }
 }

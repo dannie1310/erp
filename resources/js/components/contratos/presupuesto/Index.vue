@@ -39,7 +39,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
-                    { title: 'Folio SAO Contrato P.', tdClass: 'folio', field: 'contrato',  tdComp: require('../proyectado/partials/ActionButtons').default},
+                    { title: 'Contrato Proyectado', tdClass: 'folio', field: 'contrato'},
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Contratista', field: 'contratista', sortable: false },
                     { title: 'Referencia Contrato Proyectado ', field: 'observaciones', sortable: false },
@@ -127,16 +127,12 @@
                         contratista: (presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----',
                         observaciones: (presupuesto.contrato_proyectado) ? presupuesto.contrato_proyectado.referencia : '----- Sin Contrato Proyectado -----',
                         importe: '$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',','),
-                        usuario: (presupuesto.usuario) ? presupuesto.usuario.nombre : '---------------------------',
+                        usuario: (presupuesto.usuario) ? presupuesto.usuario.nombre : '-',
                         estado: this.getEstado(presupuesto.estado),
-                        contrato: $.extend({}, {
-                            show: (presupuesto.contrato_proyectado) ? true : false,
-                            id: (presupuesto.contrato_proyectado) ? presupuesto.contrato_proyectado.id : null,
-                            contrato_proyectado: (presupuesto.contrato_proyectado) ? presupuesto.contrato_proyectado : null,
-                            cambiaAreaSubcontratante: false
-                        }),
+                        contrato: presupuesto.contrato_proyectado.numero_folio_format,
                         buttons: $.extend({}, {
-                            id: presupuesto.id
+                            id: presupuesto.id,
+                            transaccion: {id:presupuesto.id, tipo:50, opcion:1},
                         })
                     }));
                 },

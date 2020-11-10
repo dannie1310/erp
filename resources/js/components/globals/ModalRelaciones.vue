@@ -72,6 +72,9 @@ export default {
             if(this.transaccion.tipo == 49){
                 this.contratoProyectado();
             }
+            if(this.transaccion.tipo == 50){
+                this.presupuesto();
+            }
             if(this.transaccion.tipo == 51){
                 this.subcontrato();
             }
@@ -177,6 +180,19 @@ export default {
         },
         contratoProyectado(){
             return this.$store.dispatch('contratos/contrato-proyectado/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        presupuesto(){
+            return this.$store.dispatch('contratos/presupuesto/find', {
                 id: this.transaccion.id,
                 params:{include: [
                         'relaciones'
