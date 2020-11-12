@@ -845,7 +845,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
                 $this->Ln();
                 //$this->SetFillColor(180, 180, 180);
-                $this->Cell(5, .4, utf8_decode('DANIEL GARCÍA TESISTECO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(5, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
                 $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 1);
                 $this->Cell(5, .4, utf8_decode('ING.  MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 1);
                 $this->Cell(5, .4, utf8_decode('ING. MARTÍN MORALES SÁNCHEZ'), 'TRLB', 0, 'C', 1);
@@ -877,7 +877,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
                 $this->Ln();
                 $this->SetFont('Arial', '', 5);
-                $this->Cell(3.92, .4, utf8_decode('DANIEL GARCÍA TESISTECO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, utf8_decode('LIC. MARIA LUCIA MARTINEZ BALADO'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, utf8_decode('ING. MANUEL TOBAR VIDA'), 'TRLB', 0, 'C', 1);
