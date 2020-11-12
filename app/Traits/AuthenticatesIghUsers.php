@@ -104,10 +104,11 @@ trait AuthenticatesIghUsers
      */
     protected function sendLoginResponse(Request $request)
     {
-        $request->session()->regenerate();
+        // dd(4, $request);
+        //$request->session()->regenerate();
 
         $this->clearLoginAttempts($request);
-
+        
         return $this->authenticated($request, $this->guard()->user())
             ?: redirect()->intended($this->redirectPath());
     }

@@ -14,6 +14,7 @@
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
+    Route::post('movil', 'v1\AuthController@movil');
     $api->group(['middleware' => 'api', 'prefix' => 'auth'], function ($api) {
         $api->post('login', 'App\Http\Controllers\v1\AuthController@login');
         $api->post('logout', 'App\Http\Controllers\v1\AuthController@logout');
