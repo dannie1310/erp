@@ -800,6 +800,29 @@ class AsignacionFormato extends Rotation
             $this->Cell(5.2, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 0);
 
         }
+        else if (Context::getDatabase() == "SAO1814_CHIMALHUACAN" && Context::getIdObra() == 3 && $this->asignacion->solicitud->id_area_compradora == 4)
+        {
+            $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+
+        }
         else {
             $encabezados[0] = utf8_decode("Elaboró");
             $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
