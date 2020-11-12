@@ -776,7 +776,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(5.2, .4, utf8_decode('ING. ALEJANDRO PONCE RAMÍREZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(5.2, .4, utf8_decode('ING. MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 0);
             $this->Cell(5.2, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCIA RAMOS'), 'TRLB', 0, 'C', 0);
-            $this->Cell(5.2, .4, utf8_decode('ING. MARTÍN MORALES SÁNCHEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. FLORENCIO MONTIEL MELO'), 'TRLB', 0, 'C', 0);
         }
         else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->asignacion->solicitud->id_area_compradora == 4)
         {
