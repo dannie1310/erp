@@ -422,6 +422,38 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(2.5, .5, 'TOTAL: ', 'LB', 0, 'L');
                 $this->Cell(4, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
                 $this->Ln(.5);
+
+                $this->Ln(19.5);
+
+                $this->SetFont('Arial', 'B', 4);
+
+                $this->Cell(10);
+                $this->Cell(4.6,.5, utf8_decode('"EL CLIENTE"') ,'LT',0,'C');
+                $this->Cell(5,.5, utf8_decode('"EL PROVEEDOR"'),'LRT',0,'C');
+                $this->Ln(.4);
+
+                $this->Cell(10);
+                $this->CellFitScale(4.6,1.6, '      ' ,'LT',0,'C');
+                $this->CellFitScale(5,1.6,    '      ','LTR',0,'C');
+                $this->Ln(1);
+
+
+                $this->Cell(10);
+                $this->CellFitScale(4.6,.4,utf8_decode($this->obra->facturar),'LT',0,'C');
+                $this->CellFitScale(5,.4,utf8_decode($this->empresa_nombre) ,'LTR',0,'C');
+                $this->Ln(.4);
+
+
+                $this->Cell(10);
+                $this->Cell(4.6,.2, 'APODERADO LEGAL, FACTOR o','LTR',0,'C');
+                $this->Cell(5,.2, 'APODERADO LEGAL, FACTOR o','RT',0,'C');
+                $this->Ln(.2);
+
+                $this->Cell(10);
+
+                $this->Cell(4.6,.2, 'DEPENDIENTE','LB',0,'C');
+                $this->Cell(5,.2, 'DEPENDIENTE','LRB',0,'C');
+                $this->Ln(.2);
             }
 
         }
