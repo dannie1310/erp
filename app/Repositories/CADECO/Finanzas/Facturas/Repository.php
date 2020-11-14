@@ -12,6 +12,7 @@ namespace App\Repositories\CADECO\Finanzas\Facturas;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
 use App\Models\CADECO\Moneda;
+use App\Models\SEGURIDAD_ERP\Finanzas\AvisoSATOmitir;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\RepositoryInterface;
 USE Illuminate\Support\Facades\DB;
@@ -118,5 +119,24 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $factura_repositorio = FacturaRepositorio::whereNotNull("id_transaccion")
             ->where("uuid","=", $uuid)->first();
         return $factura_repositorio;
+    }
+
+    public function getEsOmitido($mensaje, $rfc_emisor, $uuid)
+    {
+        $explode = explode("-",$mensaje);
+        $codigo = trim($explode[0]);
+        $existe = AvisoSATOmitir::where("rfc_emisor",$rfc_emisor)
+            ->where("clave",$codigo)
+            ->where("estado",1)
+        ->count();
+        if($existe == 1){
+            return $existe;
+        } else {
+            $existe = AvisoSATOmitir::where("uuid",$uuid)
+                ->where("clave",$codigo)
+                ->where("estado",1)
+                ->count();
+            return $existe;
+        }
     }
 }
