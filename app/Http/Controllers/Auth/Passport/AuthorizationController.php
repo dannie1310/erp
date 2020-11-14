@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Auth\Passport;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\IGH\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\ClientRepository;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use Illuminate\Database\Eloquent\Model;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
 class AuthorizationController
 {
@@ -59,24 +60,7 @@ class AuthorizationController
                               Request $request,
                               ClientRepository $clients,
                               TokenRepository $tokens)
-    {
-        $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
-
-            $scopes = $this->parseScopes($authRequest);
-
-            $token = $tokens->findValidToken(
-                $user = $request->user(),
-                $client = $clients->find($authRequest->getClient()->getIdentifier())
-            );
-            // dd(1, $authRequest, $scopes, $token);
-            if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
-                $resp = $this->approveRequest($authRequest, $user);
-                dd(2,get_headers($resp));
-                return $this->approveRequest($authRequest, $user);
-            }
-
-            $request->session()->put('authRequest', $authRequest);
-        
+    {   
         return $this->withErrorHandling(function () use ($psrRequest, $request, $clients, $tokens) {
             $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
 
@@ -92,7 +76,6 @@ class AuthorizationController
             }
 
             $request->session()->put('authRequest', $authRequest);
-            dd($client, $user, $scopes, $request);
             return $this->response->view('passport::authorize', [
                 'client' => $client,
                 'user' => $user,
@@ -100,6 +83,29 @@ class AuthorizationController
                 'request' => $request,
             ]);
         });
+    }
+
+    public function movil(ServerRequestInterface $psrRequest,
+                        Request $request,
+                        ClientRepository $clients,
+                        TokenRepository $tokens)
+    {
+       
+        $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
+ 
+        $scopes = $this->parseScopes($authRequest);
+        $use = Usuario::where('usuario', '=', $_GET["usuario"])->first();
+            
+        $token = $tokens->findValidToken(
+            $user = $use,
+            $client = $clients->find($authRequest->getClient()->getIdentifier())
+        );
+            // 
+        if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
+            $resp = $this->approveRequestMovil($authRequest, $user);
+            dd($resp);
+        }
+        return 'pardo vacio';
     }
 
     /**
@@ -129,13 +135,21 @@ class AuthorizationController
         $authRequest->setUser(new User($user->getKey()));
 
         $authRequest->setAuthorizationApproved(true);
-        $resp = $this->server->completeAuthorizationRequest($authRequest, new Psr7Response);
-        $headers = $resp->getHeaders();
-        $head = \explode('=', $headers['Location'][0]);
-        dd($head[1]);
 
         return $this->convertResponse(
             $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
         );
+    }
+    
+    protected function approveRequestMovil($authRequest, $user)
+    {
+        $authRequest->setUser(new User($user->getKey()));
+
+        $authRequest->setAuthorizationApproved(true);
+        $resp = $this->server->completeAuthorizationRequest($authRequest, new Psr7Response);
+        $headers = $resp->getHeaders();
+        $head = \explode('=', $headers['Location'][0]);
+        return $head[1];
+
     }
 }

@@ -59,6 +59,7 @@ class AuthController extends Controller
     }
 
     public function movil(Request $request){
+        dd(1);
         $credentials = request(['usuario', 'clave']);
         if (!Auth::attempt($credentials)) {
             return response()->json([
@@ -66,7 +67,7 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
-        dd($user->createToken('Personal Access Tokens'));
+        dd($user);
         $tokenResult = $user->createToken('Personal Access Tokens');
         $token = $tokenResult->token;
         $token->save();
