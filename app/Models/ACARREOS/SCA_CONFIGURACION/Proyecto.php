@@ -11,6 +11,7 @@ class Proyecto extends Model
 {
     protected $connection = 'scaconf';
     protected $table = 'sca_configuracion.proyectos';
+    protected $primaryKey = 'id_proyecto';
     public $timestamps = false;
 
     protected static function boot()
@@ -23,6 +24,4 @@ class Proyecto extends Model
                 ->where('status', '=', 1);
         });
     }
-
-
 }
