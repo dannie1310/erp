@@ -103,9 +103,10 @@ class AuthorizationController
             // 
         if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
             $resp = $this->approveRequestMovil($authRequest, $user);
+            return \response()->json(['code'=>$resp]);
             dd($resp);
         }
-        return 'pardo vacio';
+        return [];
     }
 
     /**
