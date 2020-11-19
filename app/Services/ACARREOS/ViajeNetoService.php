@@ -40,29 +40,31 @@ class ViajeNetoService
         $this->repository = new Repository($model);
     }
 
-    private function conexionAcarreos()
+    private function conexionAcarreos($base_datos)
     {
         try{
             DB::purge('acarreos');
-            \Config::set('database.connections.acarreos.database',Proyecto::pluck('base_datos')->first());
+            \Config::set('database.connections.acarreos.database',$base_datos);
         }catch (\Exception $e){
-            abort(500, "El proyecto no se encuentra activo en acarreos.");
+            abort(500, "Error al conectar con la base de datos.");
             throw $e;
         }
     }
 
     public function getCatalogo($data)
     {
-        $this->conexionAcarreos();
-
-        /**
-         * Revision de permisos
-         */
         /**
          * Buscar usuario con el proyecto ultimo asociado al usuario.
          */
         $usuario = $this->usuarioProyecto();
+        /**
+         * Se realiza conexión con la base de datos de acarreos.
+         */
+        $this->conexionAcarreos($usuario->first()->proyecto->base_datos);
 
+        /**
+         * Revision de permisos
+         */
         /**
          * Validar si el usuario tiene el role de checador.
          */
@@ -109,8 +111,8 @@ class ViajeNetoService
             'Nombre' => $usuario->usuario->nombre_completo,
             'IdProyecto' => $usuario->proyecto->id_proyecto,
             'base_datos' => $usuario->proyecto->base_datos,
-            'base_datos_cadeco' => $usuario->proyecto->base_SAO,
-            'id_obra' => $usuario->proyecto->id_obra_cadeco,
+            /*'base_datos_cadeco' => $usuario->proyecto->base_SAO,
+            'id_obra' => $usuario->proyecto->id_obra_cadeco,*/
             'empresa' => $usuario->proyecto->empresa,
             'tiene_logo' => $usuario->proyecto->tiene_logo,
             'IdOrigen' => $configuracion_diaria ? $configuracion_diaria->id_origen : null,

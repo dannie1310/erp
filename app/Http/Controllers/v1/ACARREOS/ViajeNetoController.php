@@ -36,7 +36,7 @@ class ViajeNetoController extends Controller
     public function __construct(Manager $fractal, ViajeNetoService $service, ViajeNetoTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('context')->except(['catalogo']);
 
         $this->fractal = $fractal;
         $this->service = $service;

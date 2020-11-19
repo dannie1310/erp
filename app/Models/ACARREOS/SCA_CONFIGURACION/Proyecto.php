@@ -20,9 +20,13 @@ class Proyecto extends Model
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('base_SAO', '=', Context::getDatabase())
-                ->where('id_obra_cadeco', '=', Context::getIdObra())
-                ->where('status', '=', 1);
+            if(Context::getDatabase()) {
+                return $query->where('base_SAO', '=', Context::getDatabase())
+                    ->where('id_obra_cadeco', '=', Context::getIdObra())
+                    ->where('status', '=', 1);
+            }else{
+                return $query->where('status', '=', 1);
+            }
         });
     }
 
