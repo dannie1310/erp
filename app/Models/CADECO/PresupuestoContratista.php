@@ -313,7 +313,7 @@ class PresupuestoContratista extends Transaccion
                         'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
                         'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
                         'IdMoneda' => $data['moneda'][$t],
-                        'Observaciones' => ($data['enable'][$t]) ? $data['observaciones'][$t] : ''
+                        'Observaciones' => ($data['enable'][$t] && array_key_exists($t,$data['observaciones'] )) ? $data['observaciones'][$t] : ''
                     ]);
                 }
             }else
