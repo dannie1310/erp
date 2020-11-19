@@ -28,14 +28,6 @@ class Telefono extends Model
         return $query->where('estatus',  1);
     }
 
-    public function scopeImpresoraActiva($query)
-    {
-        return $query->whereHas('impresora', function ($q)
-        {
-            return $q->activo();
-        });
-    }
-
     /**
      * Attributes
      */

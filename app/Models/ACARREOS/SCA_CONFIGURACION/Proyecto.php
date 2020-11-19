@@ -5,6 +5,7 @@ namespace App\Models\ACARREOS\SCA_CONFIGURACION;
 
 
 use App\Facades\Context;
+use App\Models\ACARREOS\Telefono;
 use Illuminate\Database\Eloquent\Model;
 
 class Proyecto extends Model
@@ -23,5 +24,13 @@ class Proyecto extends Model
                 ->where('id_obra_cadeco', '=', Context::getIdObra())
                 ->where('status', '=', 1);
         });
+    }
+
+    /**
+     * Relaciones
+     */
+    public function configuracion()
+    {
+        return $this->belongsTo(Configuracion::class, 'id_proyecto', 'idproyecto');
     }
 }

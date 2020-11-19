@@ -12,6 +12,15 @@ class Impresora extends Model
     protected $table = 'impresoras';
     public $primaryKey = 'id';
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->where('estatus',  1);;
+        });
+    }
+
     /**
      * Relaciones Eloquent
      */
@@ -19,10 +28,7 @@ class Impresora extends Model
     /**
      * Scopes
      */
-    public function scopeActivo($query)
-    {
-        return $query->where('estatus',  1);
-    }
+
 
     /**
      * Attributes

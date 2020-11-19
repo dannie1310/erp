@@ -14,6 +14,7 @@ use App\Models\ACARREOS\Origen;
 use App\Models\ACARREOS\Ruta;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 use App\Models\ACARREOS\SCA_CONFIGURACION\RolUsuario;
+use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
 use App\Models\ACARREOS\Tag;
 use App\Models\ACARREOS\Telefono;
 use App\Models\ACARREOS\TipoImagen;
@@ -49,11 +50,41 @@ class ViajeNetoService
             throw $e;
         }
     }
+
     public function getCatalogo($data)
     {
-       // $this->conexionAcarreos();
-        $tiros = Tiro::activo()->select(['idtiro', 'descripcion', 'IdEsquema'])->get()->toArray();
-        $camiones = Camion::select(['idcamion', 'Placas','PlacasCaja','marcas.Descripcion as marca','Modelo', 'Ancho', 'largo', 'Alto', 'Economico', 'CubicacionParaPago', 'IdEmpresa', 'IdSindicato', 'camiones.Estatus'])
+        $this->conexionAcarreos();
+
+        /**
+         * Revision de permisos
+         */
+        /**
+         * Buscar usuario con el proyecto ultimo asociado al usuario.
+         */
+        $usuario = $this->usuarioProyecto();
+
+        /**
+         * Validar si el usuario tiene el role de checador.
+         */
+        if (is_null($usuario->esChecador()->first())) {
+            dd(json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo.")));
+        }
+
+        /**
+         * Validar telefono asignado al proyecto y al usuario.
+         */
+        if (is_null(Telefono::activo()->where('imei', $data['IMEI'])->first())) {
+            dd("{'error' : 'El teléfono no tiene autorización para operar.'}");
+        }
+
+        $telefono = $usuario->first()->telefono;
+        if (is_null($telefono) || $telefono->imei != $data['IMEI']) {
+            dd("{'error' : 'El usuario no tiene asignado este teléfono. Favor de solicitarlo.'}");
+        }
+        $usuario = $usuario->first();
+        $tiros = Tiro::activo()->select(['idtiro', 'descripcion', 'IdEsquema as idesquema'])->get()->toArray();
+        $camiones = Camion::select(['idcamion', 'Placas as placas', 'PlacasCaja as placas_caja', 'marcas.Descripcion as marca', 'Modelo as modelo', 'Ancho as ancho', 'largo',
+            'Alto as alto', 'Economico as economico', 'CubicacionParaPago as capacidad', 'IdEmpresa as id_empresa', 'IdSindicato as id_sindicato', 'camiones.Estatus as estatus'])
             ->activo()
             ->marcaDescripcion()
             ->get()->toArray();
@@ -65,42 +96,60 @@ class ViajeNetoService
         $checadores = $this->arrayChecadores();
         $tipoImagenes = TipoImagen::activo()->select(['id', 'descripcion'])->get()->toArray();
         $motivoDeductiva = DeductivaMotivo::activo()->select(['id', 'motivo'])->get()->toArray();
-        $telefonos = Telefono::activo()->impresoraActiva()->select('id', 'imei as IMEI', 'id_impresora')->where('imei', $data['IMEI'])->first();
-        array_add($telefonos, 'MAC', $telefonos->impresora->mac);
-        array_except($telefonos, 'impresora');
-        $usuario = Usuario::where('idusuario', auth()->id())->first();
-        $proyecto = Proyecto::query()->first();
-       // dd($proyecto);
-
-        dd( [
-            'idusuario' => auth()->id(),
-          'nombre' => $usuario->nombre_completo,
-          'base_datos' => $proyecto->base_datos,
-          'base_datos_cadeco' => $proyecto->base_SAO,
-          'id_obra' => $proyecto->id_obra_cadeco,
-          'camiones' => $camiones,
-          'tiros' => $tiros,
-          'origenes' => $origenes,
-          'materiales' => $materiales,
-          'rutas' => $rutas,
-          'tags' => $tags,
-          'checadores' => $checadores,
-          'tipoImagenes' => $tipoImagenes,
-          'motivoDeductiva' => $motivoDeductiva,
-          'telefonos' => $telefonos->toArray()
+        $telefonos = array([
+            'id' => $telefono->impresora ? $telefono->impresora->id : null,
+            'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
+            'IMEI' => $telefono->imei
         ]);
 
+        $configuracion_diaria = $usuario->first()->configuracionDiaria;
 
+        return [
+            'IdUsuario' => auth()->id(),
+            'Nombre' => $usuario->usuario->nombre_completo,
+            'IdProyecto' => $usuario->proyecto->id_proyecto,
+            'base_datos' => $usuario->proyecto->base_datos,
+            'base_datos_cadeco' => $usuario->proyecto->base_SAO,
+            'id_obra' => $usuario->proyecto->id_obra_cadeco,
+            'empresa' => $usuario->proyecto->empresa,
+            'tiene_logo' => $usuario->proyecto->tiene_logo,
+            'IdOrigen' => $configuracion_diaria ? $configuracion_diaria->id_origen : null,
+            'IdTiro' => $configuracion_diaria ? $configuracion_diaria->id_tiro : null,
+            'IdPerfil' => $configuracion_diaria ? $configuracion_diaria->id_perfil : null,
+            'logo' => $usuario->proyecto->logo,
+            'descripcion_database' => $usuario->proyecto->descripcion,
+            'Camiones' => $camiones,
+            'Tiros' => $tiros,
+            'Origenes' => $origenes,
+            'Rutas' => $rutas,
+            'Materiales' => $materiales,
+            'TipoImagenes' => $tipoImagenes,
+            'Tags' => $tags,
+            'MotivosDeductiva' => $motivoDeductiva,
+            'Configuracion' => array("ValidacionPlacas" => $usuario->proyecto->configuracion ? $usuario->proyecto->configuracion->validacion_placas : 0),
+            'Checadores' => $checadores,
+            'Celulares' => $telefonos
+        ];
     }
 
     private function arrayChecadores()
     {
-        $checadores = RolUsuario::checador()->get();
+        $checadores = RolUsuario::esChecador()->get();
         $arrays = [];
         foreach ($checadores as $key => $checador) {
             $arrays[$key]['id'] = $checador->user_id;
             $arrays[$key]['descripcion'] = $checador->usuario->nombre_completo;
         }
         return $arrays;
+    }
+
+    private function usuarioProyecto()
+    {
+        $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', auth()->id());
+        if(is_null($usuario->first()))
+        {
+            dd(json_encode(array("error" => "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto.")));
+        }
+        return $usuario;
     }
 }
