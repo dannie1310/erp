@@ -50,4 +50,14 @@ class EFOSCambio extends Model
         return $this->estadoFinalObj->descripcion;
     }
 
+    public function getEmpresasAttribute()
+    {
+        $empresas_arr =[];
+        foreach($this->efos->cfd as $cfd_ind){
+            $empresas_arr[] = $cfd_ind->empresa;
+        }
+        $empresas = collect($empresas_arr)->unique();
+        return $empresas;
+    }
+
 }
