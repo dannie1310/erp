@@ -90,12 +90,20 @@ class ViajeNetoService
             ->activo()
             ->marcaDescripcion()
             ->get()->toArray();
+        if($camiones == [])
+        {
+            $camiones = array([
+                "idorigen" => 0,
+                "descripcion" => utf8_encode("- Seleccione -"),
+                "estado" => 1
+            ]);
+        }
         $materiales = Material::activo()->select(['idmaterial', 'descripcion'])->get()->toArray();
         $origenes = Origen::activo()->select(['idOrigen as idorigen', 'Descripcion as descripcion', 'Estatus as estado'])->get()->toArray();
         $rutas = Ruta::activo()->select(['clave', 'idruta', 'idorigen', 'idtiro', 'totalkm'])->get()->toArray();
         $tags = Tag::activo()->camionEconomico()->select(['uid', 'tags.idcamion', 'idproyecto_global as idproyecto', 'camiones.Economico',
             'camiones.Estatus'])->get()->toArray();
-        $checadores = $this->arrayChecadores();
+        $checadores = $this->arrayChecadores($usuario->proyecto->id_proyecto);
         $tipoImagenes = TipoImagen::activo()->select(['id', 'descripcion'])->get()->toArray();
         $motivoDeductiva = DeductivaMotivo::activo()->select(['id', 'motivo'])->get()->toArray();
         $telefonos = array([
@@ -134,9 +142,9 @@ class ViajeNetoService
         ];
     }
 
-    private function arrayChecadores()
+    private function arrayChecadores($proyecto)
     {
-        $checadores = RolUsuario::esChecador()->get();
+        $checadores = RolUsuario::esChecador()->where('id_proyecto', $proyecto)->get();
         $arrays = [];
         foreach ($checadores as $key => $checador) {
             $arrays[$key]['id'] = $checador->user_id;
