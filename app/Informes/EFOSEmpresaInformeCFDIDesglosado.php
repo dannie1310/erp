@@ -14,11 +14,11 @@ class EFOSEmpresaInformeCFDIDesglosado
     public static function  getInforme()
     {
         $informe["informe"][] = EFOSEmpresaInformeCFDIDesglosado::getPartidasInformeDefinitivos();
-        /*$informe["informe"][] = EFOSEmpresaInformeCFDIDesglosado::getPartidasInformePresuntos();
+        $informe["informe"][] = EFOSEmpresaInformeCFDIDesglosado::getPartidasInformePresuntos();
         $informe["informe"][] = EFOSEmpresaInformeCFDIDesglosado::getPartidasInformeEnAclaracion();
         $informe["informe"][] = EFOSEmpresaInformeCFDIDesglosado::getPartidasInformeAutocorregidos();
         $informe["informe"][] = EFOSEmpresaInformeCFDIDesglosado::getPartidasInformeNoDeducidos();
-        $informe["informe"][] = EFOSEmpresaInformeCFDIDesglosado::getPartidasInformeDefinitivos2012();*/
+        $informe["informe"][] = EFOSEmpresaInformeCFDIDesglosado::getPartidasInformeDefinitivos2012();
 
         $informe["fechas"] = EFOSEmpresaInformeCFDIDesglosado::getFechasInforme();
         return $informe;
@@ -36,9 +36,11 @@ class EFOSEmpresaInformeCFDIDesglosado
        efos.rfc,
        efos.razon_social,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
-       CONVERT(varchar,ctg_efos.fecha_presunto_dof,103) as fecha_presunto_dof,
+       CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
+       CONVERT(varchar,ctg_efos.fecha_presunto_dof,103)  as fecha_presunto_dof,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       ListaEmpresasSAT.rfc AS rfc_empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
           sum (
@@ -86,8 +88,10 @@ GROUP BY ctg_estados_efos.descripcion,
          efos.razon_social,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
+         ListaEmpresasSAT.rfc,
          ctg_efos.fecha_presunto,
          ctg_efos.fecha_presunto_dof,
+         ctg_efos.fecha_definitivo_dof,
          Subquery.fecha_presunto_maxima
 ORDER BY Subquery.fecha_presunto_maxima DESC,
          empresa ASC,
@@ -97,20 +101,21 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
             return (array)$value;
         }, $informe);
         $informe = EFOSEmpresaInformeCFDIDesglosado::setSubtotalesPartidas($informe, "PRESUNTOS");
+        $informe = EFOSEmpresaInformeCFDIDesglosado::setUUID($informe);
         return $informe;
     }
 
     private static function getPartidasInformeAutocorregidos(){
         $informe = DB::select("
         SELECT 'Corregido' AS estatus,
-       efos.rfc,
-       efos.razon_social,
-       CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
-       CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
-       CONVERT(varchar,Subquery.fecha_autocorreccion,103)  as fecha_autocorreccion,
-       ListaEmpresasSAT.nombre_corto AS empresa,
-       COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
-       format (
+        efos.rfc,
+        efos.razon_social,
+        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
+        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
+        CONVERT(varchar,Subquery.fecha_autocorreccion,103)  as fecha_autocorreccion,
+        ListaEmpresasSAT.nombre_corto AS empresa,
+        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
+        format (
           sum (
              CASE cfd_sat.tipo_comprobante
                 WHEN 'I' THEN cfd_sat.total
@@ -123,7 +128,10 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
              WHEN 'I' THEN cfd_sat.total
              WHEN 'E' THEN cfd_sat.total * -1
           END)
-          AS importe
+          AS importe,
+        CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
+        CONVERT(varchar,ctg_efos.fecha_presunto_dof,103)  as fecha_presunto_dof,
+        ListaEmpresasSAT.rfc AS rfc_empresa
   FROM ((((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
            INNER JOIN
            (SELECT cfd_sat.id, cfd_sat.estado, cfd_sat_autocorrecciones.fecha_autocorreccion
@@ -148,7 +156,10 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ListaEmpresasSAT.nombre_corto,
          Subquery.fecha_autocorreccion,
-         ctg_efos.fecha_presunto
+         ctg_efos.fecha_presunto,
+         ctg_efos.fecha_definitivo_dof,
+         ctg_efos.fecha_presunto_dof,
+         ListaEmpresasSAT.rfc
 ORDER BY 7 DESC
         ")
         ;
@@ -156,6 +167,7 @@ ORDER BY 7 DESC
             return (array)$value;
         }, $informe);
         $informe = EFOSEmpresaInformeCFDIDesglosado::setSubtotalesPartidas($informe, "CORREGIDOS");
+        $informe = EFOSEmpresaInformeCFDIDesglosado::setUUID($informe);
         return $informe;
     }
 
@@ -182,7 +194,9 @@ ORDER BY 7 DESC
              WHEN 'I' THEN cfd_sat.total
              WHEN 'E' THEN cfd_sat.total * -1
           END)
-          AS importe
+          AS importe,
+          CONVERT(varchar,ctg_efos.fecha_presunto_dof,103)  as fecha_presunto_dof,
+          ListaEmpresasSAT.rfc AS rfc_empresa
   FROM ((((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
            INNER JOIN
            (SELECT cfd_sat.id, cfd_sat.estado
@@ -207,6 +221,8 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ctg_efos.fecha_definitivo_dof,
          ListaEmpresasSAT.nombre_corto,
+         ListaEmpresasSAT.rfc,
+         ctg_efos.fecha_presunto_dof,
          ctg_efos.fecha_presunto
 ORDER BY 7 DESC
         ")
@@ -215,6 +231,7 @@ ORDER BY 7 DESC
             return (array)$value;
         }, $informe);
         $informe = EFOSEmpresaInformeCFDIDesglosado::setSubtotalesPartidas($informe, "EN ACLARACIÓN");
+        $informe = EFOSEmpresaInformeCFDIDesglosado::setUUID($informe);
         return $informe;
     }
 
@@ -241,7 +258,9 @@ ORDER BY 7 DESC
              WHEN 'I' THEN cfd_sat.total
              WHEN 'E' THEN cfd_sat.total * -1
           END)
-          AS importe
+          AS importe,
+          CONVERT(varchar,ctg_efos.fecha_presunto_dof,103)  as fecha_presunto_dof,
+          ListaEmpresasSAT.rfc AS rfc_empresa
   FROM ((((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
            INNER JOIN
            (SELECT cfd_sat.id, cfd_sat.estado
@@ -266,6 +285,9 @@ GROUP BY ctg_estados_efos.descripcion,
          ctg_efos.fecha_definitivo,
          ctg_efos.fecha_definitivo_dof,
          ListaEmpresasSAT.nombre_corto,
+         ctg_efos.fecha_presunto,
+         ListaEmpresasSAT.rfc,
+         ctg_efos.fecha_presunto_dof,
          ctg_efos.fecha_presunto
 ORDER BY 7 DESC
         ")
@@ -274,6 +296,7 @@ ORDER BY 7 DESC
             return (array)$value;
         }, $informe);
         $informe = EFOSEmpresaInformeCFDIDesglosado::setSubtotalesPartidas($informe, "NO DEDUCIDOS");
+        $informe = EFOSEmpresaInformeCFDIDesglosado::setUUID($informe);
         return $informe;
     }
 
@@ -373,7 +396,9 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
+       CONVERT(varchar,ctg_efos.fecha_presunto_dof,103)  as fecha_presunto_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       ListaEmpresasSAT.rfc AS rfc_empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
           sum (
@@ -434,7 +459,9 @@ GROUP BY ctg_estados_efos.descripcion,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto,
          ctg_efos.fecha_definitivo_dof,
-         Subquery.fecha_devinitivo_maxima
+         Subquery.fecha_devinitivo_maxima,
+          ctg_efos.fecha_presunto_dof,
+          ListaEmpresasSAT.rfc
 ORDER BY Subquery.fecha_devinitivo_maxima DESC,
          empresa ASC,
          ctg_efos.fecha_definitivo DESC
@@ -444,6 +471,7 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
             return (array)$value;
         }, $informe);
         $informe = EFOSEmpresaInformeCFDIDesglosado::setSubtotalesPartidas($informe, "DEFINITIVOS ANTES 2012");
+        $informe = EFOSEmpresaInformeCFDIDesglosado::setUUID($informe);
         return $informe;
     }
 
@@ -455,7 +483,7 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
             $partidas_completas [$i] = $partida;
             $i++;
             if(key_exists("rfc", $partida)){
-                $uuid = EFOSEmpresaInformeCFDIDesglosado::getUUID($partida["rfc"], $partida["rfc_empresa"]);
+                $uuid = EFOSEmpresaInformeCFDIDesglosado::getUUID($partida["rfc"], $partida["rfc_empresa"], $partida["estatus"]);
                 foreach($uuid as $uuid_ind){
                     $partidas_completas [$i] = $uuid_ind;
                     $partidas_completas[$i]["importe_iva"] = '$ '.number_format($uuid_ind["importe_iva"],2,".",",");
@@ -468,13 +496,56 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
         return $partidas_completas;
     }
 
-    private static function getUUID($rfc_emisor, $rfc_receptor){
+    private static function getUUID($rfc_emisor, $rfc_receptor, $tipo = null){
+        $condicion ="";
+        if($tipo == "Definitivos Antes 2012"){
+            $condicion = "AND (cfd_sat.estado = 8)";
+        }
+        if($tipo == "No Deducidos"){
+            $condicion = "AND (cfd_sat.estado = 7)";
+        }
+        if($tipo == "Corregido"){
+            $condicion = "AND (cfd_sat.estado = 6)";
+        }
+        if($tipo == "En Aclaración SAT"){
+            $condicion = "AND (cfd_sat.estado = 5)";
+        }
+
+        if($tipo == "Definitivo"){
+            $condicion = "AND (cfd_sat.estado != 8)
+            AND (cfd_sat_autocorrecciones.id IS NULL)
+            AND (cfd_no_deducidos.id IS NULL)";
+        }
+
         $informe = DB::select("
-        SELECT uuid, CONVERT(varchar,fecha,103) as fecha, serie, folio, importe_iva, subtotal, total,
+        SELECT cfd_sat.uuid, CONVERT(varchar,fecha,103) as fecha, serie, folio,
+
+        CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.importe_iva
+             WHEN 'E' THEN cfd_sat.importe_iva * -1
+          END importe_iva,
+
+          CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.subtotal
+             WHEN 'E' THEN cfd_sat.subtotal * -1
+          END subtotal,
+
+          CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.total
+             WHEN 'E' THEN cfd_sat.total * -1
+          END total,
+
         tipo_comprobante,'uuid' as tipo, indice = ROW_NUMBER() OVER (ORDER BY fecha), moneda, tipo_cambio
         FROM SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+         LEFT OUTER JOIN
+        SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
+           ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id)
+       LEFT OUTER JOIN SEGURIDAD_ERP.Fiscal.cfd_no_deducidos cfd_no_deducidos
+          ON (cfd_no_deducidos.id_cfd_sat = cfd_sat.id)
         WHERE (cfd_sat.rfc_emisor = '".$rfc_emisor."')
         AND (cfd_sat.rfc_receptor = '".$rfc_receptor."')
+        AND cfd_sat.tipo_comprobante != 'P'
+        ".$condicion."
         ")
         ;
         $informe = array_map(function ($value) {

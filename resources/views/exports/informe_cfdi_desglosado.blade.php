@@ -30,6 +30,11 @@
     <tbody>
     @foreach($informe["informe"] as $tipo)
         @foreach($tipo as $partida)
+            @if($partida["tipo"] == "titulo")
+                <tr style="background-color: #cccccc">
+                    <td colspan="12">{{ $partida["etiqueta"] }}</td>
+                </tr>
+            @endif
             @if($partida["tipo"] == "partida")
             <tr style="background-color: #cccccc">
                 <td>{{ $partida["indice"] }}</td>
