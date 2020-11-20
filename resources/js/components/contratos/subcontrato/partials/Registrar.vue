@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init"  class="btn btn-app pull-right" v-if="$root.can('registrar_orden_compra')">
+        <button @click="init"  class="btn btn-app pull-right" v-if="$root.can('registrar_subcontrato')">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i> Generar
         </button>
