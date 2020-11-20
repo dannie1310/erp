@@ -4,12 +4,14 @@
 namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas;
 
 
+use App\Exports\InformeCFDIDesglosado;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgEfosTransformer;
 use App\Services\SEGURIDAD_ERP\Finanzas\CtgEfosService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CtgEfosController extends Controller
 {
@@ -75,6 +77,11 @@ class CtgEfosController extends Controller
     public function obtenerInformeDesglosadoPDF(Request $request)
     {
         return $this->service->obtenerInformeDesglosadoPDF()->create();
+    }
+
+    public function descargaInformeCFDIDesglosado(Request $request)
+    {
+        return Excel::download(new InformeCFDIDesglosado(), 'informe_efos_cfdi_desglosado'.date("Ymd_his").'.xlsx');
     }
 
 }
