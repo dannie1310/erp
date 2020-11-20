@@ -181,11 +181,9 @@ class CFDSATService
 
     public function procesaDirectorioZIPCFD()
     {
-        //ini_set('memory_limit', -1) ;
-        //ini_set('max_execution_time', '7200');
-        $carga = CargaCFDSAT::find(213);
-        event(new CambioEFOS($carga->cambios));
-        /*
+        //$carga = CargaCFDSAT::find(213);
+        //event(new CambioEFOS($carga->cambios));
+
         ini_set('max_execution_time', '7200');
         $this->carga = $this->repository->iniciaCarga("inicial");
         $this->arreglo_factura["id_carga_cfd_sat"] = $this->carga->id;
@@ -210,7 +208,7 @@ class CFDSATService
         }
         $this->carga->load("usuario");
 
-        return $this->carga;*/
+        return $this->carga;
     }
 
     private function preparaDirectorio($path)

@@ -48,12 +48,7 @@
                         @foreach($cambio->empresas as $empresa)
                             <tr >
                                 <td >{{$empresa->rfc}}</td>
-                                <td colspan="3">{{$empresa->razon_social}}</td>
-                                <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                                <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total") - $empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
+                                <td colspan="8">{{$empresa->razon_social}}</td>
                             </tr>
                         @endforeach
                     @endforeach
@@ -77,12 +72,8 @@
                     @foreach($cambio->empresas as $empresa)
                         <tr >
                             <td >{{$empresa->rfc}}</td>
-                            <td colspan="3">{{$empresa->razon_social}}</td>
-                            <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                            <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                            <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                            <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                            <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total") - $empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
+                            <td colspan="8">{{$empresa->razon_social}}</td>
+
                         </tr>
                     @endforeach
                 @endforeach
@@ -106,12 +97,7 @@
                         @foreach($cambio->empresas as $empresa)
                             <tr >
                                 <td >{{$empresa->rfc}}</td>
-                                <td colspan="3">{{$empresa->razon_social}}</td>
-                                <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                                <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total") - $empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
+                                <td colspan="8">{{$empresa->razon_social}}</td>
                             </tr>
                         @endforeach
                     @endforeach
@@ -135,12 +121,7 @@
                         @foreach($cambio->empresas as $empresa)
                             <tr >
                                 <td >{{$empresa->rfc}}</td>
-                                <td colspan="3">{{$empresa->razon_social}}</td>
-                                <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                                <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total") - $empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
+                                <td colspan="8">{{$empresa->razon_social}}</td>
                             </tr>
                         @endforeach
                     @endforeach
@@ -164,12 +145,7 @@
                         @foreach($cambio->empresas as $empresa)
                             <tr >
                                 <td >{{$empresa->rfc}}</td>
-                                <td colspan="3">{{$empresa->razon_social}}</td>
-                                <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                                <td style="text-align: right" >{{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->count(),0,"",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
-                                <td style="text-align: right" >${{number_format($empresa->cfd->where("tipo_comprobante","I")->where("rfc_emisor",$cambio->efos->rfc)->sum("total") - $empresa->cfd->where("tipo_comprobante","E")->where("rfc_emisor",$cambio->efos->rfc)->sum("total"),2,".",",")}}</td>
+                                <td colspan="8">{{$empresa->razon_social}}</td>
                             </tr>
                         @endforeach
                     @endforeach
