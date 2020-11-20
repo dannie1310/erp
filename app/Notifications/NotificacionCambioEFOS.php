@@ -43,6 +43,7 @@ class NotificacionCambioEFOS extends Notification
      */
     public function toMail($notifiable)
     {
+
         return (new MailMessage)
             ->subject("Cambios EFOS")
             ->view('emails.cambios_efos',["cambios"=>$this->cambios]);

@@ -10,6 +10,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Events\CambioEFOS;
 use App\Events\FinalizaCargaCFD;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\PDF\Fiscal\InformeCFDICompleto;
@@ -180,6 +181,9 @@ class CFDSATService
 
     public function procesaDirectorioZIPCFD()
     {
+        //$carga = CargaCFDSAT::find(213);
+        //event(new CambioEFOS($carga->cambios));
+
         ini_set('max_execution_time', '7200');
         $this->carga = $this->repository->iniciaCarga("inicial");
         $this->arreglo_factura["id_carga_cfd_sat"] = $this->carga->id;
