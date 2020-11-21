@@ -30,6 +30,7 @@ class ConceptoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'clave_concepto' => $model->clave_concepto,
+            'clave_concepto_select' => $model->clave_concepto_select,
             'descripcion' => $model->descripcion,
             'tiene_hijos' => $model->tieneHijos,
             'nivel' => $model->nivel,
