@@ -158,7 +158,12 @@ class Concepto extends Model
     public function getClaveConceptoSelectAttribute()
     {
         if($this->clave_concepto != ''){
-            return "[" . $this->clave_concepto ."] ";
+            $pos = strpos($this->descripcion, $this->clave_concepto);
+            if($pos === false){
+                return "[" . $this->clave_concepto ."] ";
+            } else {
+                return "";
+            }
         }
         return "";
     }
