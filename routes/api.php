@@ -1126,6 +1126,7 @@ $api->version('v1', function ($api) {
             $api->post('obtener-informe-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosado');
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformePDF');
             $api->get('obtener-informe-desglosado/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosadoPDF');
+            $api->get('obtener-informe-cfdi-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@descargaInformeCFDIDesglosado');
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');

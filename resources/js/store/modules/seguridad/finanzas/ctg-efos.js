@@ -144,6 +144,18 @@ export default {
                     })
             });
         },
+        descargarInformeCFDIDesglosado(context, payload){
+            var urr = URI +  'obtener-informe-cfdi-desglosado?'+ 'access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Informe descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
     },
 
     getters: {
