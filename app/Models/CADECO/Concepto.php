@@ -26,6 +26,10 @@ class Concepto extends Model
         'activo',
         'clave_concepto',
     ];
+    public $searchable = [
+        'descripcion',
+        'clave_concepto',
+    ];
 
     public $timestamps = false;
 
@@ -150,6 +154,13 @@ class Concepto extends Model
     public function getCantidadPresupuestadaFormatAttribute()
     {
         return number_format($this->cantidad_presupuestada,4);
+    }
+    public function getClaveConceptoSelectAttribute()
+    {
+        if($this->clave_concepto != ''){
+            return "[" . $this->clave_concepto ."] ";
+        }
+        return "";
     }
 
     public function scopeRoots($query)
