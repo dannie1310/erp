@@ -167,4 +167,9 @@ class ViajeNetoService
         }
         return $usuario;
     }
+
+    public function store($data)
+    {
+
+    }
 }
