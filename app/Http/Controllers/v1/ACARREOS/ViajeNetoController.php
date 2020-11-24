@@ -7,11 +7,13 @@ namespace App\Http\Controllers\v1\ACARREOS;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\ACARREOS\ViajeNetoTransformer;
 use App\Services\ACARREOS\ViajeNetoService;
+use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class ViajeNetoController extends Controller
 {
+    use ControllerTrait;
     /**
      * @var Manager
      */
@@ -46,5 +48,11 @@ class ViajeNetoController extends Controller
     public function catalogo(Request $request)
     {
         return $this->service->getCatalogo($request->all());
+    }
+
+    public function store(Request $request)
+    {
+        $item = $this->service->store($request->all());
+        return $this->respondWithItem($item);
     }
 }
