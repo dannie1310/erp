@@ -159,18 +159,17 @@
                                                     </td>
                                                     <td v-else>{{partida.material.numero_parte}}</td>
                                                     <td v-if="partida.material === ''">
-                                                        <model-list-select
+                                                        <MaterialSelect
                                                             :name="`material[${i}]`"
+                                                            :scope="scope"
+                                                            v-model="partida.material"
+                                                            data-vv-as="Material"
                                                             v-validate="{required: true}"
-                                                            v-model="partida.id_material"
-                                                            :onchange="changeSelect(partida)"
-                                                            option-value="id"
-                                                            :custom-text="idAndNumeroParteAndDescripcion"
-                                                            :list="materiales"
                                                             :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
-                                                            :isError="errors.has(`material[${i}]`)">
-                                                        </model-list-select>
-                                                        <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
+                                                            :class="{'is-invalid': errors.has(`material[${i}]`)}"
+                                                            ref="MaterialSelect"
+                                                            :disableBranchNodes="false"/>
+                                                        <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
                                                     </td>
                                                     <td v-else>{{partida.material.descripcion}}</td>
                                                     <td>
@@ -347,11 +346,13 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
     import ConceptoSelect from "../../cadeco/concepto/Select";
+    import MaterialSelect from '../../cadeco/material/SelectAutocomplete';
     export default {
         name: "solicitud-compra-create",
-        components: {Datepicker, ModelListSelect, es,ConceptoSelect},
+        components: {Datepicker, ModelListSelect, es,ConceptoSelect, MaterialSelect},
         data(){
             return{
+                scope: ['materialesParaCompras'],
                 cargando: false,
                 es:es,
                 configuracion : '',
@@ -409,7 +410,7 @@
             this.getAreasCompradoras();
             this.getConfiguracion();
             this.getTipos();
-            this.getMateriales();
+            // this.getMateriales();
             this.getAlmacenes();
         },
         methods : {
@@ -449,11 +450,11 @@
                     })
             },
             changeSelect(item){
-                var busqueda = this.materiales.find(x=>x.id === item.id_material);
-                if(busqueda != undefined)
-                {
-                    item.material = busqueda;
-                }
+                // var busqueda = this.materiales.find(x=>x.id === item.id_material);
+                // if(busqueda != undefined)
+                // {
+                //     item.material = busqueda;
+                // }
             },
             idAndNumeroParteAndDescripcion (item) {
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
@@ -546,6 +547,7 @@
                 })
                     .then(data => {
                         this.almacenes = data.data
+                        this.cargando = false;
                     });
             },
             getAlmacen() {
@@ -594,7 +596,7 @@
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: 'materialesParaCompras',
-                        sort: 'descripcion', order: 'asc'
+                        sort: 'descripcion', order: 'asc', limit:100
                     }
                 })
                     .then(data => {
@@ -608,6 +610,7 @@
                         var t = 0;
                         var m = 0;
                         while(t < this.partidas.length){
+                            this.partidas[t].id_material = this.partidas[t].material.id;
                             if(this.partidas[t].destino === '' || typeof this.partidas[t].destino.destino === 'undefined' )
                             {
                                 m ++;
