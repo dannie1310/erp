@@ -44,7 +44,10 @@ class Tiro extends Model
     /**
      * Scopes
      */
-
+    public function scopeActivo($query)
+    {
+        return $query->where('estatus',  1);
+    }
 
     /**
      * Attributes

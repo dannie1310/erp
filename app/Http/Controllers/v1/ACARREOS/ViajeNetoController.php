@@ -1,0 +1,50 @@
+<?php
+
+
+namespace App\Http\Controllers\v1\ACARREOS;
+
+
+use App\Http\Controllers\Controller;
+use App\Http\Transformers\ACARREOS\ViajeNetoTransformer;
+use App\Services\ACARREOS\ViajeNetoService;
+use Illuminate\Http\Request;
+use League\Fractal\Manager;
+
+class ViajeNetoController extends Controller
+{
+    /**
+     * @var Manager
+     */
+    protected $fractal;
+
+    /**
+     * @var ViajeNetoService
+     */
+    protected  $service;
+
+    /**
+     * @var ViajeNetoTransformer
+     */
+    protected $transformer;
+
+    /**
+     * ViajeNetoController constructor.
+     * @param Manager $fractal
+     * @param ViajeNetoService $service
+     * @param ViajeNetoTransformer $transformer
+     */
+    public function __construct(Manager $fractal, ViajeNetoService $service, ViajeNetoTransformer $transformer)
+    {
+        $this->middleware('auth:api');
+        $this->middleware('context')->except(['catalogo']);
+
+        $this->fractal = $fractal;
+        $this->service = $service;
+        $this->transformer = $transformer;
+    }
+
+    public function catalogo(Request $request)
+    {
+        return $this->service->getCatalogo($request->all());
+    }
+}
