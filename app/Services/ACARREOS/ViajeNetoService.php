@@ -22,6 +22,7 @@ use App\Models\ACARREOS\Tiro;
 use App\Models\ACARREOS\ViajeNeto;
 use App\Models\IGH\Usuario;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ViajeNetoService
@@ -56,7 +57,7 @@ class ViajeNetoService
         /**
          * Buscar usuario con el proyecto ultimo asociado al usuario.
          */
-        $usuario = $this->usuarioProyecto();
+        $usuario = $this->usuarioProyecto($data['usuario'], $data['clave']);
         /**
          * Se realiza conexión con la base de datos de acarreos.
          */
@@ -153,9 +154,13 @@ class ViajeNetoService
         return $arrays;
     }
 
-    private function usuarioProyecto()
+    private function usuarioProyecto($usuario, $clave)
     {
-        $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', auth()->id());
+        $id_usuario = Usuario::where('usuario', $usuario)->where('clave',  md5($clave))->pluck('idusuario');
+        if(count($id_usuario) == 0){
+            dd("{'error' : 'Error al iniciar sesión, su usuario y/o clave son incorrectos.'}");
+        }
+        $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', $id_usuario);
         if(is_null($usuario->first()))
         {
             dd(json_encode(array("error" => "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto.")));
