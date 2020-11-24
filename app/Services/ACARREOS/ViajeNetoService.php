@@ -84,6 +84,7 @@ class ViajeNetoService
         if (is_null($telefono) || $telefono->imei != $data['IMEI']) {
             dd("{'error' : 'El usuario no tiene asignado este teléfono. Favor de solicitarlo.'}");
         }
+        $configuracion_diaria = $usuario->first()->configuracionDiaria;
         $usuario = $usuario->first();
         $tiros = Tiro::activo()->select(['idtiro', 'descripcion', 'IdEsquema as idesquema'])->get()->toArray();
         $camiones = Camion::select(['idcamion', 'Placas as placas', 'PlacasCaja as placas_caja', 'marcas.Descripcion as marca', 'Modelo as modelo', 'Ancho as ancho', 'largo',
@@ -112,8 +113,6 @@ class ViajeNetoService
             'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
             'IMEI' => $telefono->imei
         ]);
-
-        $configuracion_diaria = $usuario->first()->configuracionDiaria;
 
         return [
             'IdUsuario' => auth()->id(),
