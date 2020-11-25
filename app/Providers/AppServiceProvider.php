@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\ACARREOS\InicioCamion;
 use App\Models\ACARREOS\Tiro;
 use App\Models\ACARREOS\TiroConcepto;
+use App\Models\ACARREOS\ViajeNeto;
 use App\Models\CADECO\AjusteNegativo;
 use App\Models\CADECO\AjusteNegativoPartida;
 use App\Models\CADECO\AjustePositivo;
@@ -154,8 +156,10 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
+use App\Observers\ACARREOS\InicioCamionObserver;
 use App\Observers\ACARREOS\TiroConceptoObserver;
 use App\Observers\ACARREOS\TiroObserver;
+use App\Observers\ACARREOS\ViajeNetoObserver;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjusteNegativoPartidaObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
@@ -337,8 +341,10 @@ class AppServiceProvider extends ServiceProvider
         /**
          * ACARREOS
          */
+        InicioCamion::observe(InicioCamionObserver::class);
         Tiro::observe(TiroObserver::class);
         TiroConcepto::observe(TiroConceptoObserver::class);
+        ViajeNeto::observe(ViajeNetoObserver::class);
 
         /**
          * CTPQ

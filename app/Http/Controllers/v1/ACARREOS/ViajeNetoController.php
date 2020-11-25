@@ -50,8 +50,9 @@ class ViajeNetoController extends Controller
     }
 
     public function store(Request $request)
-    {dd("s");
+    {
         $item = $this->service->store($request->all());
+        dd("SE PASO");
         return $this->respondWithItem($item);
     }
 }
