@@ -30,7 +30,7 @@ class Camion extends Model
 
     public function scopeMarcaDescripcion($query)
     {
-        return $query->join('marcas','marcas.IdMarca', 'camiones.IdMarca');
+        return $query->leftjoin('marcas','marcas.IdMarca', 'camiones.IdMarca');
     }
 
     /**
