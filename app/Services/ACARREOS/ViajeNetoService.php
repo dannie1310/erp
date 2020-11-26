@@ -274,58 +274,59 @@ class ViajeNetoService
                     if($existe)
                     {
                         $previos++;
+                    }else {
+                        $camion = $this->repository->getCamion($viaje['IdCamion']);
+                        $cubicacion = array_key_exists('CubicacionCamion', $viaje) ? $viaje['CubicacionCamion'] : $camion->CubicacionParaPago;
+                        /**
+                         * Creación de viaje
+                         */
+                        try {
+                            $this->repository->create([
+                                'IdCamion' => $viaje['IdCamion'],
+                                'IdOrigen' => $viaje['IdOrigen'] == 0 ? $viaje['IdOrigen'] : NULL,
+                                'FechaSalida' => $viaje['FechaSalida'],
+                                'HoraSalida' => $viaje['HoraSalida'],
+                                'IdTiro' => $viaje['IdTiro'],
+                                'FechaLlegada' => $viaje['FechaLlegada'],
+                                'HoraLlegada' => $viaje['HoraLlegada'],
+                                'IdMaterial' => $viaje['IdMaterial'],
+                                'Observaciones' => $viaje['Observaciones'],
+                                'Creo' => $viaje['Creo'],
+                                'Code' => $viaje['Code'],
+                                'uidTAG' => $viaje['uidTAG'],
+                                'Imagen01' => isset($viaje['Imagen']) ? $viaje['Imagen'] : NULL,
+                                'imei' => $viaje['IMEI'],
+                                'Version' => $data['Version'],
+                                'CodeImagen' => $viaje['CodeImagen'],
+                                'IdEmpresa' => $camion->IdEmpresa,
+                                'IdSindicato' => $camion->IdSindicato,
+                                'CodeRandom' => array_key_exists('CodeRandom', $viaje) ? $viaje['CodeRandom'] : 'NA',
+                                'CreoPrimerToque' => array_key_exists('CreoPrimerToque', $viaje) ? $viaje['CreoPrimerToque'] : 0,
+                                'CubicacionCamion' => $cubicacion,
+                                'IdPerfil' => array_key_exists('IdPerfil', $viaje) ? $viaje['IdPerfil'] : null,
+                                'folioMina' => array_key_exists('folioMina', $viaje) ? $viaje['folioMina'] : null,
+                                'folioSeguimiento' => array_key_exists('folioSeguimiento', $viaje) ? $viaje['folioSeguimiento'] : null,
+                                'numImpresion' => array_key_exists('numImpresion', $viaje) ? $viaje['numImpresion'] : null,
+                                'tipoViaje' => array_key_exists('tipoViaje', $viaje) ? $viaje['tipoViaje'] : null,
+                                'latitud_origen' => array_key_exists('latitud_origen', $viaje) ? $viaje['latitud_origen'] : null,
+                                'longitud_origen' => array_key_exists('longitud_origen', $viaje) ? $viaje['longitud_origen'] : null,
+                                'latitud_tiro' => array_key_exists('latitud_tiro', $viaje) ? $viaje['latitud_tiro'] : null,
+                                'longitud_tiro' => array_key_exists('longitud_tiro', $viaje) ? $viaje['longitud_tiro'] : null
+                            ]);
+                            $registros_viajes++;
+                        } catch (\Exception $e) {
+                            $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+                            $this->repository->crearJson(array_add($viaje, 'ERROR', 'Creacion de viaje'));
+                            $error_viajes++;
+                        }
+                        $viaje_neto = $this->repository->viajeNeto($viaje);
+                        if ($viaje_neto) {
+                            dd("aq");
+                            //agregar deductiva y
+                        }
+                        dd("DANN", $error_viajes);
                     }
-                    $camion = $this->repository->getCamion($viaje['IdCamion']);
-                    $v = 0;
-                    $cubicacion = array_key_exists('CubicacionCamion', $viaje) ? $viaje['CubicacionCamion'] : $camion->CubicacionParaPago;
-                    /**
-                     * Creación de viaje
-                     */
-                    try {
-                        $viaje_nuevo = $this->repository->create([
-                            'IdCamion' => $viaje['IdCamion'],
-                            'IdOrigen' => $viaje['IdOrigen'] == 0 ? $viaje['IdOrigen'] : null,
-                            'FechaSalida' => $viaje['FechaSalida'],
-                            'HoraSalida' => $viaje['HoraSalida'],
-                            'IdTiro' => $viaje['IdTiro'],
-                            'FechaLlegada' => $viaje['FechaLlegada'],
-                            'HoraLlegada' => $viaje['HoraLlegada'],
-                            'IdMaterial' => $viaje['IdMaterial'],
-                            'Observaciones' => $viaje['Observaciones'],
-                            'Creo' => $viaje['Creo'],
-                            'Code' => $viaje['Code'],
-                            'uidTAG' => $viaje['uidTAG'],
-                            'Imagen01' => $viaje['Imagen'],
-                            'imei' => $viaje['IMEI'],
-                            'Version' => $data['Version'],
-                            'CodeImagen' => $viaje['CodeImagen'],
-                            'IdEmpresa' => $camion->IdEmpresa,
-                            'IdSindicato' => $camion->IdSindicato,
-                            'CodeRandom' =>  array_key_exists('CodeRandom', $viaje) ? $viaje['CodeRandom'] : 'NA',
-                            'CreoPrimerToque' => array_key_exists('CreoPrimerToque', $viaje) ? $viaje['CreoPrimerToque'] : 0,
-                            'CubicacionCamion' => $cubicacion,
-                            'IdPerfil' => array_key_exists('IdPerfil', $viaje) ? $viaje['IdPerfil'] : null,
-                            'folioMina' => array_key_exists('folioMina', $viaje) ? $viaje['folioMina'] : null,
-                            'folioSeguimiento' => array_key_exists('folioSeguimiento', $viaje) ? $viaje['folioSeguimiento'] : null,
-                            'numImpresion' => array_key_exists('numImpresion', $viaje) ? $viaje['numImpresion'] : null,
-                            'tipoViaje' => array_key_exists('tipoViaje', $viaje) ?  $viaje['tipoViaje'] : null,
-                            'latitud_origen' => array_key_exists('latitud_origen', $viaje) ?  $viaje['latitud_origen'] : null,
-                            'longitud_origen' => array_key_exists('longitud_origen', $viaje) ? $viaje['longitud_origen'] : null,
-                            'latitud_tiro' => array_key_exists('latitud_tiro', $viaje) ? $viaje['latitud_tiro'] : null,
-                            'longitud_tiro' => array_key_exists('longitud_tiro', $viaje) ?  $viaje['longitud_tiro'] : null
-                        ]);
-                        $registros_viajes++;
-                    }catch (\Exception $e)
-                    {
-                        $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
-                        $error_viajes++;
-                    }
-                    if ($viaje_nuevo)
-                    {
-                        //agregar deductiva y
-                    }
-                    dd("DANN",$error_viajes);
-
+                    dd($previos);
                 }
             }
 

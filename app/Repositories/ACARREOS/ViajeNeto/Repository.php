@@ -41,15 +41,21 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return is_null($telefono) ? true : false;
     }
 
-    public function existeViaje($viaje)
+    public function viajeNeto($viaje)
     {
         $viaje_neto = $this->model->where('IdCamion', $viaje['IdCamion'])
             ->where('FechaSalida', $viaje['FechaSalida'])
             ->where('HoraSalida', $viaje['HoraSalida'])
             ->where('FechaLlegada', $viaje['FechaLlegada'])
             ->where('HoraLlegada', $viaje['HoraLlegada'])
-            ->where('Code', $viaje['Code'])->count('IdViajeNeto');
-        if($viaje_neto > 0)
+            ->where('Code', $viaje['Code'])->first();
+        return $viaje_neto;
+    }
+
+    public function existeViaje($viaje)
+    {
+        $viaje_neto = $this->viajeNeto($viaje);
+        if($viaje_neto)
         {
             return true;
         }
