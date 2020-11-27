@@ -44,15 +44,25 @@ class ViajeNetoController extends Controller
         $this->transformer = $transformer;
     }
 
+    /**
+     * Obtener catálogos para el uso de la aplicación móvil
+     * @param Request $request
+     * @return array|false|string
+     * @throws \Exception
+     */
     public function catalogo(Request $request)
     {
         return $this->service->getCatalogo($request->all());
     }
 
-    public function store(Request $request)
+    /**
+     * Viajes a registrar desde aplicación móvil
+     * @param Request $request
+     * @return false|string
+     * @throws \Exception
+     */
+    public function registrarViaje(Request $request)
     {
-        $item = $this->service->store($request->all());
-        dd("SE PASO");
-        return $this->respondWithItem($item);
+        return $this->service->registrarViaje($request->all());
     }
 }
