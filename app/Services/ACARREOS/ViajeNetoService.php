@@ -4,30 +4,11 @@
 namespace App\Services\ACARREOS;
 
 
-use App\Facades\Context;
-use App\Http\Transformers\ACARREOS\Catalogos\TiroTransformer;
-use App\Models\ACARREOS\Camion;
-use App\Models\ACARREOS\Checador;
-use App\Models\ACARREOS\ConsultaErronea;
-use App\Models\ACARREOS\DeductivaMotivo;
 use App\Models\ACARREOS\EventoGPS;
 use App\Models\ACARREOS\InicioCamion;
-use App\Models\ACARREOS\Json;
-use App\Models\ACARREOS\Material;
-use App\Models\ACARREOS\Origen;
-use App\Models\ACARREOS\Ruta;
-use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
-use App\Models\ACARREOS\SCA_CONFIGURACION\RolUsuario;
-use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
-use App\Models\ACARREOS\Tag;
-use App\Models\ACARREOS\Telefono;
-use App\Models\ACARREOS\TipoImagen;
-use App\Models\ACARREOS\Tiro;
 use App\Models\ACARREOS\ViajeNeto;
 use App\Models\ACARREOS\VolumenDetalle;
-use App\Models\IGH\Usuario;
 use App\Repositories\ACARREOS\ViajeNeto\Repository;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ViajeNetoService
@@ -62,7 +43,7 @@ class ViajeNetoService
         /**
          * Buscar usuario con el proyecto ultimo asociado al usuario.
          */
-        $usuario = $this->usuarioProyecto($data['usuario'], $data['clave']);
+        $usuario = $this->repository->usuarioProyecto($data['usuario'], $data['clave']);
         /**
          * Se realiza conexión con la base de datos de acarreos.
          */
@@ -74,7 +55,7 @@ class ViajeNetoService
         /**
          * Validar si el usuario tiene el role de checador.
          */
-        $eschecador = $this->esChecador($usuario->first());
+        $eschecador = $this->repository->esChecador($usuario->first());
         if (!$eschecador) {
             return json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo."));
         }
@@ -82,7 +63,7 @@ class ViajeNetoService
         /**
          * Validar telefono asignado al proyecto y al usuario.
          */
-        if (is_null(Telefono::activo()->where('imei', $data['IMEI'])->first())) {
+        if ($this->repository->getTelefonoActivo($data['IMEI'])) {
             return json_encode(array("error" => "El teléfono no tiene autorización para operar."));
         }
 
@@ -92,28 +73,15 @@ class ViajeNetoService
         }
         $configuracion_diaria = $usuario->first()->configuracionDiaria;
         $usuario = $usuario->first();
-        $tiros = Tiro::activo()->select(['idtiro', 'descripcion', 'IdEsquema as idesquema'])->get()->toArray();
-        $camiones = Camion::select(['idcamion', 'Placas as placas', 'PlacasCaja as placas_caja', 'marcas.Descripcion as marca', 'Modelo as modelo', 'Ancho as ancho', 'largo',
-            'Alto as alto', 'Economico as economico', 'CubicacionParaPago as capacidad', 'IdEmpresa as id_empresa', 'IdSindicato as id_sindicato', 'camiones.Estatus as estatus'])
-            ->activo()
-            ->marcaDescripcion()
-            ->get()->toArray();
-        if($camiones == [])
-        {
-            $camiones = array([
-                "idorigen" => 0,
-                "descripcion" => utf8_encode("- Seleccione -"),
-                "estado" => 1
-            ]);
-        }
-        $materiales = Material::activo()->select(['idmaterial', 'descripcion'])->get()->toArray();
-        $origenes = Origen::activo()->select(['idOrigen as idorigen', 'Descripcion as descripcion', 'Estatus as estado'])->get()->toArray();
-        $rutas = Ruta::activo()->select(['clave', 'idruta', 'idorigen', 'idtiro', 'totalkm'])->get()->toArray();
-        $tags = Tag::activo()->camionEconomico()->select(['uid as UID', 'tags.idcamion', 'idproyecto_global as idproyecto', 'camiones.Economico',
-            'camiones.Estatus'])->get()->toArray();
-        $checadores = $this->arrayChecadores($usuario->proyecto->id_proyecto);
-        $tipoImagenes = TipoImagen::activo()->select(['id', 'descripcion'])->get()->toArray();
-        $motivoDeductiva = DeductivaMotivo::activo()->select(['id', 'motivo'])->get()->toArray();
+        $tiros = $this->repository->getCatalogoTiros();
+        $camiones = $this->repository->getCatalogoCamiones();
+        $materiales = $this->repository->getCatalogoMateriales();
+        $origenes = $this->repository->getCatalogoOrigenes();
+        $rutas = $this->repository->getCatalogoRutas();
+        $tags = $this->repository->getCatalogoTags();
+        $checadores = $this->repository->arrayChecadores($usuario->proyecto->id_proyecto);
+        $tipoImagenes = $this->repository->getCatalogoTiposImagenes();
+        $motivoDeductiva = $this->repository->getCatalogoMotivosDeductiva();
         $telefonos = array([
             'id' => $telefono->impresora ? $telefono->impresora->id : null,
             'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
@@ -146,44 +114,6 @@ class ViajeNetoService
             'Checadores' => $checadores,
             'Celulares' => $telefonos
         ];
-    }
-
-    private function arrayChecadores($proyecto)
-    {
-        $checadores = RolUsuario::esChecador()->where('id_proyecto', $proyecto)->get();
-        $arrays = [];
-        foreach ($checadores as $key => $checador) {
-            $arrays[$key]['id'] = $checador->user_id;
-            $arrays[$key]['descripcion'] = $checador->usuario->nombre_completo;
-        }
-        return $arrays;
-    }
-
-    private function usuarioProyecto($usuario, $clave)
-    {
-        $id_usuario = Usuario::where('usuario', $usuario)->where('clave',  md5($clave))->pluck('idusuario');
-        if(count($id_usuario) == 0)
-        {
-            return json_encode(array("error" => "Error al iniciar sesión, su usuario y/o clave son incorrectos."));
-        }
-        $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', $id_usuario);
-        if(is_null($usuario->first()))
-        {
-            return json_encode(array("error" =>  "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto."));
-        }
-        return $usuario;
-    }
-
-    public function esChecador($usuario)
-    {
-       $rol = RolUsuario::where('id_proyecto', $usuario->id_proyecto)
-           ->where('user_id', $usuario->id_usuario_intranet)
-           ->where('role_id', 7);
-       if(is_null($rol->first()))
-       {
-           return false;
-       }
-       return true;
     }
 
     public function store($data)
@@ -280,8 +210,6 @@ class ViajeNetoService
                  * Respaldar los datos
                  */
                 $this->repository->crearJson($data['carddata']);
-                $deductivas = array();
-                $volumen_array = array();
                 foreach ($data['carddata'] as $viaje)
                 {
                     /**
