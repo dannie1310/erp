@@ -71,19 +71,19 @@ class ViajeNetoService
          */
         $eschecador = $this->esChecador($usuario->first());
         if (!$eschecador) {
-            dd(json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo.")));
+            return json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo."));
         }
 
         /**
          * Validar telefono asignado al proyecto y al usuario.
          */
         if (is_null(Telefono::activo()->where('imei', $data['IMEI'])->first())) {
-            dd("{'error' : 'El teléfono no tiene autorización para operar.'}");
+            return json_encode(array("error" => "El teléfono no tiene autorización para operar."));
         }
 
         $telefono = $usuario->first()->telefono;
         if (is_null($telefono) || $telefono->imei != $data['IMEI']) {
-            dd("{'error' : 'El usuario no tiene asignado este teléfono. Favor de solicitarlo.'}");
+            return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
         }
         $configuracion_diaria = $usuario->first()->configuracionDiaria;
         $usuario = $usuario->first();
@@ -157,13 +157,14 @@ class ViajeNetoService
     private function usuarioProyecto($usuario, $clave)
     {
         $id_usuario = Usuario::where('usuario', $usuario)->where('clave',  md5($clave))->pluck('idusuario');
-        if(count($id_usuario) == 0){
-            dd("{'error' : 'Error al iniciar sesión, su usuario y/o clave son incorrectos.'}");
+        if(count($id_usuario) == 0)
+        {
+            return json_encode(array("error" => "Error al iniciar sesión, su usuario y/o clave son incorrectos."));
         }
         $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', $id_usuario);
         if(is_null($usuario->first()))
         {
-            dd(json_encode(array("error" => "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto.")));
+            return json_encode(array("error" =>  "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto."));
         }
         return $usuario;
     }
