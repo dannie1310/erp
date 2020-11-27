@@ -27,6 +27,11 @@ class ViajeNetoService
         $this->repository = new Repository($model);
     }
 
+    /**
+     * Restablecer conexión a base de datos de acarreos (MySQL)
+     * @param $base_datos
+     * @throws \Exception
+     */
     private function conexionAcarreos($base_datos)
     {
         try{
@@ -38,6 +43,12 @@ class ViajeNetoService
         }
     }
 
+    /**
+     * Catálogos para el uso de la aplicación móvil
+     * @param $data
+     * @return array|false|string
+     * @throws \Exception
+     */
     public function getCatalogo($data)
     {
         /**
@@ -116,229 +127,213 @@ class ViajeNetoService
         ];
     }
 
-    public function store($data)
+    /**
+     * Viajes a registrar desde aplicación móvil
+     * @param $data
+     * @return false|string
+     * @throws \Exception
+     */
+    public function registrarViaje($data)
     {
         /**
          * Se realiza conexión con la base de datos de acarreos.
          */
         $this->conexionAcarreos($data['bd']);
+        /**
+         * Respaldar los datos
+         */
+        $this->repository->crearJson(array_except($data, 'access_token'));
+
+        /**
+         * Verificar si el telefono esta activo
+         */
+        if ($this->repository->getTelefonoActivo($data['IMEI']))
+        {
+            return json_encode(array("error" => "El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "."));
+        }
+
+        /**
+         * Mensaje de error cuando no se tenga ningún viaje a procesar
+         */
+        if (!isset($data['carddata']) && !isset($data['inicioCamion']))
+        {
+            return json_encode(array("error" => "No hay ningún viaje a registrar."));
+        }
+        $registros_viajes = 0;
+        $registros_inicio = 0;
+        $previos = 0;
+        $previos_inicio = 0;
+        $error_viajes = 0;
+        $inicios_a_registrar = 0;
+        $viajes_a_registrar = 0;
+        /**
+         * Inicio de Viajes (tickets en origenes)
+         */
+        if (isset($data['inicioCamion'])) {
+            $inicios_a_registrar = count($data['inicioCamion']);
             /**
              * Respaldar los datos
              */
-            $this->repository->crearJson(array_except($data,'access_token'));//Revisar si debe ir antes para guardar sin importar los errores por si la app falla
-
-            /**
-             * Verificar si el telefono esta activo
-             */
-            if($this->repository->getTelefonoActivo($data['IMEI']))
-            {
-                dd("{'error' : 'El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "'}");
-            }
-
-            /**
-             * Mensaje de error cuando no se tenga ningún viaje a procesar
-             */
-            if(!isset($data['carddata']) && !isset($data['inicioCamion']))
-            {
-                dd("{'error' : 'No hay ningún viaje a registrar'}");
-            }
-            $registros_viajes = 0;
-            $registros_inicio = 0;
-            $previos = 0;
-            $previos_inicio = 0;
-            $error_viajes = 0;
-            $inicios_a_registrar = 0;
-            $viajes_a_registrar = 0;
-            /**
-             * Inicio de Viajes (tickets en origenes)
-             */
-            if(isset($data['inicioCamion']))
-            {
-                $inicios_a_registrar = count($data['inicioCamion']);
+            $this->repository->crearJson($data['inicioCamion']);
+            foreach ($data['inicioCamion'] as $key => $inicio) {
                 /**
-                 * Respaldar los datos
+                 * Validar que el viaje no exista en BD
                  */
-                $this->repository->crearJson($data['inicioCamion']);
-                foreach ($data['inicioCamion'] as $key => $inicio)
-                {
-                    /**
-                     * Validar que el viaje no exista en BD
-                     */
-                    $existe = $this->repository->existeViajeInicio($inicio);
-                    if($existe)
-                    {
-                        $previos_inicio++;
-                    }
-                    try {
-                        $inicio_viaje = InicioCamion::create([
-                            'idcamion' => $inicio['idcamion'],
-                            'idmaterial' => $inicio['idmaterial'],
-                            'idorigen' => $inicio['idorigen'],
-                            'fecha_origen' => $inicio['fecha_origen'],
-                            'idusuario' => $inicio['idusuario'],
-                            'uidTAG' => $inicio['uidTAG'],
-                            'IMEI' => isset($inicio['IMEI']) ? $inicio['IMEI'] : $data['IMEI'],
-                            'idperfil' => $inicio['idperfil'],
-                            'folioMina' => array_key_exists('foliomina', $inicio) ? $inicio['foliomina'] : NULL,
-                            'folioSeguimiento' => array_key_exists('folioseguimiento', $inicio) ? $inicio['folioseguimiento'] : NULL,
-                            'volumen' => array_key_exists('volumen', $inicio) ? $inicio['volumen'] : NULL,
-                            'code' => array_key_exists('Code', $inicio) ? $inicio['Code'] : NULL,
-                            'numImpresion' => array_key_exists('numImpresion', $inicio) ? $inicio['numImpresion'] : NULL,
-                            'tipo' => array_key_exists('tipo_suministro', $inicio) ? $inicio['tipo_suministro'] : NULL,
-                            'Version' => $data['Version'],
-                            'deductiva' => array_key_exists('deductiva', $inicio) ? $inicio['deductiva'] : NULL,
-                            'idMotivo_deductiva' => array_key_exists('idMotivo', $inicio) ? $inicio['idMotivo'] : NULL,
-                            'deductiva_entrada' => array_key_exists('deductiva_entrada', $inicio) ? $inicio['deductiva_entrada'] : NULL,
-                            'latitud_origen' => array_key_exists('latitud_origen', $inicio) ? $inicio['latitud_origen'] : NULL,
-                            'longitud_origen' => array_key_exists('longitud_origen', $inicio) ? $inicio['longitud_origen'] : NULL
-                        ]);
+                $existe = $this->repository->existeViajeInicio($inicio);
+                if ($existe) {
+                    $previos_inicio++;
+                }
+                try {
+                    $inicio_viaje = InicioCamion::create([
+                        'idcamion' => $inicio['idcamion'],
+                        'idmaterial' => $inicio['idmaterial'],
+                        'idorigen' => $inicio['idorigen'],
+                        'fecha_origen' => $inicio['fecha_origen'],
+                        'idusuario' => $inicio['idusuario'],
+                        'uidTAG' => $inicio['uidTAG'],
+                        'IMEI' => isset($inicio['IMEI']) ? $inicio['IMEI'] : $data['IMEI'],
+                        'idperfil' => $inicio['idperfil'],
+                        'folioMina' => array_key_exists('foliomina', $inicio) ? $inicio['foliomina'] : NULL,
+                        'folioSeguimiento' => array_key_exists('folioseguimiento', $inicio) ? $inicio['folioseguimiento'] : NULL,
+                        'volumen' => array_key_exists('volumen', $inicio) ? $inicio['volumen'] : NULL,
+                        'code' => array_key_exists('Code', $inicio) ? $inicio['Code'] : NULL,
+                        'numImpresion' => array_key_exists('numImpresion', $inicio) ? $inicio['numImpresion'] : NULL,
+                        'tipo' => array_key_exists('tipo_suministro', $inicio) ? $inicio['tipo_suministro'] : NULL,
+                        'Version' => $data['Version'],
+                        'deductiva' => array_key_exists('deductiva', $inicio) ? $inicio['deductiva'] : NULL,
+                        'idMotivo_deductiva' => array_key_exists('idMotivo', $inicio) ? $inicio['idMotivo'] : NULL,
+                        'deductiva_entrada' => array_key_exists('deductiva_entrada', $inicio) ? $inicio['deductiva_entrada'] : NULL,
+                        'latitud_origen' => array_key_exists('latitud_origen', $inicio) ? $inicio['latitud_origen'] : NULL,
+                        'longitud_origen' => array_key_exists('longitud_origen', $inicio) ? $inicio['longitud_origen'] : NULL
+                    ]);
+                    $registros_inicio++;
+                } catch (\Exception $exception) {
+                    $this->repository->crearLogError($exception->getMessage(), $data['idusuario']);
+                    $error_viajes++;
+                }
+            }
+        }
 
-                    }catch (\Exception $exception){
-                        $this->repository->crearLogError($exception->getMessage(), $data['idusuario']);
+        /**
+         * Viajes finalizados (tickets en tiros)
+         */
+        if (isset($data['carddata'])) {
+            $viajes_a_registrar = count($data['carddata']);
+            /**
+             * Respaldar los datos
+             */
+            $this->repository->crearJson($data['carddata']);
+            foreach ($data['carddata'] as $viaje) {
+                /**
+                 * Validar que el viaje no exista en BD
+                 */
+                $existe = $this->repository->existeViaje($viaje);
+                if ($existe) {
+                    $previos++;
+                } else {
+                    $camion = $this->repository->getCamion($viaje['IdCamion']);
+                    $cubicacion = array_key_exists('CubicacionCamion', $viaje) ? $viaje['CubicacionCamion'] : $camion->CubicacionParaPago;
+                    /**
+                     * Creación de viaje
+                     */
+                    try {
+                        $this->repository->create([
+                            'IdCamion' => $viaje['IdCamion'],
+                            'IdOrigen' => $viaje['IdOrigen'] == 0 ? $viaje['IdOrigen'] : NULL,
+                            'FechaSalida' => $viaje['FechaSalida'],
+                            'HoraSalida' => $viaje['HoraSalida'],
+                            'IdTiro' => $viaje['IdTiro'],
+                            'FechaLlegada' => $viaje['FechaLlegada'],
+                            'HoraLlegada' => $viaje['HoraLlegada'],
+                            'IdMaterial' => $viaje['IdMaterial'],
+                            'Observaciones' => $viaje['Observaciones'],
+                            'Creo' => $viaje['Creo'],
+                            'Code' => $viaje['Code'],
+                            'uidTAG' => $viaje['uidTAG'],
+                            'Imagen01' => isset($viaje['Imagen']) ? $viaje['Imagen'] : NULL,
+                            'imei' => $viaje['IMEI'],
+                            'Version' => $data['Version'],
+                            'CodeImagen' => $viaje['CodeImagen'],
+                            'IdEmpresa' => $camion->IdEmpresa,
+                            'IdSindicato' => $camion->IdSindicato,
+                            'CodeRandom' => array_key_exists('CodeRandom', $viaje) ? $viaje['CodeRandom'] : 'NA',
+                            'CreoPrimerToque' => array_key_exists('CreoPrimerToque', $viaje) ? $viaje['CreoPrimerToque'] : 0,
+                            'CubicacionCamion' => $cubicacion,
+                            'IdPerfil' => array_key_exists('IdPerfil', $viaje) ? $viaje['IdPerfil'] : null,
+                            'folioMina' => array_key_exists('folioMina', $viaje) ? $viaje['folioMina'] : null,
+                            'folioSeguimiento' => array_key_exists('folioSeguimiento', $viaje) ? $viaje['folioSeguimiento'] : null,
+                            'numImpresion' => array_key_exists('numImpresion', $viaje) ? $viaje['numImpresion'] : null,
+                            'tipoViaje' => array_key_exists('tipoViaje', $viaje) ? $viaje['tipoViaje'] : null,
+                            'latitud_origen' => array_key_exists('latitud_origen', $viaje) ? $viaje['latitud_origen'] : null,
+                            'longitud_origen' => array_key_exists('longitud_origen', $viaje) ? $viaje['longitud_origen'] : null,
+                            'latitud_tiro' => array_key_exists('latitud_tiro', $viaje) ? $viaje['latitud_tiro'] : null,
+                            'longitud_tiro' => array_key_exists('longitud_tiro', $viaje) ? $viaje['longitud_tiro'] : null
+                        ]);
+                        $registros_viajes++;
+                    } catch (\Exception $e) {
+                        $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+                        $this->repository->crearJson(array_add($viaje, 'ERROR', 'Creacion de viaje'));
                         $error_viajes++;
                     }
-                }
-            }
-
-            /**
-             * Viajes finalizados (tickets en tiros)
-             */
-            if(isset($data['carddata']))
-            {
-                $viajes_a_registrar = count($data['carddata']);
-                /**
-                 * Respaldar los datos
-                 */
-                $this->repository->crearJson($data['carddata']);
-                foreach ($data['carddata'] as $viaje)
-                {
-                    /**
-                     * Validar que el viaje no exista en BD
-                     */
-                    $existe = $this->repository->existeViaje($viaje);
-                    if($existe)
-                    {
-                        $previos++;
-                    }else {
-                        $camion = $this->repository->getCamion($viaje['IdCamion']);
-                        $cubicacion = array_key_exists('CubicacionCamion', $viaje) ? $viaje['CubicacionCamion'] : $camion->CubicacionParaPago;
+                    $viaje_neto = $this->repository->viajeNeto($viaje);
+                    if ($viaje_neto) {
                         /**
-                         * Creación de viaje
+                         * Ingresar Volumen detalle
                          */
                         try {
-                            $this->repository->create([
-                                'IdCamion' => $viaje['IdCamion'],
-                                'IdOrigen' => $viaje['IdOrigen'] == 0 ? $viaje['IdOrigen'] : NULL,
-                                'FechaSalida' => $viaje['FechaSalida'],
-                                'HoraSalida' => $viaje['HoraSalida'],
-                                'IdTiro' => $viaje['IdTiro'],
-                                'FechaLlegada' => $viaje['FechaLlegada'],
-                                'HoraLlegada' => $viaje['HoraLlegada'],
-                                'IdMaterial' => $viaje['IdMaterial'],
-                                'Observaciones' => $viaje['Observaciones'],
-                                'Creo' => $viaje['Creo'],
-                                'Code' => $viaje['Code'],
-                                'uidTAG' => $viaje['uidTAG'],
-                                'Imagen01' => isset($viaje['Imagen']) ? $viaje['Imagen'] : NULL,
-                                'imei' => $viaje['IMEI'],
-                                'Version' => $data['Version'],
-                                'CodeImagen' => $viaje['CodeImagen'],
-                                'IdEmpresa' => $camion->IdEmpresa,
-                                'IdSindicato' => $camion->IdSindicato,
-                                'CodeRandom' => array_key_exists('CodeRandom', $viaje) ? $viaje['CodeRandom'] : 'NA',
-                                'CreoPrimerToque' => array_key_exists('CreoPrimerToque', $viaje) ? $viaje['CreoPrimerToque'] : 0,
-                                'CubicacionCamion' => $cubicacion,
-                                'IdPerfil' => array_key_exists('IdPerfil', $viaje) ? $viaje['IdPerfil'] : null,
-                                'folioMina' => array_key_exists('folioMina', $viaje) ? $viaje['folioMina'] : null,
-                                'folioSeguimiento' => array_key_exists('folioSeguimiento', $viaje) ? $viaje['folioSeguimiento'] : null,
-                                'numImpresion' => array_key_exists('numImpresion', $viaje) ? $viaje['numImpresion'] : null,
-                                'tipoViaje' => array_key_exists('tipoViaje', $viaje) ? $viaje['tipoViaje'] : null,
-                                'latitud_origen' => array_key_exists('latitud_origen', $viaje) ? $viaje['latitud_origen'] : null,
-                                'longitud_origen' => array_key_exists('longitud_origen', $viaje) ? $viaje['longitud_origen'] : null,
-                                'latitud_tiro' => array_key_exists('latitud_tiro', $viaje) ? $viaje['latitud_tiro'] : null,
-                                'longitud_tiro' => array_key_exists('longitud_tiro', $viaje) ? $viaje['longitud_tiro'] : null
+                            VolumenDetalle::create([
+                                'id_viaje_neto' => $viaje_neto->IdViajeNeto,
+                                'volumen_origen' => $viaje['volumen_origen'],
+                                'volumen_entrada' => $viaje['volumen_entrada'],
+                                'volumen' => $viaje['volumen'],
+                                'idregistro' => $data['idusuario'],
                             ]);
-                            $registros_viajes++;
                         } catch (\Exception $e) {
                             $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
-                            $this->repository->crearJson(array_add($viaje, 'ERROR', 'Creacion de viaje'));
-                            $error_viajes++;
-                        }
-                        $viaje_neto = $this->repository->viajeNeto($viaje);
-                        if ($viaje_neto) {
-                            /**
-                             * Ingresar Volumen detalle
-                             */
-                            try {
-                                VolumenDetalle::create([
-                                    'id_viaje_neto' => $viaje_neto->IdViajeNeto,
-                                    'volumen_origen' => $viaje['volumen_origen'],
-                                    'volumen_entrada' => $viaje['volumen_entrada'],
-                                    'volumen' => $viaje['volumen'],
-                                    'idregistro' => $data['idusuario'],
-                                ]);
-                            }catch (\Exception $e)
-                            {
-                                $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
-                                $this->repository->crearJson(array_add($viaje, 'ERROR', 'Creacion de volumen_detalle'));
-                            }
+                            $this->repository->crearJson(array_add($viaje, 'ERROR', 'Creacion de volumen_detalle'));
                         }
                     }
-
                 }
-            }
 
-            /**
-             * Se registra las coordenadas
-             */
-            if(isset($data['coordenadas']))
-            {
-                $this->repository->crearJson($data['coordenadas']);
-                foreach ($data['coordenadas'] as $key => $coordenada)
-                {
-                    try {
-                        $gps = EventoGPS::create([
-                            'idevento' => $coordenada['idevento'],
-                            'IMEI' => $coordenada['IMEI'],
-                            'longitude' => $coordenada['longitud'],
-                            'latitude' => $coordenada['latitud'],
-                            'fechahora' => $coordenada['fecha_hora'],
-                            'code' => $coordenada['code'],
-                            'idusuario' => array_key_exists('idusuario', $data) ? $data['idusuario'] : 0
-                        ]);
-                    }catch (\Exception $e){
-                        $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
-                    }
-                }
-            }
-
-
-dd($previos, $error_viajes, $registros_viajes, $registros_inicio, $previos_inicio, $inicios_a_registrar, $viajes_a_registrar);
-       /*     if($viajes_a_registrar == ($previos + $registros_viajes) || $inicios_a_registrar = ($previos_inicio + $registros_inicio))
-            {
-
-            }
-            else{
-                dd("{'error' : 'No se registraron todos los viajes. Registrados: '.$registros_viajes.' Registrados Previamente: \".$previos.\" A registrar: \" . $viajes_a_registrar . \" No se registraron todos los suministros. Registrados: \" . $afi . \" Registrados Previamente: \".$previos_i.\" A registrar: \" . $inicio_registrar . \" \\"}
-        \";);
-                echo "{\"error\":\"No se registraron todos los viajes. Registrados: " . $afv . " Registrados Previamente: ".$previos." A registrar: " . $viajes_a_registrar . " No se registraron todos los suministros. Registrados: " . $afi . " Registrados Previamente: ".$previos_i." A registrar: " . $inicio_registrar . " \"}";
-            }
-        /*if (($afv + $previos) == $viajes_a_registrar || ($afi + $previos_i) == $inicio_registrar){
-            if($viajes_a_registrar == 0){
-                echo "{\"msj\":\"Suministro sincronizados correctamente. Registrados: " . $afi . " Registrados Previamente: ".$previos_i." A registrar: " . $inicio_registrar . " \"}";
-            }elseif ($inicio_registrar == 0){
-                echo "{\"msj\":\"Viajes sincronizados correctamente. Registrados: " . $afv . " Registrados Previamente: ".$previos." A registrar: " . $viajes_a_registrar . ".\"}";
-            }else{
-                echo "{\"msj\":\"Viajes sincronizados correctamente: Registrados: " . $afv . " Registrados Previamente: ".$previos." A registrar: " . $viajes_a_registrar . ". Los Suministro sincronizados correctamente: Registrados: " . $afi . " Registrados Previamente: ".$previos_i." A registrar: " . $inicio_registrar . " \"}";
             }
         }
-        else{
-            echo "{\"error\":\"No se registraron todos los viajes. Registrados: " . $afv . " Registrados Previamente: ".$previos." A registrar: " . $viajes_a_registrar . " No se registraron todos los suministros. Registrados: " . $afi . " Registrados Previamente: ".$previos_i." A registrar: " . $inicio_registrar . " \"}";
+
+        /**
+         * Se registra las coordenadas
+         */
+        if (isset($data['coordenadas'])) {
+            $this->repository->crearJson($data['coordenadas']);
+            foreach ($data['coordenadas'] as $key => $coordenada) {
+                try {
+                    $gps = EventoGPS::create([
+                        'idevento' => $coordenada['idevento'],
+                        'IMEI' => $coordenada['IMEI'],
+                        'longitude' => $coordenada['longitud'],
+                        'latitude' => $coordenada['latitud'],
+                        'fechahora' => $coordenada['fecha_hora'],
+                        'code' => $coordenada['code'],
+                        'idusuario' => array_key_exists('idusuario', $data) ? $data['idusuario'] : 0
+                    ]);
+                } catch (\Exception $e) {
+                    $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+                }
+            }
         }
-*/
-            dd("AQUIWEEEEEEEEEEEEEE", $data);
 
+        if ($viajes_a_registrar == ($previos + $registros_viajes) || $inicios_a_registrar = ($previos_inicio + $registros_inicio)) {
+            if ($viajes_a_registrar == 0) {
+                return json_encode(array("msj" => "Suministro sincronizados correctamente. Registrados: " . $registros_inicio . " Registrados Previamente: " . $previos_inicio . " A registrar: " . $inicios_a_registrar . "."));
 
+            } elseif ($inicios_a_registrar == 0) {
+                return json_encode(array("msj" => "Viajes sincronizados correctamente. Registrados: " . $registros_viajes . " Registrados Previamente: " . $previos . " A registrar: " . $viajes_a_registrar . "."));
+            } else {
+                return json_encode(array("msj" => "Viajes sincronizados correctamente: Registrados: " . $registros_viajes . " Registrados Previamente: " . $previos . " A registrar: " . $viajes_a_registrar . ". Los Suministro sincronizados correctamente: Registrados: " . $registros_inicio . " Registrados Previamente: " . $previos_inicio . " A registrar: " . $inicios_a_registrar . "."));
+            }
+        }
+        else {
+            return json_encode(array("error" => "No se registraron todos los viajes. Registrados: " . $registros_viajes . " Registrados Previamente: " . $previos . " A registrar: "
+                . $viajes_a_registrar . " No se registraron todos los suministros. Registrados: " . $registros_inicio . " Registrados Previamente: " . $previos_inicio . " A registrar: "
+                . $inicios_a_registrar));
+        }
     }
-
 }

@@ -425,7 +425,7 @@ $api->version('v1', function ($api) {
         //VIAJE NETO
         $api->group(['prefix' => 'viaje-neto'], function ($api) {
             $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@catalogo');
-            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@store');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@registrarViaje');
         });
     });
 
