@@ -69,7 +69,8 @@ class ViajeNetoService
         /**
          * Validar si el usuario tiene el role de checador.
          */
-        if (is_null($usuario->esChecador()->first())) {
+        $eschecador = $this->esChecador($usuario->first());
+        if (!$eschecador) {
             dd(json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo.")));
         }
 
@@ -165,5 +166,17 @@ class ViajeNetoService
             dd(json_encode(array("error" => "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto.")));
         }
         return $usuario;
+    }
+
+    public function esChecador($usuario)
+    {
+       $rol = RolUsuario::where('id_proyecto', $usuario->id_proyecto)
+           ->where('user_id', $usuario->id_usuario_intranet)
+           ->where('role_id', 7);
+       if(is_null($rol->first()))
+       {
+           return false;
+       }
+       return true;
     }
 }
