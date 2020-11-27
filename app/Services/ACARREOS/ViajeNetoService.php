@@ -24,6 +24,7 @@ use App\Models\ACARREOS\Telefono;
 use App\Models\ACARREOS\TipoImagen;
 use App\Models\ACARREOS\Tiro;
 use App\Models\ACARREOS\ViajeNeto;
+use App\Models\ACARREOS\VolumenDetalle;
 use App\Models\IGH\Usuario;
 use App\Repositories\ACARREOS\ViajeNeto\Repository;
 use Illuminate\Support\Facades\Auth;
@@ -177,8 +178,6 @@ class ViajeNetoService
          * Se realiza conexión con la base de datos de acarreos.
          */
         $this->conexionAcarreos($data['bd']);
-        /*try {
-            DB::connection('acarreos')->beginTransaction();*/
             /**
              * Respaldar los datos
              */
@@ -204,6 +203,8 @@ class ViajeNetoService
             $previos = 0;
             $previos_inicio = 0;
             $error_viajes = 0;
+            $inicios_a_registrar = 0;
+            $viajes_a_registrar = 0;
             /**
              * Inicio de Viajes (tickets en origenes)
              */
@@ -265,6 +266,8 @@ class ViajeNetoService
                  * Respaldar los datos
                  */
                 $this->repository->crearJson($data['carddata']);
+                $deductivas = array();
+                $volumen_array = array();
                 foreach ($data['carddata'] as $viaje)
                 {
                     /**
@@ -321,12 +324,25 @@ class ViajeNetoService
                         }
                         $viaje_neto = $this->repository->viajeNeto($viaje);
                         if ($viaje_neto) {
-                            dd("aq");
-                            //agregar deductiva y
+                            /**
+                             * Ingresar Volumen detalle
+                             */
+                            try {
+                                VolumenDetalle::create([
+                                    'id_viaje_neto' => $viaje_neto->IdViajeNeto,
+                                    'volumen_origen' => $viaje['volumen_origen'],
+                                    'volumen_entrada' => $viaje['volumen_entrada'],
+                                    'volumen' => $viaje['volumen'],
+                                    'idregistro' => $data['idusuario'],
+                                ]);
+                            }catch (\Exception $e)
+                            {
+                                $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+                                $this->repository->crearJson(array_add($viaje, 'ERROR', 'Creacion de volumen_detalle'));
+                            }
                         }
-                        dd("DANN", $error_viajes);
                     }
-                    dd($previos);
+
                 }
             }
 
@@ -354,14 +370,33 @@ class ViajeNetoService
                 }
             }
 
+
+dd($previos, $error_viajes, $registros_viajes, $registros_inicio, $previos_inicio, $inicios_a_registrar, $viajes_a_registrar);
+       /*     if($viajes_a_registrar == ($previos + $registros_viajes) || $inicios_a_registrar = ($previos_inicio + $registros_inicio))
+            {
+
+            }
+            else{
+                dd("{'error' : 'No se registraron todos los viajes. Registrados: '.$registros_viajes.' Registrados Previamente: \".$previos.\" A registrar: \" . $viajes_a_registrar . \" No se registraron todos los suministros. Registrados: \" . $afi . \" Registrados Previamente: \".$previos_i.\" A registrar: \" . $inicio_registrar . \" \\"}
+        \";);
+                echo "{\"error\":\"No se registraron todos los viajes. Registrados: " . $afv . " Registrados Previamente: ".$previos." A registrar: " . $viajes_a_registrar . " No se registraron todos los suministros. Registrados: " . $afi . " Registrados Previamente: ".$previos_i." A registrar: " . $inicio_registrar . " \"}";
+            }
+        /*if (($afv + $previos) == $viajes_a_registrar || ($afi + $previos_i) == $inicio_registrar){
+            if($viajes_a_registrar == 0){
+                echo "{\"msj\":\"Suministro sincronizados correctamente. Registrados: " . $afi . " Registrados Previamente: ".$previos_i." A registrar: " . $inicio_registrar . " \"}";
+            }elseif ($inicio_registrar == 0){
+                echo "{\"msj\":\"Viajes sincronizados correctamente. Registrados: " . $afv . " Registrados Previamente: ".$previos." A registrar: " . $viajes_a_registrar . ".\"}";
+            }else{
+                echo "{\"msj\":\"Viajes sincronizados correctamente: Registrados: " . $afv . " Registrados Previamente: ".$previos." A registrar: " . $viajes_a_registrar . ". Los Suministro sincronizados correctamente: Registrados: " . $afi . " Registrados Previamente: ".$previos_i." A registrar: " . $inicio_registrar . " \"}";
+            }
+        }
+        else{
+            echo "{\"error\":\"No se registraron todos los viajes. Registrados: " . $afv . " Registrados Previamente: ".$previos." A registrar: " . $viajes_a_registrar . " No se registraron todos los suministros. Registrados: " . $afi . " Registrados Previamente: ".$previos_i." A registrar: " . $inicio_registrar . " \"}";
+        }
+*/
             dd("AQUIWEEEEEEEEEEEEEE", $data);
-            DB::connection('acarreos')->commit();
-       /* } catch (\Exception $e) {
-            DB::connection('acarreos')->rollBack();
-            $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
-            abort(400, $e->getMessage());
-            throw $e;
-        }*/
+
+
     }
 
 }
