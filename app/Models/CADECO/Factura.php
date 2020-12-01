@@ -108,7 +108,9 @@ class Factura extends Transaccion
     public function facturaRepositorio()
     {
         return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
-            ->where('rfc_emisor', '=',$this->empresa->rfc) ;
+            ->where('rfc_emisor', '=',$this->empresa->rfc)
+            ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
+                ->first()->getKey());
     }
 
     public function facturasRepositorioLiberar()

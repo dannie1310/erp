@@ -4,6 +4,7 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\PDF\Fiscal\CFDI;
 use DateTime;
 use DateTimeZone;
 use App\Events\IncidenciaCI;
@@ -561,6 +562,21 @@ class FacturaService
             DB::connection('cadeco')->rollBack();
             throw $e;
         }
+    }
+
+    public function pdfCFDI($id)
+    {
+        $facturaTransaccion = $this->repository->show($id);
+        $facturaRepositorio = $facturaTransaccion->facturaRepositorio;
+        try{
+            $cfd = new CFD($facturaRepositorio->xml);
+        } catch (\Exception $e){
+          dd("No se cargo el CFDI de la factura");
+        }
+
+        $arreglo_cfd = $cfd->getArregloFactura();
+        $pdf = new CFDI($arreglo_cfd);
+        return $pdf;
     }
 }
 
