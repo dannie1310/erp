@@ -66,12 +66,14 @@ class CFD
         try {
             $this->arreglo_factura["descuento"] = null;
             $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
+            $this->arreglo_factura["subtotal"] = (float)$factura_xml["SubTotal"];
             $this->arreglo_factura["tipo_comprobante"] = strtoupper(substr((string)$factura_xml["TipoDeComprobante"], 0, 1));
             $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
             $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
             $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["Fecha"]);
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
             $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
+            $this->arreglo_factura["tipo_cambio"] = (string)$factura_xml["TipoCambio"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
@@ -81,6 +83,7 @@ class CFD
             $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
             $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
             $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
+            $this->arreglo_factura["receptor"]["razon_social"] = (string)$receptor["Nombre"][0];
             $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
         } catch (\Exception $e) {
             $this->log["archivos_no_cargados_error_app"] += 1;
@@ -112,6 +115,13 @@ class CFD
                     $i++;
                 }
             }
+
+            if (count($impuestos) >= 1) {
+                $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosRetenidos"];
+            } else {
+                $this->arreglo_factura["total_impuestos_retenidos"] = (float)0;
+            }
+
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
             foreach ($conceptos as $concepto) {
@@ -159,7 +169,7 @@ class CFD
             $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
-        $this->arreglo_factura["subtotal"] = $this->arreglo_factura["total"] - $this->arreglo_factura["total_impuestos_trasladados"];
+        //$this->arreglo_factura["subtotal"] = $this->arreglo_factura["total"] - $this->arreglo_factura["total_impuestos_trasladados"];
         /*$this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]);
         $proveedor = $this->repository->getProveedorSAT($this->arreglo_factura["emisor"], $this->arreglo_factura["id_empresa_sat"]);
         $this->arreglo_factura["id_proveedor_sat"] = $proveedor["id_proveedor"];
@@ -252,6 +262,9 @@ class CFD
                 $this->arreglo_factura["traslados"][$i]["importe"] = (string)$traslado["importe"];
                 $i++;
             }
+
+            $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[0]["totalImpuestosRetenidos"][0];
+
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
             foreach ($conceptos as $concepto) {
