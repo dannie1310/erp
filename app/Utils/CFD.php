@@ -64,7 +64,7 @@ class CFD
     private function setArreglo33($factura_xml)
     {
         try {
-            $this->arreglo_factura["descuento"] = null;
+            $this->arreglo_factura["descuento"] = (float)$factura_xml["Descuento"];
             $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
             $this->arreglo_factura["subtotal"] = (float)$factura_xml["SubTotal"];
             $this->arreglo_factura["tipo_comprobante"] = strtoupper(substr((string)$factura_xml["TipoDeComprobante"], 0, 1));
@@ -108,10 +108,11 @@ class CFD
                         $this->arreglo_factura["importe_iva"] = (float)$traslado["Importe"];
                         $this->arreglo_factura["tasa_iva"] = (float)$traslado["TasaOCuota"];
                     }
-                    $this->arreglo_factura["traslados"][$i]["impuesto"] = (float)$traslado["Impuesto"];
+                    $this->arreglo_factura["traslados"][$i]["impuesto"] = (string)$traslado["Impuesto"];
                     $this->arreglo_factura["traslados"][$i]["tipo_factor"] = (string)$traslado["TipoFactor"];
                     $this->arreglo_factura["traslados"][$i]["tasa_o_cuota"] = (float)$traslado["TasaOCuota"];
                     $this->arreglo_factura["traslados"][$i]["importe"] = (float)$traslado["Importe"];
+                    $this->arreglo_factura["traslados"][$i]["base"] = (float)$traslado["Base"];
                     $i++;
                 }
             }
@@ -120,6 +121,21 @@ class CFD
                 $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosRetenidos"];
             } else {
                 $this->arreglo_factura["total_impuestos_retenidos"] = (float)0;
+            }
+
+            $retenciones = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Retencion');
+
+            $iret = 0;
+            foreach ($retenciones as $retencion) {
+                if (!(float)$retencion["Base"] > 0) {
+                    if ($retencion["Impuesto"] == "002") {
+                        $this->arreglo_factura["importe_iva_retenido"] = (float)$retencion["Importe"];
+                        $this->arreglo_factura["tasa_iva_retenido"] = (float)$retencion["TasaOCuota"];
+                    }
+                    $this->arreglo_factura["retenciones"][$iret]["impuesto"] = (string)$retencion["Impuesto"];
+                    $this->arreglo_factura["retenciones"][$iret]["importe"] = (float)$retencion["Importe"];
+                    $iret++;
+                }
             }
 
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
@@ -133,11 +149,27 @@ class CFD
                 $this->arreglo_factura["conceptos"][$i]["descripcion"] = (string)$concepto["Descripcion"];
                 $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (float)$concepto["ValorUnitario"];
                 $this->arreglo_factura["conceptos"][$i]["importe"] = (float)$concepto["Importe"];
-                $traslados_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto[" . $i . "]/cfdi:Impuestos/cfdi:Traslados/cfdi:Traslado");
+                $this->arreglo_factura["conceptos"][$i]["descuento"] = (float)$concepto["Descuento"];
+                $traslados_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto/cfdi:Impuestos/cfdi:Traslados/cfdi:Traslado");
                 $itc = 0;
                 foreach ($traslados_concepto as $traslado_concepto) {
                     $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["base"] = (float)$traslado_concepto["Base"];
+                    $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["impuesto"] = (string)$traslado_concepto["Impuesto"];
+                    $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["importe"] = (float)$traslado_concepto["Importe"];
+                    $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["tasa_o_cuota"] = (float)$traslado_concepto["TasaOCuota"];
+                    $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["tipo_factor"] = (string)$traslado_concepto["TipoFactor"];
                     $itc++;
+                }
+
+                $retenciones_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto/cfdi:Impuestos/cfdi:Retenciones/cfdi:Retencion");
+                $irc = 0;
+                foreach ($retenciones_concepto as $retencion_concepto) {
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["base"] = (float)$retencion_concepto["Base"];
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["impuesto"] = (string)$retencion_concepto["Impuesto"];
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["importe"] = (float)$retencion_concepto["Importe"];
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["tasa_o_cuota"] = (float)$retencion_concepto["TasaOCuota"];
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["tipo_factor"] = (string)$retencion_concepto["TipoFactor"];
+                    $irc++;
                 }
                 $i++;
             }
