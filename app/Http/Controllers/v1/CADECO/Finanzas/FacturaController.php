@@ -83,4 +83,9 @@ class FacturaController extends Controller
     {
         return $this->respondWithItem($this->service->revertir($id));
     }
+
+    public function pdfCFDI($id)
+    {
+        return $this->service->pdfCFDI($id)->create();
+    }
 }
