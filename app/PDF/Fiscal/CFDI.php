@@ -150,7 +150,7 @@ class CFDI extends Rotation
         $this->detallesPagoImportes();
 
         try {
-            $this->Output('I', 'CFDI_'.date("d-m-Y h:i:s").'.pdf', 1);
+            $this->Output('I', 'CFDI_'.$this->factura["uuid"]."_".date("d-m-Y_h_i_s").'.pdf', 1);
         } catch (\Exception $ex) {
             dd("error", $ex);
         }
