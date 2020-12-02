@@ -54,11 +54,16 @@
                 columns: [
                     { title: '#', field:'index',sortable: false},
                     { title: 'Fecha', field: 'fecha',thComp: require('../../../globals/th-Date').default, sortable: true},
+                    { title: 'Tipo', field: 'tipo_comprobante',thComp: require('../../../globals/th-Filter').default, sortable: false},
                     { title: 'UUID', field: 'uuid',thComp: require('../../../globals/th-Filter').default, sortable: false},
                     { title: 'RFC Receptor', field: 'rfc_receptor',thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Receptor', field: 'receptor', sortable: false},
+                    { title: 'Receptor', field: 'receptor',thComp: require('../../../globals/th-Filter').default, sortable: false},
                     { title: 'RFC Emisor', field: 'rfc_emisor',thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Emisor', field: 'emisor', sortable: false},
+                    { title: 'Emisor', field: 'emisor', thComp: require('../../../globals/th-Filter').default, sortable: false},
+                    { title: 'Subtotal', field: 'subtotal', sortable: false},
+                    { title: 'Descuento', field: 'descuento', sortable: false},
+                    { title: 'Impuestos Retenidos', field: 'impuestos_retenidos', sortable: false},
+                    { title: 'Impuestos Trasladados', field: 'impuestos_trasladados', sortable: false},
                     { title: 'Total', field: 'total',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
@@ -127,11 +132,16 @@
                             rfc_emisor: ccfdi.rfc_emisor,
                             rfc_receptor: ccfdi.rfc_receptor,
                             emisor: ccfdi.proveedor.razon_social,
+                            tipo_comprobante: ccfdi.tipo_comprobante,
                             receptor: ccfdi.empresa.razon_social,
                             total: ccfdi.total_format,
+                            subtotal: ccfdi.subtotal_format,
+                            descuento: ccfdi.descuento_format,
+                            impuestos_retenidos: ccfdi.impuestos_retenidos_format,
+                            impuestos_trasladados: ccfdi.impuestos_trasladados_format,
                             uuid: ccfdi.uuid,
                             buttons: $.extend({}, {
-                                show: true,
+                                id: ccfdi.id,
                             })
                         })
 

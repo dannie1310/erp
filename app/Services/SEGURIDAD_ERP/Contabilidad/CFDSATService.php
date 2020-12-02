@@ -13,8 +13,10 @@ use App\Events\FinalizaCargaCFD;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\PDF\Fiscal\CFDI;
 use App\PDF\Fiscal\InformeCFDICompleto;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
+use App\Utils\CFD;
 use App\Utils\Util;
 use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
@@ -78,8 +80,18 @@ class CFDSATService
         if (isset($data['rfc_emisor'])) {
             $this->repository->where([['rfc_emisor', 'LIKE', '%' . $data['rfc_emisor'] . '%']]);
         }
+        if (isset($data['emisor'])) {
+            $this->repository
+                ->join("Contabilidad.proveedores_sat", "cfd_sat.id_proveedor_sat","=","proveedores_sat.id")
+                ->where([['proveedores_sat.razon_social', 'LIKE', '%'.$data['emisor'].'%']]);
+        }
         if (isset($data['rfc_receptor'])) {
             $this->repository->where([['rfc_receptor', 'LIKE', '%' . $data['rfc_receptor'] . '%']]);
+        }
+        if (isset($data['receptor'])) {
+            $this->repository
+                ->join("Contabilidad.ListaEmpresasSAT", "cfd_sat.id_empresa_sat","=","ListaEmpresasSAT.id")
+                ->where([['ListaEmpresasSAT.razon_social', 'LIKE', '%'.$data['receptor'].'%']]);
         }
         if (isset($data['uuid'])) {
             $this->repository->where([['uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
@@ -89,6 +101,9 @@ class CFDSATService
         }
         if (isset($data['fecha'])) {
             $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
+        if (isset($data['tipo_comprobante'])) {
+            $this->repository->where([['tipo_comprobante', 'LIKE', '%' .$data['tipo_comprobante']. '%' ]]);
         }
         return $this->repository->paginate($data);
     }
@@ -745,6 +760,20 @@ class CFDSATService
         } else {
             return response()->json(["mensaje"=>"No hay CFDI para la descarga "]);
         }
+    }
+
+    public function pdfCFDI($id)
+    {
+        $CFDI = $this->repository->show($id);
+        try{
+            $cfd = new CFD($CFDI->xml);
+        } catch (\Exception $e){
+            dd("No se cargo el CFDI");
+        }
+
+        $arreglo_cfd = $cfd->getArregloFactura();
+        $pdf = new CFDI($arreglo_cfd);
+        return $pdf;
     }
 
 }

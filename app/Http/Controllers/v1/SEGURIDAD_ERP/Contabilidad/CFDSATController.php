@@ -82,4 +82,9 @@ class CFDSATController extends Controller
         return $this->service->descargar($request->all());
     }
 
+    public function pdfCFDI($id)
+    {
+        return $this->service->pdfCFDI($id)->create();
+    }
+
 }
