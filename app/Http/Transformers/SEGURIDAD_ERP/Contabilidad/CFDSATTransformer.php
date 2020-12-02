@@ -42,8 +42,17 @@ class CFDSATTransformer extends TransformerAbstract
             'iva' => $model->importe_iva,
             'porcentaje_iva' => $model->porcentaje_iva,
             'uuid' => $model->uuid,
+            'subtotal' => (float) $model->subtotal,
+            'subtotal_format' => $model->subtotal_format,
+            'descuento' => (float) $model->descuento,
+            'descuento_format' => $model->descuento_format,
+            'impuestos_trasladados' => (float) $model->total_impuestos_trasladados,
+            'impuestos_trasladados_format' => $model->total_impuestos_trasladados_format,
+            'impuestos_retenidos' => (float) $model->total_impuestos_retenidos,
+            'impuestos_retenidos_format' => $model->total_impuestos_retenidos_format,
             'total' => (float) $model->total,
-            'total_format' => $model->total_format
+            'total_format' => $model->total_format,
+            'tipo_comprobante' => $model->tipo_comprobante
         ];
     }
 

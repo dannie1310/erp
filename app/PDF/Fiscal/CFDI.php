@@ -118,8 +118,13 @@ class CFDI extends Rotation
                 "$".number_format($partida["importe"],2),
                 "$".number_format($partida["descuento"],2),
             ]);
-            $this->trasladosConcepto($partida["traslados"]);
-            $this->retencionesConcepto($partida["retenciones"]);
+            if(key_exists("traslados",$partida)){
+                $this->trasladosConcepto($partida["traslados"]);
+            }
+            if(key_exists("retenciones",$partida)){
+                $this->retencionesConcepto($partida["retenciones"]);
+            }
+
             $i++;
         }
 
@@ -196,19 +201,25 @@ class CFDI extends Rotation
             $this->Cell(2.2,0.4,"$".number_format($this->factura["descuento"],2),0,1,"R");
         }
 
-        foreach($this->factura["traslados"] as $traslado){
-            $impuesto = ($traslado["impuesto"]=="002")?"IVA":(($traslado["impuesto"]=="001")?"ISR":($traslado["impuesto"]=="003")?"IEPS":"");
-            $this->Cell(15.5,0.4,"");
-            $this->Cell(2,0.4,$impuesto." Trasladado: ", 0,0,"R");
-            $this->Cell(2.2,0.4,"$".number_format($traslado["importe"],2),0,1,"R");
+        if(key_exists("traslados",$this->factura)) {
+            foreach($this->factura["traslados"] as $traslado){
+                $impuesto = ($traslado["impuesto"]=="002")?"IVA":(($traslado["impuesto"]=="001")?"ISR":($traslado["impuesto"]=="003")?"IEPS":"");
+                $this->Cell(15.5,0.4,"");
+                $this->Cell(2,0.4,$impuesto." Trasladado: ", 0,0,"R");
+                $this->Cell(2.2,0.4,"$".number_format($traslado["importe"],2),0,1,"R");
+            }
         }
 
-        foreach($this->factura["retenciones"] as $retencion){
-            $impuesto = ($retencion["impuesto"]=="002")?"IVA":(($retencion["impuesto"]=="001")?"ISR":($retencion["impuesto"]=="003")?"IEPS":"");
-            $this->Cell(15.5,0.4,"");
-            $this->Cell(2,0.4,$impuesto." Retenido: ", 0,0,"R");
-            $this->Cell(2.2,0.4,"$".number_format($retencion["importe"],2),0,1,"R");
+        if(key_exists("retenciones",$this->factura)){
+            foreach($this->factura["retenciones"] as $retencion){
+                $impuesto = ($retencion["impuesto"]=="002")?"IVA":(($retencion["impuesto"]=="001")?"ISR":($retencion["impuesto"]=="003")?"IEPS":"");
+                $this->Cell(15.5,0.4,"");
+                $this->Cell(2,0.4,$impuesto." Retenido: ", 0,0,"R");
+                $this->Cell(2.2,0.4,"$".number_format($retencion["importe"],2),0,1,"R");
+            }
         }
+
+
 
         $this->Cell(15.5,0.4,"");
         $this->Cell(2,0.4,"Total: ", 0,0,"R");
