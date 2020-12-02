@@ -78,8 +78,18 @@ class CFDSATService
         if (isset($data['rfc_emisor'])) {
             $this->repository->where([['rfc_emisor', 'LIKE', '%' . $data['rfc_emisor'] . '%']]);
         }
+        if (isset($data['emisor'])) {
+            $this->repository
+                ->join("Contabilidad.proveedores_sat", "cfd_sat.id_proveedor_sat","=","proveedores_sat.id")
+                ->where([['proveedores_sat.razon_social', 'LIKE', '%'.$data['emisor'].'%']]);
+        }
         if (isset($data['rfc_receptor'])) {
             $this->repository->where([['rfc_receptor', 'LIKE', '%' . $data['rfc_receptor'] . '%']]);
+        }
+        if (isset($data['receptor'])) {
+            $this->repository
+                ->join("Contabilidad.ListaEmpresasSAT", "cfd_sat.id_empresa_sat","=","ListaEmpresasSAT.id")
+                ->where([['ListaEmpresasSAT.razon_social', 'LIKE', '%'.$data['receptor'].'%']]);
         }
         if (isset($data['uuid'])) {
             $this->repository->where([['uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
@@ -89,6 +99,9 @@ class CFDSATService
         }
         if (isset($data['fecha'])) {
             $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
+        if (isset($data['tipo_comprobante'])) {
+            $this->repository->where([['tipo_comprobante', 'LIKE', '%' .$data['tipo_comprobante']. '%' ]]);
         }
         return $this->repository->paginate($data);
     }
