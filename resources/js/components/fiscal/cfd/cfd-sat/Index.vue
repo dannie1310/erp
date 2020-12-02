@@ -54,6 +54,8 @@
                 columns: [
                     { title: '#', field:'index',sortable: false},
                     { title: 'Fecha', field: 'fecha',thComp: require('../../../globals/th-Date').default, sortable: true},
+                    { title: 'Serie', field: 'serie',thComp: require('../../../globals/th-Filter').default, sortable: true},
+                    { title: 'Folio', field: 'folio',thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Tipo', field: 'tipo_comprobante',thComp: require('../../../globals/th-Filter').default, sortable: false},
                     { title: 'UUID', field: 'uuid',thComp: require('../../../globals/th-Filter').default, sortable: false},
                     { title: 'RFC Receptor', field: 'rfc_receptor',thComp: require('../../../globals/th-Filter').default, sortable: true},
@@ -129,6 +131,8 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             fecha: ccfdi.fecha_format,
+                            serie: ccfdi.serie,
+                            folio: ccfdi.folio,
                             rfc_emisor: ccfdi.rfc_emisor,
                             rfc_receptor: ccfdi.rfc_receptor,
                             emisor: ccfdi.proveedor.razon_social,

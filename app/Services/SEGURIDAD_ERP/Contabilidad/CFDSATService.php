@@ -105,6 +105,12 @@ class CFDSATService
         if (isset($data['tipo_comprobante'])) {
             $this->repository->where([['tipo_comprobante', 'LIKE', '%' .$data['tipo_comprobante']. '%' ]]);
         }
+        if (isset($data['serie'])) {
+            $this->repository->where([['serie', 'like', '' .$data['serie']. '' ]]);
+        }
+        if (isset($data['folio'])) {
+            $this->repository->where([['folio', 'like', '' .$data['folio']. '' ]]);
+        }
         return $this->repository->paginate($data);
     }
 
