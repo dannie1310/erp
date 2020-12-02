@@ -96,14 +96,38 @@ class CFDSATService
         if (isset($data['uuid'])) {
             $this->repository->where([['uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
         }
+        if (isset($data['moneda'])) {
+            $this->repository->where([['moneda', 'LIKE', '%' . $data['moneda'] . '%']]);
+        }
         if (isset($data['total'])) {
             $this->repository->where([['total', '=', $data['total'] ]]);
+        }
+        if (isset($data['tipo_cambio'])) {
+            $this->repository->where([['tipo_cambio', '=', $data['tipo_cambio'] ]]);
+        }
+        if (isset($data['subtotal'])) {
+            $this->repository->where([['subtotal', '=', $data['subtotal'] ]]);
+        }
+        if (isset($data['descuento'])) {
+            $this->repository->where([['descuento', '=', $data['descuento'] ]]);
+        }
+        if (isset($data['impuestos_retenidos'])) {
+            $this->repository->where([['total_impuestos_retenidos', '=', $data['impuestos_retenidos'] ]]);
+        }
+        if (isset($data['impuestos_trasladados'])) {
+            $this->repository->where([['total_impuestos_trasladados', '=', $data['impuestos_trasladados'] ]]);
         }
         if (isset($data['fecha'])) {
             $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
         }
         if (isset($data['tipo_comprobante'])) {
             $this->repository->where([['tipo_comprobante', 'LIKE', '%' .$data['tipo_comprobante']. '%' ]]);
+        }
+        if (isset($data['serie'])) {
+            $this->repository->where([['serie', 'like', '' .$data['serie']. '' ]]);
+        }
+        if (isset($data['folio'])) {
+            $this->repository->where([['folio', 'like', '' .$data['folio']. '' ]]);
         }
         return $this->repository->paginate($data);
     }
