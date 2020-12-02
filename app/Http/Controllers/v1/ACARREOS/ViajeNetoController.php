@@ -65,4 +65,8 @@ class ViajeNetoController extends Controller
     {
         return $this->service->registrarViaje($request->all());
     }
+
+    public function cargaImagenesViajes(Request $request){
+        return $this->service->cargaImagenesViajes($request->all());
+    }
 }

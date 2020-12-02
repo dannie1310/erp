@@ -268,4 +268,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         }
         return false;
     }
+
+    public function getIdViajeNeto($code_imagen){
+        return $this->model->where('CodeImagen', '=', $code_imagen)->first();
+    }
 }
