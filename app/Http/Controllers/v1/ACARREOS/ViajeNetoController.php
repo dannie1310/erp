@@ -66,7 +66,24 @@ class ViajeNetoController extends Controller
         return $this->service->registrarViaje($request->all());
     }
 
+    /**
+     * Registrar imágenes desde aplicación móvil
+     * @param Request $request
+     * @return false|string
+     * @throws \Exception
+     */
     public function cargaImagenesViajes(Request $request){
         return $this->service->cargaImagenesViajes($request->all());
+    }
+
+    /**
+     * Cambiar la contraseña del usuario desde la aplicación móvil de acarreos
+     * @param Request $request
+     * @return false|string
+     * @throws \Exception
+     */
+    public function cambiarClave(Request $request)
+    {
+        return $this->service->cambiarClave($request->all());
     }
 }
