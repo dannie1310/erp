@@ -336,4 +336,33 @@ class ViajeNetoService
                 . $inicios_a_registrar));
         }
     }
+
+    /**
+     * Cambiar la contraseña del usuario desde la aplicación móvil de acarreos
+     * @param $data
+     * @return false|string
+     * @throws \Exception
+     */
+    public function cambiarClave($data)
+    {
+        /**
+         * Se realiza conexión con la base de datos de acarreos.
+         */
+        $this->conexionAcarreos($data['bd']);
+        /**
+         * Se genera el respaldo del json
+         */
+        $this->repository->crearJson($data);
+        /**
+         * Se genera el log de cambio de contraseña.
+         */
+        $this->repository->logCambioContrasena($data);
+        try {
+            $this->repository->cambiarClave($data['idusuario'], $data['NuevaClave']);
+            return json_encode(array("msj" => "Contraseña Guardada Correctamente!!"));
+        }catch (\Exception $e) {
+            $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+            return json_encode(array("error" => "Error al realizar el cambio de contraseña, favor de reportarlo."));
+        }
+    }
 }
