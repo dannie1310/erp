@@ -13,8 +13,10 @@ use App\Events\FinalizaCargaCFD;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\PDF\Fiscal\CFDI;
 use App\PDF\Fiscal\InformeCFDICompleto;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
+use App\Utils\CFD;
 use App\Utils\Util;
 use Illuminate\Support\Facades\Storage;
 use Chumper\Zipper\Zipper;
@@ -758,6 +760,20 @@ class CFDSATService
         } else {
             return response()->json(["mensaje"=>"No hay CFDI para la descarga "]);
         }
+    }
+
+    public function pdfCFDI($id)
+    {
+        $CFDI = $this->repository->show($id);
+        try{
+            $cfd = new CFD($CFDI->xml);
+        } catch (\Exception $e){
+            dd("No se cargo el CFDI");
+        }
+
+        $arreglo_cfd = $cfd->getArregloFactura();
+        $pdf = new CFDI($arreglo_cfd);
+        return $pdf;
     }
 
 }

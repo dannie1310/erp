@@ -141,7 +141,7 @@
                             impuestos_trasladados: ccfdi.impuestos_trasladados_format,
                             uuid: ccfdi.uuid,
                             buttons: $.extend({}, {
-                                show: true,
+                                id: ccfdi.id,
                             })
                         })
 

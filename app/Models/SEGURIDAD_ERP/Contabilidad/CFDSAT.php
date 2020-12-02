@@ -188,4 +188,13 @@ class CFDSAT extends Model
     {
         return '$ ' . number_format(($this->total_impuestos_trasladados),2);
     }
+
+    public function getXMLAttribute()
+    {
+        $xml = DB::table("Contabilidad.cfd_sat")
+            ->select(DB::raw("'data:text/xml;base64,' + CONVERT(varchar(MAX), xml_file ,0) as xml"))
+            ->where("id",$this->id)
+            ->first();
+        return $xml->xml;
+    }
 }
