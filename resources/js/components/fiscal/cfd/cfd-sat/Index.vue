@@ -67,6 +67,8 @@
                     { title: 'Impuestos Retenidos', field: 'impuestos_retenidos', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Impuestos Trasladados', field: 'impuestos_trasladados', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Total', field: 'total',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                    { title: 'Moneda', field: 'moneda',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                    { title: 'TC', field: 'tipo_cambio',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -143,6 +145,8 @@
                             descuento: ccfdi.descuento_format,
                             impuestos_retenidos: ccfdi.impuestos_retenidos_format,
                             impuestos_trasladados: ccfdi.impuestos_trasladados_format,
+                            moneda: ccfdi.moneda,
+                            tipo_cambio: ccfdi.tipo_cambio,
                             uuid: ccfdi.uuid,
                             buttons: $.extend({}, {
                                 id: ccfdi.id,

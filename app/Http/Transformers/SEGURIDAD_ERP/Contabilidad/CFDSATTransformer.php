@@ -52,7 +52,9 @@ class CFDSATTransformer extends TransformerAbstract
             'impuestos_retenidos_format' => $model->total_impuestos_retenidos_format,
             'total' => (float) $model->total,
             'total_format' => $model->total_format,
-            'tipo_comprobante' => $model->tipo_comprobante
+            'tipo_comprobante' => $model->tipo_comprobante,
+            'moneda' => $model->moneda,
+            'tipo_cambio' => $model->tipo_cambio,
         ];
     }
 

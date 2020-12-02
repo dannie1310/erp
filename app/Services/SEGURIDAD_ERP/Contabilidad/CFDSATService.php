@@ -96,8 +96,14 @@ class CFDSATService
         if (isset($data['uuid'])) {
             $this->repository->where([['uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
         }
+        if (isset($data['moneda'])) {
+            $this->repository->where([['moneda', 'LIKE', '%' . $data['moneda'] . '%']]);
+        }
         if (isset($data['total'])) {
             $this->repository->where([['total', '=', $data['total'] ]]);
+        }
+        if (isset($data['tipo_cambio'])) {
+            $this->repository->where([['tipo_cambio', '=', $data['tipo_cambio'] ]]);
         }
         if (isset($data['subtotal'])) {
             $this->repository->where([['subtotal', '=', $data['subtotal'] ]]);
