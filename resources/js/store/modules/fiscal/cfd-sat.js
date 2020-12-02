@@ -101,6 +101,38 @@ export default {
                 search = search + 'uuid='+ payload.params.uuid + '&';
                 filtros = +filtros + 1;
             }
+            if (typeof payload.params.subtotal !== 'undefined') {
+                search = search + 'subtotal='+ payload.params.subtotal + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.descuento !== 'undefined') {
+                search = search + 'descuento='+ payload.params.descuento + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.moneda !== 'undefined') {
+                search = search + 'moneda='+ payload.params.moneda + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.tipo_cambio !== 'undefined') {
+                search = search + 'moneda='+ payload.params.tipo_cambio + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.serie !== 'undefined') {
+                search = search + 'serie='+ payload.params.serie + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.folio !== 'undefined') {
+                search = search + 'folio='+ payload.params.folio + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.impuestos_retenidos !== 'undefined') {
+                search = search + 'impuestos_retenidos='+ payload.params.impuestos_retenidos + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.impuestos_trasladados !== 'undefined') {
+                search = search + 'impuestos_trasladados='+ payload.params.impuestos_trasladados + '&';
+                filtros = +filtros + 1;
+            }
 
             if(filtros == 0){
                 swal({
