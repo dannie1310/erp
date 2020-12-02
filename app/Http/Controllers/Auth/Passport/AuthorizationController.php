@@ -92,19 +92,16 @@ class AuthorizationController
     {
        
         $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
- 
         $scopes = $this->parseScopes($authRequest);
         $use = Usuario::where('usuario', '=', $_GET["usuario"])->first();
             
         $token = $tokens->findValidToken(
             $user = $use,
             $client = $clients->find($authRequest->getClient()->getIdentifier())
-        );
-            // 
+        );        
         if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
             $resp = $this->approveRequestMovil($authRequest, $user);
             return \response()->json(['code'=>$resp]);
-            dd($resp);
         }
         return [];
     }
