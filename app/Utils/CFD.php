@@ -271,6 +271,7 @@ class CFD
 
             $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["rfc"][0];
             $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
+            $this->arreglo_factura["receptor"]["razon_social"] = (string)$receptor["nombre"][0];
             $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["nombre"][0];
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el receptor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
@@ -300,12 +301,18 @@ class CFD
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
             foreach ($conceptos as $concepto) {
+                $this->arreglo_factura["conceptos"][$i]["clave_prod_serv"] = (string)$concepto["ClaveProdServ"];
                 $this->arreglo_factura["conceptos"][$i]["cantidad"] = (float)$concepto["cantidad"];
                 $this->arreglo_factura["conceptos"][$i]["descripcion"] = (string)$concepto["descripcion"];
                 $this->arreglo_factura["conceptos"][$i]["importe"] = (float)$concepto["importe"];
                 $this->arreglo_factura["conceptos"][$i]["no_identificacion"] = (string)$concepto["noIdentificacion"];
                 $this->arreglo_factura["conceptos"][$i]["unidad"] = (string)$concepto["unidad"];
                 $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (float)$concepto["valorUnitario"];
+                if(key_exists("descuento", $concepto)){
+                    $this->arreglo_factura["conceptos"][$i]["descuento"] = (float)$concepto["descuento"];
+                } else {
+                    $this->arreglo_factura["conceptos"][$i]["descuento"] = 0;
+                }
                 $i++;
             }
         } catch (\Exception $e) {
