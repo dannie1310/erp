@@ -13,6 +13,8 @@ use App\Events\FinalizaCargaCFD;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\PDF\Fiscal\CFDI;
 use App\PDF\Fiscal\InformeCFDICompleto;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
@@ -81,17 +83,21 @@ class CFDSATService
             $this->repository->where([['rfc_emisor', 'LIKE', '%' . $data['rfc_emisor'] . '%']]);
         }
         if (isset($data['emisor'])) {
-            $this->repository
-                ->join("Contabilidad.proveedores_sat", "cfd_sat.id_proveedor_sat","=","proveedores_sat.id")
-                ->where([['proveedores_sat.razon_social', 'LIKE', '%'.$data['emisor'].'%']]);
+            $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            foreach ($proveedoresSAT as $e) {
+                $arreglo_proveedor[] = $e->id;
+            }
+            $this->repository->whereIn(['id_proveedor_sat', $arreglo_proveedor]);
         }
         if (isset($data['rfc_receptor'])) {
             $this->repository->where([['rfc_receptor', 'LIKE', '%' . $data['rfc_receptor'] . '%']]);
         }
         if (isset($data['receptor'])) {
-            $this->repository
-                ->join("Contabilidad.ListaEmpresasSAT", "cfd_sat.id_empresa_sat","=","ListaEmpresasSAT.id")
-                ->where([['ListaEmpresasSAT.razon_social', 'LIKE', '%'.$data['receptor'].'%']]);
+            $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            foreach ($empresasSAT as $es) {
+                $arreglo_empresa[] = $es->id;
+            }
+            $this->repository->whereIn(['id_empresa_sat', $arreglo_empresa]);
         }
         if (isset($data['uuid'])) {
             $this->repository->where([['uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
@@ -796,6 +802,7 @@ class CFDSATService
         }
 
         $arreglo_cfd = $cfd->getArregloFactura();
+        //dd($arreglo_cfd);
         $pdf = new CFDI($arreglo_cfd);
         return $pdf;
     }
