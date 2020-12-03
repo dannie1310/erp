@@ -5,11 +5,12 @@ namespace App\Services\ACARREOS;
 
 
 use App\Models\ACARREOS\EventoGPS;
-use App\Models\ACARREOS\InicioCamion;
 use App\Models\ACARREOS\ViajeNeto;
-use App\Models\ACARREOS\VolumenDetalle;
-use App\Repositories\ACARREOS\ViajeNeto\Repository;
 use Illuminate\Support\Facades\DB;
+use App\Models\ACARREOS\InicioCamion;
+use App\Models\ACARREOS\VolumenDetalle;
+use App\Models\ACARREOS\ViajeNetoImagen;
+use App\Repositories\ACARREOS\ViajeNeto\Repository;
 
 class ViajeNetoService
 {
@@ -337,6 +338,80 @@ class ViajeNetoService
         }
     }
 
+     /**
+     * Registrar imágenes enviados desde la aplicación móvil de acarreos
+     * @param $data
+     * @return false|string
+     * @throws \Exception
+     */
+    public function cargaImagenesViajes($data){
+    
+        /**
+         * Se realiza conexión con la base de datos de acarreos.
+         */
+        $this->conexionAcarreos($data['bd']);
+        /**
+         * Respaldar los datos
+         */
+        $this->repository->crearJson(array_except($data, 'access_token'));
+        
+        /**
+         * Verificar si el telefono esta activo
+         */
+        if ($this->repository->getTelefonoActivo($data['IMEI']))
+        {
+            return json_encode(array("error" => "El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "."));
+        }
+
+        $usr = $data["usr"];
+        $json_imagenes = $data["Imagenes"];
+        $imagenes = json_decode(utf8_encode($json_imagenes), TRUE);
+        $cantidad_imagenes_a_registrar = count($imagenes);
+        $cantidad_imagenes_sin_viaje_neto = 0;
+        $cantidad_imagenes = 0;
+        $imagenes_registradas = array();
+        $imagenes_no_registradas = array();
+        $imagenes_no_registradas_sv = array();
+        if($cantidad_imagenes_a_registrar>0){
+            $i = 0;
+            $ir = 0;
+            $inr = 0;
+            foreach ($imagenes as $key_i => $value_i) {
+                if($id_viaje_neto_i = $this->repository->getIdViajeNeto($value_i['CodeImagen']) > 0){
+                    try {
+                        $vn_imagen = ViajeNetoImagen::create([
+                            'idviaje_neto' => $id_viaje_neto_i,
+                            'idtipo_imagen' => $value_i['idtipo_imagen'],
+                            'imagen' => str_replace('\\','',$value_i['imagen']),
+                        ]);
+                        $cantidad_imagenes++;;
+                        $imagenes_registradas[$ir] = $value_i["idImagen"];
+                        $ir++;
+                    } catch (\Exception $e) {
+                        $imagenes_no_registradas[$inr] = $value_i["idImagen"];
+                        $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+                        $inr++;
+                    }
+                }else{
+                    $imagenes_no_registradas_sv[$cantidad_imagenes_sin_viaje_neto] = $value_i["idImagen"];
+                    $cantidad_imagenes_sin_viaje_neto++;
+                }
+                $i++;
+            }
+        }
+        $json_imagenes_registradas = json_encode($imagenes_registradas);
+        $json_imagenes_no_registradas = json_encode($imagenes_no_registradas);
+        $json_imagenes_no_registradas_sv = json_encode($imagenes_no_registradas_sv);
+        return \json_encode(array("msj"=>"Imagenes Sincronizadas.  Imagenes a Registrar: ".
+            $cantidad_imagenes_a_registrar." Imagenes Registradas: ".
+            $cantidad_imagenes." Imagenes Sin Viaje: ".
+            $cantidad_imagenes_sin_viaje_neto." Imagenes con Error: ".($inr)." \" , "
+            . "\"imagenes_registradas\":".$json_imagenes_registradas.", "
+            . "\"imagenes_no_registradas_sv\":".$json_imagenes_no_registradas_sv.", "
+            . "\"imagenes_no_registradas\":".$json_imagenes_no_registradas));
+        
+    }
+
     /**
      * Cambiar la contraseña del usuario desde la aplicación móvil de acarreos
      * @param $data
@@ -345,12 +420,8 @@ class ViajeNetoService
      */
     public function cambiarClave($data)
     {
-        /**
-         * Se realiza conexión con la base de datos de acarreos.
-         */
-        $this->conexionAcarreos($data['bd']);
-        /**
-         * Se genera el respaldo del json
+        /*
+        * Se genera el respaldo del json
          */
         $this->repository->crearJson($data);
         /**

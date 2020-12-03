@@ -271,6 +271,16 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     }
 
     /**
+     * Obtener el id viaje neto
+     * @param $code_imagen
+     * @return mixed
+     */
+    public function getIdViajeNeto($code_imagen){
+        $viaje = $this->model->where('CodeImagen', '=', $code_imagen)->first();
+        return $viaje?$viaje->IdViajeNeto:0;
+    }
+
+    /**
      * Crear log de cambio de contraseña
      * @param $data
      */
