@@ -103,6 +103,7 @@ class CFDI extends Rotation
     {
         $i = 1;
         foreach($this->factura["conceptos"] as $partida){
+            $this->SetWidths([0.5,1.5,8.2,2,1.5,2,2,2]);
             $this->SetDrawColor(100,100,100);
             $this->SetFont('Arial', '', 7);
             $this->SetAligns(['C','L','L','C','R','R','R','R']);
