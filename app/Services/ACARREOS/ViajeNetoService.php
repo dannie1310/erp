@@ -354,22 +354,11 @@ class ViajeNetoService
         /**
          * Se realiza conexión con la base de datos de acarreos.
          */
+         
         $this->conexionAcarreos($data['bd']);
-        /**
-         * Respaldar los datos
-         */
-        $this->repository->crearJson(array_except($data, 'access_token'));
-
-        /**
-         * Verificar si el telefono esta activo
-         */
-        if ($this->repository->getTelefonoActivo($data['IMEI']))
-        {
-            return json_encode(array("error" => "El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "."));
-        }
 
         $usr = $data["usuario"];
-        $json_imagenes = $data["Imagenes"];
+        $imagenes = $data["Imagenes"];
         $imagenes = json_decode(utf8_encode($json_imagenes), TRUE);
         $cantidad_imagenes_a_registrar = count($imagenes);
         $cantidad_imagenes_sin_viaje_neto = 0;
@@ -382,7 +371,9 @@ class ViajeNetoService
             $ir = 0;
             $inr = 0;
             foreach ($imagenes as $key_i => $value_i) {
-                if($id_viaje_neto_i = $this->repository->getIdViajeNeto($value_i['CodeImagen']) > 0){
+                $id_viaje_neto_i = $this->repository->getIdViajeNeto($value_i['CodeImagen']);
+                if($id_viaje_neto_i > 0){
+                    
                     try {
                         $vn_imagen = ViajeNetoImagen::create([
                             'idviaje_neto' => $id_viaje_neto_i,
@@ -410,10 +401,7 @@ class ViajeNetoService
         return \json_encode(array("msj"=>"Imagenes Sincronizadas.  Imagenes a Registrar: ".
             $cantidad_imagenes_a_registrar." Imagenes Registradas: ".
             $cantidad_imagenes." Imagenes Sin Viaje: ".
-            $cantidad_imagenes_sin_viaje_neto." Imagenes con Error: ".($inr)." \" , "
-            . "\"imagenes_registradas\":".$json_imagenes_registradas.", "
-            . "\"imagenes_no_registradas_sv\":".$json_imagenes_no_registradas_sv.", "
-            . "\"imagenes_no_registradas\":".$json_imagenes_no_registradas));
+            $cantidad_imagenes_sin_viaje_neto." Imagenes con Error: ".($inr), "imagenes_registradas" => $json_imagenes_registradas, "imagenes_no_registradas_sv"=>$json_imagenes_no_registradas_sv, "imagenes_no_registradas" => $json_imagenes_no_registradas));
 
     }
 
