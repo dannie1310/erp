@@ -363,7 +363,7 @@ class ViajeNetoService
             return json_encode(array("error" => "El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "."));
         }
 
-        $usr = $data["usr"];
+        $usr = $data["usuario"];
         $json_imagenes = $data["Imagenes"];
         $imagenes = json_decode(utf8_encode($json_imagenes), TRUE);
         $cantidad_imagenes_a_registrar = count($imagenes);
