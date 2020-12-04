@@ -244,7 +244,7 @@ class ViajeNetoService
                     try {
                         $this->repository->create([
                             'IdCamion' => $viaje['IdCamion'],
-                            'IdOrigen' => $viaje['IdOrigen'] == 0 ? $viaje['IdOrigen'] : NULL,
+                            'IdOrigen' => $viaje['IdOrigen'] == 0 ? NULL : $viaje['IdOrigen'],
                             'FechaSalida' => $viaje['FechaSalida'],
                             'HoraSalida' => $viaje['HoraSalida'],
                             'IdTiro' => $viaje['IdTiro'],
@@ -363,11 +363,11 @@ class ViajeNetoService
         /**
          * Verificar si el telefono esta activo
          */
-        if ($this->repository->getTelefonoActivo($data['IMEI']))
+        /*if ($this->repository->getTelefonoActivo($data['IMEI']))
         {
             return json_encode(array("error" => "El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "."));
         }
-
+        */
         $usr = $data["usuario"];
         $json_imagenes = $data["Imagenes"];
         $imagenes = json_decode(utf8_encode($json_imagenes), TRUE);
