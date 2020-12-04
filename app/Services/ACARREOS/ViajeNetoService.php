@@ -119,7 +119,7 @@ class ViajeNetoService
             'Origenes' => $origenes,
             'Rutas' => $rutas,
             'Materiales' => $materiales,
-            'TipoImagenes' => $tipoImagenes,
+            'TiposImagenes' => $tipoImagenes,
             'Tags' => $tags,
             'MotivosDeductiva' => $motivoDeductiva,
             'Configuracion' => array("ValidacionPlacas" => $usuario->proyecto->configuracion ? $usuario->proyecto->configuracion->validacion_placas : 0),
@@ -171,6 +171,7 @@ class ViajeNetoService
          * Inicio de Viajes (tickets en origenes)
          */
         if (isset($data['inicioCamion'])) {
+            $data['inicioCamion'] = json_decode($data['inicioCamion'],true);
             $inicios_a_registrar = count($data['inicioCamion']);
             /**
              * Respaldar los datos
@@ -183,6 +184,7 @@ class ViajeNetoService
                 $existe = $this->repository->existeViajeInicio($inicio);
                 if ($existe) {
                     $previos_inicio++;
+                    continue;
                 }
                 try {
                     $inicio_viaje = InicioCamion::create([
@@ -219,7 +221,9 @@ class ViajeNetoService
          * Viajes finalizados (tickets en tiros)
          */
         if (isset($data['carddata'])) {
+            $data['carddata'] = json_decode($data['carddata'],true);
             $viajes_a_registrar = count($data['carddata']);
+
             /**
              * Respaldar los datos
              */
@@ -304,6 +308,7 @@ class ViajeNetoService
          */
         if (isset($data['coordenadas'])) {
             $this->repository->crearJson($data['coordenadas']);
+            $data['coordenadas'] = json_decode($data['coordenadas'],true);
             foreach ($data['coordenadas'] as $key => $coordenada) {
                 try {
                     $gps = EventoGPS::create([
@@ -345,7 +350,7 @@ class ViajeNetoService
      * @throws \Exception
      */
     public function cargaImagenesViajes($data){
-    
+
         /**
          * Se realiza conexión con la base de datos de acarreos.
          */
@@ -354,7 +359,7 @@ class ViajeNetoService
          * Respaldar los datos
          */
         $this->repository->crearJson(array_except($data, 'access_token'));
-        
+
         /**
          * Verificar si el telefono esta activo
          */
@@ -409,7 +414,7 @@ class ViajeNetoService
             . "\"imagenes_registradas\":".$json_imagenes_registradas.", "
             . "\"imagenes_no_registradas_sv\":".$json_imagenes_no_registradas_sv.", "
             . "\"imagenes_no_registradas\":".$json_imagenes_no_registradas));
-        
+
     }
 
     /**

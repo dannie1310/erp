@@ -35,6 +35,7 @@ class InicioCamion extends Model
         'latitud_origen',
         'longitud_origen'
     ];
+    public $timestamps = false;
 
     /**
      * Relaciones Eloquent
