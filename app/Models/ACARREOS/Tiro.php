@@ -137,23 +137,23 @@ class Tiro extends Model
     {
         try {
             DB::connection('acarreos')->beginTransaction();
-            if ($this->concepto()) {
-                if ($this->concepto()->id_concepto == $data) {
-                    abort(400, "El concepto ya esta asignado a este tiro.");
-                }
-                $this->tiroConcepto()->whereRaw('fin_vigencia is null')->update([
-                    'fin_vigencia' => date('Y-m-d H:i:s')
-                ]);
-                TiroConcepto::create([
-                    'id_tiro' => $this->IdTiro,
-                    'id_concepto' => $data
-                ]);
-            }else{
-                TiroConcepto::create([
-                    'id_tiro' => $this->IdTiro,
-                    'id_concepto' => $data
+            if ($this->concepto() && $this->concepto()->id_concepto == $data)
+            {
+                abort(400, "El concepto ya esta asignado a este tiro.");
+            }
+
+            if (count($this->tiroConcepto) != 0)
+            {
+                $fecha_fin = date('Y-m-d H:i:s',strtotime('-1 second', strtotime(date('Y-m-d H:i:s'))));
+                $tiro_concepto = $this->tiroConcepto()->whereRaw('fin_vigencia is null')->first();
+                $tiro_concepto->update([
+                    'fin_vigencia' => $fecha_fin
                 ]);
             }
+            TiroConcepto::create([
+                'id_tiro' => $this->IdTiro,
+                'id_concepto' => $data
+            ]);
             DB::connection('acarreos')->commit();
             return $this;
         } catch (\Exception $e) {
