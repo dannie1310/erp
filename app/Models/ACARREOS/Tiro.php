@@ -141,7 +141,8 @@ class Tiro extends Model
             {
                 abort(400, "El concepto ya esta asignado a este tiro.");
             }
-            if ($this->tiroConcepto())
+
+            if (count($this->tiroConcepto) != 0)
             {
                 $fecha_fin = date('Y-m-d H:i:s',strtotime('-1 second', strtotime(date('Y-m-d H:i:s'))));
                 $tiro_concepto = $this->tiroConcepto()->whereRaw('fin_vigencia is null')->first();
