@@ -133,6 +133,10 @@ export default {
                 search = search + 'impuestos_trasladados='+ payload.params.impuestos_trasladados + '&';
                 filtros = +filtros + 1;
             }
+            if (typeof payload.params.estado !== 'undefined') {
+                search = search + 'estado='+ payload.params.estado + '&';
+                filtros = +filtros + 1;
+            }
 
             if(filtros == 0){
                 swal({

@@ -69,6 +69,7 @@
                     { title: 'Total', field: 'total',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Moneda', field: 'moneda',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'TC', field: 'tipo_cambio',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                    { title: 'Estado', field: 'estado',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -147,6 +148,7 @@
                             impuestos_trasladados: ccfdi.impuestos_trasladados_format,
                             moneda: ccfdi.moneda,
                             tipo_cambio: ccfdi.tipo_cambio,
+                            estado: ccfdi.estado,
                             uuid: ccfdi.uuid,
                             buttons: $.extend({}, {
                                 id: ccfdi.id,

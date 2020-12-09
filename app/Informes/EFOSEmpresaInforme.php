@@ -80,7 +80,7 @@ class EFOSEmpresaInforme
            ON (Subquery.id = ListaEmpresasSAT.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P' and ctg_efos.estado_registro = 1
+ WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P' and cfd_sat.cancelado != 1 and ctg_efos.estado_registro = 1
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -141,7 +141,7 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
        INNER JOIN
        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
           ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
- WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0
+ WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0 AND cfd_sat.cancelado != 1 and cfd_sat.tipo_comprobante != 'P'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -200,7 +200,7 @@ ORDER BY 7 DESC
        INNER JOIN
        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
           ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
- WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0
+ WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0 AND cfd_sat.cancelado != 1 and cfd_sat.tipo_comprobante != 'P'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -259,7 +259,7 @@ ORDER BY 7 DESC
        INNER JOIN
        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
           ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
- WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0
+ WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0 AND cfd_sat.cancelado != 1 and cfd_sat.tipo_comprobante != 'P'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -339,6 +339,8 @@ ORDER BY 7 DESC
        AND (cfd_no_deducidos.id IS NULL)
        AND (efos.estado = 0)
        AND (cfd_sat.estado !=8)
+       AND cfd_sat.cancelado != 1
+       AND cfd_sat.tipo_comprobante != 'P'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -421,6 +423,8 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
        AND (cfd_no_deducidos.id IS NULL)
        AND (efos.estado = 0)
        AND (cfd_sat.estado =8)
+       AND cfd_sat.cancelado != 1
+       AND cfd_sat.tipo_comprobante != 'P'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,

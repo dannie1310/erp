@@ -48,6 +48,7 @@ class CFDEmpresaMes
            ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id))
        INNER JOIN SEGURIDAD_ERP.Reportes.CatalogoMeses CatalogoMeses
           ON (month (cfd_sat.fecha) = CatalogoMeses.MesID)
+          WHERE cfd_sat.cancelado != 1
 GROUP BY ListaEmpresasSAT.razon_social,
          ListaEmpresasSAT.rfc,
          month (cfd_sat.fecha),
