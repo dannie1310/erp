@@ -135,6 +135,14 @@ class CFDSATService
         if (isset($data['folio'])) {
             $this->repository->where([['folio', 'like', '' .$data['folio']. '' ]]);
         }
+        if (isset($data['estado'])) {
+            if (strpos('CANCELADO', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['cancelado', '=', 1]]);
+            }
+            else if (strpos('VIGENTE', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['cancelado', '=', 0]]);
+            }
+        }
         return $this->repository->paginate($data);
     }
 
