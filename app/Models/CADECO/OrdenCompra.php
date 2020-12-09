@@ -479,23 +479,27 @@ class OrdenCompra extends Transaccion
 
         $salidas = collect($salidas_arr)->unique();
         foreach ($salidas as $salida){
-            $relaciones[$i] = $salida->datos_para_relacion;
-            $i++;
-            #POLIZA DE SALIDA
-            if($salida->poliza){
-                $relaciones[$i] = $salida->poliza->datos_para_relacion;
+            try{
+                $relaciones[$i] = $salida->datos_para_relacion;
                 $i++;
-            }
+                #POLIZA DE SALIDA
+                if($salida->poliza){
+                    $relaciones[$i] = $salida->poliza->datos_para_relacion;
+                    $i++;
+                }
+            }catch(\Exception $e){}
         }
         $transferencias = collect($transferencias_arr)->unique();
         foreach ($transferencias as $transferencia){
-            $relaciones[$i] = $transferencia->datos_para_relacion;
-            $i++;
-            #POLIZA DE TRANSFERENCIA
-            if($transferencia->poliza){
-                $relaciones[$i] = $transferencia->poliza->datos_para_relacion;
+            try {
+                $relaciones[$i] = $transferencia->datos_para_relacion;
                 $i++;
-            }
+                #POLIZA DE TRANSFERENCIA
+                if ($transferencia->poliza) {
+                    $relaciones[$i] = $transferencia->poliza->datos_para_relacion;
+                    $i++;
+                }
+            }catch(\Exception $e){}
         }
         $orden1 = array_column($relaciones, 'orden');
 
