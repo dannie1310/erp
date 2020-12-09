@@ -113,6 +113,10 @@ export default {
                 search = search + 'subtotal='+ payload.params.subtotal + '&';
                 filtros = +filtros + 1;
             }
+            if (typeof payload.params.total !== 'undefined') {
+                search = search + 'total='+ payload.params.total + '&';
+                filtros = +filtros + 1;
+            }
             if (typeof payload.params.descuento !== 'undefined') {
                 search = search + 'descuento='+ payload.params.descuento + '&';
                 filtros = +filtros + 1;
@@ -122,7 +126,7 @@ export default {
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.tipo_cambio !== 'undefined') {
-                search = search + 'moneda='+ payload.params.tipo_cambio + '&';
+                search = search + 'tipo_cambio='+ payload.params.tipo_cambio + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.serie !== 'undefined') {
@@ -143,6 +147,10 @@ export default {
             }
             if (typeof payload.params.estado !== 'undefined') {
                 search = search + 'estado='+ payload.params.estado + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.tipo_comprobante !== 'undefined') {
+                search = search + 'tipo_comprobante='+ payload.params.tipo_comprobante + '&';
                 filtros = +filtros + 1;
             }
 
