@@ -84,6 +84,14 @@ export default {
                 search = search + 'rfc_receptor='+ payload.params.rfc_receptor + '&';
                 filtros = +filtros + 1;
             }
+            if (typeof payload.params.emisor !== 'undefined') {
+                search = search + 'emisor='+ payload.params.emisor + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.receptor !== 'undefined') {
+                search = search + 'receptor='+ payload.params.receptor + '&';
+                filtros = +filtros + 1;
+            }
             if (typeof payload.params.startDate !== 'undefined') {
                 search = search + 'startDate='+ payload.params.startDate + '&';
                 filtros = +filtros + 1;
