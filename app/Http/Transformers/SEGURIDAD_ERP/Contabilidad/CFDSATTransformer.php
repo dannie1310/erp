@@ -55,6 +55,7 @@ class CFDSATTransformer extends TransformerAbstract
             'tipo_comprobante' => $model->tipo_comprobante,
             'moneda' => $model->moneda,
             'tipo_cambio' => $model->tipo_cambio,
+            'estado' => $model->estado_txt
         ];
     }
 
