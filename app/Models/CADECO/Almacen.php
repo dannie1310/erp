@@ -109,6 +109,11 @@ class Almacen extends Model
         return $query->whereIn('tipo_almacen', [0,5])->where('opciones', 0);
     }
 
+    public function scopeTipoMaterial($query)
+    {
+        return $query->where('tipo_almacen', '=', 0)->where('opciones', 0);
+    }
+
     public function  Inventarios(){
         return $this->hasMany(Inventario::class,id_almacen, "id_almacen");
     }
