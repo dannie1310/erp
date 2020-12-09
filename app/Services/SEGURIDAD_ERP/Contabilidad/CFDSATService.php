@@ -766,6 +766,59 @@ class CFDSATService
         if (isset($data['fecha'])) {
             $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
         }
+
+        if (isset($data['emisor'])) {
+            $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            foreach ($proveedoresSAT as $e) {
+                $arreglo_proveedor[] = $e->id;
+            }
+            $this->repository->whereIn(['id_proveedor_sat', $arreglo_proveedor]);
+        }
+        if (isset($data['receptor'])) {
+            $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            foreach ($empresasSAT as $es) {
+                $arreglo_empresa[] = $es->id;
+            }
+            $this->repository->whereIn(['id_empresa_sat', $arreglo_empresa]);
+        }
+        if (isset($data['moneda'])) {
+            $this->repository->where([['moneda', 'LIKE', '%' . $data['moneda'] . '%']]);
+        }
+        if (isset($data['tipo_cambio'])) {
+            $this->repository->where([['tipo_cambio', '=', $data['tipo_cambio'] ]]);
+        }
+        if (isset($data['subtotal'])) {
+            $this->repository->where([['subtotal', '=', $data['subtotal'] ]]);
+        }
+        if (isset($data['descuento'])) {
+            $this->repository->where([['descuento', '=', $data['descuento'] ]]);
+        }
+        if (isset($data['impuestos_retenidos'])) {
+            $this->repository->where([['total_impuestos_retenidos', '=', $data['impuestos_retenidos'] ]]);
+        }
+        if (isset($data['impuestos_trasladados'])) {
+            $this->repository->where([['total_impuestos_trasladados', '=', $data['impuestos_trasladados'] ]]);
+        }
+        if (isset($data['tipo_comprobante'])) {
+            $this->repository->where([['tipo_comprobante', 'LIKE', '%' .$data['tipo_comprobante']. '%' ]]);
+        }
+        if (isset($data['serie'])) {
+            $this->repository->where([['serie', 'like', '' .$data['serie']. '' ]]);
+        }
+        if (isset($data['folio'])) {
+            $this->repository->where([['folio', 'like', '' .$data['folio']. '' ]]);
+        }
+        if (isset($data['estado'])) {
+            if (strpos('CANCELADO', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['cancelado', '=', 1]]);
+            }
+            else if (strpos('VIGENTE', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['cancelado', '=', 0]]);
+            }
+        }
+
+
+
         $uuid =  $this->repository->all();
 
         $dir_xml = "uploads/contabilidad/XML_SAT/";
