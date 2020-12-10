@@ -1,12 +1,12 @@
-<template>  
+<template>
     <span>
         <div class="row">
-            <div class="col-12">    
+            <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <i class="fa fa-spin fa-spinner fa-2x" v-if="cargando"></i>
                         <div class="row" v-if="Object.keys(orden_compra).length > 0">
-                            
+
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Folio Solicitud de Compra: </b></label>
@@ -19,42 +19,42 @@
                                     {{orden_compra.solicitud.observaciones}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Folio Orden de Compra: </b></label>
                                     {{orden_compra.numero_folio_format}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Usuario Registro: </b></label>
-                                    {{orden_compra.usuario.nombre}}
+                                    {{orden_compra.usuario_registro}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Fecha Registro: </b></label>
                                     {{orden_compra.fecha_format}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Razón Social: </b></label>
                                     {{orden_compra.empresa.razon_social}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Sucursal: </b></label>
                                     {{orden_compra.sucursal.descripcion}}
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>Dirección: </b></label>
@@ -67,7 +67,7 @@
                 </div>
             </div>
              <div class="col-12" v-if="Object.keys(orden_compra).length > 0">
-                
+
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
@@ -107,7 +107,7 @@
                                                 <td  colspan="6"></td>
                                                 <td>Impuesto</td>
                                                 <td class="money">
-                                                    <input 
+                                                    <input
                                                         type="number"
                                                         class="form-control"
                                                         name="impuesto"
@@ -137,17 +137,17 @@
                     </div>
                 </div>
              </div>
-             <div class="col-12">    
+             <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <i class="fa fa-spin fa-spinner fa-2x" v-if="cargando"></i>
                         <div class="row" v-if="Object.keys(orden_compra).length > 0">
-                            
+
                             <div class="col-md-4" >
                                 <div class="form-group row error-content">
                                     <label for="porcentaje_anticipo_pactado" class="col-sm-6 col-form-label">Pago en Parcialidades (%): </label>
                                     <div class="col-sm-6">
-                                        <input 
+                                        <input
                                             type="number"
                                             class="form-control"
                                             name="porcentaje_anticipo_pactado"
@@ -158,11 +158,11 @@
                                             id="porcentaje_anticipo_pactado">
                                         <div class="invalid-feedback" v-show="errors.has(`porcentaje_anticipo_pactado`)">{{ errors.first(`porcentaje_anticipo_pactado`) }}</div>
                                     </div>
-                                    
+
                                 </div>
                             </div>
 
-                            
+
                             <div class="col-md-8" >
                                 <div class="form-group row error-content">
                                     <label for="tipo_gasto_select" class="col-sm-2 col-form-label">Tipo de Gasto: </label>
@@ -182,7 +182,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-4" >
                                 <div class="form-group">
                                     <label><b>% Anticipo: </b></label>
@@ -228,7 +228,7 @@
                                     </div>
                                 </div>
                             </div>
-                        
+
 
                             <div class="col-md-12">
                                 <div class="form-group row error-content">
@@ -246,7 +246,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-12">
                                 <div class="form-group row error-content">
                                     <label for="domicilio_entrega" class="col-sm-2 col-form-label">Domicilio de Entrega:  </label>
@@ -263,7 +263,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                              <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="otras_condiciones" class="col-sm-2 col-form-label">Otras Condiciones:  </label>
@@ -312,7 +312,7 @@ export default {
     },
     computed: {
          recalcular(){
-            return '$' + parseFloat(+this.orden_compra.subtotal + +this.orden_compra.impuesto).formatMoney(2,'.',',');     
+            return '$' + parseFloat(+this.orden_compra.subtotal + +this.orden_compra.impuesto).formatMoney(2,'.',',');
         },
     },
     mounted() {
@@ -330,7 +330,7 @@ export default {
             return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id,
                     params:{
-                        include: ['empresa', 'moneda', 'sucursal', 'complemento', 'usuario', 'partidas.material', 'partidas.complemento', 'solicitud']
+                        include: ['empresa', 'moneda', 'sucursal', 'complemento', 'partidas.material', 'partidas.complemento', 'solicitud']
                     }
                 }).then(data => {
                     this.orden_compra = data;
@@ -379,7 +379,7 @@ export default {
         salir(){
             this.$router.push({name: 'orden-compra'});
         },
-       
+
     }
 
 }

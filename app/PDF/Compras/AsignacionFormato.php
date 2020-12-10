@@ -726,22 +726,8 @@ class AsignacionFormato extends Rotation
             $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
         }
-        $this->SetTextColor(0, 0, 0);
-        $this->SetY(-5.4);
-        $this->SetFont('Arial', '', 6);
-        $encabezados[0] = utf8_decode("Elaboró");
-        $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
-        $encabezados[2] = "Gerencia Solicitante";
-        $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
-        for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, .5, $encabezados[$i], 1, 0, 'C', 0, '');
-            $this->Cell(.4);
-        }
-        $this->Ln(.5);
-        for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, 1, '', 1, 0, 'R', 0, '');
-            $this->Cell(.4);
-        }
+
+        $this->firmas();
 
         $this->SetY(-3.8);
         $this->image("data:image/png;base64,".base64_encode(QrCode::format('png')->generate($this->cadena_qr)), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
@@ -765,12 +751,101 @@ class AsignacionFormato extends Rotation
         $this->Cell(15, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
+    private function firmas()
+    {
+        $this->SetTextColor(0, 0, 0);
+        $this->SetY(-5.9);
+        $this->SetFont('Arial', '', 6);
+
+        if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->asignacion->solicitud->id_area_compradora != 4)
+        {
+            $this->Cell(5.2, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, 'Control de Proyectos', 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Gerente de Construcción'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('VoBo Administración'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Aprobó '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->Cell(5.2, .4, utf8_decode($this->asignacion->usuario), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. ALEJANDRO PONCE RAMÍREZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCIA RAMOS'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. FLORENCIO MONTIEL MELO'), 'TRLB', 0, 'C', 0);
+        }
+        else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->asignacion->solicitud->id_area_compradora == 4)
+        {
+            $this->Cell(5.2, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Aprobó'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->Cell(5.2, .4, utf8_decode('BRUNO ELIAS MEDINA RODRIGUEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. JOSE MARTÍN ORTIZ VAZQUEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('DIR. CORPORATIVO'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 0);
+
+        }
+        else if (Context::getDatabase() == "SAO1814_CHIMALHUACAN" && Context::getIdObra() == 3 && $this->asignacion->solicitud->id_area_compradora == 4)
+        {
+            $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+
+        }
+        else {
+            $encabezados[0] = utf8_decode("Elaboró");
+            $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
+            $encabezados[2] = "Gerencia Solicitante";
+            $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
+            for ($i = 0; $i <= 3; $i++) {
+                $this->Cell(6.2, .5, $encabezados[$i], 1, 0, 'C', 0, '');
+                $this->Cell(.4);
+            }
+            $this->Ln(.5);
+            for ($i = 0; $i <= 3; $i++) {
+                $this->Cell(6.2, 1, '', 1, 0, 'R', 0, '');
+                $this->Cell(.4);
+            }
+        }
+    }
+
     function create()
     {
         $this->SetMargins(1, .5, 2);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 5.5);
+        $this->SetAutoPageBreak(true, 6);
         $this->partidas();
 
         try {

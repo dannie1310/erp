@@ -47,7 +47,7 @@ class ProveedorContratistaService
             $proveedorContratista->whereIn(['id_empresa',$proveedor]);
             return $proveedorContratista->paginate($data);
         }
-        return $this->repository->paginate();       
+        return $this->repository->paginate();
     }
 
     private function getValidacionLRFC($rfc, $razon_social, $tipo_incidencia)
@@ -94,8 +94,10 @@ class ProveedorContratistaService
     }
 
     public function update(array $data, $id){
-        $this->repository->validarRegistroXml($id);
         $actual_rfc = $this->repository->getRFC($id);
+        if($data["rfc_nuevo"] != $actual_rfc){
+            $this->repository->validarRegistroXml($id);
+        }
         if($data["emite_factura"] == 1 && $data["rfc_nuevo"] != $actual_rfc)
         {
             if($data['rfc_nuevo'] == 'XXXXXXXXXXXX') abort(403, 'El R.F.C. tiene formato inválido.');
@@ -103,7 +105,7 @@ class ProveedorContratistaService
         }
         return $this->repository->update($data, $id);
     }
-    
+
     public function delete($data, $id)
     {
         $this->repository->delete($data, $id);

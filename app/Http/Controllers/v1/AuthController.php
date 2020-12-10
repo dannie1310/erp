@@ -29,8 +29,8 @@ class AuthController extends Controller
      */
     public function __construct(AuthService $auth)
     {
-        $this->middleware('auth:api', ['except' => ['login', 'setContext']]);
-        $this->middleware('context', ['except' => ['login', 'logout', 'setContext', 'refresh', 'obras']]);
+        $this->middleware('auth:api', ['except' => ['login', 'setContext', 'movil']]);
+        $this->middleware('context', ['except' => ['login', 'logout', 'setContext', 'refresh', 'obras', 'movil']]);
 
         $this->auth = $auth;
     }
@@ -52,6 +52,23 @@ class AuthController extends Controller
 
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
+        $token = $tokenResult->token;
+        $token->save();
+
+        return $this->respondWithToken($tokenResult);
+    }
+
+    public function movil(Request $request){
+        dd(1);
+        $credentials = request(['usuario', 'clave']);
+        if (!Auth::attempt($credentials)) {
+            return response()->json([
+                'message' => 'Unauthorized'], 401);
+        }
+
+        $user = $request->user();
+        dd($user);
+        $tokenResult = $user->createToken('Personal Access Tokens');
         $token = $tokenResult->token;
         $token->save();
 

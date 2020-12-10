@@ -422,6 +422,38 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(2.5, .5, 'TOTAL: ', 'LB', 0, 'L');
                 $this->Cell(4, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
                 $this->Ln(.5);
+
+                $this->Ln(19.5);
+
+                $this->SetFont('Arial', 'B', 4);
+
+                $this->Cell(10);
+                $this->Cell(4.6,.5, utf8_decode('"EL CLIENTE"') ,'LT',0,'C');
+                $this->Cell(5,.5, utf8_decode('"EL PROVEEDOR"'),'LRT',0,'C');
+                $this->Ln(.4);
+
+                $this->Cell(10);
+                $this->CellFitScale(4.6,1.6, '      ' ,'LT',0,'C');
+                $this->CellFitScale(5,1.6,    '      ','LTR',0,'C');
+                $this->Ln(1);
+
+
+                $this->Cell(10);
+                $this->CellFitScale(4.6,.4,utf8_decode($this->obra->facturar),'LT',0,'C');
+                $this->CellFitScale(5,.4,utf8_decode($this->empresa_nombre) ,'LTR',0,'C');
+                $this->Ln(.4);
+
+
+                $this->Cell(10);
+                $this->Cell(4.6,.2, 'APODERADO LEGAL, FACTOR o','LTR',0,'C');
+                $this->Cell(5,.2, 'APODERADO LEGAL, FACTOR o','RT',0,'C');
+                $this->Ln(.2);
+
+                $this->Cell(10);
+
+                $this->Cell(4.6,.2, 'DEPENDIENTE','LB',0,'C');
+                $this->Cell(5,.2, 'DEPENDIENTE','LRB',0,'C');
+                $this->Ln(.2);
             }
 
         }
@@ -693,10 +725,10 @@ class OrdenCompraFormato extends FPDI
         $residuo = $this->PageNo() % 2;
 
         $this->SetTextColor(0,0,0);
-
         // Firmas.
         if ($residuo > 0) {
-            if (Context::getDatabase() == "SAO1814" && $this->ordenCompra->obra->id_obra == 41) {
+            if (Context::getDatabase() == "SAO1814" && $this->ordenCompra->obra->id_obra == 41)
+            {
                 $this->SetY(-4.5);
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(180, 180, 180);
@@ -725,7 +757,8 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(3.92, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
 
-            } else if (Context::getDatabase() == "SAO1814_SPM_MOBILIARIO" && $this->ordenCompra->obra->id_obra == 1) {
+            }
+            else if (Context::getDatabase() == "SAO1814_SPM_MOBILIARIO" && $this->ordenCompra->obra->id_obra == 1) {
                 $this->SetY(-3.5);
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(180, 180, 180);
@@ -756,7 +789,8 @@ class OrdenCompraFormato extends FPDI
                 $this->CellFitScale(6.53, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 1);
 
 
-            } else if (Context::getDatabase() == "SAO1814_MUSEO_BARROCO") {
+            }
+            else if (Context::getDatabase() == "SAO1814_MUSEO_BARROCO") {
                 $this->SetY(-3.5);
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(180, 180, 180);
@@ -785,7 +819,9 @@ class OrdenCompraFormato extends FPDI
                 $this->CellFitScale(4.89, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 1);
                 $this->CellFitScale(4.89, .4, utf8_decode('LIC. FERNANDO GONZÁLEZ ORTÍZ'), 'TRLB', 0, 'C', 1);
 
-            } else if (Context::getDatabase() == "SAO1814_TERMINAL_NAICM") {
+            }
+            else if (Context::getDatabase() == "SAO1814_TERMINAL_NAICM")
+            {
                 $this->SetY(-3.5);
                 $this->SetFont('Arial', 'B', 5);
                 $this->SetY(-2.7);
@@ -807,7 +843,9 @@ class OrdenCompraFormato extends FPDI
                 $this->CellFitScale(4, .3, utf8_decode('Gerente / Director de Procuración'), 1, 0, 'C');
                 $this->CellFitScale(4, .3, ('Director General'), 1, 0, 'C');
 
-            } else if (Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO") {
+            }
+            else if (Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO")
+            {
                 $this->SetY(-2.7);
                 $this->Cell(4.5);
                 $this->SetFont('Arial', '', 6);
@@ -820,7 +858,64 @@ class OrdenCompraFormato extends FPDI
                 $this->CellFitScale(5, 1.2, ' ', 1, 0, 'R');
                 $this->CellFitScale(5, 1.2, ' ', 1, 0, 'R');
 
-            } else {
+            }
+            else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->ordenCompra->solicitud->id_area_compradora != 4)
+            {
+                $this->SetY(-3.5);
+                $this->SetFont('Arial', '', 6);
+                $this->SetFillColor(255, 255, 255);
+                $this->Ln();
+                $this->Cell(5, .4, utf8_decode('Jefe de compras'), 'TRLB', 0, 'C', 0);
+                $this->Cell(5, .4, utf8_decode('VoBo Administración'), 'TRLB', 0, 'C', 0);
+                $this->Cell(5, .4, utf8_decode('VoBo Gerente de Construcción'), 'TRLB', 0, 'C', 0);
+                $this->Cell(5, .4, utf8_decode('Aprobó  Director de Proyectos'), 'TRLB', 0, 'C', 0);
+                $this->Ln();
+
+                $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+                $this->Ln();
+                //$this->SetFillColor(180, 180, 180);
+                $this->Cell(5, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 1);
+                $this->Cell(5, .4, utf8_decode('ING.  MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 1);
+                $this->Cell(5, .4, utf8_decode('ING. FLORENCIO MONTIEL MELO'), 'TRLB', 0, 'C', 1);
+
+            }
+            else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra()== 3 && $this->ordenCompra->solicitud->id_area_compradora == 4)
+            {
+                $this->SetY(-3.5);
+                $this->SetFont('Arial', '', 6);
+                $this->SetFillColor(255, 255, 255);
+                $this->Cell(3.92, .25, utf8_decode(''), 'TRL', 0, 'C', 1);
+                $this->Cell(3.92, .25, '', 'TRL', 0, 'C', 1);
+                $this->Cell(3.92, .25, 'VoBo', 'TRL', 0, 'C', 1);
+                $this->Cell(3.92, .25, 'Representante Legal ', 'TRL', 0, 'C', 1);
+                $this->Cell(3.92, .25,utf8_decode('Representante Legal '),'TRL', 0, 'C', 1);
+                $this->Ln();
+
+                $this->Cell(3.92, .4, utf8_decode('Jefe Compras'), 'RLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, 'VoBo', 'RLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, 'CALTIA CONCESIONES SA DE CV', 'RLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, 'CALTIA CONCESIONES SA DE CV', 'RLB', 0, 'C', 1);
+                $this->CellFitScaleForce(3.92, .4,utf8_decode('LA PENINSULAR COMPAÑIA CONSTRUCTORA SA DE CV'),'RLB', 0, 'C', 1);
+                $this->Ln();
+
+                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
+                $this->Ln();
+                $this->SetFont('Arial', '', 5);
+                $this->Cell(3.92, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, utf8_decode('LIC. MARIA LUCIA MARTINEZ BALADO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, utf8_decode('ING. MANUEL TOBAR VIDA'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScaleForce(3.92, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 1);
+            }
+            else {
 
                 if ($this->conFirmaDAF) {
                     $this->SetFont('Arial', '', 6);
@@ -841,7 +936,6 @@ class OrdenCompraFormato extends FPDI
                     $this->Ln(.5);
                     $this->Cell(14.7);
                     $this->CellFitScale(4.9, 1.2, ' ', 1, 0, 'R');
-
                 } else {
                     $this->SetFont('Arial', '', 6);
                     $this->SetY(-2.7);

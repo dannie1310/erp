@@ -14,6 +14,11 @@
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
+    // $api->group([ 'prefix' => 'movil'], function ($api) {
+    //     $api->post('authorizeMovil', 'App\Http\Controllers\Auth\Passport\AuthorizationController@authorizeMovil');
+    // });
+
+    Route::get('movil', 'Auth\Passport\AuthorizationController@movil');
     $api->group(['middleware' => 'api', 'prefix' => 'auth'], function ($api) {
         $api->post('login', 'App\Http\Controllers\v1\AuthController@login');
         $api->post('logout', 'App\Http\Controllers\v1\AuthController@logout');
@@ -304,6 +309,7 @@ $api->version('v1', function ($api) {
             $api->get('obtener-informe-completo/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeCompletoPDF');
             $api->post('obtener-contenido-directorio', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@getContenidoDirectorio');
             $api->get('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargar');
+            $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');
@@ -415,6 +421,14 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@store');
             $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@activar')->where(['id' => '[0-9]+']);
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@desactivar')->where(['id' => '[0-9]+']);
+        });
+
+        //VIAJE NETO
+        $api->group(['prefix' => 'viaje-neto'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@registrarViaje');
+            $api->post('/cargaImagenesViajes', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@cargaImagenesViajes');
+            $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@cambiarClave');
         });
     });
 
@@ -915,6 +929,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/revertir', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@revertir')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@paginate');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfCFDI')->where(['id' => '[0-9]+']);
             /**
              * FORMATO DE CONTRARECIBO
              */
@@ -1139,6 +1154,7 @@ $api->version('v1', function ($api) {
             $api->post('obtener-informe-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosado');
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformePDF');
             $api->get('obtener-informe-desglosado/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosadoPDF');
+            $api->get('obtener-informe-cfdi-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@descargaInformeCFDIDesglosado');
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');

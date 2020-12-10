@@ -15,6 +15,9 @@
                 </div>
                 <div class="col-md-6">
                     <ImpresionInforme ></ImpresionInforme>
+                    <button @click="descargarInforme" class="btn btn-primary pull-right" title="Descargar Informe">
+                        <i class="fa fa-download"></i> Descargar
+                    </button>
                 </div>
             </div>
             <br>
@@ -105,6 +108,18 @@
             this.getInforme();
         },
         methods :{
+            descargarInforme(){
+                this.descargando = true;
+                return this.$store.dispatch('seguridad/finanzas/ctg-efos/descargarInformeCFDIDesglosado',
+                {
+
+                })
+                .then(data => {
+                    this.$emit('success');
+                }).finally(() => {
+                    this.descargando = false;
+                });
+            },
             getInforme() {
                 this.cargando = true;
                 return this.$store.dispatch('seguridad/finanzas/ctg-efos/obtenerInformeCFD', {

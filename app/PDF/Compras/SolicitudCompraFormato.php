@@ -374,7 +374,8 @@ RFC: ' . $this->obra->rfc), '', 'J');
         }
         $this->SetY(-5.9);
         $this->SetFont('Arial', '', 6);
-        if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
+        if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41)
+        {
             //if(true){
 
             $this->SetFont('Arial', '', 6);
@@ -403,7 +404,9 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->Cell(4.8, .4, 'C.P. ROGELIO HERNANDEZ BELTRAN', 'TRLB', 0, 'C', 1);
             $this->Cell(5, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
             $this->Cell(5, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
-        } else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3) {
+        }
+        else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->solicitud->id_area_compradora != 4)
+        {
 
             $this->SetFont('Arial', '', 6);
             $this->SetFillColor(255, 255, 255);
@@ -426,9 +429,31 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->Cell(4.8, .4, utf8_decode($this->solicitud->usuario_registro), 'TRLB', 0, 'C', 0);
             $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 0);
             $this->Cell(5, .4, '', 'TRLB', 0, 'C', 0);
-        } else {
+        }
+        else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->solicitud->id_area_compradora == 4)
+        {
+            $this->SetFont('Arial', '', 6);
+            $this->SetFillColor(255, 255, 255);
 
+            $this->Cell(4.8, .4, utf8_decode('Solicitó'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('Capturó'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, utf8_decode('Aprobó'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, utf8_decode('Aprobó'), 'TRLB', 0, 'C', 0);
+            $this->Ln();
 
+            $this->Cell(4.8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(4.8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Ln();
+
+            $this->Cell(4.8, .4, '', 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('BRUNO ELIAS MEDINA RODRIGUEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, utf8_decode('ING. JOSE MARTÍN ORTIZ VAZQUEZ'), 'TRLB', 0, 'C', 0);
+        }
+        else
+            {
             $this->CellFitScale(6, .5, utf8_decode('Solicitó'), 1, 0, 'C');
             $this->Cell(.7);
             $this->CellFitScale(6, .5, utf8_decode('Capturó'), 1, 0, 'C');
@@ -440,10 +465,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->CellFitScale(6, 1, ' ', 1, 0, 'C');
             $this->Cell(.8);
             $this->CellFitScale(6, 1, ' ', 1, 0, 'R');
-            //echo $this->GetY()+1.2;
-
         }
-
     }
 
     function Footer()

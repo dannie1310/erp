@@ -3,6 +3,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Finanzas;
 
+use App\Exports\InformeCFDIDesglosado;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\PDF\Fiscal\InformeEFOSCFD;
 use App\PDF\Fiscal\InformeEFOSCFDDesglosado;
@@ -73,6 +74,11 @@ class CtgEfosService
         $informe = $this->obtenerInformeDesglosado();
         $pdf = new InformeEFOSCFDDesglosado($informe);
         return $pdf->create();
+    }
+
+    public function descargaInformeCFDIDesglosado()
+    {
+        return Excel::download(new InformeCFDIDesglosado(), 'informe.xlsx');
     }
 
 }

@@ -42,6 +42,11 @@ class ProveedorContratista extends Empresa
         return $this->hasMany(Factura::class, 'id_empresa', 'id_empresa');
     }
 
+    public function facturaRepositorio()
+    {
+        return $this->hasMany(FacturaRepositorio::class, 'rfc_emisor', 'rfc');
+    }
+
     public function getPorcentajeFormatAttribute(){
         return number_format($this->porcentaje, 2, '.', ',');
     }
@@ -100,13 +105,7 @@ class ProveedorContratista extends Empresa
     }
 
     public function validarXmlRegistrados(){
-        $transacciones = $this->facturas;
-        $cantidad = 0;
-        foreach($transacciones as $transaccion){
-            if($transaccion->facturaRepositorio){
-                $cantidad++;
-            }
-        }
+        $cantidad = $this->facturaRepositorio->count();
 
         if($cantidad > 0){
             abort(403, 'El R.F.C. del Proveedor / Contratisa '. $this->razon_social.' no puede ser editado porque tiene ' . $cantidad . ' comprobante(s) digital(es) (XML) asociado(s).');
