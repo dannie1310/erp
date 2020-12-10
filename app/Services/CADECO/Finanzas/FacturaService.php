@@ -450,7 +450,7 @@ class FacturaService
     private function validaFolio($folio, $arreglo_cfd)
     {
         if ($arreglo_cfd["serie"] != null) {
-            $pos = strpos($folio, $arreglo_cfd["folio"]);
+            $pos = strpos($folio, $arreglo_cfd["serie"].$arreglo_cfd["folio"]);
             if ($pos === false) {
                 abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $arreglo_cfd["folio"] . ")");
             }
@@ -459,7 +459,6 @@ class FacturaService
                 abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $arreglo_cfd["folio"] . ")");
             }
         }
-
     }
 
     private function validaEFO($arreglo_cfd)
