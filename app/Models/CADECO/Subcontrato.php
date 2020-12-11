@@ -396,8 +396,11 @@ class Subcontrato extends Transaccion
         $presupuestos = $this->presupuestos;
         foreach($presupuestos as $presupuesto)
         {
-            $relaciones[$i] = $presupuesto->datos_para_relacion;
-            $i++;
+            try{
+                $relaciones[$i] = $presupuesto->datos_para_relacion;
+                $i++;
+            } catch(\Exception $e)
+            {}
         }
         #SUBCONTRATO
         $subcontrato = $this;
