@@ -6,7 +6,7 @@ namespace App\Models\CADECO\SubcontratosCM;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tipo extends Model
+class CtgTipo extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'SubcontratosCM.ctg_tipos';

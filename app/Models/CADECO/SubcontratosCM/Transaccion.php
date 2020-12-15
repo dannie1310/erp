@@ -29,4 +29,32 @@ class Transaccion extends Model
         return $this->belongsTo(Subcontrato::class, 'id_subcontrato', 'id_transaccion');
     }
 
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaAplicacionFormatAttribute()
+    {
+        $date = date_create($this->fecha_aplicacion);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaRegistroFormatAttribute()
+    {
+        $date = date_create($this->fecha_registro);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getImpuestoFormatAttribute()
+    {
+        return '$' . number_format($this->impuesto, 2, '.', ',');
+    }
+
+    public function getMontoFormatAttribute()
+    {
+        return '$' . number_format($this->monto, 2, '.', ',');
+    }
+
 }

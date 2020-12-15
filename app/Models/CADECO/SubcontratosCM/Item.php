@@ -5,6 +5,7 @@ namespace App\Models\CADECO\SubcontratosCM;
 
 
 use App\Models\CADECO\Concepto;
+use App\Models\CADECO\Contrato;
 use App\Models\CADECO\ItemSubcontrato;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,12 +37,12 @@ class Item extends Model
 
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class, 'id_tipo_modificacion', 'id');
+        return $this->belongsTo(CtgTipo::class, 'id_tipo_modificacion', 'id');
     }
 
     public function concepto()
     {
-        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+        return $this->belongsTo(Contrato::class, 'id_concepto', 'id_concepto');
     }
 
 }
