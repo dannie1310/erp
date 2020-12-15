@@ -8,6 +8,28 @@ use App\Models\CADECO\Subcontratos\SubcontratoPartidaEliminada;
 
 class ItemSubcontrato extends Item
 {
+    protected $fillable = [
+        'id_transaccion',
+        'id_antecedente',
+        'item_antecedente',
+        'id_concepto',
+        'id_material',
+        'unidad',
+        'cantidad',
+        'cantidad_material',
+        'cantidad_mano_obra',
+        'importe',
+        'saldo',
+        'anticipo',
+        'descuento',
+        'precio_unitario',
+        'precio_material',
+        'precio_mano_obra',
+        'cantidad_original1',
+        'precio_original1',
+        'id_asignacion',
+        'id_cm_item',
+    ];
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_transaccion', 'id_transaccion');
