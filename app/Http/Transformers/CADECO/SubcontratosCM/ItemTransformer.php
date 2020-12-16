@@ -26,6 +26,9 @@ class ItemTransformer extends TransformerAbstract
             'cantidad' => $model->cantidad,
             'precio' => $model->precio,
             'importe' => $model->importe,
+            'cantidad_format' => $model->cantidad_format,
+            'precio_format' => $model->precio_format,
+            'importe_format' => $model->importe_format,
         ];
     }
 

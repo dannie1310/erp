@@ -45,4 +45,19 @@ class Item extends Model
         return $this->belongsTo(Contrato::class, 'id_concepto', 'id_concepto');
     }
 
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad, 2, '.', ',');
+    }
+
+    public function getPrecioFormatAttribute()
+    {
+        return '$' . number_format($this->precio, 2, '.', ',');
+    }
+
+    public function getImporteFormatAttribute()
+    {
+        return '$' . number_format($this->importe, 2, '.', ',');
+    }
+
 }
