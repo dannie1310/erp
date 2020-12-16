@@ -1152,6 +1152,56 @@ class EstimacionFormato extends Rotation
             $this->Cell(($this->GetPageWidth() - 6) / 7, 0.3, utf8_decode('Responsable del Proyecto'), 'TRLB', 0, 'C', 1);
 
         }
+        else if(Context::getDatabase() == "SAO1814_CIRCUITO" && (Context::getIdObra() == 7 || Context::getIdObra() == 8)){
+            /*Firmas en CEVASG E INFRASG*/
+            $this->SetY(-3.5);
+            $this->SetTextColor('0', '0', '0');
+            $this->SetFont('Arial', '', 6);
+            $this->SetFillColor(180, 180, 180);
+
+            $this->SetFont('Arial', 'B', 4.2);
+            $this->Cell(1);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Autoriza'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+
+            $this->Ln();
+            $this->Cell(1);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 1.2, '', 'TRLB', 0, 'C');
+
+            $this->SetFont('Arial', 'B', 4.2);
+            $this->Ln();
+            $this->Cell(1);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Responsable de Subcontratos'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Jefe de Frente'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Superintendente'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Coordinador Técnico'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Gerente de Proyecto'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.6);
+            $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Director de Proyecto'), 'TRLB', 0, 'C', 1);
+        }
         else {
             /*Firmas en Gral*/
             $this->SetY(-3.5);
