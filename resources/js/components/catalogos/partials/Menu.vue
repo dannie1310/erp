@@ -5,21 +5,22 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">SISTEMA DE CATÁLOGOS</li>
-
+            <li class="nav-item" v-if="$root.can('consultar_unidad')">
+                <router-link :to="{name: 'almacen'}" class="nav-link" :class="{active: this.$route.name == 'almacen'}">
+                    <i class="fas fa-ruler-combined nav-icon"></i>
+                    <p>Catálogo de Almacenes</p>
+                </router-link>
+            </li>
             <li class="nav-item" v-if="$root.can('consultar_unidad')">
                 <router-link :to="{name: 'unidad'}" class="nav-link" :class="{active: this.$route.name == 'unidad'}">
                     <i class="fas fa-ruler-combined nav-icon"></i>
                     <p>Catálogo de Unidades</p>
                 </router-link>
             </li>
-
             <li class="nav-item" v-if="catalogo_maquinaria">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-tractor"></i>
-                    <p>
-                        Maquinaria
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
+                    <p>Maquinaria<i class="right fa fa-angle-left"></i></p>
                 </a>
 
                 <ul class="nav nav-treeview" v-if="$root.can('consultar_familia_maquinaria')">
@@ -42,10 +43,7 @@
             <li class="nav-item" v-if="catalogo_servicios">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-hand-paper"></i>
-                    <p>
-                        Mano de Obra y Servicios
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
+                    <p>Mano de Obra y Servicios<i class="right fa fa-angle-left"></i></p>
                 </a>
 
                 <ul class="nav nav-treeview" v-if="$root.can('consultar_familia_servicio')">

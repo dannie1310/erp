@@ -1786,6 +1786,23 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'almacen',
+                        component: require('./components/catalogos/almacen/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'almacen',
+                                component: require('./components/catalogos/almacen/Index').default,
+                                meta: {
+                                    title: 'Catálogo de Almacenes',
+                                    breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE ALMACENES'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_unidad']
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'unidad',
                         component: require('./components/catalogos/unidad/Layout').default,
                         children: [

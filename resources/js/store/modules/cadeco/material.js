@@ -64,7 +64,7 @@ export default {
             });
         },
 
-        delete(context, payload) {            
+        delete(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar Insumo",
@@ -157,7 +157,7 @@ export default {
             })
         },
         update(context, payload) {
-                        
+
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Actualizar Insumo",
@@ -246,6 +246,5 @@ export default {
         currentMaterial(state) {
             return state.currentMaterial;
         }
-
     }
 }

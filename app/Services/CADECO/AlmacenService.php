@@ -10,8 +10,7 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Almacen;
-use App\Models\CADECO\Material;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Almacen\Repository;
 
 class AlmacenService
 {
@@ -30,6 +29,11 @@ class AlmacenService
         $this->repository = new Repository($model);
     }
 
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
+
     public function index($data)
     {
         return $this->repository->all($data);
@@ -38,5 +42,29 @@ class AlmacenService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function store(array $data)
+    {
+        if(!$this->repository->findAlmacen($data))
+        {
+            $data['descripcion'] = strtoupper($data['descripcion']);
+            return $this->repository->create(array_except($data,'tipos_almacenes'));
+        }
+        abort(400, "El almacén '". $data['descripcion']."' se encuentra registrado.");
+    }
+
+    public function update(array $data, $id)
+    {
+        if(!$this->repository->findAlmacen($data))
+        {
+            $data['descripcion'] = strtoupper($data['descripcion']);
+            return $this->repository->update($data, $id);
+        }
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar();
     }
 }
