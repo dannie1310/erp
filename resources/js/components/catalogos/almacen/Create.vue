@@ -1,6 +1,7 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_proveedor')" class="btn btn-app btn-info float-right">
+        <button @click="init" v-if="$root.can('registrar_almacen_material')||$root.can('registrar_almacen_maquinaria')||$root.can('registrar_almacen_maquina_controladora_insumo')||
+        $root.can('registrar_almacen_mano_obra')||$root.can('registrar_almacen_servicio')||$root.can('registrar_almacen_herramienta')" class="btn btn-app btn-info float-right">
             <i class="fa fa-plus"></i> Registrar
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -110,6 +111,8 @@
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset();
                 this.descripcion = '';
+                this.tipo_almacen = '';
+                this.id_material = '';
             },
             store(){
                 this.descripcion = this.descripcion.toUpperCase();
