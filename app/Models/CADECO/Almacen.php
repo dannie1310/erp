@@ -57,7 +57,8 @@ class Almacen extends Model
         'tipo_almacen',
         'descripcion',
         'fecha_registro',
-        'id_usuario'
+        'id_usuario',
+        'id_material'
     ];
 
     protected static function boot()
@@ -127,6 +128,11 @@ class Almacen extends Model
     public function itemsRelacionados()
     {
         return $this->hasMany(Item::class, 'id_almacen', 'id_almacen');
+    }
+
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
 
     /**

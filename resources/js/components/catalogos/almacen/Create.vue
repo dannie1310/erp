@@ -51,6 +51,24 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-12" v-if="tipo_almacen == 2">
+                                    <div class="form-group row error-content">
+                                        <label for="id_material" class="col-md-2 col-form-label">Insumos:</label>
+                                        <div class="col-md-10">
+                                            <select class="form-control"
+                                                    data-vv-as="Insumos"
+                                                    id="id_material"
+                                                    name="id_material"
+                                                    :error="errors.has('id_material')"
+                                                    v-validate="{required: true}"
+                                                    v-model="id_material">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(material) in materiales.data" :value="material.id">{{ material.descripcion }}</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -75,7 +93,9 @@
             return {
                 descripcion : '',
                 tipo_almacen : '',
-                tipos_almacenes : []
+                id_material : null,
+                tipos_almacenes : [],
+                materiales : []
             }
         },
         mounted() {
@@ -99,6 +119,13 @@
                         $(this.$refs.modal).modal('hide');
                     })
             },
+            getMateriales(){
+                return this.$store.dispatch('cadeco/material/index', {
+                    params: {scope: 'tipo:8', sort: 'descripcion', order: 'asc'}
+                }).then(data => {
+                    this.materiales = data;
+                });
+            },
             tipos() {
                 if(this.$root.can('registrar_almacen_material'))
                 {
@@ -120,6 +147,8 @@
                         id_tipo :  "2",
                         descripcion : "Maquina Controladora de Insumos",
                     });
+                    this.getMateriales();
+                    this.id_material = "";
                 }
                 if(this.$root.can('registrar_almacen_mano_obra'))
                 {

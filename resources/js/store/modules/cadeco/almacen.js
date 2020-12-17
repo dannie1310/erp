@@ -32,12 +32,7 @@ export default {
         },
         DELETE_ALMACEN(state, data){
             state.almacenes.splice(data.index, 1);
-        },
-       /* DELETE_CLIENTE(state, id) {
-            state.clientes = state.clientes.filter( cliente => {
-                return cliente.id != id
-            });
-        }*/
+        }
     },
 
     actions: {

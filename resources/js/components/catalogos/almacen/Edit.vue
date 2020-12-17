@@ -52,6 +52,20 @@
                                         </div>
                                     </div>
                                 </div>
+                                 <div class="col-md-12" v-if="almacen.material">
+                                    <div class="form-group row error-content">
+                                        <label class="col-md-2 col-form-label">Insumos:</label>
+                                        <div class="col-md-10">
+                                            <input type="text"
+                                                   disabled="true"
+                                                   name="material"
+                                                   data-vv-as="Material"
+                                                   id="material"
+                                                   class="form-control float-right"
+                                                   v-model="almacen.material.descripcion">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -83,7 +97,8 @@
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/almacen/find', {
-                    id: this.id
+                    id: this.id,
+                    params: {include: 'material'}
                 })
                     .then(data => {
                         this.almacen = data

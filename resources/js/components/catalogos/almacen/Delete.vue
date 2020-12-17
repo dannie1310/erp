@@ -16,10 +16,8 @@
                 return this.$store.dispatch('cadeco/almacen/eliminar', {
                     id: this.id
                 }).then(data => {
-                    // this.$store.commit('cadeco/almacen/DELETE_ALMACEN', {id: this.id})
                     this.$store.commit('cadeco/almacen/DELETE_ALMACEN', data);
                 })
-
             },
         }
     }

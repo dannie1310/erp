@@ -23,10 +23,10 @@ class AlmacenTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'inventario',
         'materiales',
         'materiales_ajuste',
-        'materiales_salida'
+        'materiales_salida',
+        'material'
     ];
 
 
@@ -75,6 +75,19 @@ class AlmacenTransformer extends TransformerAbstract
     public function includeMaterialesSalida(Almacen $model){
         if ($materiales = $model->materialesSalida) {
             return $this->collection($materiales, new MaterialSalidasTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Almacen $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMaterial(Almacen $model)
+    {
+        if($material = $model->material)
+        {
+            return $this->item($material, new MaterialTransformer);
         }
         return null;
     }
