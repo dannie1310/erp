@@ -35,7 +35,10 @@ class AlmacenTransformer extends TransformerAbstract
             'id' => (int) $model->getKey(),
             'descripcion' => (string) $model->descripcion,
             'tipo' => (string) $model->tipo,
-            'tipo_almacen' => (int) $model->tipo_almacen
+            'tipo_almacen' => (int) $model->tipo_almacen,
+            'registro' => $model->nombre_registro,
+            'fecha_registro' => $model->fecha_registro,
+            'permiso_editar' => $model->permiso_editar
         ];
     }
 
