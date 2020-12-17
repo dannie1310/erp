@@ -62,4 +62,9 @@ class AlmacenService
             return $this->repository->update($data, $id);
         }
     }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar();
+    }
 }

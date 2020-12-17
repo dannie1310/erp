@@ -112,9 +112,10 @@
                         tipo : almacen.tipo,
                         id_usuario : almacen.registro,
                         fecha_registro : almacen.fecha_registro,
-                        buttons: $.extend({}, {
-                            edit: almacen.permiso_editar,
-                            id: almacen.id
+                        buttons : $.extend({}, {
+                            edit : almacen.permiso_editar,
+                            delete : almacen.permiso_eliminar,
+                            id : almacen.id
                         })
                     }));
                 },

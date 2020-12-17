@@ -49,6 +49,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\AlmacenController@paginate');
             $api->post('/','App\Http\Controllers\v1\CADECO\AlmacenController@store');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\AlmacenController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\AlmacenController@destroy')->where(['id' => '[0-9]+']);
         });
 
         //BANCOS

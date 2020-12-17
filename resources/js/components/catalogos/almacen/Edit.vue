@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-info" title="Editar"  :disabled="cargando">
+        <button @click="find" type="button" class="btn btn-sm btn-outline-info" title="Editar"  :disabled="cargando">
             <i class="fa fa-pencil" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>

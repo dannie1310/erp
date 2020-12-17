@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Almacenes\AlmacenEliminado;
 use App\Models\CADECO\Contabilidad\CuentaAlmacen;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -79,12 +80,12 @@ class Almacen extends Model
             ->where('Contabilidad.cuentas_almacenes.estatus', '=', 1);
     }
 
-    public function  Inventarios()
+    public function inventarios()
     {
-        return $this->hasMany(Inventario::class,id_almacen, "id_almacen");
+        return $this->hasMany(Inventario::class,"id_almacen", "id_almacen");
     }
 
-    public function Materiales()
+    public function materiales()
     {
         return $this->belongsToMany(Material::class,'inventarios','id_almacen','id_material')
             ->distinct();
@@ -111,6 +112,21 @@ class Almacen extends Model
     public function registro()
     {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
+    }
+
+    public function almacenEliminado()
+    {
+        return $this->belongsTo(AlmacenEliminado::class, 'id_almacen', 'id_almacen');
+    }
+
+    public function transaccionesRelacionadas()
+    {
+        return $this->hasMany(Transaccion::class, 'id_almacen','id_almacen');
+    }
+
+    public function itemsRelacionados()
+    {
+        return $this->hasMany(Item::class, 'id_almacen', 'id_almacen');
     }
 
     /**
@@ -204,6 +220,39 @@ class Almacen extends Model
         return false;
     }
 
+    public function getPermisoEliminarAttribute()
+    {
+        if ($this->tipo_almacen == 0 && auth()->user()->can('eliminar_almacen_material'))
+        {
+            return true;
+        }
+
+        if ($this->tipo_almacen == 1 && auth()->user()->can('eliminar_almacen_maquinaria'))
+        {
+            return true;
+        }
+        if ($this->tipo_almacen == 2 && auth()->user()->can('eliminar_almacen_maquina_controladora_insumo'))
+        {
+            return true;
+        }
+
+        if ($this->tipo_almacen == 3 && auth()->user()->can('eliminar_almacen_mano_obra'))
+        {
+            return true;
+        }
+
+        if ($this->tipo_almacen == 4 && auth()->user()->can('eliminar_almacen_servicio'))
+        {
+            return true;
+        }
+
+        if ($this->tipo_almacen == 5 && auth()->user()->can('eliminar_almacen_herramienta'))
+        {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Métodos
      */
@@ -218,6 +267,39 @@ class Almacen extends Model
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
+        }
+    }
+
+    public function eliminar()
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validarEliminacion();
+            $this->delete();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function validarEliminacion()
+    {
+        if(count($this->inventarios()->get()) != 0)
+        {
+            abort(500, "No se puede eliminar el almacén porque tiene inventarios relacionados");
+        }
+
+        if(count($this->transaccionesRelacionadas()->get()) != 0)
+        {
+            abort(500, "No se puede eliminar el almacén porque tiene transacciones relacionados");
+        }
+
+        if(count($this->itemsRelacionados()->get()) != 0)
+        {
+            abort(500, "No se puede eliminar el almacén porque tiene partidas relacionadas");
         }
     }
 }

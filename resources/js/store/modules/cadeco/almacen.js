@@ -29,7 +29,15 @@ export default {
         },
         UPDATE_ATTRIBUTE(state, data) {
             state.currentAlmacen[data.attribute] = data.value
-        }
+        },
+        DELETE_ALMACEN(state, data){
+            state.almacenes.splice(data.index, 1);
+        },
+       /* DELETE_CLIENTE(state, id) {
+            state.clientes = state.clientes.filter( cliente => {
+                return cliente.id != id
+            });
+        }*/
     },
 
     actions: {
@@ -147,6 +155,47 @@ export default {
                             })
                     }
                 });
+            });
+        },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el Almacén",
+                    text: "¿Está seguro que desea eliminar el almacén?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Almacén eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
             });
         },
     },
