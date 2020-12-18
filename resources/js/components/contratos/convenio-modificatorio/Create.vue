@@ -25,7 +25,7 @@
 				</div>
 			</div>
 		</div>
-        <div class="row" v-if="subcontrato">
+        <div class="row" v-if="conceptos">
 
             <div class="col-md-1">
                 <label for="fecha" class="col-form-label">Fecha: </label>
@@ -47,7 +47,7 @@
         <br />
 		<div class="row">
 			<div class="col-md-6">
-				<div class="card" v-if="subcontrato">
+				<div class="card" v-if="conceptos">
 					<div class="card-header">
 						<h6 class="card-title">Subcontrato</h6>
 					</div>
@@ -78,7 +78,7 @@
 			</div>
 
 			<div class="col-md-6">
-				<div class="card" v-if="subcontrato">
+				<div class="card" v-if="conceptos">
 					<div class="card-header">
 						<h6 class="card-title">Valor de los cambios</h6>
 					</div>
@@ -93,10 +93,10 @@
 			</div>
 		</div>
 
-		<div class="card" v-if="subcontrato">
+		<div class="card" v-if="conceptos" style="display:none">
 			<div class="card-body">
 				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
+					<input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado" >
 					<label class="form-check-label" for="contratado">Contratado</label>
 				</div>
 				<div class="form-check form-check-inline">
@@ -126,28 +126,25 @@
 							<th rowspan="2">Clave</th>
 							<th rowspan="2">Concepto</th>
 							<th rowspan="2">UM</th>
-							<th style="display: none" colspan="2" class="contratado">Contratado</th>
-							<th style="display: none" colspan="3" class="avance-volumen">Avance Volumen</th>
-							<th style="display: none" colspan="2" class="avance-importe">Avance Importe</th>
-							<th style="display: none" colspan="2" class="saldo">Saldo</th>
-							<th colspan="4">Esta Estimación</th>
-							<th style="display: none" class="destino">Distribución</th>
+							<th colspan="2" class="contratado">Contratado</th>
+							<th colspan="2" class="avance-volumen">Avance</th>
+
+							<th colspan="2" class="saldo">Saldo</th>
+							<th colspan="4">Addendum</th>
+							<th class="destino">Distribución</th>
 						</tr>
 						<tr>
-							<th style="display: none" class="contratado">Volumen</th>
-							<th style="display: none" class="contratado">P.U.</th>
-							<th style="display: none" class="avance-volumen">Anterior</th>
-							<th style="display: none" class="avance-volumen">Acumulado</th>
-							<th style="display: none" class="avance-volumen">%</th>
-							<th style="display: none" class="avance-importe">Anterior</th>
-							<th style="display: none" class="avance-importe">Acumulado</th>
-							<th style="display: none" class="saldo">Volumen</th>
-							<th style="display: none" class="saldo">Importe</th>
+							<th class="contratado">Volumen</th>
+							<th class="contratado">P.U.</th>
+							<th class="avance-volumen">Volumen</th>
+							<th class="avance-importe">Importe</th>
+							<th class="saldo">Volumen</th>
+							<th class="saldo">Importe</th>
 							<th>Volumen</th>
 							<th>%</th>
 							<th>P.U.</th>
 							<th>Importe</th>
-							<th style="display: none" class="destino">Destino</th>
+							<th class="destino">Destino</th>
 						</tr>
 					</thead>
 					<tbody v-for="(concepto, i) in conceptos">
@@ -157,20 +154,17 @@
                                 <span v-for="n in concepto.nivel">&nbsp;</span>
                                 <b>{{concepto.descripcion}}</b></td>
                             <td></td>
-                            <td style="display: none" class="numerico contratado"/>
-                            <td style="display: none" class="numerico contratado"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-importe"/>
-                            <td style="display: none" class="numerico avance-importe"/>
-                            <td style="display: none" class="numerico saldo"/>
-                            <td style="display: none" class="numerico saldo"/>
+                            <td class="numerico contratado"/>
+                            <td class="numerico contratado"/>
+                            <td class="numerico avance-volumen"/>
+                            <td class="numerico avance-importe"/>
+                            <td class="numerico saldo"/>
+                            <td class="numerico saldo"/>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td style="display: none" class="destino"/>
+                            <td class="destino"/>
                         </tr>
 					    <tr v-else>
 						    <td :title="concepto.clave">{{ concepto.clave }}</td>
@@ -179,15 +173,12 @@
                                 {{concepto.descripcion_concepto}}
                             </td>
                             <td class="centrado">{{concepto.unidad}}</td>
-                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-volumen"></td>
-                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-importe"></td>
-                            <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
-                            <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
+                            <td class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
+                            <td class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
+                            <td class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
+                            <td class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
+                            <td class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
+                            <td class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changeCantidad(concepto)"
                                        class="text"
@@ -216,14 +207,14 @@
                                        :class="{'is-invalid': errors.has(`importe[${concepto.id}]`)}" />
                                  <div class="invalid-feedback" v-show="errors.has(`importe[${concepto.id}]`)">{{ errors.first(`importe[${concepto.id}]`) }}</div>
                             </td>
-                            <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
+                            <td  class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                         </tr>
                     </tbody>
 				</table>
 			</div>
         </div>
 
-        <div class="form-group row" v-if="subcontrato">
+        <div class="form-group row" v-if="conceptos">
             <label class="col-md-1 col-form-label">Observaciones:</label>
             <div class="col-md-11">
                 <textarea
