@@ -130,7 +130,7 @@
 							<th colspan="2" class="avance-volumen">Avance</th>
 
 							<th colspan="2" class="saldo">Saldo</th>
-							<th colspan="4">Addendum</th>
+							<th colspan="3">Addendum</th>
 							<th class="destino">Distribución</th>
 						</tr>
 						<tr>
@@ -141,7 +141,6 @@
 							<th class="saldo">Volumen</th>
 							<th class="saldo">Importe</th>
 							<th>Volumen</th>
-							<th>%</th>
 							<th>P.U.</th>
 							<th>Importe</th>
 							<th class="destino">Destino</th>
@@ -160,7 +159,6 @@
                             <td class="numerico avance-importe"/>
                             <td class="numerico saldo"/>
                             <td class="numerico saldo"/>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -184,28 +182,13 @@
                                        class="text"
                                        v-model="concepto.cantidad_estimacion"
                                        :name="`cantidadEstimacion[${concepto.id}]`"
-                                       v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(2)}"
+                                       v-validate="{min_value: parseFloat((concepto.cantidad_por_estimar*-1)).toFixed(2)}"
                                        :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
                                  <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
                             </td>
-                            <td class="editable-cell numerico">
-                                <input v-on:change="changePorcentaje(concepto)"
-                                       v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(2)).toFixed(2) }"
-                                       class="text"
-                                       :name="`porcentaje[${concepto.id}]`"
-                                       v-model="concepto.porcentaje_estimado"
-                                       :class="{'is-invalid': errors.has(`porcentaje[${concepto.id}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`porcentaje[${concepto.id}]`)">{{ errors.first(`porcentaje[${concepto.id}]`) }}</div>
-                            </td>
                             <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
-                            <td class="editable-cell numerico">
-                                <input v-on:change="changeImporte(concepto)"
-                                       class="text"
-                                       :name="`importe[${concepto.id}]`"
-                                       v-validate="{max_value: parseFloat(concepto.importe_por_estimar).toFixed(2)}"
-                                       v-model="concepto.importe_estimacion"
-                                       :class="{'is-invalid': errors.has(`importe[${concepto.id}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`importe[${concepto.id}]`)">{{ errors.first(`importe[${concepto.id}]`) }}</div>
+                            <td class="numerico">
+                                {{ parseFloat(concepto.importe_estimacion).formatMoney(4) }}
                             </td>
                             <td  class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                         </tr>
@@ -280,16 +263,10 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             changeCantidad(concepto) {
-                concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
-            },
-            changePorcentaje(concepto) {
-                concepto.cantidad_estimacion = ((concepto.cantidad_subcontrato * concepto.porcentaje_estimado) / 100).toFixed(2);
                 concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
             },
             changeImporte(concepto) {
                 concepto.cantidad_estimacion = (concepto.importe_estimacion / concepto.precio_unitario_subcontrato).toFixed(2);
-                concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
             },
 			validate() {
 				this.$validator.validate().then(result => {
