@@ -35,6 +35,7 @@ class AlmacenObserver
                 'propiedad' => $almacen->propiedad,
                 'fecha_registro' => $almacen->fecha_registro,
                 'id_usuario' => $almacen->id_usuario,
+                'virtual' => $almacen->virtual,
                 'motivo' => '',
                 'usuario_elimina' => auth()->id(),
                 'fecha_eliminacion' => date('Y-m-d H:i:s')

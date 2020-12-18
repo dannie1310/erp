@@ -20,6 +20,7 @@ class AlmacenEliminado extends Model
         'id_material',
         'opciones',
         'cuenta_contable',
+        'virtual',
         'direccion',
         'numero_economico',
         'clasificacion',
