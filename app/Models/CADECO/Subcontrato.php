@@ -354,6 +354,7 @@ class Subcontrato extends Transaccion
         $respuesta = array(
             'folio' => $this->numero_folio_format,
             'referencia' => $this->referencia,
+            'fecha_format' => $this->fecha_format,
             'partidas' => $items
         );
         return $respuesta;
@@ -565,7 +566,7 @@ class Subcontrato extends Transaccion
                 'observacion' => $data['observacion'],
             ]);
         }
-        
+
         if($this->clasificacionSubcontrato){
             $this->clasificacionSubcontrato->id_tipo_contrato = $data['id_tipo_contrato'];
             $this->clasificacionSubcontrato->actualizarFolio();
@@ -576,7 +577,7 @@ class Subcontrato extends Transaccion
                 'id_tipo_contrato' => $data['id_tipo_contrato']
             ]);
         }
-        
+
 
         return $this;
     }

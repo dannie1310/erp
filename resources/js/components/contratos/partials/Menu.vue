@@ -30,6 +30,12 @@
                     <p>Subcontratos</p>
                 </router-link>
             </li>
+            <li class="nav-item">
+                <router-link :to="{name: 'convenio-modificatorio'}" v-if="$root.can(['consultar_convenio_modificatorio'])" class="nav-link" :class="{active: this.$route.name == 'convenios-modificatorios'}">
+                    <i class="fa fa-file-signature nav-icon"></i>
+                    <p>Convenios Modificatorios</p>
+                </router-link>
+            </li>
 
             <li class="nav-item" v-if="$root.can('consultar_estimacion_subcontrato')">
                 <router-link :to="{name: 'estimacion'}" class="nav-link" :class="{active: this.$route.name == 'estimacion' || this.$route.name == 'estimacion-edit'}">

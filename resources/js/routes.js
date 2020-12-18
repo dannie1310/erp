@@ -1026,6 +1026,74 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'convenio-modificatorio',
+                        component: require('./components/contratos/convenio-modificatorio/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'convenio-modificatorio',
+                                component: require('./components/contratos/convenio-modificatorio/Index').default,
+                                meta: {
+                                    title: 'Convenios Modificatorios',
+                                    breadcrumb: {parent: 'contratos', name: 'CONVENIOS MODIFICATORIOS'},
+                                    middleware: [auth, context],
+
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'convenio-modificatorio-create',
+                                component: require('./components/contratos/convenio-modificatorio/Create').default,
+                                meta: {
+                                    title: 'Convenios Modificatorios',
+                                    breadcrumb: {parent: 'convenio-modificatorio', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_convenio_modificatorio'
+
+                                }
+                            },
+                            {
+                                path: ':id/eliminar',
+                                name: 'convenio-modificatorio-delete',
+                                props: true,
+                                component: require('./components/contratos/convenio-modificatorio/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Convenio Modificatorio',
+                                    breadcrumb: {parent: 'convenio-modificatorio', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'eliminar_convenio_modificatorio'
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'convenio-modificatorio-show',
+                                props: true,
+                                component: require('./components/contratos/convenio-modificatorio/Show').default,
+                                meta: {
+                                    title: 'Información de Convenio Modificatorio',
+                                    breadcrumb: {parent: 'convenio-modificatorio', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission :'consultar_convenio_modificatorio'
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'convenio-modificatorio-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_convenio_modificatorio'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Convenio Modificatorio',
+                                    breadcrumb: { parent: 'convenio-modificatorio', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_convenio_modificatorio'
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'fondo-garantia',
                         component: require('./components/contratos/fondo-garantia/partials/Layout.vue').default,
                         meta: {
