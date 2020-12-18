@@ -29,9 +29,9 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Descripción', field: 'descripcion', sortable: true },
-                    { title: 'Tipo', field: 'tipo',  sortable: true },
-                    { title: 'Registro', field: 'id_usuario', sortable: true },
+                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Tipo', field: 'tipo_almacen',  sortable: true },
+                    { title: 'Registró', field: 'id_usuario', sortable: true },
                     { title: 'Fecha de Registro', field: 'fecha_registro', sortable: true },
                     { title: 'Acciones', field: 'buttons', thClass:'th_c100', tdClass:'center', tdComp: require('./partials/ActionButtons').default}
                 ],
@@ -109,13 +109,14 @@
                     self.$data.data = almacenes.map((almacen, i) => ({
                         index : (i + 1) + self.query.offset,
                         descripcion : almacen.descripcion,
-                        tipo : almacen.tipo,
+                        tipo_almacen : almacen.tipo,
                         id_usuario : almacen.registro,
                         fecha_registro : almacen.fecha_registro,
                         buttons : $.extend({}, {
                             edit : almacen.permiso_editar,
                             delete : almacen.permiso_eliminar,
-                            id : almacen.id
+                            id : almacen.id,
+                            show : true
                         })
                     }));
                 },

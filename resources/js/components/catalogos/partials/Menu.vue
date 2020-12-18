@@ -7,7 +7,7 @@
             <li class="nav-header">SISTEMA DE CATÁLOGOS</li>
             <li class="nav-item" v-if="$root.can('consultar_unidad')">
                 <router-link :to="{name: 'almacen'}" class="nav-link" :class="{active: this.$route.name == 'almacen'}">
-                    <i class="fas fa-ruler-combined nav-icon"></i>
+                    <i class="fa fa-boxes nav-icon"></i>
                     <p>Catálogo de Almacenes</p>
                 </router-link>
             </li>

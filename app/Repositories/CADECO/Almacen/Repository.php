@@ -34,11 +34,6 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function findAlmacen(array $data)
     {
-        $almacen = $this->model->where('descripcion', $data['descripcion'])->where('tipo_almacen', $data['tipo_almacen'])->first();
-        if(is_null($almacen))
-        {
-            return false;
-        }
-        return true;
+       return $this->model->where('descripcion', $data['descripcion'])->where('tipo_almacen', $data['tipo_almacen'])->first();
     }
 }

@@ -1,7 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_almacen_material')||$root.can('registrar_almacen_maquinaria')||$root.can('registrar_almacen_maquina_controladora_insumo')||
-        $root.can('registrar_almacen_mano_obra')||$root.can('registrar_almacen_servicio')||$root.can('registrar_almacen_herramienta')" class="btn btn-app btn-info float-right">
+        <button @click="init" v-if="$root.can('registrar_almacen_material')||$root.can('registrar_almacen_maquinaria')||$root.can('registrar_almacen_maquina_controladora_insumo')||$root.can('registrar_almacen_mano_obra')||$root.can('registrar_almacen_servicio')||$root.can('registrar_almacen_herramienta')" class="btn btn-app btn-info float-right">
             <i class="fa fa-plus"></i> Registrar
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -70,6 +69,60 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-12" v-if="tipo_almacen == 2">
+                                    <div class="form-group row error-content">
+                                        <label for="numero_economico" class="col-md-2 col-form-label">Número de Economico: </label>
+                                        <div class="col-md-10">
+                                            <input type="text"
+                                                   name="numero_economico"
+                                                   style="text-transform:uppercase;"
+                                                   data-vv-as="Número de Economico"
+                                                   v-validate="{required: true}"
+                                                   class="form-control float-right"
+                                                   id="numero_economico"
+                                                   placeholder="Número de Economico"
+                                                   v-model="numero_economico"
+                                                   :class="{'is-invalid': errors.has('numero_economico')}">
+                                            <div class="invalid-feedback float-right"   v-show="errors.has('numero_economico')"><span style="margin-left:5%;">{{ errors.first('numero_economico') }}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" v-if="tipo_almacen == 2">
+                                    <div class="form-group row error-content">
+                                        <label for="clasificacion" class="col-md-2 col-form-label">Clasificación:</label>
+                                        <div class="col-md-10">
+                                            <select class="form-control"
+                                                    data-vv-as="Clasificación"
+                                                    id="clasificacion"
+                                                    name="clasificacion"
+                                                    :error="errors.has('clasificacion')"
+                                                    v-validate="{required: true}"
+                                                    v-model="clasificacion">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(clasificacion) in clasificaciones" :value="clasificacion">{{ clasificacion }}</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('clasificacion')">{{ errors.first('clasificacion') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" v-if="tipo_almacen == 2">
+                                    <div class="form-group row error-content">
+                                        <label for="propiedad" class="col-md-2 col-form-label">Propiedad:</label>
+                                        <div class="col-md-10">
+                                            <select class="form-control"
+                                                    data-vv-as="Propiedad"
+                                                    id="propiedad"
+                                                    name="propiedad"
+                                                    :error="errors.has('propiedad')"
+                                                    v-validate="{required: true}"
+                                                    v-model="propiedad">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(p) in propiedades" :value="p">{{ p }}</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('propiedad')">{{ errors.first('propiedad') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -96,7 +149,20 @@
                 tipo_almacen : '',
                 id_material : null,
                 tipos_almacenes : [],
-                materiales : []
+                materiales : [],
+                numero_economico : null,
+                clasificacion : null,
+                propiedad : null,
+                clasificaciones : {
+                    0 : 'Mayor',
+                    1 : 'Menor',
+                    2 : 'Transporte'
+                },
+                propiedades : {
+                    0 : 'Propio',
+                    1 : 'Terceros',
+                    2 : 'Sociedad'
+                }
             }
         },
         mounted() {
@@ -113,10 +179,21 @@
                 this.descripcion = '';
                 this.tipo_almacen = '';
                 this.id_material = '';
+                this.numero_economico = '';
+                this.clasificacion = '';
+                this.propiedad = '';
             },
             store(){
+                var data = {}
                 this.descripcion = this.descripcion.toUpperCase();
-                return this.$store.dispatch('cadeco/almacen/store', this.$data)
+                data['descripcion'] = this.descripcion
+                data['tipo_almacen'] = this.tipo_almacen
+                data['id_material'] = this.id_material  == '' ? null : this.id_material
+                data['numero_economico'] = this.numero_economico == '' ? null : this.numero_economico
+                data['clasificacion'] = this.clasificacion  == '' ? null : this.clasificacion
+                data['propiedad'] = this.propiedad == '' ? null : this.propiedad
+
+                return this.$store.dispatch('cadeco/almacen/store', data)
                     .then((data) => {
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');
@@ -152,6 +229,9 @@
                     });
                     this.getMateriales();
                     this.id_material = "";
+                    this.numero_economico = "";
+                    this.clasificacion = "";
+                    this.propiedad = "";
                 }
                 if(this.$root.can('registrar_almacen_mano_obra'))
                 {

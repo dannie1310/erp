@@ -31,7 +31,11 @@ class AlmacenService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $almacen = $this->repository;
+        if(isset($data['descripcion'])) {
+            $almacen->where([['descripcion', 'LIKE', '%' . $data['descripcion'] . '%']]);
+        }
+        return $almacen->paginate($data);
     }
 
     public function index($data)
@@ -46,7 +50,7 @@ class AlmacenService
 
     public function store(array $data)
     {
-        if(!$this->repository->findAlmacen($data))
+        if(is_null($this->repository->findAlmacen($data)))
         {
             $data['descripcion'] = strtoupper($data['descripcion']);
             return $this->repository->create(array_except($data,'tipos_almacenes'));
@@ -56,11 +60,13 @@ class AlmacenService
 
     public function update(array $data, $id)
     {
-        if(!$this->repository->findAlmacen($data))
+        $almacen = $this->repository->findAlmacen($data);
+        if(is_null($almacen) || $almacen->id_almacen == $id)
         {
             $data['descripcion'] = strtoupper($data['descripcion']);
             return $this->repository->update($data, $id);
         }
+        abort(400, "La descripción del almacén '". $data['descripcion']."' ya esta registrado previamente.");
     }
 
     public function delete($data, $id)

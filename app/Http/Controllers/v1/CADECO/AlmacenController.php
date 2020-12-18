@@ -46,6 +46,11 @@ class AlmacenController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:registrar_almacen_material|registrar_almacen_maquinaria|registrar_almacen_maquina_controladora_insumo|registrar_almacen_mano_obra|registrar_almacen_servicio|registrar_almacen_herramienta')->only('store');
+        $this->middleware('permiso:editar_almacen_material|editar_almacen_maquinaria|editar_almacen_maquina_controladora_insumo|editar_almacen_mano_obra|editar_almacen_servicio|editar_almacen_herramienta')->only('update');
+        $this->middleware('permiso:consultar_almacen_material|consultar_almacen_maquinaria|consultar_almacen_maquina_controladora_insumo|consultar_almacen_mano_obra|consultar_almacen_servicio|consultar_almacen_herramienta')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:eliminar_almacen_material|eliminar_almacen_maquinaria|eliminar_almacen_maquina_controladora_insumo|eliminar_almacen_mano_obra|eliminar_almacen_servicio|eliminar_almacen_herramienta')->only('destroy');
+
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;

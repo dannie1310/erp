@@ -58,7 +58,10 @@ class Almacen extends Model
         'descripcion',
         'fecha_registro',
         'id_usuario',
-        'id_material'
+        'id_material',
+        'numero_economico',
+        'clasificacion',
+        'propiedad'
     ];
 
     protected static function boot()
@@ -257,6 +260,12 @@ class Almacen extends Model
             return true;
         }
         return false;
+    }
+
+    public function getFechaRegistroFormatAttribute()
+    {
+        $date = date_create($this->fecha_registro);
+        return date_format($date,"d/m/Y H:i:s");
     }
 
     /**
