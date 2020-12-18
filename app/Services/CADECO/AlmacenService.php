@@ -31,7 +31,11 @@ class AlmacenService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $almacen = $this->repository;
+        if(isset($data['descripcion'])) {
+            $almacen->where([['descripcion', 'LIKE', '%' . $data['descripcion'] . '%']]);
+        }
+        return $almacen->paginate($data);
     }
 
     public function index($data)
