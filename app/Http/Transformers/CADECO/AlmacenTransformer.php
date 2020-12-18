@@ -37,9 +37,12 @@ class AlmacenTransformer extends TransformerAbstract
             'tipo' => (string) $model->tipo,
             'tipo_almacen' => (int) $model->tipo_almacen,
             'registro' => $model->nombre_registro,
-            'fecha_registro' => $model->fecha_registro,
+            'fecha_registro' => $model->fecha_registro_format,
             'permiso_editar' => $model->permiso_editar,
-            'permiso_eliminar' => $model->permiso_eliminar
+            'permiso_eliminar' => $model->permiso_eliminar,
+            'numero_economico' => $model->numero_economico,
+            'clasificacion' => $model->clasificacion,
+            'propiedad' => $model->propiedad
         ];
     }
 

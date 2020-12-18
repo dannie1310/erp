@@ -1795,9 +1795,9 @@ export const routes = [
                                 component: require('./components/catalogos/almacen/Index').default,
                                 meta: {
                                     title: 'Catálogo de Almacenes',
-                                    breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE ALMACENES'},
+                                    breadcrumb: {parent: 'catalogos', name: 'ALMACENES'},
                                     middleware: [auth, context, permission],
-                                    permission: ['consultar_unidad']
+                                    permission: ['consultar_almacen_material','consultar_almacen_maquinaria', 'consultar_almacen_maquina_controladora_insumo', 'consultar_almacen_mano_obra', 'consultar_almacen_servicio', 'consultar_almacen_herramienta']
                                 }
                             },
                         ]
@@ -1812,7 +1812,7 @@ export const routes = [
                                 component: require('./components/catalogos/unidad/Index').default,
                                 meta: {
                                     title: 'Catálogo de Unidades',
-                                    breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE UNIDAD'},
+                                    breadcrumb: {parent: 'catalogos', name: 'UNIDAD'},
                                     middleware: [auth, context, permission],
                                     permission: ['consultar_unidad']
                                 }
@@ -1829,7 +1829,7 @@ export const routes = [
                                 component: require('./components/catalogos/empresa/Index').default,
                                 meta: {
                                     title: 'Catálogo de Empresa',
-                                    breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE EMPRESA'},
+                                    breadcrumb: {parent: 'catalogos', name: 'EMPRESA'},
                                     middleware: [auth, context],
 
                                 }
