@@ -5,7 +5,7 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">SISTEMA DE CATÁLOGOS</li>
-            <li class="nav-item" v-if="$root.can('consultar_unidad')">
+            <li class="nav-item" v-if="catalogo_almacenes">
                 <router-link :to="{name: 'almacen'}" class="nav-link" :class="{active: this.$route.name == 'almacen'}">
                     <i class="fa fa-boxes nav-icon"></i>
                     <p>Catálogo de Almacenes</p>
@@ -180,6 +180,16 @@
                     'consultar_insumo_servicio',
                     'consultar_familia_mano_obra',
                     'consultar_insumo_mano_obra'
+                ]);
+            },
+            catalogo_almacenes(){
+                return this.$root.can([
+                    'consultar_almacen_material',
+                    'consultar_almacen_maquinaria',
+                    'consultar_almacen_maquina_controladora_insumo',
+                    'consultar_almacen_mano_obra',
+                    'consultar_almacen_servicio',
+                    'consultar_almacen_herramienta'
                 ]);
             },
         },
