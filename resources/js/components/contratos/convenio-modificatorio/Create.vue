@@ -5,7 +5,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<label>
-							Seleccione el subcontrato deseado:
+							Seleccione el subcontrato al que aplicará el convenio modificatorio:
 						</label>
 					</div>
 				</div>
@@ -41,6 +41,18 @@
                             :class="{'is-invalid': errors.has('fecha')}"
                 ></datepicker>
                 <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+            </div>
+            <div class="col-md-3">
+                <label for="convenio" class="col-form-label">Convenio (PDF): </label>
+                <input type="file" class="form-control" id="convenio"
+                       @change="onFileChange"
+                       row="3"
+                       v-validate="{ ext: ['pdf']}"
+                       name="convenio_pdf"
+                       data-vv-as="Convenio"
+                       ref="convenio_pdf"
+                       :class="{'is-invalid': errors.has('convenio_pdf')}">
+                <div class="invalid-feedback" v-show="errors.has('convenio_pdf')">{{ errors.first('convenio_pdf') }} (pdf)</div>
             </div>
 
         </div>
@@ -140,14 +152,14 @@
 							<th class="avance-importe">Importe</th>
 							<th class="saldo">Volumen</th>
 							<th class="saldo">Importe</th>
-							<th>Volumen</th>
+							<th style="width: 80px">Volumen</th>
 							<th>P.U.</th>
 							<th>Importe</th>
 							<th class="destino">Destino</th>
 						</tr>
 					</thead>
 					<tbody v-for="(concepto, i) in conceptos">
-                        <tr v-if="concepto.para_estimar == 0">
+                        <tr v-if="!concepto.unidad">
                             <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                             <td :title="concepto.descripcion">
                                 <span v-for="n in concepto.nivel">&nbsp;</span>
@@ -177,7 +189,7 @@
                             <td class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
                             <td class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
                             <td class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
-                            <td class="editable-cell numerico">
+                            <td class="editable-cell numerico" style="background-color: #ddd">
                                 <input v-on:change="changeCantidad(concepto)"
                                        class="text"
                                        v-model="concepto.cantidad_estimacion"
@@ -186,11 +198,11 @@
                                        :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
                                  <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
                             </td>
-                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
-                            <td class="numerico">
+                            <td class="numerico" style="background-color: #ddd">{{ concepto.precio_unitario_subcontrato_format}}</td>
+                            <td class="numerico" style="background-color: #ddd">
                                 {{ parseFloat(concepto.importe_estimacion).formatMoney(4) }}
                             </td>
-                            <td  class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
+                            <td  class="destino" :title="concepto.destino_path_larga">{{ concepto.destino_path }}</td>
                         </tr>
                     </tbody>
 				</table>
@@ -339,7 +351,27 @@
                     }
                 }
 				return conceptos;
-			}
+			},
+            createImage(file, tipo) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.file = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+            },
+            onFileChange(e){
+                this.file = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.nombre = files[0].name;
+                if(e.target.id == 'convenio_pdf') {
+                    this.createImage(files[0]);
+                }
+            },
 		},
 
         watch: {
@@ -356,7 +388,7 @@
 						}
 					})
 							.then(data => {
-								this.$store.dispatch('contratos/subcontrato/ordenarConceptos', {
+								this.$store.dispatch('contratos/subcontrato/getConceptos', {
 									id: id
 								})
 										.then(data => {
@@ -459,7 +491,7 @@
 		padding: 0;
 		margin: 0;
 		width: 100%;
-		background-color: transparent;
+		background-color: #ddd;
 		font-family: inherit;
 		font-size: inherit;
 		font-weight: bold;

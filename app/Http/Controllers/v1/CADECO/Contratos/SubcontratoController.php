@@ -60,6 +60,11 @@ class SubcontratoController extends Controller
         return $this->service->ordenado($id);
     }
 
+    public function conceptos($id)
+    {
+        return $this->service->conceptos($id);
+    }
+
     public function pdf($id)
     {
         return $this->service->pdf($id);

@@ -134,6 +134,7 @@ class ItemSubcontrato extends Item
             'porcentaje_estimado' => (float) number_format((($porcentaje_estimado) * 100), 2, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
             'destino_path' => $destino->ruta_destino,
+            'destino_path_larga' => $destino->ruta,
             'id_destino' => $destino->id_concepto,
         );
     }
