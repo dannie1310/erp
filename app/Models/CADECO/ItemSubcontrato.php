@@ -164,6 +164,8 @@ class ItemSubcontrato extends Item
             'importe_acumulado_anterior' => $acumulado_anterior->sum('importe'),
             'cantidad_estimacion' => $cantidad_estimacion,
             'importe_estimacion' => $importe_estimacion,
+            'cantidad_addendum' => '',
+            'importe_addendum' => 0,
             'cantidad_acumulado_a_esta_estimacion' => $acumulado_anterior->sum('cantidad') + $cantidad_estimacion,
             'importe_acumulado_a_esta_estimacion' => $acumulado_anterior->sum('importe') + $importe_estimacion,
             'cantidad_porEstimar' => $this->cantidad - ($acumulado_anterior->sum('cantidad') + $cantidad_estimacion),

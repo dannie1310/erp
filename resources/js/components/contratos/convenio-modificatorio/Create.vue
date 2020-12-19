@@ -119,6 +119,10 @@
 					<div class="card-body">
 						<form>
 							<div class="form-row">
+                                <label class="col-md-3 col-form-label">Monto:</label>
+                                <div class="col-md-9">
+                                    $ {{  parseFloat(importe_addendum).formatMoney(2)  }}
+                                </div>
 
 							</div>
 						</form>
@@ -212,9 +216,10 @@
                             <td class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
                             <td class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
                             <td class="editable-cell numerico" style="background-color: #ddd">
-                                <input v-on:change="changeCantidad(concepto)"
+                                <input v-on:keyup="keyupCantidad(concepto)"
+                                       v-on:change="changeCantidad()"
                                        class="text"
-                                       v-model="concepto.cantidad_estimacion"
+                                       v-model="concepto.cantidad_addendum"
                                        :name="`cantidadEstimacion[${concepto.id}]`"
                                        v-validate="{min_value: parseFloat((concepto.cantidad_por_estimar*-1)).toFixed(2)}"
                                        :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
@@ -222,7 +227,7 @@
                             </td>
                             <td class="numerico" style="background-color: #ddd">{{ concepto.precio_unitario_subcontrato_format}}</td>
                             <td class="numerico" style="background-color: #ddd">
-                                {{ parseFloat(concepto.importe_estimacion).formatMoney(4) }}
+                                {{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
                             </td>
                             <td  class="destino" :title="concepto.destino_path_larga">{{ concepto.destino_path }}</td>
                         </tr>
@@ -277,6 +282,7 @@
 				subcontratos: [],
                 fechasDeshabilitadas:{},
                 fecha_hoy : '',
+                importe_addendum:0,
             }
         },
 
@@ -296,26 +302,26 @@
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
-            changeCantidad(concepto) {
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
+            changeCantidad() {
+                var suma;
+                suma=0;
+                this.conceptos.forEach(function(concepto) {
+                    if(!isNaN(concepto.importe_addendum)){
+                        suma +=  Number(concepto.cantidad_addendum )*Number(concepto.precio_unitario_subcontrato);
+                    }
+
+
+                });
+                this.importe_addendum = suma;
             },
-            changeImporte(concepto) {
-                concepto.cantidad_estimacion = (concepto.importe_estimacion / concepto.precio_unitario_subcontrato).toFixed(2);
+            keyupCantidad(concepto)
+            {
+                concepto.importe_addendum = (concepto.cantidad_addendum * concepto.precio_unitario_subcontrato).toFixed(2);
             },
 			validate() {
 				this.$validator.validate().then(result => {
 					if (result) {
-                        if(moment(this.fecha_fin).format('YYYY/MM/DD') < moment(this.fecha_inicio).format('YYYY/MM/DD'))
-                        {
-                            swal('¡Error!', 'La fecha de inicio no puede ser posterior a la fecha de término.', 'error')
-                        }
-                        else if(moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(this.fecha).format('YYYY/MM/DD'))
-                        {
-                            swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
-                        }
-                        else {
-                            this.store()
-                        }
+                        this.store();
 					}
 				});
 			},
@@ -334,10 +340,9 @@
 							.then(data=> {
 								this.$router.push({name: 'estimacion-index'});
 								this.$router.push({name: 'estimacion'});
-
 							})
 				} else {
-        		    swal('','Debe estimar al menos un concepto','warning');
+        		    swal('','Debe modificar o agregar al menos un concepto','warning');
 				}
 			},
 
@@ -362,12 +367,12 @@
                 for (var key in this.conceptos) {
                     var obj = this.conceptos[key];
                     if( typeof obj.para_estimar === 'undefined') {
-                        if (parseFloat(obj.cantidad_estimacion) !== 0) {
+                        if (parseFloat(obj.cantidad_addendum) !== 0) {
                             conceptos.push({
                                 item_antecedente: obj.id_concepto,
                                 id_concepto: obj.id_destino,
-                                importe: obj.importe_estimacion,
-                                cantidad: obj.cantidad_estimacion
+                                importe: obj.importe_addendum,
+                                cantidad: obj.cantidad_addendum
                             })
                         }
                     }
