@@ -156,6 +156,14 @@
 			</div>
 		</div>
 
+        <div class="row" v-if="conceptos">
+            <div class="col-md-12">
+                 <button class="btn btn-primary pull-right" title="Agregar concepto extraordinario">
+                     <i class="fa fa-plus-circle"></i> Agregar Concepto
+                 </button>
+            </div>
+        </div>
+        <br />
 		<div class="card" v-if="conceptos">
 			<div class="card-body table-responsive">
 				<table id="tabla-conceptos">
@@ -225,7 +233,7 @@
                                        :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
                                  <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
                             </td>
-                            <td class="numerico" style="background-color: #ddd">{{ concepto.precio_unitario_subcontrato_format}}</td>
+                            <td class="numerico" style="background-color: #ddd; text-decoration: underline">{{ concepto.precio_unitario_subcontrato_format}}</td>
                             <td class="numerico" style="background-color: #ddd">
                                 {{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
                             </td>
