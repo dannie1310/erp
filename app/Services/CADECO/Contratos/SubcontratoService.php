@@ -53,11 +53,6 @@ class SubcontratoService
         return $this->show($id)->subcontratoParaEstimar(null);
     }
 
-    public function conceptos($id)
-    {
-        return $this->show($id)->conceptos();
-    }
-
     public function paginate($data)
     {
         return $this->repository->paginate($data);

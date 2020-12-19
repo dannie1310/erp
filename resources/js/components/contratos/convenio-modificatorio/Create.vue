@@ -64,27 +64,49 @@
 						<h6 class="card-title">Subcontrato</h6>
 					</div>
 					<div class="card-body">
-						<form>
-                            <div class="form-group row">
-								<label class="col-sm-2 col-form-label">Fecha:</label>
-								<div class="col-sm-10">
-									{{ subcontrato.fecha_format }}
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-sm-2 col-form-label">Referencia:</label>
-								<div class="col-sm-10">
-									{{ subcontrato.referencia }}
-								</div>
-							</div>
-							<div class="form-group row" v-if="subcontrato.empresa">
-								<label class="col-sm-2 col-form-label">Contratista:</label>
-								<div class="col-sm-10">
-									{{ subcontrato.empresa.razon_social }}
-								</div>
-							</div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Fecha:</label>
+                                    <div class="col-md-9">
+                                        {{ subcontrato.fecha_format }}
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Referencia:</label>
+                                    <div class="col-md-9">
+                                        {{ subcontrato.referencia }}
+                                    </div>
+                                </div>
+                                <div class="form-group row" v-if="subcontrato.empresa">
+                                    <label class="col-md-3 col-form-label">Contratista:</label>
+                                    <div class="col-md-9">
+                                        {{ subcontrato.empresa.razon_social }}
+                                    </div>
+                                </div>
+                            </div>
 
-						</form>
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Moneda:</label>
+                                    <div class="col-md-9">
+                                        {{ subcontrato.moneda }}
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">IVA:</label>
+                                    <div class="col-md-9">
+                                        {{ subcontrato.impuesto_format }}
+                                    </div>
+                                </div>
+                                <div class="form-group row" v-if="subcontrato.empresa">
+                                    <label class="col-md-3 col-form-label">Monto:</label>
+                                    <div class="col-md-9">
+                                        {{ subcontrato.monto_format }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 					</div>
 				</div>
 			</div>
@@ -384,19 +406,11 @@
 					this.$store.dispatch('contratos/subcontrato/find', {
 						id: id,
 						params: {
-							include: 'empresa'
+							include: ['empresa','partidas_convenio']
 						}
 					})
 							.then(data => {
-								this.$store.dispatch('contratos/subcontrato/getConceptos', {
-									id: id
-								})
-										.then(data => {
-											this.conceptos = data.partidas;
-										})
-										.finally(() => {
-											this.cargando = false;
-										})
+                                this.conceptos = data.partidas_convenio.data;
 								this.subcontrato = data;
 								this.observaciones = data.Observaciones;
 							})

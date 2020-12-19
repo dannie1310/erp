@@ -360,9 +360,8 @@ class Subcontrato extends Transaccion
         return $respuesta;
     }
 
-    public function conceptos($id_estimacion = null)
+    public function getPartidasConvenioAttribute()
     {
-        $respuesta = array();
         $items = array();
         $nivel_ancestros = '';
 
@@ -380,15 +379,9 @@ class Subcontrato extends Transaccion
                 $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
                 $partida = ItemSubcontrato::where('id_transaccion', '=',  $this->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
             }
-            $items [$partida->nivel] = $partida->partidasEstimadas($id_estimacion, $this->id_antecedente, $contrato);
+            $items [$partida->nivel] = $partida->partidasEstimadas(null, $this->id_antecedente, $contrato);
         }
-        $respuesta = array(
-            'folio' => $this->numero_folio_format,
-            'referencia' => $this->referencia,
-            'fecha_format' => $this->fecha_format,
-            'partidas' => $items
-        );
-        return $respuesta;
+        return $items;
     }
 
     public function partidasPDF($id_estimacion)
