@@ -158,9 +158,7 @@
 
         <div class="row" v-if="conceptos">
             <div class="col-md-12">
-                 <button class="btn btn-primary pull-right" title="Agregar concepto extraordinario">
-                     <i class="fa fa-plus-circle"></i> Agregar Concepto
-                 </button>
+                 <ConceptoExtraordinario v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:concepto="concepto_extraordinario"></ConceptoExtraordinario>
             </div>
         </div>
         <br />
@@ -178,6 +176,7 @@
 							<th colspan="2" class="saldo">Saldo</th>
 							<th colspan="3">Addendum</th>
 							<th class="destino">Distribución</th>
+                            <th style="width: 20px"></th>
 						</tr>
 						<tr>
 							<th class="contratado">Volumen</th>
@@ -190,9 +189,11 @@
 							<th>P.U.</th>
 							<th>Importe</th>
 							<th class="destino">Destino</th>
+                            <th></th>
 						</tr>
 					</thead>
-					<tbody v-for="(concepto, i) in conceptos">
+                    <tbody>
+					<template v-for="(concepto, i) in conceptos">
                         <tr v-if="!concepto.unidad">
                             <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                             <td :title="concepto.descripcion">
@@ -209,6 +210,7 @@
                             <td></td>
                             <td></td>
                             <td class="destino"/>
+                            <td></td>
                         </tr>
 					    <tr v-else>
 						    <td :title="concepto.clave">{{ concepto.clave }}</td>
@@ -238,7 +240,44 @@
                                 {{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
                             </td>
                             <td  class="destino" :title="concepto.destino_path_larga">{{ concepto.destino_path }}</td>
+                            <td></td>
                         </tr>
+                    </template>
+                    <tr v-if="conceptos_extraordinarios.length>0">
+                        <td></td>
+                        <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Extraordinarios</b></td>
+                    </tr>
+                    <tr  v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
+                        <td >{{ concepto_extraordinario.clave }}</td>
+                        <td >
+                            {{concepto_extraordinario.descripcion}}
+                        </td>
+                        <td class="centrado">{{concepto_extraordinario.unidad}}</td>
+                        <td class="numerico contratado"></td>
+                        <td class="numerico contratado"></td>
+                        <td class="numerico avance-volumen"></td>
+                        <td class="numerico avance-importe"></td>
+                        <td class="numerico saldo"></td>
+                        <td class="numerico saldo"></td>
+                        <td class="numerico saldo">
+                            {{ parseFloat(concepto_extraordinario.cantidad).formatMoney(2) }}
+                        </td>
+                        <td class="numerico" >
+                            {{ parseFloat(concepto_extraordinario.precio).formatMoney(2)  }}
+                        </td>
+                        <td class="numerico" >
+                            {{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
+
+                        </td>
+                        <td  class="destino" :title="concepto_extraordinario.destino">{{ concepto_extraordinario.destino }}</td>
+                        <td>
+                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                <i class="fa fa-trash" v-else></i>
+                            </button>
+                        </td>
+                    </tr>
+
                     </tbody>
 				</table>
 			</div>
@@ -272,9 +311,10 @@
 	import {ModelListSelect} from 'vue-search-select';
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import ConceptoExtraordinario from './partials/CreateConceptoExtaordinario';
     export default {
         name: "estimacion-create",
-        components: {ModelListSelect, Datepicker, es},
+        components: {ModelListSelect, Datepicker, es, ConceptoExtraordinario},
         data() {
             return {
                 es:es,
@@ -291,6 +331,15 @@
                 fechasDeshabilitadas:{},
                 fecha_hoy : '',
                 importe_addendum:0,
+                conceptos_extraordinarios : [],
+                concepto_extraordinario :{
+                    clave:'',
+                    descripcion:'',
+                    cantidad:'',
+                    unidad:'',
+                    destino:'',
+                    precio:'',
+                }
             }
         },
 
@@ -370,6 +419,30 @@
 						})
 			},
 
+            onAgregaExtraordinario(concepto){
+                this.conceptos_extraordinarios.push({
+                    clave:concepto.clave,
+                    descripcion:concepto.descripcion,
+                    unidad:concepto.unidad,
+                    cantidad:concepto.cantidad,
+                    destino:concepto.destino,
+                    precio:concepto.precio,
+                    importe:(concepto.cantidad * concepto.precio).toFixed(2),
+                });
+                this.concepto_extraordinario ={
+                    clave:'',
+                    descripcion:'',
+                    cantidad:'',
+                    unidad:'',
+                    destino:'',
+                    precio:'',
+                    importe:''
+                };
+            },
+
+            eliminarPartida(index){
+                this.conceptos_extraordinarios.splice(index, 1);
+            },
 			getConceptos() {
         		var conceptos = [];
                 for (var key in this.conceptos) {
