@@ -237,7 +237,7 @@
                             </td>
                             <td class="numerico" style="background-color: #ddd; text-decoration: underline">{{ concepto.precio_unitario_subcontrato_format}}</td>
                             <td class="numerico" style="background-color: #ddd">
-                                {{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
+                                $ {{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
                             </td>
                             <td  class="destino" :title="concepto.destino_path_larga">{{ concepto.destino_path }}</td>
                             <td></td>
@@ -259,17 +259,17 @@
                         <td class="numerico avance-importe"></td>
                         <td class="numerico saldo"></td>
                         <td class="numerico saldo"></td>
-                        <td class="numerico saldo">
+                        <td class="numerico saldo" style="background-color: #ddd">
                             {{ parseFloat(concepto_extraordinario.cantidad).formatMoney(2) }}
                         </td>
-                        <td class="numerico" >
-                            {{ parseFloat(concepto_extraordinario.precio).formatMoney(2)  }}
+                        <td class="numerico" style="background-color: #ddd">
+                            $ {{ parseFloat(concepto_extraordinario.precio).formatMoney(2)  }}
                         </td>
-                        <td class="numerico" >
-                            {{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
+                        <td class="numerico" style="background-color: #ddd">
+                            $ {{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
 
                         </td>
-                        <td  class="destino" :title="concepto_extraordinario.destino">{{ concepto_extraordinario.destino }}</td>
+                        <td  class="destino" :title="concepto_extraordinario.destino_path">{{ concepto_extraordinario.destino_path_corta }}</td>
                         <td>
                             <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
@@ -422,26 +422,51 @@
 						})
 			},
 
+            getConcepto() {
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: this.destino_seleccionado.id_destino,
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.destino_seleccionado.destino = data;
+                        this.seleccionarDestino();
+                    })
+            },
+
             onAgregaExtraordinario(concepto){
-                this.conceptos_extraordinarios.push({
-                    clave:concepto.clave,
-                    descripcion:concepto.descripcion,
-                    unidad:concepto.unidad,
-                    cantidad:concepto.cantidad,
-                    destino:concepto.destino,
-                    precio:concepto.precio,
-                    importe:(concepto.cantidad * concepto.precio).toFixed(2),
-                });
-                this.concepto_extraordinario ={
-                    clave:'',
-                    descripcion:'',
-                    cantidad:'',
-                    unidad:'',
-                    destino:'',
-                    precio:'',
-                    importe:''
-                };
-                this.changeCantidad();
+
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: concepto.destino,
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.conceptos_extraordinarios.push({
+                            clave:concepto.clave,
+                            descripcion:concepto.descripcion,
+                            unidad:concepto.unidad,
+                            cantidad:concepto.cantidad,
+                            destino:concepto.destino,
+                            destino_path:data.path,
+                            destino_path_corta:data.path_corta,
+                            precio:concepto.precio,
+                            importe:(concepto.cantidad * concepto.precio).toFixed(2),
+                        });
+
+                        this.concepto_extraordinario ={
+                            clave:'',
+                            descripcion:'',
+                            cantidad:'',
+                            unidad:'',
+                            destino:'',
+                            precio:'',
+                            importe:''
+                        };
+                        this.changeCantidad();
+                    })
+
+
             },
 
             eliminarPartida(index){
