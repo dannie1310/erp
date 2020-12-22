@@ -366,8 +366,11 @@
                     if(!isNaN(concepto.importe_addendum)){
                         suma +=  Number(concepto.cantidad_addendum )*Number(concepto.precio_unitario_subcontrato);
                     }
-
-
+                });
+                this.conceptos_extraordinarios.forEach(function(concepto_extraordinario) {
+                    if(!isNaN(concepto_extraordinario.importe)){
+                        suma +=  Number(concepto_extraordinario.cantidad )*Number(concepto_extraordinario.precio);
+                    }
                 });
                 this.importe_addendum = suma;
             },
@@ -438,6 +441,7 @@
                     precio:'',
                     importe:''
                 };
+                this.changeCantidad();
             },
 
             eliminarPartida(index){
