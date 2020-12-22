@@ -235,7 +235,7 @@
                                        :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
                                  <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
                             </td>
-                            <td class="numerico" style="background-color: #ddd; text-decoration: underline">{{ concepto.precio_unitario_subcontrato_format}}</td>
+                            <td class="numerico" style="background-color: #ddd; text-decoration: underline" v-on:dblclick="onCambioPrecio(concepto)">{{ concepto.precio_unitario_subcontrato_format}}</td>
                             <td class="numerico" style="background-color: #ddd">
                                 $ {{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
                             </td>
@@ -272,6 +272,48 @@
                         <td  class="destino" :title="concepto_extraordinario.destino_path">{{ concepto_extraordinario.destino_path_corta }}</td>
                         <td>
                             <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                <i class="fa fa-trash" v-else></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr v-if="conceptos_cambios_precio.length>0">
+                        <td></td>
+                        <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Con Cambio de Precio</b></td>
+                    </tr>
+                    <tr  v-for="(concepto_cambio_precio, k) in conceptos_cambios_precio">
+                        <td >{{ concepto_cambio_precio.clave }}</td>
+                        <td >
+                            {{concepto_cambio_precio.descripcion}}
+                        </td>
+                        <td class="centrado">{{concepto_cambio_precio.unidad}}</td>
+                        <td class="numerico contratado"></td>
+                        <td class="numerico contratado"></td>
+                        <td class="numerico avance-volumen"></td>
+                        <td class="numerico avance-importe"></td>
+                        <td class="numerico saldo"></td>
+                        <td class="numerico saldo"></td>
+                        <td class="numerico saldo" style="background-color: #ddd">
+                            {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
+                        </td>
+                        <td class="editable-cell numerico" style="background-color: #ddd">
+                                <input v-on:keyup="keyupPrecio(concepto_cambio_precio)"
+                                       v-on:change="changeCantidad()"
+                                       class="text"
+                                       v-model="concepto_cambio_precio.precio"
+                                       :name="`precio[${k}]`"
+                                       v-validate="{required:true}"
+                                       :class="{'is-invalid': errors.has(`precio[${k}]`)}" />
+                                 <div class="invalid-feedback" v-show="errors.has(`precio[${k}]`)">{{ errors.first(`precio[${k}]`) }}</div>
+                            </td>
+                        <td class="numerico" style="background-color: #ddd">
+                            $ {{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
+
+                        </td>
+                        <td  class="destino" :title="concepto_cambio_precio.destino_path">{{ concepto_cambio_precio.destino_path_corta }}</td>
+                        <td>
+                            <button @click="eliminarPartidaCambioPrecio(k)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                 <i class="fa fa-trash" v-else></i>
                             </button>
@@ -339,7 +381,17 @@
                     unidad:'',
                     destino:'',
                     precio:'',
-                }
+                },
+                conceptos_cambios_precio : [],
+                concepto_cambio_precio :{
+                    clave:'',
+                    descripcion:'',
+                    cantidad:'',
+                    unidad:'',
+                    destino:'',
+                    precio:'',
+                    importe:'',
+                },
             }
         },
 
@@ -377,6 +429,10 @@
             keyupCantidad(concepto)
             {
                 concepto.importe_addendum = (concepto.cantidad_addendum * concepto.precio_unitario_subcontrato).toFixed(2);
+            },
+            keyupPrecio(concepto)
+            {
+                concepto.importe = (concepto.cantidad * concepto.precio).toFixed(2);
             },
 			validate() {
 				this.$validator.validate().then(result => {
@@ -433,7 +489,22 @@
                         this.seleccionarDestino();
                     })
             },
-
+            onCambioPrecio(concepto){
+			    concepto.cantidad_addendum = parseFloat(concepto.cantidad_por_estimar * -1).toFixed(2);
+                concepto.importe_addendum = (concepto.cantidad_addendum * concepto.precio_unitario_subcontrato).toFixed(2);
+                this.changeCantidad();
+                this.conceptos_cambios_precio.push({
+                    clave:concepto.clave,
+                    descripcion:concepto.descripcion_concepto,
+                    unidad:concepto.unidad,
+                    cantidad:concepto.cantidad_por_estimar,
+                    destino:concepto.destino,
+                    destino_path:concepto.destino_path_larga,
+                    destino_path_corta:concepto.destino_path,
+                    precio:0,
+                    importe:0,
+                });
+            },
             onAgregaExtraordinario(concepto){
 
                 return this.$store.dispatch('cadeco/concepto/find', {
@@ -468,9 +539,11 @@
 
 
             },
-
             eliminarPartida(index){
                 this.conceptos_extraordinarios.splice(index, 1);
+            },
+            eliminarPartidaCambioPrecio(index){
+                this.conceptos_cambios_precio.splice(index, 1);
             },
 			getConceptos() {
         		var conceptos = [];

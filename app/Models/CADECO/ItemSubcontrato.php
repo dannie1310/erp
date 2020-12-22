@@ -136,6 +136,7 @@ class ItemSubcontrato extends Item
             'destino_path' => $destino->ruta_destino,
             'destino_path_larga' => $destino->ruta,
             'id_destino' => $destino->id_concepto,
+            'cantidad_addendum' => "",
         );
     }
 
