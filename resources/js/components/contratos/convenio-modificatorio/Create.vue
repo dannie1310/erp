@@ -121,9 +121,14 @@
 							<div class="form-row">
                                 <label class="col-md-3 col-form-label">Monto:</label>
                                 <div class="col-md-9">
-                                    $ {{  parseFloat(importe_addendum).formatMoney(2)  }}
+                                    $ {{ parseFloat(importe_addendum).formatMoney(2) }}
                                 </div>
-
+							</div>
+                            <div class="form-row">
+                                <label class="col-md-3 col-form-label">Porcentaje:</label>
+                                <div class="col-md-9">
+                                    {{ parseFloat(porcentaje_addendum).formatMoney(4) }} %
+                                </div>
 							</div>
 						</form>
 					</div>
@@ -225,7 +230,7 @@
                             <td class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
                             <td class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
                             <td class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
-                            <td class="editable-cell numerico" style="background-color: #ddd">
+                            <td class="editable-cell numerico" style="background-color: #ddd" v-if="concepto.precio_modificado ==0">
                                 <input v-on:keyup="keyupCantidad(concepto)"
                                        v-on:change="changeCantidad()"
                                        class="text"
@@ -235,7 +240,18 @@
                                        :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
                                  <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
                             </td>
-                            <td class="numerico" style="background-color: #ddd; text-decoration: underline" v-on:dblclick="onCambioPrecio(concepto)">{{ concepto.precio_unitario_subcontrato_format}}</td>
+                            <td class="numerico" style="background-color: #ddd;"
+                                v-else>
+                                {{ parseFloat((concepto.cantidad_addendum)).toFixed(2) }}
+                            </td>
+                            <td class="numerico" style="background-color: #ddd; text-decoration: underline; cursor:pointer"
+                                v-on:dblclick="onCambioPrecio(concepto, $event)" v-if="concepto.precio_modificado ==0">
+                                {{ concepto.precio_unitario_subcontrato_format}}
+                            </td>
+                            <td class="numerico" style="background-color: #ddd;"
+                                 v-else>
+                                {{ concepto.precio_unitario_subcontrato_format}}
+                            </td>
                             <td class="numerico" style="background-color: #ddd">
                                 $ {{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
                             </td>
@@ -282,7 +298,7 @@
                         <td></td>
                         <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Con Cambio de Precio</b></td>
                     </tr>
-                    <tr  v-for="(concepto_cambio_precio, k) in conceptos_cambios_precio">
+                    <tr  v-for="(concepto_cambio_precio, k) in conceptos_cambios_precio" :key="concepto_cambio_precio.id">
                         <td >{{ concepto_cambio_precio.clave }}</td>
                         <td >
                             {{concepto_cambio_precio.descripcion}}
@@ -298,14 +314,15 @@
                             {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
                         </td>
                         <td class="editable-cell numerico" style="background-color: #ddd">
-                                <input v-on:keyup="keyupPrecio(concepto_cambio_precio)"
+                                <input
+                                    v-on:keyup="keyupPrecio(concepto_cambio_precio)"
                                        v-on:change="changeCantidad()"
                                        class="text"
                                        v-model="concepto_cambio_precio.precio"
-                                       :name="`precio[${k}]`"
-                                       v-validate="{required:true}"
-                                       :class="{'is-invalid': errors.has(`precio[${k}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`precio[${k}]`)">{{ errors.first(`precio[${k}]`) }}</div>
+                                       :name="`precio_cambio_`+concepto_cambio_precio.id"
+                                       v-validate="{decimal:3}"
+                                       :class="{'is-invalid': errors.has(`precio_cambio_`+concepto_cambio_precio.id)}" />
+                                 <div class="invalid-feedback" v-show="errors.has(`precio_cambio_`+concepto_cambio_precio.id)">{{ errors.first(`precio_cambio_`+concepto_cambio_precio.id) }}</div>
                             </td>
                         <td class="numerico" style="background-color: #ddd">
                             $ {{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
@@ -354,6 +371,7 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import ConceptoExtraordinario from './partials/CreateConceptoExtaordinario';
+    let id_cambio_precio  = 0;
     export default {
         name: "estimacion-create",
         components: {ModelListSelect, Datepicker, es, ConceptoExtraordinario},
@@ -373,6 +391,7 @@
                 fechasDeshabilitadas:{},
                 fecha_hoy : '',
                 importe_addendum:0,
+                porcentaje_addendum:0,
                 conceptos_extraordinarios : [],
                 concepto_extraordinario :{
                     clave:'',
@@ -424,7 +443,13 @@
                         suma +=  Number(concepto_extraordinario.cantidad )*Number(concepto_extraordinario.precio);
                     }
                 });
+                this.conceptos_cambios_precio.forEach(function(concepto_cambio_precio) {
+                    if(!isNaN(concepto_cambio_precio.importe)){
+                        suma +=  Number(concepto_cambio_precio.cantidad )*Number(concepto_cambio_precio.precio);
+                    }
+                });
                 this.importe_addendum = suma;
+                this.porcentaje_addendum = suma / this.subcontrato.monto * 100 ;
             },
             keyupCantidad(concepto)
             {
@@ -441,7 +466,6 @@
 					}
 				});
 			},
-
 			store() {
         		var conceptos = this.getConceptos();
         		if(conceptos.length > 0) {
@@ -453,10 +477,10 @@
 						observaciones: this.observaciones,
 						conceptos: conceptos
 					})
-							.then(data=> {
-								this.$router.push({name: 'estimacion-index'});
-								this.$router.push({name: 'estimacion'});
-							})
+                    .then(data=> {
+                        this.$router.push({name: 'estimacion-index'});
+                        this.$router.push({name: 'estimacion'});
+                    })
 				} else {
         		    swal('','Debe modificar o agregar al menos un concepto','warning');
 				}
@@ -472,10 +496,10 @@
 						order: 'desc'
 					}
 				})
-						.then(data => {
-							this.subcontratos = data;
-							this.cargando = false;
-						})
+                .then(data => {
+                    this.subcontratos = data;
+                    this.cargando = false;
+                })
 			},
 
             getConcepto() {
@@ -484,26 +508,48 @@
                     params: {
                     }
                 })
-                    .then(data => {
-                        this.destino_seleccionado.destino = data;
-                        this.seleccionarDestino();
-                    })
+                .then(data => {
+                    this.destino_seleccionado.destino = data;
+                    this.seleccionarDestino();
+                })
             },
-            onCambioPrecio(concepto){
-			    concepto.cantidad_addendum = parseFloat(concepto.cantidad_por_estimar * -1).toFixed(2);
-                concepto.importe_addendum = (concepto.cantidad_addendum * concepto.precio_unitario_subcontrato).toFixed(2);
-                this.changeCantidad();
-                this.conceptos_cambios_precio.push({
-                    clave:concepto.clave,
-                    descripcion:concepto.descripcion_concepto,
-                    unidad:concepto.unidad,
-                    cantidad:concepto.cantidad_por_estimar,
-                    destino:concepto.destino,
-                    destino_path:concepto.destino_path_larga,
-                    destino_path_corta:concepto.destino_path,
-                    precio:0,
-                    importe:0,
-                });
+            onCambioPrecio(concepto, event){
+                swal({
+                    title: "Cambiar Precio de Concepto",
+                    text: "¿Desea cambiar el precio del concepto: "+concepto.descripcion_concepto+"?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Continuar',
+                            closeModal: true,
+                        }
+                    }})
+                    .then((value) => {
+                        if (value) {
+                            concepto.cantidad_addendum = parseFloat(concepto.cantidad_por_estimar * -1).toFixed(2);
+                            concepto.importe_addendum = (concepto.cantidad_addendum * concepto.precio_unitario_subcontrato).toFixed(2);
+                            concepto.precio_modificado = 1;
+                            this.changeCantidad();
+                            this.conceptos_cambios_precio.push({
+                                clave:concepto.clave,
+                                descripcion:concepto.descripcion_concepto,
+                                unidad:concepto.unidad,
+                                cantidad:concepto.cantidad_por_estimar,
+                                destino:concepto.destino,
+                                destino_path:concepto.destino_path_larga,
+                                destino_path_corta:concepto.destino_path,
+                                precio:0,
+                                importe:0,
+                                id:id_cambio_precio,
+                            });
+                            id_cambio_precio++;
+                            this.changeCantidad();
+                        }
+                    });
             },
             onAgregaExtraordinario(concepto){
 
