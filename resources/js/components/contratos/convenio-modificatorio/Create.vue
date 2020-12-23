@@ -163,7 +163,7 @@
 
         <div class="row" v-if="conceptos">
             <div class="col-md-12">
-                 <ConceptoExtraordinario v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:concepto="concepto_extraordinario"></ConceptoExtraordinario>
+                <ConceptoExtraordinario v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:concepto="concepto_extraordinario"></ConceptoExtraordinario>
             </div>
         </div>
         <br />
@@ -245,7 +245,7 @@
                                 {{ parseFloat((concepto.cantidad_addendum)).toFixed(2) }}
                             </td>
                             <td class="numerico" style="background-color: #ddd; text-decoration: underline; cursor:pointer"
-                                v-on:dblclick="onCambioPrecio(concepto, $event)" v-if="concepto.precio_modificado ==0">
+                                v-on:dblclick="onCambioPrecio(concepto)" v-if="concepto.precio_modificado ==0">
                                 {{ concepto.precio_unitario_subcontrato_format}}
                             </td>
                             <td class="numerico" style="background-color: #ddd;"
@@ -314,23 +314,14 @@
                             {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
                         </td>
                         <td class="editable-cell numerico" style="background-color: #ddd">
-                                <input
-                                    v-on:keyup="keyupPrecio(concepto_cambio_precio)"
-                                       v-on:change="changeCantidad()"
-                                       class="text"
-                                       v-model="concepto_cambio_precio.precio"
-                                       :name="`precio_cambio_`+concepto_cambio_precio.id"
-                                       v-validate="{decimal:3}"
-                                       :class="{'is-invalid': errors.has(`precio_cambio_`+concepto_cambio_precio.id)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`precio_cambio_`+concepto_cambio_precio.id)">{{ errors.first(`precio_cambio_`+concepto_cambio_precio.id) }}</div>
-                            </td>
+                            $ {{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
+                        </td>
                         <td class="numerico" style="background-color: #ddd">
                             $ {{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
-
                         </td>
                         <td  class="destino" :title="concepto_cambio_precio.destino_path">{{ concepto_cambio_precio.destino_path_corta }}</td>
                         <td>
-                            <button @click="eliminarPartidaCambioPrecio(k)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                            <button @click="eliminarPartidaCambioPrecio(k,concepto_cambio_precio)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                 <i class="fa fa-trash" v-else></i>
                             </button>
@@ -363,6 +354,72 @@
 				</button>
 			</div>
 		</div>
+
+        <div class="modal fade" ref="modalCambioPrecio" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-dollar-sign"></i>Cambio de Precio a Concepto</h5>
+                        <button type="button" class="close" @click="cerrarCambioPrecio()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                        <div class="modal-body">
+                            <div class="form-group row error-content">
+                                <label  class="col-md-3 col-form-label">Clave:</label>
+                                <div class="col-md-4">
+                                    {{concepto_cambio_precio.clave}}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Descripción:</label>
+                                <div class="col-md-9">
+                                    {{concepto_cambio_precio.descripcion}}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Cantidad:</label>
+                                <div class="col-md-3">
+                                    {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2)  }}
+                                </div>
+                                <label class="col-md-3 col-form-label">Unidad:</label>
+                                <div class="col-md-3">
+                                    {{concepto_cambio_precio.unidad}}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Precio:</label>
+                                <div class="col-md-4">
+                                    $ {{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="precio" class="col-md-3 col-form-label">Nuevo Precio:</label>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="precio" placeholder="Precio"
+                                           v-model="concepto_cambio_precio.precio_nuevo"
+                                           name="precio"
+                                    >
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="cerrarCambioPrecio()">
+                                <i class="fa fa-close"  ></i>
+                                Cerrar
+                            </button>
+                            <button type="button" class="btn btn-primary" @click="validateCambioPrecio()">
+                                <i class="fa fa-plus-circle"></i>
+                                Agregar
+                            </button>
+                        </div>
+                </div>
+            </div>
+        </div>
 	</span>
 </template>
 
@@ -410,6 +467,7 @@
                     destino:'',
                     precio:'',
                     importe:'',
+                    precio_nuevo:'',
                 },
             }
         },
@@ -466,6 +524,19 @@
 					}
 				});
 			},
+            validateCambioPrecio(){
+
+                if(isNaN(this.concepto_cambio_precio.precio_nuevo)){
+                    swal('','Debe ingresar un precio válido','error');
+                } else {
+                    if(!this.concepto_cambio_precio.precio_nuevo>0){
+                        swal('','Debe ingresar un precio mayor a 0','error');
+                    } else{
+                        this.onAgregaCambioPrecio();
+                        this.cerrarCambioPrecio();
+                    }
+                }
+            },
 			store() {
         		var conceptos = this.getConceptos();
         		if(conceptos.length > 0) {
@@ -513,8 +584,21 @@
                     this.seleccionarDestino();
                 })
             },
-            onCambioPrecio(concepto, event){
-                swal({
+            onCambioPrecio(concepto){
+                this.concepto_cambio_precio ={
+                    clave:concepto.clave,
+                    descripcion: concepto.descripcion_concepto,
+                    cantidad: concepto.cantidad_por_estimar,
+                    unidad:concepto.unidad,
+                    precio:concepto.precio_unitario_subcontrato,
+                    precio_nuevo:'',
+                    importe:concepto.importe_subcontrato,
+                    concepto:concepto
+                };
+
+                $(this.$refs.modalCambioPrecio).modal('show');
+
+                /*swal({
                     title: "Cambiar Precio de Concepto",
                     text: "¿Desea cambiar el precio del concepto: "+concepto.descripcion_concepto+"?",
                     icon: "warning",
@@ -549,7 +633,29 @@
                             id_cambio_precio++;
                             this.changeCantidad();
                         }
-                    });
+                    });*/
+            },
+            onAgregaCambioPrecio()
+            {
+                this.concepto_cambio_precio.concepto.cantidad_addendum = parseFloat(this.concepto_cambio_precio.concepto.cantidad_por_estimar * -1).toFixed(2);
+                this.concepto_cambio_precio.concepto.importe_addendum = (this.concepto_cambio_precio.concepto.cantidad_addendum * this.concepto_cambio_precio.concepto.precio_unitario_subcontrato).toFixed(2);
+                this.concepto_cambio_precio.concepto.precio_modificado = 1;
+                this.conceptos_cambios_precio.push({
+                    clave:this.concepto_cambio_precio.concepto.clave,
+                    descripcion:this.concepto_cambio_precio.concepto.descripcion_concepto,
+                    unidad:this.concepto_cambio_precio.concepto.unidad,
+                    cantidad:this.concepto_cambio_precio.concepto.cantidad_por_estimar,
+                    destino:this.concepto_cambio_precio.concepto.destino,
+                    destino_path:this.concepto_cambio_precio.concepto.destino_path_larga,
+                    destino_path_corta:this.concepto_cambio_precio.concepto.destino_path,
+                    precio:this.concepto_cambio_precio.precio_nuevo,
+                    importe:(this.concepto_cambio_precio.precio_nuevo * this.concepto_cambio_precio.concepto.cantidad_por_estimar),
+                    concepto:this.concepto_cambio_precio.concepto
+                });
+                this.changeCantidad();
+            },
+            cerrarCambioPrecio(){
+                $(this.$refs.modalCambioPrecio).modal('hide');
             },
             onAgregaExtraordinario(concepto){
 
@@ -588,8 +694,12 @@
             eliminarPartida(index){
                 this.conceptos_extraordinarios.splice(index, 1);
             },
-            eliminarPartidaCambioPrecio(index){
+            eliminarPartidaCambioPrecio(index, concepto_cambio_precio){
+                concepto_cambio_precio.concepto.cantidad_addendum = '';
+                concepto_cambio_precio.concepto.importe_addendum = 0;
+                concepto_cambio_precio.concepto.precio_modificado = 0;
                 this.conceptos_cambios_precio.splice(index, 1);
+                this.changeCantidad();
             },
 			getConceptos() {
         		var conceptos = [];
