@@ -31,9 +31,9 @@
                 </router-link>
             </li>
             <li class="nav-item">
-                <router-link :to="{name: 'convenio-modificatorio'}" v-if="$root.can(['consultar_convenio_modificatorio'])" class="nav-link" :class="{active: this.$route.name == 'convenios-modificatorios'}">
-                    <i class="fa fa-file-signature nav-icon"></i>
-                    <p>Convenios Modificatorios</p>
+                <router-link :to="{name: 'solicitud-cambio'}" v-if="$root.can(['consultar_solicitud_cambio_subcontrato'])" class="nav-link" :class="{active: this.$route.name == 'solicitud-cambio'}">
+                    <i class="fa fa-stack-exchange nav-icon"></i>
+                    <p>Solicitudes de Cambio</p>
                 </router-link>
             </li>
 

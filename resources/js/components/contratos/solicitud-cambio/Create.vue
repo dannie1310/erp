@@ -5,7 +5,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<label>
-							Seleccione el subcontrato al que aplicará el convenio modificatorio:
+							Seleccione el subcontrato al que desea aplicar los cambios:
 						</label>
 					</div>
 				</div>
@@ -43,16 +43,16 @@
                 <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
             </div>
             <div class="col-md-3">
-                <label for="convenio" class="col-form-label">Convenio (PDF): </label>
-                <input type="file" class="form-control" id="convenio"
+                <label for="convenio" class="col-form-label">Soporte (PDF): </label>
+                <input type="file" class="form-control" id="soporte"
                        @change="onFileChange"
                        row="3"
                        v-validate="{ ext: ['pdf']}"
-                       name="convenio_pdf"
-                       data-vv-as="Convenio"
+                       name="soporte_pdf"
+                       data-vv-as="Soporte"
                        ref="convenio_pdf"
-                       :class="{'is-invalid': errors.has('convenio_pdf')}">
-                <div class="invalid-feedback" v-show="errors.has('convenio_pdf')">{{ errors.first('convenio_pdf') }} (pdf)</div>
+                       :class="{'is-invalid': errors.has('soporte_pdf')}">
+                <div class="invalid-feedback" v-show="errors.has('soporte_pdf')">{{ errors.first('soporte_pdf') }} (pdf)</div>
             </div>
 
         </div>
@@ -734,7 +734,7 @@
                 if (!files.length)
                     return;
                 this.nombre = files[0].name;
-                if(e.target.id == 'convenio_pdf') {
+                if(e.target.id == 'soporte_pdf') {
                     this.createImage(files[0]);
                 }
             },

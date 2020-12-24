@@ -1026,69 +1026,68 @@ export const routes = [
                         ]
                     },
                     {
-                        path: 'convenio-modificatorio',
-                        component: require('./components/contratos/convenio-modificatorio/Layout').default,
+                        path: 'solicitud-cambio',
+                        component: require('./components/contratos/solicitud-cambio/Layout').default,
                         children: [
                             {
                                 path: '/',
-                                name: 'convenio-modificatorio',
-                                component: require('./components/contratos/convenio-modificatorio/Index').default,
+                                name: 'solicitud-cambio',
+                                component: require('./components/contratos/solicitud-cambio/Index').default,
                                 meta: {
-                                    title: 'Convenios Modificatorios',
-                                    breadcrumb: {parent: 'contratos', name: 'CONVENIOS MODIFICATORIOS'},
+                                    title: 'Solicitudes de Cambio a Subcontratos',
+                                    breadcrumb: {parent: 'contratos', name: 'SOLICITUDES DE CAMBIO'},
                                     middleware: [auth, context],
 
                                 }
                             },
                             {
                                 path: 'create',
-                                name: 'convenio-modificatorio-create',
-                                component: require('./components/contratos/convenio-modificatorio/Create').default,
+                                name: 'solicitud-cambio-create',
+                                component: require('./components/contratos/solicitud-cambio/Create').default,
                                 meta: {
-                                    title: 'Convenios Modificatorios',
-                                    breadcrumb: {parent: 'convenio-modificatorio', name: 'REGISTRAR'},
+                                    title: 'Solicitud de Cambio a Subcontrato',
+                                    breadcrumb: {parent: 'solicitud-cambio', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
-                                    permission: 'registrar_convenio_modificatorio'
-
+                                    permission: 'registrar_solicitud_cambio_subcontrato'
                                 }
                             },
                             {
                                 path: ':id/eliminar',
-                                name: 'convenio-modificatorio-delete',
+                                name: 'solicitud-cambio-delete',
                                 props: true,
-                                component: require('./components/contratos/convenio-modificatorio/Delete').default,
+                                component: require('./components/contratos/solicitud-cambio/Delete').default,
                                 meta: {
                                     title: 'Eliminar Convenio Modificatorio',
                                     breadcrumb: {parent: 'convenio-modificatorio', name: 'ELIMINAR'},
                                     middleware: [auth, context, permission],
-                                    permission: 'eliminar_convenio_modificatorio'
+                                    permission: 'eliminar_solicitud_cambio_subcontrato'
                                 }
                             },
                             {
                                 path: ':id',
-                                name: 'convenio-modificatorio-show',
+                                name: 'solicitud-cambio-show',
                                 props: true,
-                                component: require('./components/contratos/convenio-modificatorio/Show').default,
+                                component: require('./components/contratos/solicitud-cambio/Show').default,
                                 meta: {
-                                    title: 'Información de Convenio Modificatorio',
-                                    breadcrumb: {parent: 'convenio-modificatorio', name: 'VER'},
+                                    title: 'Información de Solicitud de Cambio',
+                                    breadcrumb: {parent: 'solicitud-cambio', name: 'VER'},
                                     middleware: [auth, context, permission],
-                                    permission :'consultar_convenio_modificatorio'
+                                    permission :'consultar_solicitud_cambio_subcontrato'
                                 }
                             },
                             {
                                 path: ':id/documentos',
-                                name: 'convenio-modificatorio-documentos',
+                                name: 'solicitud-cambio-documentos',
                                 component: require('./components/globals/archivos/Files').default,
                                 props: route => ({
                                     id: route.params.id,
-                                    permiso: ['registrar_convenio_modificatorio'],
+                                    permiso: ['registrar_solicitud_cambio_subcontrato'],
                                 }),
                                 meta: {
-                                    title: 'Documentos de Convenio Modificatorio',
-                                    breadcrumb: { parent: 'convenio-modificatorio', name: 'DOCUMENTOS'},
+                                    title: 'Documentos de Solicitud de Cambio a Subcontrato',
+                                    breadcrumb: { parent: 'solicitud-cambio', name: 'DOCUMENTOS'},
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_convenio_modificatorio'
+                                    permission: 'consultar_solicitud_cambio_subcontrato'
                                 }
                             },
                         ]
