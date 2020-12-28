@@ -9,14 +9,14 @@ use App\Models\CADECO\Contrato;
 use App\Models\CADECO\ItemSubcontrato;
 use Illuminate\Database\Eloquent\Model;
 
-class Item extends Model
+class Partida extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'SubcontratosCM.items';
+    protected $table = 'SubcontratosCM.partidas';
     public $timestamps = false;
 
     protected $fillable = [
-        'id_transaccion',
+        'id_solicitud',
         'id_item_subcontrato',
         'id_tipo_modificacion',
         'cantidad',
@@ -27,7 +27,7 @@ class Item extends Model
 
     public function convenioModificatorio()
     {
-        return $this->belongsTo(Transaccion::class, 'id_transaccion', 'id');
+        return $this->belongsTo(Solicitud::class, 'id_solicitud', 'id');
     }
 
     public function itemSubcontrato()

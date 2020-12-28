@@ -5,14 +5,13 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ControllerTrait;
-use App\Services\CADECO\Contratos\ConvenioModificatorioService as Service;
+use App\Services\CADECO\Contratos\SolicitudCambioService as Service;
 use League\Fractal\Manager;
-use App\Http\Transformers\CADECO\SubcontratosCM\TransaccionTransformer as Transformer;
+use App\Http\Transformers\CADECO\SubcontratosCM\SolicitudTransformer as Transformer;
 
-class ConvenioModificatorioController extends Controller
+class SolicitudCambioController extends Controller
 {
     use ControllerTrait;
-
     public function __construct(Service $service, Manager $fractal, Transformer $transformer)
     {
         $this->middleware('auth:api');
@@ -26,5 +25,4 @@ class ConvenioModificatorioController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
-
 }

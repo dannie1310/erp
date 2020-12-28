@@ -3,10 +3,10 @@
 
 namespace App\Services\CADECO\Contratos;
 
-use App\Models\CADECO\SubcontratosCM\Transaccion as Model;
-use App\Repositories\CADECO\SubcontratosCM\TransaccionRepository as Repository;
+use App\Models\CADECO\SubcontratosCM\Solicitud as Model;
+use App\Repositories\CADECO\SubcontratosCM\SolicitudRepository as Repository;
 
-class ConvenioModificatorioService
+class SolicitudCambioService
 {
     protected $repository;
 

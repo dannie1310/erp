@@ -4,10 +4,10 @@
 namespace App\Http\Transformers\CADECO\SubcontratosCM;
 
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
-use App\Models\CADECO\SubcontratosCM\Transaccion;
+use App\Models\CADECO\SubcontratosCM\Solicitud;
 use League\Fractal\TransformerAbstract;
 
-class TransaccionTransformer extends TransformerAbstract
+class SolicitudTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -20,10 +20,10 @@ class TransaccionTransformer extends TransformerAbstract
     ];
 
     /**
-     * @param Transaccion $model
+     * @param Solicitud $model
      * @return array
      */
-    public function transform(Transaccion $model)
+    public function transform(Solicitud $model)
     {
         return [
             'id' => $model->getKey(),
@@ -44,10 +44,10 @@ class TransaccionTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Transaccion $model
+     * @param Solicitud $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeSubcontrato(Transaccion $model) {
+    public function includeSubcontrato(Solicitud $model) {
         if ($subcontrato = $model->subcontrato) {
             return $this->item($subcontrato, new SubcontratoTransformer);
         }
@@ -55,13 +55,13 @@ class TransaccionTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Transaccion $model
+     * @param Solicitud $model
      * @return \League\Fractal\Resource\Collection|null
      */
-    public function includeItems(Transaccion $model)
+    public function includeItems(Solicitud $model)
     {
-        if ($items = $model->items) {
-            return $this->collection($items, new ItemTransformer);
+        if ($partidas = $model->partidas) {
+            return $this->collection($partidas, new PartidaTransformer);
         }
         return null;
     }

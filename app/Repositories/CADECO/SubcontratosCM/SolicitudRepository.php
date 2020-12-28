@@ -5,10 +5,10 @@ namespace App\Repositories\CADECO\SubcontratosCM;
 
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
-use App\Models\CADECO\SubcontratosCM\Transaccion as Model;
+use App\Models\CADECO\SubcontratosCM\Soliciud as Model;
 
 
-class TransaccionRepository extends Repository implements RepositoryInterface
+class SolicitudRepository extends Repository implements RepositoryInterface
 {
     public function __construct(Model $model)
     {

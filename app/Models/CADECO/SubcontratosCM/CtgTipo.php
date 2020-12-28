@@ -16,9 +16,9 @@ class CtgTipo extends Model
         'descripcion',
     ];
 
-    public function itemsConvenioModificatorio()
+    public function partidasSolicitud()
     {
-        return $this->hasMany(Item::class, 'id_tipo_modificacion', 'id');
+        return $this->hasMany(Partida::class, 'id_tipo_modificacion', 'id');
     }
 
 }

@@ -7,10 +7,10 @@ namespace App\Models\CADECO\SubcontratosCM;
 use App\Models\CADECO\Subcontrato;
 use Illuminate\Database\Eloquent\Model;
 
-class Transaccion extends Model
+class Solicitud extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'SubcontratosCM.transacciones';
+    protected $table = 'SubcontratosCM.solicitudes';
     public $timestamps = false;
 
     protected $fillable = [

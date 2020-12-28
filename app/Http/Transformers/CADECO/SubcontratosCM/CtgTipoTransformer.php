@@ -4,7 +4,7 @@
 namespace App\Http\Transformers\CADECO\SubcontratosCM;
 
 use App\Models\CADECO\SubcontratosCM\CtgTipo;
-use App\Models\CADECO\SubcontratosCM\Item;
+use App\Models\CADECO\SubcontratosCM\Partida;
 use League\Fractal\TransformerAbstract;
 
 class CtgTipoTransformer extends TransformerAbstract

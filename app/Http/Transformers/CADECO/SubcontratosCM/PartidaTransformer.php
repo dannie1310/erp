@@ -4,11 +4,11 @@
 namespace App\Http\Transformers\CADECO\SubcontratosCM;
 
 use App\Http\Transformers\CADECO\ContratoTransformer;
-use App\Models\CADECO\SubcontratosCM\Item;
+use App\Models\CADECO\SubcontratosCM\Partida;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\ItemTransformer as ItemSubcontratoTransformer;
 
-class ItemTransformer extends TransformerAbstract
+class PartidaTransformer extends TransformerAbstract
 {
     /**
      * @var string[]
@@ -19,7 +19,7 @@ class ItemTransformer extends TransformerAbstract
         'concepto'
     ];
 
-    public function transform(Item $model)
+    public function transform(Partida $model)
     {
         return [
             'id' => $model->getKey(),
@@ -32,21 +32,21 @@ class ItemTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeTipo(Item $model) {
+    public function includeTipo(Partida $model) {
         if ($tipo = $model->tipo) {
             return $this->item($tipo, new CtgTipoTransformer);
         }
         return null;
     }
 
-    public function includeItemSubcontrato(Item $model) {
+    public function includeItemSubcontrato(Partida $model) {
         if ($itemSubcontrato = $model->itemSubcontrato) {
             return $this->item($itemSubcontrato, new ItemSubcontratoTransformer);
         }
         return null;
     }
 
-    public function includeConcepto(Item $model) {
+    public function includeConcepto(Partida $model) {
         if ($concepto = $model->concepto) {
             return $this->item($concepto, new ContratoTransformer);
         }
