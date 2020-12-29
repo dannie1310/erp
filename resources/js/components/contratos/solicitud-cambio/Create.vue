@@ -539,18 +539,18 @@
             },
 			store() {
         		var conceptos = this.getConceptos();
-        		if(conceptos.length > 0) {
-					return this.$store.dispatch('contratos/estimacion/store', {
+                var conceptos_cambio_precio = this.getConceptosCambioPrecio();
+        		if(conceptos.length > 0 || this.conceptos_extraordinarios.length > 0) {
+					return this.$store.dispatch('contratos/solicitud-cambio/store', {
 						id_antecedente: this.id_subcontrato,
-                        fecha: moment(this.fecha).format('YYYY-MM-DD'),
-						cumplimiento: moment(this.fecha_inicio).format('YYYY-MM-DD'),
-						vencimiento:  moment(this.fecha_fin).format('YYYY-MM-DD'),
+                        fecha: this.fecha,
 						observaciones: this.observaciones,
-						conceptos: conceptos
+                        conceptos_cambios_precio: conceptos_cambio_precio,
+                        conceptos_extraordinarios: this.conceptos_extraordinarios,
+                        conceptos: conceptos
 					})
                     .then(data=> {
-                        this.$router.push({name: 'estimacion-index'});
-                        this.$router.push({name: 'estimacion'});
+                        this.$router.push({name: 'solicitud-cambio'});
                     })
 				} else {
         		    swal('','Debe modificar o agregar al menos un concepto','warning');
@@ -598,42 +598,6 @@
 
                 $(this.$refs.modalCambioPrecio).modal('show');
 
-                /*swal({
-                    title: "Cambiar Precio de Concepto",
-                    text: "¿Desea cambiar el precio del concepto: "+concepto.descripcion_concepto+"?",
-                    icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Continuar',
-                            closeModal: true,
-                        }
-                    }})
-                    .then((value) => {
-                        if (value) {
-                            concepto.cantidad_addendum = parseFloat(concepto.cantidad_por_estimar * -1).toFixed(2);
-                            concepto.importe_addendum = (concepto.cantidad_addendum * concepto.precio_unitario_subcontrato).toFixed(2);
-                            concepto.precio_modificado = 1;
-                            this.changeCantidad();
-                            this.conceptos_cambios_precio.push({
-                                clave:concepto.clave,
-                                descripcion:concepto.descripcion_concepto,
-                                unidad:concepto.unidad,
-                                cantidad:concepto.cantidad_por_estimar,
-                                destino:concepto.destino,
-                                destino_path:concepto.destino_path_larga,
-                                destino_path_corta:concepto.destino_path,
-                                precio:0,
-                                importe:0,
-                                id:id_cambio_precio,
-                            });
-                            id_cambio_precio++;
-                            this.changeCantidad();
-                        }
-                    });*/
             },
             onAgregaCambioPrecio()
             {
@@ -665,31 +629,29 @@
                     }
                 })
                     .then(data => {
-                        this.conceptos_extraordinarios.push({
-                            clave:concepto.clave,
-                            descripcion:concepto.descripcion,
-                            unidad:concepto.unidad,
-                            cantidad:concepto.cantidad,
-                            destino:concepto.destino,
-                            destino_path:data.path,
-                            destino_path_corta:data.path_corta,
-                            precio:concepto.precio,
-                            importe:(concepto.cantidad * concepto.precio).toFixed(2),
-                        });
+                    this.conceptos_extraordinarios.push({
+                        clave:concepto.clave,
+                        descripcion:concepto.descripcion,
+                        unidad:concepto.unidad,
+                        cantidad:concepto.cantidad,
+                        destino:concepto.destino,
+                        destino_path:data.path,
+                        destino_path_corta:data.path_corta,
+                        precio:concepto.precio,
+                        importe:(concepto.cantidad * concepto.precio).toFixed(2),
+                    });
 
-                        this.concepto_extraordinario ={
-                            clave:'',
-                            descripcion:'',
-                            cantidad:'',
-                            unidad:'',
-                            destino:'',
-                            precio:'',
-                            importe:''
-                        };
-                        this.changeCantidad();
-                    })
-
-
+                    this.concepto_extraordinario ={
+                        clave:'',
+                        descripcion:'',
+                        cantidad:'',
+                        unidad:'',
+                        destino:'',
+                        precio:'',
+                        importe:''
+                    };
+                    this.changeCantidad();
+                })
             },
             eliminarPartida(index){
                 this.conceptos_extraordinarios.splice(index, 1);
@@ -705,19 +667,40 @@
         		var conceptos = [];
                 for (var key in this.conceptos) {
                     var obj = this.conceptos[key];
-                    if( typeof obj.para_estimar === 'undefined') {
-                        if (parseFloat(obj.cantidad_addendum) !== 0) {
-                            conceptos.push({
-                                item_antecedente: obj.id_concepto,
-                                id_concepto: obj.id_destino,
-                                importe: obj.importe_addendum,
-                                cantidad: obj.cantidad_addendum
-                            })
-                        }
+
+                    if (!isNaN(parseFloat(obj.cantidad_addendum))) {
+                        conceptos.push({
+                            item_antecedente: obj.id_concepto,
+                            id_concepto: obj.id_destino,
+                            importe: obj.importe_addendum,
+                            cantidad: obj.cantidad_addendum,
+                            precio_modificado: obj.precio_modificado
+                        })
                     }
                 }
 				return conceptos;
 			},
+            getConceptosCambioPrecio() {
+                var conceptos_cambio_precio = [];
+                for (var key in this.conceptos_cambios_precio) {
+                    var obj = this.conceptos_cambios_precio[key];
+                    if(obj.concepto != undefined){
+                        conceptos_cambio_precio.push({
+                            clave:obj.clave,
+                            descripcion:obj.descripcion,
+                            unidad:obj.unidad,
+                            cantidad:obj.cantidad,
+                            destino:obj.destino,
+                            destino_path:obj.destino_path,
+                            destino_path_corta:obj.destino_path_corta,
+                            precio:obj.precio,
+                            importe:obj.importe,
+                            id_concepto_original:obj.concepto.id_concepto
+                        })
+                    }
+                }
+                return conceptos_cambio_precio;
+            },
             createImage(file, tipo) {
                 var reader = new FileReader();
                 var vm = this;

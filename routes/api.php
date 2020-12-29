@@ -849,6 +849,20 @@ $api->version('v1', function ($api) {
         });
 
         /**
+         * SOLICITUD DE CAMBIO
+         */
+
+        $api->group(['prefix' => 'solicitud-cambio'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@registrar');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@aprobar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/revertirAprobacion', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@revertirAprobacion')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@paginate');
+            $api->get('{id}/formato-pdf', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@pdf')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        /**
          * TIPOS CONTRATOS
          */
         $api->group(['prefix' => 'tipo-contrato'], function ($api) {

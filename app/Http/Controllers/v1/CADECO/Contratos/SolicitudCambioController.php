@@ -6,6 +6,7 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 use App\Http\Controllers\Controller;
 use App\Traits\ControllerTrait;
 use App\Services\CADECO\Contratos\SolicitudCambioService as Service;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 use App\Http\Transformers\CADECO\SubcontratosCM\SolicitudTransformer as Transformer;
 
@@ -24,5 +25,15 @@ class SolicitudCambioController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function registrar(Request $request)
+    {
+        dd(
+            $request->conceptos_extraordinarios
+            , $request->conceptos_cambios_precio
+            , $request->conceptos);
+        $respuesta = $this->service->registrarPagos($request);
+        return response()->json($respuesta, 200);
     }
 }
