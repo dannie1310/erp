@@ -5,6 +5,7 @@ export default {
     state: {
         almacenes: [],
         currentAlmacen: '',
+        meta: {}
     },
 
     mutations: {
@@ -17,6 +18,21 @@ export default {
         SET_META(state, data) {
             state.meta = data;
         },
+        UPDATE_ALMACEN(state, data) {
+            state.almacenes = state.almacenes.map(almacen => {
+                if (almacen.id === data.id) {
+                    return Object.assign({}, almacen, data)
+                }
+                return almacen
+            })
+            state.currentAlmacen = state.currentAlmacen ? data : null;
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentAlmacen[data.attribute] = data.value
+        },
+        DELETE_ALMACEN(state, data){
+            state.almacenes.splice(data.index, 1);
+        }
     },
 
     actions: {
@@ -46,20 +62,137 @@ export default {
                     });
             });
         },
-        // materiales(context, payload) {
-        //     return new Promise((resolve, reject) => {
-        //         axios
-        //             .get(URI + payload.id +'/materiales', { params: payload.params })
-        //             .then(r => r.data)
-        //             .then(data => {
-        //                 resolve(data);
-        //             })
-        //             .catch(error => {
-        //                 reject(error)
-        //             })
-        //     });
-        // },
-
+        paginate(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Almacén registrado correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Actualizar el Almacén",
+                    text: "¿Está seguro/a de que desea actualizar el almacén?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                .then((value) => {
+                    if (value) {
+                        axios
+                            .patch(URI + payload.id, payload.data, { params: payload.params })
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("El Almacén ha sido actualizado correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                })
+                                    .then(() => {
+                                        resolve(data);
+                                    })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            })
+                    }
+                });
+            });
+        },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el Almacén",
+                    text: "¿Está seguro que desea eliminar el almacén?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Almacén eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
 
     getters: {
@@ -72,6 +205,5 @@ export default {
         meta(state) {
             return state.meta;
         },
-
     }
 }

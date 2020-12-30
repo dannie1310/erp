@@ -23,10 +23,10 @@ class AlmacenTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'inventario',
         'materiales',
         'materiales_ajuste',
-        'materiales_salida'
+        'materiales_salida',
+        'material'
     ];
 
 
@@ -35,7 +35,14 @@ class AlmacenTransformer extends TransformerAbstract
             'id' => (int) $model->getKey(),
             'descripcion' => (string) $model->descripcion,
             'tipo' => (string) $model->tipo,
-            'tipo_almacen' => (int) $model->tipo_almacen
+            'tipo_almacen' => (int) $model->tipo_almacen,
+            'registro' => $model->nombre_registro,
+            'fecha_registro' => $model->fecha_registro_format,
+            'permiso_editar' => $model->permiso_editar,
+            'permiso_eliminar' => $model->permiso_eliminar,
+            'numero_economico' => $model->numero_economico,
+            'clasificacion' => $model->clasificacion,
+            'propiedad' => $model->propiedad
         ];
     }
 
@@ -71,6 +78,19 @@ class AlmacenTransformer extends TransformerAbstract
     public function includeMaterialesSalida(Almacen $model){
         if ($materiales = $model->materialesSalida) {
             return $this->collection($materiales, new MaterialSalidasTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Almacen $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMaterial(Almacen $model)
+    {
+        if($material = $model->material)
+        {
+            return $this->item($material, new MaterialTransformer);
         }
         return null;
     }
