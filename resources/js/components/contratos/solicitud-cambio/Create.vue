@@ -43,16 +43,16 @@
                 <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
             </div>
             <div class="col-md-3">
-                <label for="convenio" class="col-form-label">Soporte (PDF): </label>
-                <input type="file" class="form-control" id="soporte"
+                <label for="archivo" class="col-form-label">Soporte (PDF): </label>
+                <input type="file" class="form-control" id="archivo"
                        @change="onFileChange"
                        row="3"
                        v-validate="{ ext: ['pdf']}"
-                       name="soporte_pdf"
+                       name="archivo"
                        data-vv-as="Soporte"
-                       ref="convenio_pdf"
-                       :class="{'is-invalid': errors.has('soporte_pdf')}">
-                <div class="invalid-feedback" v-show="errors.has('soporte_pdf')">{{ errors.first('soporte_pdf') }} (pdf)</div>
+                       ref="archivo"
+                       :class="{'is-invalid': errors.has('archivo')}">
+                <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (pdf)</div>
             </div>
 
         </div>
@@ -434,6 +434,8 @@
         components: {ModelListSelect, Datepicker, es, ConceptoExtraordinario},
         data() {
             return {
+                archivo:'',
+                archivo_nombre:'',
                 es:es,
                 id_subcontrato: '',
                 subcontrato: null,
@@ -468,6 +470,7 @@
                     precio:'',
                     importe:'',
                     precio_nuevo:'',
+                    id_item_subcontrato:'',
                 },
             }
         },
@@ -542,12 +545,14 @@
                 var conceptos_cambio_precio = this.getConceptosCambioPrecio();
         		if(conceptos.length > 0 || this.conceptos_extraordinarios.length > 0) {
 					return this.$store.dispatch('contratos/solicitud-cambio/store', {
-						id_antecedente: this.id_subcontrato,
+						id_subcontrato: this.id_subcontrato,
                         fecha: this.fecha,
 						observaciones: this.observaciones,
                         conceptos_cambios_precio: conceptos_cambio_precio,
                         conceptos_extraordinarios: this.conceptos_extraordinarios,
-                        conceptos: conceptos
+                        conceptos: conceptos,
+                        archivo: this.archivo,
+                        archivo_nombre: this.archivo_nombre
 					})
                     .then(data=> {
                         this.$router.push({name: 'solicitud-cambio'});
@@ -593,7 +598,8 @@
                     precio:concepto.precio_unitario_subcontrato,
                     precio_nuevo:'',
                     importe:concepto.importe_subcontrato,
-                    concepto:concepto
+                    concepto:concepto,
+                    id_item_subcontrato:concepto.id
                 };
 
                 $(this.$refs.modalCambioPrecio).modal('show');
@@ -614,7 +620,8 @@
                     destino_path_corta:this.concepto_cambio_precio.concepto.destino_path,
                     precio:this.concepto_cambio_precio.precio_nuevo,
                     importe:(this.concepto_cambio_precio.precio_nuevo * this.concepto_cambio_precio.concepto.cantidad_por_estimar),
-                    concepto:this.concepto_cambio_precio.concepto
+                    concepto:this.concepto_cambio_precio.concepto,
+                    id_item_subcontrato: this.concepto_cambio_precio.id_item_subcontrato,
                 });
                 this.changeCantidad();
             },
@@ -622,7 +629,6 @@
                 $(this.$refs.modalCambioPrecio).modal('hide');
             },
             onAgregaExtraordinario(concepto){
-
                 return this.$store.dispatch('cadeco/concepto/find', {
                     id: concepto.destino,
                     params: {
@@ -647,6 +653,8 @@
                         cantidad:'',
                         unidad:'',
                         destino:'',
+                        destino_path:'',
+                        destino_path_corta:'',
                         precio:'',
                         importe:''
                     };
@@ -674,7 +682,8 @@
                             id_concepto: obj.id_destino,
                             importe: obj.importe_addendum,
                             cantidad: obj.cantidad_addendum,
-                            precio_modificado: obj.precio_modificado
+                            precio_modificado: obj.precio_modificado,
+                            id_item_subcontrato: obj.id
                         })
                     }
                 }
@@ -695,29 +704,30 @@
                             destino_path_corta:obj.destino_path_corta,
                             precio:obj.precio,
                             importe:obj.importe,
-                            id_concepto_original:obj.concepto.id_concepto
+                            id_concepto_original:obj.concepto.id_concepto,
+                            id_item_subcontrato:obj.id_item_subcontrato
                         })
                     }
                 }
                 return conceptos_cambio_precio;
             },
-            createImage(file, tipo) {
+            createImage(file) {
                 var reader = new FileReader();
                 var vm = this;
 
                 reader.onload = (e) => {
-                    vm.file = e.target.result;
+                    vm.archivo = e.target.result;
                 };
                 reader.readAsDataURL(file);
 
             },
             onFileChange(e){
-                this.file = null;
+                this.archivo = null;
                 var files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
                     return;
-                this.nombre = files[0].name;
-                if(e.target.id == 'soporte_pdf') {
+                this.archivo_nombre = files[0].name;
+                if(e.target.id == 'archivo') {
                     this.createImage(files[0]);
                 }
             },

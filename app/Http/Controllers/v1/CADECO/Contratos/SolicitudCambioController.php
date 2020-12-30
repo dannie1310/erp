@@ -29,11 +29,7 @@ class SolicitudCambioController extends Controller
 
     public function registrar(Request $request)
     {
-        dd(
-            $request->conceptos_extraordinarios
-            , $request->conceptos_cambios_precio
-            , $request->conceptos);
-        $respuesta = $this->service->registrarPagos($request);
+        $respuesta = $this->service->registrar($request);
         return response()->json($respuesta, 200);
     }
 }
