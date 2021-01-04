@@ -688,8 +688,6 @@ class OrdenCompraFormato extends FPDI
             $this->SetAligns(['L']);
             $this->Row([utf8_decode($p->itemSolicitudCompra->entrega->destino_txt)]);
 
-
-
             if(!empty($p->itemSolicitudCompra->complemento->observaciones))
             {
                 $this->SetTextColors(['150,150,150']);
