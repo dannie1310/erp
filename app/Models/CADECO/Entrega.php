@@ -67,7 +67,7 @@ class Entrega extends Model
         if ($this->concepto) {
             return $this->concepto->path;
         } else {
-            return $this->almacen;
+            return $this->almacen->descripcion;
         }
     }
 
