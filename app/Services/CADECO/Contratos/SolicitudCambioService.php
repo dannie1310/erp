@@ -36,7 +36,6 @@ class SolicitudCambioService
         $partidas = [];
 
         $i = 0;
-        $importe_solicitud = 0;
         foreach($request->conceptos as $concepto){
             $partidas[$i] = [
                 "id_item_subcontrato"=>$concepto["id_item_subcontrato"],
@@ -77,7 +76,6 @@ class SolicitudCambioService
             $i++;
         }
 
-        print_r($solicitud);
 
         if($request->archivo == null){
             abort(500, "Debe seleccionar un archivo que soporte la solicitud de cambio");
@@ -85,7 +83,7 @@ class SolicitudCambioService
 
 
 
-        return $this->repository->registrar($solicitud, $archivo, $partidas );
+        return $this->repository->registrar($solicitud, $archivo, $partidas);
     }
 
 }

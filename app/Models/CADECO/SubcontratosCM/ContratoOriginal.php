@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class ContratoOriginal extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'SubcontratosCM.original_subcontratos';
+    protected $table = 'SubcontratosCM.original_contratos';
     public $timestamps = false;
 
     protected $fillable = [

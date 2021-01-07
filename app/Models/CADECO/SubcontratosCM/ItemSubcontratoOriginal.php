@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class ItemSubcontratoOriginal extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'SubcontratosCM.original_items_subcontrato';
+    protected $table = 'SubcontratosCM.original_items_subcontratos';
     public $timestamps = false;
 
     protected $fillable = [
