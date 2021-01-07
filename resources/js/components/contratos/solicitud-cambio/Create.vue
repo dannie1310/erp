@@ -546,6 +546,7 @@
         		if(conceptos.length > 0 || this.conceptos_extraordinarios.length > 0) {
 					return this.$store.dispatch('contratos/solicitud-cambio/store', {
 						id_subcontrato: this.id_subcontrato,
+                        monto: this.importe_addendum,
                         fecha: this.fecha,
 						observaciones: this.observaciones,
                         conceptos_cambios_precio: conceptos_cambio_precio,
@@ -681,6 +682,7 @@
                             item_antecedente: obj.id_concepto,
                             id_concepto: obj.id_destino,
                             importe: obj.importe_addendum,
+                            precio: obj.precio_unitario_subcontrato,
                             cantidad: obj.cantidad_addendum,
                             precio_modificado: obj.precio_modificado,
                             id_item_subcontrato: obj.id

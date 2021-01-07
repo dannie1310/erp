@@ -16,4 +16,9 @@ class SolicitudRepository extends Repository implements RepositoryInterface
         $this->model = $model;
     }
 
+    public function registrar($solicitud, $archivo, $partidas)
+    {
+        return $this->model->registrar($solicitud, $archivo, $partidas);
+    }
+
 }

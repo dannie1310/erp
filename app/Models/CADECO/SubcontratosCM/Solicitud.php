@@ -5,56 +5,51 @@ namespace App\Models\CADECO\SubcontratosCM;
 
 
 use App\Models\CADECO\Subcontrato;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Transaccion;
+use Illuminate\Support\Facades\DB;
 
-class Solicitud extends Model
+class Solicitud extends Transaccion
 {
-    protected $connection = 'cadeco';
-    protected $table = 'SubcontratosCM.solicitudes';
-    public $timestamps = false;
+    public const TIPO_ANTECEDENTE = 51;
+    public const OPCION_ANTECEDENTE = 2;
+    public const TIPO = 53;
+    public const OPCION = 1;
+    public const NOMBRE = "Solicitud de Cambio";
+    public const ICONO = "fa fa-stack-exchange";
 
     protected $fillable = [
-        'id_subcontrato',
+        'id_antecedente',
         'fecha',
-        'fecha_registro',
         'impuesto',
         'monto',
-        'usuario_registro',
-        'fecha_aplicacion',
-        'usuario_aplico',
+        'id_usuario',
     ];
 
     public function subcontrato()
     {
-        return $this->belongsTo(Subcontrato::class, 'id_subcontrato', 'id_transaccion');
+        return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function getFechaFormatAttribute()
+    public function partidas()
     {
-        $date = date_create($this->fecha);
-        return date_format($date,"d/m/Y");
+        return $this->hasMany(Partida::class, 'id_solicitud', 'id_transaccion');
     }
 
-    public function getFechaAplicacionFormatAttribute()
-    {
-        $date = date_create($this->fecha_aplicacion);
-        return date_format($date,"d/m/Y");
+    public function registrar($solicitud, $archivo, $conceptos, $conceptos_extraordinarios, $conceptos_conceptos_cambios_precio){
+        dd($solicitud, $conceptos, $conceptos_extraordinarios, $conceptos_conceptos_cambios_precio, $archivo);
+        DB::connection('cadeco')->beginTransaction();
+        $solicitud = $this->create($solicitud);
+        foreach($paridas as $partida){
+
+        }
+
+        DB::connection('cadeco')->rollBack();
     }
 
-    public function getFechaRegistroFormatAttribute()
+    public static function calcularFolio()
     {
-        $date = date_create($this->fecha_registro);
-        return date_format($date,"d/m/Y");
-    }
-
-    public function getImpuestoFormatAttribute()
-    {
-        return '$' . number_format($this->impuesto, 2, '.', ',');
-    }
-
-    public function getMontoFormatAttribute()
-    {
-        return '$' . number_format($this->monto, 2, '.', ',');
+        $fol = Transaccion::where('tipo_transaccion', '=', 53)->orderBy('numero_folio', 'DESC')->first();
+        return $fol ? $fol->numero_folio + 1 : 1;
     }
 
 }

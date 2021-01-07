@@ -22,10 +22,13 @@ class Partida extends Model
         'cantidad',
         'precio',
         'importe',
+        'clave',
+        'descripcion',
+        'unidad',
         'id_concepto',
     ];
 
-    public function convenioModificatorio()
+    public function solicitud()
     {
         return $this->belongsTo(Solicitud::class, 'id_solicitud', 'id');
     }
