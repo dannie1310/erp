@@ -25,7 +25,6 @@ class Solicitud extends Transaccion
         'monto',
         'id_usuario',
     ];
-
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
@@ -55,6 +54,7 @@ class Solicitud extends Transaccion
         DB::connection('cadeco')->beginTransaction();
         try{
             $solicitud = $this->create($solicitud);
+
             $solicitud->subcontratoOriginal()->create([
                 "id_subcontrato"=> $solicitud->subcontrato->id_transaccion,
                 "impuesto"=> $solicitud->subcontrato->impuesto,
@@ -120,12 +120,10 @@ class Solicitud extends Transaccion
                 }
             }
             DB::connection('cadeco')->commit();
+            return $solicitud;
         } catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
         }
-
-
-
     }
 
 

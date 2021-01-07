@@ -3,8 +3,10 @@
 
 namespace App\Services\CADECO\Contratos;
 
+use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\SubcontratosCM\Solicitud as Model;
 use App\Repositories\CADECO\SubcontratosCM\SolicitudRepository as Repository;
+use App\Services\CADECO\Documentacion\ArchivoService;
 use DateTime;
 use DateTimeZone;
 
@@ -28,9 +30,10 @@ class SolicitudCambioService
             "monto"=>$request->monto
         ];
 
-        $archivo = [
-            "archivo"=>$request->archivo,
-            "nombre"=>$request->archivo_nombre
+        $archivo_data = [
+            "archivos"=>\json_encode([["archivo"=>$request->archivo]]),
+            "archivos_nombres"=>\json_encode([["nombre"=>$request->archivo_nombre]]),
+            "descripcion"=>"Soporte de solicitud de cambio a subcontrato",
         ];
 
         $partidas = [];
@@ -81,9 +84,12 @@ class SolicitudCambioService
             abort(500, "Debe seleccionar un archivo que soporte la solicitud de cambio");
         }
 
+        $solicitud = $this->repository->registrar($solicitud, $archivo_data, $partidas);
+        $archivo_data["id"] = $solicitud->id_transaccion;
+        $ArchivoService = new ArchivoService(new Archivo());
+        $ArchivoService->cargarArchivo($archivo_data);
 
-
-        return $this->repository->registrar($solicitud, $archivo, $partidas);
+        return $solicitud;
     }
 
 }
