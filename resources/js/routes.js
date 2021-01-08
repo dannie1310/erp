@@ -1026,6 +1026,73 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'solicitud-cambio',
+                        component: require('./components/contratos/solicitud-cambio/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'solicitud-cambio',
+                                component: require('./components/contratos/solicitud-cambio/Index').default,
+                                meta: {
+                                    title: 'Solicitudes de Cambio a Subcontratos',
+                                    breadcrumb: {parent: 'contratos', name: 'SOLICITUDES DE CAMBIO'},
+                                    middleware: [auth, context],
+
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'solicitud-cambio-create',
+                                component: require('./components/contratos/solicitud-cambio/Create').default,
+                                meta: {
+                                    title: 'Solicitud de Cambio a Subcontrato',
+                                    breadcrumb: {parent: 'solicitud-cambio', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_solicitud_cambio_subcontrato'
+                                }
+                            },
+                            {
+                                path: ':id/eliminar',
+                                name: 'solicitud-cambio-delete',
+                                props: true,
+                                component: require('./components/contratos/solicitud-cambio/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Convenio Modificatorio',
+                                    breadcrumb: {parent: 'convenio-modificatorio', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'eliminar_solicitud_cambio_subcontrato'
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'solicitud-cambio-show',
+                                props: true,
+                                component: require('./components/contratos/solicitud-cambio/Show').default,
+                                meta: {
+                                    title: 'Información de Solicitud de Cambio',
+                                    breadcrumb: {parent: 'solicitud-cambio', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission :'consultar_solicitud_cambio_subcontrato'
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'solicitud-cambio-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_solicitud_cambio_subcontrato'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Solicitud de Cambio a Subcontrato',
+                                    breadcrumb: { parent: 'solicitud-cambio', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_cambio_subcontrato'
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'fondo-garantia',
                         component: require('./components/contratos/fondo-garantia/partials/Layout.vue').default,
                         meta: {

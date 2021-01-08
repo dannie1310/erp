@@ -16,6 +16,7 @@ use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
+use App\Http\Transformers\CADECO\SubcontratosCM\SubcontratoPartidaTransformer;
 
 class SubcontratoTransformer extends TransformerAbstract
 {
@@ -32,7 +33,8 @@ class SubcontratoTransformer extends TransformerAbstract
         'partidas_ordenadas',
         'subcontratos',
         'relaciones',
-        'costo'
+        'costo',
+        'partidas_convenio'
     ];
 
     /**
@@ -86,6 +88,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'monto_facturado_ea' => (float) $model->montoFacturadoEstimacion,
             'empresa'=>(string) $model->empresa->razon_social,
             'id_tipo_contrato' =>($model->clasificacionSubcontrato) ? (int)$model->clasificacionSubcontrato->id_tipo_contrato:'',
+            'moneda' => $model->moneda->nombre
         ];
     }
     /**
@@ -172,6 +175,15 @@ class SubcontratoTransformer extends TransformerAbstract
         if($costo = $model->costo)
         {
             return $this->item($costo, new CostoTransformer);
+        }
+        return null;
+    }
+
+    public function includePartidasConvenio(Subcontrato $model)
+    {
+        if($partidas = $model->partidas_convenio)
+        {
+            return $this->collection($partidas, new SubcontratoPartidaTransformer);
         }
         return null;
     }

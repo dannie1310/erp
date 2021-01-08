@@ -30,6 +30,12 @@
                     <p>Subcontratos</p>
                 </router-link>
             </li>
+            <li class="nav-item">
+                <router-link :to="{name: 'solicitud-cambio'}" v-if="$root.can(['consultar_solicitud_cambio_subcontrato'])" class="nav-link" :class="{active: this.$route.name == 'solicitud-cambio'}">
+                    <i class="fa fa-stack-exchange nav-icon"></i>
+                    <p>Solicitudes de Cambio</p>
+                </router-link>
+            </li>
 
             <li class="nav-item" v-if="$root.can('consultar_estimacion_subcontrato')">
                 <router-link :to="{name: 'estimacion'}" class="nav-link" :class="{active: this.$route.name == 'estimacion' || this.$route.name == 'estimacion-edit'}">

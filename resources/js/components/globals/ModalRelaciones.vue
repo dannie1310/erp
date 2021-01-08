@@ -84,6 +84,9 @@ export default {
             if(this.transaccion.tipo == 72){
                 this.solicitud_pago_anticipado();
             }
+            if(this.transaccion.tipo == 54){
+                this.solicitud_cambio_subcontrato();
+            }
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show')
         },
@@ -232,6 +235,19 @@ export default {
         },
         solicitud_pago_anticipado(){
             return this.$store.dispatch('finanzas/solicitud-pago-anticipado/find', {
+                id: this.transaccion.id,
+                params:{include: [
+                        'relaciones'
+                    ]}
+            }).then(data => {
+                this.relaciones = data.relaciones.data
+            })
+                .finally(()=> {
+                    this.cargando_relaciones = false;
+                });
+        },
+        solicitud_cambio_subcontrato(){
+            return this.$store.dispatch('contratos/solicitud-cambio/find', {
                 id: this.transaccion.id,
                 params:{include: [
                         'relaciones'
