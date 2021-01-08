@@ -3,6 +3,7 @@
 
 namespace App\Http\Transformers\CADECO\SubcontratosCM;
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use App\Models\CADECO\SubcontratosCM\Solicitud;
 use League\Fractal\TransformerAbstract;
@@ -16,7 +17,8 @@ class SolicitudTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'subcontrato',
-        'items'
+        'items',
+        'relaciones'
     ];
 
     /**
@@ -27,7 +29,7 @@ class SolicitudTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'id_subcontrato' => $model->id_subcontrato,
+            'id_subcontrato' => $model->id_antecedente,
             'fecha_format' => $model->fecha_format,
             'fecha' => $model->fecha,
             'fecha_registro_format' => $model->fecha_registro_format,
@@ -40,6 +42,10 @@ class SolicitudTransformer extends TransformerAbstract
             'fecha_aplicacion' => $model->fecha_aplicacion,
             'fecha_aplicacion_format' => $model->fecha_aplicacion_format,
             'usuario_aplico' => $model->usuario_aplico,
+            'numero_folio' => $model->numero_folio,
+            'numero_folio_format' => $model->numero_folio_format,
+            'observaciones' => $model->observaciones,
+            'estado_descripcion' => $model->estado_descripcion,
         ];
     }
 
@@ -62,6 +68,15 @@ class SolicitudTransformer extends TransformerAbstract
     {
         if ($partidas = $model->partidas) {
             return $this->collection($partidas, new PartidaTransformer);
+        }
+        return null;
+    }
+
+    public function includeRelaciones(Solicitud $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }
