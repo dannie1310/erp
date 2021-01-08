@@ -1,28 +1,20 @@
 <template>
     <span>
         <div class="btn-group">
-            <button title="Aprobar" @click="resumen('aprobar')" v-if="value.aprobar" type="button"
+            <button title="Aprobar" @click="resumen('aprobar')" v-if="value.aprobar && 1==2" type="button"
                     class="btn btn-sm btn-outline-success" :disabled="aprobando">
                 <i v-if="aprobando" class="fa fa-spin fa-spinner"></i>
                 <i v-else class="fa fa-thumbs-o-up"></i>
             </button>
-            <button title="Revertir Aprobación" @click="resumen('revertir')" v-if="value.desaprobar" type="button"
-                    class="btn btn-sm btn-outline-danger" :disabled="revirtiendo">
-                <i v-if="revirtiendo" class="fa fa-spin fa-spinner"></i>
-                <i v-else class="fa fa-thumbs-down"></i>
-            </button>
-            <router-link  :to="{ name: 'estimacion-show', params: {id: value.id}}" v-if="$root.can('consultar_estimacion_subcontrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+            <router-link  :to="{ name: 'solicitud-cambio-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato') && 1==2" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
                 <i class="fa fa-eye"></i>
             </router-link>
-            <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit && (value.estado == 0)">
-                <i class="fa fa-pencil"></i>
-            </button>
-            <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0)"  v-bind:id="value.id">
+            <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0) && 1==2"  v-bind:id="value.id">
                 <i class="fa fa-trash"></i>
             </button>
-            <PDF v-bind:id="value.id"></PDF>
+            <PDF v-bind:id="value.id" v-if="1==2"></PDF>
             <Relaciones v-bind:transaccion="value.transaccion"/>
-            <router-link  :to="{ name: 'estimacion-documentos', params: {id: value.id}}" v-if="$root.can('consultar_estimacion_subcontrato') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
+            <router-link  :to="{ name: 'solicitud-cambio-documentos', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
                 <i class="fa fa-folder-open"></i>
             </router-link>
         </div>

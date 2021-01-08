@@ -18,9 +18,9 @@ class SolicitudCambioController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        /*$this->middleware('permiso:consultar_convenio_modificatorio')->only(['index','paginate','find','show', 'pdf']);
-        $this->middleware('permiso:registrar_convenio_modificatorio')->only(['store']);
-        $this->middleware('permiso:eliminar_convenio_modificatorio')->only('destroy');*/
+        /*$this->middleware('permiso:consultar_solicitud_cambio')->only(['index','paginate','find','show', 'pdf']);
+        $this->middleware('permiso:registrar_solicitud_cambio')->only(['store']);
+        $this->middleware('permiso:eliminar_solicitud_cambio')->only('destroy');*/
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -30,6 +30,7 @@ class SolicitudCambioController extends Controller
     public function registrar(Request $request)
     {
         $respuesta = $this->service->registrar($request);
-        return response()->json($respuesta, 200);
+        return $this->respondWithItem($respuesta);
+        //return response()->json($respuesta, 200);
     }
 }

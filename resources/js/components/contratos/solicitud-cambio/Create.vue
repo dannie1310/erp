@@ -591,20 +591,23 @@
                 })
             },
             onCambioPrecio(concepto){
-                this.concepto_cambio_precio ={
-                    clave:concepto.clave,
-                    descripcion: concepto.descripcion_concepto,
-                    cantidad: concepto.cantidad_por_estimar,
-                    unidad:concepto.unidad,
-                    precio:concepto.precio_unitario_subcontrato,
-                    precio_nuevo:'',
-                    importe:concepto.importe_subcontrato,
-                    concepto:concepto,
-                    id_item_subcontrato:concepto.id
-                };
+			    if(concepto.cantidad_por_estimar>0){
+                    this.concepto_cambio_precio ={
+                        clave:concepto.clave,
+                        descripcion: concepto.descripcion_concepto,
+                        cantidad: concepto.cantidad_por_estimar,
+                        unidad:concepto.unidad,
+                        precio:concepto.precio_unitario_subcontrato,
+                        precio_nuevo:'',
+                        importe:concepto.importe_subcontrato,
+                        concepto:concepto,
+                        id_item_subcontrato:concepto.id
+                    };
 
-                $(this.$refs.modalCambioPrecio).modal('show');
-
+                    $(this.$refs.modalCambioPrecio).modal('show');
+                } else {
+                    swal('Atención','No se puede modificar el precio si la partida se ha estimado completamente','warning');
+                }
             },
             onAgregaCambioPrecio()
             {

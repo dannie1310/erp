@@ -40,14 +40,15 @@ export default {
             HeaderSettings: false,
             columns: [
                 { title: '#', field: 'index', sortable: false },
-                { title: 'Número de Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default,  sortable: true},
-                { title: 'Observaciones', field: 'observaciones', sortable: true },
-                { title: 'Contratista', field: 'id_empresa',  sortable: true  },
-                { title: 'Subtotal', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: true  },
-                { title: 'IVA', field: 'impuesto', tdClass: 'money', thClass: 'th_money', sortable: true },
-                { title: 'Total', field: 'total', tdClass: 'money', thClass: 'th_money', sortable: false },
-                { title: 'Estatus', field: 'estado', sortable: true},
-                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                { title: 'Folio', field: 'numero_folio', tdClass: 'folio', thComp: require('../../globals/th-Filter').default,  sortable: true},
+                { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default, },
+                { title: 'Subcontrato', field: 'numero_folio_subcontrato', tdClass: 'folio', thComp: require('../../globals/th-Filter').default,  sortable: true},
+                { title: 'Referencia Subcontrato', field: 'referencia_subcontrato', thComp: require('../../globals/th-Filter').default,  sortable: true},
+                { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../globals/th-Filter').default },
+                { title: 'Contratista', field: 'contratista',  sortable: false, thComp: require('../../globals/th-Filter').default,  },
+                { title: 'Total', field: 'total', tdClass: 'money', thClass: 'th_money', sortable: true },
+                { title: 'Estatus', field: 'estado', sortable: false, thComp: require('../../globals/th-Filter').default},
+                { title: 'Acciones', field: 'buttons', thClass: 'th_c150',  tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
             total: 0,
@@ -70,12 +71,12 @@ export default {
     methods: {
         paginate() {
             this.cargando = true;
-            return this.$store.dispatch('contratos/estimacion/paginate', {
+            return this.$store.dispatch('contratos/solicitud-cambio/paginate', {
                 params: this.query
             })
                 .then(data => {
-                    this.$store.commit('contratos/estimacion/SET_ESTIMACIONES', data.data);
-                    this.$store.commit('contratos/estimacion/SET_META', data.meta);
+                    this.$store.commit('contratos/solicitud-cambio/SET_SOLICITUDES', data.data);
+                    this.$store.commit('contratos/solicitud-cambio/SET_META', data.meta);
                 })
                 .finally(() => {
                     this.cargando = false;
@@ -85,10 +86,10 @@ export default {
     },
     computed: {
         estimaciones(){
-            return this.$store.getters['contratos/estimacion/estimaciones'];
+            return this.$store.getters['contratos/solicitud-cambio/solicitudes'];
         },
         meta(){
-            return this.$store.getters['contratos/estimacion/meta'];
+            return this.$store.getters['contratos/solicitud-cambio/meta'];
         },
         tbodyStyle() {
             return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -102,21 +103,20 @@ export default {
                 self.$data.data = estimaciones.map((estimacion, i) => ({
                     index: (i + 1) + self.query.offset,
                     numero_folio: estimacion.numero_folio_format,
+                    fecha: estimacion.fecha_format,
+                    numero_folio_subcontrato: estimacion.subcontrato.numero_folio_format,
+                    referencia_subcontrato: estimacion.subcontrato.referencia,
                     observaciones: estimacion.observaciones,
-                    id_empresa: estimacion.subcontrato.empresa.razon_social,
-                    estado: estimacion.estado,
-                    total: estimacion.monto_pagar_format,
-                    impuesto:estimacion.impuesto_format,
-                    subtotal: estimacion.subtotal_orden_pago,
+                    contratista: estimacion.subcontrato.empresa.razon_social,
+                    estado: estimacion.estado_descripcion,
+                    total: estimacion.monto_format,
                     buttons: $.extend({}, {
-                        aprobar: (this.$root.can('aprobar_estimacion_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
-                        desaprobar: (this.$root.can('revertir_aprobacion_estimacion_subcontrato') && estimacion.estado == 1 ) ? true : undefined ,
+                        aprobar: (this.$root.can('aprobar_solicitud_cambio_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
                         id: estimacion.id,
                         estimacion: estimacion,
                         estado: estimacion.estado,
-                        delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : false,
-                        edit: self.$root.can('editar_estimacion_subcontrato') ? true : false,
-                        transaccion: {id:estimacion.id, tipo:52},
+                        delete: self.$root.can('eliminar_solicitud_cambio_subcontrato') ? true : false,
+                        transaccion: {id:estimacion.id, tipo:54},
                     })
 
                 }));

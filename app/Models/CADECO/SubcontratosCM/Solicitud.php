@@ -1,8 +1,5 @@
 <?php
-
-
 namespace App\Models\CADECO\SubcontratosCM;
-
 
 use App\Models\CADECO\ItemSubcontrato;
 use App\Models\CADECO\Subcontrato;
@@ -13,7 +10,7 @@ class Solicitud extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 51;
     public const OPCION_ANTECEDENTE = 2;
-    public const TIPO = 53;
+    public const TIPO = 54;
     public const OPCION = 1;
     public const NOMBRE = "Solicitud de Cambio";
     public const ICONO = "fa fa-stack-exchange";
@@ -24,7 +21,21 @@ class Solicitud extends Transaccion
         'impuesto',
         'monto',
         'id_usuario',
+        'observaciones',
+        'id_empresa'
     ];
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->where('tipo_transaccion', '=', 54)
+                ->where(function ($q3) {
+                    return $q3
+                        ->whereHas('subcontrato');
+                });
+        });
+    }
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
@@ -50,6 +61,142 @@ class Solicitud extends Transaccion
         return $this->hasMany(ContratoOriginal::class, "id_solicitud", "id_transaccion");
     }
 
+    public function getEstadoDescripcionAttribute()
+    {
+        switch ($this->estado) {
+            case 0:
+                return 'Registrada';
+                break;
+            case 1:
+                return 'Aplicada';
+                break;
+        }
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Solicitud::NOMBRE;
+        $datos["tipo_numero"] = Solicitud::TIPO;
+        $datos["icono"] = Solicitud::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        $solicitud = $this;
+
+        #CONTRATOS PROYECTADOS
+        if($this->subcontrato){
+            if($this->subcontrato->contratoProyectado){
+                $relaciones[$i] = $this->subcontrato->contratoProyectado->datos_para_relacion;
+                $i++;
+            }
+        }
+
+        #PRESUPUESTOS
+        if($this->subcontrato){
+            $presupuestos = $this->subcontrato->presupuestos;
+            foreach($presupuestos as $presupuesto)
+            {
+                if($presupuesto){
+                    $relaciones[$i] = $presupuesto->datos_para_relacion;
+                    $i++;
+                }
+            }
+        }
+
+        #SUBCONTRATO
+        $subcontrato = $this->subcontrato;
+        if($this->subcontrato) {
+            $relaciones[$i] = $subcontrato->datos_para_relacion;
+            $i++;
+
+            #POLIZA DE SUBCONTRATO
+            if($subcontrato->poliza){
+                $relaciones[$i] = $subcontrato->poliza->datos_para_relacion;
+                $i++;
+            }
+            #FACTURA DE SUBCONTRATO
+            foreach ($subcontrato->facturas as $factura){
+                $relaciones[$i] = $factura->datos_para_relacion;
+                $i++;
+                #POLIZA DE FACTURA DE SUBCONTRATO
+                if($factura->poliza){
+                    $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                    $i++;
+                }
+                #PAGO DE FACTURA DE SUBCONTRATO
+                foreach ($factura->ordenesPago as $orden_pago){
+                    if($orden_pago->pago){
+                        $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                        $i++;
+                        #POLIZA DE PAGO DE FACTURA DE SUBCONTRATO
+                        if($orden_pago->pago->poliza){
+                            $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                            $i++;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        #SOLICITUD
+        $relaciones[$i] = $solicitud->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        if($this->subcontrato->estimaciones){
+            foreach($this->subcontrato->estimaciones as $estimacion){
+                $relaciones[$i] = $estimacion->datos_para_relacion;
+                $i++;
+                #FACTURA DE ESTIMACION
+                foreach ($estimacion->facturas as $factura){
+                    $relaciones[$i] = $factura->datos_para_relacion;
+                    $i++;
+
+                    #POLIZA DE FACTURA DE ESTIMACION
+                    if($factura->poliza){
+                        $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                        $i++;
+                    }
+
+                    #PAGO DE FACTURA DE ESTIMACION
+                    foreach ($factura->ordenesPago as $orden_pago){
+                        if($orden_pago->pago){
+                            $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                            $i++;
+                            #POLIZA DE PAGO DE FACTURA DE ESTIMACION
+                            if($orden_pago->pago->poliza){
+                                $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                                $i++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        $orden1 = array_column($relaciones, 'orden');
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
+    }
+
     public function registrar($solicitud, $archivo, $partidas){
         DB::connection('cadeco')->beginTransaction();
         try{
@@ -60,6 +207,8 @@ class Solicitud extends Transaccion
                 "impuesto"=> $solicitud->subcontrato->impuesto,
                 "monto"=> $solicitud->subcontrato->monto,
             ]);
+            $solicitud->id_empresa = $solicitud->subcontrato->id_empresa;
+            $solicitud->save();
             foreach($partidas as $partida){
                 if(key_exists("id_item_subcontrato", $partida) && $partida["id_tipo_modificacion"] != 3 ){
                     $itemSubcontrato = ItemSubcontrato::find($partida["id_item_subcontrato"]);
@@ -129,7 +278,7 @@ class Solicitud extends Transaccion
 
     public static function calcularFolio()
     {
-        $fol = Transaccion::where('tipo_transaccion', '=', 53)->orderBy('numero_folio', 'DESC')->first();
+        $fol = Transaccion::where('tipo_transaccion', '=', 54)->orderBy('numero_folio', 'DESC')->first();
         return $fol ? $fol->numero_folio + 1 : 1;
     }
 
