@@ -30,7 +30,7 @@ class Partida extends Model
 
     public function solicitud()
     {
-        return $this->belongsTo(Solicitud::class, 'id_solicitud', 'id');
+        return $this->belongsTo(SolicitudCambioSubcontrato::class, 'id_solicitud', 'id');
     }
 
     public function itemSubcontrato()

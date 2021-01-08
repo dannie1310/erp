@@ -1,12 +1,13 @@
 <?php
-namespace App\Models\CADECO\SubcontratosCM;
+namespace App\Models\CADECO;
 
-use App\Models\CADECO\ItemSubcontrato;
-use App\Models\CADECO\Subcontrato;
-use App\Models\CADECO\Transaccion;
+use App\Models\CADECO\SubcontratosCM\ContratoOriginal;
+use App\Models\CADECO\SubcontratosCM\ItemSubcontratoOriginal;
+use App\Models\CADECO\SubcontratosCM\Partida;
+use App\Models\CADECO\SubcontratosCM\SubcontratoOriginal;
 use Illuminate\Support\Facades\DB;
 
-class Solicitud extends Transaccion
+class SolicitudCambioSubcontrato extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 51;
     public const OPCION_ANTECEDENTE = 2;
@@ -83,9 +84,9 @@ class Solicitud extends Transaccion
         $datos["orden"] = $this->fecha_hora_registro_orden;
         $datos["usuario"] = $this->usuario_registro;
         $datos["observaciones"] = $this->observaciones;
-        $datos["tipo"] = Solicitud::NOMBRE;
-        $datos["tipo_numero"] = Solicitud::TIPO;
-        $datos["icono"] = Solicitud::ICONO;
+        $datos["tipo"] = SolicitudCambioSubcontrato::NOMBRE;
+        $datos["tipo_numero"] = SolicitudCambioSubcontrato::TIPO;
+        $datos["icono"] = SolicitudCambioSubcontrato::ICONO;
         $datos["consulta"] = 0;
 
         return $datos;

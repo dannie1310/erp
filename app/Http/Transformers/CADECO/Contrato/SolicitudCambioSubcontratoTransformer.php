@@ -1,14 +1,14 @@
 <?php
 
 
-namespace App\Http\Transformers\CADECO\SubcontratosCM;
+namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
-use App\Models\CADECO\SubcontratosCM\Solicitud;
+use App\Models\CADECO\SolicitudCambioSubcontrato;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudTransformer extends TransformerAbstract
+class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -22,10 +22,10 @@ class SolicitudTransformer extends TransformerAbstract
     ];
 
     /**
-     * @param Solicitud $model
+     * @param SolicitudCambioSubcontrato $model
      * @return array
      */
-    public function transform(Solicitud $model)
+    public function transform(SolicitudCambioSubcontrato $model)
     {
         return [
             'id' => $model->getKey(),
@@ -50,10 +50,10 @@ class SolicitudTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Solicitud $model
+     * @param SolicitudCambioSubcontrato $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeSubcontrato(Solicitud $model) {
+    public function includeSubcontrato(SolicitudCambioSubcontrato $model) {
         if ($subcontrato = $model->subcontrato) {
             return $this->item($subcontrato, new SubcontratoTransformer);
         }
@@ -61,10 +61,10 @@ class SolicitudTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Solicitud $model
+     * @param SolicitudCambioSubcontrato $model
      * @return \League\Fractal\Resource\Collection|null
      */
-    public function includeItems(Solicitud $model)
+    public function includeItems(SolicitudCambioSubcontrato $model)
     {
         if ($partidas = $model->partidas) {
             return $this->collection($partidas, new PartidaTransformer);
@@ -72,7 +72,7 @@ class SolicitudTransformer extends TransformerAbstract
         return null;
     }
 
-    public function includeRelaciones(Solicitud $model)
+    public function includeRelaciones(SolicitudCambioSubcontrato $model)
     {
         if($relaciones = $model->relaciones)
         {
