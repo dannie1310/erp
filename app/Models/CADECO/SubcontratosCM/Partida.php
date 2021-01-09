@@ -45,7 +45,7 @@ class Partida extends Model
 
     public function concepto()
     {
-        return $this->belongsTo(Contrato::class, 'id_concepto', 'id_concepto');
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 
     public function getCantidadFormatAttribute()
@@ -63,4 +63,22 @@ class Partida extends Model
         return '$' . number_format($this->importe, 2, '.', ',');
     }
 
+    public function getConceptoPathAttribute()
+    {
+        try{
+            return $this->concepto->path;
+        } catch(\Exception $e){
+            return null;
+        }
+    }
+
+    public function getConceptoPathCortaAttribute()
+    {
+        try{
+            return $this->concepto->path_corta;
+        } catch(\Exception $e){
+            return null;
+        }
+
+    }
 }

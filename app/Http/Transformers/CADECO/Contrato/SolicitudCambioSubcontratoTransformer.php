@@ -4,8 +4,11 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
-use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\CADECO\SubcontratosCM\PartidaTransformer;
 use App\Models\CADECO\SolicitudCambioSubcontrato;
+use App\Models\CADECO\Subcontrato;
 use League\Fractal\TransformerAbstract;
 
 class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
@@ -17,8 +20,10 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'subcontrato',
-        'items',
-        'relaciones'
+        'partidas',
+        'relaciones',
+        'empresa',
+        'moneda'
     ];
 
     /**
@@ -64,7 +69,7 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
      * @param SolicitudCambioSubcontrato $model
      * @return \League\Fractal\Resource\Collection|null
      */
-    public function includeItems(SolicitudCambioSubcontrato $model)
+    public function includePartidas(SolicitudCambioSubcontrato $model)
     {
         if ($partidas = $model->partidas) {
             return $this->collection($partidas, new PartidaTransformer);
@@ -77,6 +82,32 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
         if($relaciones = $model->relaciones)
         {
             return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Empresa
+     *
+     * @param Subcontrato $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeEmpresa(SolicitudCambioSubcontrato $model) {
+        if ($empresa = $model->empresa) {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Moneda
+     *
+     * @param Subcontrato $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeMoneda(SolicitudCambioSubcontrato $model) {
+        if ($moneda = $model->moneda) {
+            return $this->item($moneda, new MonedaTransformer);
         }
         return null;
     }

@@ -6,7 +6,7 @@ namespace App\Http\Transformers\CADECO\SubcontratosCM;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Models\CADECO\SubcontratosCM\Partida;
 use League\Fractal\TransformerAbstract;
-use App\Http\Transformers\CADECO\ItemTransformer as ItemSubcontratoTransformer;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoPartidaTransformer as ItemSubcontratoTransformer;
 
 class PartidaTransformer extends TransformerAbstract
 {
@@ -16,19 +16,25 @@ class PartidaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'tipo',
         'item_subcontrato',
-        'concepto'
+        'concepto',
+        'item_subcontrato'
     ];
 
     public function transform(Partida $model)
     {
         return [
             'id' => $model->getKey(),
+            'clave' => $model->clave,
+            'descripcion' => $model->descripcion,
+            'unidad' => $model->unidad,
             'cantidad' => $model->cantidad,
             'precio' => $model->precio,
             'importe' => $model->importe,
             'cantidad_format' => $model->cantidad_format,
             'precio_format' => $model->precio_format,
             'importe_format' => $model->importe_format,
+            'concepto_path' => $model->concepto_path,
+            'concepto_path_corta' => $model->concepto_path_corta,
         ];
     }
 

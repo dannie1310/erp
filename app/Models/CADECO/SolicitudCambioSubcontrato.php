@@ -23,7 +23,8 @@ class SolicitudCambioSubcontrato extends Transaccion
         'monto',
         'id_usuario',
         'observaciones',
-        'id_empresa'
+        'id_empresa',
+        'id_moneda'
     ];
     protected static function boot()
     {
@@ -40,6 +41,11 @@ class SolicitudCambioSubcontrato extends Transaccion
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
     public function partidas()
@@ -209,6 +215,7 @@ class SolicitudCambioSubcontrato extends Transaccion
                 "monto"=> $solicitud->subcontrato->monto,
             ]);
             $solicitud->id_empresa = $solicitud->subcontrato->id_empresa;
+            $solicitud->id_moneda = $solicitud->subcontrato->id_moneda;
             $solicitud->save();
             foreach($partidas as $partida){
                 if(key_exists("id_item_subcontrato", $partida) && $partida["id_tipo_modificacion"] != 3 ){

@@ -6,7 +6,7 @@
                 <i v-if="aprobando" class="fa fa-spin fa-spinner"></i>
                 <i v-else class="fa fa-thumbs-o-up"></i>
             </button>
-            <router-link  :to="{ name: 'solicitud-cambio-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato') && 1==2" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+            <router-link  :to="{ name: 'solicitud-cambio-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
                 <i class="fa fa-eye"></i>
             </router-link>
             <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0) && 1==2"  v-bind:id="value.id">

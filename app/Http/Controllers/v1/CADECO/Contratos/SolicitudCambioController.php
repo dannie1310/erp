@@ -31,6 +31,5 @@ class SolicitudCambioController extends Controller
     {
         $respuesta = $this->service->registrar($request);
         return $this->respondWithItem($respuesta);
-        //return response()->json($respuesta, 200);
     }
 }

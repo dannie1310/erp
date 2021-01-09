@@ -73,9 +73,9 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-form-label">Referencia:</label>
+                                    <label class="col-md-3 col-form-label">Folio:</label>
                                     <div class="col-md-9">
-                                        {{ subcontrato.referencia }}
+                                         {{subcontrato.numero_folio_format}} ({{ subcontrato.referencia }})
                                     </div>
                                 </div>
                                 <div class="form-group row" v-if="subcontrato.empresa">

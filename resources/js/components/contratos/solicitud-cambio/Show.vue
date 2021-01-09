@@ -5,47 +5,56 @@
             <div class="col-md-6">
 				<div class="card">
                     <div class="card-header">
-						<h6 class="card-title">Subcontrato</h6>
+						<h6 class="card-title">Solicitud de Cambio</h6>
 					</div>
 					<div class="card-body">
-						<form>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label">Fecha de la Estimación</label>
-								<div class="col-md-9">
-                                   {{estimacion.fecha}}
-								</div>
-							</div>
-                             <div class="form-group row">
-								<label class="col-md-3 col-form-label">Folio de la Estimación</label>
-								<div class="col-md-9">
-                                    {{estimacion.folio}}
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label">Folio:</label>
+                                    <div class="col-md-8">
+                                        {{estimacion.numero_folio_format}}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-								<label class="col-md-3 col-form-label">Folio Consecutivo</label>
-								<div class="col-md-9">
-                                    {{estimacion.folio_consecutivo}}
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label">Fecha:</label>
+                                    <div class="col-md-8">
+                                       {{estimacion.fecha_format}}
+                                    </div>
                                 </div>
                             </div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label">Objeto</label>
-								<div class="col-md-9">
-									({{estimacion.subcontrato.folio}}) {{ estimacion.subcontrato.referencia }}
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label">Contratista</label>
-								<div class="col-md-9">
-									{{ estimacion.razon_social }}
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label">Observaciones</label>
-								<div class="col-md-9">
-									{{estimacion.observaciones}}
-								</div>
-							</div>
-						</form>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label">Total:</label>
+                                    <div class="col-md-8">
+                                        {{estimacion.monto_format}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label">Moneda:</label>
+                                    <div class="col-md-8">
+                                       {{estimacion.moneda.nombre}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label">Observaciones:</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            {{estimacion.observaciones}}
+                        </div>
 					</div>
 				</div>
 			</div>
@@ -53,91 +62,58 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <h6 class="card-title">Periodo de Estimación</h6>
+                            <h6 class="card-title">Subcontrato</h6>
                         </div>
                         <div class="card-body">
-                            <form>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label">Inicio</label>
-                                         <input
-                                             style="text-align:right;"
-                                             :disabled="true"
-                                             type="text"
-                                             data-vv-as="Subtotal"
-                                             class="form-control"
-                                             placeholder="Subtotal"
-                                             v-model="estimacion.fecha_inicial" />
+                            <div class="form-group row">
+								<label class="col-md-3 col-form-label">Contratista:</label>
+								<div class="col-md-9">
+                                    {{ estimacion.empresa.razon_social }}
+								</div>
+							</div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group row">
+                                        <label class="col-md-3 col-form-label">Fecha:</label>
+                                        <div class="col-md-9">
+                                            {{ estimacion.subcontrato.fecha_format }}
+                                        </div>
                                     </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label">Término</label>
-                                        <input
-                                            style="text-align:right;"
-                                            :disabled="true"
-                                            type="text"
-                                            data-vv-as="Subtotal"
-                                            class="form-control"
-                                            placeholder="Subtotal"
-                                            v-model="estimacion.fecha_final" />
+                                    <div class="form-group row">
+                                        <label class="col-md-3 col-form-label">Folio:</label>
+                                        <div class="col-md-9">
+                                             {{estimacion.subcontrato.numero_folio_format}} ({{ estimacion.subcontrato.referencia }})
+                                        </div>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
-				    </div>
-			    </div>
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h6 class="card-title">Totales</h6>
-                        </div>
-                        <div class="card-body">
-                            <form>
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Subtotal</label>
-                                    <div class="col-md-8">
-                                        <input
-                                            style="text-align:right;"
-                                            :disabled="true"
-                                            type="text"
-                                            data-vv-as="Subtotal"
-                                            class="form-control"
-                                            placeholder="Subtotal"
-                                            v-model="parseFloat(estimacion.subtotal).formatMoney(2)" />
+
+                                <div class="col-md-5">
+                                    <div class="form-group row">
+                                        <label class="col-md-3 col-form-label">Moneda:</label>
+                                        <div class="col-md-9">
+                                            {{ estimacion.subcontrato.moneda }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 col-form-label">IVA:</label>
+                                        <div class="col-md-9">
+                                            {{ estimacion.subcontrato.impuesto_format }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" >
+                                        <label class="col-md-3 col-form-label">Monto:</label>
+                                        <div class="col-md-9">
+                                            {{ estimacion.subcontrato.monto_format }}
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">IVA</label>
-                                    <div class="col-md-8">
-                                         <input
-                                             style="text-align:right;"
-                                             :disabled="true"
-                                             type="text"
-                                             data-vv-as="IVA"
-                                             class="form-control"
-                                             placeholder="IVA"
-                                             v-model="parseFloat(estimacion.iva).formatMoney(2)" />
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Total</label>
-                                    <div class="col-md-8">
-                                         <input
-                                             style="text-align:right;"
-                                             :disabled="true"
-                                             type="text"
-                                             data-vv-as="total"
-                                             class="form-control"
-                                             placeholder="total"
-                                             v-model="parseFloat(estimacion.total).formatMoney(2)" />
-                                    </div>
-                                </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 		</div>
-        <div class="card" v-if="!cargando">
+        <div class="card" v-if="!cargando" style="display:none">
 			<div class="card-body">
 				<div class="form-check form-check-inline">
 					<input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
@@ -169,73 +145,60 @@
 							<th rowspan="2">Clave</th>
 							<th rowspan="2">Concepto</th>
 							<th rowspan="2">UM</th>
-							<th style="display: none" colspan="2" class="contratado">Contratado</th>
-							<th style="display: none" colspan="3" class="avance-volumen">Avance Volumen</th>
-							<th style="display: none" colspan="2" class="avance-importe">Avance Importe</th>
-							<th style="display: none" colspan="2" class="saldo">Saldo</th>
-							<th colspan="4">Esta Estimación</th>
-							<th style="display: none" class="destino">Distribución</th>
+							<th colspan="2" class="contratado">Contratado</th>
+							<th colspan="2" class="avance-volumen">Avance</th>
+
+							<th colspan="2" class="saldo">Saldo</th>
+							<th colspan="3">Addendum</th>
+							<th class="destino">Distribución</th>
+                            <th style="width: 20px"></th>
 						</tr>
 						<tr>
-							<th style="display: none" class="contratado">Volumen</th>
-							<th style="display: none" class="contratado">P.U.</th>
-							<th style="display: none" class="avance-volumen">Anterior</th>
-							<th style="display: none" class="avance-volumen">Acumulado</th>
-							<th style="display: none" class="avance-volumen">%</th>
-							<th style="display: none" class="avance-importe">Anterior</th>
-							<th style="display: none" class="avance-importe">Acumulado</th>
-							<th style="display: none" class="saldo">Volumen</th>
-							<th style="display: none" class="saldo">Importe</th>
-							<th>Volumen</th>
-							<th>%</th>
+							<th class="contratado">Volumen</th>
+							<th class="contratado">P.U.</th>
+							<th class="avance-volumen">Volumen</th>
+							<th class="avance-importe">Importe</th>
+							<th class="saldo">Volumen</th>
+							<th class="saldo">Importe</th>
+							<th style="width: 80px">Volumen</th>
 							<th>P.U.</th>
 							<th>Importe</th>
-							<th style="display: none" class="destino">Destino</th>
+							<th class="destino">Destino</th>
+                            <th></th>
 						</tr>
 					</thead>
-					<tbody v-for="(concepto, i) in estimacion.subcontrato.partidas">
-                        <tr v-if="concepto.para_estimar == 0">
-                            <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
-                            <td :title="concepto.descripcion">
-                                <span v-for="n in concepto.nivel">&nbsp;</span>
-                                <b>{{concepto.descripcion}}</b></td>
-                            <td></td>
-                            <td style="display: none" class="numerico contratado"/>
-                            <td style="display: none" class="numerico contratado"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-importe"/>
-                            <td style="display: none" class="numerico avance-importe"/>
-                            <td style="display: none" class="numerico saldo"/>
-                            <td style="display: none" class="numerico saldo"/>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td style="display: none" class="destino"/>
-                        </tr>
-					    <tr v-else>
-						    <td :title="concepto.clave">{{ concepto.clave }}</td>
-                            <td :title="concepto.descripcion_concepto">
-                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                {{concepto.descripcion_concepto}}
-                            </td>
-                            <td class="centrado">{{concepto.unidad}}</td>
-                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-volumen"></td>
-                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-importe"></td>
-                            <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
-                            <td class="numerico">{{parseFloat(concepto.cantidad_estimacion).formatMoney(2)}}</td>
-                            <td class="numerico">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2)}}</td>
-                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
-                            <td class="numerico">{{parseFloat(concepto.importe_estimacion).formatMoney(2)}}</td>
-                            <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
+					<tbody >
+                        <tr v-for="(partida, i) in estimacion.partidas.data">
+                            <template v-if="partida.item_subcontrato">
+                                <td ><b>{{partida.item_subcontrato.contrato.clave}}</b></td>
+                                <td><b>{{partida.item_subcontrato.contrato.descripcion}}</b></td>
+                                <td>{{partida.item_subcontrato.contrato.unidad}}</td>
+                                <td class="numerico contratado">{{partida.item_subcontrato.cantidad_format}}</td>
+                                <td class="numerico contratado">{{partida.item_subcontrato.precio_unitario_format}}</td>
+                                <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_estimada_format}}</td>
+                                <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_estimado_format}}</td>
+                                <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_saldo_format}}</td>
+                                <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_saldo_format}}</td>
+
+                            </template>
+                            <template v-else>
+                                <td ><b>{{partida.clave}}</b></td>
+                                <td><b>{{partida.descripcion}}</b></td>
+                                <td>{{partida.unidad}}</td>
+                                <td class="numerico">-</td>
+                                <td class="numerico">-</td>
+                                <td class="numerico">-</td>
+                                <td class="numerico">-</td>
+                                <td class="numerico">-</td>
+                                <td class="numerico">-</td>
+                            </template>
+
+                            <td class="numerico avance-importe">{{partida.cantidad_format}}</td>
+                            <td class="numerico saldo">{{partida.precio_format}}</td>
+                            <td class="numerico saldo">{{partida.importe_format}}</td>
+                            <td class="destino" v-if="partida.item_subcontrato" :title="partida.item_subcontrato.concepto_path">{{partida.item_subcontrato.concepto_path_corta}}</td>
+                            <td class="destino" v-else :title="partida.concepto_path">{{partida.concepto_path_corta}}</td>
+                            <th></th>
                         </tr>
                     </tbody>
 				</table>
@@ -264,9 +227,11 @@
         },
         methods: {
             find() {
-                return this.$store.dispatch('contratos/estimacion/ordenarConceptos', {
+                return this.$store.dispatch('contratos/solicitud-cambio/find', {
                     id: this.id,
-                    params: {}
+                    params: {
+                        include: ['moneda', 'empresa', 'subcontrato', 'partidas.item_subcontrato.contrato']
+                    }
                 }).then(data => {
                     this.estimacion = data;
                 }).finally(() => {
