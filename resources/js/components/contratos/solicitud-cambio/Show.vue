@@ -45,16 +45,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Observaciones:</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            {{estimacion.observaciones}}
-                        </div>
 					</div>
 				</div>
 			</div>
@@ -109,6 +99,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="card-footer">
+                            <div class="btn-group pull-right">
+                                <Show v-bind:id="estimacion.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></Show>
+                                <PDF v-bind:id="estimacion.subcontrato.id" @click="estimacion.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></PDF>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -142,6 +138,7 @@
 				<table id="tabla-conceptos">
 					<thead>
 						<tr>
+                            <th rowspan="2" >Tipo</th>
 							<th rowspan="2">Clave</th>
 							<th rowspan="2">Concepto</th>
 							<th rowspan="2">UM</th>
@@ -170,6 +167,7 @@
 					<tbody >
                         <tr v-for="(partida, i) in estimacion.partidas.data">
                             <template v-if="partida.item_subcontrato">
+                                <td ><b>{{partida.tipo.descripcion}}</b></td>
                                 <td ><b>{{partida.item_subcontrato.contrato.clave}}</b></td>
                                 <td><b>{{partida.item_subcontrato.contrato.descripcion}}</b></td>
                                 <td>{{partida.item_subcontrato.contrato.unidad}}</td>
@@ -182,6 +180,7 @@
 
                             </template>
                             <template v-else>
+                                <td ><b>{{partida.tipo.descripcion}}</b></td>
                                 <td ><b>{{partida.clave}}</b></td>
                                 <td><b>{{partida.descripcion}}</b></td>
                                 <td>{{partida.unidad}}</td>
@@ -202,6 +201,13 @@
                         </tr>
                     </tbody>
 				</table>
+                <br />
+                 <div class="form-group row" >
+                    <label class="col-md-1 col-form-label">Observaciones:</label>
+                    <div class="col-md-11">
+                       {{estimacion.observaciones}}
+                    </div>
+                </div>
 			</div>
 
             <div class="modal-footer">
@@ -212,8 +218,11 @@
 </template>
 
 <script>
+    import Show from '../subcontrato/Show';
+    import PDF from '../subcontrato/FormatoSubcontrato';
     export default {
         name: "estimacion-show",
+        components: {Show, PDF},
         props: ["id"],
         data() {
             return {
@@ -230,7 +239,7 @@
                 return this.$store.dispatch('contratos/solicitud-cambio/find', {
                     id: this.id,
                     params: {
-                        include: ['moneda', 'empresa', 'subcontrato', 'partidas.item_subcontrato.contrato']
+                        include: ['moneda', 'empresa', 'partidas.tipo', 'subcontrato', 'partidas.item_subcontrato.contrato']
                     }
                 }).then(data => {
                     this.estimacion = data;
@@ -239,7 +248,7 @@
                 })
             },
             salir() {
-                this.$router.push({name: 'estimacion'});
+                this.$router.push({name: 'solicitud-cambio'});
             },
         },
         watch: {

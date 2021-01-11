@@ -23,7 +23,8 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
         'partidas',
         'relaciones',
         'empresa',
-        'moneda'
+        'moneda',
+        'tipo'
     ];
 
     /**

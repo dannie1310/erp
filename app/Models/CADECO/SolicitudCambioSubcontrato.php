@@ -2,6 +2,7 @@
 namespace App\Models\CADECO;
 
 use App\Models\CADECO\SubcontratosCM\ContratoOriginal;
+use App\Models\CADECO\SubcontratosCM\CtgTipo;
 use App\Models\CADECO\SubcontratosCM\ItemSubcontratoOriginal;
 use App\Models\CADECO\SubcontratosCM\Partida;
 use App\Models\CADECO\SubcontratosCM\SubcontratoOriginal;
