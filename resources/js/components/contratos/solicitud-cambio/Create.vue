@@ -235,10 +235,10 @@
                                        v-on:change="changeCantidad()"
                                        class="text"
                                        v-model="concepto.cantidad_addendum"
-                                       :name="`cantidadEstimacion[${concepto.id}]`"
+                                       :name="`cantidadsolicitud_cambio[${concepto.id}]`"
                                        v-validate="{min_value: parseFloat((concepto.cantidad_por_estimar*-1)).toFixed(2)}"
-                                       :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
+                                       :class="{'is-invalid': errors.has(`cantidadsolicitud_cambio[${concepto.id}]`)}" />
+                                 <div class="invalid-feedback" v-show="errors.has(`cantidadsolicitud_cambio[${concepto.id}]`)">{{ errors.first(`cantidadsolicitud_cambio[${concepto.id}]`) }}</div>
                             </td>
                             <td class="numerico" style="background-color: #ddd;"
                                 v-else>
@@ -430,7 +430,7 @@
     import ConceptoExtraordinario from './partials/CreateConceptoExtaordinario';
     let id_cambio_precio  = 0;
     export default {
-        name: "estimacion-create",
+        name: "solicitud_cambio-create",
         components: {ModelListSelect, Datepicker, es, ConceptoExtraordinario},
         data() {
             return {

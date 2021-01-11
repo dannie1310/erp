@@ -13,7 +13,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label">Folio:</label>
                                     <div class="col-md-8">
-                                        {{estimacion.numero_folio_format}}
+                                        {{solicitud_cambio.numero_folio_format}}
                                     </div>
                                 </div>
                             </div>
@@ -21,7 +21,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label">Fecha:</label>
                                     <div class="col-md-8">
-                                       {{estimacion.fecha_format}}
+                                       {{solicitud_cambio.fecha_format}}
                                     </div>
                                 </div>
                             </div>
@@ -32,7 +32,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label">Total:</label>
                                     <div class="col-md-8">
-                                        {{estimacion.monto_format}}
+                                        {{solicitud_cambio.monto_format}}
                                     </div>
                                 </div>
                             </div>
@@ -40,7 +40,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label">Moneda:</label>
                                     <div class="col-md-8">
-                                       {{estimacion.moneda.nombre}}
+                                       {{solicitud_cambio.moneda.nombre}}
                                     </div>
                                 </div>
                             </div>
@@ -58,7 +58,7 @@
                             <div class="form-group row">
 								<label class="col-md-3 col-form-label">Contratista:</label>
 								<div class="col-md-9">
-                                    {{ estimacion.empresa.razon_social }}
+                                    {{ solicitud_cambio.empresa.razon_social }}
 								</div>
 							</div>
                             <div class="row">
@@ -66,13 +66,13 @@
                                     <div class="form-group row">
                                         <label class="col-md-3 col-form-label">Fecha:</label>
                                         <div class="col-md-9">
-                                            {{ estimacion.subcontrato.fecha_format }}
+                                            {{ solicitud_cambio.subcontrato.fecha_format }}
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label class="col-md-3 col-form-label">Folio:</label>
                                         <div class="col-md-9">
-                                             {{estimacion.subcontrato.numero_folio_format}} ({{ estimacion.subcontrato.referencia }})
+                                             {{solicitud_cambio.subcontrato.numero_folio_format}} ({{ solicitud_cambio.subcontrato.referencia }})
                                         </div>
                                     </div>
                                 </div>
@@ -81,19 +81,19 @@
                                     <div class="form-group row">
                                         <label class="col-md-3 col-form-label">Moneda:</label>
                                         <div class="col-md-9">
-                                            {{ estimacion.subcontrato.moneda }}
+                                            {{ solicitud_cambio.subcontrato.moneda }}
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label class="col-md-3 col-form-label">IVA:</label>
                                         <div class="col-md-9">
-                                            {{ estimacion.subcontrato.impuesto_format }}
+                                            {{ solicitud_cambio.subcontrato.impuesto_format }}
                                         </div>
                                     </div>
                                     <div class="form-group row" >
                                         <label class="col-md-3 col-form-label">Monto:</label>
                                         <div class="col-md-9">
-                                            {{ estimacion.subcontrato.monto_format }}
+                                            {{ solicitud_cambio.subcontrato.monto_format }}
                                         </div>
                                     </div>
                                 </div>
@@ -101,8 +101,8 @@
                         </div>
                         <div class="card-footer">
                             <div class="btn-group pull-right">
-                                <Show v-bind:id="estimacion.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></Show>
-                                <PDF v-bind:id="estimacion.subcontrato.id" @click="estimacion.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></PDF>
+                                <Show v-bind:id="solicitud_cambio.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></Show>
+                                <PDF v-bind:id="solicitud_cambio.subcontrato.id" @click="solicitud_cambio.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></PDF>
                             </div>
                         </div>
                     </div>
@@ -165,7 +165,7 @@
 						</tr>
 					</thead>
 					<tbody >
-                        <tr v-for="(partida, i) in estimacion.partidas.data">
+                        <tr v-for="(partida, i) in solicitud_cambio.partidas.data">
                             <template v-if="partida.item_subcontrato">
                                 <td ><b>{{partida.tipo.descripcion}}</b></td>
                                 <td ><b>{{partida.item_subcontrato.contrato.clave}}</b></td>
@@ -205,7 +205,7 @@
                  <div class="form-group row" >
                     <label class="col-md-1 col-form-label">Observaciones:</label>
                     <div class="col-md-11">
-                       {{estimacion.observaciones}}
+                       {{solicitud_cambio.observaciones}}
                     </div>
                 </div>
 			</div>
@@ -221,14 +221,14 @@
     import Show from '../subcontrato/Show';
     import PDF from '../subcontrato/FormatoSubcontrato';
     export default {
-        name: "estimacion-show",
+        name: "solicitud-cambio-show",
         components: {Show, PDF},
         props: ["id"],
         data() {
             return {
                 cargando: true,
                 columnas: [],
-                estimacion: [],
+                solicitud_cambio: [],
             };
         },
         mounted() {
@@ -242,7 +242,7 @@
                         include: ['moneda', 'empresa', 'partidas.tipo', 'subcontrato', 'partidas.item_subcontrato.contrato']
                     }
                 }).then(data => {
-                    this.estimacion = data;
+                    this.solicitud_cambio = data;
                 }).finally(() => {
                     this.cargando = false;
                 })

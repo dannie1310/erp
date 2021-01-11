@@ -34,7 +34,7 @@
 
 <script>
 export default {
-    name: "estimacion-index",
+    name: "solicitud-cambio-index",
     data() {
         return {
             HeaderSettings: false,
@@ -85,7 +85,7 @@ export default {
 
     },
     computed: {
-        estimaciones(){
+        solicitudes_cambio(){
             return this.$store.getters['contratos/solicitud-cambio/solicitudes'];
         },
         meta(){
@@ -96,27 +96,27 @@ export default {
         }
     },
     watch: {
-        estimaciones: {
-            handler(estimaciones) {
+        solicitudes_cambio: {
+            handler(solicitudes_cambio) {
                 let self = this
                 self.$data.data = []
-                self.$data.data = estimaciones.map((estimacion, i) => ({
+                self.$data.data = solicitudes_cambio.map((solicitud_cambio, i) => ({
                     index: (i + 1) + self.query.offset,
-                    numero_folio: estimacion.numero_folio_format,
-                    fecha: estimacion.fecha_format,
-                    numero_folio_subcontrato: estimacion.subcontrato.numero_folio_format,
-                    referencia_subcontrato: estimacion.subcontrato.referencia,
-                    observaciones: estimacion.observaciones,
-                    contratista: estimacion.subcontrato.empresa.razon_social,
-                    estado: estimacion.estado_descripcion,
-                    total: estimacion.monto_format,
+                    numero_folio: solicitud_cambio.numero_folio_format,
+                    fecha: solicitud_cambio.fecha_format,
+                    numero_folio_subcontrato: solicitud_cambio.subcontrato.numero_folio_format,
+                    referencia_subcontrato: solicitud_cambio.subcontrato.referencia,
+                    observaciones: solicitud_cambio.observaciones,
+                    contratista: solicitud_cambio.subcontrato.empresa.razon_social,
+                    estado: solicitud_cambio.estado_descripcion,
+                    total: solicitud_cambio.monto_format,
                     buttons: $.extend({}, {
-                        aprobar: (this.$root.can('aprobar_solicitud_cambio_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
-                        id: estimacion.id,
-                        estimacion: estimacion,
-                        estado: estimacion.estado,
+                        aprobar: (this.$root.can('aprobar_solicitud_cambio_subcontrato') && solicitud_cambio.estado == 0 ) ? true : undefined,
+                        id: solicitud_cambio.id,
+                        solicitud_cambio: solicitud_cambio,
+                        estado: solicitud_cambio.estado,
                         delete: self.$root.can('eliminar_solicitud_cambio_subcontrato') ? true : false,
-                        transaccion: {id:estimacion.id, tipo:54},
+                        transaccion: {id:solicitud_cambio.id, tipo:54},
                     })
 
                 }));
