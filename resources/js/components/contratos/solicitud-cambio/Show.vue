@@ -46,6 +46,11 @@
                             </div>
                         </div>
 					</div>
+                    <div class="card-footer">
+                        <router-link  :to="{ name: 'solicitud-cambio-documentos', params: {id: solicitud_cambio.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato') && $root.can('consultar_archivos_transaccion')" target="_blank" type="button" class="btn btn-sm btn-outline-primary pull-right" title="Ver Documentos">
+                            <i class="fa fa-folder-open"></i>
+                        </router-link>
+                    </div>
 				</div>
 			</div>
             <div class="col-md-6">
@@ -192,9 +197,9 @@
                                 <td class="numerico">-</td>
                             </template>
 
-                            <td class="numerico avance-importe">{{partida.cantidad_format}}</td>
-                            <td class="numerico saldo">{{partida.precio_format}}</td>
-                            <td class="numerico saldo">{{partida.importe_format}}</td>
+                            <td class="numerico avance-importe" style="background-color: #ddd">{{partida.cantidad_format}}</td>
+                            <td class="numerico saldo" style="background-color: #ddd">{{partida.precio_format}}</td>
+                            <td class="numerico saldo" style="background-color: #ddd">{{partida.importe_format}}</td>
                             <td class="destino" v-if="partida.item_subcontrato" :title="partida.item_subcontrato.concepto_path">{{partida.item_subcontrato.concepto_path_corta}}</td>
                             <td class="destino" v-else :title="partida.concepto_path">{{partida.concepto_path_corta}}</td>
                             <th></th>
