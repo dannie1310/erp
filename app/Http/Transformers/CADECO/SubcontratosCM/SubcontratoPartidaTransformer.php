@@ -17,7 +17,6 @@ class SubcontratoPartidaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'partida_estimacion',
-        'contratos'
     ];
 
     /**

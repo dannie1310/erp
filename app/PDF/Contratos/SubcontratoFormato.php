@@ -40,7 +40,7 @@ class SubcontratoFormato extends FPDI
         $this->txtFooterTam = 6;
         $this->encabezado_pdf = utf8_decode('SUBCONTRATO');
 
-        
+
     }
 
     function Header(){
@@ -103,11 +103,11 @@ class SubcontratoFormato extends FPDI
                 $this->SetFont('Arial', 'B', 5);
                 $this->Cell(18.15);
                 $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
-                
+
                 $this->Ln(.22);
                 $this->Cell(10.3);
                 $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
-                
+
                 $this->Ln(.18);
                 $this->Cell(12.4);
                 $this->SetFillColor('255,255,255');
@@ -194,7 +194,7 @@ class SubcontratoFormato extends FPDI
             $this->Row(array(""));
             $this->setY($y_inicial);
             $this->setX($x_inicial);
-            $this->MultiCell(9.5, .5,$this->subcontrato->empresa->razon_social.''. ($this->subcontrato->sucursal? $this->subcontrato->sucursal->direccion . ', C.P.'. $this->subcontrato->sucursal->codigo_postal  .', '. $this->subcontrato->sucursal->estado:'') .', '.$this->subcontrato->empresa->rfc, '1', 'L');
+            $this->MultiCell(9.5, .5,$this->subcontrato->empresa->razon_social.''. ($this->subcontrato->sucursal? $this->subcontrato->sucursal->direccion . ', C.P.'. $this->subcontrato->sucursal->codigo_postal  .', '. $this->subcontrato->sucursal->estado:'') .', '.$this->subcontrato->empresa->rfc, 0, 'L');
             $this->setY($y_inicial);
             $this->setX($x_inicial+10);
             $this->Row(array(""));
@@ -239,7 +239,7 @@ class SubcontratoFormato extends FPDI
             $this->MultiCell(17, .5,  $this->subcontrato->subcontratos?utf8_decode($this->subcontrato->subcontratos->observacion):'', '', 'L');
             $this->encabezados();
         }
-        
+
     }
 
     function encabezados(){
@@ -335,7 +335,7 @@ class SubcontratoFormato extends FPDI
         $this->SetFills(array('255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255'));
         $this->SetAligns(array('C','R','C','L','L','R','R','R','R'));
         $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0'));
-        
+
         $subtotal = 0;
         foreach ($this->subcontrato->partidas as $key => $partida) {
             $precio_neto = $partida->precio_unitario - ($partida->precio_unitario * $partida->descuento / 100);
@@ -352,16 +352,16 @@ class SubcontratoFormato extends FPDI
                 )
             );
             $subtotal += $importe;
-            
+
         }
         $this->SetRounds(array('4','','','','','','','','3'));
         $this->SetRadius(array(0.2,0,0,0,0,0,0,0,0.2));
-        
+
         $this->totales();
     }
 
     function totales(){
-        $desc_monetario = (($this->subcontrato->monto- $this->subcontrato->impuesto +$this->subcontrato->impuesto_retenido) * 100) / (100 - $this->subcontrato->PorcentajeDescuento) - 
+        $desc_monetario = (($this->subcontrato->monto- $this->subcontrato->impuesto +$this->subcontrato->impuesto_retenido) * 100) / (100 - $this->subcontrato->PorcentajeDescuento) -
                                 ($this->subcontrato->monto - $this->subcontrato->impuesto + $this->subcontrato->impuesto_retenido);
         $fg_monto = ($this->subcontrato->monto- $this->subcontrato->impuesto +$this->subcontrato->impuesto_retenido) * ($this->subcontrato->retencion /100) ;
 
@@ -552,7 +552,7 @@ class SubcontratoFormato extends FPDI
             $this->AddPage();
             $this->useTemplate($this->clausulado,0, -0.5, 22);
         }
-        
+
 
         try {
             $this->Output('I', "Formato - Subcontrato ".$this->subcontrato->numero_folio_format.".pdf", 1);

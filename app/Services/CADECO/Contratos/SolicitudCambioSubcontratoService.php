@@ -6,13 +6,13 @@ namespace App\Services\CADECO\Contratos;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Subcontrato;
-use App\Models\CADECO\SubcontratosCM\Solicitud as Model;
-use App\Repositories\CADECO\SubcontratosCM\SolicitudRepository as Repository;
+use App\Models\CADECO\SolicitudCambioSubcontrato as Model;
+use App\Repositories\CADECO\SubcontratosCM\SolicitudCambioSubcontratoRepository as Repository;
 use App\Services\CADECO\Documentacion\ArchivoService;
 use DateTime;
 use DateTimeZone;
 
-class SolicitudCambioService
+class SolicitudCambioSubcontratoService
 {
     protected $repository;
 

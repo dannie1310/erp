@@ -16,7 +16,7 @@ use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
-use App\Http\Transformers\CADECO\SubcontratosCM\SubcontratoPartidaTransformer;
+use App\Http\Transformers\CADECO\SubcontratosCM\SubcontratoPartidaTransformer as PartidasConvenio;
 
 class SubcontratoTransformer extends TransformerAbstract
 {
@@ -183,7 +183,7 @@ class SubcontratoTransformer extends TransformerAbstract
     {
         if($partidas = $model->partidas_convenio)
         {
-            return $this->collection($partidas, new SubcontratoPartidaTransformer);
+            return $this->collection($partidas, new PartidasConvenio);
         }
         return null;
     }

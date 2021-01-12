@@ -2,10 +2,10 @@
 
 namespace App\Observers\CADECO;
 
-use App\Models\CADECO\SubcontratosCM\Solicitud;
+use App\Models\CADECO\SolicitudCambioSubcontrato;
 use App\Models\CADECO\Transaccion;
 
-class SolicitudObserver extends TransaccionObserver
+class SolicitudCambioSubcontratoObserver extends TransaccionObserver
 {
     /**
      * @param Transaccion $solicitud
@@ -14,7 +14,7 @@ class SolicitudObserver extends TransaccionObserver
     public function creating(Transaccion $solicitud)
     {
         parent::creating($solicitud);
-        $solicitud->tipo_transaccion = Solicitud::TIPO;
+        $solicitud->tipo_transaccion = SolicitudCambioSubcontrato::TIPO;
         $solicitud->numero_folio = $solicitud->calcularFolio();
     }
 }

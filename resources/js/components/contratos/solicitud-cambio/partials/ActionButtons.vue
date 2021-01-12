@@ -6,7 +6,7 @@
                 <i v-if="aprobando" class="fa fa-spin fa-spinner"></i>
                 <i v-else class="fa fa-thumbs-o-up"></i>
             </button>
-            <router-link  :to="{ name: 'solicitud-cambio-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato') && 1==2" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+            <router-link  :to="{ name: 'solicitud-cambio-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
                 <i class="fa fa-eye"></i>
             </router-link>
             <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0) && 1==2"  v-bind:id="value.id">
@@ -36,72 +36,72 @@
                                 <tbody>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Importe Estimación</th>
-                                    <td style="text-align: right">{{value.estimacion.suma_importes}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.suma_importes}}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left">Amortización de Anticipo</th>
-                                    <td>{{value.estimacion.anticipo}}</td>
-                                    <td style="text-align: right">{{ value.estimacion.monto_anticipo_aplicado_format }}</td>
+                                    <td>{{value.solicitud_cambio.anticipo}}</td>
+                                    <td style="text-align: right">{{ value.solicitud_cambio.monto_anticipo_aplicado_format }}</td>
                                 </tr>
                                 <tr v-if="configuracion.ret_fon_gar_antes_iva == 1">
                                     <th style="text-align: left">Retención de Fondo de Garantia</th>
-                                    <td>{{value.estimacion.retencion}} %</td>
-                                    <td style="text-align: right">{{value.estimacion.retencion_fondo_garantia}}</td>
+                                    <td>{{value.solicitud_cambio.retencion}} %</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.retencion_fondo_garantia}}</td>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 1">
                                     <th style="text-align: left" colspan="2">Total Retenciones</th>
-                                    <td style="text-align: right">{{value.estimacion.total_retenciones}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.total_retenciones}}</td>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 1">
                                     <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
-                                    <td style="text-align: right">{{value.estimacion.total_retencion_liberadas}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.total_retencion_liberadas}}</td>
                                 </tr>
                                 <tr v-if="configuracion.desc_pres_mat_antes_iva == 1">
                                     <th style="text-align: left" colspan="2">Total Deductivas</th>
-                                    <td style="text-align: right">{{value.estimacion.total_deductivas}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.total_deductivas}}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Subtotal</th>
-                                    <td style="text-align: right">{{value.estimacion.subtotal_orden_pago}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.subtotal_orden_pago}}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">IVA</th>
-                                    <td style="text-align: right">{{value.estimacion.iva_orden_pago}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.iva_orden_pago}}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left">Retención de IVA</th>
-                                    <td>{{value.estimacion.retencion_iva_porcentaje}}</td>
-                                    <td style="text-align: right">{{value.estimacion.retencion_iva_format}}</td>
+                                    <td>{{value.solicitud_cambio.retencion_iva_porcentaje}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.retencion_iva_format}}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Total</th>
-                                    <td style="text-align: right">{{value.estimacion.total_orden_pago}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.total_orden_pago}}</td>
                                 </tr>
                                 <tr v-if="configuracion.ret_fon_gar_antes_iva == 0">
                                     <th style="text-align: left">Retención de Fondo de Garantia Estimación</th>
-                                    <td v-if="configuracion.ret_fon_gar_con_iva == 1">{{value.estimacion.retencion}} % + IVA</td>
-                                    <td v-else>{{value.estimacion.retencion}} %</td>
-                                    <td style="text-align: right">{{value.estimacion.retencion_fondo_garantia}}</td>
+                                    <td v-if="configuracion.ret_fon_gar_con_iva == 1">{{value.solicitud_cambio.retencion}} % + IVA</td>
+                                    <td v-else>{{value.solicitud_cambio.retencion}} %</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.retencion_fondo_garantia}}</td>
                                 </tr>
                                 <tr v-if="configuracion.desc_pres_mat_antes_iva == 0">
                                     <th style="text-align: left" colspan="2">Total Deductivas</th>
-                                    <td style="text-align: right">{{value.estimacion.total_deductivas}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.total_deductivas}}</td>
                                 </tr>
                                    <tr v-if="configuracion.retenciones_antes_iva == 0">
                                     <th style="text-align: left" colspan="2">Total Retenciones</th>
-                                    <td style="text-align: right">{{value.estimacion.total_retenciones}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.total_retenciones}}</td>
                                 </tr>
                                 <tr v-if="configuracion.retenciones_antes_iva == 0">
                                     <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
-                                    <td style="text-align: right">{{value.estimacion.total_retencion_liberadas}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.total_retencion_liberadas}}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Total Anticipo a Liberar</th>
-                                    <td style="text-align: right">{{value.estimacion.total_anticipo_liberar}}</td>
+                                    <td style="text-align: right">{{value.solicitud_cambio.total_anticipo_liberar}}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: left" colspan="2">Total a Pagar</th>
-                                    <td style="text-align: right">{{ value.estimacion.monto_pagar_format }}</td>
+                                    <td style="text-align: right">{{ value.solicitud_cambio.monto_pagar_format }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -158,9 +158,9 @@
 
             aprobar() {
                 this.guardando = true;
-                return this.$store.dispatch('contratos/estimacion/aprobar' ,{ id: this.value.id })
+                return this.$store.dispatch('contratos/solicitud_cambio/aprobar' ,{ id: this.value.id })
                     .then(() => {
-                        this.$store.commit('contratos/estimacion/APROBAR_ESTIMACION', this.value.id);
+                        this.$store.commit('contratos/solicitud_cambio/APROBAR_solicitud_cambio', this.value.id);
                     })
                     .finally(() => {
                         this.guardando = false;
@@ -170,9 +170,9 @@
 
             desaprobar() {
                 this.guardando = true;
-                return this.$store.dispatch('contratos/estimacion/revertirAprobacion', {id: this.value.id})
+                return this.$store.dispatch('contratos/solicitud_cambio/revertirAprobacion', {id: this.value.id})
                     .then(() => {
-                        this.$store.commit('contratos/estimacion/REVERTIR_APROBACION', this.value.id);
+                        this.$store.commit('contratos/solicitud_cambio/REVERTIR_APROBACION', this.value.id);
                     })
                     .finally(() => {
                         this.guardando = false;
@@ -180,17 +180,17 @@
                     })
             },
             show(){
-                this.$router.push({ name:'estimacion-show', params: {id: this.value.id}});
+                this.$router.push({ name:'solicitud_cambio-show', params: {id: this.value.id}});
             },
             edit(){
-                this.$router.push({ name:'estimacion-edit', params: {id: this.value.id}});
+                this.$router.push({ name:'solicitud_cambio-edit', params: {id: this.value.id}});
             },
             eliminar() {
-                this.$router.push({name: 'estimacion-delete', params: {id: this.value.id}});
+                this.$router.push({name: 'solicitud_cambio-delete', params: {id: this.value.id}});
             },
             getConfiguraciones() {
                 this.cargando = true;
-                return this.$store.dispatch('finanzas/estimacion/index', { params: this.query1 } )
+                return this.$store.dispatch('finanzas/solicitud_cambio/index', { params: this.query1 } )
                     .then(data => {
                        this.configuracion = data.data[0]
                     })

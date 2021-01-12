@@ -65,6 +65,11 @@ class ItemSubcontrato extends Item
         return ItemEstimacion::where('item_antecedente', '=', $this->id_concepto)->where("id_antecedente", '=', $this->id_transaccion)->sum('cantidad');
     }
 
+    public function getImporteTotalEstimadoAttribute()
+    {
+        return ItemEstimacion::where('item_antecedente', '=', $this->id_concepto)->where("id_antecedente", '=', $this->id_transaccion)->sum('importe');
+    }
+
     public function getAncestrosAttribute()
     {
         $lista = array();
@@ -183,5 +188,40 @@ class ItemSubcontrato extends Item
     public function getAcumuladoAnteriorAttribute()
     {
         return Item::where('id_antecedente', $this->id_transaccion)->where('item_antecedente', $this->id_concepto);
+    }
+
+    public function getCantidadEstimadaFormatAttribute(){
+        return number_format($this->cantidad_total_estimada,3, ".",",");
+    }
+
+    public function getImporteEstimadoFormatAttribute(){
+        return "$" . number_format($this->importe_total_estimado,3, ".",",");
+    }
+
+    public function getCantidadSaldoFormatAttribute(){
+        return number_format($this->cantidad-$this->cantidad_total_estimada,3, ".",",");
+    }
+
+    public function getImporteSaldoFormatAttribute(){
+        return "$" . number_format(($this->cantidad*$this->precio_unitario)-$this->importe_total_estimado,3, ".",",");
+    }
+
+    public function getConceptoPathAttribute()
+    {
+        try{
+            return $this->destino->concepto->path;
+        } catch(\Exception $e){
+            return null;
+        }
+    }
+
+    public function getConceptoPathCortaAttribute()
+    {
+        try{
+            return $this->destino->concepto->path_corta;
+        } catch(\Exception $e){
+            return null;
+        }
+
     }
 }
