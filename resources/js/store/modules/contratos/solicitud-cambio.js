@@ -114,11 +114,11 @@ export default {
                     })
             });
         },
-        aprobar(context, payload) {
+        aplicar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Aprobar Solicitud de Cambio",
+                    text: "Aplicar Solicitud de Cambio",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -126,7 +126,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Aprobar',
+                            text: 'Si, Aplicar',
                             closeModal: false,
                         }
                     }
@@ -134,51 +134,10 @@ export default {
                 .then((value) => {
                     if (value) {
                         axios
-                            .patch(URI + payload.id + '/aprobar')
+                            .patch(URI + payload.id + '/aplicar')
                             .then(r => r.data)
                             .then(data => {
-                                swal("Solicitud de cambio aprobada correctamente", {
-                                    icon: "success",
-                                    timer: 1500,
-                                    buttons: false
-                                })
-                                    .then(() => {
-                                        resolve(data);
-                                    })
-                            })
-                            .catch(error => {
-                                reject(error);
-                            })
-                    } else {
-                        reject();
-                    }
-                });
-            });
-        },
-        revertirAprobacion(context, payload) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "¿Está seguro?",
-                    text: "Revertir Aprobación",
-                    icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Revertir',
-                            closeModal: false,
-                        }
-                    }
-                })
-                .then((value) => {
-                    if (value) {
-                        axios
-                            .patch(URI + payload.id + '/revertirAprobacion')
-                            .then(r => r.data)
-                            .then(data => {
-                                swal("Aprobación revertida correctamente", {
+                                swal("Solicitud de cambio aplicada correctamente", {
                                     icon: "success",
                                     timer: 1500,
                                     buttons: false

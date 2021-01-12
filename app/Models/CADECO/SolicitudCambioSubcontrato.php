@@ -291,4 +291,9 @@ class SolicitudCambioSubcontrato extends Transaccion
         return $fol ? $fol->numero_folio + 1 : 1;
     }
 
+    public function aplicar()
+    {
+        dd($this);
+    }
+
 }

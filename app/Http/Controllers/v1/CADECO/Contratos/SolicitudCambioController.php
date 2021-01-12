@@ -32,4 +32,10 @@ class SolicitudCambioController extends Controller
         $respuesta = $this->service->registrar($request);
         return $this->respondWithItem($respuesta);
     }
+
+    public function aplicar($id)
+    {
+        $respuesta = $this->service->show($id)->aplicar();
+        return $this->respondWithItem($respuesta);
+    }
 }
