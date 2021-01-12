@@ -108,6 +108,9 @@
                             <div class="btn-group pull-right">
                                 <Show v-bind:id="solicitud_cambio.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></Show>
                                 <PDF v-bind:id="solicitud_cambio.subcontrato.id" @click="solicitud_cambio.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></PDF>
+                                <router-link  :to="{ name: 'subcontrato-documentos', params: {id: solicitud_cambio.subcontrato.id}}" target="_blank" v-if="$root.can('consultar_subcontrato') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
+                                    <i class="fa fa-folder-open"></i>
+                                </router-link>
                             </div>
                         </div>
                     </div>
