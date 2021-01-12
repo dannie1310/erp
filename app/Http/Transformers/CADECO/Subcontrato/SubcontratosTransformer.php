@@ -13,8 +13,10 @@ class SubcontratosTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'descripcion' => $model->observacion,
-            'fecha_ini' => ($model->fecha_ini_ejec) ? date("d/m/Y", strtotime($model->fecha_ini_ejec)) : '--------',
-            'fecha_fin' => ($model->fecha_fin_ejec) ? date("d/m/Y", strtotime($model->fecha_fin_ejec)) : '--------'
+            'fecha_ini_format' => $model->fecha_inicio_ejecucion_format,
+            'fecha_ini_ejec' => $model->fecha_ini_ejec,
+            'fecha_fin_format' => $model->fecha_fin_ejecucion_format,
+            'fecha_fin_ejec' => $model->fecha_fin_ejec,
         ];
     }
 }

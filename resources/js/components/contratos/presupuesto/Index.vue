@@ -38,12 +38,14 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Núm de Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Contrato Proyectado', tdClass: 'folio', field: 'contrato'},
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Contratista', field: 'contratista', sortable: false },
-                    { title: ' Referencia Contrato Proyectado ', field: 'observaciones', sortable: false },
+                    { title: 'Referencia Contrato Proyectado ', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: ['th_money', 'text-right'], sortable: false },
                     { title: 'Usuario Registró', tdClass: 'folio', field: 'usuario', sortable: false },
+                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -76,9 +78,30 @@
 
                     })
             },
-            
+
             create() {
                 this.$router.push({name: 'presupuesto-create'});
+            },
+            getEstado(estado) {
+
+                let val = parseInt(estado);
+                switch (val) {
+                    case 0:
+                        return {
+                            color: '#ff0000',
+                            descripcion: 'Precios Pendientes'
+                        }
+                    case 1:
+                        return {
+                            color: '#f39c12',
+                            descripcion: 'Registrada'
+                        }
+                    case 2:
+                        return {
+                            color: '#4f9b34',
+                            descripcion: 'En Asignación'
+                        }
+                }
             },
         },
         computed: {
@@ -104,10 +127,13 @@
                         contratista: (presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----',
                         observaciones: (presupuesto.contrato_proyectado) ? presupuesto.contrato_proyectado.referencia : '----- Sin Contrato Proyectado -----',
                         importe: '$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',','),
-                        usuario: (presupuesto.usuario) ? presupuesto.usuario.nombre : '---------------------------',
+                        usuario: (presupuesto.usuario) ? presupuesto.usuario.nombre : '-',
+                        estado: this.getEstado(presupuesto.estado),
+                        contrato: presupuesto.contrato_proyectado.numero_folio_format,
                         buttons: $.extend({}, {
-                            id: presupuesto.id
-                        })                         
+                            id: presupuesto.id,
+                            transaccion: {id:presupuesto.id, tipo:50, opcion:1},
+                        })
                     }));
                 },
                 deep: true

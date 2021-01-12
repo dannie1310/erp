@@ -1,0 +1,835 @@
+<?php
+
+
+namespace App\PDF\Contratos;
+
+
+use App\Facades\Context;
+// use Ghidev\Fpdf\Rotation;
+use App\Models\CADECO\Obra;
+use App\Models\CADECO\Subcontrato;
+use App\Utils\PDF\FPDI\FPDI;
+
+class SubcontratoFormato extends FPDI
+{
+    private $subcontrato;
+    private $encabezado_pdf = '';
+    private $encola = '';
+
+    const DPI = 96;
+    const MM_IN_INCH = 25.4;
+    const A4_HEIGHT = 297;
+    const A4_WIDTH = 210;
+
+    const MAX_WIDTH = 225;
+    const MAX_HEIGHT = 180;
+
+    public function __construct(Subcontrato $subcontrato)
+    {
+
+        parent::__construct('P', 'cm', 'Letter');
+        $this->obra = Obra::find(Context::getIdObra());
+        $this->subcontrato = $subcontrato;
+
+        $this->SetAutoPageBreak(true, 5);
+        $this->WidthTotal = $this->GetPageWidth() - 2;
+        $this->txtTitleTam = 18;
+        $this->txtSubtitleTam = 13;
+        $this->txtSeccionTam = 9;
+        $this->txtContenidoTam = 11;
+        $this->txtFooterTam = 6;
+        $this->encabezado_pdf = utf8_decode('SUBCONTRATO');
+
+
+    }
+
+    function Header(){
+        $ln = 0;
+        if($this->encola == 'clausulado' &&$this->subcontrato->clasificacionSubcontrato){
+            if(Context::getDatabase()  == "SAO1814_TERMINAL_NAICM"){
+                $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_ctvm.pdf'));
+            }
+            else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7){
+                $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS.pdf'));
+                $ln = 11.23;
+
+            }else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
+                $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
+                $ln = 14.6;
+            }
+            else{
+                $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc.pdf'));
+            }
+            $this->clausulado = $this->importPage(1);
+            $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
+            $this->sin_texto =  $this->importPage(1);
+
+            $this->SetTextColor('0,0,0');
+            $this->SetFont('Arial', 'B', 10);
+
+            $this->Cell(11.5);
+            $this->Cell(2.5,.5, 'OBRA','LT',0,'L');
+            $this->Cell(5.5,.5, $this->obra->nombre.' ','RT',0,'L');
+            $this->Ln(.5);
+
+
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(11.5);
+            $this->Cell(2.5,.5, 'FECHA ','L',0,'L');
+            $this->Cell(5.5,.5, $this->subcontrato->fecha_format.' ','R',0,'L');
+            $this->Ln(.5);
+
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(11.5);
+            $this->Cell(2.5,.5, 'FOLIO ','L',0,'L');
+            $this->Cell(5.5,.5, $this->subcontrato->clasificacionSubcontrato->folio_format.' ','R',0,'L');
+            $this->Ln(.5);
+
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(11.5);
+            $this->Cell(2.5,.5, 'CONTRATO ','L',0,'L');
+            $this->Cell(5.5,.5, $this->subcontrato->contratoProyectado->folio_format.' ','R',0,'L');
+            $this->Ln(.5);
+
+            $this->Cell(11.5);
+            $this->Cell(2.5,.5,'TOTAL ','LB',0,'L');
+            $this->Cell(5.5,.5, "$ ". number_format($this->subcontrato->monto, 2, ',', '.'),'RB',1,'R');
+
+            if($ln > 0){
+                $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+                $fecha_exp = explode('/', $this->subcontrato->fecha_format);
+
+                $this->Ln($ln);
+                $this->SetFont('Arial', 'B', 5);
+                $this->Cell(18.15);
+                $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
+
+                $this->Ln(.22);
+                $this->Cell(10.3);
+                $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
+
+                $this->Ln(.18);
+                $this->Cell(12.4);
+                $this->SetFillColor('255,255,255');
+                $this->Cell(.7,.15,$fecha_exp[2],'',0,'L', 1);
+            }
+        }else{
+            $postTitle=.7;
+            if( Context::getDatabase() == "SAO1814" && ID_OBRA == 41){
+                $this->image('../../img/subcontrato/LOGOTIPO_REHABILITACION_ATLACOMULCO.png',1,.3,5,2);
+                $postTitle=3.5;
+            }
+            $referencia = \substr($this->subcontrato->referencia, 0, 24) ;
+
+            $this->SetTextColor('0,0,0');
+            $this->SetFont('Arial', 'B', 12);
+            $this->Cell(11.5);
+            $this->Cell(1.5,.7,'No.'.($this->subcontrato->clasificacionSubcontrato?$this->subcontrato->clasificacionSubcontrato->tipo->descripcion_corta:'').':','LT',0,'L');
+            $this->CellFit(6.5,.7, $referencia,'RT',0,'L');
+            $this->Ln(.7);
+
+            $this->SetFont('Arial', 'B', 20);
+            $this->Cell(11.5, $postTitle, ($this->subcontrato->clasificacionSubcontrato?utf8_decode($this->subcontrato->clasificacionSubcontrato->tipo->descripcion):'SUBCONTRATO') , 0, 0, 'C', 0);
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(4.5,.7, 'FECHA :','BL',0,'L');
+            $this->Cell(3.5,.7, $this->subcontrato->fecha_format.' ','RB',0,'L');
+            $this->Ln(.7);
+
+            $this->Ln(.6);
+            $y_inicial = $this->getY();
+            $x_inicial = $this->getX();
+
+            $alto = abs(1);
+            $this->SetWidths(array(19.5));
+            $this->SetRounds(array('1234'));
+            $this->SetRadius(array(0.1));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array($alto));
+            $this->SetStyles(array('DF'));
+            $this->SetAligns("L");
+            $this->SetFont('Arial', 'B', 13);
+            $this->setY($y_inicial);
+            $this->Row(array(""));
+            $this->setY($y_inicial);
+            $this->setX($x_inicial);
+            $this->MultiCell(19.5, 1, 'PROYECTO: '. $this->obra->nombre, '', 'C');
+
+            $this->Ln(.3);
+            $this->SetFont('Arial', 'B', 13);
+            $this->SetWidths(array(19.5));
+            $this->SetRounds(array('1234'));
+            $this->SetRadius(array(0.2));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.7));
+            $this->SetRounds(array('1234'));
+            $this->SetRadius(array(0.2));
+            $this->SetAligns("C");
+            $this->SetFont('Arial', '', 10);
+            $this->Cell(9.5,.7,'Subcontratista',0,0,'L');
+            $this->Cell(.5);
+            $this->Cell(9.5,.7,'Cliente (Facturar a)',0,0,'L');
+            $this->Ln(.6);
+            $y_inicial = $this->getY();
+            $x_inicial = $this->getX();
+            $this->MultiCell(9.5, .5,$this->subcontrato->empresa->razon_social.''. ($this->subcontrato->sucursal? $this->subcontrato->sucursal->direccion . ', C.P.'. $this->subcontrato->sucursal->codigo_postal  .', '. $this->subcontrato->sucursal->estado:'') .', '.$this->subcontrato->empresa->rfc, '', 'L');
+            $y_final_1 = $this->getY();
+            $this->setY($y_inicial);
+            $this->setX($x_inicial+10);
+            $this->MultiCell(9.5, .5,$this->obra->facturar.''.$this->obra->direccion.''.$this->obra->rfc, '', 'L');
+            $y_final_2 = $this->getY();
+            if($y_final_1>$y_final_2){$y_alto = $y_final_1;}else{$y_alto = $y_final_2;}
+            $alto = abs($y_inicial-$y_alto);
+            $this->SetWidths(array(9.5));
+            $this->SetRounds(array('1234'));
+            $this->SetRadius(array(0.2));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array($alto));
+            $this->SetStyles(array('DF'));
+            $this->SetAligns("L");
+            $this->SetFont('Arial', '', 10);
+            $this->setY($y_inicial);
+            $this->Row(array(""));
+            $this->setY($y_inicial);
+            $this->setX($x_inicial);
+            $this->MultiCell(9.5, .5,$this->subcontrato->empresa->razon_social.''. ($this->subcontrato->sucursal? $this->subcontrato->sucursal->direccion . ', C.P.'. $this->subcontrato->sucursal->codigo_postal  .', '. $this->subcontrato->sucursal->estado:'') .', '.$this->subcontrato->empresa->rfc, 0, 'L');
+            $this->setY($y_inicial);
+            $this->setX($x_inicial+10);
+            $this->Row(array(""));
+
+            $this->setY($y_inicial);
+            $this->setX($x_inicial+10);
+            $this->MultiCell(9.5, .5,utf8_decode($this->obra->facturar.''.$this->obra->direccion.''.$this->obra->rfc), '', 'L');
+            $this->Ln(.9);
+            $y_inicial = $this->getY();
+            $x_inicial = $this->getX();
+
+            //$this->datos_encabezado["observacion"] = substr($this->datos_encabezado["observacion"],1,200);
+            $long = 0;
+             $this->subcontrato->subcontratos?$long =strlen($this->subcontrato->subcontratos->observacion):'';
+            if($long <= 104){
+                $alto = .5;
+            }
+            else{
+                if($long <= 200){
+                    $alto = 1;
+                }
+                else{
+                    $alto = 1.5;
+                }
+            }
+
+            $this->SetFont('Arial', 'B', 10);
+            $this->CellFit(2.5, $alto, utf8_decode('Descripción: ') , 0, 0, 'C', 0);
+            $alto = abs($alto);
+            $this->SetWidths(array(17));
+            $this->SetRounds(array('1234'));
+            $this->SetRadius(array(.1));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array($alto));
+            $this->SetStyles(array('DF'));
+            $this->SetFont('Arial', '', 10);
+            $this->Row(array(""));
+            $this->setY($y_inicial);
+            $this->setX($x_inicial);
+            $this->CellFit(2.5, 1, '', 0, 0, 'C', 0);
+            $this->MultiCell(17, .5,  $this->subcontrato->subcontratos?utf8_decode($this->subcontrato->subcontratos->observacion):'', '', 'L');
+            $this->encabezados();
+        }
+
+    }
+
+    function encabezados(){
+        $this->SetFont('Arial', '', 6);
+        $this->SetHeights(array(0.5));
+        if($this->encola=="partida"){
+            $this->Ln(.7);
+            $this->SetFillColor(180,180,180);
+            $this->SetWidths(array(0.5,1.5,1.5,2,7,2,1,2,2));
+            $this->SetStyles(array('DF','DF','DF','DF','DF','FD','FD','DF'));
+            $this->SetRounds(array('1','','','','','','','','2'));
+            $this->SetRadius(array(0.2,0,0,0,0,0,0,0,0.2));
+            $this->SetFills(array('180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180'));
+            $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0'));
+            $this->SetHeights(array(0.4));
+            $this->SetAligns(array('C','C','C','C','C','C','C','C','C'));
+            $this->Row(array("#","Cantidad", "Unidad", "Clave Concepto", utf8_decode("Descripción"), "Precio", "% Descto.","Precio Neto", "Importe"));
+            $this->SetRounds(array('','','','','','','','',''));
+            $this->SetFills(array('255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255'));
+            $this->SetAligns(array('C','R','C','L','L','R','R','R', 'R'));
+            $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0'));
+        }
+        else if($this->encola == "observaciones_partida"){
+            $this->SetRadius(array(0));
+            $this->SetTextColors(array('150,150,150'));
+            $this->SetWidths(array(19.5));
+            $this->SetAligns(array('J'));
+        }
+        else if($this->encola == "observaciones_encabezado"){
+            $this->SetWidths(array(19.5));
+            $this->SetRounds(array('12'));
+            $this->SetRadius(array(0.2));
+            $this->SetFills(array('180,180,180'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 9);
+            $this->SetAligns(array('C'));
+        }
+        else if($this->encola == "observaciones"){
+            $this->SetRounds(array('34'));
+            $this->SetRadius(array(0.2));
+            $this->SetAligns(array('J'));
+            $this->SetStyles(array('DF'));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 9);
+            $this->SetWidths(array(19.5));
+        }
+        else if($this->encola == "path_concepto"){
+            $this->Ln(.7);
+            $this->SetFillColor(180,180,180);
+            $this->SetWidths(array(0.5,1.5,1.5,2,7,2,1,2,2));
+            $this->SetStyles(array('DF','DF','DF','DF','DF','FD','FD','DF'));
+            $this->SetRounds(array('1','','','','','','','','2'));
+            $this->SetRadius(array(0.2,0,0,0,0,0,0,0,0.2));
+            $this->SetFills(array('180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180'));
+            $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0'));
+            $this->SetHeights(array(0.4));
+            $this->SetAligns(array('C','C','C','C','C','C','C','C','C'));
+            $this->Row(array("#","Cantidad", "Unidad", "Clave Concepto", utf8_decode("Descripción"), "Precio", "% Descto.","Precio Neto", "Importe"));
+            $this->SetRounds(array('','','','','','','','',''));
+            $this->SetFills(array('255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255'));
+            $this->SetAligns(array('C','R','C','L','L','R','R','R', 'R'));
+            $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0'));
+
+            $this->SetWidths(array(19.5));
+            $this->SetRadius(array(0,0,0,0,0,0,0,0,0));
+        }
+        else{
+            $this->Ln(.7);
+        }
+    }
+
+    function partidas(){
+        $this->SetFillColor(180,180,180);
+        $this->SetWidths(array(0.5,1.5,1.5,2,7,2,1,2,2));
+        $this->SetStyles(array('DF','DF','DF','DF','DF','FD','FD','DF'));
+        $this->SetRounds(array('1','','','','','','','','2'));
+        $this->SetRadius(array(0.2,0,0,0,0,0,0,0,0.2));
+        $this->SetFills(array('180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180'));
+        $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0'));
+        $this->SetHeights(array(0.4));
+        $this->SetAligns(array('C','C','C','C','C','C','C','C','C'));
+        $this->Row(array("#","Cantidad", "Unidad", "Clave Concepto", utf8_decode("Descripción"), "Precio", "% Descto.","Precio Neto", "Importe"));
+        $this->SetRounds(array('','','','','','','','',''));
+        $this->SetFills(array('255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255'));
+        $this->SetAligns(array('C','R','C','L','L','R','R','R', 'R'));
+        $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0'));
+        $this->SetWidths(array(0.5,1.5,1.5,2,7,2,1,2,2));
+        $this->encola="partida";
+        $this->SetRounds(array('','','','','','','','',''));
+        $this->SetFills(array('255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255'));
+        $this->SetAligns(array('C','R','C','L','L','R','R','R','R'));
+        $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0'));
+
+        $subtotal = 0;
+        foreach ($this->subcontrato->partidas as $key => $partida) {
+            $precio_neto = $partida->precio_unitario - ($partida->precio_unitario * $partida->descuento / 100);
+            $importe = $precio_neto * $partida->cantidad;
+            $this->Row(array($key+1,
+                $partida->cantidad,
+                $partida->contrato->unidad,
+                $partida->contrato->destino->concepto->clave_concepto,
+                utf8_decode($partida->contrato->descripcion),
+                number_format($partida->precio_unitario,2, '.', ','),
+                number_format($partida->descuento,2, '.', ','),
+                number_format($precio_neto,2, '.', ','),
+                number_format($importe,2, '.', ','),
+                )
+            );
+            $subtotal += $importe;
+
+        }
+        $this->SetRounds(array('4','','','','','','','','3'));
+        $this->SetRadius(array(0.2,0,0,0,0,0,0,0,0.2));
+
+        $this->totales();
+    }
+
+    function totales(){
+        $desc_monetario = (($this->subcontrato->monto- $this->subcontrato->impuesto +$this->subcontrato->impuesto_retenido) * 100) / (100 - $this->subcontrato->PorcentajeDescuento) -
+                                ($this->subcontrato->monto - $this->subcontrato->impuesto + $this->subcontrato->impuesto_retenido);
+        $fg_monto = ($this->subcontrato->monto- $this->subcontrato->impuesto +$this->subcontrato->impuesto_retenido) * ($this->subcontrato->retencion /100) ;
+
+        $this->encola="";
+        $y_subtotal = $this->GetY();
+        $this->SetTextColor(0,0,0);
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(17.5, .5, 'Subtotal Antes Descuento:', 0, 0,'R');
+        $this->CellFitScale(2, .5, number_format($this->subcontrato->subtotal_antes_descuento,2, '.', ','), 1, 0,'R');
+        $this->Ln(.5);
+        $this->CellFitScale(17.5, .5, 'Descuento Global ('.$this->subcontrato->PorcentajeDescuento.'%):', 0, 0,'R');
+        $this->CellFitScale(2, .5, number_format($desc_monetario,2, '.', ','), 1, 0,'R');
+        $this->Ln(.5);
+
+        $this->CellFitScale(17.5, .5, 'Subtotal:', 0, 0,'R');
+        $this->CellFitScale(2, .5, number_format($this->subcontrato->subtotal,2, '.', ','), 1, 0,'R');
+        $this->Ln(.5);
+        $this->CellFitScale(17.5, .5, 'IVA:', 0, 0,'R');
+        $this->CellFitScale(2, .5, number_format($this->subcontrato->impuesto,2, '.', ','), 1, 0,'R');
+        $this->Ln(.5);
+        $this->CellFitScale(17.5, .5, 'Total:', 0, 0,'R');
+        $this->CellFitScale(2, .5, number_format($this->subcontrato->monto,2, '.', ','), 1, 0,'R');
+        $this->Ln(.5);
+        $this->CellFitScale(17.5, .5, 'Moneda:', 0, 0,'R');
+        $this->CellFitScale(2, .5, $this->subcontrato->moneda->nombre, 1, 0,'R');
+        $this->Ln(.7);
+
+        $this->SetTextColor(0,0,0);
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(17.5, .5, 'Anticipo ('.$this->subcontrato->anticipo.' %): ', 0, 0,'R');
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2, .5, number_format($this->subcontrato->anticipo_monto,2, '.', ','), 1, 0,'R');
+        $this->Ln(.7);
+
+        $this->SetTextColor(0,0,0);
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(17.5, .5,  utf8_decode('Fondo de garantía ('.$this->subcontrato->retencion).' %): ', 0, 0,'R');
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2, .5, number_format($fg_monto,2, '.', ','), 1, 0,'R');
+        $this->Ln(.7);
+
+        $this->SetTextColor(0,0,0);
+        $this->SetFont('Arial', 'B', 9);
+        $this->CellFitScale(3, .5, utf8_decode('Plazo de Ejecución: Del'), 0, 0,'L');
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_inicio_ejecucion_format:''), 1, 0,'L');
+        $this->CellFitScale(.5, .5, utf8_decode(' al'), 0, 0,'L');
+        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_fin_ejecucion_format:''), 1, 0,'L');
+        $this->Ln(.7);
+
+        $this->SetWidths(array(19.5));
+        $this->SetRounds(array('12'));
+        $this->SetRadius(array(0.2));
+        $this->SetFills(array('180,180,180'));
+        $this->SetTextColors(array('0,0,0'));
+        $this->SetHeights(array(0.5));
+        $this->SetFont('Arial', '', 9);
+        $this->SetAligns(array('C'));
+        $this->encola="observaciones_encabezado";
+        $this->Row(array("Observaciones"));
+        $this->SetRounds(array('34'));
+        $this->SetRadius(array(0.2));
+        $this->SetAligns(array('J'));
+        $this->SetStyles(array('DF'));
+        $this->SetFills(array('255,255,255'));
+        $this->SetTextColors(array('0,0,0'));
+        $this->SetHeights(array(0.5));
+        $this->SetFont('Arial', '', 9);
+        $this->SetWidths(array(19.5));
+        $this->encola="observaciones";
+        $this->Row(array(utf8_decode($this->subcontrato->observaciones)));
+        $this->encola = 'clausulado';
+
+    }
+
+    function footer(){
+        $residuo = $this->PageNo() % 2;
+        $this->SetTextColor('0,0,0');
+        if($this->encola != 'clausulado' || ($this->subcontrato->clasificacionSubcontrato && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 4 && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 3 &&$this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 7)){
+            if(Context::getDatabase() == "SAO1814_TERMINAL_NAICM"){
+                $this->SetFont('Arial', 'B', 6);
+                $this->SetFont('Arial', 'B', 5);
+                $this->SetY(-2.7);
+                $this->Cell(2);
+                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->Ln(.4);
+                $this->Cell(2);
+                $this->CellFitScale(4, .8, '', 1, 0,'C');
+                $this->CellFitScale(4, .8, '', 1, 0,'C');
+                $this->CellFitScale(4, .8, '', 1, 0,'C');
+                $this->CellFitScale(4, .8, '', 1, 0,'C');
+                $this->Ln(.8);
+                $this->Cell(2);
+                $this->CellFitScale(4, .3, utf8_decode('Gerente / Director de Área Solicitante'), 1, 0,'C');
+                $this->CellFitScale(4, .3, utf8_decode('Coordinador de Procuración'), 1, 0,'C');
+                $this->CellFitScale(4, .3, utf8_decode('Gerente de Procuración'), 1, 0,'C');
+                $this->CellFitScale(4, .3, ('Administrador de Subcontratos de Control de Proyectos'), 1, 0,'C');
+            //$this->SetFillColor(255, 255, 255);
+			}else if(Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO"){
+                 //if(true){
+                $this->SetFont('Arial', 'B', 6);
+                $this->SetFont('Arial', 'B', 5);
+                $this->SetY(-2.7);
+                $this->Cell(2);
+                $this->CellFitScale(5.3, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(5.3, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(5.3, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->Ln(.4);
+                $this->Cell(2);
+                $this->CellFitScale(5.3, .8, '', 1, 0,'C');
+                $this->CellFitScale(5.3, .8, '', 1, 0,'C');
+                $this->CellFitScale(5.3, .8, '', 1, 0,'C');
+                $this->Ln(.8);
+                $this->Cell(2);
+                $this->CellFitScale(5.3, .3, utf8_decode('Jefe de Contratos'), 1, 0,'C');
+                $this->CellFitScale(5.3, .3, utf8_decode('Gerente Administrativo'), 1, 0,'C');
+                $this->CellFitScale(5.3, .3, ('Gerente de Proyecto'), 1, 0,'C');
+                //$this->SetFillColor(255, 255, 255);
+             }else{
+
+                $this->SetFont('Arial', 'B', 6);
+                $this->SetY(-5.7);
+                $this->Cell(3);
+                $this->CellFitScale(7, .5, utf8_decode($this->subcontrato->empresa->razon_social), 1, 0,'C');
+                $this->CellFitScale(7, .5, utf8_decode($this->obra->facturar), 1, 0,'C');
+                $this->Ln(.5);
+                $this->Cell(3);
+                $this->CellFitScale(7, 1.2, ' ', 1, 0,'R');
+                $this->CellFitScale(7, 1.2, ' ', 1, 0,'R');
+                $this->Ln(1.2);
+                $this->Cell(3);
+                $this->CellFitScale(7, .7, ' ', 1, 0,'R');
+                $this->CellFitScale(7, .7, ' ', 1, 0,'R');
+                $this->SetY(-4);
+                $this->Cell(3);
+                $this->SetFont('Arial', '', 5);
+                $this->CellFitScale(7, .3, 'Acepta:', 0, 0,'C');
+                $this->CellFitScale(7, .3, 'Autoriza:', 0, 2,'C');
+                $this->SetY(-3.7);
+                $this->Cell(3);
+                $this->CellFitScale(7, .3, '', 0, 0,'C');
+                $this->CellFitScale(7, .3, '', 0, 1,'C');
+
+                $this->SetFont('Arial', 'B', 5);
+                $this->SetY(-2.7);
+                $this->Cell(2);
+                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->Ln(.4);
+                $this->Cell(2);
+                $this->CellFitScale(4, .8, '', 1, 0,'C');
+                $this->CellFitScale(4, .8, '', 1, 0,'C');
+                $this->CellFitScale(4, .8, '', 1, 0,'C');
+                $this->CellFitScale(4, .8, '', 1, 0,'C');
+                $this->Ln(.8);
+                $this->Cell(2);
+                $this->CellFitScale(4, .3, utf8_decode('Jurídico Corporativo'), 1, 0,'C');
+                $this->CellFitScale(4, .3, ('Gerente de Subcontratos Corporativo'), 1, 0,'C');
+                $this->CellFitScale(4, .3, ('Gerente de Seguros y Fianzas'), 1, 0,'C');
+                $this->CellFitScale(4, .3, ('Gerente de Proyecto'), 1, 0,'C');
+			}
+        }
+
+        $this->SetY(-0.8);
+        $this->SetFont('Arial','B',8);
+        if($residuo>0 && ($this->subcontrato->clasificacionSubcontrato &&$this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4)){
+            $this->Cell(10,.3,('Terminos y condiciones adicionales al reverso.'),0,1,'L');
+        }else{
+            $this->Cell(10,.3,(''),0,1,'L');
+        }
+        $this->SetFont('Arial','BI',6);
+        $this->Cell(10,.3,(utf8_decode('Formato generado desde el módulo de contratos. Fecha de registro: '. $this->subcontrato->fecha_format)),0,0,'L');
+        $this->Cell(9.5,.3,utf8_decode('Página ').$this->PageNo().'/{nb}',0,0,'R');
+    }
+
+    function create() {
+        $this->SetMargins(1, 0.5, 1);
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->SetAutoPageBreak(true,6.80);
+        $this->partidas();
+        if($this->subcontrato->clasificacionSubcontrato && ($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4)){
+            $this->AddPage();
+            $this->useTemplate($this->clausulado,0, -0.5, 22);
+        }
+
+
+        try {
+            $this->Output('I', "Formato - Subcontrato ".$this->subcontrato->numero_folio_format.".pdf", 1);
+        } catch (\Exception $ex) {
+            dd("error",$ex);
+        }
+        exit;
+    }
+
+    public function agregaPagina()
+    {
+        if($this->encola == 'clausulado'){
+            $this->AddPageSH($this->CurOrientation, $this->CurPageSize, $this->CurRotation);
+            $this->useTemplate($this->sin_texto, 0, -0.5, 22);
+            $this->AddPage($this->CurOrientation,  $this->CurPageSize, $this->CurRotation);
+        }else{
+            $this->AddPage();
+        }
+    }
+
+    function CheckPageBreak($h)
+    {
+        //If the height h would cause an overflow, add a new page immediately
+        if($this->GetY()+$h>$this->PageBreakTrigger)
+            $this->agregaPagina();
+    }
+    function Close()
+    {
+        //Terminate document
+        if($this->state==3)
+            return;
+        if($this->page==0)
+            $this->agregaPagina();
+        //Page footer
+        $this->InFooter=true;
+        $this->Footer();
+        $this->InFooter=false;
+        //Close page
+        $this->_endpage();
+        //Close document
+        $this->_enddoc();
+    }
+
+    function AddPageSH($orientation='',$size='', $rotation=0)
+    {
+        if($this->state==3)
+            $this->Error('The document is closed');
+        $family = $this->FontFamily;
+        $style = $this->FontStyle.($this->underline ? 'U' : '');
+        $fontsize = $this->FontSizePt;
+        $lw = $this->LineWidth;
+        $dc = $this->DrawColor;
+        $fc = $this->FillColor;
+        $tc = $this->TextColor;
+        $cf = $this->ColorFlag;
+        if($this->page>0)
+        {
+            // Page footer
+            $this->InFooter = true;
+            $this->Footer();
+            $this->InFooter = false;
+            // Close page
+            $this->_endpage();
+        }
+        // Start new page
+        $this->_beginpage($orientation,$size,$rotation);
+        // Set line cap style to square
+        $this->_out('2 J');
+        // Set line width
+        $this->LineWidth = $lw;
+        $this->_out(sprintf('%.2F w',$lw*$this->k));
+        // Set font
+        if($family)
+            $this->SetFont($family,$style,$fontsize);
+        // Set colors
+        $this->DrawColor = $dc;
+        if($dc!='0 G')
+            $this->_out($dc);
+        $this->FillColor = $fc;
+        if($fc!='0 g')
+            $this->_out($fc);
+        $this->TextColor = $tc;
+        $this->ColorFlag = $cf;
+        // Page header
+        $this->InHeader = true;
+        //$this->Header();
+        $this->InHeader = false;
+        // Restore line width
+        if($this->LineWidth!=$lw)
+        {
+            $this->LineWidth = $lw;
+            $this->_out(sprintf('%.2F w',$lw*$this->k));
+        }
+        // Restore font
+        if($family)
+            $this->SetFont($family,$style,$fontsize);
+        // Restore colors
+        if($this->DrawColor!=$dc)
+        {
+            $this->DrawColor = $dc;
+            $this->_out($dc);
+        }
+        if($this->FillColor!=$fc)
+        {
+            $this->FillColor = $fc;
+            $this->_out($fc);
+        }
+        $this->TextColor = $tc;
+        $this->ColorFlag = $cf;
+    }
+
+    function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+    {
+        // Output a cell
+        $k = $this->k;
+        if($this->y+$h>$this->PageBreakTrigger && !$this->InHeader && !$this->InFooter && $this->AcceptPageBreak())
+        {
+            // Automatic page break
+            $x = $this->x;
+            $ws = $this->ws;
+            if($ws>0)
+            {
+                $this->ws = 0;
+                $this->_out('0 Tw');
+            }
+            $this->agregaPagina();
+            //$this->AddPage($this->CurOrientation,$this->CurPageSize,$this->CurRotation);
+            $this->x = $x;
+            if($ws>0)
+            {
+                $this->ws = $ws;
+                $this->_out(sprintf('%.3F Tw',$ws*$k));
+            }
+        }
+        if($w==0)
+            $w = $this->w-$this->rMargin-$this->x;
+        $s = '';
+        if($fill || $border==1)
+        {
+            if($fill)
+                $op = ($border==1) ? 'B' : 'f';
+            else
+                $op = 'S';
+            $s = sprintf('%.2F %.2F %.2F %.2F re %s ',$this->x*$k,($this->h-$this->y)*$k,$w*$k,-$h*$k,$op);
+        }
+        if(is_string($border))
+        {
+            $x = $this->x;
+            $y = $this->y;
+            if(strpos($border,'L')!==false)
+                $s .= sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-$y)*$k,$x*$k,($this->h-($y+$h))*$k);
+            if(strpos($border,'T')!==false)
+                $s .= sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-$y)*$k);
+            if(strpos($border,'R')!==false)
+                $s .= sprintf('%.2F %.2F m %.2F %.2F l S ',($x+$w)*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+            if(strpos($border,'B')!==false)
+                $s .= sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-($y+$h))*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+        }
+        if($txt!=='')
+        {
+            if(!isset($this->CurrentFont))
+                $this->Error('No font has been set');
+            if($align=='R')
+                $dx = $w-$this->cMargin-$this->GetStringWidth($txt);
+            elseif($align=='C')
+                $dx = ($w-$this->GetStringWidth($txt))/2;
+            else
+                $dx = $this->cMargin;
+            if($this->ColorFlag)
+                $s .= 'q '.$this->TextColor.' ';
+            $s .= sprintf('BT %.2F %.2F Td (%s) Tj ET',($this->x+$dx)*$k,($this->h-($this->y+.5*$h+.3*$this->FontSize))*$k,$this->_escape($txt));
+            if($this->underline)
+                $s .= ' '.$this->_dounderline($this->x+$dx,$this->y+.5*$h+.3*$this->FontSize,$txt);
+            if($this->ColorFlag)
+                $s .= ' Q';
+            if($link)
+                $this->Link($this->x+$dx,$this->y+.5*$h-.5*$this->FontSize,$this->GetStringWidth($txt),$this->FontSize,$link);
+        }
+        if($s)
+            $this->_out($s);
+        $this->lasth = $h;
+        if($ln>0)
+        {
+            // Go to next line
+            $this->y += $h;
+            if($ln==1)
+                $this->x = $this->lMargin;
+        }
+        else
+            $this->x += $w;
+    }
+
+    function Cell1($w,$h=0,$txt='',$border=0,$ln=0,$align='',$fill=0,$link='')
+    {
+        if(is_numeric($txt)){
+            if(!($txt>0) && !($txt<0)){
+                $txt = "-";
+            }
+        }
+
+        //Output a cell
+        $k=$this->k;
+        if($this->y+$h>$this->PageBreakTrigger && !$this->InFooter && $this->AcceptPageBreak())
+        {
+            //Automatic page break
+            $x=$this->x;
+            $ws=$this->ws;
+            if($ws>0)
+            {
+                $this->ws=0;
+                $this->_out('0 Tw');
+            }
+            $this->agregaPagina();
+            /*$this->AddPage($this->CurOrientation);*/
+            $this->x=$x;
+            if($ws>0)
+            {
+                $this->ws=$ws;
+                $this->_out(sprintf('%.3f Tw',$ws*$k));
+            }
+        }
+        if($w==0)
+            $w=$this->w-$this->rMargin-$this->x;
+        $s='';
+        if($fill==1 || $border==1)
+        {
+            if($fill==1)
+                $op=($border==1) ? 'B' : 'f';
+            else
+                $op='S';
+            $s=sprintf('%.2f %.2f %.2f %.2f re %s ',$this->x*$k,($this->h-$this->y)*$k,$w*$k,-$h*$k,$op);
+        }
+        if(is_string($border))
+        {
+            $x=$this->x;
+            $y=$this->y;
+            if(strpos($border,'L')!==false)
+                $s.=sprintf('%.2f %.2f m %.2f %.2f l S ',$x*$k,($this->h-$y)*$k,$x*$k,($this->h-($y+$h))*$k);
+            if(strpos($border,'T')!==false)
+                $s.=sprintf('%.2f %.2f m %.2f %.2f l S ',$x*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-$y)*$k);
+            if(strpos($border,'R')!==false)
+                $s.=sprintf('%.2f %.2f m %.2f %.2f l S ',($x+$w)*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+            if(strpos($border,'B')!==false)
+                $s.=sprintf('%.2f %.2f m %.2f %.2f l S ',$x*$k,($this->h-($y+$h))*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+        }
+        if($txt!=='')
+        {
+            if($align=='R')
+                $dx=$w-$this->cMargin-$this->GetStringWidth($txt);
+            elseif($align=='C')
+                $dx=($w-$this->GetStringWidth($txt))/2;
+            else
+                $dx=$this->cMargin;
+            if($this->ColorFlag)
+                $s.='q '.$this->TextColor.' ';
+            $txt2=str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',$txt)));
+            $s.=sprintf('BT %.2f %.2f Td (%s) Tj ET',($this->x+$dx)*$k,($this->h-($this->y+.5*$h+.3*$this->FontSize))*$k,$txt2);
+            if($this->underline)
+                $s.=' '.$this->_dounderline($this->x+$dx,$this->y+.5*$h+.3*$this->FontSize,$txt);
+            if($this->ColorFlag)
+                $s.=' Q';
+            if($link)
+                $this->Link($this->x+$dx,$this->y+.5*$h-.5*$this->FontSize,$this->GetStringWidth($txt),$this->FontSize,$link);
+        }
+        if($s)
+            $this->_out($s);
+        $this->lasth=$h;
+        if($ln>0)
+        {
+            //Go to next line
+            $this->y+=$h;
+            if($ln==1)
+                $this->x=$this->lMargin;
+        }
+        else
+            $this->x+=$w;
+    }
+
+
+}

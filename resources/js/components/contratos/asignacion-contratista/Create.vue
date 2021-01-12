@@ -104,10 +104,22 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" @click="borrarVolumenes()" class="btn btn-default pull-right" style="margin-left:5px">Borrar los Volúmenes del Proveedor</button>
+                                <button type="button" @click="cargarVolumenes()" class="btn btn-default pull-right">Cargar Todos los Volúmenes a Proveedor</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" @click=cerrar() class="btn btn-secondary">Cerrar</button>
-                        <button type="button" @click="validate()" class="btn btn-primary">Registrar</button>
+                        <button type="button" class="btn btn-secondary" v-on:click="salir">
+                            <i class="fa fa-angle-left"></i>
+                            Regresar
+                        </button>
+                        <button type="button" @click="validate()" class="btn btn-primary">
+                            <i class="fa fa-save"></i>
+                            Guardar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -155,6 +167,26 @@ export default {
             .then((value) => {
                 if (value) {
                     this.$router.push({name: 'asignacion-contratista'});
+                }
+            });
+        },
+        cargarVolumenes(){
+            let self = this;
+            Object.entries(self.data.items).forEach(([i, item], index) => {
+                if(item.cantidad_disponible > 0){
+                    self.data.presupuestos[self.id_transaccion].partidas[i]? self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
+                    self.data.presupuestos[self.id_transaccion].partidas[i]?item.cantidad_disponible = parseFloat(0).toFixed(4):'';
+                }
+            });
+        },
+        borrarVolumenes(){
+            let self = this;
+            Object.entries(self.data.items).forEach(([i, item], index) => {   
+                if(self.data.presupuestos[self.id_transaccion].partidas[i]){
+                    if(self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada > 0){
+                        self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada = '';
+                        item.cantidad_disponible = parseFloat(item.cantidad_base).toFixed(4);
+                    }
                 }
             });
         },
@@ -218,6 +250,28 @@ export default {
             this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_base - asignadas).toFixed(4);
 
         },
+        salir(){
+            swal({
+                title: "Salir de Asignación de Contratista",
+                text: "¿Está seguro de que quiere salir del registro de asignación de contratistas?",
+                icon: "info",
+                buttons: {
+                    cancel: {
+                        text: 'Cancelar',
+                        visible: true
+                    },
+                    confirm: {
+                        text: 'Si, Salir',
+                        closeModal: true,
+                    }
+                }
+            })
+            .then((value) => {
+                if (value) {
+                    this.$router.push({name: 'asignacion-contratista'});
+                }
+            });
+        },
         store() {
             this.cargando = true;
             return this.$store.dispatch('contratos/asignacion-contratista/store', {
@@ -234,10 +288,10 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result){
-                    this.store();
+                    this.store(); 
                 }
             });
-        }
+        },
     },
     watch:{
         id_contrato(value){

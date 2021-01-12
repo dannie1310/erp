@@ -4,9 +4,32 @@
 namespace App\Models\CADECO;
 
 use App\Models\CADECO\Contrato;
+use App\Models\CADECO\Subcontratos\SubcontratoPartidaEliminada;
 
 class ItemSubcontrato extends Item
 {
+    protected $fillable = [
+        'id_transaccion',
+        'id_antecedente',
+        'item_antecedente',
+        'id_concepto',
+        'id_material',
+        'unidad',
+        'cantidad',
+        'cantidad_material',
+        'cantidad_mano_obra',
+        'importe',
+        'saldo',
+        'anticipo',
+        'descuento',
+        'precio_unitario',
+        'precio_material',
+        'precio_mano_obra',
+        'cantidad_original1',
+        'precio_original1',
+        'id_asignacion',
+        'id_cm_item',
+    ];
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_transaccion', 'id_transaccion');
@@ -32,9 +55,19 @@ class ItemSubcontrato extends Item
         return $this->belongsTo(ItemEstimacion::class, 'id_transaccion', 'id_antecedente');
     }
 
+    public function partidaSubcontratoEliminada()
+    {
+        return $this->belongsTo(SubcontratoPartidaEliminada::class, 'id_item');
+    }
+
     public function getCantidadTotalEstimadaAttribute()
     {
         return ItemEstimacion::where('item_antecedente', '=', $this->id_concepto)->where("id_antecedente", '=', $this->id_transaccion)->sum('cantidad');
+    }
+
+    public function getImporteTotalEstimadoAttribute()
+    {
+        return ItemEstimacion::where('item_antecedente', '=', $this->id_concepto)->where("id_antecedente", '=', $this->id_transaccion)->sum('importe');
     }
 
     public function getAncestrosAttribute()
@@ -106,7 +139,10 @@ class ItemSubcontrato extends Item
             'porcentaje_estimado' => (float) number_format((($porcentaje_estimado) * 100), 2, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
             'destino_path' => $destino->ruta_destino,
+            'destino_path_larga' => $destino->ruta,
             'id_destino' => $destino->id_concepto,
+            'cantidad_addendum' => "",
+            'precio_modificado' => 0,
         );
     }
 
@@ -135,6 +171,8 @@ class ItemSubcontrato extends Item
             'importe_acumulado_anterior' => $acumulado_anterior->sum('importe'),
             'cantidad_estimacion' => $cantidad_estimacion,
             'importe_estimacion' => $importe_estimacion,
+            'cantidad_addendum' => '',
+            'importe_addendum' => 0,
             'cantidad_acumulado_a_esta_estimacion' => $acumulado_anterior->sum('cantidad') + $cantidad_estimacion,
             'importe_acumulado_a_esta_estimacion' => $acumulado_anterior->sum('importe') + $importe_estimacion,
             'cantidad_porEstimar' => $this->cantidad - ($acumulado_anterior->sum('cantidad') + $cantidad_estimacion),
@@ -150,5 +188,40 @@ class ItemSubcontrato extends Item
     public function getAcumuladoAnteriorAttribute()
     {
         return Item::where('id_antecedente', $this->id_transaccion)->where('item_antecedente', $this->id_concepto);
+    }
+
+    public function getCantidadEstimadaFormatAttribute(){
+        return number_format($this->cantidad_total_estimada,3, ".",",");
+    }
+
+    public function getImporteEstimadoFormatAttribute(){
+        return "$" . number_format($this->importe_total_estimado,3, ".",",");
+    }
+
+    public function getCantidadSaldoFormatAttribute(){
+        return number_format($this->cantidad-$this->cantidad_total_estimada,3, ".",",");
+    }
+
+    public function getImporteSaldoFormatAttribute(){
+        return "$" . number_format(($this->cantidad*$this->precio_unitario)-$this->importe_total_estimado,3, ".",",");
+    }
+
+    public function getConceptoPathAttribute()
+    {
+        try{
+            return $this->destino->concepto->path;
+        } catch(\Exception $e){
+            return null;
+        }
+    }
+
+    public function getConceptoPathCortaAttribute()
+    {
+        try{
+            return $this->destino->concepto->path_corta;
+        } catch(\Exception $e){
+            return null;
+        }
+
     }
 }

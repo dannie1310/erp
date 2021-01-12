@@ -30,11 +30,11 @@
                                             <label for="id_contrato">Buscar Contrato Proyectado:</label>
                                                  <model-list-select
                                                                 name="id_contrato"
-                                                                option-value="id"                                                               
+                                                                option-value="id"
                                                                 v-model="id_contrato"
                                                                 :custom-text="idFolioObservaciones"
                                                                 :list="contratos"
-                                                                :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'">
+                                                                :placeholder="!cargando?'Seleccionar o buscar folio o descripcion':'Cargando...'">
                                                             </model-list-select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_contrato')">{{ errors.first('id_contrato') }}</div>
                                         </div>
@@ -43,21 +43,19 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="id_proveedor">Proveedores</label>
-                                            <select class="form-control"
-                                                    name="id_proveedor"
-                                                    data-vv-as="Proveedores"
-                                                    v-model="id_proveedor"
-                                                    v-validate="{required: true}"
-                                                    :error="errors.has('id_proveedor')"
-                                                    id="id_proveedor">
-                                                <option value>-- Seleccionar--</option>
-                                                <option v-for="proveedor in proveedores" :value="proveedor.id" >{{ proveedor.razon_social}}</option>
-                                            </select>
+                                            <label for="id_proveedor">Proveedores/Contratistas</label>
+                                            <model-list-select
+                                                name="id_proveedor"
+                                                option-value="id"
+                                                v-model="id_proveedor"
+                                                :custom-text="razonSocialRFC"
+                                                :list="proveedores"
+                                                :placeholder="!cargando?'Seleccionar o buscar por RFC o razón social':'Cargando...'">
+                                            </model-list-select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 offset-1" v-if="sucursal">
+                                    <div class="col-md-3 offset-1" v-if="sucursal && id_proveedor">
                                         <div class="form-group">
                                             <label for="id_sucursal">Sucursal</label>
                                             <select class="form-control"
@@ -73,7 +71,7 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_sucursal')">{{ errors.first('id_sucursal') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 offset-1" v-else>
+                                    <div class="col-md-3 offset-1" v-else-if="id_proveedor">
                                         <div class="form-group">
                                             <label for="id_sucursal">Sucursal</label>
                                             <select class="form-control"
@@ -93,12 +91,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="row">   
+                                <!-- <div class="row">
                                     <div class="col-md-12">
                                         <label for="concepto" class="col-form-label">Concepto: </label>
                                     </div>
                                 </div> -->
-                                <!-- <div class="row">   
+                                <!-- <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
                                             <textarea
@@ -115,7 +113,7 @@
                                     </div>
                                 </div> -->
                                 <hr />
-                                
+
                                 <div class="row" v-if="id_contrato != '' && !pendiente">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
@@ -127,7 +125,7 @@
                                                     <th class="unidad">Unidad</th>
                                                     <th></th>
                                                     <th class="money">Cantidad Solicitada</th>
-                                                    <th class="money">Cantidad Aprobada</th>                                                     
+                                                    <th class="money">Cantidad Aprobada</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
                                                     <th class="money">Precio Total Antes Descto.</th>
                                                     <th class="money">% Descuento</th>
@@ -149,7 +147,7 @@
                                                                 <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
-                                                        </td>                                                        
+                                                        </td>
                                                         <td style="text-align:center;">{{partida.cantidad_original_format}}</td>
                                                         <td style="text-align:center;">{{partida.cantidad_presupuestada_format}}</td>
                                                         <td>
@@ -160,7 +158,7 @@
                                                                    class="form-control"
                                                                    :name="`precio[${i}]`"
                                                                    data-vv-as="Precio"
-                                                                   v-validate="{required: true}"
+                                                                   v-validate="{required: true, decimal:4}"
                                                                    :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                                    v-model="precio[i]"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
@@ -175,7 +173,7 @@
                                                                    class="form-control"
                                                                    :name="`descuento[${i}]`"
                                                                    data-vv-as="Descuento(%)"
-                                                                   v-validate="{required: true}"
+                                                                   v-validate="{required: true, decimal:4}"
                                                                    :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
                                                                    v-model="descuento[i]"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
@@ -197,14 +195,14 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{'$ ' + parseFloat(monedas[moneda_input[i] - 1].tipo_cambio_igh * precio[i] - ((monedas[moneda_input[i] - 1].tipo_cambio_igh * precio[i] * descuento[i]) / 100)).formatMoney(2,'.',',')}}</td>
-                                                        <td style="text-align:right;">{{'$ ' + parseFloat(partida.cantidad_presupuestada * monedas[moneda_input[i] - 1].tipo_cambio_igh * precio[i] - ((partida.cantidad_presupuestada * monedas[moneda_input[i] - 1].tipo_cambio_igh * precio[i] * descuento[i]) / 100)).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align:right;">{{'$ ' + parseFloat(getPrecioUnitarioMC(i,precio[i])).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align:right;">{{'$ ' + parseFloat(partida.cantidad_presupuestada * getPrecioUnitarioMC(i,precio[i])).formatMoney(2,'.',',')}}</td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
                                                                       data-vv-as="Observaciones"
                                                                       :disabled="enable[i] == false"
-                                                                      v-validate="{required: true}"
+                                                                      v-validate="{}"
                                                                       :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                       v-model="observaciones_inputs[i]"/>
                                                              <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
@@ -215,7 +213,7 @@
                                         </div>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Descuento:</label>                                        
+                                        <label class="col-sm-2 col-form-label">% Descuento:</label>
                                     </div>
                                     <div class=" col-md-2" align="right">
                                         <input
@@ -243,12 +241,56 @@
                                         <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">TC USD:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[1].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                        <label class="col-sm-2 col-form-label">Subtotal Precios LIBRA:</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
                                     </div>
-                                    <div class=" col-md-12" align="right">
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">TC USD:</label>
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                max="100"
+                                                name="tc_usd"
+                                                v-model="dolar"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_usd"
+                                                :class="{'is-invalid': errors.has('tc_usd')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">TC EURO:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(monedas[2].tipo_cambio_igh)).formatMoney(4,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                max="100"
+                                                name="tc_eur"
+                                                v-model="euro"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_eur"
+                                                :class="{'is-invalid': errors.has('tc_eur')}">
+                                    </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-sm-2 col-form-label">TC LIBRA:</label>
+                                    </div>
+                                    <div class=" col-md-2 p-1" align="right">
+                                        <input
+                                                :disabled="cargando"
+                                                type="number"
+                                                step="any"
+                                                max="100"
+                                                name="tc_libra"
+                                                v-model="libra"
+                                                v-validate="{required: true}"
+                                                class="col-sm-6 form-control"
+                                                id="tc_libra"
+                                                :class="{'is-invalid': errors.has('tc_libra')}">
                                     </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
@@ -263,7 +305,7 @@
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>                                        
+                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -279,7 +321,7 @@
                                                                 :class="{'is-invalid': errors.has('anticipo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -294,7 +336,7 @@
                                                                 :class="{'is-invalid': errors.has('credito')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -332,8 +374,13 @@
                                 </div>
                             </div>
                              <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" :disabled="id_contrato == ''" class="btn btn-primary">Registrar</button>
+                                 <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                        <i class="fa fa-angle-left"></i>
+                                        Regresar</button>
+                                    <button type="submit" :disabled="id_contrato == ''" class="btn btn-primary">
+                                        <i class="fa fa-save"></i>
+                                        Guardar
+                                    </button>
                              </div>
                         </form>
                     </div>
@@ -370,6 +417,10 @@
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
+                libras:0,
+                dolar:0,
+                euro:0,
+                libra:0,
                 moneda_input:[],
                 sucursal: true,
                 observaciones_inputs:[],
@@ -404,7 +455,7 @@
                 vigencia: 0,
                 descuento: [],
                 enable: []
-                             
+
             }
         },
         mounted() {
@@ -413,12 +464,16 @@
             this.getProveedores();
             this.getMonedas();
             this.getContratos();
-            
+
         },
         methods : {
             idFolioObservaciones (item)
             {
                 return `[${item.numero_folio_format}] ---- [ ${item.referencia} ]`;
+            },
+            razonSocialRFC (item)
+            {
+                return `[${item.razon_social}] - [ ${item.rfc} ]`;
             },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
@@ -435,16 +490,37 @@
                 this.cargando = true;
                 this.$store.commit('cadeco/moneda/SET_MONEDAS', null);
                 return this.$store.dispatch('cadeco/moneda/index', {
+                    params: {sort: 'id_moneda', order: 'asc'}
                 }).then(data => {
                     this.monedas = data.data;
+                    this.dolar = parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    this.libra = this.monedas[3] ? parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '') : 0;
                 }).finally(()=>{
 
                 })
             },
+            getPrecioUnitarioMC(i, precio) {
+                var suma_total = 0;
+                if(this.moneda_input.length != 0) {
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 1) {
+                       return  suma_total = precio != undefined ? precio - (precio * this.descuento[i]/100) : '1.00'
+                    }
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 2) {
+                        return suma_total = precio != undefined ? (precio * this.dolar) - (precio * this.dolar * this.descuento[i]/100) :  this.dolar
+                    }
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 3) {
+                        return suma_total = precio != undefined ? (precio * this.euro) - (precio * this.euro * this.descuento[i]/100) : this.euro
+                    }
+                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 4) {
+                        return suma_total = precio != undefined ? (precio * this.libra) - (precio * this.libra * this.descuento[i]/100) : this.libra
+                    }
+                }
+            },
             salir()
             {
                  this.$router.push({name: 'presupuesto'});
-                
+
             },
             find() {
                 this.enable = [];
@@ -481,6 +557,7 @@
                 this.pesos = 0;
                 this.dolares = 0;
                 this.euros = 0;
+                this.libras = 0;
                 while(this.x < this.contrato.conceptos.data.length)
                 {
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
@@ -499,10 +576,15 @@
                         {
                             this.euros = (this.euros + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
                              * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
-                        }                       
+                        }
+                        if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
+                        {
+                            this.libras = (this.libras + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
+                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
+                        }
                     }
-                    this.x ++;                    
-                }                   
+                    this.x ++;
+                }
             },
             getContratos() {
                 this.solicitudes = [];
@@ -515,12 +597,12 @@
                     }
                 })
                     .then(data => {
-                        this.contratos = data.data;                        
+                        this.contratos = data.data;
                         this.cargando = false;
                     })
             },
             validate() {
-                
+
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.post.partidas = this.contrato.conceptos.data;
@@ -542,12 +624,15 @@
                         this.post.subtotal = this.subtotal;
                         this.post.impuesto = this.iva;
                         this.post.pendiente = this.pendiente;
+                        this.post.tc_eur = this.euro;
+                        this.post.tc_usd = this.dolar;
+                        this.post.tc_libra = this.libra;
                         this.store()
                     }
                 });
             },
             store() {
-                
+
                 if(this.total == 0 && this.pendiente === false)
                 {
                     swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
@@ -556,7 +641,7 @@
                 {   return this.$store.dispatch('contratos/presupuesto/store', this.post)
                     .then((data) => {
                         this.$router.push({name: 'presupuesto'});
-                    });                
+                    });
                 }
             },
         },
@@ -566,9 +651,9 @@
             },
             subtotal()
             {
-                return (this.pesos + (this.dolares * this.monedas[1].tipo_cambio_igh) + (this.euros * this.monedas[2].tipo_cambio_igh) - 
-                        ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.monedas[1].tipo_cambio_igh) + (this.euros * 
-                        this.monedas[2].tipo_cambio_igh)) * parseFloat(this.descuento_cot))/100) : 0));
+                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) -
+                    ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.dolar) + (this.euros *
+                        this.euro) + (this.libras * this.libra)) * parseFloat(this.descuento_cot)) / 100) : 0));
             },
             iva()
             {
@@ -582,11 +667,11 @@
         watch: {
             id_contrato(value)
             {
-                
+
                 if(value !== '' && value !== null && value !== undefined)
                 {
                     this.find();
-                    
+
                 }
             },
             id_proveedor(value){
@@ -623,9 +708,9 @@
                 if(this.enable.length > 0)
                 {
                     this.calcular();
-                }                
+                }
             }
-            
+
         }
     }
 </script>

@@ -26,7 +26,7 @@
                                         <table class="table">
                                             <tbody>
                                                 <tr>
-                                                    <td class="bg-gray-light" align="center" colspan="6"><b>{{(presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----'}}</b></td>
+                                                    <td class="bg-gray-light" align="center" colspan="8"><b>{{(presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----'}}</b></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Sucursal:</b></td>
@@ -35,10 +35,12 @@
                                                     <td class="bg-gray-light">{{presupuesto.tc_usd_format}}</td>
                                                     <td class="bg-gray-light"><b>ToTC EURO:</b></td>
                                                     <td class="bg-gray-light">{{presupuesto.tc_euro_format}}</td>
+                                                    <td class="bg-gray-light"><b>ToTC LIBRA:</b></td>
+                                                    <td class="bg-gray-light">{{presupuesto.tc_libra_format}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bg-gray-light"><b>Direccion:</b></td>
-                                                    <td class="bg-gray-light">{{(presupuesto.sucursal) ? presupuesto.sucursal.direccion : '------------------------------'}}</td>
+                                                    <td class="bg-gray-light" colspan="3">{{(presupuesto.sucursal) ? presupuesto.sucursal.direccion : '------------------------------'}}</td>
                                                     <td class="bg-gray-light"><b>Fecha:</b></td>
                                                     <td class="bg-gray-light">{{presupuesto.fecha_format}}</td>
                                                     <td class="bg-gray-light"><b>Importe:</b></td>

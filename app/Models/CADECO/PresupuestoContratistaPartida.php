@@ -38,66 +38,145 @@ class PresupuestoContratistaPartida extends Model
     }
 
     public function getPrecioUnitarioFormatAttribute()
-    {        
-        switch($this->IdMoneda)
-        {
+    {
+        switch ($this->IdMoneda) {
             case(1):
-                return '$ '. number_format($this->precio_unitario, 2, '.', ',');
-            break;
+                return '$ ' . number_format($this->precio_unitario, 2, '.', ',');
+                break;
             case(2):
-                return '$ '. number_format(($this->precio_unitario) / $this->presupuesto->TcUSD, 2, '.', ',');
-            break;
+                return '$ ' . number_format(($this->precio_unitario) / $this->presupuesto->dolar, 2, '.', ',');
+                break;
             case(3):
-                return '$ '. number_format(($this->precio_unitario) / $this->presupuesto->TcEuro, 2, '.', ',');
-            break;
+                return '$ ' . number_format(($this->precio_unitario) / $this->presupuesto->euro, 2, '.', ',');
+                break;
+            case(4):
+                return '$ ' . number_format(($this->precio_unitario) / $this->presupuesto->libra, 2, '.', ',');
+                break;
         }
     }
 
     public function getPrecioUnitarioConvertAttribute()
-    {        
-        switch($this->IdMoneda)
-        {
+    {
+        switch ($this->IdMoneda) {
             case(1):
                 return $this->precio_unitario;
-            break;
+                break;
             case(2):
-                return ($this->precio_unitario / $this->presupuesto->TcUSD);
-            break;
+                return ($this->precio_unitario / $this->presupuesto->dolar);
+                break;
             case(3):
-                return ($this->precio_unitario / $this->presupuesto->TcEuro);
-            break;
+                return ($this->precio_unitario / $this->presupuesto->euro);
+                break;
+            case(4):
+                return ($this->precio_unitario / $this->presupuesto->libra);
+                break;
         }
     }
 
     public function getPrecioTotalAttribute()
-    {         
-        switch($this->IdMoneda)
-        {
+    {
+        switch ($this->IdMoneda) {
             case(1):
-                return ($this->concepto) ? '$ '. number_format(($this->concepto->cantidad_presupuestada * $this->precio_unitario) - ($this->precio_unitario * $this->PorcentajeDescuento), 2, '.', ',') : $this->precio_unitario_format;
-            break;
+                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * $this->precio_unitario) - ($this->precio_unitario * $this->PorcentajeDescuento), 2, '.', ',') : $this->precio_unitario_format;
+                break;
             case(2):
-                return ($this->concepto) ? '$ '. number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcUSD)) - ((($this->precio_unitario) / $this->presupuesto->TcUSD) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
-            break;
+                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->dolar)) - ((($this->precio_unitario) / $this->presupuesto->dolar) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
+                break;
             case(3):
-                return ($this->concepto) ? '$ '. number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcEuro)) - ((($this->precio_unitario) / $this->presupuesto->TcEuro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
-            break;
+                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->euro)) - ((($this->precio_unitario) / $this->presupuesto->euro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
+                break;
+            case(4):
+                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->libra)) - ((($this->precio_unitario) / $this->presupuesto->libra) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0), 2, '.', ',') : $this->precio_unitario_format;
+                break;
         }
     }
 
     public function getPrecioTotalMonedaAttribute()
     {
-        switch($this->IdMoneda)
-        {
+        switch ($this->IdMoneda) {
             case(1):
-                return ($this->concepto) ? '$ '. number_format(($this->concepto->cantidad_presupuestada * $this->precio_unitario) - ($this->precio_unitario * $this->PorcentajeDescuento), 2, '.', ',') : $this->precio_unitario_format;
-            break;
+                return ($this->concepto) ? '$ ' . number_format(($this->concepto->cantidad_presupuestada * $this->precio_unitario) - ($this->precio_unitario * $this->PorcentajeDescuento), 2, '.', ',') : $this->precio_unitario_format;
+                break;
             case(2):
-                return ($this->concepto) ? '$ '. number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcUSD)) - ((($this->precio_unitario) / $this->presupuesto->TcUSD) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcUSD), 2, '.', ',') : $this->precio_unitario_format;
-            break;
+                return ($this->concepto) ? '$ ' . number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->dolar)) - ((($this->precio_unitario) / $this->presupuesto->dolar) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->dolar), 2, '.', ',') : $this->precio_unitario_format;
+                break;
             case(3):
-                return ($this->concepto) ? '$ '. number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->TcEuro)) - ((($this->precio_unitario) / $this->presupuesto->TcEuro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->TcEuro), 2, '.', ',') : $this->precio_unitario_format;
-            break;
+                return ($this->concepto) ? '$ ' . number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->euro)) - ((($this->precio_unitario) / $this->presupuesto->euro) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->euro), 2, '.', ',') : $this->precio_unitario_format;
+                break;
+            case(4):
+                return ($this->concepto) ? '$ ' . number_format((($this->concepto->cantidad_presupuestada * (($this->precio_unitario) / $this->presupuesto->libra)) - ((($this->precio_unitario) / $this->presupuesto->libra) * ($this->PorcentajeDescuento > 0) ? $this->PorcentajeDescuento : 0)) * ($this->presupuesto->libra), 2, '.', ',') : $this->precio_unitario_format;
+                break;
+        }
+    }
+
+    /**
+     * Precio contemplando descuento y tipo de cambio
+     * @return float|int|mixed
+     */
+    public function getPrecioUnitarioCompuestoAttribute()
+    {
+        switch ($this->IdMoneda) {
+            case (1):
+                return $this->precio_compuesto;
+                break;
+            case (2):
+                return $this->precio_compuesto * $this->presupuesto->dolar;
+                break;
+            case (3):
+                return $this->precio_compuesto * $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_compuesto * $this->presupuesto->libra;
+                break;
+        }
+    }
+
+    /**
+     * Precio Compuesto contemplando descuentos al precio unitario.
+     * @return float|int|mixed
+     */
+    public function getPrecioCompuestoAttribute()
+    {
+        return $this->PorcentajeDescuento != 0 ? $this->precio_unitario_simple - ($this->precio_unitario_simple * $this->PorcentajeDescuento / 100) : $this->precio_unitario_simple;
+    }
+
+    /**
+     * Precio compuesto descuentos, precio unitario y la cantidad
+     * @return float|int
+     */
+    public function getPrecioCompuestoTotalAttribute()
+    {
+        return $this->precio_compuesto * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
+    }
+
+    /**
+     * Precio  sin descuentos, precio unitario y la cantidad
+     * @return float|int
+     */
+    public function getPrecioSinDescuentoAttribute()
+    {
+        return $this->precio_unitario * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
+    }
+
+    /**
+     * Precio unitario simple
+     * @return float|int|mixed
+     */
+    public function getPrecioUnitarioSimpleAttribute()
+    {
+        switch ($this->IdMoneda) {
+            case (1):
+                return $this->precio_unitario;
+                break;
+            case (2):
+                return $this->precio_unitario / $this->presupuesto->dolar;
+                break;
+            case (3):
+                return $this->precio_unitario / $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_unitario / $this->presupuesto->libra;
+                break;
         }
     }
 }

@@ -92,7 +92,11 @@
                     ]}
                 }).then(data => {
                     this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
+
+                    $(this.$refs.modal).appendTo('body')
+                    $(this.$refs.modal).modal('show')
                     this.cargando = false;
+
                 })
             }
         },
