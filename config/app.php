@@ -21,6 +21,7 @@ return [
         'SERVICIO_CFDI_ENV' => env('SERVICIO_CFDI_ENV'),
         'SERVICIO_CFDI_EN_USO' => env('SERVICIO_CFDI_EN_USO'),
         'DKEY' => env('DKEY'),
+        'ACARREOS_COMPROBAR_IMEI' => env('ACARREOS_COMPROBAR_IMEI')
     ],
     /*
     |--------------------------------------------------------------------------
