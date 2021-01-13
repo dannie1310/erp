@@ -26,16 +26,25 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Total:</label>
+                                    <label class="col-md-4 col-form-label">Monto:</label>
                                     <div class="col-md-8">
                                         {{solicitud_cambio.monto_format}}
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label">IVA:</label>
+                                    <div class="col-md-8">
+                                        {{solicitud_cambio.impuesto_format}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-5">
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label">Moneda:</label>
@@ -69,38 +78,43 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="form-group row">
-                                        <label class="col-md-3 col-form-label">Fecha:</label>
-                                        <div class="col-md-9">
-                                            {{ solicitud_cambio.subcontrato.fecha_format }}
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
                                         <label class="col-md-3 col-form-label">Folio:</label>
                                         <div class="col-md-9">
                                              {{solicitud_cambio.subcontrato.numero_folio_format}} ({{ solicitud_cambio.subcontrato.referencia }})
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="col-md-5">
-                                    <div class="form-group row">
-                                        <label class="col-md-3 col-form-label">Moneda:</label>
-                                        <div class="col-md-9">
-                                            {{ solicitud_cambio.subcontrato.moneda }}
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-md-3 col-form-label">IVA:</label>
-                                        <div class="col-md-9">
-                                            {{ solicitud_cambio.subcontrato.impuesto_format }}
-                                        </div>
-                                    </div>
                                     <div class="form-group row" >
                                         <label class="col-md-3 col-form-label">Monto:</label>
                                         <div class="col-md-9">
                                             {{ solicitud_cambio.subcontrato.monto_format }}
                                         </div>
                                     </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-md-3 col-form-label">Moneda:</label>
+                                        <div class="col-md-9">
+                                            {{ solicitud_cambio.subcontrato.moneda }}
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="form-group row">
+                                        <label class="col-md-3 col-form-label">Fecha:</label>
+                                        <div class="col-md-9">
+                                            {{ solicitud_cambio.subcontrato.fecha_format }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-md-3 col-form-label">IVA:</label>
+                                        <div class="col-md-9">
+                                            {{ solicitud_cambio.subcontrato.impuesto_format }}
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

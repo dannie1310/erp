@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\CADECO;
 
+use App\Facades\Context;
 use App\Models\CADECO\SubcontratosCM\ContratoOriginal;
 use App\Models\CADECO\SubcontratosCM\CtgTipo;
 use App\Models\CADECO\SubcontratosCM\ItemSubcontratoOriginal;
@@ -72,6 +73,9 @@ class SolicitudCambioSubcontrato extends Transaccion
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
+            case -1:
+                return 'Cancelada';
+                break;
             case 0:
                 return 'Registrada';
                 break;
@@ -197,8 +201,6 @@ class SolicitudCambioSubcontrato extends Transaccion
                 }
             }
         }
-
-
 
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);
