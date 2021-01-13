@@ -862,7 +862,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@aprobar')->where(['id' => '[0-9]+']);
             $api->patch('{id}/revertirAprobacion', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@revertirAprobacion')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@paginate');
-            $api->get('{id}/formato-pdf', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@pdf')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@destroy')->where(['id' => '[0-9]+']);
         });
 

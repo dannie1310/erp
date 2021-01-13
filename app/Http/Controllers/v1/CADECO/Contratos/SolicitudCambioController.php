@@ -32,4 +32,9 @@ class SolicitudCambioController extends Controller
         $respuesta = $this->service->registrar($request);
         return $this->respondWithItem($respuesta);
     }
+
+    public function pdf($id)
+    {
+        return $this->service->pdf($id)->create();
+    }
 }
