@@ -281,6 +281,7 @@ class SolicitudCambioSubcontrato extends Transaccion
             return $solicitud;
         } catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
         }
     }
 
@@ -293,7 +294,20 @@ class SolicitudCambioSubcontrato extends Transaccion
 
     public function aplicar()
     {
-        dd($this);
+        DB::connection('cadeco')->beginTransaction();
+        foreach($this->partidas as $partida){
+            if($partida->id_tipo_modificacion == 1 || $partida->id_tipo_modificacion == 2)
+            {
+                $partida->itemSubcontrato->cantidad = $partida->itemSubcontrato->cantidad + $partida->cantidad;
+                $partida->itemSubcontrato->cantidad_original1 = $partida->itemSubcontrato->cantidad_original1 + $partida->cantidad;
+                $partida->itemSubcontrato->save();
+
+                $partida->itemSubcontrato->contrato->cantidad_presupuestada = $partida->itemSubcontrato->contrato->cantidad_presupuestada + $partida->cantidad;
+                $partida->itemSubcontrato->contrato->save();
+            }
+        }
+        $this->subcontrato->recalcula();
+        DB::connection('cadeco')->rollBack();
     }
 
 }
