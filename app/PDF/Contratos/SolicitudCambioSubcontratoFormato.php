@@ -114,33 +114,34 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->SetFills(180,180,180);
         $this->SetFont('Arial', 'B', 6);
         $this->SetFillColor(180,180,180);
-        $this->Cell(0.050 * $this->WidthTotal,0.8,'Clave','RTLB',0,'C',180);
-        $this->Cell(0.230 * $this->WidthTotal,0.8,'Concepto','RTLB',0,'C',180);
-        $this->Cell(0.050 * $this->WidthTotal,0.8,'U.M.','RTLB',0,'C',180);
+        $this->Cell(0.045 * $this->WidthTotal,0.8,'Tipo','RTLB',0,'C',180);
+        $this->Cell(0.045 * $this->WidthTotal,0.8,'Clave','RTLB',0,'C',180);
+        $this->Cell(0.200 * $this->WidthTotal,0.8,'Concepto','RTLB',0,'C',180);
+        $this->Cell(0.045 * $this->WidthTotal,0.8,'U.M.','RTLB',0,'C',180);
         $this->Cell(0.122 * $this->WidthTotal,0.4,'Contratado','BTLR',0,'C',180);
         $this->Cell(0.122 * $this->WidthTotal,0.4,"Avance",'BTLR',0,'C',180);
         $this->Cell(0.122 * $this->WidthTotal,0.4,"Saldo",'BTLR',0,'C',180);
         $this->Cell(0.142 * $this->WidthTotal,0.4,"Addendum",'BTLR',0,'C',180);
         $this->Cell(0.162 * $this->WidthTotal,0.4,utf8_decode("Distribución"),'BTLR',0,'C',180);
 
-        $this->setXY(9.35, 6.2);
+        $this->setXY(9.49, 6.2);
         $this->Cell((0.080 * $this->WidthTotal),0.4,'Volumen','LRBT',0,'C',180);
         $this->Cell((0.042 * $this->WidthTotal),0.4,'P.U.','LRBT',0,'C',180);
 
-        $this->setXY(9.35+(0.122 * $this->WidthTotal), 6.2);
+        $this->setXY(9.49+(0.122 * $this->WidthTotal), 6.2);
         $this->Cell((0.061 * $this->WidthTotal),0.4,'Volumen','LRBT',0,'C',180);
         $this->Cell((0.061 * $this->WidthTotal),0.4,'Importe','LRBT',0,'C',180);
 
-        $this->setXY(9.35+(0.122 * $this->WidthTotal)*2, 6.2);
+        $this->setXY(9.49+(0.122 * $this->WidthTotal)*2, 6.2);
         $this->Cell((0.061 * $this->WidthTotal),0.4,'Cantidad','LRBT',0,'C',180);
         $this->Cell((0.061 * $this->WidthTotal),0.4,'Importe','LRBT',0,'C',180);
 
-        $this->setXY(9.35+(0.122 * $this->WidthTotal)*3, 6.2);
+        $this->setXY(9.49+(0.122 * $this->WidthTotal)*3, 6.2);
         $this->Cell((0.0473 * $this->WidthTotal),0.4,'Volumen','LRBT',0,'C',180);
         $this->Cell((0.0473 * $this->WidthTotal),0.4,'P.U.','LRBT',0,'C',180);
         $this->Cell((0.0473 * $this->WidthTotal),0.4,'Importe','LRBT',0,'C',180);
 
-        $this->setXY(9.35+(0.127 * $this->WidthTotal)*4, 6.2);
+        $this->setXY(9.49+(0.127 * $this->WidthTotal)*4, 6.2);
         $this->Cell((0.162 * $this->WidthTotal),0.4,'Destino','LRBT',0,'C',180);
     }
 
@@ -150,20 +151,21 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->Ln();
         $this->SetFont('Arial', '', 5);
         $this->SetFillColor(180, 180, 180);
-        $this->SetWidths([$w_t * 0.050, $w_t * 0.230, $w_t * 0.050, $w_t * 0.080, $w_t * 0.042, $w_t * 0.061, $w_t * 0.061, $w_t * 0.061, $w_t * 0.061, $w_t * 0.0473, $w_t * 0.0473, $w_t * 0.0473, $w_t * 0.162]);
-        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
-        $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '2']);
-        $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
-        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetWidths([$w_t * 0.045,$w_t * 0.045, $w_t * 0.200, $w_t * 0.045, $w_t * 0.080, $w_t * 0.042, $w_t * 0.061, $w_t * 0.061, $w_t * 0.061, $w_t * 0.061, $w_t * 0.0473, $w_t * 0.0473, $w_t * 0.0473, $w_t * 0.162]);
+        $this->SetStyles(['DF', 'DF','DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+        $this->SetRounds(['1', '', '', '', '','', '', '', '', '', '', '', '', '2']);
+        $this->SetRadius([0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0.0]);
+        $this->SetFills(['255,255,55', '255,255,55','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->SetTextColors(['0,0,0', '0,0,0','0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
         $this->SetHeights([0.4]);
-        $this->SetAligns(['L', 'C', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'L']);
+        $this->SetAligns(['L','L', 'L', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'L']);
         $this->encola = 'obra_ejecutada';
 
         foreach ($this->solicitud->partidas as $p)
         {
 
                 $this->Row([
+                    mb_strtoupper($p->tipo->descripcion),
                     mb_strtoupper($p->concepto->clave_concepto),
                     mb_strtoupper($p->concepto->descripcion),
                     mb_strtoupper($p->unidad),
