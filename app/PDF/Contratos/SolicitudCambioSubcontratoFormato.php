@@ -36,7 +36,7 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->obra = Obra::find(Context::getIdObra());
         $this->encabezado_pdf = utf8_decode($this->obra->facturar);
         $this->solicitud = SolicitudCambioSubcontrato::find($id);
-
+        $this->SetAutoPageBreak(true, 3.5);
         $this->fecha = Carbon::parse($this->solicitud->fecha)->format('d-m-Y');
         $this->WidthTotal = $this->GetPageWidth() - 0.82;
         $this->encola = '';
@@ -102,6 +102,11 @@ class SolicitudCambioSubcontratoFormato extends Rotation
 
         $this->tableHeader();
 
+        if ($this->encola == 'partidas')
+        {
+            $this->tableHeader();
+        }
+
         $currentPage = $this->PageNo();
         if($currentPage>1){
             $this->Ln();
@@ -110,8 +115,8 @@ class SolicitudCambioSubcontratoFormato extends Rotation
 
     public function tableHeader()
     {
-        $this->Ln();
-        $this->SetFills(180,180,180);
+        $this->Ln(0.5);
+       // $this->SetFills(180,180,180);
         $this->SetFont('Arial', 'B', 6);
         $this->SetFillColor(180,180,180);
         $this->Cell(0.045 * $this->WidthTotal,0.8,'Tipo','RTLB',0,'C',180);
@@ -161,8 +166,14 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->SetAligns(['L','L', 'L', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'L']);
         $this->encola = 'partidas';
 
-        foreach ($this->solicitud->partidas as $p)
-        {
+        foreach ($this->solicitud->partidas as $key => $p) {
+            $this->encola = 'partidas';
+            $this->SetWidths([$w_t * 0.045, $w_t * 0.045, $w_t * 0.200, $w_t * 0.045, $w_t * 0.080, $w_t * 0.042, $w_t * 0.061, $w_t * 0.061, $w_t * 0.061, $w_t * 0.061, $w_t * 0.0473, $w_t * 0.0473, $w_t * 0.0473, $w_t * 0.162]);
+            $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '', '2']);
+            $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+            $this->SetFills(['255,255,55', '255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+            $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+            $this->SetAligns(['L', 'L', 'L', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'L']);
             $this->Row([
                 mb_strtoupper($p->tipo->descripcion),
                 $p->itemSubcontrato ? mb_strtoupper($p->itemSubcontrato->contrato->clave) : mb_strtoupper($p->concepto->clave_concepto),
@@ -181,17 +192,34 @@ class SolicitudCambioSubcontratoFormato extends Rotation
             ]);
         }
         $this->encola = '';
+        /*Observaciones*/
+        if (!is_null($this->solicitud->observaciones)) {
+            $this->Ln(.5);
+            $this->SetWidths(array(27.3));
+            $this->SetRounds(array('12'));
+            $this->SetRadius(array(0.2));
+            $this->SetFills(array('180,180,180'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetStyles(array('DF'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+            $this->SetAligns(array('C'));
+            $this->Row(array("Observaciones"));
+            $this->SetRounds(array('34'));
+            $this->SetRadius(array(0.2));
+            $this->SetAligns(array('C'));
+            $this->SetStyles(array('DF'));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+            $this->SetAligns(array('J'));
+            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', "" . $this->solicitud->observaciones))));
+        }
         $this->SetY($this->GetY());
     }
 
     function totales() {
-        $this->setXY(21, $this->GetY());
-        $this->SetFont('Arial', 'B', 8);
-        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Porcentaje de Cambio'), '', 0, 'L');
-        $this->SetFont('Arial', '', 8);
-        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->porcentaje_cambio_format, '', 1, 'R');
-
-
         $this->setXY(21, $this->GetY());
         $this->SetFont('Arial', 'B', 8);
         $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Subtotal'), '', 0, 'L');
@@ -209,6 +237,12 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Total'), '', 0, 'L');
         $this->SetFont('Arial', '', 8);
         $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->total_calculado_format, '', 1, 'R');
+
+        $this->setXY(21, $this->GetY());
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Porcentaje de Cambio'), '', 0, 'L');
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->porcentaje_cambio_format, '', 1, 'R');
     }
 
     function pixelsToCM($val)
@@ -493,9 +527,9 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->SetMargins(0.4, 0.5, 0.4);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true,3.75);
-       $this->partidas();
-        $this->Ln(0.5);
+        $this->SetAutoPageBreak(true,3.5);
+        $this->partidas();
+        $this->Ln(0.3);
         $this->totales();
         try {
             $this->Output('I', "Formato - Solicitud Cambio a Subcontrato_".$this->solicitud->numero_folio.".pdf", 1);
