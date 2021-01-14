@@ -159,30 +159,56 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->SetTextColors(['0,0,0', '0,0,0','0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
         $this->SetHeights([0.4]);
         $this->SetAligns(['L','L', 'L', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'L']);
-        $this->encola = 'obra_ejecutada';
+        $this->encola = 'partidas';
 
         foreach ($this->solicitud->partidas as $p)
         {
-
-                $this->Row([
-                    mb_strtoupper($p->tipo->descripcion),
-                    mb_strtoupper($p->concepto->clave_concepto),
-                    mb_strtoupper($p->concepto->descripcion),
-                    mb_strtoupper($p->unidad),
-                    $p->itemSubcontrato ? number_format($p->itemSubcontrato->cantidad_format, 4, ".", ",") : '-',
-                    $p->itemSubcontrato ? number_format($p->itemSubcontrato->precio_unitario_format, 4, ".", ",") : '-',
-                    $p->itemSubcontrato ? number_format($p->itemSubcontrato->cantidad_estimada_format, 4, ".", ",") : '-',
-                    $p->itemSubcontrato ? number_format($p->itemSubcontrato->importe_estimado_format, 4, ".", ",") : '-',
-                    $p->itemSubcontrato ? number_format($p->itemSubcontrato->cantidad_saldo_format, 4, ".", ",") : '-',
-                    $p->itemSubcontrato ? number_format($p->itemSubcontrato->importe_saldo_format, 4, ".", ",") : '-',
-                    $p->cantidad_format,
-                    $p->precio_format,
-                    $p->importe_format,
-                    $p->itemSubcontrato ?  $p->itemSubcontrato->concepto_path_corta : $p->concepto_path_corta
-                ]);
-
+            $this->Row([
+                mb_strtoupper($p->tipo->descripcion),
+                $p->itemSubcontrato ? mb_strtoupper($p->itemSubcontrato->contrato->clave) : mb_strtoupper($p->concepto->clave_concepto),
+                $p->itemSubcontrato ? mb_strtoupper(utf8_decode($p->itemSubcontrato->contrato->descripcion)) : mb_strtoupper(utf8_decode($p->concepto->descripcion)),
+                $p->itemSubcontrato ? mb_strtoupper($p->itemSubcontrato->contrato->unidad) : mb_strtoupper($p->unidad),
+                $p->itemSubcontrato ? $p->itemSubcontrato->cantidad_format : '-',
+                $p->itemSubcontrato ? $p->itemSubcontrato->precio_unitario_format : '-',
+                $p->itemSubcontrato ? $p->itemSubcontrato->cantidad_estimada_format : '-',
+                $p->itemSubcontrato ? $p->itemSubcontrato->importe_estimado_format : '-',
+                $p->itemSubcontrato ? $p->itemSubcontrato->cantidad_saldo_format : '-',
+                $p->itemSubcontrato ? $p->itemSubcontrato->importe_saldo_format : '-',
+                $p->cantidad_format,
+                $p->precio_format,
+                $p->importe_format,
+                $p->itemSubcontrato ? $p->itemSubcontrato->concepto_path_corta : $p->concepto_path_corta
+            ]);
         }
         $this->encola = '';
+        $this->SetY($this->GetY());
+    }
+
+    function totales() {
+        $this->setXY(21, $this->GetY());
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Porcentaje de Cambio'), '', 0, 'L');
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->porcentaje_cambio_format, '', 1, 'R');
+
+
+        $this->setXY(21, $this->GetY());
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Subtotal'), '', 0, 'L');
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->subtotal_calculado_format, '', 1, 'R');
+
+        $this->setXY(21, $this->GetY());
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('IVA'), '', 0, 'L');
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->iva_calculado_format, '', 1, 'R');
+
+        $this->setXY(21, $this->GetY());
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Total'), '', 0, 'L');
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->total_calculado_format, '', 1, 'R');
     }
 
     function pixelsToCM($val)
@@ -429,13 +455,13 @@ class SolicitudCambioSubcontratoFormato extends Rotation
 
     function Footer()
     {
-        if (!App::environment('production')) {
+       /* if (!App::environment('production')) {
             $this->SetFont('Arial','B',90);
             $this->SetTextColor(155,155,155);
             $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
             $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
-        }
+        }*/
         $this->firmas();
 
         $this->SetY($this->GetPageHeight() - 1);
@@ -468,8 +494,9 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->AliasNbPages();
         $this->AddPage();
         $this->SetAutoPageBreak(true,3.75);
-
        $this->partidas();
+        $this->Ln(0.5);
+        $this->totales();
         try {
             $this->Output('I', "Formato - Solicitud Cambio a Subcontrato_".$this->solicitud->numero_folio.".pdf", 1);
         } catch (\Exception $ex) {

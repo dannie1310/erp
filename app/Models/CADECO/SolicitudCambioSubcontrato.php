@@ -39,6 +39,10 @@ class SolicitudCambioSubcontrato extends Transaccion
                 });
         });
     }
+
+    /**
+     * Relaciones
+     */
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
@@ -69,6 +73,13 @@ class SolicitudCambioSubcontrato extends Transaccion
         return $this->hasMany(ContratoOriginal::class, "id_solicitud", "id_transaccion");
     }
 
+    /**
+     * Scopes
+     */
+
+    /**
+     * Atributos
+     */
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
@@ -205,6 +216,53 @@ class SolicitudCambioSubcontrato extends Transaccion
         return $relaciones;
     }
 
+    public function getSubtotalCalculadoAttribute()
+    {
+        if($this->subtotal < 0)
+        {
+            return $this->subtotal * (-1);
+        }
+        return $this->subtotal;
+    }
+
+    public function getSubtotalCalculadoFormatAttribute()
+    {
+        return '$ ' . number_format($this->subtotal_calculado, 2, '.', ',');
+    }
+
+    public function getIvaCalculadoAttribute()
+    {
+        return $this->subtotal_calculado * 0.16;
+    }
+
+    public function getIvaCalculadoFormatAttribute()
+    {
+        return '$ ' . number_format($this->iva_calculado, 2, '.', ',');
+    }
+
+    public function getTotalCalculadoAttribute()
+    {
+        return $this->subtotal_calculado + $this->iva_calculado;
+    }
+
+    public function getTotalCalculadoFormatAttribute()
+    {
+        return '$ ' . number_format($this->total_calculado, 2, '.', ',');
+    }
+
+    public function getPorcentajeCambioAttribute()
+    {
+        return ($this->subtotal_calculado / $this->subcontrato->monto) * 100;
+    }
+
+    public function getPorcentajeCambioFormatAttribute()
+    {
+        return number_format($this->porcentaje_cambio, 2, '.', ',').'%';
+    }
+
+    /**
+     * Métodos
+     */
     public function registrar($solicitud, $archivo, $partidas){
         DB::connection('cadeco')->beginTransaction();
         try{
@@ -284,11 +342,9 @@ class SolicitudCambioSubcontrato extends Transaccion
         }
     }
 
-
     public static function calcularFolio()
     {
         $fol = Transaccion::where('tipo_transaccion', '=', 54)->orderBy('numero_folio', 'DESC')->first();
         return $fol ? $fol->numero_folio + 1 : 1;
     }
-
 }
