@@ -6,6 +6,7 @@ use App\Models\CADECO\SubcontratosCM\ContratoOriginal;
 use App\Models\CADECO\SubcontratosCM\CtgTipo;
 use App\Models\CADECO\SubcontratosCM\ItemSubcontratoOriginal;
 use App\Models\CADECO\SubcontratosCM\Partida;
+use App\Models\CADECO\SubcontratosCM\SolicitudAplicada;
 use App\Models\CADECO\SubcontratosCM\SubcontratoOriginal;
 use Illuminate\Support\Facades\DB;
 
@@ -68,6 +69,11 @@ class SolicitudCambioSubcontrato extends Transaccion
     public function contratosOriginal()
     {
         return $this->hasMany(ContratoOriginal::class, "id_solicitud", "id_transaccion");
+    }
+
+    public function aplicacion()
+    {
+        return $this->hasOne(SolicitudAplicada::class, "id_solicitud", "id_transaccion");
     }
 
     public function getEstadoDescripcionAttribute()
@@ -328,6 +334,7 @@ class SolicitudCambioSubcontrato extends Transaccion
             $this->subcontrato->recalcula();
             $this->estado = 1;
             $this->save();
+            $this->aplicacion()->create();
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e){
