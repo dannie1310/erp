@@ -300,32 +300,70 @@ class SolicitudCambioSubcontrato extends Transaccion
             abort(500, "La solicitud debe estar con estado REGISTRADA para que pueda aplicarse, su estado actual es: " . strtoupper($this->estado_descripcion));
         }
 
-        DB::connection('cadeco')->beginTransaction();
-        foreach($this->partidas as $partida){
-            if($partida->id_tipo_modificacion == 1 || $partida->id_tipo_modificacion == 2)
-            {
-                $partida->itemSubcontrato->cantidad = $partida->itemSubcontrato->cantidad + $partida->cantidad;
-                $partida->itemSubcontrato->cantidad_original1 = $partida->itemSubcontrato->cantidad_original1 + $partida->cantidad;
-                $partida->itemSubcontrato->save();
+        try{
+            DB::connection('cadeco')->beginTransaction();
 
-                $partida->itemSubcontrato->contrato->cantidad_presupuestada = $partida->itemSubcontrato->contrato->cantidad_presupuestada + $partida->cantidad;
-                $partida->itemSubcontrato->contrato->cantidad_original = $partida->itemSubcontrato->contrato->cantidad_original + $partida->cantidad;
-                $partida->itemSubcontrato->contrato->save();
+
+            foreach($this->partidas as $partida){
+                if($partida->id_tipo_modificacion == 1 || $partida->id_tipo_modificacion == 2)
+                {
+                    $this->aplicarAditivasDeductivas($partida);
+                }
+
+                $diferencia = $this->subcontratoOriginal->monto - $this->subcontrato->monto;
+                if(abs($diferencia)>0.1){
+                    throw new \Exception("El monto actual del subcontrato ya no corresponde al monto que tenía cuando se realizó la solicitud de cambio, debe cancelar la solicitud de cambio y generar una nueva" . "
+            Monto Original: " . $this->subcontratoOriginal->monto_format."
+            Monto Actual: " . $this->subcontrato->monto_format);
+                }
+                if($partida->id_tipo_modificacion == 3)
+                {
+                    $this->aplicarCambioPrecio($partida);
+                }
+                if($partida->id_tipo_modificacion == 4)
+                {
+                    $this->aplicarExtraordinario($partida);
+                }
             }
-            if($partida->id_tipo_modificacion == 3)
-            {
-                $this->aplicarCambioPrecio($partida);
-            }
-            if($partida->id_tipo_modificacion == 4)
-            {
-                $this->aplicarExtraordinario($partida);
-            }
+            $this->subcontrato->recalcula();
+            $this->estado = 1;
+            $this->save();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
         }
-        $this->subcontrato->recalcula();
-        $this->estado = 1;
-        $this->save();
-        DB::connection('cadeco')->commit();
-        return $this;
+    }
+
+    private function aplicarAditivasDeductivas($partida){
+        $originalItemSubcontrato = $this->itemsSubcontratoOriginal->where("id_item",$partida->id_item_subcontrato)->first();
+        $diferencia = $originalItemSubcontrato->cantidad - $partida->itemSubcontrato->cantidad;
+        if(abs($diferencia)>0.1){
+            throw new \Exception("La cantidad actual de la partida del subcontrato ya no corresponde a la cantidad que tenía cuando se realizó la solicitud de cambio, debe cancelar la solicitud de cambio y generar una nueva.
+
+            Partida: " . $partida->itemSubcontrato->contrato->descripcion."
+            Cantidad Original: " . $originalItemSubcontrato->cantidad_format."
+            Cantidad Actual: " . $partida->itemSubcontrato->cantidad_format);
+        }
+
+        $partida->itemSubcontrato->cantidad = $partida->itemSubcontrato->cantidad + $partida->cantidad;
+        $partida->itemSubcontrato->cantidad_original1 = $partida->itemSubcontrato->cantidad_original1 + $partida->cantidad;
+        $partida->itemSubcontrato->save();
+
+        $originalContrato = $this->contratosOriginal->where("id_contrato",$partida->itemSubcontrato->contrato->id_concepto)->first();
+        $diferencia_contrato = $originalContrato->cantidad_presupuestada - $partida->itemSubcontrato->contrato->cantidad_original;
+        if(abs($diferencia_contrato)>0.1){
+            throw new \Exception("La cantidad actual de la partida del contrato proyectado ya no corresponde a la cantidad que tenía cuando se realizó la solicitud de cambio, debe cancelar la solicitud de cambio y generar una nueva.
+
+            Partida: " . $partida->itemSubcontrato->contrato->descripcion."
+            Cantidad Original: " . $originalContrato->cantidad_presupuestada."
+            Cantidad Actual: " . $partida->itemSubcontrato->contrato->cantidad_original);
+        }
+
+        $partida->itemSubcontrato->contrato->cantidad_presupuestada = $partida->itemSubcontrato->contrato->cantidad_presupuestada + $partida->cantidad;
+        $partida->itemSubcontrato->contrato->cantidad_original = $partida->itemSubcontrato->contrato->cantidad_original + $partida->cantidad;
+        $partida->itemSubcontrato->contrato->save();
     }
 
     private function aplicarExtraordinario($partida){
