@@ -52,6 +52,7 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
             'numero_folio_format' => $model->numero_folio_format,
             'observaciones' => $model->observaciones,
             'estado_descripcion' => $model->estado_descripcion,
+            'estado' => $model->estado,
         ];
     }
 

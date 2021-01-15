@@ -1,7 +1,7 @@
 <template>
     <span>
         <div class="btn-group">
-            <router-link  :to="{ name: 'solicitud-cambio-aplicar', params: {id: value.id}}" v-if="$root.can('aplicar_solicitud_cambio_subcontrato')" type="button" class="btn btn-sm btn-outline-danger" title="Aplicar">
+            <router-link  :to="{ name: 'solicitud-cambio-aplicar', params: {id: value.id}}" v-if="$root.can('aplicar_solicitud_cambio_subcontrato') && value.aplicar" type="button" class="btn btn-sm btn-outline-danger" title="Aplicar">
                 <i class="fa fa-thumbs-o-up"></i>
             </router-link>
             <router-link  :to="{ name: 'solicitud-cambio-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">

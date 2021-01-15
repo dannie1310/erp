@@ -53,6 +53,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label">Porcentaje:</label>
+                                    <div class="col-md-8">
+                                       {{ (Number(solicitud_cambio.monto) / Number(solicitud_cambio.subcontrato.monto) * 100).formatMoney(4) }}%
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 					</div>
                     <div class="card-footer">

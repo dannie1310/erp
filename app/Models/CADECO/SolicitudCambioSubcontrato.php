@@ -296,6 +296,10 @@ class SolicitudCambioSubcontrato extends Transaccion
 
     public function aplicar()
     {
+        if($this->estado != 0){
+            abort(500, "La solicitud debe estar con estado REGISTRADA para que pueda aplicarse, su estado actual es: " . strtoupper($this->estado_descripcion));
+        }
+
         DB::connection('cadeco')->beginTransaction();
         foreach($this->partidas as $partida){
             if($partida->id_tipo_modificacion == 1 || $partida->id_tipo_modificacion == 2)
@@ -305,11 +309,62 @@ class SolicitudCambioSubcontrato extends Transaccion
                 $partida->itemSubcontrato->save();
 
                 $partida->itemSubcontrato->contrato->cantidad_presupuestada = $partida->itemSubcontrato->contrato->cantidad_presupuestada + $partida->cantidad;
+                $partida->itemSubcontrato->contrato->cantidad_original = $partida->itemSubcontrato->contrato->cantidad_original + $partida->cantidad;
                 $partida->itemSubcontrato->contrato->save();
+            }
+            if($partida->id_tipo_modificacion == 4)
+            {
+                $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->agrupadorExtraordinario()->first();
+                if(!$concepto_agrupador_extraordinario){
+                    $ultimo_concepto = $this->subcontrato->contratoProyectado->conceptos->sortByDesc("nivel")->first();
+                    $ultimo_nivel = $ultimo_concepto->nivel;
+                    $ultimo_nivel_exp = explode(".", $ultimo_nivel);
+                    $nivel_nodo_extraordinario = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
+                    $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->create([
+                        'clave'=>'EXT',
+                        'descripcion' => "EXTRAORDINARIOS",
+                        'nodo_extraordinarios'=>1,
+                        'nivel'=>$nivel_nodo_extraordinario
+                    ]);
+                }
+
+                $ultimo_concepto_extraordinario = $this->subcontrato
+                    ->contratoProyectado->contratos()
+                    ->where("nivel","LIKE",$concepto_agrupador_extraordinario->nivel."%")
+                    ->orderBy("nivel","desc")
+                    ->first();
+
+                if($ultimo_concepto_extraordinario->nodo_extraordinarios == 1){
+                    $nivel = $concepto_agrupador_extraordinario->nivel.sprintf("%03d",0)."." ;
+                } else {
+                    $ultimo_nivel_ext = $ultimo_concepto_extraordinario->nivel;
+                    $ultimo_nivel_ext_exp = explode(".", $ultimo_nivel_ext);
+                    $nivel = substr($ultimo_nivel_ext,0,strlen($ultimo_nivel_ext)-4). sprintf("%03d", $ultimo_nivel_ext_exp[count($ultimo_nivel_ext_exp)-2]+1)."." ;
+                }
+                $descripcion = 'EXT-'.($concepto_agrupador_extraordinario->cantidad_hijos+1)." ".$partida->descripcion;
+                $contrato = $this->subcontrato->contratoProyectado->conceptos()->create([
+                    'clave'=>$partida->clave,
+                    'descripcion' => $descripcion,
+                    'unidad' => $partida->unidad,
+                    'cantidad_presupuestada' => $partida->cantidad,
+                    'cantidad_original' => $partida->cantidad,
+                    'id_destino' => $partida->id_concepto,
+                    'nivel'=>$nivel
+                ]);
+                $item_subcontrato = $this->subcontrato->partidas()->create([
+                    'id_concepto' => $contrato->id_concepto,
+                    'unidad' => $partida->unidad,
+                    'cantidad' => $partida->cantidad,
+                    'precio_unitario' => $partida->precio,
+                    'id_sm_partida' => $partida->id,
+                ]);
             }
         }
         $this->subcontrato->recalcula();
-        DB::connection('cadeco')->rollBack();
+        $this->estado = 1;
+        $this->save();
+        DB::connection('cadeco')->commit();
+        return $this;
     }
 
 }

@@ -87,6 +87,11 @@ class ContratoProyectado extends Transaccion
         return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion')->OrderBy('nivel')->whereNotNull('unidad');
     }
 
+    public function contratos()
+    {
+        return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function areaSubcontratante()
     {
         return $this->belongsTo(AreaSubcontratante::class, 'id_transaccion', 'id_transaccion');

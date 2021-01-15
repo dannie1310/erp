@@ -111,7 +111,7 @@ export default {
                     estado: solicitud_cambio.estado_descripcion,
                     total: solicitud_cambio.monto_format,
                     buttons: $.extend({}, {
-                        aprobar: (this.$root.can('aprobar_solicitud_cambio_subcontrato') && solicitud_cambio.estado == 0 ) ? true : undefined,
+                        aplicar: (solicitud_cambio.estado == 0 ) ? true : false,
                         id: solicitud_cambio.id,
                         solicitud_cambio: solicitud_cambio,
                         estado: solicitud_cambio.estado,
