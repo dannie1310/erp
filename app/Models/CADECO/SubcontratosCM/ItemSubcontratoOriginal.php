@@ -30,4 +30,9 @@ class ItemSubcontratoOriginal extends Model
         return $this->belongsTo(ItemSubcontrato::class, 'id_item', 'id_item');
     }
 
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad, 2, '.', ',');
+    }
+
 }

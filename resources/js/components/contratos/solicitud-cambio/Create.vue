@@ -118,10 +118,22 @@
 					</div>
 					<div class="card-body">
 						<form>
+                            <div class="form-row">
+                                <label class="col-md-3 col-form-label">Subtotal:</label>
+                                <div class="col-md-9">
+                                    $ {{ parseFloat(importe_addendum).formatMoney(2) }}
+                                </div>
+							</div>
+                            <div class="form-row">
+                                <label class="col-md-3 col-form-label">IVA:</label>
+                                <div class="col-md-9">
+                                    $ {{ parseFloat(impuesto_addendum).formatMoney(2) }}
+                                </div>
+							</div>
 							<div class="form-row">
                                 <label class="col-md-3 col-form-label">Monto:</label>
                                 <div class="col-md-9">
-                                    $ {{ parseFloat(importe_addendum).formatMoney(2) }}
+                                    $ {{ parseFloat(monto_addendum).formatMoney(2) }}
                                 </div>
 							</div>
                             <div class="form-row">
@@ -348,7 +360,7 @@
 		 <div class="row">
 			<div class="col-md-12">
 				<button class="btn btn-primary float-right" type="submit" @click="validate"
-						:disabled="errors.count() > 0">
+						:disabled="errors.count() > 0 || !conceptos">
                     <i class="fa fa-save"></i>
 					Guardar
 				</button>
@@ -449,7 +461,10 @@
 				subcontratos: [],
                 fechasDeshabilitadas:{},
                 fecha_hoy : '',
+                tasa_iva : '',
                 importe_addendum:0,
+                monto_addendum:0,
+                impuesto_addendum:0,
                 porcentaje_addendum:0,
                 conceptos_extraordinarios : [],
                 concepto_extraordinario :{
@@ -510,7 +525,9 @@
                     }
                 });
                 this.importe_addendum = suma;
-                this.porcentaje_addendum = suma / this.subcontrato.monto * 100 ;
+                this.monto_addendum = suma * (1+(Number(this.tasa_iva)/100));
+                this.impuesto_addendum = suma * Number(this.tasa_iva)/100;
+                this.porcentaje_addendum = this.monto_addendum / this.subcontrato.monto * 100 ;
             },
             keyupCantidad(concepto)
             {
@@ -546,7 +563,8 @@
         		if(conceptos.length > 0 || this.conceptos_extraordinarios.length > 0) {
 					return this.$store.dispatch('contratos/solicitud-cambio/store', {
 						id_subcontrato: this.id_subcontrato,
-                        monto: this.importe_addendum,
+                        monto: this.monto_addendum,
+                        impuesto: this.impuesto_addendum,
                         fecha: this.fecha,
 						observaciones: this.observaciones,
                         conceptos_cambios_precio: conceptos_cambio_precio,
@@ -748,13 +766,14 @@
 					this.$store.dispatch('contratos/subcontrato/find', {
 						id: id,
 						params: {
-							include: ['empresa','partidas_convenio']
+							include: ['empresa','partidas_convenio', 'obra']
 						}
 					})
 							.then(data => {
                                 this.conceptos = data.partidas_convenio.data;
 								this.subcontrato = data;
 								this.observaciones = data.Observaciones;
+								this.tasa_iva = data.obra.iva;
 							})
 							.finally(() => {
 								this.cargando = false;

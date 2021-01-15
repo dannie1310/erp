@@ -288,7 +288,8 @@
 			</div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
+                <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                <button type="button" class="btn btn-danger" v-on:click="aplicar"><i class="fa fa-thumbs-o-up"></i>Aplicar</button>
             </div>
         </div>
     </span>
@@ -316,7 +317,7 @@
                 return this.$store.dispatch('contratos/solicitud-cambio/find', {
                     id: this.id,
                     params: {
-                        include: ['moneda', 'empresa', 'partidas.tipo', 'subcontrato', 'partidas.item_subcontrato.contrato', 'aplicacion.usuario']
+                        include: ['moneda', 'empresa', 'partidas.tipo', 'subcontrato', 'partidas.item_subcontrato.contrato']
                     }
                 }).then(data => {
                     this.solicitud_cambio = data;
@@ -324,8 +325,15 @@
                     this.cargando = false;
                 })
             },
-            salir() {
+            regresar() {
                 this.$router.push({name: 'solicitud-cambio'});
+            },
+            aplicar() {
+                return this.$store.dispatch('contratos/solicitud-cambio/aplicar', {
+                    id: this.id
+                }).then(data => {
+                    this.$router.push({name: 'solicitud-cambio'});
+                })
             },
         },
         watch: {
