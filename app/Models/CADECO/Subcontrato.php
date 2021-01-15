@@ -185,6 +185,11 @@ class Subcontrato extends Transaccion
         return $this->hasMany(PresupuestoContratista::class, 'id_antecedente', 'id_antecedente');
     }
 
+    public function solicitudesCambio()
+    {
+        return $this->hasMany(SolicitudCambioSubcontrato::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function getAnticipoFormatAttribute()
     {
         return number_format(abs($this->anticipo), 2) . '%';
@@ -548,6 +553,12 @@ class Subcontrato extends Transaccion
             $i++;
         }catch (\Exception $e){
 
+        }
+
+        #SOLICITUD DE CAMBIO
+        foreach ($subcontrato->solicitudesCambio as $solicitud_cambio){
+            $relaciones[$i] = $solicitud_cambio->datos_para_relacion;
+            $i++;
         }
 
         $orden1 = array_column($relaciones, 'orden');

@@ -581,6 +581,12 @@ class PresupuestoContratista extends Transaccion
                     }
                 }
             }
+
+            #SOLICITUD DE CAMBIO A SUBCONTRATO
+            foreach ($subcontrato->solicitudesCambio as $solicitud_cambio){
+                $relaciones[$i] = $solicitud_cambio->datos_para_relacion;
+                $i++;
+            }
         }
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);
