@@ -1,5 +1,16 @@
 <template>
     <span>
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row" v-if="!cargando">
             <div class="col-md-12">
 				<div class="card">
