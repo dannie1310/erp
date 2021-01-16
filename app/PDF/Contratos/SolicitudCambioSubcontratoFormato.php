@@ -222,25 +222,25 @@ class SolicitudCambioSubcontratoFormato extends Rotation
     function totales() {
         $this->setXY(21, $this->GetY());
         $this->SetFont('Arial', 'B', 8);
-        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Subtotal'), '', 0, 'L');
+        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Subtotal:'), '', 0, 'L');
         $this->SetFont('Arial', '', 8);
-        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->subtotal_calculado_format, '', 1, 'R');
+        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->subtotal_format, '', 1, 'R');
 
         $this->setXY(21, $this->GetY());
         $this->SetFont('Arial', 'B', 8);
-        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('IVA'), '', 0, 'L');
+        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('IVA:'), '', 0, 'L');
         $this->SetFont('Arial', '', 8);
-        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->iva_calculado_format, '', 1, 'R');
+        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->impuesto_format, '', 1, 'R');
 
         $this->setXY(21, $this->GetY());
         $this->SetFont('Arial', 'B', 8);
-        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Total'), '', 0, 'L');
+        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Monto:'), '', 0, 'L');
         $this->SetFont('Arial', '', 8);
-        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->total_calculado_format, '', 1, 'R');
+        $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->monto_format, '', 1, 'R');
 
         $this->setXY(21, $this->GetY());
         $this->SetFont('Arial', 'B', 8);
-        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Porcentaje de Cambio'), '', 0, 'L');
+        $this->Cell(0.105 * $this->WidthTotal, 0.5, utf8_decode('Porcentaje del Cambio:'), '', 0, 'L');
         $this->SetFont('Arial', '', 8);
         $this->Cell(0.107 * $this->WidthTotal, 0.5, $this->solicitud->porcentaje_cambio_format, '', 1, 'R');
     }
@@ -517,7 +517,7 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->SetFont('Arial', 'BI', 6);
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ' . date("d-m-Y", strtotime($this->fecha))).' Fecha de consulta: '.date("d-m-Y H:i:s").'  Estado: '.$this->solicitud->estado_descripcion, 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de contratos del SAO ERP. Fecha de registro: ' . date("d-m-Y", strtotime($this->fecha))).' Fecha de consulta: '.date("d-m-Y H:i:s").'  Estado: '.$this->solicitud->estado_descripcion, 0, 0, 'L');
         $this->SetXY(22.6,-0.9);
         $this->Cell(5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
@@ -532,7 +532,7 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->Ln(0.3);
         $this->totales();
         try {
-            $this->Output('I', "Formato - Solicitud Cambio a Subcontrato_".$this->solicitud->numero_folio.".pdf", 1);
+            $this->Output('I', "Formato - Solicitud de Cambio a Subcontrato_".$this->solicitud->numero_folio.".pdf", 1);
         } catch (\Exception $ex) {
             dd("error",$ex);
         }

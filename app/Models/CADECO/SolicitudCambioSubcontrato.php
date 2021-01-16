@@ -1,10 +1,12 @@
 <?php
 namespace App\Models\CADECO;
 
+use App\Facades\Context;
 use App\Models\CADECO\SubcontratosCM\ContratoOriginal;
 use App\Models\CADECO\SubcontratosCM\CtgTipo;
 use App\Models\CADECO\SubcontratosCM\ItemSubcontratoOriginal;
 use App\Models\CADECO\SubcontratosCM\Partida;
+use App\Models\CADECO\SubcontratosCM\SolicitudAplicada;
 use App\Models\CADECO\SubcontratosCM\SubcontratoOriginal;
 use Illuminate\Support\Facades\DB;
 
@@ -73,6 +75,11 @@ class SolicitudCambioSubcontrato extends Transaccion
         return $this->hasMany(ContratoOriginal::class, "id_solicitud", "id_transaccion");
     }
 
+    public function aplicacion()
+    {
+        return $this->hasOne(SolicitudAplicada::class, "id_solicitud", "id_transaccion");
+    }
+
     /**
      * Scopes
      */
@@ -83,6 +90,9 @@ class SolicitudCambioSubcontrato extends Transaccion
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
+            case -1:
+                return 'Cancelada';
+                break;
             case 0:
                 return 'Registrada';
                 break;
@@ -209,55 +219,25 @@ class SolicitudCambioSubcontrato extends Transaccion
             }
         }
 
-
-
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
     }
 
-    public function getSubtotalCalculadoAttribute()
-    {
-        if($this->subtotal < 0)
-        {
-            return $this->subtotal * (-1);
-        }
-        return $this->subtotal;
-    }
-
-    public function getSubtotalCalculadoFormatAttribute()
-    {
-        return '$ ' . number_format($this->subtotal_calculado, 2, '.', ',');
-    }
-
-    public function getIvaCalculadoAttribute()
-    {
-        return $this->subtotal_calculado * 0.16;
-    }
-
-    public function getIvaCalculadoFormatAttribute()
-    {
-        return '$ ' . number_format($this->iva_calculado, 2, '.', ',');
-    }
-
-    public function getTotalCalculadoAttribute()
-    {
-        return $this->subtotal_calculado + $this->iva_calculado;
-    }
-
-    public function getTotalCalculadoFormatAttribute()
-    {
-        return '$ ' . number_format($this->total_calculado, 2, '.', ',');
-    }
 
     public function getPorcentajeCambioAttribute()
     {
-        return ($this->subtotal_calculado / $this->subcontrato->monto) * 100;
+        return ($this->monto / $this->subcontrato->monto) * 100;
     }
 
     public function getPorcentajeCambioFormatAttribute()
     {
-        return number_format($this->porcentaje_cambio, 2, '.', ',').'%';
+        if($this->porcentaje_cambio>0){
+            return number_format($this->porcentaje_cambio, 4, '.',",").'%';
+        } else {
+            return "-". number_format(abs($this->porcentaje_cambio), 4, '.', ",").'%';
+        }
+
     }
 
     /**
@@ -339,6 +319,7 @@ class SolicitudCambioSubcontrato extends Transaccion
             return $solicitud;
         } catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
         }
     }
 
@@ -347,4 +328,183 @@ class SolicitudCambioSubcontrato extends Transaccion
         $fol = Transaccion::where('tipo_transaccion', '=', 54)->orderBy('numero_folio', 'DESC')->first();
         return $fol ? $fol->numero_folio + 1 : 1;
     }
+
+    public function aplicar()
+    {
+        if($this->estado != 0){
+            abort(500, "La solicitud debe estar con estado REGISTRADA para que pueda aplicarse, su estado actual es: " . strtoupper($this->estado_descripcion));
+        }
+
+        try{
+            DB::connection('cadeco')->beginTransaction();
+
+
+            foreach($this->partidas as $partida){
+                if($partida->id_tipo_modificacion == 1 || $partida->id_tipo_modificacion == 2)
+                {
+                    $this->aplicarAditivasDeductivas($partida);
+                }
+
+                $diferencia = $this->subcontratoOriginal->monto - $this->subcontrato->monto;
+                if(abs($diferencia)>0.1){
+                    throw new \Exception("El monto actual del subcontrato ya no corresponde al monto que tenía cuando se realizó la solicitud de cambio, debe cancelar la solicitud de cambio y generar una nueva" . "
+            Monto Original: " . $this->subcontratoOriginal->monto_format."
+            Monto Actual: " . $this->subcontrato->monto_format);
+                }
+                if($partida->id_tipo_modificacion == 3)
+                {
+                    $this->aplicarCambioPrecio($partida);
+                }
+                if($partida->id_tipo_modificacion == 4)
+                {
+                    $this->aplicarExtraordinario($partida);
+                }
+            }
+            $this->subcontrato->recalcula();
+            $this->estado = 1;
+            $this->save();
+            $this->aplicacion()->create();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
+        }
+    }
+
+    private function aplicarAditivasDeductivas($partida){
+        $originalItemSubcontrato = $this->itemsSubcontratoOriginal->where("id_item",$partida->id_item_subcontrato)->first();
+        $diferencia = $originalItemSubcontrato->cantidad - $partida->itemSubcontrato->cantidad;
+        if(abs($diferencia)>0.1){
+            throw new \Exception("La cantidad actual de la partida del subcontrato ya no corresponde a la cantidad que tenía cuando se realizó la solicitud de cambio, debe cancelar la solicitud de cambio y generar una nueva.
+
+            Partida: " . $partida->itemSubcontrato->contrato->descripcion."
+            Cantidad Original: " . $originalItemSubcontrato->cantidad_format."
+            Cantidad Actual: " . $partida->itemSubcontrato->cantidad_format);
+        }
+
+        $partida->itemSubcontrato->cantidad = $partida->itemSubcontrato->cantidad + $partida->cantidad;
+        $partida->itemSubcontrato->cantidad_original1 = $partida->itemSubcontrato->cantidad_original1 + $partida->cantidad;
+        $partida->itemSubcontrato->save();
+
+        $originalContrato = $this->contratosOriginal->where("id_contrato",$partida->itemSubcontrato->contrato->id_concepto)->first();
+        $diferencia_contrato = $originalContrato->cantidad_presupuestada - $partida->itemSubcontrato->contrato->cantidad_original;
+        if(abs($diferencia_contrato)>0.1){
+            throw new \Exception("La cantidad actual de la partida del contrato proyectado ya no corresponde a la cantidad que tenía cuando se realizó la solicitud de cambio, debe cancelar la solicitud de cambio y generar una nueva.
+
+            Partida: " . $partida->itemSubcontrato->contrato->descripcion."
+            Cantidad Original: " . $originalContrato->cantidad_presupuestada."
+            Cantidad Actual: " . $partida->itemSubcontrato->contrato->cantidad_original);
+        }
+
+        $partida->itemSubcontrato->contrato->cantidad_presupuestada = $partida->itemSubcontrato->contrato->cantidad_presupuestada + $partida->cantidad;
+        $partida->itemSubcontrato->contrato->cantidad_original = $partida->itemSubcontrato->contrato->cantidad_original + $partida->cantidad;
+        $partida->itemSubcontrato->contrato->save();
+    }
+
+    private function aplicarExtraordinario($partida){
+        $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->agrupadorExtraordinario()->first();
+        if(!$concepto_agrupador_extraordinario){
+
+            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratos->sortByDesc("nivel")->first();
+            $ultimo_nivel = $ultimo_concepto->nivel;
+            $ultimo_nivel_exp = explode(".", $ultimo_nivel);
+            $nivel_nodo_extraordinario = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
+            $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->create([
+                'clave'=>'EXT',
+                'descripcion' => "EXTRAORDINARIOS",
+                'nodo_extraordinarios'=>1,
+                'nivel'=>$nivel_nodo_extraordinario
+            ]);
+            $this->subcontrato->contratoProyectado->load("contratos");
+        }
+
+        $ultimo_concepto_extraordinario = $this->subcontrato
+            ->contratoProyectado->contratos()
+            ->where("nivel","LIKE",$concepto_agrupador_extraordinario->nivel."%")
+            ->orderBy("nivel","desc")
+            ->first();
+
+        if($ultimo_concepto_extraordinario->nodo_extraordinarios == 1){
+            $nivel = $concepto_agrupador_extraordinario->nivel.sprintf("%03d",0)."." ;
+        } else {
+            $ultimo_nivel_ext = $ultimo_concepto_extraordinario->nivel;
+            $ultimo_nivel_ext_exp = explode(".", $ultimo_nivel_ext);
+            $nivel = substr($ultimo_nivel_ext,0,strlen($ultimo_nivel_ext)-4). sprintf("%03d", $ultimo_nivel_ext_exp[count($ultimo_nivel_ext_exp)-2]+1)."." ;
+        }
+        $descripcion = 'EXT-'.($concepto_agrupador_extraordinario->cantidad_hijos+1)." ".$partida->descripcion;
+        $contrato = $this->subcontrato->contratoProyectado->conceptos()->create([
+            'clave'=>$partida->clave,
+            'descripcion' => $descripcion,
+            'unidad' => $partida->unidad,
+            'cantidad_presupuestada' => $partida->cantidad,
+            'cantidad_original' => $partida->cantidad,
+            'id_destino' => $partida->id_concepto,
+            'nivel'=>$nivel
+        ]);
+        $this->subcontrato->contratoProyectado->load("contratos");
+        $this->subcontrato->partidas()->create([
+            'id_concepto' => $contrato->id_concepto,
+            'unidad' => $partida->unidad,
+            'cantidad' => $partida->cantidad,
+            'precio_unitario' => $partida->precio,
+            'id_sm_partida' => $partida->id,
+        ]);
+        $this->subcontrato->load("partidas");
+    }
+
+    private function aplicarCambioPrecio($partida){
+        $concepto_agrupador_nuevo_precio = $this->subcontrato->contratoProyectado->contratos()->agrupadorNuevoPrecio()->first();
+        if(!$concepto_agrupador_nuevo_precio){
+            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratos->sortByDesc("nivel")->first();
+            $ultimo_nivel = $ultimo_concepto->nivel;
+            $ultimo_nivel_exp = explode(".", $ultimo_nivel);
+            $nivel_nodo_nuevo_precio = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
+            $concepto_agrupador_nuevo_precio = $this->subcontrato->contratoProyectado->contratos()->create([
+                'clave'=>'NP',
+                'descripcion' => "NUEVOS PRECIOS",
+                'nodo_cambio_precio'=>1,
+                'nivel'=>$nivel_nodo_nuevo_precio
+            ]);
+            $this->subcontrato->contratoProyectado->load("contratos");
+        }
+
+        $ultimo_concepto_nuevo_precio = $this->subcontrato
+            ->contratoProyectado->contratos()
+            ->where("nivel","LIKE",$concepto_agrupador_nuevo_precio->nivel."%")
+            ->orderBy("nivel","desc")
+            ->first();
+
+        if($ultimo_concepto_nuevo_precio->nodo_cambio_precio == 1){
+            $nivel = $concepto_agrupador_nuevo_precio->nivel.sprintf("%03d",0)."." ;
+        } else {
+            $ultimo_nivel_np = $ultimo_concepto_nuevo_precio->nivel;
+            $ultimo_nivel_np_exp = explode(".", $ultimo_nivel_np);
+            $nivel = substr($ultimo_nivel_np,0,strlen($ultimo_nivel_np)-4). sprintf("%03d", $ultimo_nivel_np_exp[count($ultimo_nivel_np_exp)-2]+1)."." ;
+        }
+
+        $item_subcontrato_original = ItemSubcontrato::find($partida->id_item_subcontrato);
+        $descripcion = 'NP-'.($concepto_agrupador_nuevo_precio->cantidad_hijos+1)." ".$item_subcontrato_original->contrato->descripcion;
+        $clave = 'NP-'.($concepto_agrupador_nuevo_precio->cantidad_hijos+1)." ".$item_subcontrato_original->contrato->clave;
+
+        $contrato = $this->subcontrato->contratoProyectado->conceptos()->create([
+            'clave'=>$clave,
+            'descripcion' => $descripcion,
+            'unidad' => $item_subcontrato_original->contrato->unidad,
+            'cantidad_presupuestada' => $partida->cantidad,
+            'cantidad_original' => $partida->cantidad,
+            'id_destino' => $item_subcontrato_original->contrato->destino->id_concepto,
+            'nivel'=>$nivel
+        ]);
+        $this->subcontrato->contratoProyectado->load("contratos");
+        $this->subcontrato->partidas()->create([
+            'id_concepto' => $contrato->id_concepto,
+            'unidad' => $item_subcontrato_original->contrato->unidad,
+            'cantidad' => $partida->cantidad,
+            'precio_unitario' => $partida->precio,
+            'id_sm_partida' => $partida->id,
+        ]);
+        $this->subcontrato->load("partidas");
+    }
+
 }

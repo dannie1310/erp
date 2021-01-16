@@ -224,10 +224,10 @@ class Concepto extends Model
      */
     public function getPathCortaAttribute()
     {
-        if ((strlen($this->nivel_padre)/4) == 3) {
+        if ((strlen($this->nivel_padre)/4) <= 3) {
             return $this->descripcion;
         }
-        if ((strlen($this->nivel_padre)/4) >= 3) {
+        else if ((strlen($this->nivel_padre)/4) > 3) {
             return self::find($this->id_padre)->path_corta . ' -> ' . $this->descripcion;
         }
     }

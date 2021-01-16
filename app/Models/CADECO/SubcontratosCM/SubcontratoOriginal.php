@@ -29,4 +29,9 @@ class SubcontratoOriginal extends Model
         return $this->belongsTo(Subcontrato::class, 'id_subcontrato', 'id_transaccion');
     }
 
+    public function getMontoFormatAttribute()
+    {
+        return '$ ' . number_format(($this->monto),2);
+    }
+
 }

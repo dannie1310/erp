@@ -1057,7 +1057,7 @@ export const routes = [
                                 props: true,
                                 component: require('./components/contratos/solicitud-cambio/Delete').default,
                                 meta: {
-                                    title: 'Eliminar Convenio Modificatorio',
+                                    title: 'Solicitud de Cambio a Subcontrato',
                                     breadcrumb: {parent: 'convenio-modificatorio', name: 'ELIMINAR'},
                                     middleware: [auth, context, permission],
                                     permission: 'eliminar_solicitud_cambio_subcontrato'
@@ -1069,10 +1069,22 @@ export const routes = [
                                 props: true,
                                 component: require('./components/contratos/solicitud-cambio/Show').default,
                                 meta: {
-                                    title: 'Información de Solicitud de Cambio',
+                                    title: 'Solicitud de Cambio a Subcontrato',
                                     breadcrumb: {parent: 'solicitud-cambio', name: 'VER'},
                                     middleware: [auth, context, permission],
                                     permission :'consultar_solicitud_cambio_subcontrato'
+                                }
+                            },
+                            {
+                                path: ':id/aplicar',
+                                name: 'solicitud-cambio-aplicar',
+                                props: true,
+                                component: require('./components/contratos/solicitud-cambio/Aplicar').default,
+                                meta: {
+                                    title: 'Solicitud de Cambio a Subcontrato',
+                                    breadcrumb: {parent: 'solicitud-cambio', name: 'APLICAR'},
+                                    middleware: [auth, context, permission],
+                                    permission :'aplicar_solicitud_cambio_subcontrato'
                                 }
                             },
                             {

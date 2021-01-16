@@ -1,11 +1,9 @@
 <template>
     <span>
         <div class="btn-group">
-            <button title="Aprobar" @click="resumen('aprobar')" v-if="value.aprobar && 1==2" type="button"
-                    class="btn btn-sm btn-outline-success" :disabled="aprobando">
-                <i v-if="aprobando" class="fa fa-spin fa-spinner"></i>
-                <i v-else class="fa fa-thumbs-o-up"></i>
-            </button>
+            <router-link  :to="{ name: 'solicitud-cambio-aplicar', params: {id: value.id}}" v-if="$root.can('aplicar_solicitud_cambio_subcontrato') && value.aplicar" type="button" class="btn btn-sm btn-outline-danger" title="Aplicar">
+                <i class="fa fa-thumbs-o-up"></i>
+            </router-link>
             <router-link  :to="{ name: 'solicitud-cambio-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
                 <i class="fa fa-eye"></i>
             </router-link>
@@ -17,109 +15,6 @@
             <router-link  :to="{ name: 'solicitud-cambio-documentos', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
                 <i class="fa fa-folder-open"></i>
             </router-link>
-        </div>
-
-
-        <!-- Modal -->
-        <div class="modal fade" ref="resumen" tabindex="-1" role="dialog" aria-labelledby="resumenLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="resumenLabel">Resumen de Estimación</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="table-responsive">
-                            <table style="width: 100%" class="table table-stripped">
-                                <tbody>
-                                <tr>
-                                    <th style="text-align: left" colspan="2">Importe Estimación</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.suma_importes}}</td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left">Amortización de Anticipo</th>
-                                    <td>{{value.solicitud_cambio.anticipo}}</td>
-                                    <td style="text-align: right">{{ value.solicitud_cambio.monto_anticipo_aplicado_format }}</td>
-                                </tr>
-                                <tr v-if="configuracion.ret_fon_gar_antes_iva == 1">
-                                    <th style="text-align: left">Retención de Fondo de Garantia</th>
-                                    <td>{{value.solicitud_cambio.retencion}} %</td>
-                                    <td style="text-align: right">{{value.solicitud_cambio.retencion_fondo_garantia}}</td>
-                                </tr>
-                                <tr v-if="configuracion.retenciones_antes_iva == 1">
-                                    <th style="text-align: left" colspan="2">Total Retenciones</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.total_retenciones}}</td>
-                                </tr>
-                                <tr v-if="configuracion.retenciones_antes_iva == 1">
-                                    <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.total_retencion_liberadas}}</td>
-                                </tr>
-                                <tr v-if="configuracion.desc_pres_mat_antes_iva == 1">
-                                    <th style="text-align: left" colspan="2">Total Deductivas</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.total_deductivas}}</td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left" colspan="2">Subtotal</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.subtotal_orden_pago}}</td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left" colspan="2">IVA</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.iva_orden_pago}}</td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left">Retención de IVA</th>
-                                    <td>{{value.solicitud_cambio.retencion_iva_porcentaje}}</td>
-                                    <td style="text-align: right">{{value.solicitud_cambio.retencion_iva_format}}</td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left" colspan="2">Total</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.total_orden_pago}}</td>
-                                </tr>
-                                <tr v-if="configuracion.ret_fon_gar_antes_iva == 0">
-                                    <th style="text-align: left">Retención de Fondo de Garantia Estimación</th>
-                                    <td v-if="configuracion.ret_fon_gar_con_iva == 1">{{value.solicitud_cambio.retencion}} % + IVA</td>
-                                    <td v-else>{{value.solicitud_cambio.retencion}} %</td>
-                                    <td style="text-align: right">{{value.solicitud_cambio.retencion_fondo_garantia}}</td>
-                                </tr>
-                                <tr v-if="configuracion.desc_pres_mat_antes_iva == 0">
-                                    <th style="text-align: left" colspan="2">Total Deductivas</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.total_deductivas}}</td>
-                                </tr>
-                                   <tr v-if="configuracion.retenciones_antes_iva == 0">
-                                    <th style="text-align: left" colspan="2">Total Retenciones</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.total_retenciones}}</td>
-                                </tr>
-                                <tr v-if="configuracion.retenciones_antes_iva == 0">
-                                    <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.total_retencion_liberadas}}</td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left" colspan="2">Total Anticipo a Liberar</th>
-                                    <td style="text-align: right">{{value.solicitud_cambio.total_anticipo_liberar}}</td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left" colspan="2">Total a Pagar</th>
-                                    <td style="text-align: right">{{ value.solicitud_cambio.monto_pagar_format }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button @click="aprobando ? aprobar() : desaprobar()" type="button" class="btn btn-primary" :disabled="guardando">
-                            <span v-if="guardando">
-                                <i class="fa fa-spin fa-spinner"></i>
-                            </span>
-                            <span v-else>
-                                {{ aprobando ? 'Aprobar' : 'Revertir Aprobación' }}
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
     </span>
 </template>
@@ -133,7 +28,7 @@
         props: ['value'],
         data() {
             return {
-                aprobando: false,
+                aplicando: false,
                 revirtiendo: false,
                 guardando: false,
                 configuracion : []
@@ -142,14 +37,14 @@
 
         mounted() {
             $(this.$refs.resumen).on('hidden.bs.modal', () => {
-                this.aprobando = false;
+                this.aplicando = false;
                 this.revirtiendo = false;
             })
         },
 
         methods: {
             resumen(opcion) {
-                if (opcion == 'aprobar') {this.aprobando = true;}
+                if (opcion == 'aprobar') {this.aplicando = true;}
                 else {this.revirtiendo = true;}
                 $(this.$refs.resumen).appendTo('body')
                 $(this.$refs.resumen).modal('show');

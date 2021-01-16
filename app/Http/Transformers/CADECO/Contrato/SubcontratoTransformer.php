@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 
+use App\Http\Transformers\CADECO\ObraTransformer;
 use App\Models\CADECO\Subcontrato;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\CostoTransformer;
@@ -34,7 +35,8 @@ class SubcontratoTransformer extends TransformerAbstract
         'subcontratos',
         'relaciones',
         'costo',
-        'partidas_convenio'
+        'partidas_convenio',
+        'obra'
     ];
 
     /**
@@ -184,6 +186,15 @@ class SubcontratoTransformer extends TransformerAbstract
         if($partidas = $model->partidas_convenio)
         {
             return $this->collection($partidas, new PartidasConvenio);
+        }
+        return null;
+    }
+
+    public function includeObra(Subcontrato $model)
+    {
+        if($obra = $model->obra)
+        {
+            return $this->item($obra, new ObraTransformer);
         }
         return null;
     }

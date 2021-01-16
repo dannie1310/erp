@@ -185,6 +185,11 @@ class Subcontrato extends Transaccion
         return $this->hasMany(PresupuestoContratista::class, 'id_antecedente', 'id_antecedente');
     }
 
+    public function solicitudesCambio()
+    {
+        return $this->hasMany(SolicitudCambioSubcontrato::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function getAnticipoFormatAttribute()
     {
         return number_format(abs($this->anticipo), 2) . '%';
@@ -550,9 +555,43 @@ class Subcontrato extends Transaccion
 
         }
 
+        #SOLICITUD DE CAMBIO
+        foreach ($subcontrato->solicitudesCambio as $solicitud_cambio){
+            $relaciones[$i] = $solicitud_cambio->datos_para_relacion;
+            $i++;
+        }
+
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
+    }
+
+    public function recalcula()
+    {
+
+        $saldo = 0;
+        $anticipo_saldo = 0;
+        $subtotal = 0;
+        foreach($this->partidas as $partida){
+            $subtotal += $partida->cantidad * $partida->precio_unitario  - ($partida->cantidad * $partida->precio_unitario * $this->PorcentajeDescuento /100);
+        }
+        $monto = $subtotal * 1.16;
+        $impuesto = $subtotal * 0.16;
+        $anticipo_monto = $subtotal * ($this->anticipo /100);
+
+        $diferencia_monto = $monto - $this->monto;
+        $diferencia_anticipo_monto = $anticipo_monto - $this->anticipo_monto;
+
+        $saldo = $this->saldo + $diferencia_monto;
+        $anticipo_saldo = $this->anticipo_saldo + $diferencia_anticipo_monto;
+
+        $this->monto = $monto;
+        $this->saldo = $saldo;
+        $this->impuesto = $impuesto;
+        $this->anticipo_monto = $anticipo_monto;
+        $this->anticipo_saldo = $anticipo_saldo;
+        $this->save();
+
     }
 
     public function updateContrato($data){

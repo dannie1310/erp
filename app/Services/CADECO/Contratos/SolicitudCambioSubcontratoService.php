@@ -3,8 +3,10 @@
 
 namespace App\Services\CADECO\Contratos;
 
+use App\Facades\Context;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Obra;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SolicitudCambioSubcontrato as Model;
 use App\PDF\Contratos\SolicitudCambioSubcontratoFormato;
@@ -91,7 +93,8 @@ class SolicitudCambioSubcontratoService
             "fecha"=>$fecha->format("Y-m-d"),
             "observaciones"=>$request->observaciones,
             "id_antecedente"=>$request->id_subcontrato,
-            "monto"=>$request->monto
+            "monto"=>$request->monto,
+            "impuesto"=>$request->impuesto
         ];
 
         $archivo_data = [
