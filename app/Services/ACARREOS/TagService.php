@@ -56,6 +56,7 @@ class TagService
          * Se realiza conexión con la base de datos de acarreos.
          */
         $this->conexionAcarreos($usuario->first()->proyecto->base_datos);
+
         /**
          * Revision de permisos
          * Validar si el usuario tiene el role de checador.
@@ -65,6 +66,21 @@ class TagService
             return json_encode(array("error" => "El usuario no tiene perfil para CONFIGURACIÓN TAGS favor de solicitarlo."));
         }
 
+        $camiones = $this->repository->getCatalogoCamiones();
+        $tags = $this->repository->getCatalogoTags();
+        $tags_disponibles = $this->repository->getCatalogoTagsDisponibles($usuario->first()->id_proyecto);
+        $usuario = $usuario->first();
+
+        return [
+            'IdUsuario' => auth()->id(),
+            'Nombre' => $usuario->usuario->nombre_completo,
+            'IdProyecto' => $usuario->proyecto->id_proyecto,
+            'base_datos' => $usuario->proyecto->base_datos,
+            'descripcion_database' => $usuario->proyecto->descripcion,
+            'Camiones' => $camiones,
+            'tags' => $tags,
+            'tags_disponibles_configurar' => $tags_disponibles
+        ];
     }
 
 }

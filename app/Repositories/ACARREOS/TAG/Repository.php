@@ -84,8 +84,18 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
      * Obtener catálogo de tags sin camión asignado
      * @return mixed
      */
-    public function getCatalogoTagsDisponibles()
+    public function getCatalogoTagsDisponibles($id_proyecto)
     {
-        $tags_disponibles = \App\Models\ACARREOS\SCA_CONFIGURACION\Tag::activo();
+        $tags = \App\Models\ACARREOS\Tag::activo()->selectRaw('UID')->get()->toArray();
+        $tags_disponibles = \App\Models\ACARREOS\SCA_CONFIGURACION\Tag::selectRaw('uid as UID, id')->activo()->where('id_proyecto', $id_proyecto)->whereNotIn('uid', $tags)->get()->toArray();
+        $tagsdisponibles = array();
+        foreach ($tags_disponibles as $key => $tag)
+        {
+            $tag['idcamion'] = null;
+            $tag['uid'] = $tag['UID'];
+            unset($tag['UID']);
+            $tagsdisponibles[$key] = $tag;
+        }
+        return $tagsdisponibles;
     }
 }

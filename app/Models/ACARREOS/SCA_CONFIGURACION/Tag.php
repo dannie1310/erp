@@ -29,9 +29,10 @@ class Tag extends Model
         return $query->where('estado',  1);
     }
 
-    public function scopeDisponibles($query)
+    public function scopeDisponibles($query, $id_proyecto)
     {
-        return $query
+        $tags = \App\Models\ACARREOS\Tag::activo()->selectRaw('UID')->get()->toArray();
+        return $query->activo()->where('id_proyecto', $id_proyecto)->whereNotIn('utid', $tags);
     }
 
     /**
