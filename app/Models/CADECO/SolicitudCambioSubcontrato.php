@@ -41,6 +41,10 @@ class SolicitudCambioSubcontrato extends Transaccion
                 });
         });
     }
+
+    /**
+     * Relaciones
+     */
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
@@ -76,6 +80,13 @@ class SolicitudCambioSubcontrato extends Transaccion
         return $this->hasOne(SolicitudAplicada::class, "id_solicitud", "id_transaccion");
     }
 
+    /**
+     * Scopes
+     */
+
+    /**
+     * Atributos
+     */
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
@@ -213,6 +224,25 @@ class SolicitudCambioSubcontrato extends Transaccion
         return $relaciones;
     }
 
+
+    public function getPorcentajeCambioAttribute()
+    {
+        return ($this->monto / $this->subcontrato->monto) * 100;
+    }
+
+    public function getPorcentajeCambioFormatAttribute()
+    {
+        if($this->porcentaje_cambio>0){
+            return number_format($this->porcentaje_cambio, 4, '.',",").'%';
+        } else {
+            return "-". number_format(abs($this->porcentaje_cambio), 4, '.', ",").'%';
+        }
+
+    }
+
+    /**
+     * Métodos
+     */
     public function registrar($solicitud, $archivo, $partidas){
         DB::connection('cadeco')->beginTransaction();
         try{
@@ -292,7 +322,6 @@ class SolicitudCambioSubcontrato extends Transaccion
             abort(500, $e->getMessage());
         }
     }
-
 
     public static function calcularFolio()
     {

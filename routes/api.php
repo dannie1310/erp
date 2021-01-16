@@ -46,6 +46,10 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'almacen'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\AlmacenController@show')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\AlmacenController@paginate');
+            $api->post('/','App\Http\Controllers\v1\CADECO\AlmacenController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\AlmacenController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\AlmacenController@destroy')->where(['id' => '[0-9]+']);
         });
 
         //BANCOS
@@ -858,7 +862,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/aplicar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@aplicar')->where(['id' => '[0-9]+']);
             $api->patch('{id}/revertirAprobacion', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@revertirAprobacion')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@paginate');
-            $api->get('{id}/formato-pdf', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@pdf')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@destroy')->where(['id' => '[0-9]+']);
         });
 

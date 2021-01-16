@@ -343,7 +343,7 @@ ORDER BY 7 DESC
                         AS fecha_devinitivo_maxima
                 FROM ((SEGURIDAD_ERP.Fiscal.efos efos
                        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-                          ON (efos.razon_social = ctg_efos.razon_social))
+                          ON (efos.rfc = ctg_efos.rfc))
                       INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
                          ON (cfd_sat.rfc_emisor = efos.rfc))
                      INNER JOIN
@@ -433,7 +433,7 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
                         AS fecha_devinitivo_maxima
                 FROM ((SEGURIDAD_ERP.Fiscal.efos efos
                        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-                          ON (efos.razon_social = ctg_efos.razon_social))
+                          ON (efos.rfc = ctg_efos.rfc))
                       INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
                          ON (cfd_sat.rfc_emisor = efos.rfc))
                      INNER JOIN

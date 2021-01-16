@@ -10,7 +10,7 @@
             <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0) && 1==2"  v-bind:id="value.id">
                 <i class="fa fa-trash"></i>
             </button>
-            <PDF v-bind:id="value.id" v-if="1==2"></PDF>
+            <PDF v-bind:id="value.id" v-if="$root.can('consultar_solicitud_cambio_subcontrato')"></PDF>
             <Relaciones v-bind:transaccion="value.transaccion"/>
             <router-link  :to="{ name: 'solicitud-cambio-documentos', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
                 <i class="fa fa-folder-open"></i>

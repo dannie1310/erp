@@ -7,6 +7,7 @@
  */
 
 namespace App\Models\CADECO;
+use App\Models\CADECO\Acarreos\ConciliacionEstimacion;
 use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Empresa;
@@ -171,6 +172,11 @@ class Estimacion extends Transaccion
     public function itemsReferenciados()
     {
         return $this->hasMany(Item::class, 'id_antecedente','id_transaccion');
+    }
+
+    public function conciliacionAcarreos()
+    {
+        return $this->hasOne(ConciliacionEstimacion::class, "id_estimacion", "id_transaccion");
     }
 
     /**
@@ -1263,5 +1269,18 @@ class Estimacion extends Transaccion
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
+    }
+
+    public function getOrigenAcarreosAttribute()
+    {
+        try{
+            if($this->conciliacionAcarreos->id >0)
+                return true;
+            else
+                return false;
+        } catch (\Exception $e){
+            return false;
+        }
+
     }
 }

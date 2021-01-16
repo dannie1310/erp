@@ -9,6 +9,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SolicitudCambioSubcontrato as Model;
+use App\PDF\Contratos\SolicitudCambioSubcontratoFormato;
 use App\Repositories\CADECO\SubcontratosCM\SolicitudCambioSubcontratoRepository as Repository;
 use App\Services\CADECO\Documentacion\ArchivoService;
 use DateTime;
@@ -159,4 +160,9 @@ class SolicitudCambioSubcontratoService
         return $solicitud;
     }
 
+    public function pdf($id)
+    {
+        $pdf = new SolicitudCambioSubcontratoFormato($id);
+        return $pdf;
+    }
 }

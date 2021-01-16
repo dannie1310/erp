@@ -72,16 +72,29 @@ class ViajeNetoService
             return json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo."));
         }
 
-        /**
-         * Validar telefono asignado al proyecto y al usuario.
-         */
-        if ($this->repository->getTelefonoActivo($data['IMEI'])) {
-            return json_encode(array("error" => "El teléfono no tiene autorización para operar."));
-        }
+        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1) {
+            /**
+             * Validar telefono asignado al proyecto y al usuario.
+             */
+            if ($this->repository->getTelefonoActivo($data['IMEI'])) {
+                return json_encode(array("error" => "El teléfono no tiene autorización para operar."));
+            }
 
-        $telefono = $usuario->first()->telefono;
-        if (is_null($telefono) || $telefono->imei != $data['IMEI']) {
-            return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
+            $telefono = $usuario->first()->telefono;
+            if (is_null($telefono) || $telefono->imei != $data['IMEI']) {
+                return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
+            }
+            $telefonos = array([
+                'id' => $telefono->impresora ? $telefono->impresora->id : null,
+                'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
+                'IMEI' => $telefono->imei
+            ]);
+        }else{
+            $telefonos = array([
+                'id' => null,
+                'MAC' => null,
+                'IMEI' => ''
+            ]);
         }
         $configuracion_diaria = $usuario->first()->configuracionDiaria;
         $usuario = $usuario->first();
@@ -94,11 +107,6 @@ class ViajeNetoService
         $checadores = $this->repository->arrayChecadores($usuario->proyecto->id_proyecto);
         $tipoImagenes = $this->repository->getCatalogoTiposImagenes();
         $motivoDeductiva = $this->repository->getCatalogoMotivosDeductiva();
-        $telefonos = array([
-            'id' => $telefono->impresora ? $telefono->impresora->id : null,
-            'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
-            'IMEI' => $telefono->imei
-        ]);
 
         return [
             'IdUsuario' => auth()->id(),
@@ -145,14 +153,16 @@ class ViajeNetoService
          */
         $this->repository->crearJson(array_except($data, 'access_token'));
 
-        /**
-         * Verificar si el telefono esta activo
-         */
-        if ($this->repository->getTelefonoActivo($data['IMEI']))
+        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1)
         {
-            return json_encode(array("error" => "El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "."));
+            /**
+             * Verificar si el telefono esta activo
+             */
+            if ($this->repository->getTelefonoActivo($data['IMEI']))
+            {
+                return json_encode(array("error" => "El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "."));
+            }
         }
-
         /**
          * Mensaje de error cuando no se tenga ningún viaje a procesar
          */
