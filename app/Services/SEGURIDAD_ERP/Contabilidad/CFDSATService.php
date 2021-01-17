@@ -313,6 +313,7 @@ class CFDSATService
                                         $this->log["archivos_no_cargados"] += 1;
                                         $this->log["archivos_receptor_no_valido"] += 1;
                                         $this->log["receptores_no_validos"][] = $this->arreglo_factura["receptor"];
+                                        unlink($ruta_archivo);
                                     }
                                 } else {
                                     $this->log["archivos_preexistentes"] += 1;
