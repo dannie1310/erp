@@ -46,10 +46,11 @@ class CFDSATRepository extends Repository implements RepositoryInterface
             if($empresa){
                 return $empresa->id;
             } else {
-                $empresa = EmpresaSAT::create(
+                /*$empresa = EmpresaSAT::create(
                     ["rfc"=>$datos_receptor["rfc"], "razon_social"=>$datos_receptor["nombre"]]
                 );
-                return $empresa->id;
+                return $empresa->id;*/
+                return -1;
             }
         } catch (\Exception $e){
             dd($datos_receptor);
