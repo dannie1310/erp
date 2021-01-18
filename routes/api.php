@@ -427,6 +427,11 @@ $api->version('v1', function ($api) {
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@desactivar')->where(['id' => '[0-9]+']);
         });
 
+        //TAG
+        $api->group(['prefix' => 'tag'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\TagController@catalogo');
+        });
+
         //VIAJE NETO
         $api->group(['prefix' => 'viaje-neto'], function ($api) {
             $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@catalogo');

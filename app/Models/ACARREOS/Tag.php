@@ -34,6 +34,11 @@ class Tag extends Model
         return $query->join('camiones','tags.idcamion', 'camiones.IdCamion');
     }
 
+    public function scopeSinCamionAsignado($query)
+    {
+        return $query->whereRaw('ISNULL(idcamion)');
+    }
+
     /**
      * Attributes
      */
