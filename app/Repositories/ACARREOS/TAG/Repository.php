@@ -5,6 +5,8 @@ namespace App\Repositories\ACARREOS\TAG;
 
 
 use App\Models\ACARREOS\Camion;
+use App\Models\ACARREOS\ConsultaErronea;
+use App\Models\ACARREOS\Json;
 use App\Models\ACARREOS\SCA_CONFIGURACION\RolUsuario;
 use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
 use App\Models\ACARREOS\Tag;
@@ -97,5 +99,40 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $tagsdisponibles[$key] = $tag;
         }
         return $tagsdisponibles;
+    }
+
+    /**
+     * Respaldar el json enviado por la aplicación
+     * @param $json
+     */
+    public function crearJson($json)
+    {
+        Json::create([
+            'json' => json_encode($json)
+        ]);
+    }
+
+    /**
+     * Crear el log cada que presente un error
+     * @param $log
+     * @param $usuario
+     */
+    public function crearLogError($log, $usuario)
+    {
+        ConsultaErronea::create([
+            'consulta' => $log,
+            'registro' => $usuario
+        ]);
+    }
+
+    /**
+     * Buscar un tag
+     * @param $tag
+     * @return mixed
+     */
+    public function tag($tag)
+    {
+        $tag = $this->model->where('idcamion', $tag['idcamion'])->first();
+        return $tag;
     }
 }

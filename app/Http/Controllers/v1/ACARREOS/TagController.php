@@ -46,7 +46,7 @@ class TagController extends Controller
     }
 
     /**
-     * Obtener catálogos para el uso de la aplicación 'Configuración TAGS'
+     * Obtener catálogos para el uso de la aplicación 'Configuración TAGS'.
      * @param Request $request
      * @return array|false|string
      * @throws \Exception
@@ -54,5 +54,16 @@ class TagController extends Controller
     public function catalogo(Request $request)
     {
         return $this->service->getCatalogo($request->all());
+    }
+
+    /**
+     * Registrar la configuración TAGS desde aplicación móvil 'Configuración TAGS'.
+     * @param Request $request
+     * @return false|string
+     * @throws \Exception
+     */
+    public function registrarTag(Request $request)
+    {
+        return $this->service->registrar($request->all());
     }
 }

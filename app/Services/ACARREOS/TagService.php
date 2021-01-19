@@ -83,4 +83,58 @@ class TagService
         ];
     }
 
+    /**
+     *  Registrar la configuración TAGS desde aplicación móvil.
+     * @param $data
+     * @return false|string
+     * @throws \Exception
+     */
+    public function registrar($data)
+    {
+        /**
+         * Buscar usuario con el proyecto ultimo asociado al usuario.
+         */
+        $usuario = $this->repository->usuarioProyecto($data['usuario'], $data['clave']);
+
+        /**
+         * Se realiza conexión con la base de datos de acarreos.
+         */
+        $this->conexionAcarreos($usuario->first()->proyecto->base_datos);
+
+        /**
+         * Respaldar los datos
+         */
+        $this->repository->crearJson(array_except($data, 'access_token'));
+
+        if (isset($data['tag_camion'])) {
+            $data['tag_camion'] = json_decode($data['tag_camion'], true);
+            $configuraciones_tag = count($data['tag_camion']);
+            if ($configuraciones_tag > 0) {
+                $registros = 0;
+                $errores = 0;
+                foreach ($data['tag_camion'] as $key => $tag) {
+                    try {
+                        $tag_registrado = $this->repository->tag($tag);
+                        if(!is_null($tag_registrado))
+                        {
+                            $tag_registrado->update([
+                                'estado' => 0
+                            ]);
+                        }
+                        $tag = Tag::create([
+                            'uid' => $tag['uid'],
+                            'idcamion' => $tag['idcamion'],
+                            'idproyecto_global' => $tag['idproyecto_global'],
+                            'asigno' => $data['usuario']
+                         ]);
+                         $registros++;
+                    } catch (\Exception $exception) {
+                        $this->repository->crearLogError($exception->getMessage(), $data['idusuario']);
+                        $errores++;
+                    }
+                }
+                dd($configuraciones_tag);
+            }
+        }
+    }
 }
