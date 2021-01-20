@@ -431,6 +431,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'tag'], function ($api) {
             $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\TagController@catalogo');
             $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\TagController@registrarTag');
+            $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\TagController@cambiarClave');
         });
 
         //VIAJE NETO

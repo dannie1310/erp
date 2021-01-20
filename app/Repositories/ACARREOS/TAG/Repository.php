@@ -4,6 +4,7 @@
 namespace App\Repositories\ACARREOS\TAG;
 
 
+use App\Models\ACARREOS\CambioContrasena;
 use App\Models\ACARREOS\Camion;
 use App\Models\ACARREOS\ConsultaErronea;
 use App\Models\ACARREOS\Json;
@@ -155,5 +156,38 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $tag = $this->model->where('idcamion', $tag['idcamion'])
             ->where('uid', $tag['uid'])->first();
         return $tag;
+    }
+
+    /**
+     * Crear log de cambio de contraseña
+     * @param $data
+     */
+    public function logCambioContrasena($data)
+    {
+        CambioContrasena::create([
+            'usr' => $data['usuario'],
+            'Idusuario' => $data['idusuario'],
+            'Version' => $data['Version'],
+            'IMEI' => $data['IMEI'],
+            'FechaHoraRegistro' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * Cambia la clave del usuario igh
+     * @param $id_usuario
+     * @param $clave_nueva
+     */
+    public function cambiarClave($id_usuario, $clave_nueva)
+    {
+        /**
+         * Se busca el usuario
+         */
+        $usuario = Usuario::where('idusuario', $id_usuario)->first();
+        if(!is_null($usuario)) {
+            $usuario->update([
+                'clave' => $clave_nueva
+            ]);
+        }
     }
 }

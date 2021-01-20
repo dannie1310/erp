@@ -66,4 +66,15 @@ class TagController extends Controller
     {
         return $this->service->registrar($request->all());
     }
+
+    /**
+     * Cambiar la contraseña del usuario desde la aplicación móvil
+     * @param Request $request
+     * @return false|string
+     * @throws \Exception
+     */
+    public function cambiarClave(Request $request)
+    {
+        return $this->service->cambiarClave($request->all());
+    }
 }

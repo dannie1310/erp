@@ -150,4 +150,29 @@ class TagService
             return json_encode(array("error" => "No se mando ningún registro para sincronizar."));
         }
     }
+
+    /**
+     * Cambiar la contraseña del usuario desde la aplicación móvil
+     * @param $data
+     * @return false|string
+     * @throws \Exception
+     */
+    public function cambiarClave($data)
+    {
+        /**
+         * Se genera el respaldo del json
+         */
+        $this->repository->crearJson($data);
+        /**
+         * Se genera el log de cambio de contraseña.
+         */
+        $this->repository->logCambioContrasena($data);
+        try {
+            $this->repository->cambiarClave($data['idusuario'], $data['NuevaClave']);
+            return json_encode(array("msj" => "Contraseña Guardada Correctamente!!"));
+        }catch (\Exception $e) {
+            $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+            return json_encode(array("error" => "Error al realizar el cambio de contraseña, favor de reportarlo."));
+        }
+    }
 }
