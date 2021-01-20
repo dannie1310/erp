@@ -79,7 +79,16 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
      */
     public function getCatalogoTags()
     {
-        return Tag::activo()->select(['uid', 'idcamion', 'idproyecto_global as idproyecto'])->get()->toArray();
+        $tags = Tag::activo()->select(['uid as UID', 'idcamion', 'idproyecto_global as idproyecto'])->get()->toArray();
+        $tagsdisponibles = array();
+        foreach ($tags as $key => $tag)
+        {
+            $tag['idcamion'] = $tag['idcamion'];
+            $tag['uid'] = $tag['UID'];
+            unset($tag['UID']);
+            $tagsdisponibles[$key] = $tag;
+        }
+        return $tagsdisponibles;
     }
 
     /**
@@ -133,6 +142,18 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function tag($tag)
     {
         $tag = $this->model->where('idcamion', $tag['idcamion'])->first();
+        return $tag;
+    }
+
+    /**
+     * Buscar registro tag
+     * @param $tag
+     * @return mixed
+     */
+    public function tagRegistrado($tag)
+    {
+        $tag = $this->model->where('idcamion', $tag['idcamion'])
+            ->where('uid', $tag['uid'])->first();
         return $tag;
     }
 }

@@ -11,6 +11,17 @@ class Tag extends Model
     protected $connection = 'acarreos';
     protected $table = 'tags';
     public $primaryKey = 'uid';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'uid',
+        'idcamion',
+        'idproyecto',
+        'idproyecto_global',
+        'fecha_asignacion',
+        'asigno',
+        'estado'
+    ];
 
 
     /**

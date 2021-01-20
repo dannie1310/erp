@@ -111,30 +111,43 @@ class TagService
             $configuraciones_tag = count($data['tag_camion']);
             if ($configuraciones_tag > 0) {
                 $registros = 0;
+                $previamente = 0;
                 $errores = 0;
                 foreach ($data['tag_camion'] as $key => $tag) {
-                    try {
-                        $tag_registrado = $this->repository->tag($tag);
-                        if(!is_null($tag_registrado))
-                        {
-                            $tag_registrado->update([
-                                'estado' => 0
+                    $tag_previamente_registrado = $this->repository->tagRegistrado($tag);
+                    if(is_null($tag_previamente_registrado))
+                    {
+                        try {
+                            $tag_registrado = $this->repository->tag($tag);
+                            if (!is_null($tag_registrado)) {
+                                $tag_registrado->update([
+                                    'estado' => 0
+                                ]);
+                            }
+                            $tag = Tag::create([
+                                'uid' => $tag['uid'],
+                                'idcamion' => $tag['idcamion'],
+                                'idproyecto_global' => $tag['idproyecto_global'],
+                                'asigno' => $data['usuario']
                             ]);
+                            $registros++;
+                        } catch (\Exception $exception) {
+                            $this->repository->crearLogError($exception->getMessage(), $data['usuario']);
+                            $errores++;
                         }
-                        $tag = Tag::create([
-                            'uid' => $tag['uid'],
-                            'idcamion' => $tag['idcamion'],
-                            'idproyecto_global' => $tag['idproyecto_global'],
-                            'asigno' => $data['usuario']
-                         ]);
-                         $registros++;
-                    } catch (\Exception $exception) {
-                        $this->repository->crearLogError($exception->getMessage(), $data['idusuario']);
-                        $errores++;
+                    }else{
+                        $previamente++;
                     }
                 }
-                dd($configuraciones_tag);
+
+                if ($configuraciones_tag == $registros|| $configuraciones_tag == ($registros + $previamente)) {
+                    return json_encode(array("msj" => "Datos sincronizados correctamente. ".($registros+$previamente)." - ".$configuraciones_tag."."));
+                }else {
+                    return json_encode(array("error" => "No se sincronizaron los todos los registros."));
+                }
             }
+        }else{
+            return json_encode(array("error" => "No se mando ningún registro para sincronizar."));
         }
     }
 }
