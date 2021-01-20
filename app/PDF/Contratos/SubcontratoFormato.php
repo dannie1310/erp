@@ -122,14 +122,14 @@ class SubcontratoFormato extends FPDI
             $referencia = \substr($this->subcontrato->referencia, 0, 24) ;
 
             $this->SetTextColor('0,0,0');
-            $this->SetFont('Arial', 'B', 12);
+            $this->SetFont('Arial', 'B', 11);
             $this->Cell(11.5);
-            $this->Cell(1.5,.7,'No.'.($this->subcontrato->clasificacionSubcontrato?$this->subcontrato->clasificacionSubcontrato->tipo->descripcion_corta:'').':','LT',0,'L');
+            $this->CellFit(1.5,.7,'No. '.($this->subcontrato->clasificacionSubcontrato?$this->subcontrato->clasificacionSubcontrato->tipo->descripcion_corta:'').': ','LT',0,'L');
             $this->CellFit(6.5,.7, $referencia,'RT',0,'L');
             $this->Ln(.7);
 
             $this->SetFont('Arial', 'B', 20);
-            $this->Cell(11.5, $postTitle, ($this->subcontrato->clasificacionSubcontrato?utf8_decode($this->subcontrato->clasificacionSubcontrato->tipo->descripcion):'SUBCONTRATO') , 0, 0, 'C', 0);
+            $this->CellFit(11.5, $postTitle, ($this->subcontrato->clasificacionSubcontrato?utf8_decode($this->subcontrato->clasificacionSubcontrato->tipo->descripcion):'SUBCONTRATO') , 0, 0, 'C', 0);
             $this->SetFont('Arial', 'B', 10);
             $this->Cell(4.5,.7, 'FECHA :','BL',0,'L');
             $this->Cell(3.5,.7, $this->subcontrato->fecha_format.' ','RB',0,'L');
@@ -341,7 +341,7 @@ class SubcontratoFormato extends FPDI
             $precio_neto = $partida->precio_unitario - ($partida->precio_unitario * $partida->descuento / 100);
             $importe = $precio_neto * $partida->cantidad;
             $this->Row(array($key+1,
-                $partida->cantidad,
+                $partida->cantidad_format,
                 $partida->contrato->unidad,
                 $partida->contrato->destino->concepto->clave_concepto,
                 utf8_decode($partida->contrato->descripcion),
