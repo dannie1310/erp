@@ -206,37 +206,14 @@ class SubcontratoFormato extends FPDI
             $y_inicial = $this->getY();
             $x_inicial = $this->getX();
 
-            //$this->datos_encabezado["observacion"] = substr($this->datos_encabezado["observacion"],1,200);
-            $long = 0;
-             $this->subcontrato->subcontratos?$long =strlen($this->subcontrato->subcontratos->observacion):'';
-            if($long <= 104){
-                $alto = .5;
-            }
-            else{
-                if($long <= 200){
-                    $alto = 1;
-                }
-                else{
-                    $alto = 1.5;
-                }
-            }
+
+            $this->setY($y_alto+0.5);
 
             $this->SetFont('Arial', 'B', 10);
-            $this->CellFit(2.5, $alto, utf8_decode('Descripción: ') , 0, 0, 'C', 0);
-            $alto = abs($alto);
-            $this->SetWidths(array(17));
-            $this->SetRounds(array('1234'));
-            $this->SetRadius(array(.1));
-            $this->SetFills(array('255,255,255'));
-            $this->SetTextColors(array('0,0,0'));
-            $this->SetHeights(array($alto));
-            $this->SetStyles(array('DF'));
+            $this->CellFit(2.5, .5, utf8_decode('Descripción: ') , 0, 0, 'C', 0);
             $this->SetFont('Arial', '', 10);
-            $this->Row(array(""));
-            $this->setY($y_inicial);
-            $this->setX($x_inicial);
-            $this->CellFit(2.5, 1, '', 0, 0, 'C', 0);
             $this->MultiCell(17, .5,  $this->subcontrato->subcontratos?utf8_decode($this->subcontrato->subcontratos->observacion):'', '', 'L');
+
             $this->encabezados();
         }
 

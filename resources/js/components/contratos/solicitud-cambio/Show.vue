@@ -12,77 +12,7 @@
             </div>
         </div>
         <DatosSolicitud v-bind:solicitud_cambio="solicitud_cambio" v-if="!cargando"></DatosSolicitud>
-
-        <div class="row" v-if="!cargando">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h6 class="card-title">Información de Subcontrato</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group row">
-                            <label class="col-md-3 col-form-label">Contratista:</label>
-                            <div class="col-md-9">
-                                {{ solicitud_cambio.empresa.razon_social }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-md-3 col-form-label">Folio:</label>
-                                    <div class="col-md-9">
-                                         {{solicitud_cambio.subcontrato.numero_folio_format}} ({{ solicitud_cambio.subcontrato.referencia }})
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group row" >
-                                    <label class="col-md-3 col-form-label">Monto:</label>
-                                    <div class="col-md-9">
-                                        {{ solicitud_cambio.subcontrato.monto_format }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group row">
-                                    <label class="col-md-6 col-form-label">Moneda:</label>
-                                    <div class="col-md-6">
-                                        {{ solicitud_cambio.subcontrato.moneda }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="form-group row">
-                                    <label class="col-md-3 col-form-label">Fecha:</label>
-                                    <div class="col-md-9">
-                                        {{ solicitud_cambio.subcontrato.fecha_format }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="form-group row">
-                                    <label class="col-md-3 col-form-label">IVA:</label>
-                                    <div class="col-md-9">
-                                        {{ solicitud_cambio.subcontrato.impuesto_format }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="btn-group pull-right">
-                            <ShowSubcontrato v-bind:id="solicitud_cambio.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></ShowSubcontrato>
-                            <PDFSubcontrato v-bind:id="solicitud_cambio.subcontrato.id" @click="solicitud_cambio.subcontrato.id" v-if="$root.can('consultar_subcontrato')"></PDFSubcontrato>
-                            <router-link  :to="{ name: 'subcontrato-documentos', params: {id: solicitud_cambio.subcontrato.id}}" target="_blank" v-if="$root.can('consultar_subcontrato') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
-                                <i class="fa fa-folder-open"></i>
-                            </router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-		</div>
+        <DatosSubcontrato v-bind:subcontrato="solicitud_cambio.subcontrato" v-if="!cargando"></DatosSubcontrato>
         <div class="card" v-if="!cargando" style="display:none">
 			<div class="card-body">
 				<div class="form-check form-check-inline">
@@ -192,13 +122,12 @@
 </template>
 
 <script>
-    import ShowSubcontrato from '../subcontrato/Show';
-    import PDFSubcontrato from '../subcontrato/FormatoSubcontrato';
+
     import DatosSolicitud from "./partials/DatosSolicitud";
-    import PDF from './Formato';
+    import DatosSubcontrato from "../subcontrato/partials/DatosSubcontrato";
     export default {
         name: "solicitud-cambio-show",
-        components: {ShowSubcontrato,PDFSubcontrato, PDF, DatosSolicitud},
+        components: {DatosSubcontrato, DatosSolicitud},
         props: ["id"],
         data() {
             return {
