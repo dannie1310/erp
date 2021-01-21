@@ -3,7 +3,8 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h6 class="card-title">Información</h6>
+                    <h6 class="card-title">Información de Solicitud de Cambio a Subcontrato</h6>
+                    <EstatusLabelGlobal v-bind:value="solicitud_cambio.estado_label" class="pull-right"></EstatusLabelGlobal>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -125,9 +126,10 @@
 
 <script>
 import PDF from '../Formato';
+import EstatusLabelGlobal from "../../../globals/EstatusLabel";
 export default {
     name: "DatosSolicitud",
-    components: {PDF},
+    components: {EstatusLabelGlobal, PDF},
     props: ['solicitud_cambio'],
 }
 </script>

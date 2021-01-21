@@ -5,6 +5,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\EstadoLabelTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\SubcontratosCM\PartidaTransformer;
 use App\Http\Transformers\CADECO\SubcontratosCM\SolicitudCambioSubcontratoComplementoTransformer;
@@ -27,6 +28,10 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
         'moneda',
         'tipo',
         'complemento'
+    ];
+
+    protected $defaultIncludes = [
+        'estado_label'
     ];
 
     /**
@@ -118,6 +123,15 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
     {
         if ($item = $model->complemento) {
             return $this->item($item, new SolicitudCambioSubcontratoComplementoTransformer);
+        }
+        return null;
+
+    }
+
+    public function includeEstadoLabel(SolicitudCambioSubcontrato $model)
+    {
+        if ($item = $model->estado_label) {
+            return $this->item($item, new EstadoLabelTransformer);
         }
         return null;
 
