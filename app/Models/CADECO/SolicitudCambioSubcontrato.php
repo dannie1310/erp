@@ -6,7 +6,7 @@ use App\Models\CADECO\SubcontratosCM\ContratoOriginal;
 use App\Models\CADECO\SubcontratosCM\CtgTipo;
 use App\Models\CADECO\SubcontratosCM\ItemSubcontratoOriginal;
 use App\Models\CADECO\SubcontratosCM\Partida;
-use App\Models\CADECO\SubcontratosCM\SolicitudAplicada;
+use App\Models\CADECO\SubcontratosCM\SolicitudCambioSubcontratoComplemento;
 use App\Models\CADECO\SubcontratosCM\SubcontratoOriginal;
 use Illuminate\Support\Facades\DB;
 
@@ -75,9 +75,9 @@ class SolicitudCambioSubcontrato extends Transaccion
         return $this->hasMany(ContratoOriginal::class, "id_solicitud", "id_transaccion");
     }
 
-    public function aplicacion()
+    public function complemento()
     {
-        return $this->hasOne(SolicitudAplicada::class, "id_solicitud", "id_transaccion");
+        return $this->hasOne(SolicitudCambioSubcontratoComplemento::class, "id_solicitud", "id_transaccion");
     }
 
     /**
@@ -90,6 +90,9 @@ class SolicitudCambioSubcontrato extends Transaccion
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
+            case -2:
+                return 'Rechazada';
+                break;
             case -1:
                 return 'Cancelada';
                 break;
@@ -363,7 +366,26 @@ class SolicitudCambioSubcontrato extends Transaccion
             $this->subcontrato->recalcula();
             $this->estado = 1;
             $this->save();
-            $this->aplicacion()->create();
+            $this->complemento()->create(["tipo"=>2]);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
+        }
+    }
+
+    public function cancelar($motivo)
+    {
+        if($this->estado != 0){
+            abort(500, "La solicitud debe estar con estado REGISTRADA para que pueda cancelarse, su estado actual es: " . strtoupper($this->estado_descripcion));
+        }
+
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $this->estado = -1;
+            $this->save();
+            $this->complemento()->create(["tipo"=>1, "motivo"=>$motivo]);
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e){

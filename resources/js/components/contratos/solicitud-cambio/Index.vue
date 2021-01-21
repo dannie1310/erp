@@ -111,11 +111,9 @@ export default {
                     estado: solicitud_cambio.estado_descripcion,
                     total: solicitud_cambio.monto_format,
                     buttons: $.extend({}, {
-                        aplicar: (solicitud_cambio.estado == 0 ) ? true : false,
                         id: solicitud_cambio.id,
                         solicitud_cambio: solicitud_cambio,
                         estado: solicitud_cambio.estado,
-                        delete: self.$root.can('eliminar_solicitud_cambio_subcontrato') ? true : false,
                         transaccion: {id:solicitud_cambio.id, tipo:54},
                     })
 

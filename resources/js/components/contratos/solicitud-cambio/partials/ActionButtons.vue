@@ -1,8 +1,11 @@
 <template>
     <span>
         <div class="btn-group">
-            <router-link  :to="{ name: 'solicitud-cambio-aplicar', params: {id: value.id}}" v-if="$root.can('aplicar_solicitud_cambio_subcontrato') && value.aplicar" type="button" class="btn btn-sm btn-outline-danger" title="Aplicar">
+            <router-link  :to="{ name: 'solicitud-cambio-aplicar', params: {id: value.id}}" v-if="$root.can('aplicar_solicitud_cambio_subcontrato') && value.estado == 0" type="button" class="btn btn-sm btn-outline-danger" title="Aplicar">
                 <i class="fa fa-thumbs-o-up"></i>
+            </router-link>
+            <router-link  :to="{ name: 'solicitud-cambio-cancelar', params: {id: value.id}}" v-if="$root.can('cancelar_solicitud_cambio_subcontrato') && value.estado == 0" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar">
+                <i class="fa fa-ban"></i>
             </router-link>
             <router-link  :to="{ name: 'solicitud-cambio-show', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
                 <i class="fa fa-eye"></i>
@@ -80,8 +83,8 @@
             edit(){
                 this.$router.push({ name:'solicitud_cambio-edit', params: {id: this.value.id}});
             },
-            eliminar() {
-                this.$router.push({name: 'solicitud_cambio-delete', params: {id: this.value.id}});
+            cancelar() {
+                this.$router.push({name: 'solicitud_cambio-cancelar', params: {id: this.value.id}});
             },
             getConfiguraciones() {
                 this.cargando = true;
