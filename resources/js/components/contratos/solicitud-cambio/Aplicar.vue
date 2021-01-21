@@ -188,8 +188,59 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
                 <button type="button" class="btn btn-danger" v-on:click="aplicar"><i class="fa fa-thumbs-o-up"></i>Aplicar</button>
+                <button type="button" class="btn btn-warning" v-on:click="pideMotivoRechazo"><i class="fa fa-thumbs-o-down"></i>Rechazar</button>
             </div>
         </div>
+
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-unidad"> <i class="fa fa-thumbs-o-down"></i> Rechazar Solicitud de Cambio a Subcontrato</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="motivo">Motivo de rechazo:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row error-content">
+
+                                    <div class="col-md-12">
+                                        <textarea
+                                            name="motivo"
+                                            id="motivo"
+                                            class="form-control"
+                                            v-model="motivo"
+                                            v-validate="{required: true}"
+                                            data-vv-as="Motivo"
+                                            :class="{'is-invalid': errors.has('motivo')}"
+                                        ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fa fa-times-circle"></i>
+                            Cerrar
+                        </button>
+                        <button type="button" class="btn btn-warning" @click="rechazar" :disabled="errors.count() > 0 || motivo == ''">
+                            <i class="fa fa-thumbs-o-down"></i>
+                            Rechazar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </span>
 </template>
 
@@ -207,6 +258,7 @@
                 cargando: true,
                 columnas: [],
                 solicitud_cambio: [],
+                motivo:''
             };
         },
         mounted() {
@@ -234,6 +286,29 @@
                 }).then(data => {
                     this.$router.push({name: 'solicitud-cambio'});
                 })
+            },
+            pideMotivoRechazo() {
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
+            },
+            rechazar() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        if(this.motivo == '') {
+                            swal('¡Error!', 'Debe colocar un motivo para realizar el rechazo.', 'error')
+                        }
+                        else {
+                            return this.$store.dispatch('contratos/solicitud-cambio/rechazar', {
+                                id: this.id,
+                                params:{motivo:this.motivo}
+                            }).then(data => {
+                                $(this.$refs.modal).modal('hide');
+                            }).finally( ()=>{
+                                this.$router.push({name: 'solicitud-cambio'});
+                            });
+                        }
+                    }
+                });
             },
         },
         watch: {

@@ -87,6 +87,24 @@ class SolicitudCambioSubcontrato extends Transaccion
     /**
      * Atributos
      */
+    public function getEstadoLabelAttribute()
+    {
+        switch ($this->estado) {
+            case 0:
+                $color = 'badge-primary';
+                break;
+            case 1:
+                $color = 'badge-success';
+                break;
+            default:
+                $color = 'badge-secondary';
+                break;
+        }
+
+        return ["descripcion"=>$this->estado_descripcion,
+            "color"=>$color];
+
+    }
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
@@ -386,6 +404,24 @@ class SolicitudCambioSubcontrato extends Transaccion
             $this->estado = -1;
             $this->save();
             $this->complemento()->create(["tipo"=>1, "motivo"=>$motivo]);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
+        }
+    }
+
+    public function rechazar($motivo)
+    {
+        if($this->estado != 0){
+            abort(500, "La solicitud debe estar con estado REGISTRADA para que pueda rechazarse, su estado actual es: " . strtoupper($this->estado_descripcion));
+        }
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $this->estado = -2;
+            $this->save();
+            $this->complemento()->create(["tipo"=>3, "motivo"=>$motivo]);
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e){
