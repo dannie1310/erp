@@ -394,6 +394,24 @@ class SolicitudCambioSubcontrato extends Transaccion
         }
     }
 
+    public function rechazar($motivo)
+    {
+        if($this->estado != 0){
+            abort(500, "La solicitud debe estar con estado REGISTRADA para que pueda rechazarse, su estado actual es: " . strtoupper($this->estado_descripcion));
+        }
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $this->estado = -2;
+            $this->save();
+            $this->complemento()->create(["tipo"=>3, "motivo"=>$motivo]);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
+        }
+    }
+
     private function aplicarAditivasDeductivas($partida){
         $originalItemSubcontrato = $this->itemsSubcontratoOriginal->where("id_item",$partida->id_item_subcontrato)->first();
         $diferencia = $originalItemSubcontrato->cantidad - $partida->itemSubcontrato->cantidad;
