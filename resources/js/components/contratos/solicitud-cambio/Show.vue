@@ -11,116 +11,7 @@
                 </div>
             </div>
         </div>
-        <div class="row" v-if="!cargando">
-            <div class="col-md-12">
-				<div class="card">
-                    <div class="card-header">
-						<h6 class="card-title">Información</h6>
-					</div>
-					<div class="card-body">
-                        <div class="row">
-                            <div class="col-md-2">
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Folio:</label>
-                                    <div class="col-md-8">
-                                        {{solicitud_cambio.numero_folio_format}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Fecha:</label>
-                                    <div class="col-md-8">
-                                       {{solicitud_cambio.fecha_format}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Monto:</label>
-                                    <div class="col-md-8">
-                                        {{solicitud_cambio.monto_format}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">IVA:</label>
-                                    <div class="col-md-8">
-                                        {{solicitud_cambio.impuesto_format}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Moneda:</label>
-                                    <div class="col-md-8">
-                                       {{solicitud_cambio.moneda.nombre}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group row">
-                                    <label class="col-md-6 col-form-label">Porcentaje:</label>
-                                    <div class="col-md-6">
-                                       {{ (Number(solicitud_cambio.monto) / Number(solicitud_cambio.subcontrato.monto) * 100).formatMoney(4) }}%
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Registro:</label>
-                                    <div class="col-md-8">
-                                       {{ solicitud_cambio.usuario_registro }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group row">
-                                    <label class="col-md-6 col-form-label">Fecha y Hora de Registro:</label>
-                                    <div class="col-md-6">
-                                       {{ solicitud_cambio.fecha_hora_registro_format }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <template v-if="solicitud_cambio.aplicacion">
-                                <div class="col-md-3">
-                                    <div class="form-group row">
-                                        <label class="col-md-4 col-form-label">Aplicó:</label>
-                                        <div class="col-md-8">
-                                           {{ solicitud_cambio.aplicacion.usuario.nombre }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group row">
-                                        <label class="col-md-6 col-form-label">Fecha y Hora de Aplicación:</label>
-                                        <div class="col-md-6">
-                                           {{ solicitud_cambio.aplicacion.fecha_hora_format }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-
-                        </div>
-					</div>
-                    <div class="card-footer">
-                        <div class="btn-group pull-right">
-                            <router-link  :to="{ name: 'solicitud-cambio-show', params: {id: solicitud_cambio.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-                                <i class="fa fa-eye"></i>
-                            </router-link>
-                            <PDF v-bind:id="solicitud_cambio.id" v-if="$root.can('consultar_solicitud_cambio_subcontrato')"></PDF>
-                            <router-link  :to="{ name: 'solicitud-cambio-documentos', params: {id: solicitud_cambio.id}}" v-if="$root.can('consultar_solicitud_cambio_subcontrato') && $root.can('consultar_archivos_transaccion')" target="_blank" type="button" class="btn btn-sm btn-outline-primary pull-right" title="Ver Documentos">
-                                <i class="fa fa-folder-open"></i>
-                            </router-link>
-                        </div>
-                    </div>
-				</div>
-			</div>
-        </div>
+        <DatosSolicitud v-bind:solicitud_cambio="solicitud_cambio" v-if="!cargando"></DatosSolicitud>
 
         <div class="row" v-if="!cargando">
             <div class="col-md-12">
@@ -303,10 +194,11 @@
 <script>
     import ShowSubcontrato from '../subcontrato/Show';
     import PDFSubcontrato from '../subcontrato/FormatoSubcontrato';
+    import DatosSolicitud from "./partials/DatosSolicitud";
     import PDF from './Formato';
     export default {
         name: "solicitud-cambio-show",
-        components: {ShowSubcontrato,PDFSubcontrato, PDF},
+        components: {ShowSubcontrato,PDFSubcontrato, PDF, DatosSolicitud},
         props: ["id"],
         data() {
             return {
@@ -323,7 +215,7 @@
                 return this.$store.dispatch('contratos/solicitud-cambio/find', {
                     id: this.id,
                     params: {
-                        include: ['moneda', 'empresa', 'partidas.tipo', 'subcontrato', 'partidas.item_subcontrato.contrato', 'aplicacion.usuario']
+                        include: ['moneda', 'empresa', 'partidas.tipo', 'subcontrato', 'partidas.item_subcontrato.contrato', 'complemento.usuario']
                     }
                 }).then(data => {
                     this.solicitud_cambio = data;

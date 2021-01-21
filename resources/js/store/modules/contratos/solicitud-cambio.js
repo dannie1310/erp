@@ -155,11 +155,11 @@ export default {
                 });
             });
         },
-        eliminar(context, payload) {
+        cancelar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Solicitud de Cambio",
-                    text: "¿Está seguro de que desea eliminar esta solicitud de cambio?",
+                    title: "Cancelar Solicitud de Cambio",
+                    text: "¿Está seguro de que desea cancelar esta solicitud de cambio?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -168,7 +168,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Eliminar',
+                            text: 'Si, Cancelar Solicitud',
                             closeModal: false,
                         }
                     }
@@ -176,10 +176,10 @@ export default {
                 .then((value) => {
                     if (value) {
                         axios
-                            .delete(URI + payload.id, {params: payload.params})
+                            .patch(URI + payload.id + '/cancelar',{params: payload.params})
                             .then(r => r.data)
                             .then(data => {
-                                swal("Solicitud de cambio eliminada correctamente", {
+                                swal("Solicitud de cambio cancelada correctamente", {
                                     icon: "success",
                                     timer: 1500,
                                     buttons: false

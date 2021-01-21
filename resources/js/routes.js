@@ -1052,15 +1052,15 @@ export const routes = [
                                 }
                             },
                             {
-                                path: ':id/eliminar',
-                                name: 'solicitud-cambio-delete',
+                                path: ':id/cancelar',
+                                name: 'solicitud-cambio-cancelar',
                                 props: true,
-                                component: require('./components/contratos/solicitud-cambio/Delete').default,
+                                component: require('./components/contratos/solicitud-cambio/Cancelar').default,
                                 meta: {
                                     title: 'Solicitud de Cambio a Subcontrato',
-                                    breadcrumb: {parent: 'convenio-modificatorio', name: 'ELIMINAR'},
+                                    breadcrumb: {parent: 'solicitud-cambio', name: 'CANCELAR'},
                                     middleware: [auth, context, permission],
-                                    permission: 'eliminar_solicitud_cambio_subcontrato'
+                                    permission: 'cancelar_solicitud_cambio_subcontrato'
                                 }
                             },
                             {

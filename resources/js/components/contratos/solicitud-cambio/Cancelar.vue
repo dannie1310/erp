@@ -183,151 +183,177 @@
                        {{solicitud_cambio.observaciones}}
                     </div>
                 </div>
+
+                <div class="form-group row" >
+                    <label class="col-md-2 col-form-label">Motivo de Cancelación:</label>
+                    <div class="col-md-10">
+                        <textarea
+                            name="motivo"
+                            id="motivo"
+                            class="form-control"
+                            v-model="motivo"
+                            v-validate="{required: true}"
+                            data-vv-as="Motivo"
+                            :class="{'is-invalid': errors.has('motivo')}"
+                        ></textarea>
+                    </div>
+                </div>
 			</div>
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
-                <button type="button" class="btn btn-danger" v-on:click="aplicar"><i class="fa fa-thumbs-o-up"></i>Aplicar</button>
+                <button type="button" class="btn btn-danger" v-on:click="cancelar" :disabled="errors.count() > 0 || motivo == ''"><i class="fa fa-ban"></i>Cancelar</button>
             </div>
         </div>
     </span>
 </template>
 
 <script>
-    import ShowSubcontrato from '../subcontrato/Show';
-    import PDFSubcontrato from '../subcontrato/FormatoSubcontrato';
-    import PDF from './Formato';
-    import DatosSolicitud from "./partials/DatosSolicitud";
-    export default {
-        name: "solicitud-cambio-show",
-        components: {PDF, ShowSubcontrato, PDFSubcontrato, DatosSolicitud},
-        props: ["id"],
-        data() {
-            return {
-                cargando: true,
-                columnas: [],
-                solicitud_cambio: [],
-            };
+import ShowSubcontrato from '../subcontrato/Show';
+import PDFSubcontrato from '../subcontrato/FormatoSubcontrato';
+import PDF from './Formato';
+import DatosSolicitud from "./partials/DatosSolicitud";
+export default {
+    name: "solicitud-cambio-cancelar",
+    components: {DatosSolicitud, PDF, ShowSubcontrato, PDFSubcontrato},
+    props: ["id"],
+    data() {
+        return {
+            cargando: true,
+            columnas: [],
+            solicitud_cambio: [],
+            motivo:''
+        };
+    },
+    mounted() {
+        this.find();
+    },
+    methods: {
+        find() {
+            return this.$store.dispatch('contratos/solicitud-cambio/find', {
+                id: this.id,
+                params: {
+                    include: ['moneda', 'empresa', 'partidas.tipo', 'subcontrato', 'partidas.item_subcontrato.contrato', 'complemento.usuario']
+                }
+            }).then(data => {
+                this.solicitud_cambio = data;
+            }).finally(() => {
+                this.cargando = false;
+            })
         },
-        mounted() {
-            this.find();
+        regresar() {
+            this.$router.push({name: 'solicitud-cambio'});
         },
-        methods: {
-            find() {
-                return this.$store.dispatch('contratos/solicitud-cambio/find', {
-                    id: this.id,
-                    params: {
-                        include: ['moneda', 'empresa', 'partidas.tipo', 'subcontrato', 'partidas.item_subcontrato.contrato', 'complemento.usuario']
+        cancelar() {
+            this.$validator.validate().then(result => {
+                if (result) {
+                    if(this.motivo == '') {
+                        swal('¡Error!', 'Debe colocar un motivo para realizar la cancelación.', 'error')
                     }
-                }).then(data => {
-                    this.solicitud_cambio = data;
-                }).finally(() => {
-                    this.cargando = false;
-                })
-            },
-            regresar() {
-                this.$router.push({name: 'solicitud-cambio'});
-            },
-            aplicar() {
-                return this.$store.dispatch('contratos/solicitud-cambio/aplicar', {
-                    id: this.id
-                }).then(data => {
-                    this.$router.push({name: 'solicitud-cambio'});
-                })
-            },
+                    else {
+                        return this.$store.dispatch('contratos/solicitud-cambio/cancelar', {
+                            id: this.id,
+                            params:{motivo:this.motivo}
+                        }).then(data => {
+                            this.$router.push({name: 'solicitud-cambio'});
+                        })
+                    }
+                }
+            });
         },
-        watch: {
-            columnas(val) {
-                $('.contratado').css('display', 'none');
-                $('.avance-volumen').css('display', 'none');
-                $('.avance-importe').css('display', 'none');
-                $('.saldo').css('display', 'none');
-                $('.destino').css('display', 'none');
+    },
+    watch: {
+        columnas(val) {
+            $('.contratado').css('display', 'none');
+            $('.avance-volumen').css('display', 'none');
+            $('.avance-importe').css('display', 'none');
+            $('.saldo').css('display', 'none');
+            $('.destino').css('display', 'none');
 
-                val.forEach(v => {
-                    $('.' + v).removeAttr('style')
-                })
-            },
-        }
+            val.forEach(v => {
+                $('.' + v).removeAttr('style')
+            })
+        },
     }
+}
 </script>
 
 <style scoped>
-    table#tabla-conceptos {
-        word-wrap: unset;
-        width: 100%;
-        background-color: white;
-        border-color: transparent;
-        border-collapse: collapse;
-        clear: both;
-    }
+table#tabla-conceptos {
+    word-wrap: unset;
+    width: 100%;
+    background-color: white;
+    border-color: transparent;
+    border-collapse: collapse;
+    clear: both;
+}
 
-    table thead th
-    {
-        padding: 0.2em;
-        border: 1px solid #666;
-        background-color: #333;
-        color: white;
-        font-weight: normal;
-        overflow: hidden;
-        text-align: center;
-    }
+table thead th
+{
+    padding: 0.2em;
+    border: 1px solid #666;
+    background-color: #333;
+    color: white;
+    font-weight: normal;
+    overflow: hidden;
+    text-align: center;
+}
 
-    table thead th {
-        text-align: center;
-    }
-    table tbody tr
-    {
-        border-width: 0 1px 1px 1px;
-        border-style: none solid solid solid;
-        border-color: white #CCCCCC #CCCCCC #CCCCCC;
-    }
-    table tbody td,
-    table tbody th
-    {
-        border-right: 1px solid #ccc;
-        color: #242424;
-        line-height: 20px;
-        overflow: hidden;
-        padding: 1px 5px;
-        text-align: left;
-        text-overflow: ellipsis;
-        -o-text-overflow: ellipsis;
-        -ms-text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+table thead th {
+    text-align: center;
+}
+table tbody tr
+{
+    border-width: 0 1px 1px 1px;
+    border-style: none solid solid solid;
+    border-color: white #CCCCCC #CCCCCC #CCCCCC;
+}
+table tbody td,
+table tbody th
+{
+    border-right: 1px solid #ccc;
+    color: #242424;
+    line-height: 20px;
+    overflow: hidden;
+    padding: 1px 5px;
+    text-align: left;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
-    table col.clave { width: 120px; }
-    table col.icon { width: 25px; }
-    table col.monto { width: 115px; }
-    table col.pct { width: 60px; }
-    table col.unidad { width: 80px; }
-    table col.clave  {width: 100px; }
+table col.clave { width: 120px; }
+table col.icon { width: 25px; }
+table col.monto { width: 115px; }
+table col.pct { width: 60px; }
+table col.unidad { width: 80px; }
+table col.clave  {width: 100px; }
 
-    table tbody td input.text
-    {
-        border: none;
-        padding: 0;
-        margin: 0;
-        width: 100%;
-        background-color: transparent;
-        font-family: inherit;
-        font-size: inherit;
-        font-weight: bold;
-    }
+table tbody td input.text
+{
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+}
 
-    table tbody .numerico
-    {
-        text-align: right;
-        padding-left: 0;
-        white-space: normal;
-    }
+table tbody .numerico
+{
+    text-align: right;
+    padding-left: 0;
+    white-space: normal;
+}
 
-    .text.is-invalid {
-        color: #dc3545;
-    }
+.text.is-invalid {
+    color: #dc3545;
+}
 
-    table tbody td input.text {
-        text-align: right;
-    }
+table tbody td input.text {
+    text-align: right;
+}
 </style>

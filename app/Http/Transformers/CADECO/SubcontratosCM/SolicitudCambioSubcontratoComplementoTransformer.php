@@ -6,11 +6,11 @@ namespace App\Http\Transformers\CADECO\SubcontratosCM;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\SubcontratosCM\Partida;
-use App\Models\CADECO\SubcontratosCM\SolicitudAplicada;
+use App\Models\CADECO\SubcontratosCM\SolicitudCambioSubcontratoComplemento;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoPartidaTransformer as ItemSubcontratoTransformer;
 
-class SolicitudAplicadaTransformer extends TransformerAbstract
+class SolicitudCambioSubcontratoComplementoTransformer extends TransformerAbstract
 {
     /**
      * @var string[]
@@ -19,16 +19,18 @@ class SolicitudAplicadaTransformer extends TransformerAbstract
         'usuario'
     ];
 
-    public function transform(SolicitudAplicada $model)
+    public function transform(SolicitudCambioSubcontratoComplemento $model)
     {
         return [
             'id' => $model->getKey(),
             'fecha_hora_format' => $model->fecha_hora_format,
-            'fecha_hora' => $model->fecha_aplicacion,
+            'fecha_hora' => $model->fecha,
+            'tipo'=>$model->tipo,
+            'motivo'=>$model->motivo
         ];
     }
 
-    public function includeUsuario(SolicitudAplicada $model) {
+    public function includeUsuario(SolicitudCambioSubcontratoComplemento $model) {
         if ($item = $model->usuario) {
             return $this->item($item, new UsuarioTransformer);
         }

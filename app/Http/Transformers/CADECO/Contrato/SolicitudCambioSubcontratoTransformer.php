@@ -7,7 +7,7 @@ use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\SubcontratosCM\PartidaTransformer;
-use App\Http\Transformers\CADECO\SubcontratosCM\SolicitudAplicadaTransformer;
+use App\Http\Transformers\CADECO\SubcontratosCM\SolicitudCambioSubcontratoComplementoTransformer;
 use App\Models\CADECO\SolicitudCambioSubcontrato;
 use App\Models\CADECO\Subcontrato;
 use League\Fractal\TransformerAbstract;
@@ -26,7 +26,7 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
         'empresa',
         'moneda',
         'tipo',
-        'aplicacion'
+        'complemento'
     ];
 
     /**
@@ -114,10 +114,10 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
         return null;
     }
 
-    public function includeAplicacion(SolicitudCambioSubcontrato $model)
+    public function includeComplemento(SolicitudCambioSubcontrato $model)
     {
-        if ($item = $model->aplicacion) {
-            return $this->item($item, new SolicitudAplicadaTransformer);
+        if ($item = $model->complemento) {
+            return $this->item($item, new SolicitudCambioSubcontratoComplementoTransformer);
         }
         return null;
 

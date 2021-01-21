@@ -7,19 +7,22 @@ namespace App\Models\CADECO\SubcontratosCM;
 use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contrato;
 use App\Models\CADECO\ItemSubcontrato;
+use App\Models\CADECO\SolicitudCambioSubcontrato;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
-class SolicitudAplicada extends Model
+class SolicitudCambioSubcontratoComplemento extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'SubcontratosCM.solicitudes_aplicadas';
+    protected $table = 'SubcontratosCM.solicitudes_complemento';
     public $timestamps = false;
 
     protected $fillable = [
         'id_solicitud',
-        'fecha_aplicacion',
-        'usuario_aplico',
+        'fecha',
+        'id_usuario',
+        'tipo',
+        'motivo'
     ];
 
     public function solicitud()
@@ -28,12 +31,12 @@ class SolicitudAplicada extends Model
     }
 
     public function usuario(){
-        return $this->belongsTo(Usuario::class, 'usuario_aplico', 'idusuario');
+        return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 
     public function getFechaHoraFormatAttribute()
     {
-        $date = date_create($this->fecha_aplicacion);
+        $date = date_create($this->fecha);
         return date_format($date,"d/m/Y H:i");
     }
 

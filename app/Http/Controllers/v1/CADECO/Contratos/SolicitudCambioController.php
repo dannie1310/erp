@@ -43,4 +43,10 @@ class SolicitudCambioController extends Controller
         $respuesta = $this->service->show($id)->aplicar();
         return $this->respondWithItem($respuesta);
     }
+
+    public function cancelar($id,Request $request)
+    {
+        $respuesta = $this->service->show($id)->cancelar($request->params["motivo"]);
+        return $this->respondWithItem($respuesta);
+    }
 }
