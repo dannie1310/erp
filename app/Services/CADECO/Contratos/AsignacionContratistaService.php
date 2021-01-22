@@ -8,6 +8,8 @@
 
 namespace App\Services\CADECO\Contratos;
 
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\PresupuestoContratista;
 use Exception;
 use App\Facades\Context;
 use App\Repositories\Repository;
@@ -38,17 +40,39 @@ class AsignacionContratistaService
 
     public function paginate($data)
     {
-        $asignaciones = $this->repository;
+        if (isset($data['fecha_hora_registro'])) {
+            $this->repository->whereBetween( ['fecha_hora_registro', [ request( 'fecha_hora_registro' )." 00:00:00",request( 'fecha_hora_registro' )." 23:59:59"]] );
+        }
 
-        if(isset($data['busqueda'])){
-            $contratos = ContratoProyectado::where('numero_folio', 'LIKE', '%'.$data['busqueda'].'%')->
-                                            orWhere('referencia', 'LIKE','%'.$data['busqueda'].'%' )->get();
+        if(isset($data['numero_folio'])){
+            $this->repository->where([['id_asignacion', 'LIKE', '%'.$data['numero_folio'].'%']]);
+        }
 
-            foreach ($contratos as $e){
-                $asignaciones = $asignaciones->whereOr([['id_transaccion', '=', $e->id_transaccion]]);
+        if(isset($data['numero_folio_cp'])){
+            $contrato_proyectado = ContratoProyectado::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio_cp'].'%']])->pluck("id_transaccion");
+            $this->repository->whereIn(['id_transaccion',  $contrato_proyectado]);
+        }
+
+        if (isset($data['estado'])) {
+            if (strpos('REGISTRADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 1]]);
+            }else if (strpos('APLICADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 2]]);
             }
         }
-        return $asignaciones->paginate($data);
+
+        if(isset($data['referencia_cp'])){
+            $contrato_proyectado = ContratoProyectado::query()->where([['referencia', 'LIKE', '%'.$data['referencia_cp'].'%']])->pluck("id_transaccion");
+            $this->repository->whereIn(['id_transaccion',  $contrato_proyectado]);
+        }
+
+        if(isset($data['contratistas'])){
+            $empresas = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['contratistas'].'%']])->pluck("id_empresa");
+            $presupuestos = PresupuestoContratista::whereIn("id_empresa", $empresas)->pluck("id_transaccion");
+            $asignaciones = AsignacionContratistaPartida::whereIn("id_transaccion",$presupuestos)->pluck("id_asignacion");
+            $this->repository->whereIn(['id_asignacion', $asignaciones]);
+        }
+        return $this->repository->paginate($data);
     }
 
     public function show($id)

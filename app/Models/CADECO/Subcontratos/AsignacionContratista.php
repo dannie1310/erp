@@ -53,9 +53,10 @@ class AsignacionContratista extends Model
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
     }
 
-    public function presupuestoContratista()
+    public function presupuestosContratista()
     {
-        return $this->belongsTo(PresupuestoContratista::class, 'id_transaccion', 'id_antecedente');
+        return $this->hasManyThrough(PresupuestoContratista::class,AsignacionContratistaPartida::class, 'id_asignacion', 'id_transaccion','id_asignacion','id_transaccion')
+            ->distinct();
     }
 
     public function asignacionEliminada()
@@ -225,6 +226,15 @@ class AsignacionContratista extends Model
             $id_cotizacion_optima = null;
         }
         return $array;
+    }
+
+    public function getContratistasStrAttribute(){
+        $razones_sociales = [];
+        foreach($this->presupuestosContratista as $presupuesto){
+            $razones_sociales [] = $presupuesto->empresa->razon_social;
+
+        }
+        return implode(" / ",$razones_sociales);
     }
 
     /**

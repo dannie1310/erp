@@ -80,10 +80,10 @@ class PresupuestoContratista extends Transaccion
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 
-    public function asignacion()
+    /*public function asignacion()
     {
-        return $this->hasOne(AsignacionSubcontratoPartidas::class, 'id_transaccion');
-    }
+        return $this->hasOne(AsignacionContratistaPartida::class, 'id_transaccion');
+    }*/
 
     public function empresa()
     {

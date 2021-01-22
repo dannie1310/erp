@@ -44,7 +44,7 @@
                     { title: 'Subtotal', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: false },
                     { title: 'IVA', field: 'impuesto', tdClass: 'money', thClass: 'th_money', sortable: true },
                     { title: 'Total', field: 'monto', tdClass: 'money', thClass: 'th_money', sortable: true },
-                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estado', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],

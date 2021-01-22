@@ -47,7 +47,7 @@ export default {
                 { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../globals/th-Filter').default },
                 { title: 'Contratista', field: 'contratista',  sortable: false, thComp: require('../../globals/th-Filter').default,  },
                 { title: 'Total', field: 'total', tdClass: 'money', thClass: 'th_money', sortable: true },
-                { title: 'Estatus', field: 'estado', sortable: false, thComp: require('../../globals/th-Filter').default, tdComp: require('../../globals/EstatusLabel').default},
+                { title: 'Estado', field: 'estado', sortable: false, thComp: require('../../globals/th-Filter').default, tdComp: require('../../globals/EstatusLabel').default},
                 { title: 'Acciones', field: 'buttons', thClass: 'th_c150',  tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],

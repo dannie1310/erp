@@ -45,10 +45,8 @@ class PresupuestoContratistaService
          }
 
          if(isset($data['numero_folio_cp'])){
-             $contrato_proyectado = ContratoProyectado::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio_cp'].'%']])->get();
-             foreach ($contrato_proyectado as $e){
-                 $this->repository->whereOr([['id_antecedente', '=', $e->id_transaccion]]);
-             }
+             $contrato_proyectado = ContratoProyectado::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio_cp'].'%']])->pluck("id_transaccion");
+             $this->repository->whereIn(['id_antecedente',  $contrato_proyectado]);
          }
 
          if (isset($data['estado'])) {

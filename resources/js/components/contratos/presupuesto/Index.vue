@@ -44,7 +44,7 @@
                     { title: 'Referencia Contrato Proyectado ', field: 'referencia_cp', sortable: false, thComp: require('../../globals/th-Filter').default },
                     { title: 'Contratista', field: 'contratista', sortable: false, thComp: require('../../globals/th-Filter').default },
                     { title: 'Monto', field: 'monto', tdClass: ['th_money', 'text-right'], sortable: true, thComp: require('../../globals/th-Filter').default },
-                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default, thComp: require('../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
