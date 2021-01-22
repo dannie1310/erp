@@ -4,6 +4,8 @@
 namespace App\Services\CADECO\Contratos;
 
 use App\Imports\PresupuestoImport;
+use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\Empresa;
 use App\Models\CADECO\PresupuestoContratista;
 use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 use App\Repositories\CADECO\PresupuestoContratista\Repository;
@@ -30,6 +32,46 @@ class PresupuestoContratistaService
 
      public function paginate($data)
      {
+         if (isset($data['fecha'])) {
+             $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+         }
+
+         if(isset($data['numero_folio'])){
+             $this->repository->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+         }
+
+         if(isset($data['monto'])){
+             $this->repository->where([['monto', '=', $data['total']]]);
+         }
+
+         if(isset($data['numero_folio_cp'])){
+             $contrato_proyectado = ContratoProyectado::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio_cp'].'%']])->get();
+             foreach ($contrato_proyectado as $e){
+                 $this->repository->whereOr([['id_antecedente', '=', $e->id_transaccion]]);
+             }
+         }
+
+         if (isset($data['estado'])) {
+             if (strpos('PRECIOS PENDIENTES', strtoupper($data['estado'])) !== FALSE) {
+                 $this->repository->where([['estado', '=', 0]]);
+             }
+             else if (strpos('REGISTRADA', strtoupper($data['estado'])) !== FALSE) {
+                 $this->repository->where([['estado', '=', 1]]);
+             }else if (strpos('EN ASIGNACION', strtoupper($data['estado'])) !== FALSE) {
+                 $this->repository->where([['estado', '=', 2]]);
+             }
+         }
+
+         if(isset($data['referencia_cp'])){
+             $contrato_proyectado = ContratoProyectado::query()->where([['referencia', 'LIKE', '%'.$data['referencia_cp'].'%']])->pluck("id_transaccion");
+             $this->repository->whereIn(['id_antecedente',  $contrato_proyectado]);
+
+         }
+
+         if(isset($data['contratista'])){
+             $empresa = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['contratista'].'%']])->pluck("id_empresa");
+             $this->repository->whereIn(['id_empresa', $empresa]);
+         }
          return $this->repository->paginate($data);
      }
 
