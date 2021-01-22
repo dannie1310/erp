@@ -47,7 +47,7 @@ export default {
                 { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../globals/th-Filter').default },
                 { title: 'Contratista', field: 'contratista',  sortable: false, thComp: require('../../globals/th-Filter').default,  },
                 { title: 'Total', field: 'total', tdClass: 'money', thClass: 'th_money', sortable: true },
-                { title: 'Estatus', field: 'estado', sortable: false, thComp: require('../../globals/th-Filter').default},
+                { title: 'Estatus', field: 'estado', sortable: false, thComp: require('../../globals/th-Filter').default, tdComp: require('../../globals/EstatusLabel').default},
                 { title: 'Acciones', field: 'buttons', thClass: 'th_c150',  tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
@@ -108,7 +108,7 @@ export default {
                     referencia_subcontrato: solicitud_cambio.subcontrato.referencia,
                     observaciones: solicitud_cambio.observaciones,
                     contratista: solicitud_cambio.subcontrato.empresa.razon_social,
-                    estado: solicitud_cambio.estado_descripcion,
+                    estado: solicitud_cambio.estado_label,
                     total: solicitud_cambio.monto_format,
                     buttons: $.extend({}, {
                         id: solicitud_cambio.id,
