@@ -148,6 +148,17 @@ class ContratoProyectadoService
             }
 
         }
+        if (isset($data['fecha'])) {
+            $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
+
+        if(isset($data['numero_folio'])){
+            $this->repository->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+        }
+
+        if(isset($data['referencia'])){
+            $this->repository->where([['referencia', 'LIKE', '%'.$data['referencia'].'%']]);
+        }
         return $this->repository->paginate();
     }
 

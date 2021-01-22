@@ -30,10 +30,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', sortable: true },
                     { title: 'Área Subcontratante', field: 'id_area_subcontratante',thComp: require('../../globals/th-Filter').default, sortable: false },
-                    { title: 'Fecha', field: 'fecha', sortable: true },
-                    { title: 'Referencia', field: 'referencia', sortable: false },
+                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default },
                     { title: 'Acciones', field: 'buttons', thClass: 'th_c150',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
