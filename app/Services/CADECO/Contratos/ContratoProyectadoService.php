@@ -132,20 +132,10 @@ class ContratoProyectadoService
 
     public function paginate($data)
     {
-        $cp_area = new AreaSubcontratante();
-        $cp = $this->repository;
-
-        if(isset($data['id_area_subcontratante'])){
-            $area = TipoAreaSubcontratante::where([['descripcion', 'LIKE', '%'.request('id_area_subcontratante').'%']])->get();
-
-            foreach ($area as $e){
-                if(isset($e->id)){
-                    $cp_areas = $cp_area::where([['id_area_subcontratante', '=', $e->id]])->get();
-                    foreach ($cp_areas as $et){
-                        $cp = $cp->whereOr([['id_transaccion', '=', $et->id_transaccion]]);
-                    }
-                }
-            }
+       if(isset($data['id_area_subcontratante'])){
+            $areas = TipoAreaSubcontratante::where([['descripcion', 'LIKE', '%'.request('id_area_subcontratante').'%']])->pluck("id");
+            $cp_areas = AreaSubcontratante::whereIn('id_area_subcontratante',  $areas)->pluck("id_transaccion");
+            $this->repository->whereIn(['id_transaccion', $cp_areas]);
 
         }
         if (isset($data['fecha'])) {
