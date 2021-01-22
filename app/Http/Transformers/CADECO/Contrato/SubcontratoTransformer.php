@@ -36,7 +36,8 @@ class SubcontratoTransformer extends TransformerAbstract
         'relaciones',
         'costo',
         'partidas_convenio',
-        'obra'
+        'obra',
+        'contrato_proyectado',
     ];
 
     /**
@@ -195,6 +196,21 @@ class SubcontratoTransformer extends TransformerAbstract
         if($obra = $model->obra)
         {
             return $this->item($obra, new ObraTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include ContratoProyectado
+     *
+     * @param PresupuestoContratista $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeContratoProyectado(Subcontrato $model)
+    {
+        if($contrato = $model->contratoProyectado)
+        {
+            return $this->item($contrato, new ContratoProyectadoTransformer);
         }
         return null;
     }
