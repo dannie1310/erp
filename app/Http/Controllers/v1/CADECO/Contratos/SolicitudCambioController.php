@@ -18,9 +18,10 @@ class SolicitudCambioController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        /*$this->middleware('permiso:consultar_solicitud_cambio')->only(['index','paginate','find','show', 'pdf']);
-        $this->middleware('permiso:registrar_solicitud_cambio')->only(['store']);
-        $this->middleware('permiso:eliminar_solicitud_cambio')->only('destroy');*/
+        $this->middleware('permiso:consultar_solicitud_cambio_subcontrato')->only(['index','paginate','find','show', 'pdf']);
+        $this->middleware('permiso:registrar_solicitud_cambio_subcontrato')->only(['registrar']);
+        $this->middleware('permiso:cancelar_solicitud_cambio_subcontrato')->only('cancelar');
+        $this->middleware('permiso:aplicar_solicitud_cambio_subcontrato')->only(['aplicar','rechazar']);
 
         $this->service = $service;
         $this->fractal = $fractal;
