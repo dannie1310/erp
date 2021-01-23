@@ -81,7 +81,8 @@ class EstimacionTransformer extends TransformerAbstract
             'monto_pagar' => $model->monto_a_pagar,
             'monto_pagar_format' => $model->monto_a_pagar_format,
             'suma_penalizaciones' => $model->suma_penalizaciones_format,
-            'suma_penalizaciones_liberadas' => $model->suma_penalizaciones_liberadas_format
+            'suma_penalizaciones_liberadas' => $model->suma_penalizaciones_liberadas_format,
+            'consecutivo' => $model->subcontratoEstimacion->folio_consecutivo_format
         ];
     }
 
