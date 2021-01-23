@@ -20,13 +20,15 @@ class ContratoProyectadoTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'areasSubcontratantes',
         'conceptos',
-        'relaciones'
+        'relaciones',
+        'contratos'
     ];
     public function transform(ContratoProyectado $model)
     {
         return [
             'id' => $model->getKey(),
             'numeroFolio' => $model->numero_folio,
+            'fecha_format' => $model->fecha_format,
             'numero_folio_format' => $model->numero_folio_format,
             'fecha' => $model->fecha_format,
             'fecha_date' => $model->fecha,
@@ -34,7 +36,10 @@ class ContratoProyectadoTransformer extends TransformerAbstract
             'area_subcontratante' => ($model->areaSubcontratante) ? $model->areaSubcontratante->tipoAreaSubcontratante->descripcion : 'Sin Área Subcontratante Asignada',
             'usuario' => ($model->areaSubcontratante) ? $model->areaSubcontratante->nombre_completo : '-------------',
             'cumplimiento' => $model->cumplimiento,
-            'vencimiento' => date_format(new DateTime($model->vencimiento), 'Y-m-d')
+            'vencimiento' => date_format(new DateTime($model->vencimiento), 'Y-m-d'),
+            'observaciones'=>$model->observaciones_format,
+            'fecha_hora_registro_format' => $model->fecha_hora_registro_format,
+            'usuario_registro' => $model->usuario_registro,
         ];
     }
 
@@ -59,6 +64,19 @@ class ContratoProyectadoTransformer extends TransformerAbstract
         if($concepto = $model->conceptos)
         {
             return $this->collection($concepto, new ContratoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param ContratoProyectado $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeContratos(ContratoProyectado $model)
+    {
+        if($items = $model->contratos)
+        {
+            return $this->collection($items, new ContratoTransformer);
         }
         return null;
     }
