@@ -807,6 +807,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id',
+                                name: 'presupuesto-show',
+                                component: require('./components/contratos/presupuesto/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Presupuesto Contratista',
+                                    breadcrumb: { parent: 'presupuesto', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_presupuesto_contratista'
+                                }
+                            },
+                            {
                                 path: 'create',
                                 name: 'presupuesto-create',
                                 component: require('./components/contratos/presupuesto/Create').default,

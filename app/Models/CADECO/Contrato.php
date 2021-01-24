@@ -50,6 +50,10 @@ class Contrato extends Model
         return $this->hasMany(AsignacionContratistaPartida::class, 'id_concepto', 'id_concepto');
     }
 
+    public function partidasPresupuesto(){
+        return $this->hasMany(PresupuestoContratistaPartida::class, 'id_concepto', 'id_concepto');
+    }
+
     public function scopeAgrupadorExtraordinario($query){
        return $query->where("nodo_extraordinarios",1);
     }
