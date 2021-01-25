@@ -1,6 +1,5 @@
 <template>
     <div class="btn-group">
-        <Show v-bind:id="value.id"></Show>
         <router-link  :to="{ name: 'presupuesto-show', params: {id: value.id}}" v-if="$root.can('consultar_presupuesto_contratista')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </router-link>

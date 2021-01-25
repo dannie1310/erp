@@ -179,4 +179,83 @@ class PresupuestoContratistaPartida extends Model
                 break;
         }
     }
+
+    public function getPorcentajeDescuentoFormatAttribute()
+    {
+        return number_format($this->PorcentajeDescuento, "2",".","")." %";
+    }
+
+    public function getPrecioUnitarioAntesDescuentoAttribute()
+    {
+        switch ($this->IdMoneda) {
+            case(1):
+                return $this->precio_unitario;
+                break;
+            case(2):
+                return $this->precio_unitario / $this->presupuesto->dolar;
+                break;
+            case(3):
+                return $this->precio_unitario / $this->presupuesto->euro;
+                break;
+            case(4):
+                return $this->precio_unitario / $this->presupuesto->libra;
+                break;
+        }
+    }
+
+    public function getPrecioUnitarioAntesDescuentoFormatAttribute()
+    {
+        return "$".number_format($this->precio_unitario_antes_descuento, 2, '.', ',');
+    }
+
+    public function getTotalAntesDescuentoAttribute()
+    {
+        return $this->precio_unitario_antes_descuento * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function getTotalAntesDescuentoFormatAttribute()
+    {
+        return "$".number_format($this->total_antes_descuento, 2, '.', ',');
+    }
+
+    public function getPrecioUnitarioDespuesDescuentoAttribute()
+    {
+        return $this->precio_unitario_antes_descuento -($this->precio_unitario_antes_descuento * $this->PorcentajeDescuento / 100) ;
+    }
+
+    public function getPrecioUnitarioDespuesDescuentoFormatAttribute()
+    {
+        return "$".number_format($this->precio_unitario_despues_descuento, 2, '.', ',');
+    }
+
+    public function getTotalDespuesDescuentoAttribute()
+    {
+        return $this->precio_unitario_despues_descuento * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function getTotalDespuesDescuentoFormatAttribute()
+    {
+        return "$".number_format($this->total_despues_descuento, 2, '.', ',');
+    }
+
+    public function getPrecioUnitarioDespuesDescuentoMCAttribute()
+    {
+        return $this->precio_unitario -($this->precio_unitario * $this->PorcentajeDescuento / 100) ;
+    }
+
+    public function getPrecioUnitarioDespuesDescuentoMCFormatAttribute()
+    {
+        return "$".number_format($this->precio_unitario_despues_descuento_mc, 2, '.', ',');
+    }
+
+    public function getTotalDespuesDescuentoMCAttribute()
+    {
+        return $this->precio_unitario_despues_descuento_mc * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function getTotalDespuesDescuentoMCFormatAttribute()
+    {
+        return "$".number_format($this->total_despues_descuento_mc, 2, '.', ',');
+    }
+
 }

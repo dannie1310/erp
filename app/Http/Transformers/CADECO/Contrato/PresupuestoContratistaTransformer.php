@@ -4,6 +4,7 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
+use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
@@ -23,7 +24,8 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         'partidas',
         'sucursal',
         'usuario',
-        'relaciones'
+        'relaciones',
+        'contratos'
     ];
 
     public function transform(PresupuestoContratista $model)
@@ -49,7 +51,10 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'anticipo' => $model->anticipo,
             'dias_credito' => $model->DiasCredito,
             'dias_vigencia' => $model->DiasVigencia,
-            'observaciones' => $model->observaciones
+            'observaciones' => $model->observaciones,
+            'con_descuento_partidas' =>$model->con_descuento_partidas,
+            'con_moneda_extranjera' => $model->con_moneda_extranjera,
+            'con_observaciones_partidas' => $model->con_observaciones_partidas
         ];
     }
 
@@ -139,6 +144,15 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         if($relaciones = $model->relaciones)
         {
             return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
+
+    public function includeContratos(PresupuestoContratista $model)
+    {
+        if($partidas = $model->contratos)
+        {
+            return $this->collection($partidas, new ContratoTransformer);
         }
         return null;
     }

@@ -12,25 +12,73 @@
             </div>
         </div>
         <div class="card" v-else>
-            <div class="card-body">
+            <div class="card-body table-responsive">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="invoice p-3 mb-3">
+                            <div class="row col-md-12">
+                                <div class="col-md-6">
+                                    <h5>Folio: &nbsp; <b>{{presupuesto.numero_folio}}</b></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive col-md-12">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td class="bg-gray-light" align="center" colspan="8"><b>{{(presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----'}}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-gray-light"><b>Sucursal:</b></td>
+                                            <td class="bg-gray-light">{{(presupuesto.sucursal) ? presupuesto.sucursal.descripcion : '------ Sin Sucursal ------'}}</td>
+                                            <td class="bg-gray-light"><b>ToTC USD:</b></td>
+                                            <td class="bg-gray-light">{{presupuesto.tc_usd_format}}</td>
+                                            <td class="bg-gray-light"><b>ToTC EURO:</b></td>
+                                            <td class="bg-gray-light">{{presupuesto.tc_euro_format}}</td>
+                                            <td class="bg-gray-light"><b>ToTC LIBRA:</b></td>
+                                            <td class="bg-gray-light">{{presupuesto.tc_libra_format}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-gray-light"><b>Direccion:</b></td>
+                                            <td class="bg-gray-light" colspan="3">{{(presupuesto.sucursal) ? presupuesto.sucursal.direccion : '------------------------------'}}</td>
+                                            <td class="bg-gray-light"><b>Fecha:</b></td>
+                                            <td class="bg-gray-light">{{presupuesto.fecha_format}}</td>
+                                            <td class="bg-gray-light"><b>Importe:</b></td>
+                                            <td class="bg-gray-light">{{'$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',',')}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
                 <div class="row" >
-                    <div class="col-md-12">
+                    <div class="col-md-12 table-responsive">
                         <table id="tabla-conceptos" >
                             <thead>
                                 <tr>
-                                    <th rowspan="2">#</th>
-                                    <th rowspan="2">Clave</th>
-                                    <th rowspan="2">Concepto</th>
-                                    <th rowspan="2">UM</th>
-                                    <th  class="contratado">Cantidad</th>
-                                    <th class="destino"></th>
-                                </tr>
-                                <tr>
-                                    <th  class="contratado">Solicitada</th>
+                                    <th >#</th>
+                                    <th >Clave</th>
+                                    <th >Concepto</th>
+                                    <th >UM</th>
+                                    <th  class="contratado">Cantidad Solicitada</th>
+
+                                    <th  class="contratado">Cantidad Autorizada</th>
+                                    <th  v-if="presupuesto.con_descuento_partidas">PU antes descuento</th>
+                                    <th  v-if="presupuesto.con_descuento_partidas">Total antes descuento</th>
+                                    <th  v-if="presupuesto.con_descuento_partidas">% Descuento</th>
+                                    <th  >PU</th>
+                                    <th  >Total</th>
+                                    <th  v-if="presupuesto.con_moneda_extranjera">Moneda</th>
+                                    <th  v-if="presupuesto.con_moneda_extranjera">PU Moneda Conversión</th>
+                                    <th  v-if="presupuesto.con_moneda_extranjera">Total Moneda Conversión</th>
+                                    <th  v-if="presupuesto.con_observaciones_partidas">Observaciones</th>
+
                                     <th class="destino">Destino</th>
                                 </tr>
+
                             </thead>
-                            <tbody v-for="(concepto, i) in presupuesto.contrato_proyectado.contratos.data">
+                            <tbody v-for="(concepto, i) in presupuesto.contratos.data">
                                 <tr v-if="concepto.unidad == null">
                                     <td >{{i + 1}}</td>
                                     <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
@@ -40,6 +88,18 @@
                                     </td>
                                     <td></td>
                                     <td></td>
+
+                                    <td></td>
+                                    <td v-if="presupuesto.con_descuento_partidas"></td>
+                                    <td v-if="presupuesto.con_descuento_partidas"></td>
+                                    <td v-if="presupuesto.con_descuento_partidas"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td v-if="presupuesto.con_moneda_extranjera"></td>
+                                    <td v-if="presupuesto.con_moneda_extranjera"></td>
+                                    <td v-if="presupuesto.con_moneda_extranjera"></td>
+                                    <td v-if="presupuesto.con_observaciones_partidas"></td>
+
                                     <td></td>
                                 </tr>
                                 <tr v-else>
@@ -51,50 +111,23 @@
                                     </td>
                                     <td >{{concepto.unidad}}</td>
                                     <td class="numerico">{{concepto.cantidad_original_format}}</td>
+
+                                    <td class="numerico">{{concepto.cantidad_presupuestada_format}}</td>
+                                    <td class="numerico" v-if="presupuesto.con_descuento_partidas">{{concepto.presupuesto.precio_unitario_antes_descuento_format}}</td>
+                                    <td class="numerico" v-if="presupuesto.con_descuento_partidas">{{concepto.presupuesto.total_antes_descuento_format}}</td>
+                                    <td class="numerico" v-if="presupuesto.con_descuento_partidas">{{concepto.presupuesto.descuento_format}}</td>
+                                    <td class="numerico">{{concepto.presupuesto.precio_unitario_despues_descuento_format}}</td>
+                                    <td class="numerico">{{concepto.presupuesto.total_despues_descuento_format}}</td>
+                                    <td v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.moneda.nombre}}</td>
+                                    <td class="numerico" v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.precio_unitario_despues_descuento_mc_format}}</td>
+                                    <td class="numerico" v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.total_despues_descuento_mc_format}}</td>
+                                    <td v-if="presupuesto.con_observaciones_partidas">{{concepto.presupuesto.observaciones}}</td>
+
                                     <td :title="concepto.destino.path" style="text-decoration: underline">{{ concepto.destino.destino_path }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="table-responsive col-md-12">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Descripción</th>
-                                <th class="no_parte">Unidad</th>
-                                <th class="no_parte">Cantidad Solicitada</th>
-                                <th class="no_parte">Cantidad Aprobada</th>
-                                <th>Precio Unitario</th>
-                                <th>% Descuento</th>
-                                <th>Precio Total</th>
-                                <th>Moneda</th>
-                                <th>Precio Total Moneda Conversión</th>
-                                <th>Observaciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(partida, i) in presupuesto.partidas.data">
-                                <td >{{i + 1}}</td>
-                                <td style="text-align: left" v-if="partida.concepto" v-html="partida.concepto.descripcion_formato"></td>
-                                <td v-else></td>
-                                <td style="text-align: center">{{(partida.concepto) ? partida.concepto.unidad : '-----'}}</td>
-                                <td style="text-align: center">{{(partida.concepto) ? partida.concepto.cantidad_original_format : '-----'}}</td>
-                                <td style="text-align: center">{{(partida.concepto) ? partida.concepto.cantidad_presupuestada_format : '-----'}}</td>
-                                <td class="money">{{partida.precio_unitario_format}}</td>
-                                <td style="text-align: center">{{partida.descuento}}</td>
-                                <td class="money">{{partida.precio_total}}</td>
-                                <td style="text-align: center">{{(partida.moneda) ? partida.moneda.nombre : '------'}}</td>
-                                <td class="money">{{partida.precio_total_moneda}}</td>
-                                <td>{{(partida.observaciones) ? partida.observaciones : '-------------------'}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
@@ -109,49 +142,7 @@
                         </button>
                     </div>
                     <div class="modal-body" v-if="presupuesto">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="invoice p-3 mb-3">
-                                    <div class="row col-md-12">
-                                        <div class="col-md-6">
-                                            <h5>Folio: &nbsp; <b>{{presupuesto.numero_folio}}</b></h5>
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive col-md-12">
-                                        <table class="table">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="bg-gray-light" align="center" colspan="8"><b>{{(presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----'}}</b></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="bg-gray-light"><b>Sucursal:</b></td>
-                                                    <td class="bg-gray-light">{{(presupuesto.sucursal) ? presupuesto.sucursal.descripcion : '------ Sin Sucursal ------'}}</td>
-                                                    <td class="bg-gray-light"><b>ToTC USD:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.tc_usd_format}}</td>
-                                                    <td class="bg-gray-light"><b>ToTC EURO:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.tc_euro_format}}</td>
-                                                    <td class="bg-gray-light"><b>ToTC LIBRA:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.tc_libra_format}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="bg-gray-light"><b>Direccion:</b></td>
-                                                    <td class="bg-gray-light" colspan="3">{{(presupuesto.sucursal) ? presupuesto.sucursal.direccion : '------------------------------'}}</td>
-                                                    <td class="bg-gray-light"><b>Fecha:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.fecha_format}}</td>
-                                                    <td class="bg-gray-light"><b>Importe:</b></td>
-                                                    <td class="bg-gray-light">{{'$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',',')}}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <h6><b>Detalle de las partidas</b></h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
 
                     </div>
                     <div class="modal-footer">
@@ -183,10 +174,9 @@
                 return this.$store.dispatch('contratos/presupuesto/find', {
                     id: this.id,
                     params:{include: [
-                        'contrato_proyectado.contratos.destino',
-                        'contrato_proyectado.contratos.presupuesto:id_transaccion_presupuesto('+this.id+')',
-                        'partidas.concepto',
-                        'partidas.moneda',
+
+                        'contratos.presupuesto:id_transaccion_presupuesto('+this.id+')',
+                        'contratos.destino',
                         'sucursal',
                         'empresa',]}
                 }).then(data => {

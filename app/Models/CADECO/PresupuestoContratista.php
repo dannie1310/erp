@@ -3,6 +3,7 @@
 namespace App\Models\CADECO;
 
 use App\CSV\PresupuestoLayout;
+use App\Facades\Context;
 use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
 use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
@@ -211,6 +212,43 @@ class PresupuestoContratista extends Transaccion
     public function getTotalPartidasAttribute()
     {
         return $this->suma_subtotal_partidas + $this->iva_Partidas;
+    }
+
+    public function getContratosAttribute()
+    {
+        $partidas = $this->partidas;
+        $niveles = [];
+        foreach($partidas as $partida){
+            $nivel = $partida->concepto->nivel;
+            $niveles[] = $partida->concepto->nivel;
+            for($i = 1; $i < strlen($nivel)/4; $i++)
+            {
+                $niveles[] = substr($nivel, 0, 4*$i);
+            }
+        }
+        $niveles = array_unique($niveles);
+
+        $conceptos = Contrato::whereIn("nivel",$niveles)->where("id_transaccion",$this->id_antecedente)->orderBy("nivel")->get();
+        return $conceptos;
+    }
+
+    public function getConDescuentoPartidasAttribute()
+    {
+        $cantidad = $this->partidas()->where("PorcentajeDescuento",">",0)->count();
+        return $cantidad>0?true:false;
+    }
+
+    public function getConMonedaExtranjeraAttribute()
+    {
+        $id_moneda = Obra::find(Context::getIdObra())->id_moneda;
+        $cantidad = $this->partidas()->where("IdMoneda","<>",$id_moneda)->count();
+        return $cantidad>0?true:false;
+    }
+
+    public function getConObservacionesPartidasAttribute()
+    {
+        $cantidad = $this->partidas()->where("Observaciones","<>","")->count();
+        return $cantidad>0?true:false;
     }
 
     /**
