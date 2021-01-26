@@ -1,59 +1,76 @@
 <template>
-    <div class="row" v-if="contrato_proyectado">
+    <div class="row" v-if="presupuesto">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h6 class="card-title">Información de Contrato Proyectado</h6>
+                    <h6 class="card-title">Información de Presupuesto de Contratista</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group row">
-                                <label class="col-md-6 col-form-label">Área Subcontratante:</label>
-                                <div class="col-md-6">
-                                    {{contrato_proyectado.area_subcontratante}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group row">
                                 <label class="col-md-4 col-form-label">Folio:</label>
                                 <div class="col-md-8">
-                                    {{contrato_proyectado.numero_folio_format}}
+                                    {{presupuesto.numero_folio_format}}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group row">
-                                <label class="col-md-4 col-form-label">Referencia:</label>
-                                <div class="col-md-8">
-                                    {{contrato_proyectado.referencia}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group row">
                                 <label class="col-md-4 col-form-label">Fecha:</label>
                                 <div class="col-md-8">
-                                    {{contrato_proyectado.fecha_format}}
+                                    {{presupuesto.fecha_format}}
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-5">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label">Contratista:</label>
+                                <div class="col-md-10">
+                                    {{presupuesto.empresa.razon_social}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Sucursal:</label>
+                                <div class="col-md-8">
+                                    {{presupuesto.sucursal.descripcion}}
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group row">
-                                <label class="col-md-4 col-form-label">Registro:</label>
+                                <label class="col-md-4 col-form-label">Impuesto:</label>
                                 <div class="col-md-8">
-                                    {{ contrato_proyectado.usuario_registro }}
+                                    {{presupuesto.impuesto_format}}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Monto:</label>
+                                <div class="col-md-8">
+                                    {{presupuesto.monto_format}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Registro:</label>
+                                <div class="col-md-8">
+                                    {{ presupuesto.usuario_registro }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="form-group row">
                                 <label class="col-md-6 col-form-label">Fecha y Hora de Registro:</label>
                                 <div class="col-md-6">
-                                    {{ contrato_proyectado.fecha_hora_registro_format }}
+                                    {{ presupuesto.fecha_hora_registro_format }}
                                 </div>
                             </div>
                         </div>
@@ -63,14 +80,14 @@
                             <div class="form-group row">
                                 <label class="col-md-2 col-form-label">Observaciones:</label>
                                 <div class="col-md-10">
-                                    {{ contrato_proyectado.observaciones }}
+                                    {{ presupuesto.observaciones }}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <ButtonsContratoProyectado class="pull-right" :value="contrato_proyectado"></ButtonsContratoProyectado>
+                    <PresupuestoButtons class="pull-right" :value="presupuesto"></PresupuestoButtons>
                 </div>
             </div>
         </div>
@@ -78,13 +95,14 @@
 </template>
 
 <script>
-import PDF from '../FormatoContratoProyectado';
+import PDF from '../FormatoTablaComparativa';
 import EstatusLabelGlobal from "../../../globals/EstatusLabel";
-import ButtonsContratoProyectado from "./ActionButtons";
+import ActionButtons from "../../../compras/orden-compra/partials/ActionButtons";
+import PresupuestoButtons from "./ActionButtons";
 export default {
-    name: "DatosContratoProyectado",
-    components: {ButtonsContratoProyectado, EstatusLabelGlobal, PDF},
-    props: ['contrato_proyectado'],
+    name: "DatosPresupuesto",
+    components: {PresupuestoButtons, ActionButtons, EstatusLabelGlobal, PDF},
+    props: ['presupuesto'],
 }
 </script>
 

@@ -4,11 +4,13 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
+use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\PresupuestoContratista;
+use App\Models\CADECO\Transaccion;
 use League\Fractal\TransformerAbstract;
 
 class PresupuestoContratistaTransformer extends TransformerAbstract
@@ -25,8 +27,11 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         'sucursal',
         'usuario',
         'relaciones',
-        'contratos'
+        'contratos',
+        'transaccion'
     ];
+
+    protected $defaultIncludes=["transaccion"];
 
     public function transform(PresupuestoContratista $model)
     {
@@ -36,6 +41,7 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'fecha_format' => $model->fecha_format,
             'estado' => $model->estado,
             'numero_folio' => $model->numero_folio_format,
+            'numero_folio_format' => $model->numero_folio_format,
             'subtotal' => $model->monto,
             'impuesto' => $model->impuesto,
             'impuesto_format' => $model->impuesto_format,
@@ -54,7 +60,9 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'observaciones' => $model->observaciones,
             'con_descuento_partidas' =>$model->con_descuento_partidas,
             'con_moneda_extranjera' => $model->con_moneda_extranjera,
-            'con_observaciones_partidas' => $model->con_observaciones_partidas
+            'con_observaciones_partidas' => $model->con_observaciones_partidas,
+            'fecha_hora_registro_format' => $model->fecha_hora_registro_format,
+            'usuario_registro' => $model->usuario_registro,
         ];
     }
 
@@ -155,5 +163,10 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             return $this->collection($partidas, new ContratoTransformer);
         }
         return null;
+    }
+
+    public function includeTransaccion(Transaccion $model)
+    {
+        return $this->item($model, new TransaccionRelacionTransformer);
     }
 }

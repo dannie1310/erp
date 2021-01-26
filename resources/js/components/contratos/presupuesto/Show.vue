@@ -13,45 +13,8 @@
         </div>
         <div class="card" v-else>
             <div class="card-body table-responsive">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="invoice p-3 mb-3">
-                            <div class="row col-md-12">
-                                <div class="col-md-6">
-                                    <h5>Folio: &nbsp; <b>{{presupuesto.numero_folio}}</b></h5>
-                                </div>
-                            </div>
-                            <div class="table-responsive col-md-12">
-                                <table class="table">
-                                    <tbody>
-                                        <tr>
-                                            <td class="bg-gray-light" align="center" colspan="8"><b>{{(presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----'}}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="bg-gray-light"><b>Sucursal:</b></td>
-                                            <td class="bg-gray-light">{{(presupuesto.sucursal) ? presupuesto.sucursal.descripcion : '------ Sin Sucursal ------'}}</td>
-                                            <td class="bg-gray-light"><b>ToTC USD:</b></td>
-                                            <td class="bg-gray-light">{{presupuesto.tc_usd_format}}</td>
-                                            <td class="bg-gray-light"><b>ToTC EURO:</b></td>
-                                            <td class="bg-gray-light">{{presupuesto.tc_euro_format}}</td>
-                                            <td class="bg-gray-light"><b>ToTC LIBRA:</b></td>
-                                            <td class="bg-gray-light">{{presupuesto.tc_libra_format}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="bg-gray-light"><b>Direccion:</b></td>
-                                            <td class="bg-gray-light" colspan="3">{{(presupuesto.sucursal) ? presupuesto.sucursal.direccion : '------------------------------'}}</td>
-                                            <td class="bg-gray-light"><b>Fecha:</b></td>
-                                            <td class="bg-gray-light">{{presupuesto.fecha_format}}</td>
-                                            <td class="bg-gray-light"><b>Importe:</b></td>
-                                            <td class="bg-gray-light">{{'$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',',')}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+                <DatosPresupuesto v-bind:presupuesto="presupuesto"></DatosPresupuesto>
+                <DatosContratoProyectado v-bind:contrato_proyectado="presupuesto.contrato_proyectado"></DatosContratoProyectado>
                 <div class="row" >
                     <div class="col-md-12 table-responsive">
                         <table id="tabla-conceptos" >
@@ -155,8 +118,11 @@
 </template>
 
 <script>
+    import DatosContratoProyectado from "../proyectado/partials/DatosContratoProyectado";
+    import DatosPresupuesto from "./partials/DatosPresupuesto";
     export default {
         name: "presupuesto-show",
+        components: {DatosPresupuesto,  DatosContratoProyectado},
         props: ['id'],
         data(){
             return{
@@ -174,7 +140,7 @@
                 return this.$store.dispatch('contratos/presupuesto/find', {
                     id: this.id,
                     params:{include: [
-
+                        'contrato_proyectado',
                         'contratos.presupuesto:id_transaccion_presupuesto('+this.id+')',
                         'contratos.destino',
                         'sucursal',

@@ -107,6 +107,7 @@ class PresupuestoContratista extends Transaccion
 
     public function getSubcontratosAttribute(){
         $subcontratos_arr = [];
+        $subcontratos=[];
         $partidas_asignaciones = $this->partidasAsignaciones;
         foreach($partidas_asignaciones as $partida_asignacion){
             $subcontratos_arr[] =$partida_asignacion->asignacion->subcontrato;
@@ -249,6 +250,11 @@ class PresupuestoContratista extends Transaccion
     {
         $cantidad = $this->partidas()->where("Observaciones","<>","")->count();
         return $cantidad>0?true:false;
+    }
+
+    public function getMontoFormatAttribute()
+    {
+        return number_format($this->monto + $this->impuesto,2,".",",");
     }
 
     /**

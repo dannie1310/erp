@@ -11,7 +11,7 @@
         <PDF v-bind:id="value.id" />
         <Eliminar v-if="$root.can('eliminar_presupuesto_contratista')" v-bind:id="value.id"></Eliminar>
         <Relaciones v-bind:transaccion="value.transaccion"/>
-        <router-link  :to="{ name: 'presupuesto-documentos', params: {id: value.id}}" v-if="$root.can('consultar_presupuesto_contratista')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
+        <router-link  :to="{ name: 'presupuesto-documentos', params: {id: value.id}}" v-if="$root.can('consultar_presupuesto_contratista') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
             <i class="fa fa-folder-open"></i>
         </router-link>
     </div>

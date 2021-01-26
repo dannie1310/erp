@@ -9,9 +9,11 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
+use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\TipoAreaSubcontratanteTransformer;
 use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\Transaccion;
 use DateTime;
 use League\Fractal\TransformerAbstract;
 
@@ -21,8 +23,10 @@ class ContratoProyectadoTransformer extends TransformerAbstract
         'areasSubcontratantes',
         'conceptos',
         'relaciones',
-        'contratos'
+        'contratos',
+        'transaccion'
     ];
+    protected $defaultIncludes=["transaccion"];
     public function transform(ContratoProyectado $model)
     {
         return [
@@ -88,5 +92,10 @@ class ContratoProyectadoTransformer extends TransformerAbstract
             return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
+    }
+
+    public function includeTransaccion(Transaccion $model)
+    {
+        return $this->item($model, new TransaccionRelacionTransformer);
     }
 }
