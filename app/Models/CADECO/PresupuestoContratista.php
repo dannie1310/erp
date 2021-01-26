@@ -405,7 +405,7 @@ class PresupuestoContratista extends Transaccion
                     'fecha' => $fecha->format("Y-m-d"),
                     'id_empresa' => $data['id_proveedor'],
                     'id_sucursal' => $data['id_sucursal'],
-                    'monto' => $data['subtotal'],
+                    'monto' => $data['total'],
                     'impuesto' => $data['impuesto'],
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observacion'],
@@ -422,7 +422,7 @@ class PresupuestoContratista extends Transaccion
                     $presupuesto->partidas()->create([
                         'id_transaccion' => $presupuesto->id_transaccion,
                         'id_concepto' => $partida['id_concepto'],
-                        'precio_unitario' => ($data['enable'][$t]) ? $this->precioConversion($data['precio'][$t], $data['moneda'][$t]) : null,
+                        'precio_unitario' => ($data['enable'][$t]) ? $data['precio'][$t]-($data['precio'][$t] *($data['descuento'][$t]/100)) : null,
                         'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
                         'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
                         'IdMoneda' => $data['moneda'][$t],

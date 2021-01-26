@@ -45,6 +45,7 @@
                                         <div class="form-group">
                                             <label for="id_proveedor">Proveedores/Contratistas</label>
                                             <model-list-select
+                                                id="id_proveedor"
                                                 name="id_proveedor"
                                                 option-value="id"
                                                 v-model="id_proveedor"
@@ -91,27 +92,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                    <div class="col-md-12">
-                                        <label for="concepto" class="col-form-label">Concepto: </label>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group row error-content">
-                                            <textarea
-                                                name="concepto"
-                                                id="concepto"
-                                                class="form-control"
-                                                v-model="concepto"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Concepto"
-                                                :class="{'is-invalid': errors.has('concepto')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
-                                        </div>
-                                    </div>
-                                </div> -->
+
                                 <hr />
 
                                 <div class="row" v-if="id_contrato != '' && !pendiente">
@@ -144,7 +125,7 @@
                                                         <td>{{partida.unidad}}</td>
                                                         <td style="text-align:center; vertical-align:inherit;">
                                                             <div class="custom-control custom-switch">
-                                                                <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
+                                                                <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" >
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
                                                         </td>
@@ -448,7 +429,8 @@
                     anticipo: '',
                     credito: '',
                     tiempo: '',
-                    vigencia: ''
+                    vigencia: '',
+                    total:''
                 },
                 anticipo: 0,
                 credito: 0,
@@ -533,7 +515,7 @@
                 this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
                 return this.$store.dispatch('contratos/contrato-proyectado/find', {
                     id: this.id_contrato,
-                    params:{include: ['conceptos'], scope: 'partida'}
+                    params:{include: ['conceptos']}
                 }).then(data => {
                     this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
                     this.asigna();
@@ -622,6 +604,7 @@
                         this.post.vigencia = this.vigencia;
                         this.post.fecha = this.fecha;
                         this.post.subtotal = this.subtotal;
+                        this.post.total = this.total;
                         this.post.impuesto = this.iva;
                         this.post.pendiente = this.pendiente;
                         this.post.tc_eur = this.euro;
