@@ -587,30 +587,39 @@
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.post.partidas = this.contrato.conceptos.data;
-                        this.post.id_contrato = this.id_contrato;
-                        this.post.id_proveedor = this.id_proveedor;
-                        this.post.sucursal = this.sucursal;
-                        this.post.id_sucursal = this.id_sucursal;
-                        this.post.observaciones = this.observaciones_inputs;
-                        this.post.moneda = this.moneda_input;
-                        this.post.observacion = this.observaciones;
-                        this.post.precio = this.precio;
-                        this.post.enable = this.enable;
-                        this.post.descuento = this.descuento;
-                        this.post.descuento_cot = this.descuento_cot;
-                        this.post.anticipo = this.anticipo;
-                        this.post.credito = this.credito;
-                        this.post.vigencia = this.vigencia;
-                        this.post.fecha = this.fecha;
-                        this.post.subtotal = this.subtotal;
-                        this.post.total = this.total;
-                        this.post.impuesto = this.iva;
-                        this.post.pendiente = this.pendiente;
-                        this.post.tc_eur = this.euro;
-                        this.post.tc_usd = this.dolar;
-                        this.post.tc_libra = this.libra;
-                        this.store()
+                        if(!this.id_proveedor >0)
+                        {
+                            swal('¡Error!', 'Debe seleccionar un contratista', 'error')
+                        } else
+                        if(!this.id_sucursal >0)
+                        {
+                            swal('¡Error!', 'Debe seleccionar una sucursal', 'error')
+                        } else {
+                            this.post.partidas = this.contrato.conceptos.data;
+                            this.post.id_contrato = this.id_contrato;
+                            this.post.id_proveedor = this.id_proveedor;
+                            this.post.sucursal = this.sucursal;
+                            this.post.id_sucursal = this.id_sucursal;
+                            this.post.observaciones = this.observaciones_inputs;
+                            this.post.moneda = this.moneda_input;
+                            this.post.observacion = this.observaciones;
+                            this.post.precio = this.precio;
+                            this.post.enable = this.enable;
+                            this.post.descuento = this.descuento;
+                            this.post.descuento_cot = this.descuento_cot;
+                            this.post.anticipo = this.anticipo;
+                            this.post.credito = this.credito;
+                            this.post.vigencia = this.vigencia;
+                            this.post.fecha = this.fecha;
+                            this.post.subtotal = this.subtotal;
+                            this.post.total = this.total;
+                            this.post.impuesto = this.iva;
+                            this.post.pendiente = this.pendiente;
+                            this.post.tc_eur = this.euro;
+                            this.post.tc_usd = this.dolar;
+                            this.post.tc_libra = this.libra;
+                            this.store()
+                        }
                     }
                 });
             },
