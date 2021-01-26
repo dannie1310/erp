@@ -28,13 +28,13 @@
 
                                     <th  class="contratado">Cantidad Autorizada</th>
                                     <th  v-if="presupuesto.con_descuento_partidas">PU antes descuento</th>
-                                    <th  v-if="presupuesto.con_descuento_partidas">Total antes descuento</th>
+                                    <th  v-if="presupuesto.con_descuento_partidas">Importe antes descuento</th>
                                     <th  v-if="presupuesto.con_descuento_partidas">% Descuento</th>
                                     <th  >PU</th>
-                                    <th  >Total</th>
+                                    <th  >Importe</th>
                                     <th  v-if="presupuesto.con_moneda_extranjera">Moneda</th>
                                     <th  v-if="presupuesto.con_moneda_extranjera">PU Moneda Conversión</th>
-                                    <th  v-if="presupuesto.con_moneda_extranjera">Total Moneda Conversión</th>
+                                    <th  v-if="presupuesto.con_moneda_extranjera">Importe Moneda Conversión</th>
                                     <th  v-if="presupuesto.con_observaciones_partidas">Observaciones</th>
 
                                     <th class="destino">Destino</th>
@@ -82,37 +82,61 @@
                                     <td class="numerico">{{concepto.presupuesto.precio_unitario_despues_descuento_format}}</td>
                                     <td class="numerico">{{concepto.presupuesto.total_despues_descuento_format}}</td>
                                     <td v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.moneda.nombre}}</td>
-                                    <td class="numerico" v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.precio_unitario_despues_descuento_mc_format}}</td>
-                                    <td class="numerico" v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.total_despues_descuento_mc_format}}</td>
+                                    <td class="numerico" v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.precio_unitario_despues_descuento_partida_mc_format}}</td>
+                                    <td class="numerico" v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.total_despues_descuento_partida_mc_format}}</td>
                                     <td v-if="presupuesto.con_observaciones_partidas">{{concepto.presupuesto.observaciones}}</td>
 
                                     <td :title="concepto.destino.path" style="text-decoration: underline">{{ concepto.destino.destino_path }}</td>
                                 </tr>
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal (Moneda Conversión):</td>
+                                    <td class="numerico">{{presupuesto.subtotal_mc_antes_descuento_global_format}}</td>
+                                </tr>
+                                <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">% Descuento:</td>
+                                    <td class="numerico">{{presupuesto.porcentaje_descuento_format}}</td>
+                                </tr>
+
+                                <tr v-for="(subtotal, i) in presupuesto.subtotales_por_moneda.data">
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal {{subtotal.moneda}}:</td>
+                                    <td class="numerico">{{subtotal.subtotal_format}}</td>
+                                </tr>
+                                <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">TC USD:</td>
+                                    <td class="numerico">{{presupuesto.tc_usd_format}}</td>
+                                </tr>
+                                <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">TC EURO:</td>
+                                    <td class="numerico">{{presupuesto.tc_euro_format}}</td>
+                                </tr>
+                                <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">TC Libra:</td>
+                                    <td class="numerico">{{presupuesto.tc_libra_format}}</td>
+                                </tr>
+                                <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Moneda Conversión:</td>
+                                    <td >{{presupuesto.moneda_conversion}}</td>
+                                </tr>
+                                <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal Después de Descuento (Moneda Conversión):</td>
+                                    <td class="numerico">{{presupuesto.subtotal_format}}</td>
+                                </tr>
+                                <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">IVA:</td>
+                                    <td class="numerico">{{presupuesto.impuesto_format}}</td>
+                                </tr>
+                                <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Monto:</td>
+                                    <td class="numerico">{{presupuesto.monto_format}}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
 
-        </div>
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> DETALLES DEL PRESUPUESTO CONTRATISTA</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body" v-if="presupuesto">
-
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    </div>
-                </div>
-            </div>
         </div>
     </span>
 </template>
@@ -144,7 +168,7 @@
                         'contratos.presupuesto:id_transaccion_presupuesto('+this.id+')',
                         'contratos.destino',
                         'sucursal',
-                        'empresa',]}
+                        'empresa', 'subtotales_por_moneda']}
                 }).then(data => {
                     this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', data);
                     this.cargando = false;
@@ -227,7 +251,7 @@ table tbody td input.text
     font-weight: bold;
 }
 
-table tbody .numerico
+table .numerico
 {
     text-align: right;
     padding-left: 0;

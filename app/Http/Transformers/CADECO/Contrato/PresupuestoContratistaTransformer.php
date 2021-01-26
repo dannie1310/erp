@@ -28,7 +28,8 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         'usuario',
         'relaciones',
         'contratos',
-        'transaccion'
+        'transaccion',
+        'subtotales_por_moneda'
     ];
 
     protected $defaultIncludes=["transaccion"];
@@ -45,7 +46,7 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'subtotal' => $model->monto,
             'impuesto' => $model->impuesto,
             'impuesto_format' => $model->impuesto_format,
-            'subtotal_format' => $model->monto_format,
+            'subtotal_format' => $model->subtotal_format,
             'monto_format' => $model->monto_format,
             'tc_usd' => $model->TcUSD,
             'tc_usd_format' => $model->usd_format,
@@ -54,7 +55,9 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'tc_libra' => $model->TcLibra,
             'tc_libra_format' => $model->libra_format,
             'descuento' => $model->PorcentajeDescuento,
+            'porcentaje_descuento_format' => $model->porcentaje_descuento_format,
             'anticipo' => $model->anticipo,
+            'porcentaje_anticipo_format' => $model->porcentaje_anticipo_format,
             'dias_credito' => $model->DiasCredito,
             'dias_vigencia' => $model->DiasVigencia,
             'observaciones' => $model->observaciones,
@@ -63,6 +66,9 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'con_observaciones_partidas' => $model->con_observaciones_partidas,
             'fecha_hora_registro_format' => $model->fecha_hora_registro_format,
             'usuario_registro' => $model->usuario_registro,
+            'moneda_conversion' => $model->moneda_conversion,
+            'subtotal_mc_antes_descuento_global_format' =>$model->subtotal_mc_antes_descuento_global_format,
+            'colspan'=>$model->colspan
         ];
     }
 
@@ -168,5 +174,15 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
     public function includeTransaccion(Transaccion $model)
     {
         return $this->item($model, new TransaccionRelacionTransformer);
+    }
+
+    public function includeSubtotalesPorMoneda(PresupuestoContratista $model)
+    {
+        if($items = $model->subtotales_por_moneda)
+        {
+            return $this->collection($items, new SubtotalPresupuestoTransformer);
+        }
+        return null;
+
     }
 }

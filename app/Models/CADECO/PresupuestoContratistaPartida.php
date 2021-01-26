@@ -238,24 +238,52 @@ class PresupuestoContratistaPartida extends Model
         return "$".number_format($this->total_despues_descuento, 2, '.', ',');
     }
 
-    public function getPrecioUnitarioDespuesDescuentoMCAttribute()
+    public function getPrecioUnitarioDespuesDescuentoPartidaMCAttribute()
     {
         return $this->precio_unitario -($this->precio_unitario * $this->PorcentajeDescuento / 100) ;
     }
 
-    public function getPrecioUnitarioDespuesDescuentoMCFormatAttribute()
+    public function getPrecioUnitarioDespuesDescuentoPartidaMCFormatAttribute()
     {
-        return "$".number_format($this->precio_unitario_despues_descuento_mc, 2, '.', ',');
+        return "$".number_format($this->precio_unitario_despues_descuento_partida_mc, 2, '.', ',');
     }
 
-    public function getTotalDespuesDescuentoMCAttribute()
+    public function getTotalDespuesDescuentoPartidaMCAttribute()
     {
-        return $this->precio_unitario_despues_descuento_mc * $this->concepto->cantidad_presupuestada;
+        return $this->precio_unitario_despues_descuento_partida_mc * $this->concepto->cantidad_presupuestada;
     }
 
-    public function getTotalDespuesDescuentoMCFormatAttribute()
+    public function getTotalDespuesDescuentoPartidaMCFormatAttribute()
     {
-        return "$".number_format($this->total_despues_descuento_mc, 2, '.', ',');
+        return "$".number_format($this->total_despues_descuento_partida_mc, 2, '.', ',');
+    }
+
+    public function getImporteAttribute()
+    {
+        return $this->precio_unitario * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
+    }
+
+    public function getPrecioUnitarioMonedaOriginalAttribute()
+    {
+        switch ($this->IdMoneda) {
+            case (1):
+                return $this->precio_unitario;
+                break;
+            case (2):
+                return $this->precio_unitario / $this->presupuesto->dolar;
+                break;
+            case (3):
+                return $this->precio_unitario / $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_unitario / $this->presupuesto->libra;
+                break;
+        }
+    }
+
+    public function getImporteMonedaOriginalAttribute()
+    {
+        return $this->precio_unitario_moneda_original * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
     }
 
 }

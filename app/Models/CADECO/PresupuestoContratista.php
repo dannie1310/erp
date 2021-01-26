@@ -254,7 +254,76 @@ class PresupuestoContratista extends Transaccion
 
     public function getMontoFormatAttribute()
     {
-        return number_format($this->monto + $this->impuesto,2,".",",");
+        return "$ ".number_format($this->monto,2,".",",");
+    }
+
+    public function getPorcentajeAnticipoFormatAttribute()
+    {
+        return number_format($this->anticipo,2,".",","). " %";
+    }
+
+    public function getPorcentajeDescuentoFormatAttribute()
+    {
+        return number_format($this->PorcentajeDescuento,2,".",","). " %";
+    }
+
+    public function getMonedaConversionAttribute()
+    {
+        return Obra::find(Context::getIdObra())->moneda->nombre;
+    }
+
+    public function  getSubtotalMcAntesDescuentoGlobalFormatAttribute()
+    {
+        return "$ ".number_format($this->subtotal_mc_antes_descuento_global,2,".",",");
+    }
+
+    public function getSubtotalMcAntesDescuentoGlobalAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida) {
+            $suma += $partida->total_despues_descuento_partida_mc;
+        }
+        return $suma;
+    }
+
+    public function getSubtotalesPorMonedaAttribute()
+    {
+        $subtotales = [];
+        $salida = [];
+        foreach ($this->partidas as $partida) {
+            $monedas [] = $partida->IdMoneda;
+            if(key_exists($partida->IdMoneda, $subtotales)){
+                $subtotales[$partida->IdMoneda] += $partida->importe_moneda_original ;
+            } else {
+                $subtotales = [$partida->IdMoneda=>$partida->importe_moneda_original];
+            }
+
+        }
+        foreach($subtotales as $k=>$v){
+            $salida[] = [
+                "moneda"=>Moneda::find($k)->nombre,
+                "subtotal_format"=>"$ ".number_format($v,2)
+            ];
+        }
+        return $salida;
+    }
+
+    public function getColspanAttribute()
+    {
+        //dd($this->con_observaciones_partidas , $this->con_moneda_extranjera);
+
+        if($this->con_moneda_extranjera && $this->con_descuento_partidas){
+            $colspan = 13;
+        } else if(!$this->con_descuento_partidas && !$this->con_moneda_extranjera){
+            $colspan = 7;
+        }
+        else if($this->con_descuento_partidas && !$this->con_moneda_extranjera){
+            $colspan = 10;
+        }
+        else if(!$this->con_descuento_partidas && $this->con_moneda_extranjera){
+            $colspan = 10;
+        }
+        return $colspan;
     }
 
     /**

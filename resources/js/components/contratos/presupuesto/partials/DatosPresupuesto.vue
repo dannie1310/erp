@@ -39,7 +39,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     <div class="row">
                         <div class="col-md-3">
@@ -71,6 +70,32 @@
                                 <label class="col-md-6 col-form-label">Fecha y Hora de Registro:</label>
                                 <div class="col-md-6">
                                     {{ presupuesto.fecha_hora_registro_format }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">% Anticipo:</label>
+                                <div class="col-md-8">
+                                    {{presupuesto.porcentaje_anticipo_format}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Crédito (días):</label>
+                                <div class="col-md-8">
+                                    {{presupuesto.dias_credito}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Vigencia (días):</label>
+                                <div class="col-md-8">
+                                    {{ presupuesto.dias_vigencia }}
                                 </div>
                             </div>
                         </div>
