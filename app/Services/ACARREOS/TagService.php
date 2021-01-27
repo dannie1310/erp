@@ -4,7 +4,9 @@
 namespace App\Services\ACARREOS;
 
 
+use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
 use App\Models\ACARREOS\Tag;
+use App\Models\IGH\Usuario;
 use App\Repositories\ACARREOS\TAG\Repository;
 use Illuminate\Support\Facades\DB;
 
@@ -51,12 +53,21 @@ class TagService
         /**
          * Buscar usuario con el proyecto ultimo asociado al usuario.
          */
-        $usuario = $this->repository->usuarioProyecto($data['usuario'], $data['clave']);
+        $id_usuario = Usuario::where('usuario', $data['usuario'])->where('clave',  md5($data['clave']))->pluck('idusuario');
+        if(count($id_usuario) == 0)
+        {
+            return json_encode(array("error" => "Error al iniciar sesión, su usuario y/o clave son incorrectos."));
+        }
+        $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', $id_usuario);
+        if(is_null($usuario->first()))
+        {
+            return json_encode(array("error" =>  "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto."));
+        }
+
         /**
          * Se realiza conexión con la base de datos de acarreos.
          */
         $this->conexionAcarreos($usuario->first()->proyecto->base_datos);
-
         /**
          * Revision de permisos
          * Validar si el usuario tiene el role de checador.
@@ -65,16 +76,15 @@ class TagService
         if (!$permiso) {
             return json_encode(array("error" => "El usuario no tiene perfil para CONFIGURACIÓN TAGS favor de solicitarlo."));
         }
-
         $camiones = $this->repository->getCatalogoCamiones();
         $tags = $this->repository->getCatalogoTags();
         $tags_disponibles = $this->repository->getCatalogoTagsDisponibles($usuario->first()->id_proyecto);
         $usuario = $usuario->first();
 
         return [
-            'IdUsuario' => auth()->id(),
+            'IdUsuario' => (String) auth()->id(),
             'Nombre' => $usuario->usuario->nombre_completo,
-            'IdProyecto' => $usuario->proyecto->id_proyecto,
+            'IdProyecto' => (String) $usuario->proyecto->id_proyecto,
             'base_datos' => $usuario->proyecto->base_datos,
             'descripcion_database' => $usuario->proyecto->descripcion,
             'Camiones' => $camiones,
@@ -91,15 +101,16 @@ class TagService
      */
     public function registrar($data)
     {
-        /**
-         * Buscar usuario con el proyecto ultimo asociado al usuario.
-         */
-        $usuario = $this->repository->usuarioProyecto($data['usuario'], $data['clave']);
+        $id_usuario = Usuario::where('usuario', $data['usuario'])->where('clave',  md5($data['clave']))->pluck('idusuario');
+        if(count($id_usuario) == 0)
+        {
+            return json_encode(array("error" => "Datos de inicio de sesión no validos."));
+        }
 
         /**
          * Se realiza conexión con la base de datos de acarreos.
          */
-        $this->conexionAcarreos($usuario->first()->proyecto->base_datos);
+        $this->conexionAcarreos($data['bd']);
 
         /**
          * Respaldar los datos
@@ -160,13 +171,20 @@ class TagService
     public function cambiarClave($data)
     {
         /**
-         * Se genera el respaldo del json
+         * Se realiza conexión con la base de datos de acarreos.
          */
-        $this->repository->crearJson($data);
+        $this->conexionAcarreos($data['bd']);
+
         /**
-         * Se genera el log de cambio de contraseña.
-         */
+             * Se genera el respaldo del json
+             */
+        $this->repository->crearJson($data);
+
+        /**
+             * Se genera el log de cambio de contraseña.
+             */
         $this->repository->logCambioContrasena($data);
+
         try {
             $this->repository->cambiarClave($data['idusuario'], $data['NuevaClave']);
             return json_encode(array("msj" => "Contraseña Guardada Correctamente!!"));
