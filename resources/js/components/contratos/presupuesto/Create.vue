@@ -193,6 +193,10 @@
                                             </table>
                                         </div>
                                     </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal Antes de Descuento:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal_antes_descuento)).formatMoney(4,'.',',')}}</label>
+                                    </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">% Descuento:</label>
                                     </div>
@@ -399,6 +403,10 @@
                 dolares: 0,
                 euros: 0,
                 libras:0,
+                pesos_sd: 0,
+                dolares_sd: 0,
+                euros_sd: 0,
+                libras_sd:0,
                 dolar:0,
                 euro:0,
                 libra:0,
@@ -540,6 +548,11 @@
                 this.dolares = 0;
                 this.euros = 0;
                 this.libras = 0;
+
+                this.pesos_sd = 0;
+                this.dolares_sd = 0;
+                this.euros_sd = 0;
+                this.libras_sd = 0;
                 while(this.x < this.contrato.conceptos.data.length)
                 {
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
@@ -547,22 +560,34 @@
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
                             this.pesos = (this.pesos + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
+                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100) - ((this.precio[this.x] * this.descuento_cot)/100) )));
+
+                            this.pesos_sd = (this.pesos_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
                             this.dolares = (this.dolares + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
+                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100) - ((this.precio[this.x] * this.descuento_cot)/100) )));
+
+                            this.dolares_sd = (this.dolares_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
                             this.euros = (this.euros + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
+                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100) - ((this.precio[this.x] * this.descuento_cot)/100) )));
+
+                            this.euros_sd = (this.euros_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                         if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
                         {
                             this.libras = (this.libras + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
+                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100) - ((this.precio[this.x] * this.descuento_cot)/100) )));
+
+                            this.libras_sd = (this.libras_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                     }
                     this.x ++;
@@ -647,6 +672,10 @@
                     ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.dolar) + (this.euros *
                         this.euro) + (this.libras * this.libra)) * parseFloat(this.descuento_cot)) / 100) : 0));
             },
+            subtotal_antes_descuento()
+            {
+                return (this.pesos_sd + (this.dolares_sd * this.dolar) + (this.euros_sd * this.euro) + (this.libras_sd * this.libra) );
+            },
             iva()
             {
                 return this.subtotal * 0.16;
@@ -694,6 +723,10 @@
                 {
                     this.calcular();
                 }
+            },
+            descuento_cot()
+            {
+                this.calcular();
             },
             enable()
             {
