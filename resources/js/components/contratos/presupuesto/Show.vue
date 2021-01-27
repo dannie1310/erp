@@ -91,7 +91,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal (Moneda Conversión):</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal antes de descuento:</td>
                                     <td class="numerico">{{presupuesto.subtotal_mc_antes_descuento_global_format}}</td>
                                 </tr>
                                 <tr>

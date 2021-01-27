@@ -187,20 +187,7 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioAntesDescuentoAttribute()
     {
-        switch ($this->IdMoneda) {
-            case(1):
-                return $this->precio_unitario;
-                break;
-            case(2):
-                return $this->precio_unitario / $this->presupuesto->dolar;
-                break;
-            case(3):
-                return $this->precio_unitario / $this->presupuesto->euro;
-                break;
-            case(4):
-                return $this->precio_unitario / $this->presupuesto->libra;
-                break;
-        }
+        return 100 * $this->precio_unitario /(100-$this->PorcentajeDescuento);
     }
 
     public function getPrecioUnitarioAntesDescuentoFormatAttribute()
@@ -220,7 +207,7 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioDespuesDescuentoAttribute()
     {
-        return $this->precio_unitario_antes_descuento -($this->precio_unitario_antes_descuento * $this->PorcentajeDescuento / 100) ;
+        return $this->precio_unitario ;
     }
 
     public function getPrecioUnitarioDespuesDescuentoFormatAttribute()
@@ -240,7 +227,20 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioDespuesDescuentoPartidaMCAttribute()
     {
-        return $this->precio_unitario -($this->precio_unitario * $this->PorcentajeDescuento / 100) ;
+        switch ($this->IdMoneda) {
+            case (1):
+                return $this->precio_unitario;
+                break;
+            case (2):
+                return $this->precio_unitario * $this->presupuesto->dolar;
+                break;
+            case (3):
+                return $this->precio_unitario * $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_unitario * $this->presupuesto->libra;
+                break;
+        }
     }
 
     public function getPrecioUnitarioDespuesDescuentoPartidaMCFormatAttribute()
@@ -260,30 +260,22 @@ class PresupuestoContratistaPartida extends Model
 
     public function getImporteAttribute()
     {
-        return $this->precio_unitario * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
+        return $this->precio_unitario * $this->concepto->cantidad_presupuestada;
     }
 
     public function getPrecioUnitarioMonedaOriginalAttribute()
     {
-        switch ($this->IdMoneda) {
-            case (1):
-                return $this->precio_unitario;
-                break;
-            case (2):
-                return $this->precio_unitario / $this->presupuesto->dolar;
-                break;
-            case (3):
-                return $this->precio_unitario / $this->presupuesto->euro;
-                break;
-            case (4):
-                return $this->precio_unitario / $this->presupuesto->libra;
-                break;
-        }
+        return $this->precio_unitario;
     }
 
     public function getImporteMonedaOriginalAttribute()
     {
-        return $this->precio_unitario_moneda_original * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
+        return $this->precio_unitario_moneda_original * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function getImporteMonedaOriginalDespuesDescuentoGlobalAttribute()
+    {
+        return ($this->precio_unitario_moneda_original -($this->precio_unitario_moneda_original * $this->presupuesto->PorcentajeDescuento / 100)) * $this->concepto->cantidad_presupuestada;
     }
 
 }

@@ -139,17 +139,17 @@ class PresupuestoContratista extends Transaccion
 
     public function getDolarAttribute()
     {
-        return $this->tc_usd ? $this->tc_usd : Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio;
+        return $this->TcUSD ? $this->TcUSD : Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio;
     }
 
     public function getEuroAttribute()
     {
-        return $this->tc_euro ? $this->tc_euro : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio;
+        return $this->TcEuro ? $this->TcEuro : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio;
     }
 
     public function getLibraAttribute()
     {
-        return $this->tc_libra ? $this->tc_libra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
+        return $this->TcLibra ? $this->TcLibra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
     }
 
     public function getDatosParaRelacionAttribute()
@@ -293,17 +293,18 @@ class PresupuestoContratista extends Transaccion
         foreach ($this->partidas as $partida) {
             $monedas [] = $partida->IdMoneda;
             if(key_exists($partida->IdMoneda, $subtotales)){
-                $subtotales[$partida->IdMoneda] += $partida->importe_moneda_original ;
+                $subtotales[$partida->IdMoneda] += $partida->importe_moneda_original_despues_descuento_global ;
             } else {
-                $subtotales = [$partida->IdMoneda=>$partida->importe_moneda_original];
+                $subtotales[] = [$partida->IdMoneda=>$partida->importe_moneda_original_despues_descuento_global];
             }
-
         }
-        foreach($subtotales as $k=>$v){
-            $salida[] = [
-                "moneda"=>Moneda::find($k)->nombre,
-                "subtotal_format"=>"$ ".number_format($v,2)
-            ];
+        foreach($subtotales as $subtotal){
+            foreach($subtotal as $k=>$v) {
+                $salida[] = [
+                    "moneda" => Moneda::find($k)->nombre,
+                    "subtotal_format" => "$ " . number_format($v, 2)
+                ];
+            }
         }
         return $salida;
     }
@@ -482,7 +483,7 @@ class PresupuestoContratista extends Transaccion
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $this->update([
                     'fecha' => $fecha->format("Y-m-d"),
-                    'monto' => $data['subtotal'],
+                    'monto' => $data['monto'],
                     'impuesto' => $data['impuesto'],
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observaciones'],

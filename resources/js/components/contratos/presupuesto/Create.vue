@@ -559,8 +559,13 @@
                     {
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
+
                             this.pesos = (this.pesos + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100) - ((this.precio[this.x] * this.descuento_cot)/100) )));
+                             * (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
+
 
                             this.pesos_sd = (this.pesos_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
                                 * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
@@ -568,7 +573,10 @@
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
                             this.dolares = (this.dolares + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100) - ((this.precio[this.x] * this.descuento_cot)/100) )));
+                             * (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
 
                             this.dolares_sd = (this.dolares_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
                                 * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
@@ -576,7 +584,10 @@
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
                             this.euros = (this.euros + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100) - ((this.precio[this.x] * this.descuento_cot)/100) )));
+                                (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
 
                             this.euros_sd = (this.euros_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
                                 * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
@@ -584,7 +595,10 @@
                         if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
                         {
                             this.libras = (this.libras + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100) - ((this.precio[this.x] * this.descuento_cot)/100) )));
+                                (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
 
                             this.libras_sd = (this.libras_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
                                 * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
@@ -668,9 +682,7 @@
             },
             subtotal()
             {
-                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) -
-                    ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.dolar) + (this.euros *
-                        this.euro) + (this.libras * this.libra)) * parseFloat(this.descuento_cot)) / 100) : 0));
+                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) );
             },
             subtotal_antes_descuento()
             {
