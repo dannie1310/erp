@@ -86,7 +86,7 @@
                                     <td class="numerico" v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.total_despues_descuento_partida_mc_format}}</td>
                                     <td v-if="presupuesto.con_observaciones_partidas">{{concepto.presupuesto.observaciones}}</td>
 
-                                    <td :title="concepto.destino.path" style="text-decoration: underline">{{ concepto.destino.destino_path }}</td>
+                                    <td :title="concepto.destino.concepto.path" style="text-decoration: underline">{{ concepto.destino.concepto.path_corta }}</td>
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -120,7 +120,7 @@
                                     <td >{{presupuesto.moneda_conversion}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal Después de Descuento (Moneda Conversión):</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal:</td>
                                     <td class="numerico">{{presupuesto.subtotal_format}}</td>
                                 </tr>
                                 <tr>
