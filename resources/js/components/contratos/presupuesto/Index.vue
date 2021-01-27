@@ -79,7 +79,7 @@
             },
 
             create() {
-                this.$router.push({name: 'presupuesto-create'});
+                this.$router.push({name: 'presupuesto-selecciona-contrato-proyectado'});
             },
             getEstado(estado) {
 

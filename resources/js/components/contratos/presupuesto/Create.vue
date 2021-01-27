@@ -24,22 +24,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row justify-content-between">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="id_contrato">Buscar Contrato Proyectado:</label>
-                                                 <model-list-select
-                                                                name="id_contrato"
-                                                                option-value="id"
-                                                                v-model="id_contrato"
-                                                                :custom-text="idFolioObservaciones"
-                                                                :list="contratos"
-                                                                :placeholder="!cargando?'Seleccionar o buscar folio o descripcion':'Cargando...'">
-                                                            </model-list-select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_contrato')">{{ errors.first('id_contrato') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -381,12 +365,12 @@
     import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "presupuesto-create",
+        props: ['id_contrato'],
         components: {Datepicker, ModelListSelect},
         data() {
             return {
                 cargando: false,
                 pendiente: false,
-                id_contrato: '',
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
@@ -396,7 +380,6 @@
                 id_sucursal: '',
                 id_proveedor : '',
                 id_tipo : '',
-                contratos : [],
                 concepto : '',
                 monedas: [],
                 pesos: 0,
@@ -449,12 +432,9 @@
             }
         },
         mounted() {
+            this.find();
             this.fecha = new Date();
             this.$validator.reset();
-            this.getProveedores();
-            this.getMonedas();
-            this.getContratos();
-
         },
         methods : {
             idFolioObservaciones (item)
@@ -470,14 +450,15 @@
             },
             getProveedores() {
                 return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:1,3', include: 'sucursales' }
+                    params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:2,3', include: 'sucursales' }
                 })
                     .then(data => {
                         this.proveedores = data.data;
+                    }).finally(()=>{
+                        this.getMonedas();
                     })
             },
             getMonedas(){
-                this.cargando = true;
                 this.$store.commit('cadeco/moneda/SET_MONEDAS', null);
                 return this.$store.dispatch('cadeco/moneda/index', {
                     params: {sort: 'id_moneda', order: 'asc'}
@@ -487,7 +468,7 @@
                     this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
                     this.libra = this.monedas[3] ? parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '') : 0;
                 }).finally(()=>{
-
+                    this.cargando = false;
                 })
             },
             getPrecioUnitarioMC(i, precio) {
@@ -509,26 +490,35 @@
             },
             salir()
             {
-                 this.$router.push({name: 'presupuesto'});
+                 this.$router.push({name: 'presupuesto-selecciona-contrato-proyectado'});
 
             },
             find() {
-                this.enable = [];
-                this.precio = [];
-                this.pendiente = false;
-                this.moneda_input = [];
-                this.observaciones_inputs = [];
-                this.descuento = [];
                 this.cargando = true;
-                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
-                return this.$store.dispatch('contratos/contrato-proyectado/find', {
-                    id: this.id_contrato,
-                    params:{include: ['conceptos']}
-                }).then(data => {
-                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
+
+
+                if(this.$store.getters['contratos/contrato-proyectado/currentContrato'] == null){
+                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
+                    return this.$store.dispatch('contratos/contrato-proyectado/find', {
+                        id: this.id_contrato,
+                        params:{include: ['conceptos']}
+                    }).then(data => {
+                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
+                        this.asigna();
+                    }).finally(()=>{
+                        this.getProveedores();
+                    });
+                } else {
+                    this.enable = [];
+                    this.precio = [];
+                    this.pendiente = false;
+                    this.moneda_input = [];
+                    this.observaciones_inputs = [];
+                    this.descuento = [];
+                    this.getProveedores();
                     this.asigna();
-                    this.cargando = false;
-                })
+
+                }
             },
             asigna()
             {
@@ -607,21 +597,6 @@
                     this.x ++;
                 }
             },
-            getContratos() {
-                this.solicitudes = [];
-                this.cargando = true;
-                return this.$store.dispatch('contratos/contrato-proyectado/index', {
-                    params: {
-                        scope: 'conItems',
-                        order: 'DESC',
-                        sort: 'numero_folio'
-                    }
-                })
-                    .then(data => {
-                        this.contratos = data.data;
-                        this.cargando = false;
-                    })
-            },
             validate() {
 
                 this.$validator.validate().then(result => {
@@ -698,15 +673,6 @@
             }
         },
         watch: {
-            id_contrato(value)
-            {
-
-                if(value !== '' && value !== null && value !== undefined)
-                {
-                    this.find();
-
-                }
-            },
             id_proveedor(value){
                 this.id_sucursal = '';
                 if(value !== '' && value !== null && value !== undefined){
