@@ -12,7 +12,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\PresupuestoContratista;
 use Exception;
 use App\Facades\Context;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Contratos\Asignacion\Repository;
 use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ItemSubcontrato;
@@ -82,39 +82,7 @@ class AsignacionContratistaService
 
     public function store($data)
     {
-        try{
-            DB::connection('cadeco')->beginTransaction();
-            $asignacion = $this->repository->create([
-                'id_transaccion' => $data['id_contrato'],  // contrato proyectado
-                'estado' => 1,
-            ]);
-            $registradas = 0;
-            foreach($data['presupuestos'] as $presupuesto){
-                foreach($presupuesto['partidas'] as $partida){
-                    if($partida && $partida['cantidad_asignada'] > 0){
-                        AsignacionContratistaPartida::create([
-                            'id_asignacion' => $asignacion->id_asignacion,
-                            'id_transaccion' => $presupuesto['id_transaccion'],
-                            'id_concepto' => $partida['id_concepto'],
-                            'cantidad_asignada' => $partida['cantidad_asignada'],
-                            'cantidad_autorizada' => $partida['cantidad_asignada'],
-                        ]);
-                        $registradas ++;
-                    }
-                }
-            }
-
-            if($registradas == 0){
-                abort(403,'La asignación debe tener al menos una partida con cantidad asignada a un proveedor.');
-            }
-
-            DB::connection('cadeco')->commit();
-            return $asignacion;
-        }catch (\Exception $e){
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
+        return $this->repository->registrar($data);
     }
 
     public function delete($data, $id)
