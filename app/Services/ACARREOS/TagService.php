@@ -129,13 +129,13 @@ class TagService
                     if(is_null($tag_previamente_registrado))
                     {
                         try {
-                            $tag_registrado = $this->repository->tag($tag);
+                            $tag_registrado = $this->repository->camionAsignado($tag);
                             if (!is_null($tag_registrado)) {
                                 $tag_registrado->update([
                                     'estado' => 0
                                 ]);
                             }
-                            $tag = Tag::create([
+                            Tag::create([
                                 'uid' => $tag['uid'],
                                 'idcamion' => $tag['idcamion'],
                                 'idproyecto_global' => $tag['idproyecto_global'],
@@ -150,7 +150,6 @@ class TagService
                         $previamente++;
                     }
                 }
-
                 if ($configuraciones_tag == $registros|| $configuraciones_tag == ($registros + $previamente)) {
                     return json_encode(array("msj" => "Datos sincronizados correctamente. ".($registros+$previamente)." - ".$configuraciones_tag."."));
                 }else {

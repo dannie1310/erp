@@ -116,11 +116,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     }
 
     /**
-     * Buscar un tag
+     * Buscar un camión
      * @param $tag
      * @return mixed
      */
-    public function tag($tag)
+    public function camionAsignado($tag)
     {
         $tag = $this->model->where('idcamion', $tag['idcamion'])->first();
         return $tag;
