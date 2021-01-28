@@ -6,6 +6,7 @@
                     <div class="invoice p-3 mb-3">
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
+                                <DatosPresupuesto v-bind:presupuesto="presupuesto"></DatosPresupuesto>
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group error-content">
@@ -24,35 +25,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="table-responsive col-md-12">
-                                        <table class="table">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="bg-gray-light" align="center" colspan="8"><b>{{(presupuesto.empresa) ? presupuesto.empresa.razon_social : '----------'}}</b></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="bg-gray-light"><b>Sucursal:</b></td>
-                                                    <td class="bg-gray-light">{{(presupuesto.sucursal) ? presupuesto.sucursal.descripcion : '----------'}}</td>
-                                                    <td class="bg-gray-light"><b>TC USD:</b></td>
-                                                    <td class="bg-gray-light">{{'$ ' + parseFloat(tipo_cambio[2]).formatMoney(4, '.', ',')}}</td>
-                                                    <td class="bg-gray-light"><b>TC EURO:</b></td>
-                                                    <td class="bg-gray-light">{{'$ ' + parseFloat(tipo_cambio[3]).formatMoney(4, '.', ',')}}</td>
-                                                    <td class="bg-gray-light"><b>TC LIBRA:</b></td>
-                                                    <td class="bg-gray-light">{{'$ ' + parseFloat(tipo_cambio[3]).formatMoney(4, '.', ',')}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="bg-gray-light"><b>Direccion:</b></td>
-                                                    <td class="bg-gray-light" colspan="3">{{(presupuesto.sucursal) ? presupuesto.sucursal.direccion : '----------'}}</td>
-                                                    <td class="bg-gray-light"><b>Folio:</b></td>
-                                                    <td class="bg-gray-light">{{presupuesto.numero_folio}}</td>
-                                                    <td class="bg-gray-light"><b>Importe:</b></td>
-                                                    <td class="bg-gray-light">{{importe}}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+
+
                                 <hr />
-                                
+
                                 <div class="row" v-if="presupuesto.partidas">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
@@ -64,7 +40,7 @@
                                                     <th class="unidad">Unidad</th>
                                                     <th></th>
                                                     <th class="money">Cantidad Solicitada</th>
-                                                    <th class="money">Cantidad Aprobada</th>                                                  
+                                                    <th class="money">Cantidad Aprobada</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
                                                     <th class="money">Precio Total Antes Descto.</th>
                                                     <th class="money">% Descuento</th>
@@ -87,7 +63,7 @@
                                                                 <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
-                                                        </td>                                                        
+                                                        </td>
                                                         <td style="text-align:center;">{{(partida.concepto) ? partida.concepto.cantidad_original_format : '----------'}}</td>
                                                         <td style="text-align:center;">{{(partida.concepto) ? partida.concepto.cantidad_presupuestada_format : '----------'}}</td>
                                                         <td>
@@ -142,7 +118,6 @@
                                                                       :name="`observaciones[${i}]`"
                                                                       data-vv-as="Observaciones"
                                                                       :disabled="enable[i] == false"
-                                                                      v-validate="{required: true}"
                                                                       :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                       v-model="partida.observaciones"/>
                                                              <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
@@ -152,8 +127,12 @@
                                             </table>
                                         </div>
                                     </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal Antes de Descuento:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal_antes_descuento)).formatMoney(4,'.',',')}}</label>
+                                    </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Descuento:</label>                                        
+                                        <label class="col-sm-2 col-form-label">% Descuento:</label>
                                     </div>
                                     <div class=" col-md-2" align="right">
                                         <input
@@ -234,7 +213,7 @@
                                                 :class="{'is-invalid': errors.has('tc_libra')}">
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
+                                        <label class="col-sm-2 col-form-label">Subtotal:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
@@ -246,7 +225,7 @@
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>                                        
+                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -263,7 +242,7 @@
                                                                 :class="{'is-invalid': errors.has('anticipo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -279,7 +258,7 @@
                                                                 :class="{'is-invalid': errors.has('credito')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>                                        
+                                        <label class="col-sm-2 col-form-label">Vigencia( días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
@@ -335,10 +314,11 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
+    import DatosPresupuesto from "./partials/DatosPresupuesto";
     export default {
         name: "presupuesto-edit",
 
-        components: {Datepicker, ModelListSelect},
+        components: {DatosPresupuesto, Datepicker, ModelListSelect},
         props: ['id', 'xls'],
         data() {
             return {
@@ -354,6 +334,10 @@
                 dolares: 0,
                 euros: 0,
                 libras:0,
+                pesos_sd: 0,
+                dolares_sd: 0,
+                euros_sd: 0,
+                libras_sd:0,
                 dolar:0,
                 euro:0,
                 libra:0,
@@ -385,7 +369,7 @@
                 vigencia: 0,
                 descuento: [],
                 enable: []
-                             
+
             }
         },
         mounted() {
@@ -395,9 +379,9 @@
             this.moneda_input = [];
             this.observaciones_inputs = [];
             this.descuento = [];
-            this.find();            
+            this.find();
             this.$validator.reset();
-            
+
         },
         methods : {
             actualizaTC(index){
@@ -449,7 +433,7 @@
                  this.$router.push({name: 'presupuesto'});
             },
             find() {
-                
+
                 this.cargando = true;
                 this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', null);
                 return this.$store.dispatch('contratos/presupuesto/find', {
@@ -457,13 +441,14 @@
                     params:{include: [
                         'empresa',
                         'sucursal',
-                        'partidas.concepto'
+                        'partidas.concepto',
+                            'contrato.conceptos'
                     ]}
-                }).then(data => {         
-                    this.presupuesto = data;                               
-                    this.fecha = data.fecha;                    
+                }).then(data => {
+                    this.presupuesto = data;
+                    this.fecha = data.fecha;
                     this.ordenar();
-                    this.cargando = false;                    
+                    this.cargando = false;
                 })
             },
             calcular()
@@ -473,57 +458,88 @@
                 this.dolares = 0;
                 this.euros = 0;
                 this.libras = 0;
+
+                this.pesos_sd = 0;
+                this.dolares_sd = 0;
+                this.euros_sd = 0;
+                this.libras_sd = 0;
                 while(this.x < this.presupuesto.partidas.data.length)
-                {                    
+                {
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
-                    {                                           
+                    {
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
-                            this.pesos = (this.pesos + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] - 
-                            ((this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] * this.descuento[this.x]) / 100)));
+
+                            this.pesos = (this.pesos + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada
+                                * (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
+
+
+                            this.pesos_sd = (this.pesos_sd + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
-                            this.dolares = (this.dolares + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] - 
-                            ((this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] * this.descuento[this.x]) / 100)));
+                            this.dolares = (this.dolares + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada
+                                * (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
+
+                            this.dolares_sd = (this.dolares_sd + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
-                            this.euros = (this.euros + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] - 
-                            ((this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] * this.descuento[this.x]) / 100)));
-                        }                       
+                            this.euros = (this.euros + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada
+                                (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
+
+                            this.euros_sd = (this.euros_sd + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
+                        }
                         if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
                         {
-                            this.libras = (this.libras + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] - 
-                            ((this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada * this.precio[this.x] * this.descuento[this.x]) / 100)));
-                        }                       
+                            this.libras = (this.libras + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada
+                                (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
+
+                            this.libras_sd = (this.libras_sd + parseFloat(this.presupuesto.partidas.data[this.x].concepto.cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
+                        }
                     }
-                    this.x ++;                    
-                }                     
+                    this.x ++;
+                }
             },
             ordenar()
-            {                
+            {
                 this.x = 0;
                 while(this.x < this.presupuesto.partidas.data.length)
                 {
                     if(!this.carga)
                     {
                         this.enable[this.x] = this.presupuesto.partidas.data[this.x].presupuesto;
-                        this.precio[this.x] = this.presupuesto.partidas.data[this.x].precio_unitario_convert;
+                        this.precio[this.x] = this.presupuesto.partidas.data[this.x].precio_unitario_antes_descuento;
                         this.moneda_input[this.x] = (this.presupuesto.partidas.data[this.x].id_moneda != 0) ? this.presupuesto.partidas.data[this.x].id_moneda : 1;
                         this.descuento[this.x] = (this.presupuesto.partidas.data[this.x].descuento > 0) ? this.presupuesto.partidas.data[this.x].descuento : 0;
 
                     }else
                     {
-                        var busqueda = this.carga.partidas.find(x=>x.id_concepto == this.presupuesto.partidas.data[this.x].concepto.id_concepto)                        
+                        var busqueda = this.carga.partidas.find(x=>x.id_concepto == this.presupuesto.partidas.data[this.x].concepto.id_concepto)
                         this.enable[this.x] = true;
                         this.precio[this.x] = busqueda.precio_unitario;
                         this.moneda_input[this.x] = busqueda.id_moneda;
                         this.descuento[this.x] = busqueda.descuento;
                         this.presupuesto.partidas.data[this.x].observaciones = busqueda.observaciones;
-                    }                        
+                    }
                     this.x ++;
-                }                
+                }
 
                 if(!this.carga)
                 {
@@ -534,8 +550,8 @@
                     this.dolar = this.presupuesto.tc_usd;
                     this.euro = this.presupuesto.tc_euro;
                     this.libra = this.presupuesto.tc_libra;
-                
-                    
+
+
                 }else
                 {
                     this.anticipo = this.carga.anticipo;
@@ -552,11 +568,11 @@
                     this.tipo_cambio[1] = 1;
                     this.tipo_cambio[2] = (this.presupuesto.tc_usd) ? this.presupuesto.tc_usd : this.monedas[1].tipo_cambio_igh;
                     this.tipo_cambio[3] = (this.presupuesto.tc_euro) ? this.presupuesto.tc_euro : this.monedas[2].tipo_cambio_igh;
-                    
-                this.calcular();                
+
+                this.calcular();
             },
             validate() {
-                
+
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.post.partidas = this.presupuesto.partidas.data;
@@ -571,6 +587,7 @@
                         this.post.credito = this.credito;
                         this.post.vigencia = this.vigencia;
                         this.post.subtotal = this.subtotal;
+                        this.post.monto = this.total;
                         this.post.impuesto = this.iva;
                         this.post.observaciones = this.presupuesto.observaciones;
                         this.post.tipo_cambio = this.tipo_cambio;
@@ -578,32 +595,35 @@
                         this.post.tdEuro = this.euro;
                         this.post.tcLibra = this.libra;
                         this.save()
-                    }                    
+                    }
                 });
             },
             save() {
-                
+
                 if(this.total == 0)
                 {
                     swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
                 }
                 else
-                {                    
+                {
                     return this.$store.dispatch('contratos/presupuesto/update', {
                         id: this.id,
                         post: this.post
                         })
                     .then((data) => {
                         this.$router.push({name: 'presupuesto'});
-                    });                
+                    });
                 }
             },
         },
         computed: {
             subtotal()
             {
-                return ((this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra)) - 
-                ((this.descuento_cot * (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra))) / 100 ));
+                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) );
+            },
+            subtotal_antes_descuento()
+            {
+                return (this.pesos_sd + (this.dolares_sd * this.dolar) + (this.euros_sd * this.euro) + (this.libras_sd * this.libra) );
             },
             iva()
             {
@@ -613,14 +633,6 @@
             {
                 return this.subtotal + this.iva;
             },
-            // dolar()
-            // {
-            //     return '$ ' + parseFloat(this.tipo_cambio[2]).formatMoney(4,'.',',');
-            // },
-            // euro()
-            // {
-            //     return '$ ' + parseFloat(this.tipo_cambio[3]).formatMoney(4,'.',',');
-            // },
             importe()
             {
                 return '$ ' + (parseFloat(this.presupuesto.subtotal) + parseFloat(this.presupuesto.impuesto)).formatMoney(2,'.',',');
@@ -646,7 +658,7 @@
                 }
             },
             descuento()
-            {                
+            {
                 if(this.descuento.length > 0)
                 {
                     this.calcular();
@@ -657,8 +669,8 @@
                 if(this.enable.length > 0)
                 {
                     this.calcular();
-                }                
-            }            
+                }
+            }
         }
     }
 </script>

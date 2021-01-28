@@ -42,6 +42,8 @@ class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
             'total_despues_descuento_format' => $model->total_despues_descuento_format,
             'precio_unitario_despues_descuento_partida_mc_format' => $model->precio_unitario_despues_descuento_partida_mc_format,
             'total_despues_descuento_partida_mc_format' => $model->total_despues_descuento_partida_mc_format,
+            'precio_unitario_antes_descuento' => $model->precio_unitario_antes_descuento,
+            'total_antes_descuento' => $model->total_antes_descuento,
         ];
     }
 

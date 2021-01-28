@@ -497,29 +497,11 @@ class PresupuestoContratista extends Transaccion
                 $x = 0;
                 foreach($data['partidas'] as $partida)
                 {
-                    $precio = 0;
-                    $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $partida['id'])->where('id_concepto', '=', $partida['concepto']['id_concepto']);
-                    if($data['moneda'][$x] > 1)
-                    {
-                        switch ((int)$data['moneda'][$x]){
-                            case 2:
-                                $precio = $data['precio'][$x] * $data['tcUsd'];
-                            break;
-                            case 3:
-                                $precio = $data['precio'][$x] * $data['tdEuro'];
-                            break;
-                            case 4:
-                                $precio = $data['precio'][$x] * $data['tcLibra'];
-                            break;
-                        }
 
-                    }
-                    else{
-                        $precio = $data['precio'][$x];
-                    }
+                    $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $partida['id'])->where('id_concepto', '=', $partida['concepto']['id_concepto']);
 
                     $item->update([
-                        'precio_unitario' => ($data['enable'][$x]) ? $precio : null,
+                        'precio_unitario' => ($data['enable'][$x]) ? $data['precio'][$x]-($data['precio'][$x] *($data['descuento'][$x]/100)) : null,
                         'no_cotizado' => ($data['enable'][$x]) ? 0 : 1,
                         'PorcentajeDescuento' => ($data['enable'][$x]) ? $data['descuento'][$x] : null,
                         'IdMoneda' => $data['moneda'][$x],
