@@ -495,8 +495,6 @@
             },
             find() {
                 this.cargando = true;
-
-
                 if(this.$store.getters['contratos/contrato-proyectado/currentContrato'] == null){
                     this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
                     return this.$store.dispatch('contratos/contrato-proyectado/find', {

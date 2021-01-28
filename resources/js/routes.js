@@ -775,6 +775,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id_contrato/asignacion-contratista/create',
+                                name: 'asignacion-contratista-create',
+                                component: require('./components/contratos/asignacion-contratista/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Asignación Contratistas',
+                                    breadcrumb: { parent: 'asignacion-contratista-selecciona-contrato-proyectado', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_asignacion_contratista']
+                                }
+                            },
+                            {
                                 path: ':id/documentos',
                                 name: 'proyectado-documentos',
                                 component: require('./components/globals/archivos/Files').default,
@@ -874,12 +886,12 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'create',
-                                name: 'asignacion-contratista-create',
-                                component: require('./components/contratos/asignacion-contratista/Create').default,
+                                path: 'create/seleccionar_contrato_proyectado',
+                                name: 'asignacion-contratista-selecciona-contrato-proyectado',
+                                component: require('./components/contratos/asignacion-contratista/SeleccionaContratoProyectado').default,
                                 meta: {
-                                    title: 'Registrar Asignación Contratistas',
-                                    breadcrumb: { parent: 'asignacion-contratista', name: 'REGISTRAR'},
+                                    title: 'Seleccionar Contrato Proyectado',
+                                    breadcrumb: { parent: 'asignacion-contratista', name: 'SELECCIONAR CONTRATO'},
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_asignacion_contratista']
                                 }

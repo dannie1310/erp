@@ -1,28 +1,7 @@
 <template>
     <span>
+        <DatosContratoProyectado v-if="contrato" :contrato_proyectado="contrato"></DatosContratoProyectado>
         <div class="row">
-            <div class="col-12">
-                <div class="invoice p-3 mb-3">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="id_solicitud">Seleccionar Contrato Proyectado:</label>
-                                    <model-list-select
-                                        :disabled="cargando"
-                                        name="id_contrato"
-                                        option-value="id_transaccion"                                                               
-                                        v-model="id_contrato"
-                                        :custom-text="numeroFolioFormatAndObservaciones"
-                                        :list="contratos"
-                                        :placeholder="!cargando?'Seleccionar o buscar Contrato Proyectado':'Cargando...'"
-                                        :isError="errors.has(`id_contrato`)">
-                                    </model-list-select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('id_contrato')">{{ errors.first('id_contrato') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="col-12" v-if="data">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
@@ -54,7 +33,7 @@
                                                 <th style="width: 4%;">Unidad</th>
                                                 <th style="width: 6%;">Cantidad Solicitada</th>
                                                 <th style="width: 6%;">Cantidad Pendiente Asignar</th>
-                                             
+
                                                 <th class="bg-gray-light ">Precio Unitario Antes Descto.</th>
                                                 <th class="bg-gray-light ">Precio Total Antes Descto.</th>
                                                 <th class="bg-gray-light">% Descuento</th>
@@ -87,7 +66,7 @@
                                                         <input v-on:change="recalcular(i)"
                                                             type="number"
                                                             :disabled="item.cantidad_disponible == 0 && data.presupuestos[id_transaccion].partidas[i].cantidad_asignada == ''"
-                                                            
+
                                                             class="form-control"
                                                             :name="`cantidad_asignada[${item.id_concepto}]`"
                                                             data-vv-as="Cantidad Asignada"
@@ -129,9 +108,11 @@
 
 <script>
 import {ModelListSelect} from 'vue-search-select';
+import DatosContratoProyectado from "../proyectado/partials/DatosContratoProyectado";
 export default {
     name: "asignacion-proveedores-create",
-    components: {ModelListSelect},
+    props: ['id_contrato'],
+    components: {DatosContratoProyectado, ModelListSelect},
     data() {
         return {
             cargando: false,
@@ -142,10 +123,12 @@ export default {
         }
     },
     mounted() {
-        this.getContratos();
+        this.find();
     },
     computed: {
-        
+        contrato(){
+            return this.$store.getters['contratos/contrato-proyectado/currentContrato'];
+        },
     },
     methods: {
         cerrar(){
@@ -181,7 +164,7 @@ export default {
         },
         borrarVolumenes(){
             let self = this;
-            Object.entries(self.data.items).forEach(([i, item], index) => {   
+            Object.entries(self.data.items).forEach(([i, item], index) => {
                 if(self.data.presupuestos[self.id_transaccion].partidas[i]){
                     if(self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada > 0){
                         self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada = '';
@@ -193,23 +176,30 @@ export default {
         numeroFolioFormatAndObservaciones(item){
             return `[${item.folio}] - [${item.referencia}]`
         },
-        getContratos(){
+        find() {
             this.cargando = true;
-            return this.$store.dispatch('contratos/contrato-proyectado/getContratos', {
-                params: this.query
-            })
-            .then(data => {
-                this.contratos =  data;
-            })
-            .finally(() => {
-                this.cargando = false;
-            })
+            if(this.$store.getters['contratos/contrato-proyectado/currentContrato'] == null){
+                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
+                return this.$store.dispatch('contratos/contrato-proyectado/find', {
+                    id: this.id_contrato,
+                    params:{include: ['conceptos']}
+                }).then(data => {
+                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
+
+                }).finally(()=>{
+                    this.getCotizaciones();
+                });
+            } else {
+
+                this.getCotizaciones();
+
+            }
         },
-        getCotizaciones(id){
+        getCotizaciones(){
             this.cargando = true;
             this.data = null;
             return this.$store.dispatch('contratos/contrato-proyectado/getCotizaciones', {
-                id: id,
+                id: this.id_contrato,
                 params: {}
             })
             .then(data => {
@@ -226,7 +216,7 @@ export default {
             Object.values(this.data.presupuestos).forEach(partida =>{
                 if(partida.partidas[i] && partida.partidas[i].cantidad_asignada !== ''){
                     asignadas = +asignadas + +partida.partidas[i].cantidad_asignada;
-                }                   
+                }
             });
 
             if(asignadas > this.data.items[i].cantidad_base){
@@ -240,11 +230,11 @@ export default {
             }else{
                 let p_unitario = 0;
                 p_unitario = this.data.presupuestos[this.id_transaccion].partidas[i].precio_unitario_con_desc;
-                    
+
                 let c_asignada =this.data.presupuestos[this.id_transaccion].partidas[i].cantidad_asignada !== ''?this.data.presupuestos[this.id_transaccion].partidas[i].cantidad_asignada:0;
                 this.data.presupuestos[this.id_transaccion].partidas[i].precio_total_con_desc = parseFloat(p_unitario * c_asignada).formatMoney(2);
                 this.data.presupuestos[this.id_transaccion].partidas[i].importe_moneda_conversion = parseFloat((p_unitario * c_asignada) * this.data.presupuestos[this.id_transaccion].partidas[i].tipo_cambio).formatMoney(2);
-     
+
             }
             // this.data.items[i].cantidad_disponible = this.data.items[i].cantidad_base;
             this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_base - asignadas).toFixed(4);
@@ -268,7 +258,7 @@ export default {
             })
             .then((value) => {
                 if (value) {
-                    this.$router.push({name: 'asignacion-contratista'});
+                    this.$router.push({name: 'asignacion-contratista-selecciona-contrato-proyectado'});
                 }
             });
         },
@@ -288,20 +278,11 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result){
-                    this.store(); 
+                    this.store();
                 }
             });
         },
     },
-    watch:{
-        id_contrato(value){
-            if(value != ''){
-                this.getCotizaciones(value);
-            }
-        }
-    }
-
-
 }
 </script>
 

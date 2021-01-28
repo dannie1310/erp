@@ -47,7 +47,7 @@
     import {ModelListSelect} from 'vue-search-select';
     import DatosContratoProyectado from "../proyectado/partials/DatosContratoProyectado";
     export default {
-        name: "selecciona-contrato-proyectado",
+        name: "selecciona-contrato-proyectado-asignacion",
         components: {DatosContratoProyectado, ModelListSelect},
         data() {
             return {
@@ -68,20 +68,19 @@
             {
                 return `[${item.numero_folio_format}] ---- [ ${item.referencia} ]`;
             },
-
             salir()
             {
-                 this.$router.push({name: 'presupuesto'});
+                 this.$router.push({name: 'asignacion-contratista'});
             },
             find() {
+
                 this.cargando = true;
                 this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
                 return this.$store.dispatch('contratos/contrato-proyectado/find', {
                     id: this.id_contrato,
-                    params:{include: ['conceptos']}
+                    params:{}
                 }).then(data => {
                     this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
-
                     this.cargando = false;
                 })
             },
@@ -90,7 +89,6 @@
                 this.cargando = true;
                 return this.$store.dispatch('contratos/contrato-proyectado/index', {
                     params: {
-                        scope: 'conItems',
                         order: 'DESC',
                         sort: 'numero_folio'
                     }
@@ -105,7 +103,7 @@
                 this.$validator.validate().then(result => {
                     if (result) {
 
-                        this.$router.push({name: 'presupuesto-create', params: {id_contrato: this.contrato.id}});
+                        this.$router.push({name: 'asignacion-contratista-create', params: {id_contrato: this.contrato.id}});
                     }
 
                 });
