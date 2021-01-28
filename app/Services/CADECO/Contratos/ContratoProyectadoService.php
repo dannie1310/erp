@@ -366,15 +366,14 @@ class ContratoProyectadoService
                         if($partida_presupuestada && $partida_presupuestada->precio_unitario > 0){
                             $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = [
                                 'id_concepto' => $contrato->id_concepto,
-                                'precio_unitario' => '$ ' . number_format($partida_presupuestada->precio_unitario, 2, '.', ','),
-                                'precio_total_antes_desc' => '$ ' . number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente, 2, '.', ','),
-                                'precio_unitario_con_desc' =>  number_format($partida_presupuestada->precio_unitario * $desc , 2, '.', ','),
-                                'precio_total_con_desc' =>   number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc , 2, '.', ','),
-                                'descuento' => $partida_presupuestada->descuento,
+                                'precio_unitario' => $partida_presupuestada->precio_unitario_antes_descuento_format,
+                                'precio_total_antes_desc' => $partida_presupuestada->total_antes_descuento_format,
+                                'precio_unitario_con_desc' =>  $partida_presupuestada->precio_unitario_despues_descuento_format,
+                                'precio_total_con_desc' =>   $partida_presupuestada->total_despues_descuento_format,
+                                'descuento' => $partida_presupuestada->porcentaje_descuento_format,
                                 'moneda' => $partida_presupuestada->moneda->abreviatura,
                                 'tipo_cambio' => $partida_presupuestada->moneda->tipo == 1?1: number_format($partida_presupuestada->moneda->cambio->cambio, 4, '.', ','),
-                                'importe_moneda_conversion' => $partida_presupuestada->moneda->tipo == 1? number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc , 2, '.', ',')
-                                                            : number_format($partida_presupuestada->moneda->cambio->cambio * ($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc), 4, '.', ','),
+                                'importe_moneda_conversion' => $partida_presupuestada->total_despues_descuento_partida_mc_format,
                                 'observaciones' => $partida_presupuestada->Observaciones,
                                 'cantidad_asignada' => '',
                             ];
@@ -387,7 +386,7 @@ class ContratoProyectadoService
 
                 }
             }
-            return ['items'=>$items,'presupuestos'=> $presupuestos];
+            return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($presupuestos)];
 
         } catch (\Exception $e) {
             throw $e;

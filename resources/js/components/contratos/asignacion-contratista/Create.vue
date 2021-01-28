@@ -7,7 +7,8 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="col-12 table-responsive">
+                                <div class=" table-responsive">
+                                    <span style="color: #6c757d" class="pull-right">{{data.cantidad_presupuestos}} Presupuestos registrados</span>
                                     <table class="table table-striped">
                                          <thead>
                                             <tr>
@@ -56,10 +57,10 @@
                                                 <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].precio_unitario}}</td><td v-else></td>
                                                 <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].precio_total_antes_desc}}</td><td v-else></td>
                                                 <td v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].descuento}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]">$ {{data.presupuestos[id_transaccion].partidas[i].precio_unitario_con_desc}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]">$ {{data.presupuestos[id_transaccion].partidas[i].precio_total_con_desc}}</td><td v-else></td>
+                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].precio_unitario_con_desc}}</td><td v-else></td>
+                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].precio_total_con_desc}}</td><td v-else></td>
                                                 <td v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].moneda}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]">$ {{data.presupuestos[id_transaccion].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
+                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
                                                 <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].observaciones}}</td><td v-else></td>
                                                 <td>
                                                     <span  v-if="data.presupuestos[id_transaccion].partidas[i]">
@@ -117,7 +118,6 @@ export default {
         return {
             cargando: false,
             contratos:[],
-            id_contrato:'',
             data:null,
             id_transaccion:'',
         }
