@@ -116,13 +116,12 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     }
 
     /**
-     * Buscar un camión
-     * @param $tag
+     * @param $id_camion
      * @return mixed
      */
-    public function camionAsignado($tag)
+    public function camionAsignado($id_camion)
     {
-        $tag = $this->model->where('idcamion', $tag['idcamion'])->first();
+        $tag = $this->model->where('idcamion', $id_camion)->first();
         return $tag;
     }
 
@@ -131,10 +130,20 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
      * @param $tag
      * @return mixed
      */
-    public function tagRegistrado($tag)
+    public function tagCamionRegistrado($tag)
     {
         $tag = $this->model->where('idcamion', $tag['idcamion'])
             ->where('uid', $tag['uid'])->first();
+        return $tag;
+    }
+
+    /**
+     * @param $uid
+     * @return mixed
+     */
+    public function tagRegistrado($uid)
+    {
+        $tag = $this->model->where('uid', $uid)->first();
         return $tag;
     }
 

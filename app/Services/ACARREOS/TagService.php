@@ -125,26 +125,29 @@ class TagService
                 $previamente = 0;
                 $errores = 0;
                 foreach ($data['tag_camion'] as $key => $tag) {
-                    $tag_previamente_registrado = $this->repository->tagRegistrado($tag);
+                    $tag_previamente_registrado = $this->repository->tagCamionRegistrado($tag);
                     if(is_null($tag_previamente_registrado))
                     {
-                        try {
-                            $tag_registrado = $this->repository->camionAsignado($tag);
-                            if (!is_null($tag_registrado)) {
-                                $tag_registrado->update([
-                                    'estado' => 0
+                        $uid_registrado = $this->repository->tagRegistrado($tag['uid']);
+                        if(is_null($uid_registrado)) {
+                            try {
+                                $tag_registrado = $this->repository->camionAsignado($tag['idcamion']);
+                                if (!is_null($tag_registrado)) {
+                                    $tag_registrado->update([
+                                        'estado' => 0
+                                    ]);
+                                }
+                                Tag::create([
+                                    'uid' => $tag['uid'],
+                                    'idcamion' => $tag['idcamion'],
+                                    'idproyecto_global' => $tag['idproyecto_global'],
+                                    'asigno' => $data['usuario']
                                 ]);
+                                $registros++;
+                            } catch (\Exception $exception) {
+                                $this->repository->crearLogError($exception->getMessage(), $data['usuario']);
+                                $errores++;
                             }
-                            Tag::create([
-                                'uid' => $tag['uid'],
-                                'idcamion' => $tag['idcamion'],
-                                'idproyecto_global' => $tag['idproyecto_global'],
-                                'asigno' => $data['usuario']
-                            ]);
-                            $registros++;
-                        } catch (\Exception $exception) {
-                            $this->repository->crearLogError($exception->getMessage(), $data['usuario']);
-                            $errores++;
                         }
                     }else{
                         $previamente++;
