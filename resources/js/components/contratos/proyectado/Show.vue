@@ -14,10 +14,10 @@
 
         <DatosContratoProyectado v-bind:contrato_proyectado="contrato" v-if="!cargando"></DatosContratoProyectado>
 
-        <div class="card" v-if="!cargando">
-            <div class="card-body">
+        <div class="card" v-if="contrato">
+            <div class="card-body table-responsive">
                 <div class="row" >
-                    <div class="col-md-12">
+                    <div class="col-md-12 table-responsive">
                         <table id="tabla-conceptos" >
                             <thead>
                                 <tr>
@@ -51,7 +51,7 @@
                                     </td>
                                     <td >{{concepto.unidad}}</td>
                                     <td class="numerico">{{concepto.cantidad_original_format}}</td>
-                                    <td :title="concepto.destino.path" style="text-decoration: underline">{{ concepto.destino.destino_path }}</td>
+                                    <td :title="concepto.destino.concepto.path" style="text-decoration: underline">{{ concepto.destino.concepto.path_corta }}</td>
                                 </tr>
                             </tbody>
                         </table>
