@@ -664,6 +664,10 @@
                     this.calcular();
                 }
             },
+            descuento_cot()
+            {
+                this.calcular();
+            },
             enable()
             {
                 if(this.enable.length > 0)
