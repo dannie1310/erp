@@ -420,10 +420,17 @@ class PresupuestoContratista extends Transaccion
 
                 foreach($data['partidas'] as $t => $partida)
                 {
+                    $precio_conversion = ($data['enable'][$t]) ? $this->precioConversion($data['precio'][$t], $data['moneda'][$t]) : null;
+                    if($precio_conversion){
+                        $precio_descuento = $precio_conversion -($precio_conversion*$data['descuento'][$t]/100);
+                    } else {
+                        $precio_descuento = null;
+                    }
+
                     $presupuesto->partidas()->create([
                         'id_transaccion' => $presupuesto->id_transaccion,
                         'id_concepto' => $partida['id_concepto'],
-                        'precio_unitario' => ($data['enable'][$t]) ? $data['precio'][$t]-($data['precio'][$t] *($data['descuento'][$t]/100)) : null,
+                        'precio_unitario' => $precio_descuento,
                         'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
                         'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
                         'IdMoneda' => $data['moneda'][$t],
@@ -500,8 +507,15 @@ class PresupuestoContratista extends Transaccion
 
                     $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $partida['id'])->where('id_concepto', '=', $partida['concepto']['id_concepto']);
 
+                    $precio_conversion = ($data['enable'][$x]) ? $this->precioConversion($data['precio'][$x], $data['moneda'][$x]) : null;
+                    if($precio_conversion){
+                        $precio_descuento = $precio_conversion -($precio_conversion*$data['descuento'][$x]/100);
+                    } else {
+                        $precio_descuento = null;
+                    }
+
                     $item->update([
-                        'precio_unitario' => ($data['enable'][$x]) ? $data['precio'][$x]-($data['precio'][$x] *($data['descuento'][$x]/100)) : null,
+                        'precio_unitario' => $precio_descuento,
                         'no_cotizado' => ($data['enable'][$x]) ? 0 : 1,
                         'PorcentajeDescuento' => ($data['enable'][$x]) ? $data['descuento'][$x] : null,
                         'IdMoneda' => $data['moneda'][$x],

@@ -180,6 +180,24 @@ class PresupuestoContratistaPartida extends Model
         }
     }
 
+    public function getPrecioUnitarioMonedaOriginalAttribute()
+    {
+        switch ($this->IdMoneda) {
+            case (1):
+                return $this->precio_unitario;
+                break;
+            case (2):
+                return $this->precio_unitario / $this->presupuesto->dolar;
+                break;
+            case (3):
+                return $this->precio_unitario / $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_unitario / $this->presupuesto->libra;
+                break;
+        }
+    }
+
     public function getPorcentajeDescuentoFormatAttribute()
     {
         return number_format($this->PorcentajeDescuento, "2",".","")." %";
@@ -187,7 +205,7 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioAntesDescuentoAttribute()
     {
-        return 100 * $this->precio_unitario /(100-$this->PorcentajeDescuento);
+        return 100 * $this->precio_unitario_moneda_original /(100-$this->PorcentajeDescuento);
     }
 
     public function getPrecioUnitarioAntesDescuentoFormatAttribute()
@@ -207,7 +225,7 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioDespuesDescuentoAttribute()
     {
-        return $this->precio_unitario ;
+        return $this->precio_unitario_moneda_original ;
     }
 
     public function getPrecioUnitarioDespuesDescuentoFormatAttribute()
@@ -261,11 +279,6 @@ class PresupuestoContratistaPartida extends Model
     public function getImporteAttribute()
     {
         return $this->precio_unitario * $this->concepto->cantidad_presupuestada;
-    }
-
-    public function getPrecioUnitarioMonedaOriginalAttribute()
-    {
-        return $this->precio_unitario;
     }
 
     public function getImporteMonedaOriginalAttribute()
