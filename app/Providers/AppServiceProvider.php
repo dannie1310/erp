@@ -353,6 +353,10 @@ class AppServiceProvider extends ServiceProvider
         TiroConcepto::observe(TiroConceptoObserver::class);
         ViajeNeto::observe(ViajeNetoObserver::class);
         VolumenDetalle::observe(VolumenDetalleObserver::class);
+            /**
+             * SCA CONFIGURACION
+             */
+            \App\Models\ACARREOS\SCA_CONFIGURACION\Tag::observe(\App\Observers\ACARREOS\SCA_CONFIGURACION\TagObserver::class);
 
         /**
          * CTPQ
