@@ -291,4 +291,9 @@ class PresupuestoContratistaPartida extends Model
         return ($this->precio_unitario_moneda_original -($this->precio_unitario_moneda_original * $this->presupuesto->PorcentajeDescuento / 100)) * $this->concepto->cantidad_presupuestada;
     }
 
+    public function scopeCotizadas($query)
+    {
+        return $query->where('no_cotizado', '=', 0);
+    }
+
 }

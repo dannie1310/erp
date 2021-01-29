@@ -217,7 +217,7 @@ class PresupuestoContratista extends Transaccion
 
     public function getContratosAttribute()
     {
-        $partidas = $this->partidas;
+        $partidas = $this->partidas()->cotizadas()->get();
         $niveles = [];
         foreach($partidas as $partida){
             $nivel = $partida->concepto->nivel;
