@@ -81,7 +81,7 @@ class TagService
         }
 
         return [
-            'IdUsuario' => (String) auth()->id(),
+            'IdUsuario' => (String) $id_usuario,
             'Nombre' => $usuario->first()->usuario->nombre_completo,
             'proyectos' => $this->repository->getProyectos()
         ];
@@ -136,7 +136,7 @@ class TagService
                     Tag::create([
                         'uid' => $tag['uid'],
                         'id_proyecto' => $tag['id_proyecto'],
-                        'registro' => $tag['usuario']
+                        'registro' => $data['usuario']
                     ]);
                     $registros++;
                 }
