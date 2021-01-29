@@ -55,4 +55,15 @@ class TagController extends Controller
     {
         return $this->service->getCatalogo($request->all());
     }
+
+    /**
+     * Registrar TAGS desde aplicación móvil 'Registro TAGS'.
+     * @param Request $request
+     * @return false|string
+     * @throws \Exception
+     */
+    public function registrarTag(Request $request)
+    {
+        return $this->service->registrar($request->all());
+    }
 }

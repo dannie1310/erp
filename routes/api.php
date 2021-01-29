@@ -437,6 +437,7 @@ $api->version('v1', function ($api) {
         //TAG GLOBAL
         $api->group(['prefix' => 'tag-global'], function ($api) {
             $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@registrarTag');
         });
 
         //VIAJE NETO
