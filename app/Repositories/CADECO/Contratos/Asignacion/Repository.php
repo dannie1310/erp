@@ -19,4 +19,9 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     {
         return $this->model->registrar($data);
     }
+
+    public function generarSubcontratos($data)
+    {
+        return $this->model->generarSubcontratos($data);
+    }
 }
