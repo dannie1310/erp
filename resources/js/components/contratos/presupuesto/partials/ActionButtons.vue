@@ -17,7 +17,6 @@
     </div>
 </template>
 <script>
-import Show from '../Show';
 import Eliminar from '../Delete';
 import DescargaLayout from '../DescargaLayout';
 import CargaLayout from '../CargaLayout';
@@ -25,7 +24,7 @@ import PDF from '../FormatoTablaComparativa';
 import Relaciones from "../../../globals/ModalRelaciones";
     export default {
         name: "presupuesto-buttons",
-        components: {Show, Eliminar, DescargaLayout, CargaLayout, PDF, Relaciones},
+        components: { Eliminar, DescargaLayout, CargaLayout, PDF, Relaciones},
         props: ['value'],
 
         methods: {

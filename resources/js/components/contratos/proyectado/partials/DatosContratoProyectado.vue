@@ -78,12 +78,10 @@
 </template>
 
 <script>
-import PDF from '../FormatoContratoProyectado';
-import EstatusLabelGlobal from "../../../globals/EstatusLabel";
 import ButtonsContratoProyectado from "./ActionButtons";
 export default {
     name: "DatosContratoProyectado",
-    components: {ButtonsContratoProyectado, EstatusLabelGlobal, PDF},
+    components: {ButtonsContratoProyectado},
     props: ['contrato_proyectado'],
 }
 </script>

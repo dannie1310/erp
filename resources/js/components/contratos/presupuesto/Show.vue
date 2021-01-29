@@ -14,7 +14,6 @@
         <div class="card" v-else>
             <div class="card-body table-responsive">
                 <DatosPresupuesto v-bind:presupuesto="presupuesto"></DatosPresupuesto>
-                <DatosContratoProyectado v-bind:contrato_proyectado="presupuesto.contrato_proyectado"></DatosContratoProyectado>
                 <div class="row" >
                     <div class="col-md-12 table-responsive">
                         <table id="tabla-conceptos" >
@@ -142,11 +141,10 @@
 </template>
 
 <script>
-    import DatosContratoProyectado from "../proyectado/partials/DatosContratoProyectado";
     import DatosPresupuesto from "./partials/DatosPresupuesto";
     export default {
         name: "presupuesto-show",
-        components: {DatosPresupuesto,  DatosContratoProyectado},
+        components: {DatosPresupuesto},
         props: ['id'],
         data(){
             return{

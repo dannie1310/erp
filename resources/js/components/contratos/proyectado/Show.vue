@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <DatosContratoProyectado v-bind:contrato_proyectado="contrato" v-if="!cargando"></DatosContratoProyectado>
+        <DatosContratoProyectado v-bind:contrato_proyectado="contrato" v-if="contrato"></DatosContratoProyectado>
 
         <div class="card" v-if="contrato">
             <div class="card-body table-responsive">

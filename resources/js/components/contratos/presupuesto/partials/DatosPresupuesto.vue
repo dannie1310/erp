@@ -120,13 +120,11 @@
 </template>
 
 <script>
-import PDF from '../FormatoTablaComparativa';
-import EstatusLabelGlobal from "../../../globals/EstatusLabel";
-import ActionButtons from "../../../compras/orden-compra/partials/ActionButtons";
+
 import PresupuestoButtons from "./ActionButtons";
 export default {
     name: "DatosPresupuesto",
-    components: {PresupuestoButtons, ActionButtons, EstatusLabelGlobal, PDF},
+    components: {PresupuestoButtons},
     props: ['presupuesto'],
 }
 </script>
