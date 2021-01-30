@@ -10,11 +10,14 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Events\CambioEFOS;
 use App\Events\FinalizaCargaCFD;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\PDF\Fiscal\CFDI;
 use App\PDF\Fiscal\InformeCFDICompleto;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
@@ -141,6 +144,39 @@ class CFDSATService
             }
             else if (strpos('VIGENTE', strtoupper($data['estado'])) !== FALSE) {
                 $this->repository->where([['cancelado', '=', 0]]);
+            }
+        }
+        if (isset($data['obra'])) {
+            $obras = ConfiguracionObra::withoutGlobalScopes()->where([['nombre', 'LIKE', '%' . $data['obra'] . '%']])->get();
+
+            foreach($obras as $obra){
+                $id_obra[] = $obra->id_obra;
+                $id_proyecto[] = $obra->id_proyecto;
+            }
+
+            $uuid = FacturaRepositorio::whereIn("id_obra", $id_obra)->whereIn("id_proyecto", $id_proyecto)->pluck("uuid");
+            $this->repository->whereIn(['uuid', $uuid]);
+        }
+        if (isset($data['base_datos'])) {
+            $id_proyecto = Proyecto::where([['base_datos', 'LIKE', '%' . $data['base_datos'] . '%']])->pluck("id");
+
+            $uuid = FacturaRepositorio::whereIn("id_proyecto", $id_proyecto)->whereIn("id_proyecto", $id_proyecto)->pluck("uuid");
+            $this->repository->whereIn(['uuid', $uuid]);
+        }
+        if (isset($data['solo_pendientes'])) {
+            if($data['solo_pendientes']==="true"){
+
+               /* $this->repository->leftJoin("Finanzas.repositorio_facturas","repositorio_facturas.uuid","=","cfd_sat.uuid")
+                ->whereNull("repositorio_facturas.uuid");*/
+                $this->repository->whereNull("id_factura_repositorio");
+            }
+        }
+
+        if (isset($data['solo_asociados'])) {
+            if($data['solo_asociados']==="true"){
+                /*$this->repository->join("Finanzas.repositorio_facturas","repositorio_facturas.uuid","=","cfd_sat.uuid")
+                    ;*/
+                $this->repository->whereNotNull("id_factura_repositorio");
             }
         }
         return $this->repository->paginate($data);

@@ -177,4 +177,21 @@ class Repository implements RepositoryInterface
         $this->model = $this->model->join($tabla,$campo1,$signo,$campo2);
         return $this;
     }
+
+    public function leftJoin($tabla, $campo1, $signo, $campo2)
+    {
+        $this->model = $this->model->leftJoin($tabla,$campo1,$signo,$campo2);
+        return $this;
+    }
+
+    public function whereNull($campo)
+    {
+        $this->model = $this->model->whereNull($campo);
+        return $this;
+    }
+    public function whereNotNull($campo)
+    {
+        $this->model = $this->model->whereNotNull($campo);
+        return $this;
+    }
 }

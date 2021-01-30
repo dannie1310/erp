@@ -13,22 +13,51 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                    <div class="form-row">
-                        <div class="col">
-                            <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="$data.daterange"/>
+                        <div class="form-row">
+                            <div class="col">
+                                <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="$data.daterange"/>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="custom-control custom-switch" :disabled="ver_asociados">
+                                    <input type="checkbox" class="custom-control-input" id="ver_pendientes" v-model="ver_pendientes" :disabled="ver_asociados">
+                                    <label class="custom-control-label" for="ver_pendientes" :disabled="ver_asociados">Ver únicamente CFDI pendientes de asociación en proyecto</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="custom-control custom-switch" :disabled="ver_pendientes">
+                                    <input type="checkbox" class="custom-control-input" id="ver_asociados" v-model="ver_asociados" :disabled="ver_pendientes">
+                                    <label class="custom-control-label" for="ver_asociados" :disabled="ver_pendientes">Ver únicamente CFDI asociados a proyecto</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
                     <!-- /.card-header -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="card">
+
+                <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
                             <datatable v-bind="$data" />
                         </div>
                     </div>
-                    <!-- /.card-body -->
+                <!-- /.card-body -->
                 </div>
-                <!-- /.card -->
-            </div>
+            <!-- /.card -->
         </div>
             <!-- /.col -->
     </span>
@@ -50,6 +79,9 @@
                 id_empresa: '',
                 empresas: [],
                 empresa_seleccionada: [],
+                ver_pendientes: false,
+                ver_asociados: false,
+                detalle_descarga :[],
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
@@ -70,12 +102,15 @@
                     { title: 'Moneda', field: 'moneda',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'TC', field: 'tipo_cambio',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Estado', field: 'estado',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'BD', field: 'base_datos',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Proyecto', field: 'obra',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Fecha Carga Proyecto', field: 'fecha_carga_proyecto',tdClass: 'td_money',},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: ['empresa','proveedor'],
+                    include: ['empresa','proveedor', 'factura_repositorio'],
                     sort: 'fecha',  order: 'desc'
                 },
                 daterange: null,
@@ -149,6 +184,9 @@
                             moneda: ccfdi.moneda,
                             tipo_cambio: ccfdi.tipo_cambio,
                             estado: ccfdi.estado,
+                            base_datos: ccfdi.factura_repositorio?ccfdi.factura_repositorio.base_datos:'',
+                            obra: ccfdi.factura_repositorio?ccfdi.factura_repositorio.obra:'',
+                            fecha_carga_proyecto: ccfdi.factura_repositorio?ccfdi.factura_repositorio.fecha_hora_carga_format:'',
                             uuid: ccfdi.uuid,
                             buttons: $.extend({}, {
                                 id: ccfdi.id,
@@ -207,6 +245,20 @@
                 },
                 deep: true
             },
+            ver_pendientes:{
+                handler(vp) {
+                    this.query.solo_pendientes = vp
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+            },
+            ver_asociados:{
+                handler(va) {
+                    this.query.solo_asociados = va
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+            }
         },
     }
 </script>
