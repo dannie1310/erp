@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\FacturaRepositorioTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Fiscal\CtgEstadosCFDTransformer;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use League\Fractal\TransformerAbstract;
@@ -27,7 +28,8 @@ class CFDSATTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'empresa',
         'proveedor',
-        'estatus'
+        'estatus',
+        'factura_repositorio'
     ];
 
     public function transform(CFDSAT $model) {
@@ -94,6 +96,15 @@ class CFDSATTransformer extends TransformerAbstract
         if($estatus = $model->ctgEstado)
         {
             return $this->item($estatus, new CtgEstadosCFDTransformer);
+        }
+        return null;
+    }
+
+    public function includeFacturaRepositorio(CFDSAT $model)
+    {
+        if($item = $model->facturaRepositorio)
+        {
+            return $this->item($item, new FacturaRepositorioTransformer);
         }
         return null;
     }
