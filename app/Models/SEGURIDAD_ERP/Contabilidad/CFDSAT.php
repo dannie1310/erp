@@ -9,11 +9,13 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\Obra;
+use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -50,7 +52,7 @@ class CFDSAT extends Model
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
-    //protected $dateFormat = 'Y-m-d H:i:s';
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     public function carga()
     {
@@ -115,6 +117,16 @@ class CFDSAT extends Model
     public function scopeExceptoTipo($query, $tipo)
     {
         return $query->where('tipo_comprobante', '!=', $tipo);
+    }
+
+    public function scopeParaProyecto($query){
+        $rfc_contexto = Obra::find(Context::getIdObra())->rfc;
+        return $query->where("rfc_receptor","=", $rfc_contexto)
+            ->join(Context::getDatabase().".dbo.empresas","rfc_emisor","=","empresas.rfc")
+            ->join(Context::getDatabase().".dbo.transacciones","empresas.id_empresa","=","transacciones.id_empresa")
+            ->where("transacciones.id_obra","=",Context::getIdObra())
+            ->select("cfd_sat.*")
+           ;
     }
 
     public function registrar($data)
