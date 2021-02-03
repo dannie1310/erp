@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\ACARREOS\InicioCamion;
+use App\Models\ACARREOS\Tag;
 use App\Models\ACARREOS\Tiro;
 use App\Models\ACARREOS\TiroConcepto;
 use App\Models\ACARREOS\ViajeNeto;
@@ -159,6 +160,7 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\ACARREOS\InicioCamionObserver;
+use App\Observers\ACARREOS\TagObserver;
 use App\Observers\ACARREOS\TiroConceptoObserver;
 use App\Observers\ACARREOS\TiroObserver;
 use App\Observers\ACARREOS\ViajeNetoObserver;
@@ -346,10 +348,15 @@ class AppServiceProvider extends ServiceProvider
          * ACARREOS
          */
         InicioCamion::observe(InicioCamionObserver::class);
+        Tag::observe(TagObserver::class);
         Tiro::observe(TiroObserver::class);
         TiroConcepto::observe(TiroConceptoObserver::class);
         ViajeNeto::observe(ViajeNetoObserver::class);
         VolumenDetalle::observe(VolumenDetalleObserver::class);
+            /**
+             * SCA CONFIGURACION
+             */
+            \App\Models\ACARREOS\SCA_CONFIGURACION\Tag::observe(\App\Observers\ACARREOS\SCA_CONFIGURACION\TagObserver::class);
 
         /**
          * CTPQ

@@ -427,6 +427,19 @@ $api->version('v1', function ($api) {
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@desactivar')->where(['id' => '[0-9]+']);
         });
 
+        //TAG
+        $api->group(['prefix' => 'tag'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\TagController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\TagController@registrarTag');
+            $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\TagController@cambiarClave');
+        });
+
+        //TAG GLOBAL
+        $api->group(['prefix' => 'tag-global'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@registrarTag');
+        });
+
         //VIAJE NETO
         $api->group(['prefix' => 'viaje-neto'], function ($api) {
             $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@catalogo');
