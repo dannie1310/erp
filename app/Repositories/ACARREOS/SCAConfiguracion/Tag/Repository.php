@@ -28,7 +28,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         foreach ($proyectos as $key => $proyecto)
         {
             $proyecto['id_proyecto'] = (String) $proyecto['id_proyecto'];
-            $proyecto['descripcion'] = (String) utf8_encode($proyecto['descripcion']);
+            $proyecto['descripcion'] = $proyecto['descripcion'];
             $proyectos_disponibles[$key] = $proyecto;
         }
         return $proyectos_disponibles;

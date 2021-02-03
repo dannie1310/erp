@@ -81,7 +81,7 @@ class TagService
         }
 
         return [
-            'IdUsuario' => (String) $id_usuario,
+            'IdUsuario' => (String) $id_usuario[0],
             'Nombre' => $usuario->first()->usuario->nombre_completo,
             'proyectos' => $this->repository->getProyectos()
         ];
