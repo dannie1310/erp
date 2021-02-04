@@ -123,6 +123,7 @@ import solicitudBaja from './modules/finanzas/solicitud-baja-cuenta-bancaria';
 import tipoMovimiento from './modules/finanzas/tipo-movimiento';
 import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
+import CFDSATObra from './modules/finanzas/cfd-sat';
 
 //PADRON PROVEEDORES
 import archivoPrestadoraExpediente from './modules/padronProveedores/archivo-prestadora';
@@ -266,6 +267,7 @@ export default new Vuex.Store({
         'finanzas/tipo-movimiento': tipoMovimiento,
         'finanzas/traspaso-entre-cuentas': traspaso,
         'finanzas/rubro': rubro,
+        'finanzas/cfdi-sat': CFDSATObra,
 
 
         'contabilidad/cierre-periodo': cierrePeriodo,
