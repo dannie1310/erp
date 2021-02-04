@@ -39,45 +39,11 @@ class CFDSATController extends Controller
     {
         $this->middleware( 'auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_cfdi')->only(['paginate','descargar','pdfCFDI']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
-    }
-
-    public function cargaZIP(Request $request)
-    {
-        $respuesta =$this->service->storeZIPCFD($request->nombre_archivo, $request->archivo_zip);
-        return response()->json($respuesta, 200);
-    }
-
-    public function procesaDirectorioZIPCFD(Request $request)
-    {
-        $respuesta =$this->service->procesaDirectorioZIPCFD();
-        //$respuesta =$this->service->generaCarpeta();
-        return response()->json($respuesta, 200);
-    }
-
-    public function obtenerInformeEmpresaMes()
-    {
-        $respuesta =$this->service->obtenerInformeEmpresaMes();
-        return response()->json($respuesta, 200);
-    }
-
-    public function getContenidoDirectorio(){
-        $respuesta =$this->service->getContenidoDirectorio();
-        return response()->json($respuesta, 200);
-    }
-
-    public function obtenerInformeCompleto()
-    {
-        $respuesta =$this->service->obtenerInformeCompleto();
-        return response()->json($respuesta, 200);
-    }
-
-    public function obtenerInformeCompletoPDF()
-    {
-        $this->service->obtenerInformeCompletoPDF()->create();
     }
 
     public function descargar(Request $request){

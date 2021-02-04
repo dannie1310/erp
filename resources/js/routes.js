@@ -1245,7 +1245,7 @@ export const routes = [
                                     title: 'CFDI',
                                     breadcrumb: {name: 'CFDI', parent: 'finanzas'},
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_factura'
+                                    permission: 'consultar_cfdi'
                                 }
                             },
                         ]

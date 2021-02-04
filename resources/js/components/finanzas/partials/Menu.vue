@@ -87,7 +87,7 @@
                     <p>Traspasos Entre Cuentas</p>
                 </router-link>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_factura')">
+            <li class="nav-item" v-if="$root.can('consultar_cfdi')">
                 <router-link :to="{name: 'cfdi'}" class="nav-link" :class="{active: this.$route.name == 'cfdi'}">
                     &nbsp;<i class="fa fa-file-code nav-icon"></i>
                     <p>CFDI</p>
