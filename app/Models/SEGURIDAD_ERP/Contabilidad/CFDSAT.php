@@ -16,6 +16,7 @@ use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -121,10 +122,14 @@ class CFDSAT extends Model
 
     public function scopeParaProyecto($query){
         $rfc_contexto = Obra::find(Context::getIdObra())->rfc;
-        return $query->where("rfc_receptor","=", $rfc_contexto)
+        $proyecto_contexto = Proyecto::where("base_datos","=",Context::getDatabase())->first()->id;
+        return $query->where("cfd_sat.rfc_receptor","=", $rfc_contexto)
             ->join(Context::getDatabase().".dbo.empresas","rfc_emisor","=","empresas.rfc")
             ->join(Context::getDatabase().".dbo.transacciones","empresas.id_empresa","=","transacciones.id_empresa")
+            ->leftJoin("Finanzas.repositorio_facturas","repositorio_facturas.uuid","=","cfd_sat.uuid")
             ->where("transacciones.id_obra","=",Context::getIdObra())
+            ->whereNull("repositorio_facturas.uuid")
+            ->orWhere("repositorio_facturas.id_proyecto","=", $proyecto_contexto)->where("repositorio_facturas.id_obra","=",Context::getIdObra())
             ->select("cfd_sat.*")
            ;
     }
