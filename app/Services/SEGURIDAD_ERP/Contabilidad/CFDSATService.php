@@ -782,7 +782,6 @@ class CFDSATService
     }
 
     public function descargar($data){
-
         if (isset($data['startDate'])) {
             $this->repository->where([['cfd_sat.fecha', '>=', $data['startDate']]]);
         }
@@ -866,6 +865,22 @@ class CFDSATService
         }
         if (isset($data['base_datos'])) {
             $id_proyecto = Proyecto::where([['base_datos', 'LIKE', '%' . $data['base_datos'] . '%']])->pluck("id");
+
+            $uuid = FacturaRepositorio::whereIn("id_proyecto", $id_proyecto)->whereIn("id_proyecto", $id_proyecto)->pluck("uuid");
+            $this->repository->whereIn(['cfd_sat.uuid', $uuid]);
+        }
+        if (isset($data['solo_pendientes'])) {
+            if($data['solo_pendientes']==="true"){
+                $this->repository->whereNull("id_factura_repositorio");
+            }
+        }
+
+        if (isset($data['solo_asociados'])) {
+            if($data['solo_asociados']==="true"){
+                $this->repository->whereNotNull("id_factura_repositorio");
+            }
+        }
+
 
 
         $uuid =  $this->repository->all();
