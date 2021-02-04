@@ -130,7 +130,7 @@ class CFDSAT extends Model
             ->where("transacciones.id_obra","=",Context::getIdObra())
             ->whereNull("repositorio_facturas.uuid")
             ->orWhere("repositorio_facturas.id_proyecto","=", $proyecto_contexto)->where("repositorio_facturas.id_obra","=",Context::getIdObra())
-            ->select("cfd_sat.*")
+            ->select("cfd_sat.*")->distinct()
            ;
     }
 
