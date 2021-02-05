@@ -65,27 +65,6 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     }
 
     /**
-     * Valida y obtiene datos del usuario
-     * @param $usuario
-     * @param $clave
-     * @return false|string
-     */
-    public function usuarioProyecto($usuario, $clave)
-    {
-        $id_usuario = Usuario::where('usuario', $usuario)->where('clave',  md5($clave))->pluck('idusuario');
-        if(count($id_usuario) == 0)
-        {
-            return json_encode(array("error" => "Error al iniciar sesión, su usuario y/o clave son incorrectos."));
-        }
-        $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', $id_usuario);
-        if(is_null($usuario->first()))
-        {
-            return json_encode(array("error" =>  "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto."));
-        }
-        return $usuario;
-    }
-
-    /**
      * Obtener catálogo de tiros
      * @return mixed
      */
