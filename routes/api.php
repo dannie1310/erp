@@ -417,6 +417,11 @@ $api->version('v1', function ($api) {
      * ACARREOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'acarreos'], function ($api) {
+        //CAMIÓN
+        $api->group(['prefix' => 'camion'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@catalogo');
+        });
+
         //TIRO
         $api->group(['prefix' => 'tiro'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@paginate');
