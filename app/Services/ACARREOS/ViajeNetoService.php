@@ -72,7 +72,7 @@ class ViajeNetoService
             return json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo."));
         }
 
-        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1) {
+        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1 && $data['IMEI'] != 'N/A' ) {
             /**
              * Validar telefono asignado al proyecto y al usuario.
              */
@@ -153,7 +153,7 @@ class ViajeNetoService
          */
         $this->repository->crearJson(array_except($data, 'access_token'));
 
-        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1)
+        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1 && $data['IMEI'] != 'N/A')
         {
             /**
              * Verificar si el telefono esta activo
