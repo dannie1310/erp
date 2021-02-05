@@ -101,9 +101,9 @@ class AuthorizationController
         );        
         if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
             $resp = $this->approveRequestMovil($authRequest, $user);
-            return \response()->json(['code'=>$resp]);
+            return \response()->json(['code'=>$resp,'mensaje'=>'']);
         }
-        return [];
+        return \response()->json(['code'=>'','mensaje'=>'Se debe iniciar sesión en http://portal-aplicaciones.grupohi.mx antes de utilizar la aplicación.']);
     }
 
     /**
