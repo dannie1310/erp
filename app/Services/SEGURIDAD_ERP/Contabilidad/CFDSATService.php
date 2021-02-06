@@ -881,6 +881,12 @@ class CFDSATService
             }
         }
 
+        if (isset($data['solo_asociados_contabilidad'])) {
+            if($data['solo_asociados_contabilidad']==="true"){
+                $this->repository->whereNotNull("id_factura_repositorio");
+            }
+        }
+
 
 
         $uuid =  $this->repository->all();
