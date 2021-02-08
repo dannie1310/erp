@@ -58,7 +58,7 @@ class CamionService
         {
             return json_encode(array("error" => "Error al iniciar sesión, su usuario y/o clave son incorrectos."));
         }
-        $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', $id_usuario);
+        $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', $id_usuario)->where('id_proyecto','!=', '5555');
         if(is_null($usuario->first()))
         {
             return json_encode(array("error" =>  "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto."));
@@ -70,15 +70,18 @@ class CamionService
         $this->conexionAcarreos($usuario->first()->proyecto->base_datos);
 
         /**
-         * Revision de permisos
+         * * Revisión de permisos
+         * Validar si el usuario tiene el role de 'Catálogo Camiones Móvil'.
          */
-        /**
-         * Validar si el usuario tiene el role de checador.
-         */
-        $eschecador = $this->repository->esChecador($usuario->first());
-        if (!$eschecador) {
-            return json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo."));
+        $permiso = $this->repository->permiso($usuario->first());
+        if (!$permiso) {
+            return json_encode(array("error" => "El usuario no tiene perfil para utilizar el catálogo de camiones, favor de solicitarlo."));
         }
+
+        $sindicatos = $this->repository->getCatalogoSindicato();
+        $empresas = $this->repository->getCatalogoEmpresa();
+        $camiones = $this->repository->getCatalogoCamion();
+        dd($camiones);
 
     }
 }
