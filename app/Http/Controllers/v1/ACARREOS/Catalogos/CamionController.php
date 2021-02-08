@@ -55,4 +55,15 @@ class CamionController extends Controller
     {
         return $this->service->getCatalogo($request->all());
     }
+
+    /**
+     * Cambiar la contraseña del usuario desde la aplicación móvil "Catálogo Camiones"
+     * @param Request $request
+     * @return false|string
+     * @throws \Exception
+     */
+    public function cambiarClave(Request $request)
+    {
+        return $this->service->cambiarClave($request->all());
+    }
 }

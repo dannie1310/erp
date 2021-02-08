@@ -84,4 +84,40 @@ class CamionService
         dd($camiones);
 
     }
+
+    /**
+     * Cambiar la contraseña del usuario desde la aplicación móvil
+     * @param $data
+     * @return false|string
+     * @throws \Exception
+     */
+    public function cambiarClave($data)
+    {
+        /**
+         * Se realiza conexión con la base de datos de acarreos.
+         */
+        $this->conexionAcarreos($data['bd']);
+        /**
+         * Se genera el respaldo del json
+         */
+        $this->repository->crearJson($data);
+        /**
+         * Se genera el log de cambio de contraseña.
+         */
+        $this->repository->logCambioContrasena($data);
+        try {
+            /**
+             * Se busca el usuario
+             */
+            $usuario = Usuario::where('idusuario', $data['idusuario'])->first();
+            if(!is_null($usuario)) {
+                $usuario->cambiarClave($data['NuevaClave']);
+                return json_encode(array("msj" => "Contraseña Guardada Correctamente!!"));
+            }
+            return json_encode(array("error" => "Error al encontrar el usuario, favor de reportarlo."));
+        }catch (\Exception $e) {
+            $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+            return json_encode(array("error" => "Error al realizar el cambio de contraseña, favor de reportarlo."));
+        }
+    }
 }

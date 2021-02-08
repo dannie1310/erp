@@ -4,10 +4,14 @@
 namespace App\Repositories\ACARREOS\Camion;
 
 
+use App\Models\ACARREOS\CambioContrasena;
 use App\Models\ACARREOS\Camion;
+use App\Models\ACARREOS\ConsultaErronea;
 use App\Models\ACARREOS\Empresa;
+use App\Models\ACARREOS\Json;
 use App\Models\ACARREOS\SCA_CONFIGURACION\RolUsuario;
 use App\Models\ACARREOS\Sindicato;
+use App\Models\IGH\Usuario;
 use App\Repositories\RepositoryInterface;
 
 class Repository extends \App\Repositories\Repository implements RepositoryInterface
@@ -64,5 +68,30 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         dd($camiones);
     }
 
+    /**
+     * Respaldar el json enviado por la aplicación
+     * @param $json
+     */
+    public function crearJson($json)
+    {
+        Json::create([
+            'json' => json_encode($json)
+        ]);
+    }
 
+
+    /**
+     * Crear log de cambio de contraseña
+     * @param $data
+     */
+    public function logCambioContrasena($data)
+    {
+        CambioContrasena::create([
+            'usr' => $data['usuario'],
+            'Idusuario' => $data['idusuario'],
+            'Version' => $data['Version'],
+            'IMEI' => $data['IMEI'],
+            'FechaHoraRegistro' => date('Y-m-d H:i:s')
+        ]);
+    }
 }

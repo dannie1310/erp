@@ -420,6 +420,7 @@ $api->version('v1', function ($api) {
         //CAMIÓN
         $api->group(['prefix' => 'camion'], function ($api) {
             $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@catalogo');
+            $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cambiarClave');
         });
 
         //TIRO
