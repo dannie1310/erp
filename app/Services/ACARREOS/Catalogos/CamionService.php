@@ -78,10 +78,23 @@ class CamionService
             return json_encode(array("error" => "El usuario no tiene perfil para utilizar el catálogo de camiones, favor de solicitarlo."));
         }
 
+        $usuario = $usuario->first();
         $sindicatos = $this->repository->getCatalogoSindicato();
         $empresas = $this->repository->getCatalogoEmpresa();
         $camiones = $this->repository->getCatalogoCamion();
-        dd($camiones);
+        $tipoImagenes = $this->repository->getTiposImagenes();
+
+        return [
+            'IdUsuario' => auth()->id(),
+            'Nombre' => $usuario->usuario->nombre_completo,
+            'IdProyecto' => $usuario->proyecto->id_proyecto,
+            'base_datos' => $usuario->proyecto->base_datos,
+            'descripcion_database' => $usuario->proyecto->descripcion,
+            'camiones' => $camiones,
+            'sindicatos' => $sindicatos,
+            'empresas' => $empresas,
+            'tipos_imagen' => $tipoImagenes
+        ];
 
     }
 

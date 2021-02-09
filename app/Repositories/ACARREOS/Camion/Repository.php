@@ -65,7 +65,34 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function getCatalogoCamion()
     {
         $camiones = $this->model->activo()->get();
-        dd($camiones);
+        $camiones_arrays = array();
+        foreach ($camiones as $key => $camion)
+        {
+            $camiones_arrays[$key]['id_camion'] = (String) $camion->getKey();
+            $camiones_arrays[$key]['id_sindicato'] = $camion->sindicato ? (String) $camion->sindicato->getKey() : "";
+            $camiones_arrays[$key]['id_empresa'] = $camion->empresa ? (String) $camion->empresa->getKey() : "";
+            $camiones_arrays[$key]['sindicato'] = $camion->sindicato ? (String) $camion->sindicato->Descripcion : "";
+            $camiones_arrays[$key]['empresa'] = $camion->empresa ? (String) $camion->empresa->razonSocial : "";
+            $camiones_arrays[$key]['propietario'] = (String) $camion->Propietario;
+            $camiones_arrays[$key]['operador'] = $camion->operador ? (String) $camion->operador->Nombre : "";
+            $camiones_arrays[$key]['numero_licencia'] = $camion->operador ? (String) $camion->operador->NoLicencia : "";
+            $camiones_arrays[$key]['vigencia_licencia'] = $camion->operador ? (String) $camion->operador->VigenciaLicencia : "";
+            $camiones_arrays[$key]['economico'] = (String) $camion->Economico;
+            $camiones_arrays[$key]['placas_camion'] = (String) $camion->Placas;
+            $camiones_arrays[$key]['placas_caja'] = (String) $camion->PlacasCaja;
+            $camiones_arrays[$key]['marca'] = $camion->marca ? (String) $camion->marca->Descripcion : "";
+            $camiones_arrays[$key]['modelo'] = (String) $camion->Modelo;
+            $camiones_arrays[$key]['ancho'] = (String) $camion->Ancho;
+            $camiones_arrays[$key]['largo'] = (String) $camion->Largo;
+            $camiones_arrays[$key]['alto'] = (String) $camion->Alto;
+            $camiones_arrays[$key]['espacio_gato'] = (String) $camion->EspacioDeGato;
+            $camiones_arrays[$key]['altura_extension'] = (String) $camion->AlturaExtension;
+            $camiones_arrays[$key]['disminucion'] = (String) $camion->Disminucion;
+            $camiones_arrays[$key]['cubicacion_real'] = (String) $camion->CubicacionReal;
+            $camiones_arrays[$key]['cubicacion_para_pago'] = (String) $camion->CubicacionParaPago;
+            $camiones_arrays[$key]['estatus'] = (String) $camion->Estatus;
+        }
+        return $camiones_arrays;
     }
 
     /**
@@ -93,5 +120,23 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             'IMEI' => $data['IMEI'],
             'FechaHoraRegistro' => date('Y-m-d H:i:s')
         ]);
+    }
+
+    /**
+     *  Tipos de imagenes
+     * @return mixed
+     */
+    public function getTiposImagenes()
+    {
+        $tipos_imagenes = array();
+        $tipos_imagenes[0]['id'] = 'f';
+        $tipos_imagenes[0]['descripcion'] = 'Frente';
+        $tipos_imagenes[1]['id'] = 'd';
+        $tipos_imagenes[1]['descripcion'] = 'Derecha';
+        $tipos_imagenes[2]['id'] = 'i';
+        $tipos_imagenes[2]['descripcion'] = 'Izquierda';
+        $tipos_imagenes[3]['id'] = 'a';
+        $tipos_imagenes[3]['descripcion'] = 'Atras';
+        return $tipos_imagenes;
     }
 }
