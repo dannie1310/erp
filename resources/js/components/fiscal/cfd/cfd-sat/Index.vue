@@ -134,7 +134,6 @@
                 })
         },
 
-
         methods: {
             paginate(){
                 this.cargando=true;
