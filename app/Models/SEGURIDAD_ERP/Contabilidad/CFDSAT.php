@@ -101,7 +101,7 @@ class CFDSAT extends Model
 
     public function polizaCFDI()
     {
-        return $this->hasOne(PolizaCFDI::class, "id_cfdi", "id");
+        return $this->hasOne(PolizaCFDI::class, "uuid", "uuid");
     }
 
     public function scopeDeEFO($query)

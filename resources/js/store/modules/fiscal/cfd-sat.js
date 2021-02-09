@@ -174,6 +174,36 @@ export default {
                 filtros = +filtros + 1;
             }
 
+            if (typeof payload.params.base_datos_ctpq !== 'undefined') {
+                search = search + 'base_datos_ctpq='+ payload.params.base_datos_ctpq + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.ejercicio !== 'undefined') {
+                search = search + 'ejercicio='+ payload.params.ejercicio + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.periodo !== 'undefined') {
+                search = search + 'periodo='+ payload.params.periodo + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.tipo_poliza !== 'undefined') {
+                search = search + 'tipo_poliza='+ payload.params.tipo_poliza + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.folio_poliza !== 'undefined') {
+                search = search + 'folio_poliza='+ payload.params.folio_poliza + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.fecha_poliza !== 'undefined') {
+                search = search + 'folio_poliza='+ payload.params.fecha_poliza + '&';
+                filtros = +filtros + 1;
+            }
+
             if(filtros == 0){
                 swal({
                     title: "Aviso",

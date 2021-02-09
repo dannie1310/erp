@@ -114,7 +114,7 @@ class CFDSATTransformer extends TransformerAbstract
     {
         if($item = $model->polizaCFDI)
         {
-            return $this->item($item, new FacturaRepositorioTransformer);
+            return $this->item($item, new PolizaCFDITransformer);
         }
         return null;
     }

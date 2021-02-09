@@ -24,4 +24,10 @@ class PolizaCFDI extends Model
         "id_cfdi",
     ];
     public $timestamps = false;
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
+    }
 }

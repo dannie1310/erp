@@ -206,4 +206,10 @@ class Repository implements RepositoryInterface
         $this->model = $this->model->whereDoesntHave($relacion);
         return $this;
     }
+
+    public function select($select)
+    {
+        $this->model = $this->model->select($select);
+        return $this;
+    }
 }

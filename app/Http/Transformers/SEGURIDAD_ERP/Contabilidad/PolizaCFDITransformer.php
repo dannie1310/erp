@@ -23,6 +23,7 @@ class PolizaCFDITransformer extends TransformerAbstract
             'periodo'=>$model->periodo,
             'folio'=>$model->folio,
             'tipo'=>$model->tipo,
+            'fecha_format'=>$model->fecha_format,
         ];
     }
 }

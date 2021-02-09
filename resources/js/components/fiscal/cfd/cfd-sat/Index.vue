@@ -114,13 +114,14 @@
                     { title: 'Periodo', field: 'periodo',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
                     { title: 'Tipo Póliza', field: 'tipo_poliza',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
                     { title: 'Folio Póliza', field: 'folio_poliza',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Fecha Póliza', field: 'fecha_poliza',thComp: require('../../../globals/th-Date').default, sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
                     include: ['empresa','proveedor', 'factura_repositorio', "poliza_cfdi"],
-                    sort: 'fecha',  order: 'desc'
+                    sort: 'cfd_sat.fecha',  order: 'desc'
                 },
                 daterange: null,
             }
@@ -201,7 +202,9 @@
                             ejercicio: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.ejercicio:'',
                             periodo: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.periodo:'',
                             tipo_poliza: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.tipo:'',
-                            folio_poliza: ccfdi.poliza_cfdi?ccfdi.poliza.folio:'',
+                            folio_poliza: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.folio:'',
+                            fecha_poliza: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.fecha_format:'',
+                            monto: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.monto_format:'',
                             buttons: $.extend({}, {
                                 id: ccfdi.id,
                             })
