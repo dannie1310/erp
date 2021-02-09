@@ -76,7 +76,7 @@ class ViajeNetoService
         /**
          * Revision de permisos
          */
-        /**
+              /**
          * Validar si el usuario tiene el role de checador.
          */
         $eschecador = $this->repository->esChecador($usuario->first());

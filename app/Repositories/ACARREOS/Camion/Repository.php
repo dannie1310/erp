@@ -10,6 +10,7 @@ use App\Models\ACARREOS\ConsultaErronea;
 use App\Models\ACARREOS\Empresa;
 use App\Models\ACARREOS\Json;
 use App\Models\ACARREOS\SCA_CONFIGURACION\RolUsuario;
+use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
 use App\Models\ACARREOS\Sindicato;
 use App\Models\IGH\Usuario;
 use App\Repositories\RepositoryInterface;
@@ -20,6 +21,41 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         parent::__construct($model);
         $this->model = $model;
+    }
+
+    /**
+     * Obtener id usuario de Intranet
+     * @param $usuario
+     * @param $clave
+     * @return mixed
+     */
+    public function getIdUsuario($usuario, $clave)
+    {
+        return Usuario::where('usuario', $usuario)->where('clave', md5($clave))->pluck('idusuario');
+    }
+
+    /**
+     * Obtener usuario de acarreos
+     * @param $id_usuario
+     * @return mixed
+     */
+    public function getUsuario($id_usuario)
+    {
+        return UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', $id_usuario)->where('id_proyecto', '!=', '5555');
+    }
+
+    /**
+     * Buscar usuario acarreos por proyecto y id_usuario
+     * @param $id_usuario
+     * @param $id_proyecto
+     * @return mixed
+     */
+    public function getUsuarioProyecto($id_usuario, $id_proyecto)
+    {
+        return UsuarioProyecto::activo()->ordenarProyectos()
+            ->where('id_usuario_intranet', $id_usuario)
+            ->where('id_proyecto', '=', $id_proyecto)
+            ->where('id_proyecto', '!=', '5555');
     }
 
     /**
@@ -138,5 +174,18 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $tipos_imagenes[3]['id'] = 'a';
         $tipos_imagenes[3]['descripcion'] = 'Atras';
         return $tipos_imagenes;
+    }
+
+    /**
+     * Crear el log cada que presente un error
+     * @param $log
+     * @param $usuario
+     */
+    public function crearLogError($log, $usuario)
+    {
+        ConsultaErronea::create([
+            'consulta' => $log,
+            'registro' => $usuario
+        ]);
     }
 }
