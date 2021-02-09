@@ -29,7 +29,8 @@ class CFDSATTransformer extends TransformerAbstract
         'empresa',
         'proveedor',
         'estatus',
-        'factura_repositorio'
+        'factura_repositorio',
+        'poliza_cfdi'
     ];
 
     public function transform(CFDSAT $model) {
@@ -105,6 +106,15 @@ class CFDSATTransformer extends TransformerAbstract
         if($item = $model->facturaRepositorio)
         {
             return $this->item($item, new FacturaRepositorioTransformer);
+        }
+        return null;
+    }
+
+    public function includePolizaCFDI(CFDSAT $model)
+    {
+        if($item = $model->polizaCFDI)
+        {
+            return $this->item($item, new PolizaCFDITransformer);
         }
         return null;
     }
