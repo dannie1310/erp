@@ -21,18 +21,21 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="custom-control custom-switch" :disabled="ver_asociados">
-                                    <input type="checkbox" class="custom-control-input" id="ver_pendientes" v-model="ver_pendientes" :disabled="ver_asociados">
+                                    <input type="checkbox" class="custom-control-input" id="ver_pendientes" v-model="ver_pendientes" :disabled="ver_asociados || ver_asociados_contabilidad">
                                     <label class="custom-control-label" for="ver_pendientes" :disabled="ver_asociados">Ver únicamente CFDI pendientes de asociación en proyecto</label>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="custom-control custom-switch" :disabled="ver_pendientes">
                                     <input type="checkbox" class="custom-control-input" id="ver_asociados" v-model="ver_asociados" :disabled="ver_pendientes">
-                                    <label class="custom-control-label" for="ver_asociados" :disabled="ver_pendientes">Ver únicamente CFDI asociados a proyecto</label>
+                                    <label class="custom-control-label" for="ver_asociados" :disabled="ver_pendientes">Ver CFDI asociados a proyecto por SAO</label>
                                 </div>
                             </div>
                             <div class="col-md-4">
-
+                                <div class="custom-control custom-switch" :disabled="ver_pendientes">
+                                    <input type="checkbox" class="custom-control-input" id="ver_asociados_contpaq" v-model="ver_asociados_contabilidad" :disabled="ver_pendientes">
+                                    <label class="custom-control-label" for="ver_asociados_contpaq" :disabled="ver_pendientes">Ver CFDI asociados a proyecto por Contabilidad</label>
+                                </div>
                             </div>
                         </div>
 
@@ -78,6 +81,7 @@
                 empresa_seleccionada: [],
                 ver_pendientes: false,
                 ver_asociados: false,
+                ver_asociados_contabilidad: false,
                 detalle_descarga :[],
                 HeaderSettings: false,
                 columns: [
@@ -100,15 +104,20 @@
                     { title: 'TC', field: 'tipo_cambio',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Estado', field: 'estado',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
                     { title: 'BD', field: 'base_datos',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
-                    { title: 'Proyecto', field: 'obra',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha Carga Proyecto', field: 'fecha_carga_proyecto',tdClass: 'td_money',},
+                    { title: 'BD CTPQ', field: 'base_datos_ctpq',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Ejercicio', field: 'ejercicio',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Periodo', field: 'periodo',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Tipo Póliza', field: 'tipo_poliza',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Folio Póliza', field: 'folio_poliza',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Fecha Póliza', field: 'fecha_poliza',thComp: require('../../globals/th-Date').default, sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
                     scope : 'paraProyecto',
-                    include: ['empresa','proveedor', 'factura_repositorio'],
+                    include: ['empresa','proveedor', 'factura_repositorio',  "poliza_cfdi"],
                     sort: 'cfd_sat.fecha',  order: 'desc'
                 },
                 daterange: null,
@@ -186,6 +195,13 @@
                             obra: ccfdi.factura_repositorio?ccfdi.factura_repositorio.obra:'',
                             fecha_carga_proyecto: ccfdi.factura_repositorio?ccfdi.factura_repositorio.fecha_hora_carga_format:'',
                             uuid: ccfdi.uuid,
+                            base_datos_ctpq: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.base_datos:'',
+                            ejercicio: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.ejercicio:'',
+                            periodo: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.periodo:'',
+                            tipo_poliza: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.tipo:'',
+                            folio_poliza: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.folio:'',
+                            fecha_poliza: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.fecha_format:'',
+                            monto: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.monto_format:'',
                             buttons: $.extend({}, {
                                 id: ccfdi.id,
                             })
@@ -253,6 +269,13 @@
             ver_asociados:{
                 handler(va) {
                     this.query.solo_asociados = va
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+            },
+            ver_asociados_contabilidad:{
+                handler(vac) {
+                    this.query.solo_asociados_contabilidad = vac
                     this.query.offset = 0;
                     this.paginate()
                 },

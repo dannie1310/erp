@@ -11,7 +11,6 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
@@ -98,6 +97,11 @@ class CFDSAT extends Model
     public function facturaRepositorio()
     {
         return $this->hasOne(FacturaRepositorio::class, "id", "id_factura_repositorio");
+    }
+
+    public function polizaCFDI()
+    {
+        return $this->hasOne(PolizaCFDI::class, "uuid", "uuid");
     }
 
     public function scopeDeEFO($query)
