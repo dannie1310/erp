@@ -165,18 +165,19 @@ class CFDSATService
         }
         if (isset($data['solo_pendientes'])) {
             if($data['solo_pendientes']==="true"){
-
-               /* $this->repository->leftJoin("Finanzas.repositorio_facturas","repositorio_facturas.uuid","=","cfd_sat.uuid")
-                ->whereNull("repositorio_facturas.uuid");*/
-                $this->repository->whereNull("id_factura_repositorio");
+                $this->repository->whereDoesntHave("facturaRepositorio")->whereDoesntHave("polizaCFDI");
             }
         }
 
         if (isset($data['solo_asociados'])) {
             if($data['solo_asociados']==="true"){
-                /*$this->repository->join("Finanzas.repositorio_facturas","repositorio_facturas.uuid","=","cfd_sat.uuid")
-                    ;*/
-                $this->repository->whereNotNull("id_factura_repositorio");
+                $this->repository->whereHas("facturaRepositorio");
+            }
+        }
+
+        if (isset($data['solo_asociados_contabilidad'])) {
+            if($data['solo_asociados_contabilidad']==="true"){
+                $this->repository->whereHas("polizaCFDI");
             }
         }
         return $this->repository->paginate($data);
@@ -869,21 +870,22 @@ class CFDSATService
             $uuid = FacturaRepositorio::whereIn("id_proyecto", $id_proyecto)->whereIn("id_proyecto", $id_proyecto)->pluck("uuid");
             $this->repository->whereIn(['cfd_sat.uuid', $uuid]);
         }
+
         if (isset($data['solo_pendientes'])) {
             if($data['solo_pendientes']==="true"){
-                $this->repository->whereNull("id_factura_repositorio");
+                $this->repository->whereDoesntHave("facturaRepositorio")->whereDoesntHave("polizaCFDI");
             }
         }
 
         if (isset($data['solo_asociados'])) {
             if($data['solo_asociados']==="true"){
-                $this->repository->whereNotNull("id_factura_repositorio");
+                $this->repository->whereHas("facturaRepositorio");
             }
         }
 
         if (isset($data['solo_asociados_contabilidad'])) {
             if($data['solo_asociados_contabilidad']==="true"){
-                $this->repository->whereNotNull("id_factura_repositorio");
+                $this->repository->whereHas("polizaCFDI");
             }
         }
 

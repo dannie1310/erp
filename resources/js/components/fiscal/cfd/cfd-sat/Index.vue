@@ -30,13 +30,13 @@
                             <div class="col-md-4">
                                 <div class="custom-control custom-switch" :disabled="ver_pendientes">
                                     <input type="checkbox" class="custom-control-input" id="ver_asociados" v-model="ver_asociados" :disabled="ver_pendientes">
-                                    <label class="custom-control-label" for="ver_asociados" :disabled="ver_pendientes">Ver únicamente CFDI asociados a proyecto por SAO</label>
+                                    <label class="custom-control-label" for="ver_asociados" :disabled="ver_pendientes">Ver CFDI asociados a proyecto por SAO</label>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="custom-control custom-switch" :disabled="ver_pendientes">
                                     <input type="checkbox" class="custom-control-input" id="ver_asociados_contpaq" v-model="ver_asociados_contabilidad" :disabled="ver_pendientes">
-                                    <label class="custom-control-label" for="ver_asociados_contpaq" :disabled="ver_pendientes">Ver únicamente CFDI asociados a proyecto por Contabilidad</label>
+                                    <label class="custom-control-label" for="ver_asociados_contpaq" :disabled="ver_pendientes">Ver CFDI asociados a proyecto por Contabilidad</label>
                                 </div>
                             </div>
                         </div>
@@ -106,15 +106,20 @@
                     { title: 'Moneda', field: 'moneda',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'TC', field: 'tipo_cambio',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Estado', field: 'estado',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
-                    { title: 'BD', field: 'base_datos',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'BD SAO', field: 'base_datos',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
                     { title: 'Proyecto', field: 'obra',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
                     { title: 'Fecha Carga Proyecto', field: 'fecha_carga_proyecto',tdClass: 'td_money',},
+                    { title: 'BD CTPQ', field: 'base_datos_ctpq',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Ejercicio', field: 'ejercicio',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Periodo', field: 'periodo',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Tipo Póliza', field: 'tipo_poliza',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Folio Póliza', field: 'folio_poliza',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: ['empresa','proveedor', 'factura_repositorio'],
+                    include: ['empresa','proveedor', 'factura_repositorio', "poliza_cfdi"],
                     sort: 'fecha',  order: 'desc'
                 },
                 daterange: null,
@@ -192,6 +197,11 @@
                             obra: ccfdi.factura_repositorio?ccfdi.factura_repositorio.obra:'',
                             fecha_carga_proyecto: ccfdi.factura_repositorio?ccfdi.factura_repositorio.fecha_hora_carga_format:'',
                             uuid: ccfdi.uuid,
+                            base_datos_ctpq: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.base_datos:'',
+                            ejercicio: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.ejercicio:'',
+                            periodo: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.periodo:'',
+                            tipo_poliza: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.tipo:'',
+                            folio_poliza: ccfdi.poliza_cfdi?ccfdi.poliza.folio:'',
                             buttons: $.extend({}, {
                                 id: ccfdi.id,
                             })

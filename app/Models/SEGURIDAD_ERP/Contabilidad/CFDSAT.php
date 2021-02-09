@@ -11,16 +11,12 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CADECO\Transaccion;
-use App\Models\CTPQ\AsocCFDI;
-use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class CFDSAT extends Model
@@ -103,12 +99,9 @@ class CFDSAT extends Model
         return $this->hasOne(FacturaRepositorio::class, "id", "id_factura_repositorio");
     }
 
-    public function poliza()
+    public function polizaCFDI()
     {
-        $base_datos_contpaq = ;
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', $base_datos_contpaq);
-        return $this->hasOne(AsocCFDI::class, "UUID", "uuid");
+        return $this->hasOne(PolizaCFDI::class, "id_cfdi", "id");
     }
 
     public function scopeDeEFO($query)

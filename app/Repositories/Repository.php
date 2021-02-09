@@ -194,4 +194,16 @@ class Repository implements RepositoryInterface
         $this->model = $this->model->whereNotNull($campo);
         return $this;
     }
+
+    public function whereHas($relacion)
+    {
+        $this->model = $this->model->whereHas($relacion);
+        return $this;
+    }
+
+    public function whereDoesntHave($relacion)
+    {
+        $this->model = $this->model->whereDoesntHave($relacion);
+        return $this;
+    }
 }
