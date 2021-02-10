@@ -577,5 +577,13 @@ class FacturaService
         $pdf = new CFDI($arreglo_cfd);
         return $pdf;
     }
+
+    public function getDocumentos($id){
+        return $this->repository->show($id)->getDocumentos();
+    }
+
+    public function storeRevision($data){
+        return $this->repository->show($data['factura']['id'])->storeRevision($data);
+    }
 }
 

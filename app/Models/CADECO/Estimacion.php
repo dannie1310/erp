@@ -333,6 +333,21 @@ class Estimacion extends Transaccion
         return $this;
     }
 
+    public function getReferenciaRevisionAttribute()
+    {
+        return $this->subcontrato->referencia;
+    }
+
+    public function getMontoRevisionAttribute()
+    {
+        return number_format($this->suma_importes - $this->autorizado, 2, ".", "");
+    }
+
+    public function getFolioRevisionFormatAttribute()
+    {
+        return 'EST ' . $this->numero_folio_format;
+    }
+
     public function getImporteRetencionAttribute()
     {
         return $this->suma_importes * $this->retencion / 100;
@@ -346,6 +361,11 @@ class Estimacion extends Transaccion
     public function getSumaImportesFormatAttribute()
     {
         return '$ ' . number_format($this->suma_importes, 2, ".", ",");
+    }
+
+    public function getMontoRevisionFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_revision, 2, ".", ",");
     }
 
     public function getAmortizacionPendienteAttribute()

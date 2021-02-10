@@ -5,7 +5,8 @@ export default {
     state: {
         facturas: [],
         currentFactura: null,
-        meta: {}
+        meta: {},
+        items_revision:[]
     },
 
     mutations: {
@@ -32,7 +33,24 @@ export default {
 
         UPDATE_ATTRIBUTE(state, data) {
             state.currentFactura[data.attribute] = data.value
-        }
+        },
+
+        SET_ITEMS_REVISION(state, data){
+            state.items_revision = data;
+        },
+        UPDATE_ITEM_PENDIENTE(state, data) {
+            // state.items_revision.pendientes.forEach(function (item){
+            //     item.seleccionado = data.seleccionado;
+            //     console.log(data);
+            // });
+            state.items_revision.pendientes = state.items_revision.pendientes.map(factura => {
+                if (factura.id_item === data.id_item) {
+                    return Object.assign([], factura, data)
+                }
+                return factura
+            })
+            state.currentFactura = data
+        },
     },
 
     actions: {
@@ -105,6 +123,19 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        getDocumentos(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/getDocumentos', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -203,6 +234,44 @@ export default {
                     });
             });
         },
+        storeRevision(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Revisión Factura",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'storeRevision', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Revisión de Factura registrada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
         autorizadas(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -242,6 +311,10 @@ export default {
 
         currentFactura(state) {
             return state.currentFactura;
-        }
+        },
+
+        items_revision(state){
+            return state.items_revision;
+        },
     }
 }

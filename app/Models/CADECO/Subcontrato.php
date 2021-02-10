@@ -350,6 +350,21 @@ class Subcontrato extends Transaccion
         return $items;
     }
 
+    public function getFolioRevisionFormatAttribute()
+    {
+        return 'SUB ' . $this->numero_folio_format;
+    }
+
+    public function getMontoRevisionAttribute()
+    {
+        return number_format($this->anticipo_saldo, 2, ".", "");
+    }
+
+    public function getMontoRevisionFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_revision, 2, ".", ",");
+    }
+
     public function getImporteFondoGarantiaAttribute()
     {
         return ($this->monto - $this->impuesto) * $this->retencion / 100;
