@@ -303,7 +303,7 @@ class EntradaMaterial extends Transaccion
                 array_push($mensaje_items,  "-No existe un inventario ni movimiento \n". $inventario . $movimiento. $item['id_item'] );
             }
 
-            if($inventario != null && $inventario->cantidad != $inventario->saldo){
+            if($inventario != null && ($inventario->cantidad - $inventario->saldo) > 1){
                 $movimientos_salidas = Movimiento::query()->where('lote_antecedente', $inventario->id_lote)->get();
                 $inventarios_transferencias =  Inventario::query()->where('lote_antecedente', $inventario->id_lote)->get();
 
