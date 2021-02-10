@@ -7,6 +7,9 @@
  */
 
 namespace App\Services\CTPQ;
+use App\Jobs\ProcessAsociacionCFDI;
+use App\Jobs\ProcessBusquedaDiferenciasPolizas;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDI;
 use Chumper\Zipper\Zipper;
 use App\Imports\PolizaImport;
 use App\Models\CTPQ\Poliza;
@@ -148,8 +151,8 @@ class PolizaService
                 $pdf = new PolizaFormatoT1B($poliza, $empresa);
             }
             $pdf->create(config('filesystems.disks.polizas_pdf.root'));
-        } 
-        
+        }
+
         $zip_name = 'Polizas '.date("Ymdhis") . '.zip';
         $zipper = new Zipper;
         $files = glob(config('filesystems.disks.polizas_pdf.root').'/*');
@@ -157,7 +160,7 @@ class PolizaService
 
         Storage::disk('polizas_pdf')->delete(Storage::disk('polizas_pdf')->allFiles());
         return Storage::disk('polizas_zip')->download($zip_name);
-        
+
     }
 
     private function busqueda($data){
@@ -250,7 +253,7 @@ class PolizaService
 
             Storage::disk('polizas_pdf')->delete(Storage::disk('polizas_pdf')->allFiles());
             return $zip_name;
-            
+
         }catch (\Exception $e) {
             abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
             throw $e;
@@ -322,4 +325,54 @@ class PolizaService
         // dd($data);
         return Storage::disk('polizas_zip')->download($data['nombreZip']);
     }
+
+    public function asociarCFDI()
+    {
+        $solicitud =SolicitudAsociacionCFDI::getSolicitudActiva();
+        if(!$solicitud){
+            $solicitud = $this->generaPeticionesDeAsociacion();
+            $datos_solicitud = [
+                "folio" =>$solicitud->id,
+                "usuario_inicio" =>$solicitud->usuario->nombre_completo,
+                "fecha_hora_inicio"=>$solicitud->fecha_hora_inicio_format,
+                "mensaje" =>"Proceso de asociación generado éxitosamente, se le enviará un correo al finalizar",
+                "icon" =>"success"
+            ];
+        } else {
+            $datos_solicitud = [
+                "folio" =>$solicitud->id,
+                "usuario_inicio" =>$solicitud->usuario->nombre_completo,
+                "fecha_hora_inicio"=>$solicitud->fecha_hora_inicio_format,
+                "mensaje" =>"Existe un proceso de asociación de CFDI activo, favor de esperar",
+                "icon" =>"warning"
+            ];
+        }
+        return $datos_solicitud;
+    }
+
+    public function generaPeticionesDeAsociacion()
+    {
+        $solicitud = $this->repository->generaSolicitudAsociacion();
+        $bases = $this->repository->getListaEmpresas();
+        $idistribucion = 0;
+        foreach($bases as $base){
+            $data = [
+                "id_solicitud_asociacion" => $solicitud->id,
+                "base_datos" => $base,
+            ];
+            $asociacion = $this->repository->generaPeticionesAsociacion($data);
+            ProcessAsociacionCFDI::dispatch($asociacion)->onQueue("q".$idistribucion);
+            //$asociacion->procesarAsociacionCFDI();
+            $idistribucion ++;
+            if($idistribucion==3){
+                $idistribucion=0;
+            }
+        }
+
+
+
+        return $solicitud;
+    }
+
+
 }

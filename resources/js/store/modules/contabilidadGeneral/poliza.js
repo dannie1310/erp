@@ -63,23 +63,23 @@ export default {
             let filtros = 0;
             var search = 'id_empresa=' + payload.params.id_empresa + '&caida=' + payload.tipo + '&';
             if (typeof payload.params.ejercicio !== 'undefined') {
-                search = search + 'ejercicio='+ payload.params.ejercicio + '&';  
+                search = search + 'ejercicio='+ payload.params.ejercicio + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.periodo !== 'undefined') {
-                search = search + 'periodo='+ payload.params.periodo + '&';  
+                search = search + 'periodo='+ payload.params.periodo + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.tipo !== 'undefined') {
-                search = search + 'tipo='+ payload.params.tipo + '&';  
+                search = search + 'tipo='+ payload.params.tipo + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.folio !== 'undefined') {
-                search = search + 'folio='+ payload.params.folio + '&';  
+                search = search + 'folio='+ payload.params.folio + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.concepto !== 'undefined') {
-                search = search + 'concepto='+ payload.params.concepto + '&';  
+                search = search + 'concepto='+ payload.params.concepto + '&';
                 filtros = +filtros + 1;
             }
 
@@ -109,7 +109,7 @@ export default {
                 }
             }
 
-            
+
         },
 
         findEdit(context, payload) {
@@ -162,6 +162,26 @@ export default {
                                 })
                         }
                     });
+            });
+        },
+        actualizaCFDI(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'actualizar-cfdi', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        swal(data.mensaje, {
+                            icon: data.icon,
+                            timer: 3000,
+                            buttons: false
+                        })
+                            .then(() => {
+                                resolve(data);
+                            })
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
             });
         },
         busquedaExcel(context, payload) {

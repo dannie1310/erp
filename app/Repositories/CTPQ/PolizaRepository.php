@@ -8,7 +8,11 @@
 
 namespace App\Repositories\CTPQ;
 
+use App\Models\CTPQ\Empresa;
 use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDI;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDIPartida;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 
@@ -32,4 +36,24 @@ class PolizaRepository extends Repository implements RepositoryInterface
             ->get();
     }
 
+    public function generaSolicitudAsociacion()
+    {
+        if (!SolicitudAsociacionCFDI::getSolicitudActiva()) {
+            return SolicitudAsociacionCFDI::create(["usuario_inicio" => auth()->id(), "fecha_hora_inicio" => date('Y-m-d H:i:s')]);
+        } else {
+            return null;
+        }
+    }
+
+    public function getListaEmpresas()
+    {
+        $bases = Empresa::all()->pluck("AliasBDD")->take(2);
+        $bases = Empresa::where("AliasBDD","like","ctPCO811231EI4_01%")->pluck("AliasBDD")->take(20);
+        return $bases;
+    }
+
+    public function generaPeticionesAsociacion($data)
+    {
+        return SolicitudAsociacionCFDIPartida::create($data);
+    }
 }
