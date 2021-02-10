@@ -9,6 +9,8 @@ use App\Models\ACARREOS\Camion;
 use App\Models\ACARREOS\ConsultaErronea;
 use App\Models\ACARREOS\Empresa;
 use App\Models\ACARREOS\Json;
+use App\Models\ACARREOS\Marca;
+use App\Models\ACARREOS\Operador;
 use App\Models\ACARREOS\SCA_CONFIGURACION\RolUsuario;
 use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
 use App\Models\ACARREOS\Sindicato;
@@ -187,5 +189,75 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             'consulta' => $log,
             'registro' => $usuario
         ]);
+    }
+
+    public function getIdSindicato($descripcion)
+    {
+        if($descripcion == "" || $descripcion == "0")
+        {
+            return "NULL";
+        }
+        return Sindicato::where('Descripcion', utf8_decode($descripcion))->pluck('IdSindicato')->first();
+    }
+
+    public function getIdEmpresa($descripcion)
+    {
+        if($descripcion == "" || $descripcion == "0")
+        {
+            return "NULL";
+        }
+        return Empresa::where('razonSocial', utf8_decode($descripcion))->pluck('IdEmpresa')->first();
+    }
+
+    public function getIdOperador($operador, $licencia, $vigencia, $id_usuario)
+    {
+        if($operador == "" || $operador == "0")
+        {
+            return "NULL";
+        }
+        $id_operador = Operador::where('Nombre', utf8_decode($operador))->pluck('IdOperador')->first();
+        if(is_null($id_operador))
+        {
+            $operador = Operador::create([
+                'Nombre' => $this->limpiarCaracteres(utf8_decode(utf8_decode($operador))),
+                'NoLicencia' => $this->limpiarCaracteres($licencia),
+                'VigenciaLicencia' => $vigencia,
+                'FechaAlta' => date('Y-m-d H:i:s'),
+                'usuario_registro' => $id_usuario
+            ]);
+            $id_operador = $operador->IdOperador;
+        }
+        return $id_operador;
+    }
+
+    private function limpiarCaracteres($datos)
+    {
+        return str_replace(
+            array("\\", "�", "�", "-", "~",
+                "#", "@", "|", "!", "\"",
+                "�", "$", "%", "&", "/",
+                "(", ")", "?", "'", "�",
+                "�", "[", "^", "`", "]",
+                "+", "}", "{", "�", "�",
+                ">", "<", ";", ",", ":",
+            ),'',$datos);
+    }
+
+    public function getIdMarca($marca, $id_usuario)
+    {
+        if($marca == "" || $marca == "0")
+        {
+            return "NULL";
+        }
+        $id_marca = Marca::where('Descripcion', utf8_decode($marca))->pluck('IdMarca')->first();
+        if(is_null($id_marca))
+        {
+            $marca = Marca::create([
+                'Descripcion' => $this->limpiarCaracteres(utf8_decode(utf8_decode($marca))),
+                'usuario_registro' => $id_usuario
+            ]);
+            $id_marca = $marca->IdMarca;
+        }
+        return $id_marca;
     }
 }

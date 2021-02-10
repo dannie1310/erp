@@ -180,6 +180,7 @@ class CamionService
          */
         $actualizados = 0;
         $error = 0;
+        $camiones_editar = 0;
         if (isset($data['camiones_editados']))
         {
             $data['camiones_editados'] = json_decode($data['camiones_editados'], true);
@@ -188,17 +189,20 @@ class CamionService
             {
                 foreach ($data['camiones_editados'] as $key => $camion)
                 {
-                    dd($camion);
+                    $id_sindicato = $this->repository->getIdSindicato($camion['sindicato']);
+                    $id_empresa = $this->repository->getIdEmpresa($camion['empresa']);
+                    $id_operador = $this->repository->getIdOperador($camion['operador'], $camion['licencia'], $camion['vigencia'], $data['idusuario']);
+                    $id_marca = $this->repository->getIdMarca($camion['marca'],$data['idusuario']);
                     try {
                         SolicitudActualizacionCamion::create([
                             'IdCamion' => $camion['id_camion'],
-                            'IdSindicato' => $camion['id_sindicato'],
-                            'IdEmpresa' => $camion['id_empresa'],
+                            'IdSindicato' => $id_sindicato,
+                            'IdEmpresa' => $id_empresa,
                             'Propietario' => $camion['propietario'],
-                            'IdOperador' => $camion['id_operador'],
+                            'IdOperador' => $id_operador,
                             'Placas' => $camion['placas_camion'],
                             'PlacasCaja' => $camion['placas_caja'],
-                            'IdMarca' => $camion['id_marca'],
+                            'IdMarca' => $id_marca,
                             'Modelo' => $camion['modelo'],
                             'Ancho' => $camion['ancho'],
                             'Largo' => $camion['largo'],
@@ -228,23 +232,27 @@ class CamionService
          */
         $sol_activadas = 0;
         $sol_errores = 0;
+        $solicitudes_activacion = 0;
         if (isset($data['solicitud_activacion']))
         {
             $data['solicitud_activacion'] = json_decode($data['solicitud_activacion'], true);
             $solicitudes_activacion = count($data['solicitud_activacion']);
             if($solicitudes_activacion > 0) {
                 foreach ($data['solicitud_activacion'] as $key => $camion) {
-                    dd($camion);
+                    $id_sindicato = $this->repository->getIdSindicato($camion['sindicato']);
+                    $id_empresa = $this->repository->getIdEmpresa($camion['empresa']);
+                    $id_operador = $this->repository->getIdOperador($camion['operador'], $camion['licencia'], $camion['vigencia'], $data['idusuario']);
+                    $id_marca = $this->repository->getIdMarca($camion['marca'],$data['idusuario']);
                     try {
                         SolicitudReactivacionCamion::create([
                             'IdCamion' => $camion['id_camion'],
-                            'IdSindicato' => $camion['id_sindicato'],
-                            'IdEmpresa' => $camion['id_empresa'],
+                            'IdSindicato' => $id_sindicato,
+                            'IdEmpresa' => $id_empresa,
                             'Propietario' => $camion['propietario'],
-                            'IdOperador' => $camion['id_operador'],
+                            'IdOperador' => $id_operador,
                             'Placas' => $camion['placas_camion'],
                             'PlacasCaja' => $camion['placas_caja'],
-                            'IdMarca' => $camion['id_marca'],
+                            'IdMarca' => $id_marca,
                             'Modelo' => $camion['modelo'],
                             'Ancho' => $camion['ancho'],
                             'Largo' => $camion['largo'],
@@ -268,17 +276,18 @@ class CamionService
             }
         }
 
-        if(($actualizados + $error) == $camiones_editar && ($sol_activadas + $sol_errores) == $solicitudes_activacion)
+        if($actualizados == $camiones_editar && $sol_activadas == $solicitudes_activacion)
         {
             return json_encode(array("msj" => "Actualización de Camiones y Registro de Solicitudes correcto."));
         }
-        elseif (($actualizados+$error) == $camiones_editar && ($sol_activadas + $sol_errores) != $solicitudes_activacion){
+        elseif ($error == 0 && $sol_errores != 0){
             return json_encode(array("error" => "No se registraron todas las solicitudes de activación. ".$sol_activadas."_".$sol_errores."_".$solicitudes_activacion));
         }
-        elseif (($actualizados+$error) != $camiones_editar && ($sol_activadas + $sol_errores) == $solicitudes_activacion){
+        elseif ($error != 0 && $sol_errores == 0){
             return json_encode(array("error" => "No se actualizaron todos los camiones. ".$actualizados."_".$error."_".$camiones_editar));
         }
-        elseif (($actualizados+$error) != $camiones_editar && ($sol_activadas + $sol_errores) != $solicitudes_activacion){
+        elseif ($error != 0 && $sol_errores != 0)
+        {
             return json_encode(array("error" => "Actualización de camiones y registro de solicitudes incorrecto."));
         }
     }

@@ -11,6 +11,7 @@ class SolicitudActualizacionCamion extends Model
     protected $connection = 'acarreos';
     protected $table = 'solicitud_actualizacion_camion';
     public $primaryKey = 'IdSolicitudActualizacion';
+    public $timestamps = false;
 
     protected $fillable = [
         'IdCamion',

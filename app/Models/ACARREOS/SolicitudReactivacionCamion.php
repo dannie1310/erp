@@ -11,6 +11,7 @@ class SolicitudReactivacionCamion extends Model
     protected $connection = 'acarreos';
     protected $table = 'solicitud_reactivacion_camion';
     public $primaryKey = 'IdSolicitudReactivacion';
+    public $timestamps = false;
 
     protected $fillable = [
         'IdCamion',

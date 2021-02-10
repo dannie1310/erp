@@ -12,6 +12,11 @@ class Sindicato extends Model
     protected $table = 'sindicatos';
     public $primaryKey = 'IdSindicato';
 
+    protected $fillable = [
+        'Descripcion',
+        'NombreCorto'
+    ];
+
     /**
      * Relaciones Eloquent
      */

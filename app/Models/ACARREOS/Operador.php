@@ -12,6 +12,14 @@ class Operador extends Model
     protected $table = 'operadores';
     public $primaryKey = 'IdOperador';
 
+    protected $fillable = [
+        'Nombre',
+        'NoLicencia',
+        'VigenciaLicencia',
+        'FechaAlta',
+        'usuario_registro'
+    ];
+
     /**
      * Relaciones Eloquent
      */
