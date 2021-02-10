@@ -5,7 +5,9 @@ namespace App\Services\ACARREOS;
 
 
 use App\Models\ACARREOS\EventoGPS;
+use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
 use App\Models\ACARREOS\ViajeNeto;
+use App\Models\IGH\Usuario;
 use Illuminate\Support\Facades\DB;
 use App\Models\ACARREOS\InicioCamion;
 use App\Models\ACARREOS\VolumenDetalle;
@@ -55,7 +57,17 @@ class ViajeNetoService
         /**
          * Buscar usuario con el proyecto ultimo asociado al usuario.
          */
-        $usuario = $this->repository->usuarioProyecto($data['usuario'], $data['clave']);
+        $id_usuario = Usuario::where('usuario', $data['usuario'])->where('clave',  md5($data['clave']))->pluck('idusuario');
+        if(count($id_usuario) == 0)
+        {
+            return json_encode(array("error" => "Error al iniciar sesión, su usuario y/o clave son incorrectos."));
+        }
+        $usuario = UsuarioProyecto::activo()->ordenarProyectos()->where('id_usuario_intranet', $id_usuario);
+        if(is_null($usuario->first()))
+        {
+            return json_encode(array("error" =>  "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto."));
+        }
+
         /**
          * Se realiza conexión con la base de datos de acarreos.
          */
@@ -72,7 +84,7 @@ class ViajeNetoService
             return json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo."));
         }
 
-        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1) {
+        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1 && $data['IMEI'] != 'N/A' ) {
             /**
              * Validar telefono asignado al proyecto y al usuario.
              */
@@ -153,7 +165,7 @@ class ViajeNetoService
          */
         $this->repository->crearJson(array_except($data, 'access_token'));
 
-        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1)
+        if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1 && $data['IMEI'] != 'N/A')
         {
             /**
              * Verificar si el telefono esta activo
@@ -421,7 +433,11 @@ class ViajeNetoService
      */
     public function cambiarClave($data)
     {
-        /*
+        /**
+         * Se realiza conexión con la base de datos de acarreos.
+         */
+        $this->conexionAcarreos($data['bd']);
+        /**
         * Se genera el respaldo del json
          */
         $this->repository->crearJson($data);

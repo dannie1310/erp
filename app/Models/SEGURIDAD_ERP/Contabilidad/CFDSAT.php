@@ -9,10 +9,13 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\Obra;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
-use Carbon\Carbon;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -91,6 +94,16 @@ class CFDSAT extends Model
         return $this->belongsTo(CtgEstadoCFD::class, 'estado', 'id');
     }
 
+    public function facturaRepositorio()
+    {
+        return $this->hasOne(FacturaRepositorio::class, "id", "id_factura_repositorio");
+    }
+
+    public function polizaCFDI()
+    {
+        return $this->hasOne(PolizaCFDI::class, "uuid", "uuid");
+    }
+
     public function scopeDeEFO($query)
     {
         return $query->whereHas("efo");
@@ -109,6 +122,20 @@ class CFDSAT extends Model
     public function scopeExceptoTipo($query, $tipo)
     {
         return $query->where('tipo_comprobante', '!=', $tipo);
+    }
+
+    public function scopeParaProyecto($query){
+        $rfc_contexto = Obra::find(Context::getIdObra())->rfc;
+        $proyecto_contexto = Proyecto::where("base_datos","=",Context::getDatabase())->first()->id;
+        return $query->where("cfd_sat.rfc_receptor","=", $rfc_contexto)
+            ->join(Context::getDatabase().".dbo.empresas","rfc_emisor","=","empresas.rfc")
+            ->join(Context::getDatabase().".dbo.transacciones","empresas.id_empresa","=","transacciones.id_empresa")
+            ->leftJoin("Finanzas.repositorio_facturas","repositorio_facturas.uuid","=","cfd_sat.uuid")
+            ->where("transacciones.id_obra","=",Context::getIdObra())
+            ->whereNull("repositorio_facturas.uuid")
+            ->orWhere("repositorio_facturas.id_proyecto","=", $proyecto_contexto)->where("repositorio_facturas.id_obra","=",Context::getIdObra())
+            ->select("cfd_sat.*")->distinct()
+           ;
     }
 
     public function registrar($data)

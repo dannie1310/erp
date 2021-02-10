@@ -1249,6 +1249,23 @@ export const routes = [
                         ]
                     },
                     {
+                        path:'cfdi',
+                        component: require('./components/finanzas/factura/Layout').default,
+                        children: [
+                            {
+                                path:'/',
+                                name: 'cfdi',
+                                component: require('./components/finanzas/cfdi/Index').default,
+                                meta:{
+                                    title: 'CFDI',
+                                    breadcrumb: {name: 'CFDI', parent: 'finanzas'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_cfdi'
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path:'fondo',
                         component: require('./components/finanzas/fondo/Layout.vue').default,
                         children: [

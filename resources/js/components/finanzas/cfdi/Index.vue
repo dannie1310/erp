@@ -2,8 +2,6 @@
     <span>
         <div class="row">
             <div class="col-12">
-                <RegistroMasivo/>
-                <ProcesaDirectorio/>
                 <button @click="descargar" class="btn btn-app btn-secondary float-right" title="Descargar">
                     <i class="fa fa-download"></i> Descargar
                 </button>
@@ -67,13 +65,12 @@
 </template>
 
 <script>
-    import RegistroMasivo from './RegistroMasivo'
-    import ProcesaDirectorio from './ProcesaDirectorio'
-    import DateRangePicker from "../../../globals/DateRangePicker"
+
+    import DateRangePicker from "../../globals/DateRangePicker"
 
     export default {
-        name: "cfd-sat-index",
-        components:{RegistroMasivo,ProcesaDirectorio, DateRangePicker},
+        name: "cfd-sat-obra-index",
+        components:{ DateRangePicker},
 
         data() {
             return {
@@ -89,38 +86,38 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Fecha', field: 'fecha',thComp: require('../../../globals/th-Date').default, sortable: true},
-                    { title: 'Serie', field: 'serie',thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Folio', field: 'folio',thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Tipo', field: 'tipo_comprobante',thComp: require('../../../globals/th-Filter').default, sortable: false},
-                    { title: 'UUID', field: 'uuid',thComp: require('../../../globals/th-Filter').default, sortable: false},
-                    { title: 'RFC Receptor', field: 'rfc_receptor',thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Receptor', field: 'receptor',thComp: require('../../../globals/th-Filter').default, sortable: false},
-                    { title: 'RFC Emisor', field: 'rfc_emisor',thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Emisor', field: 'emisor', thComp: require('../../../globals/th-Filter').default, sortable: false},
-                    { title: 'Subtotal', field: 'subtotal', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Descuento', field: 'descuento', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Impuestos Retenidos', field: 'impuestos_retenidos', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Impuestos Trasladados', field: 'impuestos_trasladados', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Total', field: 'total',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Moneda', field: 'moneda',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'TC', field: 'tipo_cambio',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Estado', field: 'estado',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
-                    { title: 'BD SAO', field: 'base_datos',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Proyecto', field: 'obra',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Fecha', field: 'fecha',thComp: require('../../globals/th-Date').default, sortable: true},
+                    { title: 'Serie', field: 'serie',thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Folio', field: 'folio',thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Tipo', field: 'tipo_comprobante',thComp: require('../../globals/th-Filter').default, sortable: false},
+                    { title: 'UUID', field: 'uuid',thComp: require('../../globals/th-Filter').default, sortable: false},
+                    { title: 'RFC Receptor', field: 'rfc_receptor',thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Receptor', field: 'receptor',thComp: require('../../globals/th-Filter').default, sortable: false},
+                    { title: 'RFC Emisor', field: 'rfc_emisor',thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Emisor', field: 'emisor', thComp: require('../../globals/th-Filter').default, sortable: false},
+                    { title: 'Subtotal', field: 'subtotal', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Descuento', field: 'descuento', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Impuestos Retenidos', field: 'impuestos_retenidos', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Impuestos Trasladados', field: 'impuestos_trasladados', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Total', field: 'total',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Moneda', field: 'moneda',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'TC', field: 'tipo_cambio',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Estado', field: 'estado',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'BD', field: 'base_datos',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha Carga Proyecto', field: 'fecha_carga_proyecto',tdClass: 'td_money',},
-                    { title: 'BD CTPQ', field: 'base_datos_ctpq',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Ejercicio', field: 'ejercicio',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Periodo', field: 'periodo',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Tipo Póliza', field: 'tipo_poliza',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Folio Póliza', field: 'folio_poliza',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Fecha Póliza', field: 'fecha_poliza',thComp: require('../../../globals/th-Date').default, sortable: true},
+                    { title: 'BD CTPQ', field: 'base_datos_ctpq',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Ejercicio', field: 'ejercicio',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Periodo', field: 'periodo',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Tipo Póliza', field: 'tipo_poliza',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Folio Póliza', field: 'folio_poliza',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Fecha Póliza', field: 'fecha_poliza',thComp: require('../../globals/th-Date').default, sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: ['empresa','proveedor', 'factura_repositorio', "poliza_cfdi"],
+                    scope : 'paraProyecto',
+                    include: ['empresa','proveedor', 'factura_repositorio',  "poliza_cfdi"],
                     sort: 'cfd_sat.fecha',  order: 'desc'
                 },
                 daterange: null,
@@ -134,10 +131,11 @@
                 })
         },
 
+
         methods: {
             paginate(){
                 this.cargando=true;
-                return this.$store.dispatch('fiscal/cfd-sat/paginate', {params: this.query})
+                return this.$store.dispatch('finanzas/cfdi-sat/paginate', {params: this.query})
                     .then(data=>{
 
                     })
@@ -147,7 +145,7 @@
             },
             descargar(){
                 this.descargando = true;
-                return this.$store.dispatch('fiscal/cfd-sat/descargar',
+                return this.$store.dispatch('finanzas/cfdi-sat/descargar',
                     {
                         params: this.query,
                     })
@@ -160,10 +158,10 @@
         },
         computed: {
             cfdi(){
-                return this.$store.getters['fiscal/cfd-sat/CFDSAT'];
+                return this.$store.getters['finanzas/cfdi-sat/CFDSAT'];
             },
             meta(){
-                return this.$store.getters['fiscal/cfd-sat/meta']
+                return this.$store.getters['finanzas/cfdi-sat/meta']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
