@@ -20,6 +20,21 @@ class Camion extends Model
         return $this->belongsTo(Marca::class, 'IdMarca', 'IdMarca');
     }
 
+    public function sindicato()
+    {
+        return $this->belongsTo(Sindicato::class, 'IdSindicato', 'IdSindicato');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'IdEmpresa', 'IdEmpresa');
+    }
+
+    public function operador()
+    {
+        return $this->belongsTo(Operador::class, 'IdOperador', 'IdOperador');
+    }
+
     /**
      * Scopes
      */
