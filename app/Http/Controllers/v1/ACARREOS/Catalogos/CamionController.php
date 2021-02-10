@@ -77,4 +77,15 @@ class CamionController extends Controller
     {
         return $this->service->registrar($request->all());
     }
+
+    /**
+     * Registrar imágenes desde aplicación móvil "Catálogo Camiones"
+     * @param Request $request
+     * @return false|string
+     * @throws \Exception
+     */
+    public function cargaImagenes(Request $request)
+    {
+        return $this->service->cargaImagenes($request->all());
+    }
 }
