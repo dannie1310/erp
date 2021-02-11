@@ -117,10 +117,15 @@ ORDER BY fecha ASC, folio ASC";
                 ->where("uuid","=",$asociacion["uuid"])
                 ->first();
             $cfdi = CFDSAT::where("uuid","=",$asociacion["uuid"])->first();
+            try{
+                $cfdi_id = $cfdi->id;
+            } catch (\Exception $e){
+                $cfdi_id = null;
+            }
             if($polizaCFDIPreexistente){
                 if($polizaCFDIPreexistente->solicitud_asociacion_cancelacion>0){
                     $polizaCFDIPreexistente->solicitud_asociacion_cancelacion = null;
-                    $polizaCFDIPreexistente->id_cfdi = $cfdi->id;
+                    $polizaCFDIPreexistente->id_cfdi = $cfdi_id;
                     $polizaCFDIPreexistente->solicitud_asociacion_registro = $this->id_solicitud_asociacion;
                     $polizaCFDIPreexistente->save();
                     $nuevas_asociaciones++;
@@ -128,7 +133,7 @@ ORDER BY fecha ASC, folio ASC";
             } else {
                 $asociacion["solicitud_asociacion_registro"]=$this->id_solicitud_asociacion;
 
-                $asociacion["id_cfdi"] = $cfdi->id;
+                $asociacion["id_cfdi"] = $cfdi_id;
                 PolizaCFDI::create($asociacion);
                 $nuevas_asociaciones++;
             }
