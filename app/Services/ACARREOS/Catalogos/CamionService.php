@@ -305,19 +305,23 @@ class CamionService
          */
         $this->conexionAcarreos($data['bd']);
 
-        $json_imagenes = $data["Imagenes"];
-        $imagenes = json_decode(utf8_encode($json_imagenes), TRUE);
-        $cantidad_imagenes_a_registrar = count($imagenes);
-        $cantidad_imagenes_sin_viaje_neto = 0;
-        $cantidad_imagenes = 0;
-        $imagenes_registradas = array();
-        $imagenes_no_registradas = array();
-        $imagenes_no_registradas_sv = array();
-        if($cantidad_imagenes_a_registrar>0){
+        /**
+         * Respaldar los datos
+         */
+        $this->repository->crearJson(array_except($data, 'access_token'));
+
+        $data['Imagenes'] = json_decode($data['Imagenes'], true);
+        $cantidad_imagenes_a_registrar = count($data['Imagenes']);
+
+        if($cantidad_imagenes_a_registrar > 0)
+        {
             $i = 0;
             $ir = 0;
             $inr = 0;
-            foreach ($imagenes as $key_i => $value_i) {
+
+
+            //AQUI
+            foreach ($data['Imagenes'] as $key_i => $value_i) {
                 $id_viaje_neto_i = $this->repository->getIdViajeNeto($value_i['CodeImagen']);
                 if($id_viaje_neto_i > 0){
 
