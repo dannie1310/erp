@@ -22,6 +22,13 @@ class PolizaCFDI extends Model
         "guid_poliza_contpaq",
         "uuid",
         "id_cfdi",
+        "ejercicio",
+        "periodo",
+        "fecha",
+        "monto",
+        "tipo",
+        'folio',
+        "solicitud_asociacion_registro"
     ];
     public $timestamps = false;
 
