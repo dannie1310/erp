@@ -53,6 +53,8 @@ class PolizaRepository extends Repository implements RepositoryInterface
             ->where("AliasBDD","not like","%HST%")
             ->pluck("AliasBDD","Nombre")->take(20);*/
         $bases = Empresa::where("AliasBDD","not like","%HST%")
+            ->where("AliasBDD","not like","%DESA%")
+            ->where("AliasBDD","not like","%PRUEBAS%")
             ->pluck("AliasBDD","Nombre");
         return $bases;
     }
