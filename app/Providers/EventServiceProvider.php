@@ -30,6 +30,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendFinalizaCargaCFDNotification',
         ],
 
+        'App\Events\FinalizaProcesamientoAsociacion' => [
+            'App\Listeners\SendFinalizaAsociacionPolizaCFDINotification',
+        ],
+
             Registered::class => [
             SendEmailVerificationNotification::class,
         ],

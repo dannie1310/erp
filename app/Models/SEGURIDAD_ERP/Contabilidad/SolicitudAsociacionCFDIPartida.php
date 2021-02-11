@@ -17,6 +17,7 @@ class SolicitudAsociacionCFDIPartida extends Model
     protected $fillable = [
         "id_solicitud_asociacion",
         "base_datos",
+        "nombre_empresa",
         "fecha_hora_inicio",
         "fecha_hora_fin",
         "cantidad_asociaciones_detectadas",
@@ -51,42 +52,6 @@ class SolicitudAsociacionCFDIPartida extends Model
     }
 
 
-
-    public function procesarBusquedaDiferencias()
-    {
-        $this->fecha_hora_inicio = date('Y-m-d H:i:s');
-        $this->save();
-        $polizas = $this->obtienePolizasRevisar();
-        //$this->cantidad_polizas_revisadas = count($polizas);
-        $this->lote->setCantidadPolizasRevisadas(count($polizas));
-        $this->cantidad_polizas_existentes = $this->empresa_busqueda->getCantidadPolizas($this->ejercicio, $this->periodo);
-        $this->save();
-
-        foreach ($polizas as $poliza) {
-            $impedir_busqueda=false;
-            $relaciones = $poliza->relaciona($this);
-            if(key_exists("relacion_poliza",$relaciones))
-            {
-                if($relaciones["relacion_poliza"]){
-                    $busqueda = New BusquedaDiferenciasPolizas($relaciones, $this);
-                    $impedir_busqueda = $busqueda->buscarDiferenciasPolizas();
-                }
-            }
-            if(!$impedir_busqueda){
-                if(key_exists("relaciones_movimientos",$relaciones)){
-                    foreach ($relaciones["relaciones_movimientos"] as $relacion_movimiento)
-                    {
-                        if($relacion_movimiento){
-                            $busqueda_movimiento = New BusquedaDiferenciasMovimientos($relacion_movimiento, $this);
-                            $busqueda_movimiento->buscarDiferenciasMovimientos();
-                        }
-                    }
-                }
-            }
-        }
-        $this->finaliza(count($polizas));
-    }
-
     public function procesarAsociacionCFDI()
     {
         $this->fecha_hora_inicio = date('Y-m-d H:i:s');
@@ -102,8 +67,6 @@ class SolicitudAsociacionCFDIPartida extends Model
 
         $this->finaliza($numero_asociaciones, $numero_asociaciones_nuevas, $numero_asociaciones_eliminadas);
     }
-
-
 
     private function detectaAsociaciones()
     {
@@ -153,15 +116,19 @@ ORDER BY fecha ASC, folio ASC";
                 ->where("guid_poliza_contpaq","=",$asociacion["guid_poliza_contpaq"])
                 ->where("uuid","=",$asociacion["uuid"])
                 ->first();
+            $cfdi = CFDSAT::where("uuid","=",$asociacion["uuid"])->first();
             if($polizaCFDIPreexistente){
                 if($polizaCFDIPreexistente->solicitud_asociacion_cancelacion>0){
                     $polizaCFDIPreexistente->solicitud_asociacion_cancelacion = null;
+                    $polizaCFDIPreexistente->id_cfdi = $cfdi->id;
                     $polizaCFDIPreexistente->solicitud_asociacion_registro = $this->id_solicitud_asociacion;
                     $polizaCFDIPreexistente->save();
                     $nuevas_asociaciones++;
                 }
             } else {
                 $asociacion["solicitud_asociacion_registro"]=$this->id_solicitud_asociacion;
+
+                $asociacion["id_cfdi"] = $cfdi->id;
                 PolizaCFDI::create($asociacion);
                 $nuevas_asociaciones++;
             }

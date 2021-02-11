@@ -354,25 +354,25 @@ class PolizaService
     {
         $solicitud = $this->repository->generaSolicitudAsociacion();
         $bases = $this->repository->getListaEmpresas();
-        $idistribucion = 0;
-        foreach($bases as $base){
+
+        foreach($bases as $empresa=>$base){
             $data = [
                 "id_solicitud_asociacion" => $solicitud->id,
                 "base_datos" => $base,
+                "nombre_empresa" => $empresa,
             ];
-            $asociacion = $this->repository->generaPeticionesAsociacion($data);
-            ProcessAsociacionCFDI::dispatch($asociacion)->onQueue("q".$idistribucion);
+            $this->repository->generaPeticionesAsociacion($data);
+        }
+        $idistribucion = 0;
+        foreach($solicitud->partidas as $partida){
+            ProcessAsociacionCFDI::dispatch($partida)->onQueue("q".$idistribucion);
             //$asociacion->procesarAsociacionCFDI();
             $idistribucion ++;
-            if($idistribucion==3){
+            if($idistribucion==5){
                 $idistribucion=0;
             }
         }
-
-
-
         return $solicitud;
     }
-
 
 }
