@@ -55,4 +55,10 @@ class ListaEmpresasController extends Controller
         $res = $this->service->consolida($request->all(), $id);
         return response()->json([], 200);
     }
+
+    public function sincronizar(Request $request)
+    {
+        $res = $this->service->sincronizar();
+        return response()->json($res, 200);
+    }
 }

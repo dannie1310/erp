@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: JLopezA
- * Date: 20/02/2020
- * Time: 06:47 PM
- */
-
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
+use App\Scopes\EstatusActivoScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
@@ -21,21 +15,29 @@ class Empresa extends Model
     protected $table = 'Contabilidad.ListaEmpresas';
     protected $primaryKey = 'Id';
     public $timestamps = false;
-    
+
     public $fillable = [
         'Visible',
         'Editable',
         'Historica',
         'Consolidadora',
         'Desarrollo',
-        'IdConsolidadora'
+        'IdConsolidadora',
+        'Nombre',
+        'AliasBDD'
     ];
 
     public $searchable = [
         'Nombre',
         'AliasBDD'
     ];
-    
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EstatusActivoScope);
+    }
+
     /*public function consolida()
     {
         return $this->hasMany(self::class, 'IdConsolidadora', 'Id');
@@ -179,7 +181,7 @@ class Empresa extends Model
     }
 
     public function actualizaEmpresas($data)
-    {        
+    {
         try {
             DB::connection('seguridad')->beginTransaction();
             $this->consolida()->update(['IdConsolidadora' => NULL]);
@@ -189,8 +191,8 @@ class Empresa extends Model
                 $this->where('Id', '=', $empresa)->update(['IdConsolidadora' => $this->Id]);
             }
 
-            DB::connection('seguridad')->commit();            
-            
+            DB::connection('seguridad')->commit();
+
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
             throw $e;

@@ -1,5 +1,15 @@
 <template>
-    <div class="row">
+    <span>
+        <div class="row">
+            <div class="col-12">
+                <button @click="sincronizar"  class="btn btn-app btn-secondary float-right" title="Sincronizar Empresas con Contpaq" :disabled="sincronizando">
+                    <i class="fa fa-spin fa-spinner" v-if="sincronizando"></i>
+                    <i class="fa fa-sync" v-else></i>
+                    Sincronizar con Contpaq
+                </button>
+            </div>
+        </div>
+        <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -21,8 +31,10 @@
             </div>
             <!-- /.card -->
         </div>
-        <!-- /.col -->
+            <!-- /.col -->
     </div>
+    </span>
+
 </template>
 
 <script>
@@ -47,7 +59,8 @@
                 total: 0,
                 query: {},
                 search: '',
-                cargando: false
+                cargando: false,
+                sincronizando : false,
             }
         },
 
@@ -60,16 +73,28 @@
         },
 
         methods: {
-                paginate() {
-                    this.cargando = true;
-                    return this.$store.dispatch('contabilidadGeneral/empresa/paginate', { params: this.query })
-                        .then(data => {
-                            this.$store.commit('contabilidadGeneral/empresa/SET_EMPRESAS', data.data);
-                            this.$store.commit('contabilidadGeneral/empresa/SET_META', data.meta);
+            paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('contabilidadGeneral/empresa/paginate', { params: this.query })
+                    .then(data => {
+                        this.$store.commit('contabilidadGeneral/empresa/SET_EMPRESAS', data.data);
+                        this.$store.commit('contabilidadGeneral/empresa/SET_META', data.meta);
+                })
+                .finally(() => {
+                    this.cargando = false;
+                })
+            },
+            sincronizar(){
+                this.sincronizando = true;
+                return this.$store.dispatch('contabilidadGeneral/empresa/sincronizar',
+                    {
+                        params: this.query,
                     })
-                    .finally(() => {
-                        this.cargando = false;
-                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.sincronizando = false;
+                    });
             }
         },
 
