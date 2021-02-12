@@ -7,7 +7,9 @@ namespace App\Services\ACARREOS\Catalogos;
 use App\Models\ACARREOS\Camion;
 use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
 use App\Models\ACARREOS\SolicitudActualizacionCamion;
+use App\Models\ACARREOS\SolicitudActualizacionCamionImagen;
 use App\Models\ACARREOS\SolicitudReactivacionCamion;
+use App\Models\ACARREOS\SolicitudReactivacionCamionImagen;
 use App\Models\IGH\Usuario;
 use App\Repositories\ACARREOS\Camion\Repository;
 use Illuminate\Support\Facades\DB;
@@ -315,44 +317,65 @@ class CamionService
 
         if($cantidad_imagenes_a_registrar > 0)
         {
-            $i = 0;
+            $imagenes = 0;
+            $error = 0;
             $ir = 0;
             $inr = 0;
+            $imagenes_registradas = array();
+            $imagenes_no_registradas = array();
 
-
-            //AQUI
-            foreach ($data['Imagenes'] as $key_i => $value_i) {
-                $id_viaje_neto_i = $this->repository->getIdViajeNeto($value_i['CodeImagen']);
-                if($id_viaje_neto_i > 0){
-
-                    try {
-                        $vn_imagen = ViajeNetoImagen::create([
-                            'idviaje_neto' => $id_viaje_neto_i,
-                            'idtipo_imagen' => $value_i['idtipo_imagen'],
-                            'imagen' => str_replace('\\','',$value_i['imagen']),
+            foreach ($data['Imagenes'] as $key => $imagen)
+            {
+                if($imagen['estatus'] == 1)
+                {
+                    try{
+                        $id_solicitud = $this->repository->getSolicitudActivacionImagen($imagen['idcamion']);
+                        SolicitudActualizacionCamionImagen::create([
+                            'IdSolicitudActualizacion' => $id_solicitud,
+                            'IdCamion' => $imagen['idcamion'],
+                            'TipoC' => $imagen['idtipo_imagen'],
+                            'Imagen' => str_replace('\\','',$imagen['imagen']),
+                            'Tipo' => 0
                         ]);
-                        $cantidad_imagenes++;;
-                        $imagenes_registradas[$ir] = $value_i["idImagen"];
+                        $imagenes++;
+                        $imagenes_registradas[$ir] = $imagen["idImagen"];
                         $ir++;
-                    } catch (\Exception $e) {
-                        $imagenes_no_registradas[$inr] = $value_i["idImagen"];
-                        $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+                    }catch (\Exception $e)
+                    {
+                        $imagenes_no_registradas[$inr] = $imagen["idImagen"];
+                        $this->repository->crearLogError($e->getMessage(), $data['usuario']);
+                        $error++;
                         $inr++;
                     }
-                }else{
-                    $imagenes_no_registradas_sv[$cantidad_imagenes_sin_viaje_neto] = $value_i["idImagen"];
-                    $cantidad_imagenes_sin_viaje_neto++;
                 }
-                $i++;
+                else{
+                    try{
+                        $id_solicitud = $this->repository->getSolicitudReactivacionImagen($imagen['idcamion']);
+                        SolicitudReactivacionCamionImagen::create([
+                            'IdSolicitudReactivacion' => $id_solicitud,
+                            'IdCamion' => $imagen['idcamion'],
+                            'TipoC' => $imagen['idtipo_imagen'],
+                            'Imagen' => str_replace('\\','',$imagen['imagen']),
+                            'Tipo' => 0
+                        ]);
+                        $imagenes++;
+                        $imagenes_registradas[$ir] = $imagen["idImagen"];
+                        $ir++;
+                    }catch (\Exception $e)
+                    {
+                        $imagenes_no_registradas[$inr] = $imagen["idImagen"];
+                        $this->repository->crearLogError($e->getMessage(), $data['usuario']);
+                        $error++;
+                        $inr++;
+                    }
+                }
             }
         }
-        $json_imagenes_registradas = json_encode($imagenes_registradas);
-        $json_imagenes_no_registradas = json_encode($imagenes_no_registradas);
-        $json_imagenes_no_registradas_sv = json_encode($imagenes_no_registradas_sv);
+        $json_registrado = json_encode($imagenes_registradas);
+        $json_no_registrado = json_encode($imagenes_no_registradas);
         return \json_encode(array("msj"=>"Imagenes Sincronizadas.  Imagenes a Registrar: ".
             $cantidad_imagenes_a_registrar." Imagenes Registradas: ".
-            $cantidad_imagenes." Imagenes Sin Viaje: ".
-            $cantidad_imagenes_sin_viaje_neto." Imagenes con Error: ".($inr), "imagenes_registradas" => $json_imagenes_registradas, "imagenes_no_registradas_sv"=>$json_imagenes_no_registradas_sv, "imagenes_no_registradas" => $json_imagenes_no_registradas));
-
+            $imagenes." Imagenes con Error: ".($error), "imagenes_registradas" => $json_registrado,
+            "imagenes_no_registradas" => $json_no_registrado));
     }
 }
