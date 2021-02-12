@@ -9,6 +9,7 @@
 namespace App\Repositories\CTPQ;
 
 use App\Models\CTPQ\Empresa;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa as EmpresaERP;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDIPartida;
@@ -52,9 +53,7 @@ class PolizaRepository extends Repository implements RepositoryInterface
         /*$bases = Empresa::where("AliasBDD","like","ctPCO811231EI4_01%")
             ->where("AliasBDD","not like","%HST%")
             ->pluck("AliasBDD","Nombre")->take(20);*/
-        $bases = Empresa::where("AliasBDD","not like","%HST%")
-            ->where("AliasBDD","not like","%DESA%")
-            ->where("AliasBDD","not like","%PRUEBAS%")
+        $bases = EmpresaERP::paraSincronizacionCFDIPoliza()
             ->pluck("AliasBDD","Nombre");
         return $bases;
     }

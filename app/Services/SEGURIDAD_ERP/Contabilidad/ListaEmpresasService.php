@@ -3,7 +3,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
-use App\Repositories\Repository;
+use App\Repositories\SEGURIDAD_ERP\Contabilidad\ListaEmpresaRepository as Repository;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 
 class ListaEmpresasService{
@@ -45,5 +45,10 @@ class ListaEmpresasService{
     public function consolida($data, $id)
     {
         $this->repository->show($id)->actualizaEmpresas($data['params']);
+    }
+
+    public function sincronizar()
+    {
+        return $this->repository->sincronizar();
     }
 }
