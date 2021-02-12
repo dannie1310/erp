@@ -165,6 +165,18 @@ class Empresa extends Model
         return $query->whereHas('diferencias');
     }
 
+    public function scopeParaSincronizacionCFDIPoliza($query)
+    {
+        return $query->where('Desarrollo',"=",0)
+            ->where('Historica', '=', 0)
+            ->where('Estatus', '=', 1)
+            ->where('Consolidadora', '=', 0)
+            ->where('SincronizacionPolizasCFDI', '=', 1)
+            ->where("AliasBDD","not like","%HST%")
+            ->where("AliasBDD","not like","%DESA%")
+            ->where("AliasBDD","not like","%PRUEBAS%");
+    }
+
     public function diferencias()
     {
         return $this->hasMany(Diferencia::class,"base_datos_revisada","AliasBDD");
