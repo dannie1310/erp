@@ -12,7 +12,7 @@
                     </thead>
                     <tbody v-if="items">
                         <tr v-for="item in items.descuentos">
-                            <td>{{item.concepto}}</td>
+                            <td>{{decode_utf8(item.concepto)}}</td>
                             <td>{{item.naturaleza}}</td>
                             <td><input type="checkbox" id="seguir" :value="item.seleccionado" v-model="item.seleccionado"  ></td>
                         </tr>
@@ -31,7 +31,11 @@ export default {
         return {
         }
     },
-    methods: {},
+    methods: {
+        decode_utf8(s) {
+            return decodeURIComponent(escape(s));
+        }
+    },
     computed:{
         // items(){
         //     return this.$store.getters['finanzas/factura/items_revision'];

@@ -127,7 +127,7 @@
                                         <td></td>
                                     </tr>
                                     <tr v-for="item in items.descuentos" v-if="item.seleccionado">
-                                        <td colspan="5">{{item.concepto}}</td>
+                                        <td colspan="5">{{decode_utf8(item.concepto)}}</td>
                                         <td>
                                             <input class="form-control"
                                                 style="width: 100%"
@@ -458,11 +458,12 @@
                     
                 </div>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12" v-if="Object.keys(factura).length > 0">
                 <div class="invoice p-3 mb-3">
                     <div class="row">
                         <div class="col-md-12">
                             <button type="button" class="btn btn-primary float-right" v-on:click="validate">Aceptar</button>
+                            <button type="button" class="btn btn-default float-right" style="margin-right:5px" v-on:click="salir">Cerrar</button>
                         </div>
                         
                     </div>
@@ -538,7 +539,7 @@ export default {
             if(this.items){
                 this.items.pendientes.forEach(pendiente => {
                     if(pendiente.seleccionado){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat((pendiente.cantidad * pendiente.precio) - pendiente.anticipo);
+                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo);
                     }
                     
                 });
@@ -582,7 +583,7 @@ export default {
                 this.items.descuentos.forEach(descuento => {
                     if(descuento.seleccionado){
                         if(descuento.naturaleza === 'Descuento'){
-                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  parseFloat(descuento.monto_revision);
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  (descuento.monto_revision);
                         }
                         if(descuento.naturaleza === 'Recargo'){
                             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(descuento.monto_revision);
@@ -627,7 +628,7 @@ export default {
             this.resumen.subtotal = 0;
             this.items.pendientes.forEach(pendiente => {
                 if(pendiente.seleccionado){
-                    this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat((pendiente.cantidad * pendiente.precio) - pendiente.anticipo);
+                    this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo);
                 }
                 
             });
@@ -661,7 +662,7 @@ export default {
             });
             this.items.descuentos.forEach(descuento => {
                 if(descuento.seleccionado){
-                    descuento.monto_revision = descuento.monto_revision === '' ? 0 : parseFloat(descuento.monto_revision);
+                    descuento.monto_revision = descuento.monto_revision === '' ? 0 : (descuento.monto_revision);
                     if(descuento.naturaleza === 'Descuento'){
                         this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  parseFloat(descuento.monto_revision);
                     }
@@ -761,8 +762,6 @@ export default {
             this.resumen.total_documentos = parseFloat(this.resumen.total_documentos).toFixed(2);
         },
         diferencia(){
-            console.log(this.resumen.total_documentos);
-            console.log(this.factura.monto);
             return parseFloat(this.resumen.total_documentos - this.factura.monto).formatMoney(2);
         },
         item_subcontrato_desc(item){
@@ -775,7 +774,7 @@ export default {
             return '';
         },
         total_pendiente(item){
-            return '$' + parseFloat((item.cantidad * item.precio) - item.anticipo).formatMoney(2,'.',',');
+            return '$' + parseFloat((item.cantidad * item.precio_sf) - item.anticipo).formatMoney(2,'.',',');
         },
         setTipoCambio(tipos){
             tipos.forEach(tipo =>{
@@ -829,7 +828,9 @@ export default {
                 
             });
             this.items.anticipos.forEach(anticipo => {
-                resp.anticipos.push(anticipo);
+                if(anticipo.seleccionado){
+                    resp.anticipos.push(anticipo);
+                }
             });
             this.items.subcontratos.forEach(subcontrato => {
                 if(subcontrato.seleccionado){
@@ -854,6 +855,12 @@ export default {
             });
             return resp;
         },
+        salir(){
+            this.$router.push({name: 'factura'});
+        },
+        decode_utf8(s) {
+            return decodeURIComponent(escape(s));
+        }
     },
     computed:{
         total(){

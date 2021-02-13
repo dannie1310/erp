@@ -701,6 +701,7 @@ class Factura extends Transaccion
                     , r.[descripcion] AS insumo
                     , r.[cantidad] AS cantidad
                     , CONVERT(VARCHAR(100), CAST(r.precio_unitario AS MONEY), 1) AS precio
+                    , r.precio_unitario AS  precio_sf
                     , CONVERT(VARCHAR(100), CAST(r.[cantidad] * r.[precio_unitario] AS MONEY), 1) AS monto_original
                     , r.[cantidad] * r.[precio_unitario] as monto_original_sf
                     , r.id_moneda
@@ -840,7 +841,10 @@ class Factura extends Transaccion
     public function storeRevision($data){
         try {
             DB::connection('cadeco')->beginTransaction();
-            foreach($data['pendientes'] as $pendiente){
+            if(abs($data['factura']['monto'] - $data['resumen']['total_documentos']) > 0.99){
+                abort(403, 'Para proceder con la revisión, la diferencia debe ser menor a 0.99');
+            }
+            foreach($data['items']['pendientes'] as $pendiente){
                 $item_entrada = ItemEntradaAlmacen::find($pendiente['id_item']);
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
@@ -860,20 +864,20 @@ class Factura extends Transaccion
                 $item_entrada->save();
             }
 
-            foreach($data['anticipos'] as $anticipo){
+            foreach($data['items']['anticipos'] as $anticipo){
                 $item_oc = ItemOrdenCompra::find($anticipo['id_item']);
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
                     "id_antecedente" => $anticipo['id_transaccion'],
                     "item_antecedente" => $anticipo['id_item'],
                     "importe" => $anticipo['anticipo_sf'],
-                    "id_material" => $item_sao->id_material,
+                    "id_material" => $item_oc->id_material,
                     "numero" => 2,
                     "cantidad" => 0,
                 ]);
             }
 
-            foreach($data['subcontratos'] as $subcontrato){
+            foreach($data['items']['subcontratos'] as $subcontrato){
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
                     "id_antecedente" => $subcontrato['id'],
@@ -903,7 +907,7 @@ class Factura extends Transaccion
 
             }
 
-            foreach($data['renta'] as $renta){
+            foreach($data['items']['renta'] as $renta){
                 $item_renta = ItemEntradaMaquinaria::find($renta['id_item']);
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
@@ -919,7 +923,7 @@ class Factura extends Transaccion
 
             }
 
-            foreach($data['lista'] as $lista){
+            foreach($data['items']['lista'] as $lista){
                 $item_trns = Transaccion::find($lista['id_item']);
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
@@ -943,7 +947,7 @@ class Factura extends Transaccion
                 }
             }
 
-            foreach($data['descuentos'] as $descuento){
+            foreach($data['items']['descuentos'] as $descuento){
                 $reg_varios = Vario::create([
                     "descripcion" => $descuento['concepto'],
                     "mascara" => $descuento['mascara'],
