@@ -41,6 +41,12 @@
         </div>
         <div class="col-md-2" >
             <div class="form-group" >
+                <label><b>No. Empresas con Acceso:</b></label>
+                {{count($solicitud->partidas()->where("sin_acceso","=",0)->get())}}
+            </div>
+        </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
                 <label><b>No. Empresas sin Acceso:</b></label>
                 {{count($solicitud->partidas()->where("sin_acceso","=",1)->get())}}
             </div>
@@ -66,13 +72,58 @@
             </div>
         </div>
 
+        @if(count($solicitud->partidas()->where("sin_acceso","=",0)->get())>0)
+            <hr />
+
+            <div class="row">
+                <table>
+                    <caption style="text-align: left; font-weight: bold">Empresas Con Acceso:</caption>
+                    <thead>
+                    <th>
+                        BD
+                    </th>
+                    <th>
+                        Empresa
+                    </th>
+                    <th>
+                        Asociaciones Identificadas
+                    </th>
+                    <th>
+                        Asociaciones Nuevas
+                    </th>
+                    <th>
+                        Asociaciones Eliminadas
+                    </th>
+                    </thead>
+                    <tbody>
+                    @foreach($solicitud->partidas()->where("sin_acceso","=",1)->get() as $item)
+                        <tr>
+                            <td>
+                                {{$item->base_datos}}
+                            </td>
+                            <td>
+                                {{$item->nombre_empresa}}
+                            </td>
+                            <td style="text-align: right">
+                                {{$item->cantidad_asociaciones_detectadas}}
+                            </td>
+                            <td style="text-align: right">
+                                {{$item->cantidad_asociaciones_nuevas}}
+                            </td>
+                            <td style="text-align: right">
+                                {{$item->cantidad_asociaciones_eliminadas}}
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+
     @if(count($solicitud->partidas()->where("sin_acceso","=",1)->get())>0)
         <hr />
 
         <div class="row">
-            <div class="col-md-12">
-
-            </div>
             <table>
                 <caption style="text-align: left; font-weight: bold">Empresas Sin Acceso:</caption>
                 <thead>
