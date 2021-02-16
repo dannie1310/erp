@@ -48,12 +48,12 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Nombre', field: 'nombre', sortable: true },
                     { title: 'Alias', field: 'alias', sortable: true },
-                    { title: 'Visible', field: 'visible', sortable: true },
-                    { title: 'Editable', field: 'editable', sortable: true },
-                    { title: 'Histórica', field: 'historica', sortable: true },
-                    { title: 'Consolidadora ', field: 'consolidadora', sortable: true },
-                    { title: 'Desarrollo ', field: 'desarrollo', sortable: true },
-                    { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Visible', field: 'visible', sortable: true, tdComp: require('./partials/SwitchVisible').default },
+                    { title: 'Editable', field: 'editable', sortable: true, tdComp: require('./partials/SwitchEditable').default },
+                    { title: 'Histórica', field: 'historica', sortable: true, tdComp: require('./partials/SwitchHistorica').default },
+                    { title: 'Consolidadora ', field: 'consolidadora', sortable: true, tdComp: require('./partials/SwitchConsolidadora').default },
+                    { title: 'Desarrollo ', field: 'desarrollo', sortable: true, tdComp: require('./partials/SwitchDesarrollo').default },
+                    { title: 'Pólizas-CFDI ', field: 'poliza_cfdi', sortable: true, tdComp: require('./partials/SwitchPolizaCFDI').default },
                 ],
                 data: [],
                 total: 0,
@@ -119,11 +119,17 @@
                         index: (i + 1) + self.query.offset,
                         nombre: empresa.nombre,
                         alias: empresa.alias,
-                        visible: empresa.visible == 1?'SI':'NO',
-                        editable: empresa.editable == 1?'SI':'NO',
-                        historica: empresa.historica == 1?'SI':'NO',
-                        consolidadora: empresa.consolidadora == 1?'SI':'NO',
-                        desarrollo: empresa.desarrollo == 1 ? 'SI' : 'NO',
+                        /*visible: empresa.visible == 1?'SI':'NO',*/
+                        visible: $.extend({},{id: empresa.id, visible: empresa.visible}),
+                        /*editable: empresa.editable == 1?'SI':'NO',*/
+                        editable: $.extend({},{id: empresa.id, editable: empresa.editable}),
+                        /*historica: empresa.historica == 1?'SI':'NO',*/
+                        historica: $.extend({},{id: empresa.id, historica: empresa.historica}),
+                        /*consolidadora: empresa.consolidadora == 1?'SI':'NO',*/
+                        consolidadora: $.extend({},{id: empresa.id, consolidadora: empresa.consolidadora}),
+                        /*desarrollo: empresa.desarrollo == 1 ? 'SI' : 'NO',*/
+                        desarrollo: $.extend({},{id: empresa.id, desarrollo: empresa.desarrollo}),
+                        poliza_cfdi: $.extend({},{id: empresa.id, poliza_cfdi: empresa.poliza_cfdi}),
                         buttons: $.extend({}, {
                             edit: self.$root.can('configurar_visibilidad_empresa_ctpq', true) || self.$root.can('configurar_editabilidad_empresa_ctpq', true) || self.$root.can('configurar_tipo_empresa_ctpq', true) ? true : false,
                             empresa: empresa,

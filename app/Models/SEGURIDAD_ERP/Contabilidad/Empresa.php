@@ -24,7 +24,8 @@ class Empresa extends Model
         'Desarrollo',
         'IdConsolidadora',
         'Nombre',
-        'AliasBDD'
+        'AliasBDD',
+        'SincronizacionPolizasCFDI'
     ];
 
     public $searchable = [
