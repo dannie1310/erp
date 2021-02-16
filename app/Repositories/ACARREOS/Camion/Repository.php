@@ -14,8 +14,8 @@ use App\Models\ACARREOS\Operador;
 use App\Models\ACARREOS\SCA_CONFIGURACION\RolUsuario;
 use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
 use App\Models\ACARREOS\Sindicato;
-use App\Models\ACARREOS\SolicitudActualizacionCamionImagen;
-use App\Models\ACARREOS\SolicitudReactivacionCamionImagen;
+use App\Models\ACARREOS\SolicitudActualizacionCamion;
+use App\Models\ACARREOS\SolicitudReactivacionCamion;
 use App\Models\IGH\Usuario;
 use App\Repositories\RepositoryInterface;
 
@@ -103,9 +103,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
      */
     public function getCatalogoCamion()
     {
-        $camiones = $this->model->activo()->get();
         $camiones_arrays = array();
-        foreach ($camiones as $key => $camion) {
+        foreach ($this->model->get() as $key => $camion) {
             $camiones_arrays[$key]['id_camion'] = (String)$camion->getKey();
             $camiones_arrays[$key]['id_sindicato'] = $camion->sindicato ? (String)$camion->sindicato->getKey() : "";
             $camiones_arrays[$key]['id_empresa'] = $camion->empresa ? (String)$camion->empresa->getKey() : "";
@@ -173,7 +172,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $tipos_imagenes[1]['descripcion'] = 'Derecha';
         $tipos_imagenes[2]['id'] = 'i';
         $tipos_imagenes[2]['descripcion'] = 'Izquierda';
-        $tipos_imagenes[3]['id'] = 'a';
+        $tipos_imagenes[3]['id'] = 't';
         $tipos_imagenes[3]['descripcion'] = 'Atras';
         return $tipos_imagenes;
     }
@@ -193,31 +192,34 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function getIdSindicato($descripcion)
     {
-        if ($descripcion == "" || $descripcion == "0") {
-            return "NULL";
+        if ($descripcion == "" || $descripcion == "0")
+        {
+            return NULL;
         }
         return Sindicato::where('Descripcion', utf8_decode($descripcion))->pluck('IdSindicato')->first();
     }
 
     public function getIdEmpresa($descripcion)
     {
-        if ($descripcion == "" || $descripcion == "0") {
-            return "NULL";
+        if ($descripcion == "" || $descripcion == "0")
+        {
+            return NULL;
         }
         return Empresa::where('razonSocial', utf8_decode($descripcion))->pluck('IdEmpresa')->first();
     }
 
     public function getIdOperador($operador, $licencia, $vigencia, $id_usuario)
     {
-        if ($operador == "" || $operador == "0") {
-            return "NULL";
+        if ($operador == "" || $operador == "0")
+        {
+            return NULL;
         }
         $id_operador = Operador::where('Nombre', utf8_decode($operador))->pluck('IdOperador')->first();
         if (is_null($id_operador)) {
             $operador = Operador::create([
                 'Nombre' => $this->limpiarCaracteres(utf8_decode(utf8_decode($operador))),
                 'NoLicencia' => $this->limpiarCaracteres($licencia),
-                'VigenciaLicencia' => $vigencia,
+                'VigenciaLicencia' => $vigencia != "" ? $vigencia : date('Y-m-d'),
                 'FechaAlta' => date('Y-m-d H:i:s'),
                 'usuario_registro' => $id_usuario
             ]);
@@ -241,8 +243,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function getIdMarca($marca, $id_usuario)
     {
-        if ($marca == "" || $marca == "0") {
-            return "NULL";
+        if ($marca == "" || $marca == "0")
+        {
+            return NULL;
         }
         $id_marca = Marca::where('Descripcion', utf8_decode($marca))->pluck('IdMarca')->first();
         if (is_null($id_marca)) {
@@ -258,16 +261,16 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     /**
      * Buscar el id de la solicitud de activación
      */
-    public function getSolicitudActivacionImagen($id_camion)
+    public function getSolicitudActivacion($id_camion)
     {
-        return SolicitudActualizacionCamionImagen::where('IdCamion', $id_camion)->orderBy('IdSolicitudActualizacion', 'desc')->pluck('IdSolicitudActualizacion')->first();
+        return SolicitudActualizacionCamion::where('IdCamion', $id_camion)->orderBy('IdSolicitudActualizacion', 'desc')->pluck('IdSolicitudActualizacion')->first();
     }
 
     /**
      * Buscar el id de la solicitud de reactivación
      */
-    public function getSolicitudReactivacionImagen($id_camion)
+    public function getSolicitudReactivacion($id_camion)
     {
-        return SolicitudReactivacionCamionImagen::where('IdCamion', $id_camion)->orderBy('IdSolicitudReactivacion', 'desc')->limit(1)->pluck('IdSolicitudReactivacion');
+        return SolicitudReactivacionCamion::where('IdCamion', $id_camion)->orderBy('IdSolicitudReactivacion', 'desc')->pluck('IdSolicitudReactivacion')->first();
     }
 }

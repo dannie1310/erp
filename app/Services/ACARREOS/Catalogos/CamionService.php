@@ -87,9 +87,9 @@ class CamionService
         $tipoImagenes = $this->repository->getTiposImagenes();
 
         return [
-            'IdUsuario' => auth()->id(),
+            'IdUsuario' => (String) auth()->id(),
             'Nombre' => $usuario->usuario->nombre_completo,
-            'IdProyecto' => $usuario->proyecto->id_proyecto,
+            'IdProyecto' => (String) $usuario->proyecto->id_proyecto,
             'base_datos' => $usuario->proyecto->base_datos,
             'descripcion_database' => $usuario->proyecto->descripcion,
             'camiones' => $camiones,
@@ -186,15 +186,17 @@ class CamionService
         if (isset($data['camiones_editados']))
         {
             $data['camiones_editados'] = json_decode($data['camiones_editados'], true);
+
             $camiones_editar = count($data['camiones_editados']);
             if($camiones_editar > 0)
             {
                 foreach ($data['camiones_editados'] as $key => $camion)
-                {
+                { $this->repository->crearJson($camion);
                     $id_sindicato = $this->repository->getIdSindicato($camion['sindicato']);
                     $id_empresa = $this->repository->getIdEmpresa($camion['empresa']);
                     $id_operador = $this->repository->getIdOperador($camion['operador'], $camion['licencia'], $camion['vigencia'], $data['idusuario']);
                     $id_marca = $this->repository->getIdMarca($camion['marca'],$data['idusuario']);
+
                     try {
                         SolicitudActualizacionCamion::create([
                             'IdCamion' => $camion['id_camion'],
@@ -224,7 +226,6 @@ class CamionService
                         $this->repository->crearLogError($exception->getMessage(), $data['idusuario']);
                         $error++;
                     }
-
                 }
             }
         }
@@ -329,7 +330,7 @@ class CamionService
                 if($imagen['estatus'] == 1)
                 {
                     try{
-                        $id_solicitud = $this->repository->getSolicitudActivacionImagen($imagen['idcamion']);
+                        $id_solicitud = $this->repository->getSolicitudActivacion($imagen['idcamion']);
                         SolicitudActualizacionCamionImagen::create([
                             'IdSolicitudActualizacion' => $id_solicitud,
                             'IdCamion' => $imagen['idcamion'],
@@ -338,11 +339,11 @@ class CamionService
                             'Tipo' => 0
                         ]);
                         $imagenes++;
-                        $imagenes_registradas[$ir] = $imagen["idImagen"];
+                        $imagenes_registradas[$ir] = (String) $imagen["idImagen"];
                         $ir++;
                     }catch (\Exception $e)
                     {
-                        $imagenes_no_registradas[$inr] = $imagen["idImagen"];
+                        $imagenes_no_registradas[$inr] = (String) $imagen["idImagen"];
                         $this->repository->crearLogError($e->getMessage(), $data['usuario']);
                         $error++;
                         $inr++;
@@ -350,7 +351,7 @@ class CamionService
                 }
                 else{
                     try{
-                        $id_solicitud = $this->repository->getSolicitudReactivacionImagen($imagen['idcamion']);
+                        $id_solicitud = $this->repository->getSolicitudReactivacion($imagen['idcamion']);
                         SolicitudReactivacionCamionImagen::create([
                             'IdSolicitudReactivacion' => $id_solicitud,
                             'IdCamion' => $imagen['idcamion'],
@@ -359,11 +360,11 @@ class CamionService
                             'Tipo' => 0
                         ]);
                         $imagenes++;
-                        $imagenes_registradas[$ir] = $imagen["idImagen"];
+                        $imagenes_registradas[$ir] = (String) $imagen["idImagen"];
                         $ir++;
                     }catch (\Exception $e)
                     {
-                        $imagenes_no_registradas[$inr] = $imagen["idImagen"];
+                        $imagenes_no_registradas[$inr] = (String) $imagen["idImagen"];
                         $this->repository->crearLogError($e->getMessage(), $data['usuario']);
                         $error++;
                         $inr++;
