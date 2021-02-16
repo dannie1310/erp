@@ -188,8 +188,15 @@ class TagService
         $this->repository->logCambioContrasena($data);
 
         try {
-            $this->repository->cambiarClave($data['idusuario'], $data['NuevaClave']);
-            return json_encode(array("msj" => "Contraseña Guardada Correctamente!!"));
+            /**
+             * Se busca el usuario
+             */
+            $usuario = Usuario::where('idusuario', $data['idusuario'])->first();
+            if(!is_null($usuario)) {
+                $usuario->cambiarClave($data['NuevaClave']);
+                return json_encode(array("msj" => "Contraseña Guardada Correctamente!!"));
+            }
+            return json_encode(array("error" => "Error al encontrar el usuario, favor de reportarlo."));
         }catch (\Exception $e) {
             $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
             return json_encode(array("error" => "Error al realizar el cambio de contraseña, favor de reportarlo."));

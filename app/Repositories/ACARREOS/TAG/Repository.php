@@ -161,22 +161,4 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             'FechaHoraRegistro' => date('Y-m-d H:i:s')
         ]);
     }
-
-    /**
-     * Cambia la clave del usuario igh
-     * @param $id_usuario
-     * @param $clave_nueva
-     */
-    public function cambiarClave($id_usuario, $clave_nueva)
-    {
-        /**
-         * Se busca el usuario
-         */
-        $usuario = Usuario::where('idusuario', $id_usuario)->first();
-        if(!is_null($usuario)) {
-            $usuario->update([
-                'clave' => $clave_nueva
-            ]);
-        }
-    }
 }
