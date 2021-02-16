@@ -30,6 +30,10 @@ class SolicitudAsociacionCFDIPartida extends Model
         return $this->belongsTo(SolicitudAsociacionCFDI::class,"id_solicitud_asociacion", "id");
     }
 
+    public function logs()
+    {
+        return $this->hasMany(SolicitudAsociacionCFDIPartidaLog::class,"id_solicitud_asociacion", "id");
+    }
 
     public function empresa_busqueda()
     {
@@ -124,18 +128,27 @@ ORDER BY fecha ASC, folio ASC";
             }
             if($polizaCFDIPreexistente){
                 if($polizaCFDIPreexistente->solicitud_asociacion_cancelacion>0){
-                    $polizaCFDIPreexistente->solicitud_asociacion_cancelacion = null;
-                    $polizaCFDIPreexistente->id_cfdi = $cfdi_id;
-                    $polizaCFDIPreexistente->solicitud_asociacion_registro = $this->id_solicitud_asociacion;
-                    $polizaCFDIPreexistente->save();
-                    $nuevas_asociaciones++;
+                    try{
+                        $polizaCFDIPreexistente->solicitud_asociacion_cancelacion = null;
+                        $polizaCFDIPreexistente->id_cfdi = $cfdi_id;
+                        $polizaCFDIPreexistente->solicitud_asociacion_registro = $this->id_solicitud_asociacion;
+                        $polizaCFDIPreexistente->save();
+                        $nuevas_asociaciones++;
+                    } catch (\Exception $e){
+                        $this->logs()->create(["message"=>$e->getMessage()]);
+                    }
+
                 }
             } else {
-                $asociacion["solicitud_asociacion_registro"]=$this->id_solicitud_asociacion;
+                try{
+                    $asociacion["solicitud_asociacion_registro"]=$this->id_solicitud_asociacion;
+                    $asociacion["id_cfdi"] = $cfdi_id;
+                    PolizaCFDI::create($asociacion);
+                    $nuevas_asociaciones++;
 
-                $asociacion["id_cfdi"] = $cfdi_id;
-                PolizaCFDI::create($asociacion);
-                $nuevas_asociaciones++;
+                }catch (\Exception $e){
+                    $this->logs()->create(["message"=>$e->getMessage()]);
+                }
             }
         }
         return $nuevas_asociaciones;
@@ -152,13 +165,19 @@ ORDER BY fecha ASC, folio ASC";
         //array_pop($asociaciones);
         $a_cancelar = array_diff_assoc($polizasCFDI,$asociaciones);
         foreach($a_cancelar as $uuid=>$guid){
-            $polizaCFDICancelar = PolizaCFDI::where("base_datos_contpaq","=",$this->base_datos)
-                ->where("guid_poliza_contpaq","=",$guid)
-                ->where("uuid","=",$uuid)->first();
+            try{
+                $polizaCFDICancelar = PolizaCFDI::where("base_datos_contpaq","=",$this->base_datos)
+                    ->where("guid_poliza_contpaq","=",$guid)
+                    ->where("uuid","=",$uuid)->first();
 
-            $polizaCFDICancelar->solicitud_asociacion_cancelacion = $this->id_solicitud_asociacion;
-            $polizaCFDICancelar->save();
-            $cancelaciones++;
+                $polizaCFDICancelar->solicitud_asociacion_cancelacion = $this->id_solicitud_asociacion;
+                $polizaCFDICancelar->save();
+                $cancelaciones++;
+
+            } catch (\Exception $e){
+                $this->logs()->create(["message"=>$e->getMessage()]);
+            }
+
         }
         return $cancelaciones;
     }
