@@ -177,7 +177,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return $tipos_imagenes;
     }
 
-    /**Authenticate
+    /**
      * Crear el log cada que presente un error
      * @param $log
      * @param $usuario
