@@ -395,4 +395,15 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     {
         return $this->correo;
     }
+
+    /**
+     * Cambia la clave del usuario igh
+     * @param $clave_nueva
+     */
+    public function cambiarClave($clave_nueva)
+    {
+        $this->update([
+            'clave' => $clave_nueva
+        ]);
+    }
 }
