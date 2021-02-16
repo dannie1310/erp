@@ -15,6 +15,7 @@ use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\FondoGarantia;
 use App\Models\CADECO\ItemOrdenCompra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\CADECO\ItemEntradaAlmacen;
@@ -26,6 +27,7 @@ use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
+use App\Http\Transformers\CADECO\Finanzas\FondoGarantiaTransformer;
 
 class Factura extends Transaccion
 {
@@ -687,6 +689,11 @@ class Factura extends Transaccion
                 $items[] = $estmTransformer->transform($estim);
             }
         }
+        $fondos = FondoGarantia::where('id_empresa', '=', $this->id_empresa)->paraRevision()->get();
+        $fondo_transform = new FondoGarantiaTransformer();
+        foreach($fondos as $fondo){
+            $items[] = $fondo_transform->transform($fondo);
+        }
         
         return $items;
     }
@@ -885,26 +892,36 @@ class Factura extends Transaccion
                     "saldo" => $subcontrato['monto_revision'],
                     "numero" => 1,
                 ]);
+                if($subcontrato['tipo_transaccion'] == 53){
+                    $fondo_gar = FondoGarantia::find($subcontrato['id']);
+                    $fondo_gar->estado = 2;
+                    $fondo_gar->saldo = $fondo_gar->saldo - $subcontrato['monto_revision'];
+                    $fondo_gar->save();
+                }
                 if($subcontrato['tipo_transaccion'] == 52){
                     $estimacion_ = Estimacion::find($subcontrato['id']);
                     $estimacion_->estado = 2;
                     $estimacion_->autorizado = $subcontrato['monto_revision'];
+                    $estimacion_->save();
                 }
-                if($subcontrato['tipo_transaccion'] == 52){
+                if($subcontrato['tipo_transaccion'] == 51){
                     $subcont = Subcontrato::find($subcontrato['id']);
                     $subcont->estado = 1;
                     $subcont->anticipo_saldo = 0;
+                    $subcont->save();
                 }
                 
-                $resp = DB::connection('cadeco')->select(DB::raw("DECLARE @RC int
-                EXECUTE @RC = [sp_aplicar_anticipos] 
-                @id_item = $item->id_item
-                SELECT	'res' = @RC "));
+                if($subcontrato['tipo_transaccion'] == 52 || $subcontrato['tipo_transaccion'] == 51){
+                    $resp = DB::connection('cadeco')->select(DB::raw("
+                    DECLARE @RC int
+                    EXECUTE @RC = [sp_aplicar_anticipos] 
+                    @id_item = $item->id_item
+                    SELECT	'res' = @RC "));
 
-                if($resp->rs != 0){
-                    abort(403, 'Error al aplicar anticipos.');
+                    if($resp->rs != 0){
+                        abort(403, 'Error al aplicar anticipos.');
+                    }
                 }
-
             }
 
             foreach($data['items']['renta'] as $renta){
@@ -979,16 +996,16 @@ class Factura extends Transaccion
             $impuestos = $this->impuesto + $data['resumen']['ieps'] + $data['resumen']['imp_hospedaje'];
             $impuestos_retenidos = $this->impuesto + $data['resumen']['ret_iva_4'] + $data['resumen']['ret_iva_6'] + $data['resumen']['ret_iva_23'] + $data['resumen']['ret_isr_10'];
             $tipo_cambio = 1;
-            $this->id_moneda == 2? $tipo_cambio = $data['resumen']['tipo_cambio']['usd']:'';
-            $this->id_moneda == 3? $tipo_cambio = $data['resumen']['tipo_cambio']['eur']:'';
+            $this->id_moneda == 2? $tipo_cambio = $data['tipo_cambio']['usd']:'';
+            $this->id_moneda == 3? $tipo_cambio = $data['tipo_cambio']['eur']:'';
             $this->estado = 1;
             $this->impuesto = $impuestos;
             $this->impuesto_retenido = $impuestos_retenidos;
             $this->diferencia = $data['diferencia'];
             $this->tipo_cambio = $tipo_cambio;
             $this->observaciones = $data['factura']['observaciones'];
-            $this->TcUSD = $data['resumen']['tipo_cambio']['usd'];
-            $this->TcEuro = $data['resumen']['tipo_cambio']['eur'];
+            $this->TcUSD = $data['tipo_cambio']['usd'];
+            $this->TcEuro = $data['tipo_cambio']['eur'];
             $this->retencionIVA_2_3 = $data['resumen']['ret_iva_23'];
             $this->save();
 

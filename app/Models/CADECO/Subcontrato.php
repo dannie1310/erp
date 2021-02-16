@@ -365,6 +365,20 @@ class Subcontrato extends Transaccion
         return '$ ' . number_format($this->monto_revision, 2, ".", ",");
     }
 
+    public function getTipoCambioAttribute(){
+        switch((int)$this->id_moneda){
+            case 1:
+                return 1;
+                break;
+            case 2:
+                return $this->TcUsd;
+                break;
+            case 3:
+                return $this->TcEuro;
+                break;
+        }
+    }
+
     public function getImporteFondoGarantiaAttribute()
     {
         return ($this->monto - $this->impuesto) * $this->retencion / 100;
