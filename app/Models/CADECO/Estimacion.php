@@ -384,6 +384,22 @@ class Estimacion extends Transaccion
         }
     }
 
+    public function getTipoCambioAttribute(){
+        switch((int)$this->id_moneda){
+            case 1:
+                return 1;
+                break;
+            case 2:
+                return $this->TcUsd;
+                break;
+            case 3:
+                return $this->TcEuro;
+                break;
+
+
+        }
+    }
+
     public function getMontoAnticipoAplicadoAttribute()
     {
         return $this->suma_importes * (($this->anticipo) / 100);

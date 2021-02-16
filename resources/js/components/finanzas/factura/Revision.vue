@@ -97,7 +97,10 @@
                                     <tr v-for="item in items.subcontratos" v-if="item.seleccionado">
                                         <td colspan="5">{{item_subcontrato_desc(item)}}</td>
                                         <td>
-                                            <input class="form-control"
+                                            <input 
+                                                type="number"
+                                                step=".01" 
+                                                class="form-control"
                                                 style="width: 100%"
                                                 placeholder="Monto"
                                                 name="monto_revision"
@@ -110,7 +113,7 @@
                                                 >
                                             <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
                                         </td>
-                                        <td>$ 1</td>
+                                        <td>{{item.tipo_cambio}}</td>
                                         <td></td>
                                     </tr>
                                     <tr v-for="item in items.anticipos" v-if="item.seleccionado">
@@ -129,7 +132,10 @@
                                     <tr v-for="item in items.descuentos" v-if="item.seleccionado">
                                         <td colspan="5">{{decode_utf8(item.concepto)}}</td>
                                         <td>
-                                            <input class="form-control"
+                                            <input 
+                                                type="number"
+                                                step=".01"
+                                                class="form-control"
                                                 style="width: 100%"
                                                 placeholder="Monto"
                                                 name="monto_revision"
@@ -166,40 +172,24 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col-md-3">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="monto_anticipo_aplicado" class="col-md-5">Amortización de Anticipo:</label>
-                                    <input class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="Amortización de Anticipo"
-                                           name="monto_anticipo_aplicado"
-                                           id="monto_anticipo_aplicado"
-                                           data-vv-as="Amortización de Anticipo"
-                                           v-validate="{required: true}"
-                                           v-model="resumen.monto_anticipo_aplicado"
-                                           v-on:keyup="actualizar()"
-                                           :class="{'is-invalid': errors.has('monto_anticipo_aplicado')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('monto_anticipo_aplicado')">{{ errors.first('monto_anticipo_aplicado') }}</div>
-                                </div>
-                                
-                            </div>
-                        </div> -->
                         <div class="col-md-3 offset-6 ">
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="tc_usd" class="col-md-5">Tipo Cambio USD:</label>
-                                    <input class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="Tipo Cambio USD"
-                                           name="tc_usd"
-                                           id="tc_usd"
-                                           data-vv-as="Tipo Cambio USD"
-                                           v-validate="{required: true}"
-                                           v-model="tipo_cambio.usd"
-                                           v-on:keyup="actualizar_resumen()"
-                                           :class="{'is-invalid': errors.has('tc_usd')}"
+                                    <input 
+                                        type="number"
+                                        min="0.01"
+                                        step=".01" 
+                                        class="form-control col-md-6"
+                                        style="width: 100%"
+                                        placeholder="Tipo Cambio USD"
+                                        name="tc_usd"
+                                        id="tc_usd"
+                                        data-vv-as="Tipo Cambio USD"
+                                        v-validate="{required: true}"
+                                        v-model="tipo_cambio.usd"
+                                        v-on:keyup="actualizar_resumen()"
+                                        :class="{'is-invalid': errors.has('tc_usd')}"
                                         >
                                     <div class="invalid-feedback" v-show="errors.has('tc_usd')">{{ errors.first('tc_usd') }}</div>
                                 </div>
@@ -213,31 +203,15 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col-md-3">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="total_deductivas_estimacion" class="col-md-5">Total Deductivas:</label>
-                                    <input class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="Total Deductivas"
-                                           name="total_deductivas_estimacion"
-                                           id="total_deductivas_estimacion"
-                                           data-vv-as="Total Deductivas"
-                                           v-validate="{required: true}"
-                                           v-model="resumen.total_deductivas_estimacion"
-                                           v-on:keyup="actualizar()"
-                                           :class="{'is-invalid': errors.has('total_deductivas_estimacion')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('total_deductivas_estimacion')">{{ errors.first('total_deductivas_estimacion') }}</div>
-                                </div>
-                                
-                            </div>
-                        </div> -->
                         <div class="col-md-3 offset-6 ">
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="tc_eur" class="col-md-5">Tipo Cambio EUR:</label>
-                                    <input class="form-control col-md-6"
+                                    <input 
+                                        type="number"
+                                        min="0.01"
+                                        step=".01" 
+                                        class="form-control col-md-6"
                                            style="width: 100%"
                                            placeholder="Tipo Cambio EUR"
                                            name="tc_eur"
@@ -291,7 +265,10 @@
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="referencia" class="col-md-5">IVA Subtotal:</label>
-                                    <input class="form-control col-md-6"
+                                    <input 
+                                        type="number"
+                                        step=".01" 
+                                        class="form-control col-md-6"
                                            style="width: 100%"
                                            placeholder="IVA Subtotal"
                                            name="iva_subtotal"
@@ -311,7 +288,11 @@
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="referencia" class="col-md-5">Ret IVA (4%):</label>
-                                    <input class="form-control col-md-6"
+                                    <input 
+                                        type="number"
+                                        min="0.01"
+                                        step=".01" 
+                                        class="form-control col-md-6"
                                            style="width: 100%"
                                            placeholder="Ret IVA (4%)"
                                            name="ret_iva_4"
@@ -330,7 +311,11 @@
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="referencia" class="col-md-5">Ret IVA (6%):</label>
-                                    <input class="form-control col-md-6"
+                                    <input 
+                                        type="number"
+                                        min="0.01"
+                                        step=".01" 
+                                        class="form-control col-md-6"
                                            style="width: 100%"
                                            placeholder="Ret IVA (6%)"
                                            name="ret_iva_6"
@@ -349,7 +334,11 @@
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="referencia" class="col-md-5">Ret IVA (2/3):</label>
-                                    <input class="form-control col-md-6"
+                                    <input 
+                                        type="number"
+                                        min="0.01"
+                                        step=".01" 
+                                        class="form-control col-md-6"
                                            style="width: 100%"
                                            placeholder="Ret IVA (2/3%)"
                                            name="ret_iva_23"
@@ -376,7 +365,11 @@
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="referencia" class="col-md-5">IEPS:</label>
-                                    <input class="form-control col-md-6"
+                                    <input 
+                                        type="number"
+                                        min="0.01"
+                                        step=".01" 
+                                        class="form-control col-md-6"
                                            style="width: 100%"
                                            placeholder="IEPS"
                                            name="ieps"
@@ -395,7 +388,11 @@
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="referencia" class="col-md-5">Imp Hospedaje:</label>
-                                    <input class="form-control col-md-6"
+                                    <input 
+                                        type="number"
+                                        min="0.01"
+                                        step=".01" 
+                                        class="form-control col-md-6"
                                            style="width: 100%"
                                            placeholder="Imp Hospedaje"
                                            name="imp_hospedaje"
@@ -414,7 +411,11 @@
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="referencia" class="col-md-5">Ret. ISR (10%):</label>
-                                    <input class="form-control col-md-6"
+                                    <input 
+                                        type="number"
+                                        min="0.01"
+                                        step=".01" 
+                                        class="form-control col-md-6"
                                            style="width: 100%"
                                            placeholder="Ret ISR (10%)"
                                            name="ret_isr_10"
@@ -566,7 +567,9 @@ export default {
                             this.resumen.total_deductivas_estimacion = parseFloat(this.resumen.total_deductivas_estimacion) + parseFloat(subcontrato.total_deductivas_sf);
                             this.resumen.monto_anticipo_aplicado = parseFloat(this.resumen.monto_anticipo_aplicado) + parseFloat(subcontrato.monto_anticipo_aplicado);
                         }
-                        
+                        if(parseInt(subcontrato.tipo_transaccion) == 53){
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) + parseFloat(subcontrato.monto_revision);
+                        }
                     }
                     
                 });
@@ -646,7 +649,9 @@ export default {
                     if(parseInt( subcontrato.tipo_transaccion) == 52){
                         this.resumen.subtotal = parseFloat(this.resumen.subtotal) + parseFloat(subcontrato.monto_revision);
                     }
-                    
+                    if(parseInt(subcontrato.tipo_transaccion) == 53){
+                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) + parseFloat(subcontrato.monto_revision);
+                    }
                 }
                 
             });
@@ -770,6 +775,9 @@ export default {
             }
             if(item.tipo_transaccion == 52){
                 return item.folio_revision_format + '[Periodo ' + item.fecha_inicial + ' - ' + item.fecha_final + ']';
+            }
+            if(item.tipo_transaccion == 53){
+                return item.folio_revision_format ;
             }
             return '';
         },

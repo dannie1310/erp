@@ -71,6 +71,7 @@ class EstimacionTransformer extends TransformerAbstract
             'retencion' => $model->retencion,
             'retencion_fondo_garantia' => $model->retencion_fondo_garantia_orden_pago_format,
             'retencion_fondo_garantia_sf' => $model->retencion_fondo_garantia_orden_pago,
+            'tipo_cambio' => $model->tipo_cambio,
             'total_retenciones' => $model->suma_retenciones_format,
             'retencion_iva' => $model->IVARetenido,
             'retencion_iva4_format' => $model->retencion_iva4_format,

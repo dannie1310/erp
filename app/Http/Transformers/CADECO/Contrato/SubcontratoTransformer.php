@@ -63,6 +63,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'monto'=>(float)$model->monto,
             'monto_revision' => (float)$model->monto_revision,
             'monto_revision_format' => $model->monto_revision_format,
+            'tipo_cambio' => $model->tipo_cambio,
             'referencia_revision' => $model->referencia,
             'costo'=>(string)($model->costo) ? $model->costo->descripcion : '-----',
             'tipo_subcontrato'=>(string)($model->clasificacionSubcontrato) ? $model->clasificacionSubcontrato->tipo->descripcion : '------',
