@@ -66,7 +66,8 @@ class TagService
          * Revisar privilegios para dar de alta de tags
          */
         $permiso = PermisoAltaTag::selectRaw('if( vigencia > NOW() OR vigencia is null, 1,0) AS valido')->where('idusuario', $id_usuario)->first();
-        if($permiso->valido == 0)
+
+        if(is_null($permiso) || $permiso->valido == 0)
         {
             return json_encode(array("error" =>  "No tiene los privilegios para dar de alta tags en los proyectos."));
         }
