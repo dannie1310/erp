@@ -178,7 +178,6 @@
                                     <label for="tc_usd" class="col-md-5">Tipo Cambio USD:</label>
                                     <input 
                                         type="number"
-                                        min="0.01"
                                         step=".01" 
                                         class="form-control col-md-6"
                                         style="width: 100%"
@@ -209,7 +208,6 @@
                                     <label for="tc_eur" class="col-md-5">Tipo Cambio EUR:</label>
                                     <input 
                                         type="number"
-                                        min="0.01"
                                         step=".01" 
                                         class="form-control col-md-6"
                                            style="width: 100%"
@@ -290,7 +288,6 @@
                                     <label for="referencia" class="col-md-5">Ret IVA (4%):</label>
                                     <input 
                                         type="number"
-                                        min="0.01"
                                         step=".01" 
                                         class="form-control col-md-6"
                                            style="width: 100%"
@@ -313,7 +310,6 @@
                                     <label for="referencia" class="col-md-5">Ret IVA (6%):</label>
                                     <input 
                                         type="number"
-                                        min="0.01"
                                         step=".01" 
                                         class="form-control col-md-6"
                                            style="width: 100%"
@@ -336,7 +332,6 @@
                                     <label for="referencia" class="col-md-5">Ret IVA (2/3):</label>
                                     <input 
                                         type="number"
-                                        min="0.01"
                                         step=".01" 
                                         class="form-control col-md-6"
                                            style="width: 100%"
@@ -367,7 +362,6 @@
                                     <label for="referencia" class="col-md-5">IEPS:</label>
                                     <input 
                                         type="number"
-                                        min="0.01"
                                         step=".01" 
                                         class="form-control col-md-6"
                                            style="width: 100%"
@@ -390,7 +384,6 @@
                                     <label for="referencia" class="col-md-5">Imp Hospedaje:</label>
                                     <input 
                                         type="number"
-                                        min="0.01"
                                         step=".01" 
                                         class="form-control col-md-6"
                                            style="width: 100%"
@@ -413,7 +406,6 @@
                                     <label for="referencia" class="col-md-5">Ret. ISR (10%):</label>
                                     <input 
                                         type="number"
-                                        min="0.01"
                                         step=".01" 
                                         class="form-control col-md-6"
                                            style="width: 100%"
@@ -710,20 +702,20 @@ export default {
             this.actualizar_resumen();
         },
         actualizar_resumen(){
-            this.resumen.iva_subtotal = this.resumen.iva_subtotal === ''?0:this.resumen.iva_subtotal;
-            this.resumen.ret_iva_4 = this.resumen.ret_iva_4 === ''?parseFloat(0):parseFloat(this.resumen.ret_iva_4);
-            this.resumen.ret_iva_6 = this.resumen.ret_iva_6 === ''?0:this.resumen.ret_iva_6;
-            this.resumen.ret_iva_23 = this.resumen.ret_iva_23 === ''?0:this.resumen.ret_iva_23;
-            this.resumen.ieps = this.resumen.ieps === ''?0:this.resumen.ieps;
-            this.resumen.imp_hospedaje = this.resumen.imp_hospedaje === ''?0:this.resumen.imp_hospedaje;
-            this.resumen.ret_isr_10 = this.resumen.ret_isr_10 === ''?0:this.resumen.ret_isr_10;
-            this.resumen.iva_subtotal = this.resumen.iva_subtotal === ''?0:this.resumen.iva_subtotal;
+            this.resumen.iva_subtotal = this.resumen.iva_subtotal === ''?0:parseFloat(this.resumen.iva_subtotal);
+            this.resumen.ret_iva_4 = this.resumen.ret_iva_4 === ''?0:parseFloat(this.resumen.ret_iva_4);
+            this.resumen.ret_iva_6 = this.resumen.ret_iva_6 === ''?0:parseFloat(this.resumen.ret_iva_6);
+            this.resumen.ret_iva_23 = this.resumen.ret_iva_23 === ''?0:parseFloat(this.resumen.ret_iva_23);
+            this.resumen.ieps = this.resumen.ieps === ''?0:parseFloat(this.resumen.ieps);
+            this.resumen.imp_hospedaje = this.resumen.imp_hospedaje === ''?0:parseFloat(this.resumen.imp_hospedaje);
+            this.resumen.ret_isr_10 = this.resumen.ret_isr_10 === ''?0:parseFloat(this.resumen.ret_isr_10);
+            this.resumen.iva_subtotal = this.resumen.iva_subtotal === ''?0:parseFloat(this.resumen.iva_subtotal);
 
-            this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal) - parseFloat(this.resumen.ret_iva_23);
-            let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje) + parseFloat(this.resumen.ieps) + parseFloat(this.resumen.ret_isr_10);
-            let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6);
-
-            this.resumen.total_documentos = this.resumen.subtotal + this.resumen.iva_pagar - otros_impuestos - retenciones;
+            this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal - this.resumen.ret_iva_23);
+            let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje  +  this.resumen.ieps  +  this.resumen.ret_isr_10);
+            let retenciones = parseFloat(this.resumen.ret_iva_4 + this.resumen.ret_iva_6);
+            console.log(this.resumen.total_documentos);
+            this.resumen.total_documentos = parseFloat(this.resumen.subtotal) + this.resumen.iva_pagar - otros_impuestos - retenciones;
             this.format_money();
         },
         find(){
