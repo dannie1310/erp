@@ -436,6 +436,12 @@ $api->version('v1', function ($api) {
             $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\TagController@cambiarClave');
         });
 
+        //TAG GLOBAL
+        $api->group(['prefix' => 'tag-global'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@registrarTag');
+        });
+
         //VIAJE NETO
         $api->group(['prefix' => 'viaje-neto'], function ($api) {
             $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@catalogo');

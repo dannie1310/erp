@@ -13,6 +13,14 @@ class Tag extends Model
     public $primaryKey = 'uid';
     public $timestamps = false;
 
+    protected $fillable = [
+        'uid',
+        'id_proyecto',
+        'estado',
+        'registro',
+        'fecha_registro'
+    ];
+
     /**
      * Relaciones
      */
