@@ -365,8 +365,8 @@ class PolizaService
         }
         $idistribucion = 0;
         foreach($solicitud->partidas as $partida){
-            ProcessAsociacionCFDI::dispatch($partida)->onQueue("q".$idistribucion);
-            //$asociacion->procesarAsociacionCFDI();
+            //ProcessAsociacionCFDI::dispatch($partida)->onQueue("q".$idistribucion);
+            $partida->procesarAsociacionCFDI();
             $idistribucion ++;
             if($idistribucion==5){
                 $idistribucion=0;
