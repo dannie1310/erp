@@ -419,6 +419,14 @@ $api->version('v1', function ($api) {
      * ACARREOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'acarreos'], function ($api) {
+        //CAMIÓN
+        $api->group(['prefix' => 'camion'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@catalogo');
+            $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cambiarClave');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@registrar');
+            $api->post('/cargaImagenes', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cargaImagenes');
+        });
+
         //TIRO
         $api->group(['prefix' => 'tiro'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@paginate');
@@ -427,6 +435,19 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@store');
             $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@activar')->where(['id' => '[0-9]+']);
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@desactivar')->where(['id' => '[0-9]+']);
+        });
+
+        //TAG
+        $api->group(['prefix' => 'tag'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\TagController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\TagController@registrarTag');
+            $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\TagController@cambiarClave');
+        });
+
+        //TAG GLOBAL
+        $api->group(['prefix' => 'tag-global'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@registrarTag');
         });
 
         //VIAJE NETO
