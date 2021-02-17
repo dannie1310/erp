@@ -83,6 +83,11 @@ class Estimacion extends Transaccion
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function subcontrato_sgc()
+    {
+        return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     public function itemsXContratistas()
     {
         return $this->hasMany(ItemContratista::class, 'id_empresa', 'id_empresa');
@@ -335,7 +340,7 @@ class Estimacion extends Transaccion
 
     public function getReferenciaRevisionAttribute()
     {
-        return $this->subcontrato->referencia;
+        return $this->subcontrato_sgc->referencia;
     }
 
     public function getMontoRevisionAttribute()
@@ -602,7 +607,7 @@ class Estimacion extends Transaccion
 
     public function getIvaOrdenPagoAttribute()
     {
-        if ($this->subcontrato->impuesto != 0)
+        if ($this->subcontrato_sgc->impuesto != 0)
         {
             return $this->subtotal_orden_pago * 0.16;
         } else {

@@ -52,7 +52,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'tipo_transaccion' => $model->tipo_transaccion,
             'folio_revision_format' => $model->folio_revision_format,
             'numero_folio_format'=>(string)$model->numero_folio_format,
-            'contrato_folio_format' => (string)$model->contratoProyectado->numero_folio_format,
+            'contrato_folio_format' => (string)$model->contratoProyectado_sgc->numero_folio_format,
             'subtotal'=>(float)$model->subtotal,
             'subtotal_format'=>(string) '$ '.number_format(($model->subtotal),2,".",","),
             'subtotal_antes_descuento' =>(string) '$ '.number_format(($model->subtotal_antes_descuento),2,".",","),

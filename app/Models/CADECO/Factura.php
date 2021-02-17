@@ -682,12 +682,10 @@ class Factura extends Transaccion
             $subcTransformer=  new SubcontratoTransformer();
             $estmTransformer=  new EstimacionTransformer();
             if($item['tipo_transaccion'] == 51){
-                // $subc = Transaccion::find($item['id_item']);
                 $subc = Subcontrato::withoutGlobalScopes()->find($item['id_item']);
                 $items[] = $subcTransformer->transform($subc);
             }
             if($item['tipo_transaccion'] == 52){
-                // $estim = Transaccion::find($item['id_item']);
                 $estim = Estimacion::withoutGlobalScopes()->find($item['id_item']);
                 $items[] = $estmTransformer->transform($estim);
             }

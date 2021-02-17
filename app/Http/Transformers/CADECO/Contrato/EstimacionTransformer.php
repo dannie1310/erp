@@ -88,6 +88,7 @@ class EstimacionTransformer extends TransformerAbstract
             'total_deductivas_sf' => $model->suma_deductivas,
             'subtotal_orden_pago' => $model->subtotal_orden_pago_format,
             'iva_orden_pago' => $model->iva_orden_pago_format,
+            'iva_orden_pago_revision' => $model->iva_orden_pago_revision_format,
             'total_orden_pago' => $model->total_orden_pago_format,
             'total_anticipo_liberar' => $model->anticipo_a_liberar_format,
             'monto_pagar' => $model->monto_a_pagar,
