@@ -118,16 +118,72 @@
                                     </tr>
                                     <tr v-for="item in items.anticipos" v-if="item.seleccionado">
                                         <td colspan="5">{{item.descripcion_item}}</td>
-                                        <td>$ {{item.anticipo}}</td>
+                                        <td><input 
+                                                type="number"
+                                                step=".01"
+                                                class="form-control"
+                                                style="width: 100%"
+                                                placeholder="Monto"
+                                                name="monto_revision"
+                                                id="monto_revision"
+                                                data-vv-as="Monto Revision"
+                                                v-validate="{required: true}"
+                                                v-model="item.anticipo_sf"
+                                                v-on:keyup="actualizar_subtotal()"
+                                                :class="{'is-invalid': errors.has('monto_revision')}"
+                                                >
+                                            <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div></td>
+                                        <td>1</td>
+                                        <td>{{item.transaccion}}</td>
+                                    </tr>
+                                    <tr v-for="item in items.renta" v-if="item.seleccionado">
+                                        <td>{{item.equipo}}</td>
+                                        <td>{{item.unidad}}</td>
+                                        <td><input 
+                                                type="number"
+                                                step=".01"
+                                                class="form-control"
+                                                style="width: 100%"
+                                                placeholder="Renta"
+                                                name="renta"
+                                                id="renta"
+                                                data-vv-as="Renta"
+                                                v-validate="{required: true}"
+                                                v-model="item.rentas"
+                                                v-on:keyup="actualizar_total_renta(item)"
+                                                :class="{'is-invalid': errors.has('renta')}"
+                                                >
+                                            <div class="invalid-feedback" v-show="errors.has('renta')">{{ errors.first('renta') }}</div>
+                                        </td>
+                                        <td>{{item.importe_total}}</td>
+                                        <td></td>
+                                        <td>{{getTotalRentaFormato(item.importe_total_rentas)}}</td>
+                                        <td>{{item.id_moneda}}</td>
                                         <td></td>
                                         <td></td>
                                     </tr>
-                                    <tr v-for="item in items.renta" v-if="item.seleccionado">
-                                        <td colspan="4">{{item.equipo}} - {{item.numero_serie}}</td>
-                                        <td>{{item.unidad}}</td>
-                                        <td>{{item.importe_total}}</td>
-                                        <td></td>
-                                        <td></td>
+                                    <tr v-for="item in items.lista" v-if="item.seleccionado">
+                                        <td colspan="5">{{decode_utf8(item.referencia)}}</td>
+                                        <td v-if="item.tipo_transaccion == 99">{{item.importe_total}}</td>
+                                        <td v-else>
+                                            <input 
+                                                type="number"
+                                                step=".01"
+                                                class="form-control"
+                                                style="width: 100%"
+                                                placeholder="Monto"
+                                                name="importe_total"
+                                                id="importe_total"
+                                                data-vv-as="Monto Revision"
+                                                v-validate="{required: true}"
+                                                v-model="item.importe_total_sf"
+                                                v-on:keyup="actualizar_subtotal()"
+                                                :class="{'is-invalid': errors.has('importe_total')}"
+                                                >
+                                            <div class="invalid-feedback" v-show="errors.has('importe_total')">{{ errors.first('importe_total') }}</div>
+                                        </td>
+                                        <td>{{item.id_moneda}}</td>
+                                        <td>{{item.referencia_folio}}</td>
                                     </tr>
                                     <tr v-for="item in items.descuentos" v-if="item.seleccionado">
                                         <td colspan="5">{{decode_utf8(item.concepto)}}</td>
@@ -567,7 +623,7 @@ export default {
                 });
                 this.items.renta.forEach(rent => {
                     if(rent.seleccionado){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.anticipo_sf);
+                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.importe_total_rentas);
                     }
                 });
                 this.items.lista.forEach(list => {
@@ -649,7 +705,7 @@ export default {
             });
             this.items.renta.forEach(rent => {
                 if(rent.seleccionado){
-                    this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.anticipo_sf);
+                    this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.importe_total_rentas);
                 }
             });
             this.items.lista.forEach(list => {
@@ -714,7 +770,6 @@ export default {
             this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal - this.resumen.ret_iva_23);
             let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje  +  this.resumen.ieps  +  this.resumen.ret_isr_10);
             let retenciones = parseFloat(this.resumen.ret_iva_4 + this.resumen.ret_iva_6);
-            console.log(this.resumen.total_documentos);
             this.resumen.total_documentos = parseFloat(this.resumen.subtotal) + this.resumen.iva_pagar - otros_impuestos - retenciones;
             this.format_money();
         },
@@ -860,7 +915,13 @@ export default {
         },
         decode_utf8(s) {
             return decodeURIComponent(escape(s));
-        }
+        },
+        actualizar_total_renta(item){
+            item.importe_total_rentas = parseFloat(item.rentas * item.importe_total_sf);
+        },
+        getTotalRentaFormato(importe){
+            return parseFloat(importe).formatMoney(2);
+        },
     },
     computed:{
         total(){
