@@ -89,6 +89,11 @@ class Subcontrato extends Transaccion
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function contratoProyectado_sgc()
+    {
+        return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     public function clasificacionSubcontrato()
     {
         return $this->belongsTo(ClasificacionSubcontrato::class, 'id_transaccion');
