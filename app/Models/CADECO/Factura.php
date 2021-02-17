@@ -14,6 +14,7 @@ use App\Models\CADECO\Item;
 use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Subcontrato;
+use App\Models\CADECO\Transaccion;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\FondoGarantia;
 use App\Models\CADECO\ItemOrdenCompra;
@@ -681,11 +682,13 @@ class Factura extends Transaccion
             $subcTransformer=  new SubcontratoTransformer();
             $estmTransformer=  new EstimacionTransformer();
             if($item['tipo_transaccion'] == 51){
-                $subc = Subcontrato::find($item['id_item']);
+                // $subc = Transaccion::find($item['id_item']);
+                $subc = Subcontrato::withoutGlobalScopes()->find($item['id_item']);
                 $items[] = $subcTransformer->transform($subc);
             }
             if($item['tipo_transaccion'] == 52){
-                $estim = Estimacion::find($item['id_item']);
+                // $estim = Transaccion::find($item['id_item']);
+                $estim = Estimacion::withoutGlobalScopes()->find($item['id_item']);
                 $items[] = $estmTransformer->transform($estim);
             }
         }
@@ -779,6 +782,7 @@ class Factura extends Transaccion
                 , [RentasPorFacturar].[descripcion] AS equipo  
                 , [RentasPorFacturar].[referencia] AS numero_serie
                 , [RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) AS importe_total_sf
+                , [RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) AS importe_total_rentas
                 , CONVERT(VARCHAR(100), CAST([RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) AS MONEY), 1) AS importe_total
                 , ([RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]))/[RentasPorFacturar].[precio_unitario] AS rentas
                 , [RentasPorFacturar].[unidad]
@@ -804,10 +808,15 @@ class Factura extends Transaccion
     public function getitemsLista(){
         $items_lista = DB::connection('cadeco')->select(DB::raw("SELECT
                 [id_transaccion] as id_item, 'false' as seleccionado
+                ,tipo_transaccion
                 , CASE [tipo_transaccion]
                     WHEN 99 THEN 'L/R: ' + CAST([referencia] AS VARCHAR(MAX))
                     WHEN 102 THEN 'PRE'
                     END referencia
+                    ,CASE [tipo_transaccion]
+                    WHEN 99 THEN 'L/R # ' + CAST(RIGHT('00000' + CONVERT(VARCHAR(5),numero_folio), 5) AS VARCHAR(MAX))
+                    WHEN 102 THEN 'PRE #' + CAST(RIGHT('00000' + CONVERT(VARCHAR(5),numero_folio), 5) AS VARCHAR(MAX))
+                    END referencia_folio
                 , [numero_folio] AS folio
                 , CONVERT(VARCHAR(10), [fecha], 105) AS fecha
                 , CONVERT(VARCHAR(100), CAST(saldo AS MONEY), 1) AS importe_total
@@ -931,11 +940,11 @@ class Factura extends Transaccion
                     "id_antecedente" => 0,
                     "item_antecedente" =>  $renta['id_item'],
                     "id_material" => $item_renta->id_material,
-                    "cantidad" => $renta['cantidad'],
-                    "importe" => $item_renta->precio_unitario * $renta['cantidad'],
+                    "cantidad" => $renta['rentas'],
+                    "importe" => $item_renta->importe_total_sf * $renta['renta'],
                     "saldo" => 0,
                     "numero" => 3,
-                    "precio_unitario" => $item_renta->precio_unitario,
+                    "precio_unitario" => $item_renta->importe_total_sf,
                 ]);
 
             }
@@ -945,8 +954,8 @@ class Factura extends Transaccion
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
                     "id_antecedente" => $lista['id_item'],
-                    "importe" => $item_trns->monto,
-                    "saldo" => $item_trns->saldo,
+                    "importe" => $lista['importe_total_sf'],
+                    "saldo" => $lista['importe_total_sf'],
                     "numero" => 4,
                 ]);
                 if($item_trns->tipo_transacicon == 99){
@@ -954,12 +963,12 @@ class Factura extends Transaccion
                     $item_trns->save();
                 }
                 if($item_trns->tipo_transacicon == 102){
-                    if($item_trns->saldo - $lista['importe'] == 0){
+                    if($item_trns->saldo - $lista['importe_total_sf'] == 0){
                         $item_trns->estado = 2;
                     }else{
                         $item_trns->estado = 1;
                     }
-                    $item_trns->saldo = $item_trns->saldo- $lista['importe'];
+                    $item_trns->saldo = $item_trns->saldo- $lista['importe_total_sf'];
                     $item_trns->save();
                 }
             }
@@ -1009,6 +1018,7 @@ class Factura extends Transaccion
             $this->retencionIVA_2_3 = $data['resumen']['ret_iva_23'];
             $this->save();
 
+            DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
