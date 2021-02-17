@@ -32,7 +32,7 @@ class SolicitudAsociacionCFDIPartida extends Model
 
     public function logs()
     {
-        return $this->hasMany(SolicitudAsociacionCFDIPartidaLog::class,"id_solicitud_asociacion", "id");
+        return $this->hasMany(SolicitudAsociacionCFDIPartidaLog::class,"id_solicitud_asociacion_partida", "id");
     }
 
     public function empresa_busqueda()
@@ -68,6 +68,9 @@ class SolicitudAsociacionCFDIPartida extends Model
         $numero_asociaciones = count($asociaciones);
         $numero_asociaciones_nuevas = $this->registraAsociaciones($asociaciones);
         $numero_asociaciones_eliminadas = $this->cancelaAsociaciones($asociaciones);
+
+        $polizas_detectadas = $this->detectaPolizasCFDIRequerido();
+        $this->registraPolizasCFDIRequerido($polizas_detectadas);
 
         $this->finaliza($numero_asociaciones, $numero_asociaciones_nuevas, $numero_asociaciones_eliminadas);
     }
@@ -194,4 +197,52 @@ ORDER BY fecha ASC, folio ASC";
             $this->solicitudAsociacion->finaliza();
         }
     }
+
+    private function detectaPolizasCFDIRequerido()
+    {
+        $query = "
+              select distinct db_name() as base_datos_contpaq, Polizas.Id as id_poliza_contpaq, Polizas.Ejercicio as ejercicio,
+              Polizas.Periodo as periodo, TiposPolizas.Nombre as tipo, Polizas.Folio as folio, Polizas.Guid as guid_poliza_contpaq,
+              Polizas.Cargos AS monto, Polizas.fecha as fecha
+              from [dbo].Polizas
+               join [dbo].TiposPolizas on(TiposPolizas.Id = Polizas.TipoPol)
+              join [dbo].MovimientosPoliza
+               on(Polizas.Id = MovimientosPoliza.IdPoliza)
+               join [dbo].[Cuentas]
+               on (Cuentas.Id = MovimientosPoliza.IdCuenta)
+                where Cuentas.Nombre like 'IVA %';";
+
+        $polizas =[];
+
+        try{
+            $polizas = DB::connection("cntpq")->select($query);
+            $polizas = array_map(function ($value) {
+                return (array)$value;
+            }, $polizas);
+
+        } catch (\Exception $e){
+
+
+        }
+        return $polizas;
+    }
+
+    private function registraPolizasCFDIRequerido($polizas)
+    {
+        try{
+            $base = $polizas[0]["base_datos_contpaq"];
+            PolizaCFDIRequerido::where("base_datos_contpaq","=",$base)->delete();
+
+        }catch (\Exception $e){
+            $this->logs()->create(["message"=>$e->getMessage()]);
+        }
+
+        $cantidad_polizas = count($polizas);
+        for($i = 0; $i<=$cantidad_polizas; $i+=999)
+        {
+            $polizas_new = array_slice($polizas, $i, 999);
+            PolizaCFDIRequerido::insert($polizas_new);
+        }
+    }
+    
 }

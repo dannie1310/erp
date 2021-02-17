@@ -49,12 +49,12 @@ class PolizaRepository extends Repository implements RepositoryInterface
     public function getListaEmpresas()
     {
         //$bases = Empresa::all()->pluck("AliasBDD")->take(20);
-        $bases = Empresa::where("AliasBDD","like","ctPCO811231EI4_014%")->pluck("AliasBDD","Nombre")->take(20);
+        //$bases = Empresa::where("AliasBDD","like","ctPCO811231EI4_014%")->pluck("AliasBDD","Nombre")->take(20);
         /*$bases = Empresa::where("AliasBDD","like","ctPCO811231EI4_01%")
             ->where("AliasBDD","not like","%HST%")
             ->pluck("AliasBDD","Nombre")->take(20);*/
-        /*$bases = EmpresaERP::paraSincronizacionCFDIPoliza()
-            ->pluck("AliasBDD","Nombre");*/
+        $bases = EmpresaERP::paraSincronizacionCFDIPoliza()
+            ->pluck("AliasBDD","Nombre");
         return $bases;
     }
 
