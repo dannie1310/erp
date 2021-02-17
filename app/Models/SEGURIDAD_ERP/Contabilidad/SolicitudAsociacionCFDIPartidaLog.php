@@ -19,16 +19,16 @@ use Illuminate\Support\Facades\DB;
 class SolicitudAsociacionCFDIPartidaLog extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.Contabilidad.solicitud_asociacion_cfdi_log';
+    protected $table = 'SEGURIDAD_ERP.Contabilidad.solicitud_asociacion_partida_log';
     public $timestamps = false;
     protected $fillable =[
-        "id_solicitud_asociacion",
+        "id_solicitud_asociacion_partida",
         "message",
     ];
 
     public function partida()
     {
-        return $this->belongsTo(SolicitudAsociacionCFDIPartida::class,"id_solicitud_asociacion", "id");
+        return $this->belongsTo(SolicitudAsociacionCFDIPartida::class,"id_solicitud_asociacion_partida", "id");
     }
 
 }
