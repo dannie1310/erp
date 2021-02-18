@@ -52,7 +52,7 @@ class CFDSAT extends Model
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
-    //protected $dateFormat = 'Y-m-d H:i:s';
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     public function carga()
     {
@@ -96,7 +96,7 @@ class CFDSAT extends Model
 
     public function facturaRepositorio()
     {
-        return $this->hasOne(FacturaRepositorio::class, "id", "id_factura_repositorio");
+        return $this->hasOne(FacturaRepositorio::class, "uuid", "uuid");
     }
 
     public function polizaCFDI()
