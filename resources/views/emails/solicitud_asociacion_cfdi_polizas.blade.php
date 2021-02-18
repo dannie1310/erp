@@ -53,24 +53,18 @@
         </div>
         <div class="col-md-2" >
             <div class="form-group" >
-                <label><b>No. Asociaciones Detectadas:</b></label>
+                <label><b>No. Asociaciones Póliza-CFDI Detectadas:</b></label>
                 {{$solicitud->cantidad_asociaciones_detectadas_format}}
             </div>
         </div>
 
         <div class="col-md-2" >
             <div class="form-group" >
-                <label><b>No. Nuevas Asociaciones:</b></label>
+                <label><b>No. Polizas CFDI Requerido:</b></label>
                 {{$solicitud->cantidad_asociaciones_nuevas_format}}
             </div>
         </div>
 
-        <div class="col-md-2" >
-            <div class="form-group" >
-                <label><b>No. Asociaciones Canceladas:</b></label>
-                {{$solicitud->cantidad_asociaciones_eliminadas_format}}
-            </div>
-        </div>
 
         @if(count($solicitud->partidas()->where("sin_acceso","=",0)->get())>0)
             <hr />
@@ -86,17 +80,14 @@
                         Empresa
                     </th>
                     <th>
-                        Asociaciones Identificadas
+                        No. Asociaciones Póliza-CFDI Detectadas
                     </th>
                     <th>
-                        Asociaciones Nuevas
-                    </th>
-                    <th>
-                        Asociaciones Eliminadas
+                        No. Pólizas CFDI Requerido
                     </th>
                     </thead>
                     <tbody>
-                    @foreach($solicitud->partidas()->where("sin_acceso","=",1)->get() as $item)
+                    @foreach($solicitud->partidas()->where("sin_acceso","=",0)->get() as $item)
                         <tr>
                             <td>
                                 {{$item->base_datos}}
@@ -109,9 +100,6 @@
                             </td>
                             <td style="text-align: right">
                                 {{$item->cantidad_asociaciones_nuevas}}
-                            </td>
-                            <td style="text-align: right">
-                                {{$item->cantidad_asociaciones_eliminadas}}
                             </td>
                         </tr>
                     @endforeach
