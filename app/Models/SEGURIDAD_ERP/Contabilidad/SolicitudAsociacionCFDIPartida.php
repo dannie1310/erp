@@ -66,13 +66,14 @@ class SolicitudAsociacionCFDIPartida extends Model
 
         $asociaciones = $this->detectaAsociaciones();
         $numero_asociaciones = count($asociaciones);
-        $numero_asociaciones_nuevas = $this->registraAsociaciones($asociaciones);
-        $numero_asociaciones_eliminadas = $this->cancelaAsociaciones($asociaciones);
+        $this->registraAsociaciones($asociaciones);
+        //$numero_asociaciones_eliminadas = $this->cancelaAsociaciones($asociaciones);
 
         $polizas_detectadas = $this->detectaPolizasCFDIRequerido();
+        $numero_polizas_requiere_cfdi = count($polizas_detectadas);
         $this->registraPolizasCFDIRequerido($polizas_detectadas);
 
-        $this->finaliza($numero_asociaciones, $numero_asociaciones_nuevas, $numero_asociaciones_eliminadas);
+        $this->finaliza($numero_asociaciones, $numero_polizas_requiere_cfdi, 0);
     }
 
     private function detectaAsociaciones()
@@ -113,7 +114,26 @@ ORDER BY fecha ASC, folio ASC";
 
     }
 
-    private function registraAsociaciones($asociaciones)
+    private function registraAsociaciones($polizas)
+    {
+        try{
+            $base = $polizas[0]["base_datos_contpaq"];
+            PolizaCFDI::where("base_datos_contpaq","=",$base)->delete();
+
+        }catch (\Exception $e){
+            $this->logs()->create(["message"=>$e->getMessage()]);
+        }
+
+        $cantidad_polizas = count($polizas);
+        for($i = 0; $i<=$cantidad_polizas; $i+=999)
+        {
+            $polizas_new = array_slice($polizas, $i, 999);
+            PolizaCFDI::insert($polizas_new);
+        }
+    }
+
+
+    private function registraAsociacionesOriginal($asociaciones)
     {
         $nuevas_asociaciones = 0;
         foreach($asociaciones as $asociacion){
@@ -203,7 +223,7 @@ ORDER BY fecha ASC, folio ASC";
         $query = "
               select distinct db_name() as base_datos_contpaq, Polizas.Id as id_poliza_contpaq, Polizas.Ejercicio as ejercicio,
               Polizas.Periodo as periodo, TiposPolizas.Nombre as tipo, Polizas.Folio as folio, Polizas.Guid as guid_poliza_contpaq,
-              Polizas.Cargos AS monto, Polizas.fecha as fecha
+              Polizas.Cargos AS monto, Polizas.fecha as fecha, ".$this->id_solicitud_asociacion." as solicitud_asociacion_registro
               from [dbo].Polizas
                join [dbo].TiposPolizas on(TiposPolizas.Id = Polizas.TipoPol)
               join [dbo].MovimientosPoliza
@@ -244,5 +264,5 @@ ORDER BY fecha ASC, folio ASC";
             PolizaCFDIRequerido::insert($polizas_new);
         }
     }
-    
+
 }
