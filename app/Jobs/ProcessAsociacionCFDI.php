@@ -34,4 +34,9 @@ class ProcessAsociacionCFDI implements ShouldQueue
     {
         $this->solicitud_partida->procesarAsociacionCFDI();
     }
+
+    public function failed($exception)
+    {
+        $exception->getMessage();
+    }
 }
