@@ -13,7 +13,9 @@
                             <th class="bg-gray-light">Monto Original</th>
                             <th class="bg-gray-light">Anticipo</th>
                             <th class="bg-gray-light">Monto</th>
-                            <th class="bg-gray-light">Importe Pesos</th>
+                            <th class="bg-gray-light" v-if="id_moneda == 2">Importe Dolares</th>
+                            <th class="bg-gray-light" v-else-if="id_moneda == 3">Importe Euros</th>
+                            <th class="bg-gray-light" v-else>Importe Pesos</th>
                             <th class="bg-gray-light"></th>
                         </tr>
                     </thead>
@@ -27,7 +29,7 @@
                             <td>$ {{item.monto_original}}</td>
                             <td>{{item.anticipo}}</td>
                             <td>$ {{item.monto}}</td>
-                            <td>$ {{item.monto}}</td>
+                            <td>$ {{getMontoMoneda(item)}}</td>
                             <td><input type="checkbox" id="seguir" :value="item.seleccionado" v-model="item.seleccionado"  ></td>
                         </tr>
                     </tbody>
@@ -40,7 +42,7 @@
 <script>
 export default {
     name: "revision-pendientes-tab",
-    props: ['items'],
+    props: ['items', 'id_moneda', 'cambios'],
     data() {
         return {
 
@@ -48,20 +50,21 @@ export default {
     },
     methods: {
         actualizar(item){
-            // item.seleccionado = true;
-            // console.log(item);
             this.items.pendientes.forEach(pendiente => {
                 pendiente['seleccionado'] = item.seleccionado;
             });
-            
-            // this.$store.commit('finanzas/factura/UPDATE_ITEM_PENDIENTE', item);
-            // 
+        },
+        getMontoMoneda(item){
+            if(parseInt(this.id_moneda) === parseInt(item.id_moneda)){
+                return item.monto;
+            }
+            else{
+                return parseFloat(item.monto_sf / this.cambios[this.id_moneda]).formatMoney(2);
+            }
+           
         },
     },
     computed:{
-        // items(){
-        //     return this.$store.getters['finanzas/factura/items_revision'];
-        // }
     },
 }
 </script>

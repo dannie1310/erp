@@ -142,6 +142,12 @@ class Factura extends Transaccion
         return $this->hasMany(Cambio::class, 'fecha', 'fecha');
     }
 
+    public function tipoCambioFechaRevision(){
+        $fecha = Cambio::where('fecha', '<=', $this->fecha)->orderBy('fecha', 'DESC')->first();
+        // dd($fecha->fecha);
+        return Cambio::where('fecha', '=', $fecha->fecha)->get();
+    }
+
     public function subcontrato(){
         return $this->hasMany(Subcontrato::class, 'id_empresa', 'id_empresa')
                 ->whereIn('estado', [-1,0,1]);
@@ -819,7 +825,7 @@ class Factura extends Transaccion
                 , CONVERT(VARCHAR(10), [fecha], 105) AS fecha
                 , CONVERT(VARCHAR(100), CAST(saldo AS MONEY), 1) AS importe_total
                 , saldo AS importe_total_sf
-                , 1 as id_moneda
+                , id_moneda
             FROM
                 [dbo].[transacciones]
             WHERE
@@ -1011,8 +1017,8 @@ class Factura extends Transaccion
             $this->diferencia = $data['diferencia'];
             $this->tipo_cambio = $tipo_cambio;
             $this->observaciones = $data['factura']['observaciones'];
-            $this->TcUSD = $data['tipo_cambio']['usd'];
-            $this->TcEuro = $data['tipo_cambio']['eur'];
+            $this->TcUSD = $data['tipo_cambio'][2];
+            $this->TcEuro = $data['tipo_cambio'][3];
             $this->retencionIVA_2_3 = $data['resumen']['ret_iva_23'];
             $this->save();
 

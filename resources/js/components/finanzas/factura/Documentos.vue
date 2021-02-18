@@ -34,22 +34,22 @@
                                 </nav>
                                 <div class="tab-content" id="nav-tabContent">
                                     <div aria-labelledby="nav-items-tab" class="tab-pane fade show active" id="nav-items" role="tabpanel">
-                                        <PendientesTab v-bind:items="items" />
+                                        <PendientesTab v-bind:items="items" v-bind:id_moneda="id_moneda" v-bind:cambios="cambios" />
                                     </div>
                                     <div aria-labelledby="nav-anticipos-tab" class="tab-pane fade" id="nav-anticipos" role="tabpanel">
-                                        <AnticiposTab  v-bind:items="items" />
+                                        <AnticiposTab  v-bind:items="items" v-bind:id_moneda="id_moneda" v-bind:cambios="cambios" />
                                     </div>
                                     <div aria-labelledby="nav-subcontratos-tab" class="tab-pane fade" id="nav-subcontratos" role="tabpanel">
-                                        <SubcontratosTab  v-bind:items="items" />
+                                        <SubcontratosTab  v-bind:items="items" v-bind:id_moneda="id_moneda" v-bind:cambios="cambios" />
                                     </div>
                                     <div aria-labelledby="nav-renta-tab" class="tab-pane fade" id="nav-renta" role="tabpanel">
-                                        <RentaTab v-bind:items="items"  />
+                                        <RentaTab v-bind:items="items" v-bind:id_moneda="id_moneda" v-bind:cambios="cambios"  />
                                     </div>
                                     <div aria-labelledby="nav-lista-tab" class="tab-pane fade" id="nav-lista" role="tabpanel">
-                                        <ListaTab  v-bind:items="items" />
+                                        <ListaTab  v-bind:items="items" v-bind:id_moneda="id_moneda" v-bind:cambios="cambios" />
                                     </div>
                                     <div aria-labelledby="nav-descuentos-tab" class="tab-pane fade" id="nav-descuentos" role="tabpanel">
-                                        <DescuentosTab v-bind:items="items"  />
+                                        <DescuentosTab v-bind:items="items" v-bind:id_moneda="id_moneda" v-bind:cambios="cambios"  />
                                     </div>
                                 </div>
                             </nav>
@@ -76,7 +76,7 @@ import DescuentosTab from './tabs-documentos/DescuentosTab';
 export default {
     name: "revision-documentos",
     components:{SubcontratosTab, PendientesTab, AnticiposTab, RentaTab, ListaTab, DescuentosTab},
-    props: ['id', 'items'],
+    props: ['id', 'items', 'id_moneda', 'cambios'],
     data() {
         return {
             cargando: false,

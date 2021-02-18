@@ -9,7 +9,9 @@
                             <th class="bg-gray-light">Folio</th>
                             <th class="bg-gray-light">Fecha</th>
                             <th class="bg-gray-light">Importe</th>
-                            <th class="bg-gray-light">Importe Pesos</th>
+                            <th class="bg-gray-light" v-if="id_moneda == 2">Importe Dolares</th>
+                            <th class="bg-gray-light" v-else-if="id_moneda == 3">Importe Euros</th>
+                            <th class="bg-gray-light" v-else>Importe Pesos</th>
                             <th class="bg-gray-light"></th>
                         </tr>
                     </thead>
@@ -19,7 +21,7 @@
                             <td>{{item.folio}}</td>
                             <td>$ {{item.fecha}}</td>
                             <td>$ {{item.importe_total}}</td>
-                            <td>$ {{item.importe_total}}</td>
+                            <td>$ {{getMontoMoneda(item)}}</td>
                             <td><input type="checkbox" id="seguir" :value="item.seleccionado" v-model="item.seleccionado"  ></td>
                         </tr>
                     </tbody>
@@ -32,16 +34,23 @@
 <script>
 export default {
     name: "revision-lista-tab",
-    props: ['items'],
+    props: ['items', 'id_moneda', 'cambios'],
     data() {
         return {
         }
     },
-    methods: {},
+    methods: {
+        getMontoMoneda(item){
+            if(parseInt(this.id_moneda) === parseInt(item.id_moneda)){
+                return item.importe_total;
+            }
+            else{
+                return parseFloat(item.importe_total_sf / this.cambios[this.id_moneda]).formatMoney(2);
+            }
+           
+        },
+    },
     computed:{
-        // items(){
-        //     return this.$store.getters['finanzas/factura/items_revision'];
-        // }
     },
 }
 </script>
