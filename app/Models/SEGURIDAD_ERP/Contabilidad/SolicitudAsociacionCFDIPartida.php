@@ -129,9 +129,9 @@ ORDER BY fecha ASC, folio ASC";
         }
 
         $cantidad_polizas = count($polizas);
-        for($i = 0; $i<=$cantidad_polizas; $i+=500)
+        for($i = 0; $i<=$cantidad_polizas; $i+=100)
         {
-            $polizas_new = array_slice($polizas, $i, 500);
+            $polizas_new = array_slice($polizas, $i, 100);
             PolizaCFDI::insert($polizas_new);
         }
     }
@@ -262,9 +262,9 @@ ORDER BY fecha ASC, folio ASC";
         }
 
         $cantidad_polizas = count($polizas);
-        for($i = 0; $i<=$cantidad_polizas; $i+=500)
+        for($i = 0; $i<=$cantidad_polizas; $i+=100)
         {
-            $polizas_new = array_slice($polizas, $i, 500);
+            $polizas_new = array_slice($polizas, $i, 100);
             PolizaCFDIRequerido::insert($polizas_new);
         }
     }
