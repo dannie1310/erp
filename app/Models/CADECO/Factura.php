@@ -1009,8 +1009,8 @@ class Factura extends Transaccion
             $impuestos = $this->impuesto + $data['resumen']['ieps'] + $data['resumen']['imp_hospedaje'];
             $impuestos_retenidos = $this->impuesto + $data['resumen']['ret_iva_4'] + $data['resumen']['ret_iva_6'] + $data['resumen']['ret_iva_23'] + $data['resumen']['ret_isr_10'];
             $tipo_cambio = 1;
-            $this->id_moneda == 2? $tipo_cambio = $data['tipo_cambio']['usd']:'';
-            $this->id_moneda == 3? $tipo_cambio = $data['tipo_cambio']['eur']:'';
+            $this->id_moneda == 2? $tipo_cambio = $data['tipo_cambio'][2]:'';
+            $this->id_moneda == 3? $tipo_cambio = $data['tipo_cambio'][3]:'';
             $this->estado = 1;
             $this->impuesto = $impuestos;
             $this->impuesto_retenido = $impuestos_retenidos;
