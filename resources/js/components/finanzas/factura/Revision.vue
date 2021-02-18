@@ -63,7 +63,7 @@
                 <div class="invoice p-3 mb-3">
                     <div class="row">
                         <div class="col-12">
-                            <Documento v-bind:id="id" v-bind:items="items" @created="actualizar()"/><br><br>
+                            <Documento v-bind:id="id" v-bind:items="items" v-bind:id_moneda="factura.id_moneda" v-bind:cambios="tipo_cambio" @created="actualizar()"/><br><br>
                         </div>
                         <div class="col-12 table-responsive">
                             <table class="table table-striped">
@@ -113,7 +113,7 @@
                                                 >
                                             <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
                                         </td>
-                                        <td>{{item.tipo_cambio}}</td>
+                                        <td>{{getTipoCambioItem(item)}}</td>
                                         <td></td>
                                     </tr>
                                     <tr v-for="item in items.anticipos" v-if="item.seleccionado">
@@ -216,7 +216,7 @@
                             <div class="form-group error-content">
                                 <div class="row">
                                     <label for="referencia" class="col-md-5">Moneda:</label>
-                                    Pesos
+                                    {{factura.moneda}}
                                 </div>
                             </div>
                         </div>
@@ -242,7 +242,7 @@
                                         id="tc_usd"
                                         data-vv-as="Tipo Cambio USD"
                                         v-validate="{required: true}"
-                                        v-model="tipo_cambio.usd"
+                                        v-model="tipo_cambio[2]"
                                         v-on:keyup="actualizar_resumen()"
                                         :class="{'is-invalid': errors.has('tc_usd')}"
                                         >
@@ -272,7 +272,7 @@
                                            id="tc_eur"
                                            data-vv-as="Tipo Cambio EUR"
                                            v-validate="{required: true}"
-                                           v-model="tipo_cambio.eur"
+                                           v-model="tipo_cambio[3]"
                                            v-on:keyup="actualizar_resumen()"
                                            :class="{'is-invalid': errors.has('tc_eur')}"
                                         >
@@ -552,10 +552,8 @@ export default {
                 total_documentos:0,
             },
             items:[],
-            tipo_cambio:{
-                usd:0,
-                eur:0,
-            },
+            tipo_cambio:[]
+            
         }
     },
     mounted() {
@@ -588,13 +586,13 @@ export default {
             if(this.items){
                 this.items.pendientes.forEach(pendiente => {
                     if(pendiente.seleccionado){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo);
+                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo) / this.tipo_cambio[this.factura.id_moneda]);
                     }
                     
                 });
                 this.items.anticipos.forEach(anticipo => {
                     if(anticipo.seleccionado){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.anticipo_sf);
+                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.anticipo_sf / this.tipo_cambio[this.factura.id_moneda]);
                     }
                 });
                 this.items.subcontratos.forEach(subcontrato => {
@@ -623,12 +621,12 @@ export default {
                 });
                 this.items.renta.forEach(rent => {
                     if(rent.seleccionado){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.importe_total_rentas);
+                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.importe_total_rentas / this.tipo_cambio[this.factura.id_moneda]);
                     }
                 });
                 this.items.lista.forEach(list => {
                     if(list.seleccionado){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(list.importe_total_sf);
+                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(list.importe_total_sf / this.tipo_cambio[this.factura.id_moneda]);
                     }
                 });
                 this.items.descuentos.forEach(descuento => {
@@ -833,13 +831,9 @@ export default {
         },
         setTipoCambio(tipos){
             tipos.forEach(tipo =>{
-                if(tipo.id_moneda ==2){
-                    this.tipo_cambio.usd = parseFloat(tipo.cambio);
-                }
-                if(tipo.id_moneda ==3){
-                    this.tipo_cambio.eur = parseFloat(tipo.cambio);
-                }
+                this.tipo_cambio[tipo.id_moneda] = parseFloat(tipo.cambio);
             });
+            this.tipo_cambio[1] = 1;
         },
         store(){
             let items = this.filtrar_items_seleccionados();
@@ -921,6 +915,9 @@ export default {
         },
         getTotalRentaFormato(importe){
             return parseFloat(importe).formatMoney(2);
+        },
+        getTipoCambioItem(item){
+            return parseFloat(item.monto_revision / item.subtotal).toFixed(6)
         },
     },
     computed:{

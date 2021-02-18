@@ -45,6 +45,7 @@ class EstimacionTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'autorizado' => $model->autorizado,
+            'id_moneda' => $model->id_moneda,
             'numero_folio' => $model->numero_folio,
             'numero_folio_format' => $model->numero_folio_format,
             'tipo_transaccion' => $model->tipo_transaccion,
