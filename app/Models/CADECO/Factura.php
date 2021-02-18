@@ -144,7 +144,6 @@ class Factura extends Transaccion
 
     public function tipoCambioFechaRevision(){
         $fecha = Cambio::where('fecha', '<=', $this->fecha)->orderBy('fecha', 'DESC')->first();
-        // dd($fecha->fecha);
         return Cambio::where('fecha', '=', $fecha->fecha)->get();
     }
 
@@ -930,8 +929,8 @@ class Factura extends Transaccion
                     EXECUTE @RC = [sp_aplicar_anticipos] 
                     @id_item = $item->id_item
                     SELECT	'res' = @RC "));
-
-                    if($resp->rs != 0){
+                    $resp_ = json_decode(json_encode($resp), true);
+                    if($resp_[0]['res'] != 0){
                         abort(403, 'Error al aplicar anticipos.');
                     }
                 }
