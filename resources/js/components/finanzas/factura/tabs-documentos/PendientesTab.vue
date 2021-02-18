@@ -24,10 +24,10 @@
                             <td>{{item.remision}}</td>
                             <td>{{item.fecha}}</td>
                             <td>{{item.insumo}}</td>
-                            <td>{{item.cantidad}}</td>
+                            <td>{{parseFloat(item.cantidad).toFixed(4)}}</td>
                             <td>$ {{item.precio}}</td>
                             <td>$ {{item.monto_original}}</td>
-                            <td>{{item.anticipo}}</td>
+                            <td>{{parseFloat(item.anticipo).formatMoney(2)}}</td>
                             <td>$ {{item.monto}}</td>
                             <td>$ {{getMontoMoneda(item)}}</td>
                             <td><input type="checkbox" id="seguir" :value="item.seleccionado" v-model="item.seleccionado"  ></td>

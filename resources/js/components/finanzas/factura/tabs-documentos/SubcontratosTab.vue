@@ -23,7 +23,7 @@
                             <td>{{item.fecha_inicial}}</td>
                             <td>{{item.fecha_final}}</td>
                             <td>{{item.subtotal_format}}</td>
-                            <td>${{getMontoMoneda(item)}}</td>
+                            <td>{{getMontoMoneda(item)}}</td>
                             <td><input type="checkbox" id="seguir" :value="item.seleccionado"  v-model="item.seleccionado"   ></td>
                         </tr>
                     </tbody>
@@ -54,7 +54,7 @@ export default {
             }
             else{
                 item.monto_revision = parseFloat(item.subtotal / this.cambios[this.id_moneda]).toFixed(2);
-                return parseFloat(item.monto_revision).formatMoney(2);
+                return '$ ' . parseFloat(item.monto_revision).formatMoney(2);
             }
            
         },
