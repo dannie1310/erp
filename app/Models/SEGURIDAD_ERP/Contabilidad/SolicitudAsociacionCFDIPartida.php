@@ -66,12 +66,16 @@ class SolicitudAsociacionCFDIPartida extends Model
 
         $asociaciones = $this->detectaAsociaciones();
         $numero_asociaciones = count($asociaciones);
-        $this->registraAsociaciones($asociaciones);
+        if($numero_asociaciones>0){
+            $this->registraAsociaciones($asociaciones);
+        }
         //$numero_asociaciones_eliminadas = $this->cancelaAsociaciones($asociaciones);
 
         $polizas_detectadas = $this->detectaPolizasCFDIRequerido();
         $numero_polizas_requiere_cfdi = count($polizas_detectadas);
-        $this->registraPolizasCFDIRequerido($polizas_detectadas);
+        if($numero_polizas_requiere_cfdi>0){
+            $this->registraPolizasCFDIRequerido($polizas_detectadas);
+        }
 
         $this->finaliza($numero_asociaciones, $numero_polizas_requiere_cfdi, 0);
     }
@@ -125,9 +129,9 @@ ORDER BY fecha ASC, folio ASC";
         }
 
         $cantidad_polizas = count($polizas);
-        for($i = 0; $i<=$cantidad_polizas; $i+=999)
+        for($i = 0; $i<=$cantidad_polizas; $i+=500)
         {
-            $polizas_new = array_slice($polizas, $i, 999);
+            $polizas_new = array_slice($polizas, $i, 500);
             PolizaCFDI::insert($polizas_new);
         }
     }
@@ -258,9 +262,9 @@ ORDER BY fecha ASC, folio ASC";
         }
 
         $cantidad_polizas = count($polizas);
-        for($i = 0; $i<=$cantidad_polizas; $i+=999)
+        for($i = 0; $i<=$cantidad_polizas; $i+=500)
         {
-            $polizas_new = array_slice($polizas, $i, 999);
+            $polizas_new = array_slice($polizas, $i, 500);
             PolizaCFDIRequerido::insert($polizas_new);
         }
     }
