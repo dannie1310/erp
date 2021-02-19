@@ -32,6 +32,11 @@ class PolizaCFDI extends Model
     ];
     public $timestamps = false;
 
+    public function cfdi()
+    {
+        return $this->belongsTo(CFDSAT::class, "uuid", "uuid");
+    }
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha);

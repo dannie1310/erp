@@ -73,6 +73,21 @@ export default {
             });
         },
 
+        descargarIndividual(context, payload) {
+
+            var urr = URI + payload.id +  '/descargar?access_token=' + this._vm.$session.get('jwt');
+
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("CFDI descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
+
         descargar(context, payload){
             let filtros = 0;
             var search = '?';

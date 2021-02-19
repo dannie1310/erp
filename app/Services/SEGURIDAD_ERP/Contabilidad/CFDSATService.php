@@ -807,6 +807,27 @@ class CFDSATService
         return $contenido;
     }
 
+    public function descargarIndividual($id)
+    {
+        $uuid =  $this->repository->show($id);
+
+        $dir_xml = "uploads/contabilidad/XML_SAT/";
+        $dir_descarga = "downloads/fiscal/descarga/".date("Ymdhis")."/";
+        if (!file_exists($dir_descarga) && !is_dir($dir_descarga)) {
+            mkdir($dir_descarga, 777, true);
+        }
+        try{
+            copy($dir_xml.$uuid->uuid.".xml", $dir_descarga.$uuid->uuid.".xml");
+        }catch (\Exception $e){
+        }
+
+        if(file_exists(public_path($dir_descarga.$uuid->uuid.".xml"))){
+            return response()->download(public_path($dir_descarga.$uuid->uuid.".xml"));
+        } else {
+            return response()->json(["mensaje"=>"No hay CFDI para la descarga: ".$uuid->uuid]);
+        }
+    }
+
     public function descargar($data){
         if (isset($data['startDate'])) {
             $this->repository->where([['cfd_sat.fecha', '>=', $data['startDate']]]);

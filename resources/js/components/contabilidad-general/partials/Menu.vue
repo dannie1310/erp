@@ -1,6 +1,12 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+                <router-link :to="{name: 'poliza-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'poliza-cfdi'}">
+                    <i class="fa fa-file-code nav-icon"></i>
+                    <p>Pólizas CFDI</p>
+                </router-link>
+            </li>
             <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-file-powerpoint nav-icon"></i>
