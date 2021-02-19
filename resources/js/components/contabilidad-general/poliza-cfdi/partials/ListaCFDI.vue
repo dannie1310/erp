@@ -19,11 +19,12 @@
                                     </div>
                                 </div>
                                 <div class="row" v-else >
-                                    <div class="col-md-10">
+                                    <div class="col-md-9">
                                         {{i+1}}-{{cfdi.uuid}}
                                     </div>
-                                    <div class="col-md-2" style="text-align:center">
+                                    <div class="col-md-3" style="text-align:center">
                                         <CFDI v-bind:id="cfdi.cfdi.id" @click="cfdi.cfdi.id" ></CFDI>
+                                        <DescargaCFDI v-bind:id="cfdi.cfdi.id"></DescargaCFDI>
                                     </div>
                                 </div>
                             </template>
@@ -47,9 +48,10 @@
 <script>
 
     import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
+    import DescargaCFDI from "../../../fiscal/cfd/cfd-sat/DescargaCFDI";
     export default {
         name: "lista-cfdi",
-        components:{CFDI},
+        components:{DescargaCFDI, CFDI},
         props: ['value'],
         methods: {
             init() {
