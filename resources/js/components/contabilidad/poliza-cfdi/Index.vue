@@ -4,11 +4,9 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="row">
+                        <div class="form-row">
                             <div class="col">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Buscar" v-model="search">
-                                </div>
+                                <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="$data.daterange"/>
                             </div>
                         </div>
                     </div>
@@ -55,9 +53,10 @@
 </template>
 
 <script>
+    import DateRangePicker from "../../globals/DateRangePicker";
     export default {
         name: "lista-empresas-index",
-        components: {},
+        components: {DateRangePicker},
         data() {
             return {
                 HeaderSettings: false,
@@ -80,6 +79,7 @@
                     include: ['empresa','asociacion_cfdi.cfdi'],
                     sort: 'fecha',  order: 'desc'
                 },
+                daterange: null,
                 search: '',
                 cargando: false,
                 sincronizando : false,
@@ -157,6 +157,22 @@
             },
             query: {
                 handler () {
+                    this.paginate()
+                },
+                deep: true
+            },
+            'daterange.startDate': {
+                handler(sd) {
+                    this.query.startDate = sd.format('YYYY-MM-DD')
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+                deep: true
+            },
+            'daterange.endDate': {
+                handler(ed) {
+                    this.query.endDate = ed.format('YYYY-MM-DD')
+                    this.query.offset = 0;
                     this.paginate()
                 },
                 deep: true

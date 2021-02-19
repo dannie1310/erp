@@ -29,6 +29,12 @@ class PolizaCFDIRequeridoService
 
     public function paginate($data)
     {
+        if (isset($data['startDate'])) {
+            $this->repository->where([['fecha', '>=', $data['startDate']]]);
+        }
+        if (isset($data['endDate'])) {
+            $this->repository->where([['fecha', '<=', $data['endDate']]]);
+        }
         if (isset($data['solo_pendientes'])) {
             if($data['solo_pendientes']==="true"){
                 $this->repository->whereDoesntHave("cfdi");
