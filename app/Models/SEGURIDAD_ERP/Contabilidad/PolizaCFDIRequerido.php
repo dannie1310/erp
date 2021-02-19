@@ -8,6 +8,9 @@
 
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
+use App\Facades\Context;
+use App\Models\CADECO\Obra;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Database\Eloquent\Model;
 
 class PolizaCFDIRequerido extends Model
@@ -45,5 +48,12 @@ class PolizaCFDIRequerido extends Model
     public function empresa()
     {
         return $this->belongsTo(Empresa::class,  "base_datos_contpaq" , "AliasBDD");
+    }
+
+    public function scopeParaProyecto($query){
+
+        $id_proyecto = Proyecto::where("base_datos","=",Context::getDatabase())->first()->id;
+        $base_datos_contpaq = Obra::find(Context::getIdObra())->datosContables->BDContPaq;
+        return $query->where("base_datos_contpaq","=", $base_datos_contpaq);
     }
 }

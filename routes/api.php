@@ -679,6 +679,13 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/validar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@validar')->where(['id' => '[0-9]+']);
         });
 
+        //PÓLIZAS CFDI
+        $api->group(['prefix' => 'poliza-cfdi'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaCFDIRequeridoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaCFDIRequeridoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaCFDIRequeridoController@show')->where(['id' => '[0-9]+']);
+        });
+
         //TIPOS CUENTA CONTABLE
         $api->group(['prefix' => 'tipo-cuenta-contable'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@index');
@@ -1069,6 +1076,8 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\TipoMovimientoController@index');
         });
+
+        //CFDSAT
 
         $api->group(['prefix' => 'cfd-sat'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@index');

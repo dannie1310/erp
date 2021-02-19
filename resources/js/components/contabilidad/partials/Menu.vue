@@ -83,6 +83,12 @@
                     <p>Prepólizas Generadas</p>
                 </router-link>
             </li>
+            <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+                <router-link :to="{name: 'poliza-cfdi-proyecto'}" class="nav-link" :class="{active: this.$route.name == 'poliza-cfdi-proyecto'}">
+                    <i class="fa fa-file-code nav-icon"></i>
+                    <p>Pólizas CFDI</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
