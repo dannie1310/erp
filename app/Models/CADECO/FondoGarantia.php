@@ -58,6 +58,6 @@ class FondoGarantia extends Transaccion
     }
 
     public function scopeParaRevision($query){
-        return $query->where('estado', '=', 1);
+        return $query->where('estado', '=', 1)->where('opciones', '=', 0);
     }
 }
