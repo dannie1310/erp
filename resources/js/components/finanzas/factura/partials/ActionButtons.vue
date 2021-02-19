@@ -2,6 +2,9 @@
     <span>
         <div class="btn-group">
             <FacturaShow v-if="value.show" v-bind:id="value.id" />
+            <router-link  :to="{ name: 'factura-revisar', params: {id: value.id}}" v-if="value.revisar" type="button" class="btn btn-sm btn-outline-dark" title="Revisar">
+                <i class="fa fa-file-alt"></i>
+            </router-link>
             <PDF v-bind:id="value.id" @click="value.id" v-if="$root.can('consultar_factura')"></PDF>
             <CFDI v-bind:id="value.id" @click="value.id" ></CFDI>
             <Eliminar v-if="value.borrar" v-bind:id="value.id" v-bind:pagina="value.pagina" />
@@ -25,6 +28,9 @@
         name: "action-buttons",
         components: {Revertir, PDF, FacturaShow, Eliminar, Relaciones, CFDI},
         props: ['value'],
+        methods: {
+           
+        },
     }
 </script>
 
