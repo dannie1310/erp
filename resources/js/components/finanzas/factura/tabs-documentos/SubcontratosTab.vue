@@ -54,7 +54,7 @@ export default {
             }
             else{
                 item.monto_revision = parseFloat(item.subtotal / this.cambios[this.id_moneda]).toFixed(2);
-                return '$ ' . parseFloat(item.monto_revision).formatMoney(2);
+                return '$ ' + parseFloat(item.monto_revision).formatMoney(2);
             }
            
         },
