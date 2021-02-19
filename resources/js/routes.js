@@ -1702,6 +1702,24 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'poliza-cfdi',
+                        component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"poliza-cfdi-proyecto",
+                                component: require('./components/contabilidad/poliza-cfdi/Index.vue').default,
+                                meta: {
+                                    title: 'Pólizas-CFDI',
+                                    breadcrumb: {parent: 'contabilidad', name: 'PÓLIZAS CFDI'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_poliza'],
+                                    general: true
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'poliza',
                         component: require('./components/contabilidad/poliza/Layout.vue').default,
                         children: [
@@ -2321,6 +2339,24 @@ export const routes = [
                             breadcrumb: {parent: 'poliza-contpaq', name: 'EDITAR'},
                             middleware: [auth, permission],
                             permission: 'editar_poliza',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'poliza-cfdi',
+                component: require('./components/contabilidad-general/poliza-cfdi/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"poliza-cfdi",
+                        component: require('./components/contabilidad-general/poliza-cfdi/Index.vue').default,
+                        meta: {
+                            title: 'Pólizas-CFDI',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'PÓLIZAS CFDI'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
                             general: true
                         }
                     },

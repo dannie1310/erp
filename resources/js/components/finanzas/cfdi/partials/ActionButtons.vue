@@ -1,14 +1,16 @@
 <template>
     <div class="btn-group">
         <CFDI v-bind:id="value.id" @click="value.id" ></CFDI>
+        <DescargaCFDI v-bind:id="value.id"></DescargaCFDI>
     </div>
 </template>
 
 <script>
     import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
+    import DescargaCFDI from "../../../fiscal/cfd/cfd-sat/DescargaCFDI";
     export default {
         name: "ActionButtons",
-        components: {CFDI},
+        components: {DescargaCFDI, CFDI},
         props: ['value']
     }
 </script>

@@ -54,13 +54,12 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
         $registros = $this->registra($empresas_actuales, $empresas_contpaq);
         $actualizaciones = $this->actualiza($empresas_actuales, $empresas_contpaq);
 
+        DB::connection('seguridad')->commit();
         return [
             "cancelaciones"=>$cancelaciones
             , "registros"=>$registros
             , "actualizaciones"=>$actualizaciones
         ];
-
-        DB::connection('seguridad')->commit();
 
     }
 
@@ -70,9 +69,12 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
         $a_registrar = array_diff($alias_contpaq, $alias_actuales);
         $registros = 0;
         foreach($a_registrar as $alias_bdd){
+            $empresa_contpaq = \App\Models\CTPQ\Empresa::where("AliasBDD", "=", $alias_bdd)
+                ->first();
             Empresa::create([
                 "Nombre"=>$empresas_contpaq[$alias_bdd],
-                "AliasBDD"=>$alias_bdd
+                "AliasBDD"=>$alias_bdd,
+                "IdEmpresaContpaq"=>$empresa_contpaq->Id
             ]);
             $registros++;
         }
@@ -99,15 +101,21 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
     {
         $actualizaciones=0;
         foreach($empresas_actuales as $alias_bdd=>$nombre){
+            $empresa_contpaq = \App\Models\CTPQ\Empresa::where("AliasBDD", "=", $alias_bdd)
+                ->first();
+
             $empresa_actual = Empresa::where("AliasBDD","=",$alias_bdd)->where("Estatus","=",1)
                 ->first();
             try{
-                if($empresa_actual->Nombre != $empresas_contpaq[$alias_bdd]){
+                if($empresa_actual->Nombre != $empresas_contpaq[$alias_bdd] || $empresa_actual->IdEmpresaContpaq != $empresa_contpaq->Id){
                     $empresa_actual->Nombre = $empresas_contpaq[$alias_bdd];
+                    $empresa_actual->IdEmpresaContpaq = $empresa_contpaq->Id;
                     $empresa_actual->save();
                     $actualizaciones++;
                 }
-            }catch(\Exception $e){}
+            }catch(\Exception $e){
+                abort(500, $e->getMessage());
+            }
         }
         return $actualizaciones;
     }

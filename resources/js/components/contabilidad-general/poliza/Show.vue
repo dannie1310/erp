@@ -92,6 +92,7 @@
                                         <tr>
                                             <th class="bg-gray-light index_corto">#</th>
                                             <th class="bg-gray-light no_parte">Cuenta</th>
+                                            <th class="bg-gray-light no_parte">Descripción</th>
                                             <th class="bg-gray-light">Cargo</th>
                                             <th class="bg-gray-light">Abono</th>
                                             <th class="bg-gray-light referencia_input">Referencia</th>
@@ -102,6 +103,7 @@
                                         <tr v-for="(movimiento, i) in poliza.movimientos_poliza.data">
                                             <td>{{ i + 1 }}</td>
                                             <td>{{movimiento.cuenta.cuenta}}</td>
+                                            <td>{{movimiento.cuenta.descripcion}}</td>
                                             <td class="money">{{movimiento.cargo_format}}</td>
                                             <td class="money">{{movimiento.abono_format}}</td>
                                             <td>{{movimiento.referencia}}</td>
@@ -143,7 +145,7 @@ export default {
             this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
             return this.$store.dispatch('contabilidadGeneral/poliza/find', {
                 id: this.id,
-                params: {include: ['movimientos_poliza'], id_empresa : this.id_empresa}
+                params: {include: ['movimientos_poliza.cuenta'], id_empresa : this.id_empresa}
             }).then(data => {
                 this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
                 $(this.$refs.modalShowPoliza).modal('show');
