@@ -255,6 +255,11 @@ $api->version('v1', function ($api) {
             $api->get('descargar-zip', 'App\Http\Controllers\v1\CTPQ\PolizaController@getZip');
             $api->post('actualizar-cfdi', 'App\Http\Controllers\v1\CTPQ\PolizaController@getAsociacionCFDI');
         });
+        $api->group(['prefix' => 'poliza-cfdi'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@show')->where(['id' => '[0-9]+']);
+        });
         $api->group(['prefix' => 'incidente-poliza'], function ($api) {//buscar-diferencias
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@store');
             $api->post('buscar-diferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@buscarDiferencias');

@@ -36,4 +36,14 @@ class PolizaCFDIRequerido extends Model
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
     }
+
+    public function cfdi()
+    {
+        return $this->hasMany(PolizaCFDI::class, "guid_poliza_contpaq", "guid_poliza_contpaq");
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class,  "base_datos_contpaq" , "AliasBDD");
+    }
 }

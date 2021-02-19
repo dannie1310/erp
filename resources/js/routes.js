@@ -2327,6 +2327,24 @@ export const routes = [
                 ]
             },
             {
+                path: 'poliza-cfdi',
+                component: require('./components/contabilidad-general/poliza-cfdi/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"poliza-cfdi",
+                        component: require('./components/contabilidad-general/poliza-cfdi/Index.vue').default,
+                        meta: {
+                            title: 'Pólizas',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'PÓLIZAS CFDI'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'diferencias',
                 component: require('./components/contabilidad-general/diferencias-polizas/diferencia-poliza/Index.vue').default,
                 children:[

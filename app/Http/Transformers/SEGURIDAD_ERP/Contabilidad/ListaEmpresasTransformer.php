@@ -30,6 +30,7 @@ class ListaEmpresasTransformer extends TransformerAbstract
             'consolidada' => $model->consolidada,
             'desarrollo' => $model->Desarrollo ? (int) $model->Desarrollo : 0,
             'poliza_cfdi' => $model->SincronizacionPolizasCFDI ? (int) $model->SincronizacionPolizasCFDI : 0,
+            'id_empresa_contpaq' => $model->IdEmpresaContpaq
         ];
     }
 
