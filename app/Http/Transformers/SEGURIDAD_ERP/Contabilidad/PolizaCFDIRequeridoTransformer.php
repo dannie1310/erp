@@ -14,7 +14,7 @@ class PolizaCFDIRequeridoTransformer extends TransformerAbstract
     ];
 
     protected $availableIncludes = [
-        'cfdi',
+        'asociacion_cfdi',
         'empresa'
     ];
 
@@ -31,7 +31,7 @@ class PolizaCFDIRequeridoTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeCFDI(PolizaCFDIRequerido $model)
+    public function includeAsociacionCFDI(PolizaCFDIRequerido $model)
     {
         if($items = $model->cfdi)
         {

@@ -3,6 +3,7 @@ namespace App\Http\Transformers\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\PolizaCFDI;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CFDSATTransformer;
 
 class PolizaCFDITransformer extends TransformerAbstract
 {
@@ -12,7 +13,7 @@ class PolizaCFDITransformer extends TransformerAbstract
     ];
 
     protected $availableIncludes = [
-
+        "cfdi"
     ];
 
     public function transform(PolizaCFDI $model) {
@@ -24,6 +25,16 @@ class PolizaCFDITransformer extends TransformerAbstract
             'folio'=>$model->folio,
             'tipo'=>$model->tipo,
             'fecha_format'=>$model->fecha_format,
+            'uuid'=>$model->uuid,
         ];
+    }
+
+    public function includeCFDI(PolizaCFDI $model)
+    {
+        if($item = $model->cfdi)
+        {
+            return $this->item($item, new CFDSATTransformer);
+        }
+        return null;
     }
 }

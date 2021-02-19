@@ -2335,7 +2335,7 @@ export const routes = [
                         name:"poliza-cfdi",
                         component: require('./components/contabilidad-general/poliza-cfdi/Index.vue').default,
                         meta: {
-                            title: 'Pólizas',
+                            title: 'Pólizas-CFDI',
                             breadcrumb: {parent: 'contabilidad-general', name: 'PÓLIZAS CFDI'},
                             middleware: [auth, permission],
                             permission: ['consultar_poliza'],

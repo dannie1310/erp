@@ -70,13 +70,13 @@
                     { title: 'Tipo Póliza', field: 'tipo_poliza',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
                     { title: 'Folio Póliza', field: 'folio_poliza',tdClass: 'td_money', thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha Póliza', field: 'fecha_poliza',tdClass: 'td_money',thComp: require('../../globals/th-Date').default, sortable: true},
-                    { title: 'CFDI', field: 'cfdi',tdClass: 'td_money', sortable: true},
+                    { title: 'CFDI', field: 'cfdi',tdClass: 'td_money', tdComp: require('./partials/ListaCFDI').default },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: ['empresa','cfdi'],
+                    include: ['empresa','asociacion_cfdi.cfdi'],
                     sort: 'fecha',  order: 'desc'
                 },
                 search: '',
@@ -137,7 +137,7 @@
                         folio_poliza: poliza.folio,
                         fecha_poliza: poliza.fecha_format,
                         monto: poliza.monto_format,
-                        cfdi: poliza.cfdi.data.length,
+                        cfdi: poliza.asociacion_cfdi.data,
                         buttons: $.extend({}, {
                             id: poliza.id_poliza_contpaq,
                             id_empresa: poliza.empresa.id_empresa_contpaq,
