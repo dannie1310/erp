@@ -272,7 +272,7 @@
                     }
                 })
                 .then(data => {
-                    this.resultados = data;
+                    this.resultados = data.data;
                     this.cargando = false;
                 })
             },
@@ -283,7 +283,7 @@
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
             },
             agregarMaterial(){
-                this.items[this.index].id_material = this.resultados[this.id_seleccion].id_material;
+                this.items[this.index].id_material = this.resultados[this.id_seleccion].id;
                 this.items[this.index].material = this.resultados[this.id_seleccion];
                 this.items[this.index].i = 2;
                 $(this.$refs.modal).modal('hide')
