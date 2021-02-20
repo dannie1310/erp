@@ -617,6 +617,7 @@ class Factura extends Transaccion
         $renta = $this->getItemsRentas();
         $lista = $this->getitemsLista();
         $descuentos = $this->getItemsDescuentos();
+        $conceptosEstimacion = $this->getConceptosEstimacion();
         return [
             'pendientes' => $pendientes,
             'anticipos' => $anticipos,
@@ -624,6 +625,7 @@ class Factura extends Transaccion
             'renta' => $renta,
             'lista' => $lista,
             'descuentos' => $descuentos,
+            'conceptosEstimacion' => $conceptosEstimacion,
         ];
     }
 
@@ -857,6 +859,95 @@ class Factura extends Transaccion
         return $item_final;
     }
 
+    public function getConceptosEstimacion(){
+        $concpEstim = [];
+        $id_lib_ret = Vario::where('descripcion', '=', utf8_encode('(+) Liberación de Retenciones'))->first();
+        $concpEstim[] = [
+            "insumo"=>("(+) Liberación de Retenciones"),
+            "descripcion_insumo"=>("(+) Liberación de Retenciones"),
+            "item_antecedente"=>($id_lib_ret)?$id_lib_ret->id_vario:0,
+            "mascara"=>12288,
+            "tipo_antecedente"=>8,
+            "monto_revision"=>0,
+            "seleccionado"=>false,
+            "tcp"=>1
+        ];
+        
+        $id_lib_ant = Vario::where('descripcion', '=', utf8_encode('(+) Liberación de Anticipo'))->first();
+        $concpEstim[] = [
+            "insumo"=>("(+) Liberación de Anticipo"),
+            "descripcion_insumo"=>("(+) Liberación de Anticipo"),
+            "item_antecedente"=>($id_lib_ant)?$id_lib_ant->id_vario:0,
+            "mascara"=>12288,
+            "tipo_antecedente"=>8,
+            "monto_revision"=>0,
+            "seleccionado"=>false,
+            "tcp"=>1
+        ];
+
+        $id_pre_mat = Vario::where('descripcion', '=', '(-) Prestamo de Materiales')->first();
+        $concpEstim[] = [
+            "insumo"=>"(-) Prestamo de Materiales",
+            "descripcion_insumo"=>"(-) Prestamo de Materiales",
+            "item_antecedente"=>($id_pre_mat)?$id_pre_mat->id_vario:0,
+            "mascara"=>8192,
+            "tipo_antecedente"=>9,
+            "monto_revision"=>0,
+            "seleccionado"=>false,
+            "tcp"=>1
+        ];
+
+        $id_ret = Vario::where('descripcion', '=', '(-) Retenciones')->first();
+        $concpEstim[] = [
+            "insumo"=>"(-) Retenciones",
+            "descripcion_insumo"=>"(-) Retenciones",
+            "item_antecedente"=>($id_ret)?$id_ret->id_vario:0,
+            "mascara"=>8192,
+            "tipo_antecedente"=>9,
+            "monto_revision"=>0,
+            "seleccionado"=>false,
+            "tcp"=>1
+        ];
+
+        $id_amo_ant = Vario::where('descripcion', '=', utf8_encode('(-) Amortización de Anticipo'))->first();
+        $concpEstim[] = [
+            "insumo"=>("(-) Amortización de Anticipo"),
+            "descripcion_insumo"=>("(-) Amortización de Anticipo"),
+            "item_antecedente"=>($id_amo_ant)?$id_amo_ant->id_vario:0,
+            "mascara"=>8192,
+            "tipo_antecedente"=>9,
+            "monto_revision"=>0,
+            "seleccionado"=>false,
+            "tcp"=>1
+        ];
+
+        $id_not_cre = Vario::where('descripcion', '=', utf8_encode('(-) Nota de Crédito'))->first();
+        $concpEstim[] = [
+            "insumo"=>("(-) Nota de Crédito"),
+            "descripcion_insumo"=>("(-) Nota de Crédito"),
+            "item_antecedente"=>($id_not_cre)?$id_not_cre->id_vario:0,
+            "mascara"=>8192,
+            "tipo_antecedente"=>9,
+            "monto_revision"=>0,
+            "seleccionado"=>false,
+            "tcp"=>1
+        ];
+
+        $id_dev_mat = Vario::where('descripcion', '=', utf8_encode('(-) Devolución de materiales'))->first();
+        $concpEstim[] = [
+            "insumo"=>("(-) Devolución de materiales"),
+            "descripcion_insumo"=>("(-) Devolucion de materiales"),
+            "item_antecedente"=>($id_dev_mat)?$id_dev_mat->id_vario:0,
+            "mascara"=>8192,
+            "tipo_antecedente"=>9,
+            "monto_revision"=>0,
+            "seleccionado"=>false,
+            "tcp"=>1
+        ];
+
+        return $concpEstim;
+    }
+
     public function storeRevision($data){
         try {
             DB::connection('cadeco')->beginTransaction();
@@ -977,23 +1068,36 @@ class Factura extends Transaccion
             }
 
             foreach($data['items']['descuentos'] as $descuento){
-                $reg_varios = Vario::create([
-                    "descripcion" => $descuento['concepto'],
-                    "mascara" => $descuento['mascara'],
-                    "cuenta_contable"=>1,
-                    "id_obra"=> Context::getIdObra(),
-                    "para_estimacion"=>1
-                ]);
-                
                 $numero = $descuento['mascara'] == 12288? 5 : 6;
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
-                    "item_antecedente" => $reg_varios->id_vario,
+                    "item_antecedente" => $descuento['id_item'],
                     "importe" => $descuento['monto_revision'],
                     "saldo" => $descuento['monto_revision'],
                     "numero" => $numero,
                 ]);
 
+            }
+
+            foreach($data['items']['conceptos'] as $concepto){
+                if($concepto['item_antecedente'] == 0){
+                        $reg_varios = Vario::create([
+                        "descripcion" => utf8_encode($concepto['descripcion_insumo']),
+                        "mascara" => $concepto['mascara'],
+                        "cuenta_contable"=>1,
+                        "id_obra"=> Context::getIdObra(),
+                        "para_estimacion"=>1
+                    ]);
+                    $concepto['item_antecedente'] = $reg_varios->id_vario;
+                }
+                $numero = $concepto['mascara'] == 12288? 5 : 6;
+                $item = Item::create([
+                    "id_transaccion" => $this->id_transaccion,
+                    "item_antecedente" => $concepto['item_antecedente'],
+                    "importe" => $concepto['monto_revision'],
+                    "saldo" => $concepto['monto_revision'],
+                    "numero" => $numero,
+                ]);
             }
 
             $this->complemento->iva = $data['resumen']['iva_subtotal'];
