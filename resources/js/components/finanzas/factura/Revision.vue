@@ -62,8 +62,12 @@
             <div class="col-12" v-if="Object.keys(factura).length > 0">
                 <div class="invoice p-3 mb-3">
                     <div class="row">
-                        <div class="col-12">
-                            <Documento v-bind:id="id" v-bind:items="items" v-bind:id_moneda="factura.id_moneda" v-bind:cambios="tipo_cambio" @created="actualizar()"/><br><br>
+                        <div class="col-md-11">
+                            <Conceptos v-bind:items="items" @created="actualizar()" />
+                        </div>
+                        <div class="col-1">
+                            
+                            <Documento v-bind:id="id" v-bind:items="items" v-bind:id_moneda="factura.id_moneda" v-bind:cambios="tipo_cambio" @created="actualizar()"/> <br><br>
                         </div>
                         <div class="col-12 table-responsive">
                             <table class="table table-striped">
@@ -187,6 +191,28 @@
                                     </tr>
                                     <tr v-for="item in items.descuentos" v-if="item.seleccionado">
                                         <td colspan="5">{{decode_utf8(item.concepto)}}</td>
+                                        <td>
+                                            <input 
+                                                type="number"
+                                                step=".01"
+                                                class="form-control"
+                                                style="width: 100%"
+                                                placeholder="Monto"
+                                                name="monto_revision"
+                                                id="monto_revision"
+                                                data-vv-as="Monto Revision"
+                                                v-validate="{required: true}"
+                                                v-model="item.monto_revision"
+                                                v-on:keyup="actualizar_subtotal()"
+                                                :class="{'is-invalid': errors.has('monto_revision')}"
+                                                >
+                                            <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
+                                        </td>
+                                        <td>1</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr v-for="item in items.conceptosEstimacion" v-if="item.seleccionado">
+                                        <td colspan="5">{{item.descripcion_insumo}}</td>
                                         <td>
                                             <input 
                                                 type="number"
@@ -524,10 +550,11 @@
 </template>
 
 <script>
-import Documento from './Documentos'
+import Documento from './Documentos';
+import Conceptos from './ConceptosEstimacion';
 export default {
     name: "factura-revisar",
-    components: {Documento},
+    components: {Documento, Conceptos},
     props: ['id'],
 
     data() {
@@ -629,17 +656,7 @@ export default {
                         this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(list.importe_total_sf / this.tipo_cambio[this.factura.id_moneda]);
                     }
                 });
-                this.items.descuentos.forEach(descuento => {
-                    if(descuento.seleccionado){
-                        if(descuento.naturaleza === 'Descuento'){
-                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  (descuento.monto_revision);
-                        }
-                        if(descuento.naturaleza === 'Recargo'){
-                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(descuento.monto_revision);
-                        }
-                        
-                    }
-                });
+                
                 
                 if(this.configuracion.ret_fon_gar_antes_iva == 1){
                     this.resumen.subtotal = this.resumen.subtotal -  this.resumen.fondo_garantia; 
@@ -670,8 +687,33 @@ export default {
                 }
 
                 this.resumen.total_documentos = this.resumen.subtotal + this.resumen.iva_pagar - otros_impuestos - retenciones;
-                this.format_money();
+                this.actualizar_subtotal_descuentos();
+                this.actualizar_resumen();
             }
+        },
+        actualizar_subtotal_descuentos(){
+            this.items.descuentos.forEach(descuento => {
+                    if(descuento.seleccionado){
+                        if(descuento.naturaleza === 'Descuento'){
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  (descuento.monto_revision);
+                        }
+                        if(descuento.naturaleza === 'Recargo'){
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(descuento.monto_revision);
+                        }
+                        
+                    }
+                });
+                this.items.conceptosEstimacion.forEach(conceptoEst => {
+                    if(conceptoEst.seleccionado){
+                        if(conceptoEst.mascara === 8192){
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  (conceptoEst.monto_revision);
+                        }
+                        if(conceptoEst.mascara === 12288){
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(conceptoEst.monto_revision);
+                        }
+                        
+                    }
+                });
         },
         actualizar_subtotal(){
             this.resumen.subtotal = 0;
@@ -711,18 +753,30 @@ export default {
                     this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(list.importe_total_sf);
                 }
             });
-            this.items.descuentos.forEach(descuento => {
-                if(descuento.seleccionado){
-                    descuento.monto_revision = descuento.monto_revision === '' ? 0 : (descuento.monto_revision);
-                    if(descuento.naturaleza === 'Descuento'){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  parseFloat(descuento.monto_revision);
-                    }
-                    if(descuento.naturaleza === 'Recargo'){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(descuento.monto_revision);
-                    }
+            // this.items.descuentos.forEach(descuento => {
+            //     if(descuento.seleccionado){
+            //         descuento.monto_revision = descuento.monto_revision === '' ? 0 : (descuento.monto_revision);
+            //         if(descuento.naturaleza === 'Descuento'){
+            //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  parseFloat(descuento.monto_revision);
+            //         }
+            //         if(descuento.naturaleza === 'Recargo'){
+            //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(descuento.monto_revision);
+            //         }
                     
-                }
-            });
+            //     }
+            // });
+            // this.items.conceptosEstimacion.forEach(conceptoEst => {
+            //     if(conceptoEst.seleccionado){
+            //         conceptoEst.monto_revision = conceptoEst.monto_revision === '' ? 0 : (conceptoEst.monto_revision);
+            //         if(conceptoEst.mascara === 8192){
+            //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  (conceptoEst.monto_revision);
+            //         }
+            //         if(conceptoEst.mascara === 12288){
+            //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(conceptoEst.monto_revision);
+            //         }
+                    
+            //     }
+            // });
 
             if(this.configuracion.ret_fon_gar_antes_iva == 1){
                 this.resumen.subtotal = this.resumen.subtotal -  this.resumen.fondo_garantia; 
@@ -753,6 +807,7 @@ export default {
             }
 
             this.resumen.total_documentos = this.resumen.subtotal + this.resumen.iva_pagar - otros_impuestos - retenciones;
+            this.actualizar_subtotal_descuentos();
             this.actualizar_resumen();
         },
         actualizar_resumen(){
@@ -868,7 +923,8 @@ export default {
                 'subcontratos':[],
                 'renta':[],
                 'lista':[],
-                'descuentos':[]
+                'descuentos':[],
+                'conceptos':[]
             };
             this.items.pendientes.forEach(pendiente => {
                 if(pendiente.seleccionado){
@@ -900,6 +956,11 @@ export default {
             this.items.descuentos.forEach(descuento => {
                 if(descuento.seleccionado){
                     resp.descuentos.push(descuento);
+                }
+            });
+            this.items.conceptosEstimacion.forEach(concepto => {
+                if(concepto.seleccionado){
+                    resp.conceptos.push(concepto);
                 }
             });
             return resp;
