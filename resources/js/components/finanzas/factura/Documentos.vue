@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init(id)" type="button" class="btn  btn-success float-right" title="Agregar" :disabled="cargando">
+        <button @click="init(id)" type="button" class="btn  btn-success float-right" style="margin-left:5px" title="Agregar" :disabled="cargando">
         <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>Agregar
         </button>
