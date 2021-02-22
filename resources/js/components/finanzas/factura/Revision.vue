@@ -62,12 +62,10 @@
             <div class="col-12" v-if="Object.keys(factura).length > 0">
                 <div class="invoice p-3 mb-3">
                     <div class="row">
-                        <div class="col-md-11">
-                            <Conceptos v-bind:items="items" @created="actualizar()" />
-                        </div>
-                        <div class="col-1">
+                        <div class="col-md-12">
                             
-                            <Documento v-bind:id="id" v-bind:items="items" v-bind:id_moneda="factura.id_moneda" v-bind:cambios="tipo_cambio" @created="actualizar()"/> <br><br>
+                            <Documento v-bind:id="id" v-bind:items="items" v-bind:id_moneda="factura.id_moneda" v-bind:cambios="tipo_cambio" @created="actualizar()"/> 
+                            <Conceptos v-bind:items="items" @created="actualizar()" /><br><br>
                         </div>
                         <div class="col-12 table-responsive">
                             <table class="table table-striped">
