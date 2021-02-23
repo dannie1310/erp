@@ -8,7 +8,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-search" style="padding-right:3px"></i>Cambiar Area Subcontratante</h5>
+                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-refresh" style="padding-right:3px"></i>Cambiar Área Subcontratante</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -18,7 +18,7 @@
                        <div class="col-md-6">
                            <h5>Número de folio: {{value.numero_folio}}</h5>
                             <div class="form-group error-content">
-                                <label for="id_area">Área Subcontratante</label>
+                                <label for="id_area">Área Subcontratante:</label>
                                 <select
                                         type="text"
                                         name="id_area"
@@ -112,7 +112,12 @@
                     params:{include:"areasSubcontratantes"}
                 })
                     .then(data => {
-                        $(this.$refs.modal).modal('hide');
+                      return this.$store.dispatch('contratos/contrato-proyectado/paginate', { params: {include: 'areasSubcontratantes', sort: 'numero_folio', order: 'DESC'}})
+                          .then(data => {
+                            this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
+                            this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
+                          })
+                        /*$(this.$refs.modal).modal('hide');
                         this.$store.dispatch('configuracion/area-subcontratante/getAreasUsuario', this.currentUser.idusuario)
                             .then(data_a => {
                                 var areas = [];
@@ -121,11 +126,14 @@
                                 });
 
                                 if($.inArray(data.areasSubcontratantes.data[0].id, areas) == -1) {
-                                    this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO_PROYECTADO', this.id);
+                                    this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO', this.id);
                                 }
 
-                            })
+                            })*/
                     })
+                    .finally( ()=>{
+                      $(this.$refs.modal).modal('hide');
+                    });
             },
 
         }

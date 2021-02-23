@@ -9,8 +9,11 @@
 namespace App\Models\CADECO;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaConcepto;
+use App\Models\CADECO\PresupuestoObra\DatoConcepto;
+use App\Models\CADECO\PresupuestoObra\Responsable;
+use App\Scopes\ActivoScope;
+use App\Scopes\ObraScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Concepto extends Model
@@ -19,15 +22,32 @@ class Concepto extends Model
     protected $table = 'dbo.conceptos';
     protected $primaryKey = 'id_concepto';
 
+    public $fillable = [
+        'activo',
+        'clave_concepto',
+    ];
+    public $searchable = [
+        'descripcion',
+        'clave_concepto',
+    ];
+
     public $timestamps = false;
 
     protected static function boot()
     {
         parent::boot();
+        static::addGlobalScope(new ActivoScope);
+        static::addGlobalScope(new ObraScope);
+    }
 
-        self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra())->where('activo','=',1);
-        });
+    public function dato()
+    {
+        return $this->hasOne(DatoConcepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function responsables()
+    {
+        return $this->hasMany(Responsable::class, 'id_concepto', 'id_concepto');
     }
 
 
@@ -76,9 +96,76 @@ class Concepto extends Model
         return null;
     }
 
+    public function getEsAgrupadorAttribute(){
+        if ($this->nivel_padre != '') {
+            return self::where('nivel', '=', $this->nivel_padre)->first()->concepto_medible == 3;
+        }
+        return false;
+    }
+
+    public function getTipoAttribute()
+    {
+        $tipo = '';
+        switch ($this->concepto_medible){
+            case 0:
+                if($this->id_material){
+                    $tipo= 'Material';
+                } else {
+                    $tipo= 'Agrupador';
+                }
+                break;
+            case 3: $tipo= 'Medible';
+                break;
+        }
+        return $tipo;
+    }
+
     public function getTieneHijosAttribute()
     {
         return $this->hijos()->count() ? true : false;
+    }
+
+    public function getConHijosAttribute()
+    {
+        return $this->hijosCompletos()->count() ? true : false;
+    }
+
+    public function getAnidacionAttribute()
+    {
+        $anidacion = "";
+        $longitud = (strlen($this->nivel)/4);
+        for($i=0; $i<$longitud; $i++)
+        {
+            $anidacion .= "___";
+        }
+        return $anidacion;
+    }
+
+    public function getPrecioUnitarioFormatAttribute()
+    {
+        return '$ ' . number_format($this->precio_unitario,2);
+    }
+
+    public function getMontoPresupuestadoFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_presupuestado,2);
+    }
+
+    public function getCantidadPresupuestadaFormatAttribute()
+    {
+        return number_format($this->cantidad_presupuestada,4);
+    }
+    public function getClaveConceptoSelectAttribute()
+    {
+        if($this->clave_concepto != ''){
+            $pos = strpos($this->descripcion, $this->clave_concepto);
+            if($pos === false){
+                return "[" . $this->clave_concepto ."] ";
+            } else {
+                return "";
+            }
+        }
+        return "";
     }
 
     public function scopeRoots($query)
@@ -122,6 +209,14 @@ class Concepto extends Model
             ->whereNull('id_material')
             ->orderBy('nivel', 'ASC');
     }
+
+    public function hijosCompletos()
+    {
+        return $this->hasMany(self::class, 'id_obra', 'id_obra')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ->orderBy('nivel', 'ASC');
+    }
+
 
     /**
      *  Se muestra la ruta desde 3er nivel (000.000.000.)

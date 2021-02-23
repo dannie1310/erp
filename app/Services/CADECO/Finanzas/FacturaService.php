@@ -4,19 +4,17 @@
 namespace App\Services\CADECO\Finanzas;
 
 
-use App\Events\IncidenciaCI;
-use App\Models\CADECO\ContraRecibo;
-use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Factura;
-use App\Notifications\NotificacionIncidenciasCI;
-use App\Repositories\CADECO\Finanzas\Facturas\Repository;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
+use App\PDF\Fiscal\CFDI;
 use DateTime;
 use DateTimeZone;
+use App\Events\IncidenciaCI;
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Factura;
+use App\Utils\CFD;
+use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\ContraRecibo;
 use App\PDF\Finanzas\ContrareciboPDF;
-use App\Models\IGH\Usuario;
+use App\Repositories\CADECO\Finanzas\Facturas\Repository;
 
 class FacturaService
 {
@@ -42,7 +40,7 @@ class FacturaService
 
     public function show($id)
     {
-        return $this->repository->show($id);
+        return $this->repository->show($id)->validarPrepoliza();
     }
 
     public function delete($data, $id)
@@ -136,65 +134,58 @@ class FacturaService
         return $this->repository->pendientesPago($id);
     }
 
-    private function setArregloFactura($archivo_xml)
+    private function getArregloCFD($archivo_xml)
     {
-        try {
+        $arreglo = [];
+        $cfd = new CFD($archivo_xml);
+        $arreglo_cfd = $cfd->getArregloFactura();
+
+        /*try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
-            $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
-            $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
-            $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
-            $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
-            $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
-            $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
-            $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
-            $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
-            $this->arreglo_factura["emisor"]["nombre"] = (string)$emisor["Nombre"][0];
-            $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
-            $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
-            $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
-
-        } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
-        }
-
-        try {
-            $ns = $factura_xml->getNamespaces(true);
-            $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
-            $factura_xml->registerXPathNamespace('t', $ns['tfd']);
-            $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
-            $this->arreglo_factura["complemento"]["uuid"] = (string)$complemento["UUID"][0];
-            if (!$this->arreglo_factura["folio"]) {
-                try {
-                    $factura_xml->registerXPathNamespace('rf', $ns['registrofiscal']);
-                    $CFDI_RF = $factura_xml->xpath('//rf:CFDIRegistroFiscal')[0];
-                    $this->arreglo_factura["folio"] = $CFDI_RF["Folio"];
-                } catch (\Exception $e) {
-                    $this->arreglo_factura["folio"] = "";
-                }
+            if(!$factura_xml){
+                $factura_xml = new \SimpleXMLElement(file_get_contents($archivo_xml));
             }
         } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer la ruta de complemento: " . $e->getMessage());
-        }
+            abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
+        }*/
 
-        $this->arreglo_factura["empresa_bd"] = $this->repository->getEmpresa(
+        $arreglo["total"] = $arreglo_cfd["total"];
+        $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
+        $arreglo["serie"] = $arreglo_cfd["serie"];
+        $arreglo["folio"] = $arreglo_cfd["folio"];
+        $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("Y-m-d");
+        $arreglo["version"] = $arreglo_cfd["version"];
+        $arreglo["moneda"] = $arreglo_cfd["moneda"];
+
+        $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
+        $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
+
+        $arreglo["receptor"]["rfc"] = $arreglo_cfd["receptor"]["rfc"];
+        $arreglo["receptor"]["nombre"] = $arreglo_cfd["receptor"]["nombre"];
+
+        $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
+        $arreglo["folio"] = $arreglo_cfd["folio"];
+
+        $arreglo["empresa_bd"] = $this->repository->getEmpresa(
             [
-                "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                "razon_social" => $this->arreglo_factura["emisor"]["nombre"]
+                "rfc" => $arreglo["emisor"]["rfc"],
+                "razon_social" => $arreglo["emisor"]["nombre"]
             ]
         );
-        $this->validaEFO();
-        $this->validaReceptor();
-        if (!$this->arreglo_factura["empresa_bd"]) {
+        $this->validaEFO($arreglo);
+        $this->validaReceptor($arreglo);
+        if (!$arreglo["empresa_bd"]) {
             event(new IncidenciaCI(
                 ["id_tipo_incidencia" => 16,
-                    "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                    "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                    "rfc" => $arreglo["emisor"]["rfc"],
+                    "empresa" => $arreglo["emisor"]["nombre"],
                 ]
             ));
             abort(500, "El emisor del comprobante no esta dado de alta en el catálogo de proveedores / contratistas; la factura no puede ser registrada.");
         }
-        $this->arreglo_factura["moneda_bd"]["id_moneda"] = $this->repository->getIdMoneda($this->arreglo_factura["moneda"]);
+        $arreglo["moneda_bd"]["id_moneda"] = $this->repository->getIdMoneda($arreglo["moneda"]);
+        return $arreglo;
     }
 
     private function getValidacionCFDI33($xml)
@@ -225,44 +216,55 @@ class FacturaService
         }
     }
 
-    public function validaCFDI33($xml)
+    public function validaCFDI33($xml, $rfc_emisor,$uuid)
     {
         $respuesta = $this->getValidacionCFDI33($xml);
         $estructura_correcta = $respuesta["detail"][0]["detail"][0]["message"];
+
         if ($estructura_correcta !== "OK") {
-            event(new IncidenciaCI(
-                ["id_tipo_incidencia" => 13,
-                    "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                    "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                    "mensaje" => $estructura_correcta,
-                    "xml" => $xml
-                ]
-            ));
-            abort(500, "Aviso SAT:\nError en la validación de la estructura del comprobante: " . $estructura_correcta);
+            $omitido = $this->repository->getEsOmitido($respuesta["detail"][0]["detail"][0]["message"],$rfc_emisor, $uuid);
+            if($omitido == 0){
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 13,
+                        "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                        "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                        "mensaje" => $estructura_correcta,
+                        "xml" => $xml
+                    ]
+                ));
+                abort(500, "Aviso SAT:\nError en la validación de la estructura del comprobante: " . $estructura_correcta);
+            }
         }
+
         $validaciones_proveedor_comprobante = $respuesta["detail"][1]["detail"][0]["message"];
         if ($validaciones_proveedor_comprobante !== "OK") {
-            event(new IncidenciaCI(
-                ["id_tipo_incidencia" => 14,
-                    "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                    "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                    "mensaje" => $validaciones_proveedor_comprobante,
-                    "xml" => $xml
-                ]
-            ));
-            abort(500, "Aviso SAT:\nError en la validación del proveedor del comprobante: " . $validaciones_proveedor_comprobante);
+            $omitido = $this->repository->getEsOmitido($respuesta["detail"][1]["detail"][0]["message"],$rfc_emisor, $uuid);
+            if($omitido==0){
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 14,
+                        "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                        "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                        "mensaje" => $validaciones_proveedor_comprobante,
+                        "xml" => $xml
+                    ]
+                ));
+                abort(500, "Aviso SAT:\nError en la validación del proveedor del comprobante: " . $validaciones_proveedor_comprobante);
+            }
         }
         $validaciones_proveedor_complemento = $respuesta["detail"][2]["detail"][0]["message"];
         if ($validaciones_proveedor_complemento !== "OK") {
-            event(new IncidenciaCI(
-                ["id_tipo_incidencia" => 15,
-                    "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                    "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                    "mensaje" => $validaciones_proveedor_complemento,
-                    "xml" => $xml
-                ]
-            ));
-            abort(500, "Aviso SAT:\nError en la validación del proveedor del timbre: " . $validaciones_proveedor_complemento);
+            $omitido = $this->repository->getEsOmitido($respuesta["detail"][2]["detail"][0]["message"],$rfc_emisor, $uuid);
+            if($omitido==0) {
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 15,
+                        "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                        "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                        "mensaje" => $validaciones_proveedor_complemento,
+                        "xml" => $xml
+                    ]
+                ));
+                abort(500, "Aviso SAT:\nError en la validación del proveedor del timbre: " . $validaciones_proveedor_complemento);
+            }
         }
 
         $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
@@ -288,24 +290,45 @@ class FacturaService
     public function store(array $data)
     {
         $datos_rfactura = null;
+        $datos_rnc = null;
         $referencia = $data["referencia"];
         if ($data["es_deducible"] == true && $data["es_nacional"] == true) {
-            $this->validaExistenciaRepositorio($data["archivo"]);
-            $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
-            $this->validaReceptor();
-            $this->validaTotal($data["total"]);
-            $this->validaFolio($data["referencia"]);
-            $this->validaCFDI33($data["archivo"]);
+            $arreglo_cfd = $this->getArregloCFD($data["archivo"]);
+            $this->validaExistenciaRepositorio($data["archivo"], $arreglo_cfd);
+            $this->validaRFCFacturaVsEmpresa($data["id_empresa"],$arreglo_cfd);
+            $this->validaReceptor($arreglo_cfd);
+
+            $this->validaFolio($data["referencia"], $arreglo_cfd);
+            if($arreglo_cfd["version"] == 3.3){
+                $this->validaCFDI33($data["archivo"], $arreglo_cfd["emisor"]["rfc"], $arreglo_cfd["complemento"]["uuid"]);
+            }
 
             $datos_rfactura = [
                 "xml_file" => $this->repository->getArchivoSQL($data["archivo"]),
                 "hash_file" => hash_file('md5', $data["archivo"]),
-                "uuid" => $this->arreglo_factura["complemento"]["uuid"],
-                "rfc_emisor" => $this->arreglo_factura["emisor"]["rfc"],
-                "rfc_receptor" => $this->arreglo_factura["receptor"]["rfc"],
+                "uuid" => $arreglo_cfd["complemento"]["uuid"],
+                "rfc_emisor" => $arreglo_cfd["emisor"]["rfc"],
+                "rfc_receptor" => $arreglo_cfd["receptor"]["rfc"],
+                "tipo_comprobante" => $arreglo_cfd["tipo_comprobante"],
             ];
-            if($this->arreglo_factura["folio"] != ""){
-                $referencia = $this->arreglo_factura["serie"] . $this->arreglo_factura["folio"];
+            if($arreglo_cfd["folio"] != ""){
+                $referencia = $arreglo_cfd["serie"] . $arreglo_cfd["folio"];
+            }
+            if($data["con_nota_credito"]){
+                $arreglo_cfd_nc = $this->getArregloCFD($data["archivo_nc"]);
+                $this->validaExistenciaRepositorio($data["archivo_nc"], $arreglo_cfd_nc);
+                $datos_rnc = [
+                    "xml_file" => $this->repository->getArchivoSQL($data["archivo_nc"]),
+                    "hash_file" => hash_file('md5', $data["archivo_nc"]),
+                    "uuid" => $arreglo_cfd_nc["complemento"]["uuid"],
+                    "rfc_emisor" => $arreglo_cfd_nc["emisor"]["rfc"],
+                    "rfc_receptor" => $arreglo_cfd_nc["receptor"]["rfc"],
+                    "tipo_comprobante" => $arreglo_cfd_nc["tipo_comprobante"],
+                ];
+                $this->validaTotal($data["total"],$arreglo_cfd["total"],$arreglo_cfd_nc["total"]);
+
+            } else {
+                $this->validaTotal($data["total"],$arreglo_cfd["total"],0);
             }
         }
 
@@ -322,7 +345,6 @@ class FacturaService
         $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
 
         $this->validaFechas($emision, $vencimiento);
-
 
         $datos_factura = [
             'fecha' => $emision->format('Y-m-d'),
@@ -351,17 +373,17 @@ class FacturaService
         $datos["rubro"] = $datos_rubro;
         $datos["cr"] = $datos_cr;
         $datos["factura_repositorio"] = $datos_rfactura;
+        $datos["nc_repositorio"] = $datos_rnc;
         $transaccion = $this->repository->create($datos);
-        $this->validaPresuntoEFO($transaccion);
+        $this->validaPresuntoEFO($arreglo_cfd);
 
         return $transaccion;
     }
 
-    private function validaExistenciaRepositorio($archivo)
+    private function validaExistenciaRepositorio($archivo, $arreglo_cfd)
     {
-        $this->setArregloFactura($archivo);
         $hash_file = hash_file('md5', $archivo);
-        $factura_repositorio = $this->repository->validaExistenciaRepositorio($hash_file, $this->arreglo_factura["complemento"]["uuid"]);
+        $factura_repositorio = $this->repository->validaExistenciaRepositorio($hash_file, $arreglo_cfd["complemento"]["uuid"]);
         if($factura_repositorio){
             $factura_repositorio->load("usuario");
             event(new IncidenciaCI(
@@ -373,9 +395,9 @@ class FacturaService
             Proyecto: ' . $factura_repositorio->obra . '
             Factura: ' . $factura_repositorio->factura->numero_folio . '
             Fecha Registro: '. $factura_repositorio->fecha_hora_registro_format . '
-            UUID: ' . $this->arreglo_factura["complemento"]["uuid"] . '
-            Emisor: ' . $this->arreglo_factura["emisor"]["nombre"] . '
-            RFC Emisor: ' . $this->arreglo_factura["emisor"]["rfc"]
+            UUID: ' . $arreglo_cfd["complemento"]["uuid"] . '
+            Emisor: ' . $arreglo_cfd["emisor"]["nombre"] . '
+            RFC Emisor: ' . $arreglo_cfd["emisor"]["rfc"]
                 ]
             ));
             abort(403, 'Comprobante utilizado previamente:
@@ -384,23 +406,23 @@ class FacturaService
             Proyecto: ' . $factura_repositorio->obra . '
             Factura: ' . $factura_repositorio->factura->numero_folio . '
             Fecha Registro: '. $factura_repositorio->fecha_hora_registro_format . '
-            UUID: ' . $this->arreglo_factura["complemento"]["uuid"] . '
-            Emisor: ' . $this->arreglo_factura["emisor"]["nombre"] . '
-            RFC Emisor: ' . $this->arreglo_factura["emisor"]["rfc"] );
+            UUID: ' . $arreglo_cfd["complemento"]["uuid"] . '
+            Emisor: ' . $arreglo_cfd["emisor"]["nombre"] . '
+            RFC Emisor: ' . $arreglo_cfd["emisor"]["rfc"] );
         }
     }
 
-    private function validaReceptor()
+    private function validaReceptor($arreglo_cfd)
     {
         $rfc_obra = $this->repository->getRFCObra();
-        if ($this->arreglo_factura["receptor"]["rfc"] != $rfc_obra) {
+        if ($arreglo_cfd["receptor"]["rfc"] != $rfc_obra) {
             event(new IncidenciaCI(
                 [
                     "id_tipo_incidencia" => 6,
-                    "rfc" => $this->arreglo_factura["receptor"]["rfc"],
+                    "rfc" => $arreglo_cfd["receptor"]["rfc"],
                 ]
             ));
-            abort(500, "El RFC de la obra (" . $rfc_obra . ") no corresponde al RFC del receptor en el comprobante digital (" . $this->arreglo_factura["receptor"]["rfc"] . ")");
+            abort(500, "El RFC de la obra (" . $rfc_obra . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
         }
     }
 
@@ -411,82 +433,87 @@ class FacturaService
         }
     }
 
-    private function validaRFCFacturaVsEmpresa($id_empresa)
+    private function validaRFCFacturaVsEmpresa($id_empresa, $arreglo_cfd)
     {
         $rfc = $this->repository->getRFCEmpresa($id_empresa);
-        if ($this->arreglo_factura["emisor"]["rfc"] != $rfc) {
+        if ($arreglo_cfd["emisor"]["rfc"] != $rfc) {
             event(new IncidenciaCI(
                 ["id_tipo_incidencia" => 10,
-                    "id_empresa" => $this->arreglo_factura["empresa_bd"]["id_empresa"],
-                    "rfc" => $this->arreglo_factura["empresa_bd"]["rfc"],
-                    "empresa" => $this->arreglo_factura["empresa_bd"]["razon_social"]]
+                    "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
+                    "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
+                    "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
             ));
-            abort(500, "El RFC del proveedor seleccionado (" . $rfc . ") no corresponde al RFC del emisor en el comprobante digital (" . $this->arreglo_factura["emisor"]["rfc"] . ")");
+            abort(500, "El RFC del proveedor seleccionado (" . $rfc . ") no corresponde al RFC del emisor en el comprobante digital (" . $arreglo_cfd["emisor"]["rfc"] . ")");
         }
     }
 
-    private function validaFolio($folio)
+    private function validaFolio($folio, $arreglo_cfd)
     {
-        if ($this->arreglo_factura["serie"] != null) {
-            $pos = strpos($folio, $this->arreglo_factura["folio"]);
+        if ($arreglo_cfd["serie"] != null) {
+            $pos = strpos($folio, $arreglo_cfd["serie"].$arreglo_cfd["folio"]);
             if ($pos === false) {
-                abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $this->arreglo_factura["folio"] . ")");
+                abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $arreglo_cfd["folio"] . ")");
             }
-        } else if ($this->arreglo_factura["folio"] != "") {
-            if ($folio != $this->arreglo_factura["folio"]) {
-                abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $this->arreglo_factura["folio"] . ")");
+        } else if ($arreglo_cfd["folio"] != "") {
+            if ($folio != $arreglo_cfd["folio"]) {
+                abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $arreglo_cfd["folio"] . ")");
             }
         }
-
     }
 
-    private function validaEFO()
+    private function validaEFO($arreglo_cfd)
     {
-        $efo = $this->repository->getEFO($this->arreglo_factura["emisor"]["rfc"]);
+        $efo = $this->repository->getEFO($arreglo_cfd["emisor"]["rfc"]);
         if ($efo) {
             if ($efo->estado == 0) {
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia" => 8,
-                        "id_empresa" => $this->arreglo_factura["empresa_bd"]["id_empresa"],
-                        "rfc" => $this->arreglo_factura["empresa_bd"]["rfc"],
-                        "empresa" => $this->arreglo_factura["empresa_bd"]["razon_social"]]
+                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
+                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
+                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
                 ));
-                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
             } else if ($efo->estado == 2) {
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia" => 9,
-                        "id_empresa" => $this->arreglo_factura["empresa_bd"]["id_empresa"],
-                        "rfc" => $this->arreglo_factura["empresa_bd"]["rfc"],
-                        "empresa" => $this->arreglo_factura["empresa_bd"]["razon_social"]]
+                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
+                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
+                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
                 ));
-                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
             }
 
         }
     }
 
-    private function validaPresuntoEFO($transaccion)
+    private function validaPresuntoEFO($arreglo_cfd)
     {
-        $efo = $this->repository->getEFO($this->arreglo_factura["emisor"]["rfc"]);
+        $efo = $this->repository->getEFO($arreglo_cfd["emisor"]["rfc"]);
         if ($efo) {
             if ($efo->estado == 2) {
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia" => 9,
-                        "id_empresa" => $this->arreglo_factura["empresa_bd"]["id_empresa"],
-                        "rfc" => $this->arreglo_factura["empresa_bd"]["rfc"],
-                        "empresa" => $this->arreglo_factura["empresa_bd"]["razon_social"]]
+                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
+                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
+                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
                 ));
             }
 
         }
     }
 
-    private function validaTotal($total)
+    private function validaTotal($total, $total_cfd_factura, $total_cfd_nc =0)
     {
-        if (abs($this->arreglo_factura["total"] - $total) > 0.99) {
-            abort(500, "El monto ingresado no corresponde al monto en el comprobante digital");
+        if($total_cfd_nc == 0){
+            if (abs($total_cfd_factura - $total_cfd_nc - $total) > 0.99) {
+                abort(500, "El monto ingresado no corresponde al monto en el comprobante digital");
+            }
+        } else {
+            if (abs($total_cfd_factura - $total_cfd_nc - $total) > 0.99) {
+                abort(500, "El monto ingresado no corresponde al monto de los comprobantes digitales");
+            }
         }
     }
 
@@ -496,10 +523,29 @@ class FacturaService
         return $pdf;
     }
 
-    public function cargaXML($archivo_xml)
+    public function cargaXML(array $data)
     {
-        $this->setArregloFactura($archivo_xml);
-        return $this->arreglo_factura;
+        $archivo_xml = $data["xml"];
+        $tipo = $data["tipo"];
+        $id_empresa = $data["id_empresa"];
+        $arreglo_cfd = $this->getArregloCFD($archivo_xml);
+        if(is_numeric($id_empresa)){
+            $empresa = $this->repository->getEmpresaPorId($id_empresa);
+            if($empresa["rfc"] != $arreglo_cfd["emisor"]["rfc"]){
+                if($arreglo_cfd["tipo_comprobante"] == "E"){
+                    abort(500, "El emisor de los CFD no coincide, favor de verificar");
+                }
+            }
+        }
+        if($arreglo_cfd["tipo_comprobante"] == "I" && $tipo == 2)
+        {
+            abort(500, "Se ingresó un CFD de tipo erróneo, favor de ingresar un CFD de tipo egreso (Nota de Crédito)");
+        }
+        elseif($arreglo_cfd["tipo_comprobante"] == "E" && $tipo == 1)
+        {
+            abort(500, "Se ingresó un CFD de tipo erróneo, favor de ingresar un CFD de tipo ingreso (Factura)");
+        }
+        return $arreglo_cfd;
     }
 
     public  function revertir($id)
@@ -515,6 +561,21 @@ class FacturaService
             DB::connection('cadeco')->rollBack();
             throw $e;
         }
+    }
+
+    public function pdfCFDI($id)
+    {
+        $facturaTransaccion = $this->repository->show($id);
+        $facturaRepositorio = $facturaTransaccion->facturaRepositorio;
+        try{
+            $cfd = new CFD($facturaRepositorio->xml);
+        } catch (\Exception $e){
+          dd("No se cargo el CFDI de la factura");
+        }
+
+        $arreglo_cfd = $cfd->getArregloFactura();
+        $pdf = new CFDI($arreglo_cfd);
+        return $pdf;
     }
 }
 

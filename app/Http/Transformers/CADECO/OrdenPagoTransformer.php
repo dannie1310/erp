@@ -4,6 +4,7 @@
 namespace App\Http\Transformers\CADECO;
 
 
+use App\Http\Transformers\CADECO\Finanzas\FacturaTransformer;
 use App\Models\CADECO\OrdenPago;
 use League\Fractal\TransformerAbstract;
 
@@ -15,7 +16,7 @@ class OrdenPagoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'factura'
     ];
 
     /**
@@ -40,9 +41,23 @@ class OrdenPagoTransformer extends TransformerAbstract
             'tipo_transaccion' => $model->tipo_transaccion,
             "id_empresa" => $model->id_empres,
             "id_moneda" => $model->id_moneda,
-            "id_usuario" => $model->id_usuario
+            "id_usuario" => $model->id_usuario,
+            'tipo' => $model->tipo->Descripcion,
+            'observaciones'=>(string)$model->observaciones,
         ];
 
     }
 
+    /**
+     * @param OrdenPago $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeFactura(OrdenPago $model)
+    {
+        if($factura = $model->factura)
+        {
+            return $this->item($factura, new FacturaTransformer);
+        }
+        return null;
+    }
 }

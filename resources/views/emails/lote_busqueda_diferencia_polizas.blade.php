@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>SAO</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<div id="app">
+    <h3></h3>
+    <hr />
+    <div class="col-md-2" >
+        <div class="form-group" >
+            <label><b>Folio:</b></label>
+            {{$lote->id}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4" >
+            <div class="form-group" >
+                <label><b>Tipo de Búsqueda:</b></label>
+                {{$lote->tipo_str}}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3" >
+            <div class="form-group" >
+                <label><b>Usuario Solicitó Busqueda:</b></label>
+                {{$lote->usuario->nombre_completo}}
+            </div>
+
+        </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>Fecha /  Hora Incio:</b></label>
+                {{$lote->fecha_hora_inicio_format}}
+            </div>
+        </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>Fecha /  Hora Fin:</b></label>
+                {{$lote->fecha_hora_fin_format}}
+            </div>
+        </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>No. Empresas sin Acceso:</b></label>
+                {{$lote->bases_datos_inaccesibles()->distinct('base_datos')->count('base_datos')}}
+            </div>
+        </div>
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>No. Pólizas Revisadas:</b></label>
+                {{$lote->cantidad_polizas_revisadas_format}}
+            </div>
+        </div>
+
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>Nuevas Diferencias Detectadas:</b></label>
+                    {{$lote->cantidad_diferencias_detectadas_format}}
+                </div>
+            </div>
+
+        @if ($lote->cantidad_diferencias_corregidas>0)
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>Diferencias Corregidas:</b></label>
+                    {{($lote->cantidad_diferencias_corregidas_format)}}
+                </div>
+            </div>
+        @endif
+        @if (($lote->cantidad_diferencias_detectadas)>0)
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>No. de Pólizas Con Nuevas Diferencias:</b></label>
+                    {{$lote->cantidad_polizas_con_errores_format}} ({{$lote->porcentaje_diferencias}})
+                </div>
+            </div>
+        @endif
+        <hr />
+        @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != ($lote->cantidad_diferencias_detectadas)))
+            <div class="col-md-2" >
+                <div class="form-group" >
+                    <label><b>Diferencias Totales Existentes:</b></label>
+                    {{$diferencias_totales->sum("cantidad")}}
+                </div>
+            </div>
+        @endif
+        @if ($diferencias_totales && ($diferencias_totales->sum("cantidad") != ($lote->cantidad_diferencias_detectadas)))
+            @if($lote->cantidad_polizas_existentes>0)
+                <div class="col-md-2" >
+                    <div class="form-group" >
+                        <label><b>No. Total de Pólizas Con Diferencias:</b></label>
+                        {{$cantidad_diferencias_totales}} ({{number_format($cantidad_diferencias_totales / $lote->cantidad_polizas_revisadas*100,2,".", ",")}} %)
+                    </div>
+                </div>
+                @else
+                <div class="col-md-2" >
+                    <div class="form-group" >
+                        <label><b>No. Total de Pólizas Con Diferencias:</b></label>
+                        {{$cantidad_diferencias_totales}}
+                    </div>
+                </div>
+            @endif
+        @endif
+        <div class="col-md-2" >
+            <div class="form-group" >
+                <label><b>No. Pólizas Existentes:</b></label>
+                {{$lote->cantidad_polizas_existentes_format}}
+            </div>
+        </div>
+    </div>
+
+    @if(count($lote->cantidad_diferencias_detectadas_por_tipo)>0)
+        <hr />
+
+        <div class="row">
+            <table>
+                <caption style="text-align: left; font-weight: bold">Cantidad de diferencias por tipo:</caption>
+                <thead>
+                <th>
+                    Tipo Diferencia
+                </th>
+                <th>
+                    Cantidad Diferencias
+                </th>
+                <th>
+                    Cantidad Pólizas Afectadas
+                </th>
+                </thead>
+                <tbody>
+                @foreach($lote->cantidad_diferencias_detectadas_por_tipo as $item)
+                <tr>
+                    <td>
+                        {{$item->descripcion}}
+                    </td>
+                    <td style="text-align: right">
+                        {{$item->cantidad}}
+                    </td>
+                    <td style="text-align: right">
+                        {{$item->cantidad_polizas}}
+                        @if($item->cantidad_polizas_revisadas>0)
+                            ({{number_format(100*$item->cantidad_polizas/$item->cantidad_polizas_revisadas,"2",".",",")}} %)
+                        @endif
+                    </td>
+                </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+    @if(count($lote->cantidad_diferencias_detectadas_por_tipo_por_base)>0)
+        <hr />
+        <div class="row">
+            <table>
+                <caption style="text-align: left; font-weight: bold">Cantidad de diferencias por empresa y tipo:</caption>
+                <thead>
+                <th>
+                    Empresa Revisada
+                </th>
+                <th>
+                    Empresa Referencia
+                </th>
+                <th>
+                    Tipo Diferencia
+                </th>
+                <th>
+                    Cantidad Diferencias
+                </th>
+                <th>
+                    Cantidad Pólizas Afectadas
+                </th>
+                </thead>
+                <tbody>
+                @foreach($lote->cantidad_diferencias_detectadas_por_tipo_por_base as $item)
+                    <tr>
+                        <td>
+                            {{$item->base_datos_revisada}}
+                        </td>
+                        <td>
+                            {{$item->base_datos_referencia}}
+                        </td>
+                        <td>
+                            {{$item->descripcion}}
+                        </td>
+                        <td style="text-align: right">
+                            {{$item->cantidad}}
+                        </td>
+                        <td style="text-align: right">
+                            {{$item->cantidad_polizas}}
+                            @if($item->cantidad_polizas_revisadas>0)
+                                ({{number_format(100*$item->cantidad_polizas/$item->cantidad_polizas_revisadas,"2",".",",")}} %)
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
+    @if(count($diferencias_totales)>0 &&($diferencias_totales->sum("cantidad") != ($lote->cantidad_diferencias_detectadas)))
+        <hr />
+
+        <div class="row">
+            <table>
+                <caption style="text-align: left; font-weight: bold">Cantidad de diferencias totales por empresa y tipo:</caption>
+                <thead>
+                <th>
+                    Empresa Revisada
+                </th>
+                <th>
+                    Empresa Referencia
+                </th>
+                <th>
+                    Tipo Diferencia
+                </th>
+                <th>
+                    Cantidad Diferencias
+                </th>
+                <th>
+                    Cantidad Pólizas
+                </th>
+                </thead>
+                <tbody>
+                @foreach($diferencias_totales as $item)
+                    <tr>
+                        <td>
+                            {{$item->base_datos_revisada}}
+                        </td>
+                        <td>
+                            {{$item->base_datos_referencia}}
+                        </td>
+                        <td>
+                            {{$item->descripcion}}
+                        </td>
+                        <td style="text-align: right">
+                            {{$item->cantidad}}
+                        </td>
+                        <td style="text-align: right">
+                            {{$item->cantidad_polizas}}
+                            @if($lote->cantidad_polizas_revisadas>0)
+                                ({{number_format(100*$item->cantidad_polizas/$lote->cantidad_polizas_revisadas,"2",".",",")}} %)
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+    @if(count($lote->bases_datos_inaccesibles)>0)
+        <hr />
+
+        <div class="row">
+            <div class="col-md-12">
+
+            </div>
+            <table>
+                <caption style="text-align: left; font-weight: bold">Empresas Sin Acceso:</caption>
+                <thead>
+                <th>
+                    Empresa
+                </th>
+                </thead>
+                <tbody>
+                @foreach($lote->bases_datos_inaccesibles as $item)
+                    <tr>
+                        <td>
+                            {{$item->empresa->Nombre}} {{$item->base_datos}}
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+</div>
+</html>

@@ -45,6 +45,160 @@ export default{
                     })
             });
         },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        getAsignacion(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/getAsignacion', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        pendientesOrden(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'pendientesOrden', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        delete(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Asignación de Proveedor",
+                    text: "¿Está seguro/a de que desea eliminar la asignación?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Asignación eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        generarOC(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Generar Orden de Compra",
+                    text: "¿Está seguro/a de que desea generar la(s) orden(es) de compra?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Generar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'generarOC', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Orden de Compra generada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        generarOrdenIndividual(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Generar Orden de Compra",
+                    text: "¿Está seguro/a de que desea generar la orden de compra?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Generar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'generarOrdenIndividual', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Orden de Compra generada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         cargaManualLayout(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -100,8 +254,8 @@ export default{
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar inventario fisico",
-                    text: "¿Está seguro/a de que quiere registrar un nuevo inventario físico?",
+                    title: "Registrar Asignación de Proveedores",
+                    text: "¿Está seguro/a de que desea registrar la asignación de proveedores?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -120,7 +274,7 @@ export default{
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Inventario físico registrado correctamente", {
+                                    swal("Asignación de proveedores registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
@@ -135,28 +289,16 @@ export default{
                     });
             });
         },
-        pdf_marbetes(context, payload) {
-            var URL = '/api/almacenes/inventario-fisico/' + payload.id +'/pdf_marbetes?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
-            var win = window.open(URL, "_blank");
-            win.onbeforeunload = ()=> {
-                swal("Marbetes descargados correctamente.", {
-                    icon: "success",
-                    timer: 2000,
-                    buttons: false
-                })
-            }
-        },
-
-        descargaLayout(context){
+        descargaLayout(context, payload){
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'descargaLayout', { responseType:'blob', })
+                    .get(URI + 'descargaLayout/'+ payload.id, { params: payload.params, responseType:'blob', })
                     .then(r => r.data)
                     .then(data => {
                         const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
                         const link = document.createElement('a');
                         link.href = url;
-                        link.setAttribute('download', 'Layout-prueba.csv');
+                        link.setAttribute('download', 'Layout-'+payload.id+'.csv');
                         document.body.appendChild(link);
                         link.click();
                     })

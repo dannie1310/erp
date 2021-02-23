@@ -44,6 +44,14 @@
                                             <th style="text-align: left" colspan="2">Total Deductivas</th>
                                             <td style="text-align: right">{{estimacion.total_deductivas}}</td>
                                         </tr>
+                                        <tr v-if="configuracion.penalizacion_antes_iva == 1">
+                                            <th style="text-align: left" colspan="2">Total Penalizaciones</th>
+                                            <td style="text-align: right">{{estimacion.suma_penalizaciones}}</td>
+                                        </tr>
+                                         <tr v-if="configuracion.penalizacion_antes_iva == 1">
+                                            <th style="text-align: left" colspan="2">Total Penalizaciones Liberadas</th>
+                                            <td style="text-align: right">{{estimacion.suma_penalizaciones_liberadas}}</td>
+                                        </tr>
                                         <tr>
                                             <th style="text-align: left" colspan="2">Subtotal</th>
                                             <td style="text-align: right">{{estimacion.subtotal_orden_pago}}</td>
@@ -78,6 +86,14 @@
                                         <tr v-if="configuracion.retenciones_antes_iva == 0">
                                             <th style="text-align: left" colspan="2">Total Retenciones Liberadas</th>
                                             <td style="text-align: right">{{estimacion.total_retencion_liberadas}}</td>
+                                        </tr>
+                                        <tr v-if="configuracion.penalizacion_antes_iva == 0">
+                                            <th style="text-align: left" colspan="2">Total Penalizaciones</th>
+                                            <td style="text-align: right">{{estimacion.suma_penalizaciones}}</td>
+                                        </tr>
+                                        <tr v-if="configuracion.penalizacion_antes_iva == 0">
+                                            <th style="text-align: left" colspan="2">Total Penalizaciones Liberadas</th>
+                                            <td style="text-align: right">{{estimacion.suma_penalizaciones_liberadas}}</td>
                                         </tr>
                                         <tr>
                                             <th style="text-align: left" colspan="2">Total Anticipo a Liberar</th>

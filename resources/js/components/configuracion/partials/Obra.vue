@@ -1,5 +1,5 @@
 <template>
-    <div class="card" id="configuracion-obra" v-if="$root.can('administracion_configuracion_obra')">
+    <div class="card" id="configuracion-obra" v-if="$root.can('administracion_configuracion_obra',true)">
         <div class="card-header">
             <h6 class="card-title">Configuración de Obra</h6>
             <div class="card-tools">
@@ -30,7 +30,7 @@
                 <label for="nombre" class="col-lg-2 col-form-label">Abreviatura</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="nombre" v-model="form.nombre"
-                           v-validate="{max: 16}"
+                           v-validate="{required:true, max: 16}"
                            name="nombre"
                            data-vv-as="Abreviatura"
                            :class="{'is-invalid': errors.has('nombre')}"
@@ -43,7 +43,7 @@
                 <label for="descripcion" class="col-lg-2 col-form-label">Descripción</label>
                 <div class="col-lg-4">
                     <textarea class="form-control" id="descripcion" v-model="form.descripcion"
-                              v-validate="{max: 255}"
+                              v-validate="{required:true, max: 255}"
                               name="descripcion"
                               data-vv-as="Descripción"
                               :class="{'is-invalid': errors.has('descripcion')}"
@@ -71,7 +71,7 @@
                 <label for="cliente" class="col-lg-2 col-form-label">Cliente</label>
                 <div class="col-lg-5">
                     <input type="text" class="form-control" id="cliente" v-model="form.cliente"
-                           v-validate="{max: 255}"
+                           v-validate="{required:true, max: 255}"
                            name="cliente"
                            data-vv-as="Cliente"
                            :class="{'is-invalid': errors.has('cliente')}"
@@ -84,7 +84,7 @@
                 <label for="facturar" class="col-lg-2 col-form-label">Facturar a</label>
                 <div class="col-lg-5">
                     <input type="text" class="form-control" id="facturar" v-model="form.facturar"
-                           v-validate="{max: 255}"
+                           v-validate="{required:true, max: 255}"
                            name="facturar"
                            data-vv-as="Facturar a"
                            :class="{'is-invalid': errors.has('facturar')}"
@@ -101,7 +101,7 @@
                             data-vv-as="Responsable"
                             v-validate="{integer: true}"
                             v-model="form.configuracion.id_responsable"
-                            :placeholder="form.configuracion.id_responsable ? form.responsable : '-- Buscar --'"
+                            :placeholder="form.configuracion.id_responsable ? form.configuracion.responsable : '-- Buscar --'"
                             :error="errors.has('responsable')"
                     >
                     </usuario-select>
@@ -117,7 +117,7 @@
                             data-vv-as="Administrador"
                             v-validate="{integer: true}"
                             v-model="form.configuracion.id_administrador"
-                            :placeholder="form.configuracion.id_administrador ? form.administrador : '-- Buscar --'"
+                            :placeholder="form.configuracion.id_administrador ? form.configuracion.administrador : '-- Buscar --'"
                             :error="errors.has('administrador')"
                     >
                     </usuario-select>
@@ -145,7 +145,7 @@
                 <label for="id_moneda" class="col-lg-2 col-form-label">Moneda</label>
                 <div class="col-lg-4">
                     <select class="form-control" id="id_moneda" v-model="form.id_moneda"
-                            v-validate="{integer: true}"
+                            v-validate="{required:true, integer: true}"
                             name="id_moneda"
                             data-vv-as="Moneda"
                             :class="{'is-invalid': errors.has('id_moneda')}"
@@ -159,7 +159,7 @@
                 <label for="iva" class="col-lg-2 col-form-label">Porcentaje de IVA</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="iva" v-model="form.iva"
-                           v-validate="{ decimal: true,  max_value: 100, min_value: 0}"
+                           v-validate="{required:true, decimal: true,  max_value: 100, min_value: 0}"
                            name="iva"
                            data-vv-as="Porcentaje de IVA"
                            :class="{'is-invalid': errors.has('iva')}"
@@ -232,13 +232,13 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" id="esquema_permisos1" value="1"
                                    v-model="form.configuracion.esquema_permisos"
-                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto')">
+                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto', true)">
                             <label class="form-check-label" for="esquema_permisos1"> Esquema Global</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" id="esquema_permisos2" value="2"
                                    v-model="form.configuracion.esquema_permisos"
-                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto')">
+                                   :disabled="!$root.can('modificar_esquema_permisos_proyecto', true)">
                             <label class="form-check-label" for="esquema_permisos2"> Esquema Personalizado</label>
                         </div>
                     </div>
@@ -252,7 +252,7 @@
                 <label for="direccion" class="col-lg-2 col-form-label">Dirección</label>
                 <div class="col-lg-10">
                     <textarea id="direccion" class="form-control" v-model="form.direccion"
-                              v-validate="{max: 255}"
+                              v-validate="{required:true, max: 255}"
                               name="direccion"
                               data-vv-as="Dirección"
                               :class="{'is-invalid': errors.has('direccion')}"
@@ -264,7 +264,7 @@
                 <label for="ciudad" class="col-lg-2 col-form-label">Ciudad</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="ciudad" v-model="form.ciudad"
-                           v-validate="{max: 255}"
+                           v-validate="{required:true, max: 255}"
                            name="ciudad"
                            data-vv-as="Ciudad"
                            :class="{'is-invalid': errors.has('ciudad')}"
@@ -277,7 +277,7 @@
                 <label for="estado" class="col-lg-2 col-form-label">Estado</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="estado" v-model="form.estado"
-                           v-validate="{max: 255}"
+                           v-validate="{required:true, max: 255}"
                            name="estado"
                            data-vv-as="Estado"
                            :class="{'is-invalid': errors.has('estado')}"
@@ -290,7 +290,7 @@
                 <label for="codigo_postal" class="col-lg-2 col-form-label">Código Postal</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="codigo_postal" v-model="form.codigo_postal"
-                           v-validate="{integer: true, digits: 5}"
+                           v-validate="{required:true, integer: true, digits: 5}"
                            name="codigo_postal"
                            data-vv-as="Código Postal"
                            :class="{'is-invalid': errors.has('codigo_postal')}"
@@ -316,7 +316,7 @@
     export default {
         name: "configuracion-obra",
         components: {UsuarioSelect},
-        props: ['obra'],
+        props: ['obra', 'monedas', 'tipo'],
         data() {
             return {
                 user: '',
@@ -371,6 +371,7 @@
                 formData.append('cliente', this.form.cliente)
                 formData.append('codigo_postal', this.form.codigo_postal);
 
+                formData.append('configuracion[base_datos]', this.form.configuracion.base_datos);
                 formData.append('configuracion[esquema_permisos]', this.form.configuracion.esquema_permisos);
                 if (this.form.configuracion.id_administrador) formData.append('configuracion[id_administrador]', this.form.configuracion.id_administrador);
                 if (this.form.configuracion.id_responsable) formData.append('configuracion[id_responsable]', this.form.configuracion.id_responsable);
@@ -396,35 +397,54 @@
                         formData.delete(key);
                 });
 
-                return this.$store.dispatch('cadeco/obras/update', {
-                    id: this.obra.id_obra,
-                    data: formData,
-                    config: {
-                        params: { _method: 'PATCH', include: 'configuracion'}
-                    }
-                })
-                    .then(data => {
-                        if (data) {
-                            this.$store.commit('auth/setObra', { obra: data });
-                            this.form = data
-                            setTimeout(() => {
-                                if (data.configuracion.logotipo_original) {
-                                    this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
-                                }
-                            }, 100);
+                if(this.tipo == 0) {
+                    return this.$store.dispatch('cadeco/obras/update', {
+                        id: this.obra.id_obra,
+                        data: formData,
+                        config: {
+                            params: {_method: 'PATCH', include: 'configuracion'}
                         }
                     })
-                    .finally(() => {
-                        this.guardando = false;
+                        .then(data => {
+                            if (data) {
+                                this.$store.commit('auth/setObra', {obra: data});
+                                this.form = data
+                                setTimeout(() => {
+                                    if (data.configuracion.logotipo_original) {
+                                        this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
+                                    }
+                                }, 100);
+                            }
+                        })
+                        .finally(() => {
+                            this.guardando = false;
+                        })
+                }
+                if(this.tipo == 1) {
+                    return this.$store.dispatch('cadeco/obras/updateGeneral', {
+                        id: this.obra.id_obra,
+                        data: formData,
+                        config: {
+                            params: {_method: 'PATCH'}
+                        }
                     })
+                        .then(data => {
+                            if (data) {
+                                this.form = data.obra
+                                this.form.configuracion = data.configuracion;
+                                setTimeout(() => {
+                                    if (data.configuracion.logotipo_original) {
+                                        this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
+                                    }
+                                }, 100);
+                            }
+                        })
+                        .finally(() => {
+                            this.guardando = false;
+                        })
+                }
             }
         },
-
-        computed: {
-            monedas() {
-                return this.$store.getters['cadeco/moneda/monedas'];
-            }
-        }
     }
 </script>
 

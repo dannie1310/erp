@@ -13,7 +13,12 @@ class DeleteMaterialRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('eliminar_insumo_servicio');
+        return auth()->user()->can([
+            'eliminar_insumo_servicio',
+            'eliminar_insumo_material',
+            'eliminar_insumo_herramienta_equipo',
+            'eliminar_insumo_maquinaria',
+            'eliminar_insumo_mano_obra']);
     }
 
     /**
@@ -28,6 +33,6 @@ class DeleteMaterialRequest extends FormRequest
 
     protected function failedAuthorization()
     {
-        abort(403, 'Permisos insuficientes');
+        abort(403, 'Permisos insuficientes para esta acción');
     }
 }

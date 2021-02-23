@@ -25,6 +25,9 @@ class Factura extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 67;
     public const OPCION_ANTECEDENTE = 0;
+    public const TIPO = 65;
+    public const NOMBRE = "Factura";
+    public const ICONO = "fa fa-file-invoice";
     protected $fillable = [
         'fecha',
         "id_empresa",
@@ -41,7 +44,7 @@ class Factura extends Transaccion
         parent::boot();
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 65)
-                ->where('estado', '!=', -2);
+                /*->where('estado', '!=', -2)*/;
         });
     }
 
@@ -104,19 +107,28 @@ class Factura extends Transaccion
 
     public function facturaRepositorio()
     {
-        return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion');
+        return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
+            ->where('rfc_emisor', '=',$this->empresa->rfc)
+            ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
+                ->first()->getKey());
     }
 
-    public function facturaRepositorioLiberar()
+    public function facturasRepositorioLiberar()
     {
-        return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+        return $this->hasMany(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
+            ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
+                ->first()->getKey());
     }
 
     public function poliza()
     {
         return $this->belongsTo(Poliza::class, 'id_transaccion', 'id_transaccion_sao');
     }
-    
+
+    public function polizas(){
+        return $this->hasMany(Poliza::class, 'id_transaccion_sao', 'id_transaccion');
+    }
+
     public function tipoCambioFecha(){
         return $this->hasMany(Cambio::class, 'fecha', 'fecha');
     }
@@ -128,6 +140,52 @@ class Factura extends Transaccion
             abort(400, "Hubo un error al registrar el contrarecibo");
         }
         return $cr;
+    }
+
+    /*public function transaccionesRevisadas()
+    {
+        return $this->hasManyThrough(Transaccion::class,FacturaPartida::class,"id_transaccion","id_transaccion","id_transaccion","id_antecedente")
+            ->distinct();
+    }*/
+
+    public function prepolizaActiva(){
+        return $this->polizas()->orderBy('estatus', 'DESC')->first();
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Factura::NOMBRE;
+        $datos["tipo_numero"] = Factura::TIPO;
+        $datos["icono"] = Factura::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
+    public function getTransaccionesRevisadasAttribute()
+    {
+        /*NO SE USA RELACIÓN ELOQUENT PORQUE HAY CONFLICTOS CON LA SOBREESCRITURA DEL CAMPO id_transaccion*/
+        $transacciones_arr = [];
+        $transacciones = null;
+        foreach ($this->items as $item){
+            if($item->antecedente){
+                $transacciones_arr[] = $item->antecedente;
+            }
+        }
+
+        if(count($transacciones_arr)>0){
+            $transacciones =  collect($transacciones_arr)->unique();
+        }
+
+        return $transacciones;
     }
 
     private function registrarComplemento($factura)
@@ -159,18 +217,18 @@ class Factura extends Transaccion
         }
     }
 
-    private function registrarFacturaRepositorio($factura, $data)
+    private function registrarCFDRepositorio($factura, $data)
     {
-        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["factura_repositorio"]["uuid"])->first();
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
             $factura_repositorio->id_transaccion = $factura->id_transaccion;
             $factura_repositorio->save();
 
         } else {
-            if($data["factura_repositorio"]){
-                $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
+            if($data){
+                $factura_repositorio = $factura->facturaRepositorio()->create($data);
                 if (!$factura_repositorio) {
-                    abort(400, "Hubo un error al registrar la factura en el repositorio");
+                    abort(400, "Hubo un error al registrar el CFD en el repositorio");
                 }
             }
         }
@@ -185,7 +243,10 @@ class Factura extends Transaccion
             $factura = $cr->facturas()->create($data["factura"]);
             $this->registrarComplemento($factura);
             $this->registrarRubro($factura, $data);
-            $this->registrarFacturaRepositorio($factura, $data);
+            $this->registrarCFDRepositorio($factura, $data["factura_repositorio"]);
+            if($data["nc_repositorio"]){
+                $this->registrarCFDRepositorio($factura, $data["nc_repositorio"]);
+            }
             DB::connection('cadeco')->commit();
             return $factura;
 
@@ -216,13 +277,15 @@ class Factura extends Transaccion
 
     public function desvinculaFacturaRepositorio()
     {
-        if ($this->facturaRepositorioLiberar) {
-            $this->facturaRepositorioLiberar->id_transaccion = null;
-            $this->facturaRepositorioLiberar->id_proyecto = null;
-            $this->facturaRepositorioLiberar->id_obra = null;
-            $this->facturaRepositorioLiberar->usuario_asocio = null;
-            $this->facturaRepositorioLiberar->fecha_hora_asociacion = null;
-            $this->facturaRepositorioLiberar->save();
+        if ($this->facturasRepositorioLiberar) {
+            foreach ($this->facturasRepositorioLiberar as $cfd_repositorio){
+                $cfd_repositorio->id_transaccion = null;
+                $cfd_repositorio->id_proyecto = null;
+                $cfd_repositorio->id_obra = null;
+                $cfd_repositorio->usuario_asocio = null;
+                $cfd_repositorio->fecha_hora_asociacion = null;
+                $cfd_repositorio->save();
+            }
         }
     }
 
@@ -323,6 +386,91 @@ class Factura extends Transaccion
         return $tipo;
     }
 
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #FACTURA
+        $factura = $this;
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        if($this->transacciones_revisadas){
+            foreach ($this->transacciones_revisadas as $transaccion_revisada) {
+                if ($transaccion_revisada) {
+                    if ($transaccion_revisada->tipo_transaccion == 52) {
+                        $estimacion = Estimacion::find($transaccion_revisada->id_transaccion);
+                        if($estimacion){
+                            foreach ($estimacion->relaciones as $relacion) {
+                                if ($relacion["tipo_numero"] != 65) {
+                                    $relaciones[$i] = $relacion;
+                                    $relaciones[$i]["consulta"] = 0;
+                                    $i++;
+                                }
+                            }
+                        }
+                    } else if ($transaccion_revisada->tipo_transaccion == 51) {
+                        $subcontrato = Subcontrato::find($transaccion_revisada->id_transaccion);
+                        if($subcontrato){
+                            foreach ($subcontrato->relaciones as $relacion) {
+                                if ($relacion["tipo_numero"] != 65) {
+                                    $relaciones[$i] = $relacion;
+                                    $relaciones[$i]["consulta"] = 0;
+                                    $i++;
+                                }
+                            }
+                        }
+                    } else if ($transaccion_revisada->tipo_transaccion == 33 && $transaccion_revisada->opciones == 1) {
+                        $entrada = EntradaMaterial::find($transaccion_revisada->id_transaccion);
+                        foreach ($entrada->relaciones as $relacion) {
+                            if ($relacion["tipo_numero"] != 65) {
+                                $relaciones[$i] = $relacion;
+                                $relaciones[$i]["consulta"] = 0;
+                                $i++;
+                            }
+                        }
+                    } else if ($transaccion_revisada->tipo_transaccion == 19 && $transaccion_revisada->opciones == 1) {
+                        $orden_compra = OrdenCompra::find($transaccion_revisada->id_transaccion);
+                        foreach ($orden_compra->relaciones as $relacion) {
+                            if ($relacion["tipo_numero"] != 65) {
+                                $relaciones[$i] = $relacion;
+                                $relaciones[$i]["consulta"] = 0;
+                                $i++;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        } else {
+            #POLIZA DE FACTURA
+            if ($factura->poliza) {
+                $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                $i++;
+            }
+            #PAGO DE FACTURA
+            foreach ($factura->ordenesPago as $orden_pago) {
+                if ($orden_pago->pago) {
+                    $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                    $i++;
+                    #POLIZA DE PAGO DE FACTURA
+                    if ($orden_pago->pago->poliza) {
+                        $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                        $i++;
+                    }
+                }
+            }
+        }
+
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
+    }
+
     private function validaSaldos($saldo_esperado, $saldo_esperado_cuenta, $pago)
     {
         $this->refresh();
@@ -413,5 +561,24 @@ class Factura extends Transaccion
     public function revertir()
     {
         DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
+    }
+
+    public function validarPrepoliza(){
+        if(!$this->polizas && $this->estado > 0 ){
+            DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+            return $this->find($this->id_transaccion);
+        }else if($this->polizas && $this->estado > 0){
+            $diferente = false;
+            foreach($this->polizas->pluck('estatus') as $estatus){
+                if($estatus != -3){
+                    $diferente = true;
+                }
+            }
+            if(!$diferente){
+                DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+                return $this->find($this->id_transaccion);
+            }
+        }
+        return $this;
     }
 }

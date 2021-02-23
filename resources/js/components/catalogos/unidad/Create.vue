@@ -25,7 +25,7 @@
                                                 type="text"
                                                 name="unidad"
                                                 data-vv-as="Unidad"
-                                                v-validate="{required: true}"
+                                                v-validate="{required: true, max:16}"
                                                 class="form-control"
                                                 id="unidad"
                                                 placeholder="######"

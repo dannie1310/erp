@@ -4,10 +4,10 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header" v-if="catalogos">CATÁLOGOS</li>
+            <li class="nav-header" v-if="catalogos">SISTEMA DE CONTABILIDAD</li>
             <li class="nav-item" v-if="catalogos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-money"></i>
+                    <i class="nav-icon fa fa-list"></i>
                     <p>
                         Cuentas Contables
                         <i class="right fa fa-angle-left"></i>
@@ -27,19 +27,19 @@
                         </router-link>
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_cuenta_concepto')">
-                        <router-link :to="{name: 'cuenta-concepto'}" class="nav-link" >
+                        <router-link :to="{name: 'cuenta-concepto'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-concepto'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas de Concepto</p>
                         </router-link>
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_cuenta_costo')">
-                        <router-link :to="{name: 'cuenta-costo'}" class="nav-link" >
+                        <router-link :to="{name: 'cuenta-costo'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-costo'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas de Costo</p>
                         </router-link>
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_cuenta_empresa')">
-                        <router-link :to="{name: 'cuenta-empresa'}" class="nav-link" >
+                        <router-link :to="{name: 'cuenta-empresa'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-empresa'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas de Empresa</p>
                         </router-link>
@@ -71,17 +71,22 @@
                 </ul>
             </li>
 
-            <li class="nav-header" v-if="modulos">MÓDULOS</li>
             <li class="nav-item" v-if="$root.can('consultar_cierre_periodo')">
-                <router-link :to="{name: 'cierre-periodo'}" class="nav-link">
-                    <i class="fa fa-file-text nav-icon"></i>
+                <router-link :to="{name: 'cierre-periodo'}" class="nav-link" :class="{active: this.$route.name == 'cierre-periodo'}">
+                    <i class="fa fa-ban nav-icon"></i>
                     <p>Cierres de periodo</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_prepolizas_generadas')">
-                <router-link :to="{name: 'poliza'}" class="nav-link">
+                <router-link :to="{name: 'poliza'}" class="nav-link" :class="{active: this.$route.name == 'poliza'}">
                     <i class="fa fa-file-text nav-icon"></i>
                     <p>Prepólizas Generadas</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+                <router-link :to="{name: 'poliza-cfdi-proyecto'}" class="nav-link" :class="{active: this.$route.name == 'poliza-cfdi-proyecto'}">
+                    <i class="fa fa-file-code nav-icon"></i>
+                    <p>Pólizas CFDI</p>
                 </router-link>
             </li>
         </ul>

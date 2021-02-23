@@ -77,38 +77,40 @@ class EntradaMaterialPartidaObserver
 
     public function deleting(EntradaMaterialPartida $partida)
     {
-        if ($partida->inventario) {
+        if ($partida->inventario)
+        {
             $partida->inventario->delete();
-        } else if ($partida->movimiento) {
+        }
+        else if ($partida->movimiento) {
             $partida->movimiento->delete();
         }
     }
 
     public function deleted(EntradaMaterialPartida $partida)
     {
-        ItemEntradaEliminada::query()->create(
+        ItemEntradaEliminada::create(
             [
-                'id_item' => $partida['id_item'],
-                'id_transaccion' => $partida['id_transaccion'],
-                'id_antecedente' => $partida['id_antecedente'],
-                'item_antecedente' => $partida['item_antecedente'],
-                'id_almacen' => $partida['id_almacen'],
-                'id_concepto' => $partida['id_concepto'],
-                'id_material' => $partida['id_material'],
-                'unidad' => $partida['unidad'],
-                'numero' => $partida['numero'],
-                'cantidad' => $partida['cantidad'],
-                'cantidad_material' => $partida['cantidad_material'],
-                'importe' => $partida['importe'],
-                'saldo' => $partida['saldo'],
-                'precio_unitario' => $partida['precio_unitario'],
-                'anticipo' => $partida['anticipo'],
-                'precio_material' => $partida['precio_material'],
-                'referencia' => $partida['referencia'],
-                'estado' => $partida['estado'],
-                'cantidad_original1' => $partida['cantidad_original1'],
-                'precio_original1' => $partida['precio_original1'],
-                'id_asignacion' => $partida['id_asignacion']
+                'id_item' => $partida->id_item,
+                'id_transaccion' => $partida->id_transaccion,
+                'id_antecedente' => $partida->id_antecedente,
+                'item_antecedente' => $partida->item_antecedente,
+                'id_almacen' => $partida->id_almacen,
+                'id_concepto' => $partida->id_concepto,
+                'id_material' => $partida->id_material,
+                'unidad' => $partida->unidad,
+                'numero' => $partida->numero,
+                'cantidad' => $partida->cantidad,
+                'cantidad_material' => $partida->cantidad_material,
+                'importe' => $partida->importe,
+                'saldo' => $partida->saldo,
+                'precio_unitario' => $partida->precio_unitario,
+                'anticipo' => $partida->anticipo,
+                'precio_material' => $partida->precio_material,
+                'referencia' => $partida->referencia,
+                'estado' => $partida->estado,
+                'cantidad_original1' => $partida->cantidad_original1,
+                'precio_original1' => $partida->precio_original1,
+                'id_asignacion' => $partida->id_asignacion
             ]
         );
         /*

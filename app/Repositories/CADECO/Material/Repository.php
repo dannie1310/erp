@@ -29,4 +29,9 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     {
        return $this->model->lista_materiales($data);
     }
+
+    public function buscarMateriales($dato){
+        $resp = $this->model->where('descripcion', 'LIKE', '%'.$dato.'%')->whereIn('tipo_material', [1,4])->insumos()->limit(30)->get();
+        return $resp;
+    }
 }

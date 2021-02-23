@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargandoo" v-if="$root.can('registrar_descuento_estimacion_subcontrato')" >
+        <button type="button" @click="init()" class="btn btn-primary float-right" :disabled="cargando" v-if="$root.can(['registrar_retencion_estimacion_subcontrato', 'registrar_liberacion_estimacion_subcontrato', 'eliminar_retencion_estimacion_subcontrato', 'eliminar_liberacion_estimacion_subcontrato'])" >
             Retenciones
         </button>
         <div class="row">
@@ -90,7 +90,7 @@ import LiberadasCreate from './Liberadas';
 export default {
     name: "retencion-index",
     components: {AplicadasCreate, LiberadasCreate},
-    props: ['id', 'cargandoo'],
+    props: ['id'],
     data() {
         return {
             cargando:false,
@@ -117,9 +117,8 @@ export default {
         getLiberaciones(){
             this.cargando = true;
             this.$store.commit('subcontratosEstimaciones/retencion-liberacion/SET_LIBERACIONES', null);
-            return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/listLiberaciones',{
-                id: this.id,
-                params:{}})
+            return this.$store.dispatch('subcontratosEstimaciones/retencion-liberacion/index',{
+                params:{ scope : ['porEstimacion:'+this.id]}})
                 .then(data => {
                     this.$store.commit('subcontratosEstimaciones/retencion-liberacion/SET_LIBERACIONES', data.data);
                 })
@@ -130,9 +129,8 @@ export default {
         getRetenciones(){
             this.cargando = true;
             this.$store.commit('subcontratosEstimaciones/retencion/SET_RETENCIONES', null);
-            return this.$store.dispatch('subcontratosEstimaciones/retencion/listRetenciones',{
-                id: this.id,
-                params:{}})
+            return this.$store.dispatch('subcontratosEstimaciones/retencion/index',{
+                params:{ scope : ['porEstimacion:'+this.id]}})
                 .then(data => {
                     this.$store.commit('subcontratosEstimaciones/retencion/SET_RETENCIONES', data.data);
                 })

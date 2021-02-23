@@ -118,9 +118,29 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_CONTROL_INTERNO')),
         ],
+        'padron_contratista' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_PADRON_CONTRATISTAS')),
+        ],
         'xml_sat' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_SAT')),
-        ]
+        ],
+        'xml_errores' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_XML_ERRORES')),
+        ],
+        'archivos_transacciones' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_ARCHIVOS_TRANSACCIONES')),
+        ],
+        'polizas_pdf' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_CONTABILIDAD_GENERAL_POLIZAS')),
+        ],
+        'polizas_zip' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_CONTABILIDAD_GENERAL_POLIZAS_ZIP')),
+        ],
     ],
 ];

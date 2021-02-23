@@ -13,7 +13,10 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\UsuarioNotificacion;
+use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
+use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
 use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
@@ -126,6 +129,43 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->hasOne(UsuarioNotificacion::class, 'id_usuario', 'idusuario');
     }
 
+    public function suscripciones(){
+        return $this->hasMany(Suscripcion::class, "id_usuario", "idusuario");
+    }
+
+    public function solicitudesEdicion(){
+        return $this->hasMany(SolicitudEdicion::class, "id_usuario_registro", "idusuario");
+    }
+
+    public function scopeSolicitudEdicion($query, $solicitudes_edicion){
+        $arreglo_usuarios = [];
+        foreach($solicitudes_edicion as $solicitud)
+        {
+            $arreglo_usuarios[] = $solicitud->id_usuario_registro;
+        }
+        $arreglo_usuarios = array_unique($arreglo_usuarios);
+        return $query->whereIn("idusuario",$arreglo_usuarios);
+    }
+
+    public function scopeEmpresaPadron($query, $empresas_padron){
+        $arreglo_usuarios = [];
+        foreach($empresas_padron as $empresa)
+        {
+            $arreglo_usuarios[] = $empresa->usuario_registro;
+        }
+        $arreglo_usuarios = array_unique($arreglo_usuarios);
+        return $query->whereIn("idusuario",$arreglo_usuarios);
+    }
+
+    public function scopeSuscripcion($query, $suscripciones, $id_usuario=null){
+        $arreglo_usuarios = [[$id_usuario]];
+        foreach($suscripciones as $suscripcion)
+        {
+            $arreglo_usuarios[] = $suscripcion->id_usuario;
+        }
+        return $query->whereIn("idusuario",$arreglo_usuarios);
+    }
+
     public function scopeNotificacionCI($query){
         $usuarios = UsuarioNotificacion::all();
         $usuarios->transform(function($item, $key){
@@ -142,11 +182,11 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
      *
      * @return bool
      */
-    public function can($permiso, $requireAll = false)
+    public function can($permiso, $requireAll = false, $global = false)
     {
         if (is_array($permiso)) {
             foreach ($permiso as $permName) {
-                $hasPerm = $this->can($permName);
+                $hasPerm = $this->can($permName, $requireAll, $global);
                 if ($hasPerm && !$requireAll) {
                     return true;
                 } elseif (!$hasPerm && $requireAll) {
@@ -158,14 +198,35 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
             // Return the value of $requireAll;
             return $requireAll;
         } else {
-            foreach ($this->roles as $rol) {
-                // Validate against the Permission table
-                foreach ($rol->permisos as $perm) {
-                    if (str_is($permiso, $perm->name)) {
-                        return true;
+            if($global){
+                foreach ($this->rolesSinContextoAsignado as $rol) {
+                    // Validate against the Permission table
+                    foreach ($rol->permisos as $perm) {
+                        if (str_is($permiso, $perm->name)) {
+                            return true;
+                        }
+                    }
+                }
+                foreach ($this->rolesSinContexto as $rol) {
+                    // Validate against the Permission table
+                    foreach ($rol->permisos as $perm) {
+                        if (str_is($permiso, $perm->name)) {
+                            return true;
+                        }
                     }
                 }
             }
+            else {
+                foreach ($this->roles as $rol) {
+                    // Validate against the Permission table
+                    foreach ($rol->permisos as $perm) {
+                        if (str_is($permiso, $perm->name)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
         }
         return false;
     }
@@ -191,6 +252,20 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
                 ->where('id_obra', $obra->getKey())
                 ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
         }
+    }
+
+    public function rolesSinContexto()
+    {
+        //return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
+        return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user', 'user_id', 'role_id');
+
+    }
+
+    public function rolesSinContextoAsignado()
+    {
+        return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
+        //return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user', 'user_id', 'role_id');
+
     }
 
     public function rolesGlobales()
@@ -229,6 +304,11 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->belongsToMany( CtgAreaSolicitante::class, 'Compras.areas_solicitantes_usuario', 'id_usuario', 'id_area_solicitante' );
     }
 
+    public function aplicaciones()
+    {
+        return $this->hasManyThrough(Sistema::class, SistemaPermiso::class,"permission_id","id", "id", "sistema_id");
+    }
+
     public function permisos()
     {
         $permisos = [];
@@ -255,6 +335,47 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $permisos;
     }
 
+    public function permisosAplicaciones()
+    {
+        $permisos = [];
+        foreach ($this->rolesSinContexto as $rol) {
+            foreach ($rol->permisos()->aplicacion()->get() as $perm) {
+                array_push($permisos, $perm->name);
+            }
+        }
+
+        foreach ($this->rolesSinContextoAsignado as $rol) {
+            foreach ($rol->permisos()->aplicacion()->get() as $perm) {
+                array_push($permisos, $perm->name);
+            }
+        }
+        return array_unique($permisos);
+    }
+
+    public function reportesGenerales()
+    {
+        $permisos_reportes = [];
+        foreach ($this->rolesGenerales as $rol) {
+            foreach ($rol->permisos()->reporte()->get() as $perm) {
+                array_push($permisos_reportes, $perm->name);
+            }
+        }
+        return $permisos_reportes;
+    }
+
+    public function findPermisoGeneral($permiso)
+    {
+        foreach ($this->rolesGenerales as $rol) {
+            // Validate against the Permission table
+            foreach ($rol->permisos as $perm) {
+                if($perm->name == $permiso){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public function rolesGenerales()
     {
         return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
@@ -273,5 +394,16 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function routeNotificationForMail($notification)
     {
         return $this->correo;
+    }
+
+    /**
+     * Cambia la clave del usuario igh
+     * @param $clave_nueva
+     */
+    public function cambiarClave($clave_nueva)
+    {
+        $this->update([
+            'clave' => $clave_nueva
+        ]);
     }
 }

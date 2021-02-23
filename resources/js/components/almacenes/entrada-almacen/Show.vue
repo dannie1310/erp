@@ -1,6 +1,6 @@
 <template>
     <span>
-         <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Show">
+         <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
               <i class="fa fa-eye"></i>
          </button>
         <div class="modal fade" ref="modal" role="dialog">

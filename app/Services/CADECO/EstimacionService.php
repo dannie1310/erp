@@ -123,7 +123,7 @@ class EstimacionService
     public function registrarRetencionIva($data, $id)
     {
         $estimacion = $this->repository->show($id);
-        return $estimacion->registrarIVARetenido($data['IVARetenido']);
+        return $estimacion->registrarIVARetenido($data);
     }
 
     public function ordenado($id)

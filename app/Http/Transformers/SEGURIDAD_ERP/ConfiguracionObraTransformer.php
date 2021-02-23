@@ -43,12 +43,15 @@ class ConfiguracionObraTransformer extends TransformerAbstract
             'id_tipo_proyecto' => $model->id_tipo_proyecto,
             'id_responsable' => $model->id_responsable,
             'id_administrador' => $model->id_administrador,
+            'administrador' => $model->administrador_nombre,
+            'responsable' => $model->responsable_nombre,
             'nombre' => $model->nombre,
             'base_datos' => $model->proyecto->base_datos,
             'id_proyecto' => $model->id_proyecto,
             'id_obra' => $model->id_obra,
             'consulta' => $model->consulta,
             'tipo_obra' => $model->tipo_obra,
+            'configuracion_area_solicitante' => $model->configuracion_area_solicitante
         ];
     }
 

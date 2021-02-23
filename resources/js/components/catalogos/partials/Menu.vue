@@ -4,22 +4,23 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">CATÁLOGOS</li>
-
-            <li class="nav-item" v-if="$root.can('consultar_unidad')">
-                <router-link :to="{name: 'unidad'}" class="nav-link">
-                            <i class="fas fa-ruler-combined nav-icon"></i>
-                            <p>Catálogo de Unidades</p>
-                        </router-link>
+            <li class="nav-header">SISTEMA DE CATÁLOGOS</li>
+            <li class="nav-item" v-if="catalogo_almacenes">
+                <router-link :to="{name: 'almacen'}" class="nav-link" :class="{active: this.$route.name == 'almacen'}">
+                    <i class="fa fa-boxes nav-icon"></i>
+                    <p>Catálogo de Almacenes</p>
+                </router-link>
             </li>
-            
+            <li class="nav-item" v-if="$root.can('consultar_unidad')">
+                <router-link :to="{name: 'unidad'}" class="nav-link" :class="{active: this.$route.name == 'unidad'}">
+                    <i class="fas fa-ruler-combined nav-icon"></i>
+                    <p>Catálogo de Unidades</p>
+                </router-link>
+            </li>
             <li class="nav-item" v-if="catalogo_maquinaria">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-tractor"></i>
-                    <p>
-                        Maquinaria
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
+                    <p>Maquinaria<i class="right fa fa-angle-left"></i></p>
                 </a>
 
                 <ul class="nav nav-treeview" v-if="$root.can('consultar_familia_maquinaria')">
@@ -42,10 +43,7 @@
             <li class="nav-item" v-if="catalogo_servicios">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-hand-paper"></i>
-                    <p>
-                        Mano de Obra y Servicios
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
+                    <p>Mano de Obra y Servicios<i class="right fa fa-angle-left"></i></p>
                 </a>
 
                 <ul class="nav nav-treeview" v-if="$root.can('consultar_familia_servicio')">
@@ -139,6 +137,12 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item"  v-if="$root.can('consultar_unificacion_proveedores')">
+                <router-link :to="{name: 'unificacion-proveedores'}" class="nav-link" :class="{active: this.$route.name == 'unificacion-proveedores'}">
+                    <i class="fas fa-crosshairs nav-icon"></i>
+                    <p>Unificación de Empresas</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
@@ -176,6 +180,16 @@
                     'consultar_insumo_servicio',
                     'consultar_familia_mano_obra',
                     'consultar_insumo_mano_obra'
+                ]);
+            },
+            catalogo_almacenes(){
+                return this.$root.can([
+                    'consultar_almacen_material',
+                    'consultar_almacen_maquinaria',
+                    'consultar_almacen_maquina_controladora_insumo',
+                    'consultar_almacen_mano_obra',
+                    'consultar_almacen_servicio',
+                    'consultar_almacen_herramienta'
                 ]);
             },
         },

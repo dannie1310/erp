@@ -74,6 +74,11 @@ class Inventario extends Model
         return $this->hasMany(ItemAjuste::class, 'item_antecedente', 'id_lote');
     }
 
+    public function itemTransferencia()
+    {
+        return $this->belongsTo(ItemTransferenciaAlmacen::class, 'id_item', 'id_item');
+    }
+
     public function getCantidadFormatAttribute()
     {
         return number_format($this->cantidad, 3, '.', '');
@@ -82,6 +87,11 @@ class Inventario extends Model
     public function getSaldoFormatAttribute()
     {
         return number_format($this->saldo, 3, '.', '');
+    }
+
+    public function getTransferenciaAttribute()
+    {
+        return $this->itemTransferencia->transferencia;
     }
 
     public function disminuyeSaldo($cantidad)
@@ -232,5 +242,14 @@ class Inventario extends Model
         catch (\Exception $e){
             abort(500, "Error en aplicación de monto por ajuste: ".$e->getMessage());
         }
+    }
+
+
+    private function cambiarMontoPagado($monto_pagado)
+    {
+        $this->update([
+            'monto_pagado' => $monto_pagado
+        ]);
+        $this->distribuirPagoInventarios();
     }
 }

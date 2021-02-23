@@ -18,7 +18,23 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\IncidenciaCI' => [
             'App\Listeners\SendIncidenciaCINotification',
         ],
-        Registered::class => [
+
+        'App\Events\CambioEFOS' => [
+            'App\Listeners\SendCambiosEFOSNotification',
+        ],
+
+        'App\Events\FinalizaProcesamientoLoteBusquedas' => [
+            'App\Listeners\SendFinalizaProcesamientoLoteBusquedaNotification',
+            ],
+        'App\Events\FinalizaCargaCFD' => [
+            'App\Listeners\SendFinalizaCargaCFDNotification',
+        ],
+
+        'App\Events\FinalizaProcesamientoAsociacion' => [
+            'App\Listeners\SendFinalizaAsociacionPolizaCFDINotification',
+        ],
+
+            Registered::class => [
             SendEmailVerificationNotification::class,
         ],
     ];

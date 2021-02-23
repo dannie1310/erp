@@ -268,6 +268,11 @@ class Venta extends Transaccion
     }
 
     private function guardarPdf($pdf_file){
+        if (config('filesystems.disks.pdf_factura_venta.root') == storage_path())
+        {
+            abort(403,'No existe el directorio destino: STORAGE_PDF_FACTURA_VENTA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
+
         if($pdf_file == null) {
             abort(403, 'Archivo de factura inválido');
         }

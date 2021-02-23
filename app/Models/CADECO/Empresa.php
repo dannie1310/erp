@@ -8,14 +8,16 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\IGH\Usuario;
+use App\Events\IncidenciaCI;
 use App\Models\CADECO\Transaccion;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\FinanzasCBE\Solicitud;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
-use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
-use App\Models\IGH\Usuario;
-use App\Events\IncidenciaCI;
 
 class Empresa extends Model
 {
@@ -63,6 +65,11 @@ class Empresa extends Model
         return $this->hasMany(Estimacion::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursales()
+    {
+        return $this->hasMany(Sucursal::class, 'id_empresa');
+    }
+
     public function facturas(){
         return $this->belongsTo(Documento::class, 'id_empresa', 'IDDestinatario');
     }
@@ -70,6 +77,11 @@ class Empresa extends Model
     public function cuentasBancarias()
     {
         return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function solicitudCBE()
+    {
+        return $this->hasMany(Solicitud::class, 'id_empresa', 'id_empresa');
     }
 
     public function efo()
@@ -146,6 +158,11 @@ class Empresa extends Model
         return $query->whereIn('tipo_empresa',[1,2,3]);
     }
 
+    public function scopeTipoEmpresa($query, $tipo)
+    {
+        return $query->whereIn('tipo_empresa', explode(",", $tipo));
+    }
+
     public function scopeDestajistas($query)
     {
         return $query->where('tipo_empresa',4);
@@ -192,6 +209,9 @@ class Empresa extends Model
         if($this->tipo_empresa == 4){
             return 'Destajistas';
         }
+        if($this->tipo_empresa == 8 && $this->tipo_cliente == 0){
+            return 'Deudor y/o Acreedor';
+        }
         if($this->tipo_empresa == 16 && $this->tipo_cliente == 1){
             return 'Cliente Comprador';
         }
@@ -204,6 +224,21 @@ class Empresa extends Model
         if($this->tipo_empresa == 32){
             return 'Responsables Fondos Fijos';
         }
+    }
+
+    public function getPersonalidadDefinicionAttribute()
+    {
+        switch ($this->personalidad)
+        {
+            case(1):
+                return 'Persona Física';
+                break;
+            case(2):
+                return 'Persona Moral';
+                break;
+        }
+
+        return '---------';
     }
 
     public function scopeBeneficiarioCuentaBancaria($query)
@@ -269,5 +304,32 @@ class Empresa extends Model
     {
         $date = date_create($this->FechaHoraRegistro);
         return date_format($date,"d/m/Y");
+    }
+
+    public function getTransaccionesAfectacion(){
+        $transacciones = $this->transacciones()->select('tipo_transaccion', DB::raw('count(1) as total'))->groupBy('tipo_transaccion')->get();
+        $data = [];
+        $data['data'] = [];
+        $total = 0;
+        foreach($transacciones as $transaccion){
+            $total += $transaccion->total;
+            $data['data'][] = [
+                'tipo_transaccion' => $transaccion->tipo_transaccion,
+                'tipo' => $transaccion->tipo,
+                'cantidad' => $transaccion->total,
+            ];
+        }
+        $data['total_afectacion'] = $total;
+        return $data;
+    }
+
+    public function getSolicitudesCBEAfectacion(){
+        $solicitudes = $this->solicitudCBE;
+        return $solicitudes->count();
+    }
+
+    public function getCuentaBancariaEmresaAfectacion(){
+        $cuentas = $this->cuentasBancarias;
+        return $cuentas->count();
     }
 }

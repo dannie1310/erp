@@ -9,6 +9,9 @@
 namespace App\Models\SEGURIDAD_ERP;
 
 use App\Facades\Context;
+use App\Models\CADECO\Obra;
+use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Compras\Configuracion;
 use Illuminate\Database\Eloquent\Model;
 
 class ConfiguracionObra extends Model
@@ -23,7 +26,9 @@ class ConfiguracionObra extends Model
         'id_responsable',
         'id_tipo_proyecto',
         'logotipo_original',
-        'logotipo_reportes'
+        'logotipo_reportes',
+        'tipo_obra',
+        'consulta'
     ];
 
     protected $hidden = [
@@ -36,7 +41,10 @@ class ConfiguracionObra extends Model
 
         // Global Scope para proyecto
         self::addGlobalScope(function ($query) {
-            return $query->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+            $proyecto = Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first();
+            if($proyecto){
+                return $query->where('id_proyecto', '=', $proyecto->getkey());
+            }
         });
 
         // Global Scope para obra
@@ -55,8 +63,50 @@ class ConfiguracionObra extends Model
         return $this->belongsTo(TipoProyecto::class, 'id_tipo_proyecto');
     }
 
+    public function administrador()
+    {
+        return $this->belongsTo(Usuario::class, 'id_administrador', 'idusuario');
+    }
+
+    public function responsable()
+    {
+        return $this->belongsTo(Usuario::class, 'id_responsable', 'idusuario');
+    }
+
+    public function configuracionCompra()
+    {
+        return $this->belongsTo(Configuracion::class, 'id_proyecto', 'id_proyecto')->where('id_obra', '=', $this->id_obra);
+    }
+
     public function scopeObraTerminada($query)
     {
         return $query->where('tipo_obra', '!=', 2);
+    }
+
+    public function getAdministradorNombreAttribute()
+    {
+        if($this->administrador)
+        {
+            return $this->administrador->nombre_completo;
+        }
+        return null;
+    }
+
+    public function getResponsableNombreAttribute()
+    {
+        if($this->responsable)
+        {
+            return $this->responsable->nombre_completo;
+        }
+        return null;
+    }
+
+    public function getConfiguracionAreaSolicitanteAttribute()
+    {
+        if($this->configuracionCompra)
+        {
+            return $this->configuracionCompra->con_area_solicitante;
+        }
+        return null;
     }
 }

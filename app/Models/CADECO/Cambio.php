@@ -15,15 +15,19 @@ use Illuminate\Database\Eloquent\Model;
 class Cambio extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'cambios';
+    protected $table = 'dbo.cambios';
     protected $primaryKey = 'id_moneda';
 
     public function moneda(){
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
+    public function getCambioFormatoAttribute()
+    {
+        return number_format($this->cambio, 4, '.', ',');
+    }
+
     public function getCambioFormatAttribute(){
         return '$ ' . number_format($this->cambio, 4);
     }
-
 }

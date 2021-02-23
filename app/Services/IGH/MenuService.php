@@ -3,6 +3,7 @@
 namespace App\Services\IGH;
 
 use App\Models\IGH\Menu;
+use App\Models\SEGURIDAD_ERP\Sistema;
 use App\Repositories\Repository;
 
 class MenuService
@@ -23,6 +24,9 @@ class MenuService
 
     public function index($data)
     {
-        return $this->repository->all($data);
+        $sistema = new Sistema();
+        $aplicaciones = $sistema->aplicaciones()->get();
+        $menu = $this->repository->all($data);
+        return $aplicaciones->merge($menu);
     }
 }

@@ -57,7 +57,7 @@
             }
         },
         mounted() {
-            this.query.include = 'subcontrato.empresa';
+            this.query.include = ['subcontrato.empresa','relaciones'];
             this.query.sort = 'numero_folio';
             this.query.order = 'DESC';
 
@@ -130,9 +130,9 @@
                         observaciones: estimacion.observaciones,
                         id_empresa: estimacion.subcontrato.empresa.razon_social,
                         estado: this.getEstado(estimacion.estado),
-                        total: estimacion.monto_format,
+                        total: estimacion.monto_pagar_format,
                         impuesto:estimacion.impuesto_format,
-                        subtotal: estimacion.subtotal_format,
+                        subtotal: estimacion.subtotal_orden_pago,
                         buttons: $.extend({}, {
                             aprobar: (this.$root.can('aprobar_estimacion_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
                             desaprobar: (this.$root.can('revertir_aprobacion_estimacion_subcontrato') && estimacion.estado == 1 ) ? true : undefined ,
@@ -140,7 +140,8 @@
                             estimacion: estimacion,
                             estado: estimacion.estado,
                             delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : false,
-                            edit: self.$root.can('editar_estimacion_subcontrato') ? true : false
+                            edit: self.$root.can('editar_estimacion_subcontrato') ? true : false,
+                            transaccion: {id:estimacion.id, tipo:52},
                         })
 
                     }));

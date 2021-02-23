@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\DB;
 class SalidaAlmacen extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
+    public const TIPO = 34;
+    public const OPCION = 1;
+    public const NOMBRE = "Salida de Almacén";
+    public const ICONO = "fa fa-sign-out";
 
     protected $fillable = [
         'id_concepto',
@@ -129,6 +133,22 @@ class SalidaAlmacen extends Transaccion
         {
             return null;
         }
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #SALIDA
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
     }
 
     public function ordenar($clave)
@@ -267,6 +287,25 @@ class SalidaAlmacen extends Transaccion
         }
     }
 
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["opcion"] = SalidaAlmacen::OPCION;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = SalidaAlmacen::NOMBRE;
+        $datos["tipo_numero"] = SalidaAlmacen::TIPO;
+        $datos["icono"] = SalidaAlmacen::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
     public function eliminar($motivo)
     {
         try {
@@ -302,7 +341,7 @@ class SalidaAlmacen extends Transaccion
             }
             if ($this->opciones == 65537) {
 
-                $inventarios = Inventario::where('id_item', $item['id_item'])->get()->toArray();
+                $inventarios = Inventario::where('id_item', $item['id_item'])->get();
 
                 if ($inventarios == []) {
                     $mensaje = $mensaje . "-No existe inventario\n";
@@ -342,6 +381,18 @@ class SalidaAlmacen extends Transaccion
                             }
                         }
                     }
+                    if(count($inventario->inventarios_hijos))
+                    {
+                        foreach ($inventario->inventarios_hijos as $inv_hijo)
+                        {
+                            $item_inv_hijo = SalidaAlmacenPartida::where('id_item', '=', $inv_hijo->id_item)->first();
+                            if ($item_inv_hijo->salida->tipo_transaccion == 34 && $item_inv_hijo->salida->opciones == 65537)
+                            {
+                                $mensaje .='-Salida (Transferencia): #'.$item_inv_hijo->salida->numero_folio.".\n";
+                            }
+                        }
+                    }
+
                     if ($inventario['cantidad'] != $inventario['saldo']) {
                         $mensaje = $mensaje . "-La cantidad es diferente al saldo del inventario\n";
                     }
@@ -349,11 +400,8 @@ class SalidaAlmacen extends Transaccion
                     if ($inventario_antecedente[0]['saldo'] + $inventario['cantidad'] > $inventario_antecedente[0]['cantidad']) {
                         $mensaje = $mensaje . "-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }
-
                 }
-
             }
-
             if ($this->opciones == 1) {
                 $movimientos = Movimiento::where('id_item', $item['id_item'])->get()->toArray();
                 if ($movimientos == []) {
@@ -361,8 +409,9 @@ class SalidaAlmacen extends Transaccion
                 }
                 foreach ($movimientos as $movimiento) {
                     $inv_antecedente = Inventario::where('id_lote', $movimiento['lote_antecedente'])->get()->toArray();
-                    if ($inv_antecedente[0]['saldo'] + $movimiento['cantidad'] > $inv_antecedente[0]['cantidad']) {
-                        $mensaje = $mensaje . "-El saldo es mayor a la cantidad del inventario antecedente\n";
+                    if (abs(($inv_antecedente[0]['saldo'] + $movimiento['cantidad']) - $inv_antecedente[0]['cantidad']) > 0.01)
+                    {
+                       $mensaje = $mensaje . "-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }
                 }
             }
@@ -415,9 +464,13 @@ class SalidaAlmacen extends Transaccion
      */
     public function eliminar_partidas($partidas)
     {
-        foreach ($partidas as $item) {
-            ItemContratista::where('id_item','=',$item['id_item'])->delete();
-            SalidaAlmacenPartida::find($item['id_item'])->delete();
+        foreach ($partidas as $item)
+        {
+            if($item->contratista)
+            {
+                $item->contratista->delete();
+            }
+            $item->delete();
         }
     }
 

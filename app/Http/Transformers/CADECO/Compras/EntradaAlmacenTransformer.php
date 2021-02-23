@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Models\CADECO\EntradaMaterial;
 use League\Fractal\TransformerAbstract;
@@ -25,7 +26,8 @@ class EntradaAlmacenTransformer extends TransformerAbstract
         'empresa',
         'partidas',
         'orden_compra',
-        'transacciones_relacionadas'
+        'transacciones_relacionadas',
+        'relaciones'
     ];
 
     /**
@@ -48,7 +50,7 @@ class EntradaAlmacenTransformer extends TransformerAbstract
             'folio' => $model->numero_folio,
             'numero_folio_format' => $model->numero_folio_format,
             'referencia' => $model->referencia,
-            'empresa_razon_social' => $model->empresa->razon_social,
+            'empresa_razon_social' => $model->empresa ? $model->empresa->razon_social : '',
             'orden_compra_numero_folio_format' => $model->ordenCompra->numero_folio_format,
             'solicitud_numero_folio_format' => $model->ordenCompra->solicitud->numero_folio_format,
         ];
@@ -95,6 +97,14 @@ class EntradaAlmacenTransformer extends TransformerAbstract
     {
         if ($partida = $model->transacciones_relacionadas) {
             return $this->item($partida, new EntradaAlmacenTransaccionesRelacionadasTransformer());
+        }
+        return null;
+    }
+    public function includeRelaciones(EntradaMaterial $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }

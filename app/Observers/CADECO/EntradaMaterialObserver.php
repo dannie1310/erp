@@ -35,8 +35,7 @@ class EntradaMaterialObserver extends TransaccionObserver
     public function deleting(EntradaMaterial $entradaMaterial)
     {
         $entradaMaterial->desvincularPolizas();
-        $items = $entradaMaterial->partidas()->get()->toArray();
-        $entradaMaterial->eliminar_partidas($items);
+        $entradaMaterial->eliminar_partidas($entradaMaterial->partidas);
         EntradaEliminada::create(
             [
                 'id_transaccion' => $entradaMaterial->id_transaccion,

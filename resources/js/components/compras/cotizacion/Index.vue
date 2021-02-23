@@ -1,19 +1,34 @@
 <template>
-   <!-- <div class="row">
+    <div class="row">
+        <div class="col-12">
+            <button @click="create" v-if="$root.can('registrar_cotizacion_compra')" class="btn btn-app btn-info pull-right">
+                <i class="fa fa-plus"></i> Registrar
+            </button>
+        </div>
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.card-header -->
-              <!--  <div class="card-body">
+                <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
                     </div>
                 </div>
                 <!-- /.card-body -->
-            <!--</div>
+            </div>
             <!-- /.card -->
-    <!--</div>
-    <!-- /.col -->
-    <!--</div> -->
+        </div>
+        <!-- /.col -->
+        <router-view ></router-view>
+    </div>
 </template>
 
 <script>
@@ -23,109 +38,138 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    {title: '#', field: 'index', sortable: false},
-                    {title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true},
-                    {title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, sortable: true},
-                    {title: 'Observaciones', field: 'observaciones', sortable: true},
-                    {title: 'Registró', field: 'id_usuario', sortable: true},
-                    {title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
-
-
+                    { title: '#', field: 'index', sortable: false },
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Folio SAO Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtonsConsulta').default},
+                    { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Proveedor', field: 'empresa', sortable: false },
+                    { title: 'Observaciones', field: 'observaciones', sortable: false },
+                    { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
+                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'id_transaccion', order: 'desc'},
+                query: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa', 'relaciones']},
                 search: '',
                 cargando: false
             }
         },
         mounted() {
+
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
                 })
         },
-
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/solicitud-compra/paginate', {
+                return this.$store.dispatch('compras/cotizacion/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
-                        this.$store.commit('compras/solicitud-compra/SET_META', data.meta);
+                        this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
+                        this.$store.commit('compras/cotizacion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
+
                     })
             },
-            create_solicitud() {
-                this.$router.push({name: 'solicitud-compra-create'});
-            },
 
+            getEstado(estado) {
+
+                let val = parseInt(estado);
+                switch (val) {
+                    case 0:
+                        return {
+                            color: '#ff0000',
+                            descripcion: 'Precios Pendientes'
+                        }
+                    case 1:
+                        return {
+                            color: '#f39c12',
+                            descripcion: 'Registrada'
+                        }
+                    case 2:
+                        return {
+                            color: '#4f9b34',
+                            descripcion: 'En Asignación'
+                        }
+                }
+            },
+            create() {
+                this.$router.push({name: 'cotizacion-create'});
+            },
         },
         computed: {
-            solicitudes() {
-                return this.$store.getters['compras/solicitud-compra/solicitudes'];
+            cotizaciones(){
+                return this.$store.getters['compras/cotizacion/cotizaciones'];
             },
-
-            meta() {
-                return this.$store.getters['compras/solicitud-compra/meta'];
+            meta(){
+                return this.$store.getters['compras/cotizacion/meta'];
             },
-
             tbodyStyle() {
-                return this.cargando ? {'-webkit-filter': 'blur(2px)'} : {}
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            solicitudes: {
-                handler(solicitudes) {
+            cotizaciones: {
+                handler(cotizaciones) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = solicitudes.map((solicitud, i) => ({
+                    self.$data.data = cotizaciones.map((cotizacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: `# ${solicitud.numero_folio}`,
-                        fecha: new Date(solicitud.fecha).toDate(),
-                        observaciones: solicitud.observaciones,
-                        id_usuario: solicitud.usuario ? solicitud.usuario.nombre : '',
+                        numero_folio: cotizacion.folio_format,
+                        fecha: cotizacion.fecha_format,
+                        empresa: (cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----',
+                        observaciones: cotizacion.observaciones,
+                        importe: cotizacion.importe,
+                        estado: this.getEstado(cotizacion.estado),
+                        solicitud: $.extend({}, {
+                            show: (cotizacion.solicitud) ? true : false,
+                            id: (cotizacion.solicitud) ? cotizacion.solicitud.id : null,
+                            numero_folio: (cotizacion.solicitud) ? cotizacion.solicitud.numero_folio_format : null
+                        }),
                         buttons: $.extend({}, {
                             show: true,
-                            edit: true,
-                            id: solicitud.id
+                            id: cotizacion.id,
+                            delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
+                            edit: (cotizacion.asignada) ? false : true,
+                            transaccion: {id:cotizacion.id, tipo:18},
                         })
                     }));
                 },
                 deep: true
             },
-
             meta: {
-                handler(meta) {
+                handler (meta) {
+
                     let total = meta.pagination.total
                     this.$data.total = total
                 },
                 deep: true
             },
             query: {
-                handler() {
+                handler (query) {
                     this.paginate()
                 },
                 deep: true
             },
-
             search(val) {
                 if (this.timer) {
                     clearTimeout(this.timer);
                     this.timer = null;
                 }
                 this.timer = setTimeout(() => {
+
                     this.query.search = val;
                     this.query.offset = 0;
                     this.paginate();
                 }, 500);
             },
-
             cargando(val) {
                 $('tbody').css({
                     '-webkit-filter': val ? 'blur(2px)' : '',
@@ -136,6 +180,16 @@
     }
 </script>
 
-<style scoped>
 
+<style>
+    .folio
+    {
+        text-align: center;
+    }
+    .th_money
+    {
+        width: 150px;
+        max-width: 150px;
+        min-width: 100px;
+    }
 </style>

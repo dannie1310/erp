@@ -131,6 +131,35 @@
                                                     </div>
                                              </div>
                                         </div>
+                                        <div class="col-md-12" v-show="$root.can('configurar_es_desarrollo_empresa_ctpq', true)">
+                                            <div class="form-group row error-content">
+                                                    <label for="es_nacional" class="col-sm-6 col-form-label">Es Desarrollo: </label>
+                                                    <div class="col-sm-6">
+                                                        <div class="btn-group btn-group-toggle">
+                                                            <label class="btn btn-outline-secondary" :class="Desarrollo === Number(1) ? 'active': ''"  :key="1">
+                                                                <input type="radio" :disabled="!$root.can('configurar_es_desarrollo_empresa_ctpq', true)"
+                                                                    class="btn-group-toggle"
+                                                                    name="Desarrollo"
+                                                                    :id="'Desarrollo' + 1"
+                                                                    :value="1"
+                                                                    autocomplete="on"
+                                                                    v-model.number="Desarrollo">
+                                                                Si
+                                                            </label>
+                                                            <label class="btn btn-outline-secondary" :class="Desarrollo === Number(0) ? 'active': ''"  :key="0">
+                                                                <input type="radio" :disabled="!$root.can('configurar_es_desarrollo_empresa_ctpq', true)"
+                                                                    class="btn-group-toggle"
+                                                                    name="Desarrollo"
+                                                                    :id="'Desarrollo' + 0"
+                                                                    :value="0"
+                                                                    autocomplete="on"
+                                                                    v-model.number="Desarrollo">
+                                                                No
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                             </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -157,6 +186,7 @@ export default {
             Editable:'',
             Historica: '',
             Consolidadora: '',
+            Desarrollo:'',
             cargando:false,
         }
     },
@@ -180,10 +210,12 @@ export default {
                         Visible:parseInt(this.Visible),
                         Editable:parseInt(this.Editable),
                         Historica:parseInt(this.Historica),
-                        Consolidadora:parseInt(this.Consolidadora)
+                        Consolidadora:parseInt(this.Consolidadora),
+                        Desarrollo: parseInt(this.Desarrollo)
                     }
                 }).then(data => {
-                    this.$store.commit('seguridad/lista-empresas/UPDATE_EMPRESA', data);
+                                        
+                    this.$store.commit('contabilidadGeneral/empresa/UPDATE_EMPRESA', data);
                     $(this.$refs.modal).modal('hide');
                 })
             }
@@ -195,6 +227,7 @@ export default {
             this.Visible = value.visible;
             this.Historica = value.historica;
             this.Consolidadora = value.consolidadora;
+            this.Desarrollo = value.desarrollo;
         }
     }
 

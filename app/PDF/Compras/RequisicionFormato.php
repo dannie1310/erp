@@ -248,7 +248,7 @@ class RequisicionFormato extends Rotation
             if(!empty($p->concepto))
                 {
                     $nivel=$p->concepto['nivel'];
-             
+
                     /*Concepto*/
                     $this->SetTextColors(['0,0,0']);
                     $this->SetRounds(['4','','','','','','','','3']);
@@ -292,8 +292,8 @@ class RequisicionFormato extends Rotation
         if (!App::environment('production')) {
             $this->SetFont('Arial','B',80);
             $this->SetTextColor(155,155,155);
-            $this->RotatedText(5,20,utf8_decode("MUESTRA"),45);
-            $this->RotatedText(6,26,utf8_decode("SIN VALOR"),45);
+            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,21,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
         }
         $this->SetTextColor('0,0,0');

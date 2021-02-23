@@ -12,6 +12,11 @@
                 <i class="fa fa-money" v-else></i>
                 Registrar Pago
             </button>
+            <router-link  :to="{ name: 'carga-masiva'}" v-if="$root.can('consultar_carga_layout_pago')" type="button" class="btn btn-app btn-info float-right" title="Carga masiva">
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-file-upload" v-else></i>
+                Carga Masiva
+            </router-link>
         </div>
         <div class="col-12">
             <div class="card">
@@ -30,10 +35,8 @@
 </template>
 
 <script>
-
     export default {
         name: "gestion-pago-index",
-
         data() {
             return {
                 HeaderSettings: false,
@@ -47,10 +50,11 @@
                     { title: 'Monto', field: 'monto', thClass: 'th_money', tdClass: 'td_money', sortable: true},
                     { title: 'Moneda', field: 'id_moneda',  thComp:require('../../../globals/th-Filter').default, sortable: true },
                     { title: 'Estado', field: 'estado',  thComp:require('../../../globals/th-Filter').default, sortable: true },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['moneda','cuenta','empresa'], sort: 'id_transaccion', order: 'desc'},
+                query: {include: ['moneda','cuenta','empresa','relaciones' ], sort: 'id_transaccion', order: 'desc'},
                 estado: "",
                 cargando: false,
             }
@@ -110,6 +114,11 @@
                             monto: pago.monto_format,
                             estado: pago.estado_string,
                             id_moneda:pago.moneda.nombre,
+                            buttons: $.extend({}, {
+                                id: pago.id,
+                                delete: self.$root.can('eliminar_pagos') ? true : false,
+                                transaccion: {id:pago.id, tipo:82},
+                            })
                         })
                     });
                 },

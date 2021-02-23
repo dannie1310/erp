@@ -18,6 +18,12 @@ class EntregaObserver
      * @throws \Exception
      *
      */
+    public function creating(Entrega $entrega)
+    {
+        $entrega->numero_entrega = 1;
+        $entrega->fecha = date('Y-m-d');
+    }
+
     public function updating(Entrega $entrega)
     {
         if($entrega->surtida > ($entrega->cantidad+0.01))

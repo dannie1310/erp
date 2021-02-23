@@ -118,7 +118,8 @@
                                 cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : false,
                                 pdf:true,
                                 id: solicitud.id,
-                                estado: solicitud.estado
+                                estado: solicitud.estado,
+                                transaccion: {id:solicitud.id, tipo:72},
                             })
                         })
                     });

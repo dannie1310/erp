@@ -15,6 +15,7 @@ class AuditoriaPermisoRol extends Model
     protected $fillable = [
         'role_id',
         'permission_id',
-        'action'
+        'action',
+        'created_at'
     ];
 }

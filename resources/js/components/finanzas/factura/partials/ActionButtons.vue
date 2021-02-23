@@ -2,9 +2,14 @@
     <span>
         <div class="btn-group">
             <FacturaShow v-if="value.show" v-bind:id="value.id" />
-            <PDF v-bind:id="value.id" @click="value.id" ></PDF>
+            <PDF v-bind:id="value.id" @click="value.id" v-if="$root.can('consultar_factura')"></PDF>
+            <CFDI v-bind:id="value.id" @click="value.id" ></CFDI>
             <Eliminar v-if="value.borrar" v-bind:id="value.id" v-bind:pagina="value.pagina" />
             <Revertir v-if="value.revertir" v-bind:id="value.id" />
+            <Relaciones v-bind:transaccion="value.transaccion"/>
+            <router-link  :to="{ name: 'factura-documentos', params: {id: value.id}}" v-if="$root.can('consultar_factura') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+                <i class="fa fa-folder-open"></i>
+            </router-link>
         </div>
     </span>
 </template>
@@ -14,9 +19,11 @@
     import FacturaShow from "../Show";
     import Eliminar from '../Eliminar';
     import Revertir from "../Revertir";
+    import Relaciones from "../../../globals/ModalRelaciones";
+    import CFDI from "../CFDI";
     export default {
         name: "action-buttons",
-        components: {Revertir, PDF, FacturaShow, Eliminar},
+        components: {Revertir, PDF, FacturaShow, Eliminar, Relaciones, CFDI},
         props: ['value'],
     }
 </script>

@@ -8,7 +8,12 @@
 
 namespace App\Repositories\CTPQ;
 
+use App\Models\CTPQ\Empresa;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa as EmpresaERP;
 use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDI;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDIPartida;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 
@@ -22,28 +27,39 @@ class PolizaRepository extends Repository implements RepositoryInterface
 
     public function update(array $datos, $id)
     {
-        //TODO: migrarlo al observer cuando se resuelva el manejo de la empresa de contabilidad en el contexto
-        $item = $this->show($id);
-        $item->actualiza($datos);
-        $logs = $item->logs()->where("id_empresa","=","666")->get();
-        foreach($logs as $log)
-        {
-            $log->id_empresa = $datos["id_empresa"];
-            $log->empresa = $datos["empresa"];
-            $log->save();
-        }
-        $movimientos = $item->movimientos;
-        foreach ($movimientos as $movimiento)
-        {
-            $logs = $movimiento->logs()->where("id_empresa","=","666")->get();
-            foreach($logs as $log)
-            {
-                $log->id_empresa = $datos["id_empresa"];
-                $log->empresa = $datos["empresa"];
-                $log->save();
-            }
-        }
-        return $item;
+        return $this->show($id)->actualiza($datos);
     }
 
+    public function find(array $datos){
+        return $this->model->where("Folio","=",$datos["folio"])
+            ->where("Fecha","=",$datos["fecha"])
+            ->where("TipoPol","=",$datos["tipo"])
+            ->get();
+    }
+
+    public function generaSolicitudAsociacion()
+    {
+        if (!SolicitudAsociacionCFDI::getSolicitudActiva()) {
+            return SolicitudAsociacionCFDI::create(["usuario_inicio" => auth()->id(), "fecha_hora_inicio" => date('Y-m-d H:i:s')]);
+        } else {
+            return null;
+        }
+    }
+
+    public function getListaEmpresas()
+    {
+        //$bases = Empresa::all()->pluck("AliasBDD")->take(20);
+        //$bases = Empresa::where("AliasBDD","like","ctPCO811231EI4_014%")->pluck("AliasBDD","Nombre")->take(20);
+        /*$bases = Empresa::where("AliasBDD","like","ctPCO811231EI4_01%")
+            ->where("AliasBDD","not like","%HST%")
+            ->pluck("AliasBDD","Nombre")->take(20);*/
+        $bases = EmpresaERP::paraSincronizacionCFDIPoliza()
+            ->pluck("AliasBDD","Nombre");
+        return $bases;
+    }
+
+    public function generaPeticionesAsociacion($data)
+    {
+        return SolicitudAsociacionCFDIPartida::create($data);
+    }
 }

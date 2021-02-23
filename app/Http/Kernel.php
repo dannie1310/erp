@@ -64,6 +64,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'context' => \App\Http\Middleware\CheckForContext::class,
         'permiso' => \App\Http\Middleware\Permiso::class,
+        'permisoGlobal' => \App\Http\Middleware\PermisoGlobal::class,
         'esquemaGlobal' => \App\Http\Middleware\EsquemaGlobal::class,
         'esquemaPersonalizado' => \App\Http\Middleware\EsquemaPersonalizado::class,
         'addAccessToken' => \App\Http\Middleware\AddHeaderAccessToken::class,

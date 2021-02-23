@@ -32,7 +32,7 @@ export default {
             state.currentSolicitud[data.attribute] = data.value
         },
         DELETE_SOLICITUD(state, id){
-            state.solicitudes = state.solicitudes.filter(marbete => {
+            state.solicitudes = state.solicitudes.filter(solicitud => {
                 return solicitud.id != id
             });
         }
@@ -65,8 +65,20 @@ export default {
                     })
             });
         },
+        getCotizaciones(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/getCotizaciones', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         store(context,payload){
-
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Solicitud de Compra",
@@ -104,6 +116,19 @@ export default {
             });
 
         },
+        index(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         update(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
@@ -122,7 +147,6 @@ export default {
                     }
                 })
                     .then((value) => {
-
                         if (value) {
                             axios
                                 .patch(URI + payload.id, payload.data)
@@ -140,6 +164,48 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 })
+                        }
+                    });
+            });
+        },
+        aprobar(context, payload) {
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Aprobar Solicitud de Compra",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Aprobar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/aprobar', payload.data)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Solicitud de Compra aprobada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        } else {
+                            reject();
                         }
                     });
             });

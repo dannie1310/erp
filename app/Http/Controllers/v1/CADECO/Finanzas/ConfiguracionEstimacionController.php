@@ -38,7 +38,7 @@ class ConfiguracionEstimacionController extends Controller
     public function __construct(ConfiguracionEstimacionService $service, Manager $fractal, ConfiguracionEstimacionTransformer $transformer){
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:editar_configuracion_finanzas_estimaciones');
+        $this->middleware('permiso:editar_configuracion_finanzas_estimaciones')->except('index');
 
         $this->service = $service;
         $this->fractal = $fractal;

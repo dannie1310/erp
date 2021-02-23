@@ -73,7 +73,7 @@ export default {
                                             resolve(data);
                                         })
                                     }else{
-                                        swal("Lista de EFOS actualizados correctamente:"+data, {
+                                        swal("Lista de EFOS actualizada correctamente"+data, {
                                             icon: "success",
                                             timer: 2000,
                                             buttons: false
@@ -117,6 +117,44 @@ export default {
                         reject(error);
                     })
             })
+        },
+        obtenerInformeCFD(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'obtener-informe', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        obtenerInformeCFDDesglosado(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'obtener-informe-desglosado', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        descargarInformeCFDIDesglosado(context, payload){
+            var urr = URI +  'obtener-informe-cfdi-desglosado?'+ 'access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Informe descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
         },
     },
 

@@ -12,8 +12,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
 {
-    protected $connection = 'seguridad';
-    protected $table = 'Contabilidad.ListaEmpresas';
+    protected $connection = 'cntpqg';
+    protected $table = 'dbo.ListaEmpresas';
     protected $primaryKey = 'Id';
     public $timestamps = false;
+
+    public static function getIdEmpresa($bd){
+        $empresa = Empresa::where("AliasBDD","=", $bd)->first();
+        return $empresa->IdContpaq;
+    }
+    public static function getNombreEmpresa($bd){
+        $empresa = Empresa::where("AliasBDD","=", $bd)->first();
+        return $empresa->Nombre;
+    }
 }

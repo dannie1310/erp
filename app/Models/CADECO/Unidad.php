@@ -40,7 +40,7 @@ class Unidad extends Model
         return $this->belongsTo(UnidadComplemento::class, 'unidad', 'unidad');
     }
 
-    public function validarUsoItems()
+    public function validarUsoMaterial()
     {
         if(Material::where('unidad', '=', $this->unidad)->first())
             {
@@ -49,10 +49,18 @@ class Unidad extends Model
         return false;
     }
 
+    public function validarUsoItems()
+    {
+        return (Item::where('unidad','=', $this->unidad)->first() != null) ? true : false;
+    }
+
     public function eliminarUnidad()
     {
-        if($this->validarUsoItems()){
+        if($this->validarUsoMaterial()){
             abort(403, "\n\n No se puede eliminar la unidad '".$this->unidad."'.\n  La unidad ya esta siendo usada en algunos materiales");
+        }
+        if($this->validarUsoItems()){
+            abort(403, "\n\n No se puede eliminar la unidad '".$this->unidad."'.\n  La unidad ya esta siendo usada en algunas partidas");
         }
         $this->where('unidad', '=', $this->unidad)->delete();
         if($this->unidadComplemento)
@@ -63,9 +71,13 @@ class Unidad extends Model
 
     public function actualizarUnidad($data)
     {
-        if($this->validarUsoItems()){
+        if($this->validarUsoMaterial()){
             abort(403, "\n\n No se puede editar la unidad '".$this->unidad."'.\n  La unidad ya esta siendo usada en algunos materiales");
         }
+        if($this->validarUsoItems()){
+            abort(403, "\n\n No se puede editar la unidad '".$this->unidad."'.\n  La unidad ya esta siendo usada en algunas partidas");
+        }
         $this->where('unidad', '=', $this->unidad)->update(['unidad' => strtoupper($data['unidad']), 'descripcion' => strtoupper($data['descripcion'])]);
+        exit;
     }
 }

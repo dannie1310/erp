@@ -75,12 +75,17 @@ class FacturaController extends Controller
 
     public function cargaXML(Request $request)
     {
-        $respuesta = $this->service->cargaXML($request->xml);
+        $respuesta = $this->service->cargaXML($request->all());
         return response()->json($respuesta, 200);
     }
 
     public function revertir($id)
     {
         return $this->respondWithItem($this->service->revertir($id));
+    }
+
+    public function pdfCFDI($id)
+    {
+        return $this->service->pdfCFDI($id)->create();
     }
 }

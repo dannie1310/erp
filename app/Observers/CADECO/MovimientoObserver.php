@@ -33,10 +33,9 @@ class MovimientoObserver
                 'monto_total' => $movimiento->monto_total,
                 'monto_pagado' => $movimiento->monto_pagado,
                 'monto_original' => $movimiento->monto_original,
-                'creado' => $movimiento->creado
+                'creado' => $movimiento->creado,
+                'lote_antecedente' => $movimiento->lote_antecedente
             ]
         );
-
-
     }
 }

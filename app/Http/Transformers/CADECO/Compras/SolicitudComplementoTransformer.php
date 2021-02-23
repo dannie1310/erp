@@ -27,9 +27,7 @@ class SolicitudComplementoTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'area_compradora',
         'area_solicitante',
-        'tipo',
-
-
+        'tipo'
     ];
 
     /**
@@ -38,26 +36,27 @@ class SolicitudComplementoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'area_compradora',
+        'area_solicitante',
+        'tipo'
     ];
 
     public function transform(SolicitudComplemento $model)
     {
-//        dd("Dee");
       return [
             'id' => $model->getKey(),
+            'folio' => $model->folio_compuesto,
+            'estado' => $model->estado,
+            'color' => $model->color_estado,
+            'descripcion_estado' => $model->descripcion_estado,
+            'concepto' => $model->concepto,
             'id_area_compradora' => $model->id_area_compradora,
             'id_tipo' => $model->id_tipo,
             'id_area_solicitante' => $model->id_area_solicitante,
-            'folio' => $model->folio_compuesto,
-            'estado' => $model->estado,
-            'concepto' => $model->concepto,
             'fecha_requisicion_origen_format' => $model->fecha_format,
             'fecha_requisicion_origen' => $model->fecha_requisicion_origen,
             'requisicion_origen' => $model->requisicion_origen,
-            'registro' => $model->registro,
             'fecha_registro' =>$model->timestamp_registro,
-
         ];
     }
 
@@ -75,7 +74,6 @@ class SolicitudComplementoTransformer extends TransformerAbstract
         return null;
     }
 
-
     /**
      * @param SolicitudComplemento $model
      * @return \League\Fractal\Resource\Item|null
@@ -89,10 +87,6 @@ class SolicitudComplementoTransformer extends TransformerAbstract
         return null;
     }
 
-
-
-
-
     /**
      * @param SolicitudComplemento $model
      * @return \League\Fractal\Resource\Item|null
@@ -104,9 +98,5 @@ class SolicitudComplementoTransformer extends TransformerAbstract
             return $this->item($tipo, new CtgTipoTransformer);
         }
         return null;
-
     }
-
-
-
 }

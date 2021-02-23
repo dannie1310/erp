@@ -23,14 +23,15 @@ class ConfiguracionEstimacion extends Model
         'ret_fon_gar_antes_iva',
         'desc_pres_mat_antes_iva',
         'desc_otros_prest_antes_iva',
-        'ret_fon_gar_con_iva'
+        'ret_fon_gar_con_iva',
+        'amort_anticipo_antes_iva'
     ];
 
     public function validar()
     {
         if(ConfiguracionEstimacion::query()->where('id_obra',Context::getIdObra())->first() != null)
         {
-            abort(400,'La Configuracion Finanzas ya fue registrada anteriormente');
+            abort(400,'La Configuración Finanzas ya fue registrada anteriormente');
         }
     }
 

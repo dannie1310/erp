@@ -1,0 +1,39 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: EMartinez
+ * Date: 08/07/2020
+ * Time: 11:36 PM
+ */
+
+namespace App\Events;
+
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+
+class FinalizaCargaCFD
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+    public $carga;
+    public $tipo;
+
+    public function __construct(CargaCFDSAT $carga)
+    {
+        $this->carga = $carga;
+        $this->tipo = 2;
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return \Illuminate\Broadcasting\Channel|array
+     */
+    public function broadcastOn()
+    {
+        return new PrivateChannel('channel-name');
+    }
+
+}

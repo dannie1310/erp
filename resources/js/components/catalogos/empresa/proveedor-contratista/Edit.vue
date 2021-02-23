@@ -291,7 +291,7 @@ export default {
         },
         init(){
             this.fillDataEdit();
-            this.$store.commit('cadeco/sucursal/SET_SUCURSALES', this.proveedorContratista.sucursales.data);
+            this.$store.commit('cadeco/proveedor-contratista-sucursal/SET_SUCURSALES', this.proveedorContratista.sucursales.data);
             this.$store.commit('cadeco/suministrado/SET_SUMINISTRADOS', this.proveedorContratista.suministrados.data);
 
             $(this.$refs.modalEdit).appendTo('body');

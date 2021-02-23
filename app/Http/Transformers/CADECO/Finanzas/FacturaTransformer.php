@@ -4,12 +4,14 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Models\CADECO\Factura;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\CambioTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\ContraReciboTransformer;
+use App\Http\Transformers\CADECO\Contabilidad\PolizaTransformer;
 use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoTransformer;
 
 class FacturaTransformer extends TransformerAbstract
@@ -24,7 +26,8 @@ class FacturaTransformer extends TransformerAbstract
         'moneda',
         'complemento',
         'cambio',
-
+        'poliza',
+        'relaciones'
     ];
 
     /**
@@ -54,6 +57,7 @@ class FacturaTransformer extends TransformerAbstract
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
+            'fecha' => (string)$model->fecha,
             'fecha_format' => (string)$model->fecha_format,
             'estado_format'=>$model->estado_string,
             'estado' => (int)$model->estado,
@@ -72,6 +76,7 @@ class FacturaTransformer extends TransformerAbstract
             'fondo_garantia_format' => $model->fondo_garantia_format,
             'retenciones_format' => $model->retenciones_subcontrato_format,
             'devoluciones_format' => $model->devoluciones_subcontrato_format,
+            'tipo' => $model->tipo->Descripcion
 
         ];
     }
@@ -102,6 +107,14 @@ class FacturaTransformer extends TransformerAbstract
         return null;
     }
 
+    public function includePoliza(Factura $model)
+    {
+        if ($poliza = $model->prepolizaActiva()) {
+            return $this->item($poliza, new PolizaTransformer);
+        }
+        return null;
+    }
+
     public function includeEmpresa(Factura $model){
         if($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
@@ -123,4 +136,12 @@ class FacturaTransformer extends TransformerAbstract
         return null;
     }
 
+    public function includeRelaciones(Factura $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
 }

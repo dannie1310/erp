@@ -27,6 +27,7 @@ class DatosContables extends Model
     ];
 
     protected $appends = ['mask'];
+    //protected $dateFormat = 'Y-m-d H:i:s';
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Obra

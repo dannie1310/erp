@@ -1,7 +1,9 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <Layout @change="paginate()"></Layout>
+            <button @click="create" class="btn btn-app btn-default pull-right" v-if="$root.can('registrar_asignacion_proveedor')" :disabled="cargando">
+                <i class="fa fa-plus"></i> Registrar
+            </button>
         </div>
         <div class="col-12">
             <div class="card">
@@ -22,46 +24,47 @@
 <script>
     import Layout from "./CargaLayout";
     export default {
-        name: "asignacion-proveedores-index",
+        name: "asignacion-proveedor-index",
         components: {Layout},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio', tdClass: 'td_money',sortable: true},
-                    { title: 'Fecha/Hora', field: 'fecha_format', tdClass: 'td_money',sortable: true},
-                    { title: 'Estado', field: 'estado', sortable: true},
-                    { title: 'Cotizaciones', field: 'cotizacion', sortable: true},
-                    { title: 'Observaciones', field: 'observaciones'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Folio', field: 'id', tdClass: 'th_numero_folio', sortable: true},
+                    { title: 'Folio SAO Solicitud', field: 'solicitud', tdClass: 'th_c120', tdComp: require('../solicitud-compra/partials/ActionButtonsConsulta').default,sortable: true},
+                    { title: 'Concepto de Solicitud', field: 'concepto'},
+                    { title: 'Fecha / Hora de Registro', field: 'fecha_format',sortable: true},
+                    { title: 'Estado', field: 'estado', thClass:'th_c120', sortable: true},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'verCotizaciones', sort: 'id_transaccion', order: 'desc'},
+                query: {scope: 'areasCompradorasAsignadas', sort: 'id', order: 'desc', include: ['solicitudCompra']},
                 estado: "",
                 cargando: false
             }
         },
 
         mounted() {
+            this.cargando = true;
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
+                    this.cargando = false;
                 })
         },
 
         methods: {
+            create(){
+                this.$router.push({name: 'asignacion-proveedor-create'});
+            },
             paginate() {
-                this.cargando = true;
                 return this.$store.dispatch('compras/asignacion/paginate', { params: this.query})
                     .then(data => {
                         this.$store.commit('compras/asignacion/SET_ASIGNACIONES', data.data);
                         this.$store.commit('compras/asignacion/SET_META', data.meta);
-                    })
-                    .finally(() => {
-                        this.cargando = false;
                     })
             }
         },
@@ -84,18 +87,22 @@
                     asignaciones.forEach(function (asignacion, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: asignacion.folio_format,
-                            id_tipo: asignacion.id_tipo,
+                            folio_solicitud: asignacion.folio_solicitud_format,
+                            id: asignacion.folio_asignacion_format,
+                            concepto: asignacion.concepto,
+                            estado: asignacion.estado_format,
                             fecha_format: asignacion.fecha_format,
-                            observaciones: asignacion.observaciones,
-                            // buttons: $.extend({}, {
-                            //     id:inventario.id,
-                            //     marbete: self.$root.can('generar_marbetes'),
-                            //     layout: self.$root.can('descarga_layout_captura_conteos'),
-                            //     resumen: self.$root.can('descargar_resumen_conteos'),
-                            //     estado: inventario.estado,
-                            //     actualizar: self.$root.can('cerrar_inventario_fisico')
-                            // })
+                            solicitud: $.extend({}, {
+                                show: (asignacion.solicitud) ? true : false,
+                                id: (asignacion.solicitud) ? asignacion.solicitud.id : null,
+                                numero_folio: (asignacion.solicitud) ? asignacion.solicitud.numero_folio_format : null
+                            }),
+                            buttons: $.extend({}, {
+                                id:asignacion.id,
+                                estado:asignacion.estado,
+                                eliminar: (self.$root.can('eliminar_asignacion_proveedor') && ! asignacion.aplicada) ? true : false,
+                                editar: self.$root.can('registrar_orden_compra') && ! asignacion.aplicada ? true : false
+                            })
                         })
                     });
                 },

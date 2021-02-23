@@ -1,5 +1,8 @@
 <template>
     <div class="row">
+        <div class="col-md-12">
+            <Registro @created="paginate()"></Registro>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -19,25 +22,27 @@
 </template>
 
 <script>
-
+    import Registro from "./partials/Registrar";
     export default {
         name: "orden-compra-index",
-
+        components:{Registro},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio Orden de Compra', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Folio de Asignación', field: 'folio_asignacion' },
+                    { title: 'Folio de Cotización', field: 'folio_cotizacion' },
+                    { title: 'Folio SAO Solicitud', field: 'id_antecedente', thComp: require('../../globals/th-Filter').default, sortable: false },
                     { title: 'Empresa', field: 'id_empresa', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Fecha de Registro', field: 'FechaHoraRegistro', sortable: true },
-                    { title: 'Folio Solicitud', field: 'id_antecedente', thComp: require('../../globals/th-Filter').default, sortable: false },
                     { title: 'Observaciones', field: 'observaciones', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['solicitud','empresa'], sort: 'id_transaccion', order: 'desc'},
+                query: {scope: 'areasCompradorasAsignadas', include: ['solicitud','empresa','relaciones'], sort: 'id_transaccion', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -84,6 +89,8 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             numero_folio: orden.numero_folio_format,
+                            folio_asignacion: orden.folio_asignacion,
+                            folio_cotizacion: orden.folio_cotizacion,
                             FechaHoraRegistro: orden.fecha_format,
                             observaciones: orden.observaciones_format,
                             id_empresa: orden.empresa.razon_social,
@@ -92,6 +99,8 @@
                                 show: true,
                                 pdf: self.$root.can('consultar_orden_compra') ? true : false,
                                 id: orden.id,
+                                tiene_entradas: orden.entradas_almacen,
+                                transaccion: {id:orden.id, tipo:19},
                             })
                         })
                     });

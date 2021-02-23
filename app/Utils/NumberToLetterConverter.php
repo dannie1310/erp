@@ -77,9 +77,9 @@ class NumberToLetterConverter
             $num = substr($num, 1);
         }else
             $neg = '';
-        while ($num[0] == '0')
+        while ($num == '0')
             $num = substr($num, 1);
-        if ($num[0] < '1' or $num[0] > 9) $num = '0' . $num;
+        if ($num < '1' or $num > 9) $num = '0' . $num;
         $zeros = true;
         $punt = false;
         $ent = '';
@@ -118,7 +118,20 @@ class NumberToLetterConverter
             }
         }else
             $fin = '';
-        if ((int)$ent === 0) return 'Cero ' . $fin;
+        if ((int)$ent === 0)
+        {
+            switch ($moneda) {
+                case 1 :
+                   return 'Cero pesos con'.(isset($float[1]) ? $float[1] : '00').'/100 M.N.';
+                    break;
+                case 2 :
+                    return 'Cero dolares con '.(isset($float[1]) ? $float[1] : '00').'/100 USD.';
+                    break;
+                case 3 :
+                    return ' euros '.(isset($float[1]) ? $float[1] : '00').'/100 EUR.';
+                    break;
+            }
+        }
         $tex = '';
         $sub = 0;
         $mils = 0;

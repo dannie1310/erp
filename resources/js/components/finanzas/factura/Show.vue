@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver" :disabled="cargando">
         <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-eye" v-else></i>
         </button>
@@ -15,12 +15,16 @@
                     </div>
                     <div class="modal-body" v-if="factura">
                         <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" @click="prepoliza(factura.poliza.id)" class="btn btn-primary float-right" v-if="factura.poliza && $root.can('consultar_prepolizas_generadas') && factura.estado > 0"> Ver Prepóliza</button>
+                            </div>
                             <div class="col-md-2">
                                 <div class="form-group error-content">
                                     <label for="fecha">Fecha:</label>
                                     {{factura.fecha_cr}}
                                 </div>
                             </div>
+
                         </div>
                         <div class="row">
                             <div class="col-md-10">
@@ -238,7 +242,7 @@
                                 <div class="form-group error-content float-right"> {{factura.total_format}} </div>
                             </div>
                             <div class="col-md-5"></div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -262,7 +266,7 @@
                 this.$store.commit('finanzas/factura/SET_FACTURA', null);
                 return this.$store.dispatch('finanzas/factura/find', {
                     id: id,
-                    params: {include: ['complemento', 'cambio.moneda']}
+                    params: {include: ['complemento', 'cambio.moneda', 'poliza']}
                 }).then(data => {
                     this.$store.commit('finanzas/factura/SET_FACTURA', data);
                     $(this.$refs.modal).appendTo('body')
@@ -270,6 +274,10 @@
                 }).finally(() => {
                     this.cargando = false;
                 })
+            },
+            prepoliza(id){
+                let prepoliza = this.$router.resolve({name: 'poliza-show', params: {id: id}});
+                window.open(prepoliza.href, '_blank');
             }
         },
         computed: {

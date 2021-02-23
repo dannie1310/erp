@@ -49,4 +49,46 @@ class CFDSATController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function procesaDirectorioZIPCFD(Request $request)
+    {
+        $respuesta =$this->service->procesaDirectorioZIPCFD();
+        //$respuesta =$this->service->generaCarpeta();
+        return response()->json($respuesta, 200);
+    }
+
+    public function obtenerInformeEmpresaMes()
+    {
+        $respuesta =$this->service->obtenerInformeEmpresaMes();
+        return response()->json($respuesta, 200);
+    }
+
+    public function getContenidoDirectorio(){
+        $respuesta =$this->service->getContenidoDirectorio();
+        return response()->json($respuesta, 200);
+    }
+
+    public function obtenerInformeCompleto()
+    {
+        $respuesta =$this->service->obtenerInformeCompleto();
+        return response()->json($respuesta, 200);
+    }
+
+    public function obtenerInformeCompletoPDF()
+    {
+        $this->service->obtenerInformeCompletoPDF()->create();
+    }
+
+    public function descargar(Request $request){
+        return $this->service->descargar($request->all());
+    }
+
+    public function descargarIndividual(Request $request, $id){
+        return $this->service->descargarIndividual($id);
+    }
+
+    public function pdfCFDI($id)
+    {
+        return $this->service->pdfCFDI($id)->create();
+    }
+
 }
