@@ -1,0 +1,141 @@
+<template>
+    <span>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <datatable v-bind="$data" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </span>
+</template>
+
+<script>
+    export default {
+        name: "comprobante-fondo-index",
+        data() {
+            return {
+                HeaderSettings: false,
+                columns: [
+                    { title: '#', field: 'index', thClass:'th_index_corto', sortable: false },
+                    { title: 'Tipo', field: 'tipo', thClass:'th_rfc', sortable: false },
+                    { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'RFC', field: 'rfc', thClass:'th_rfc', tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Usuario Inicio',  field: 'usuario_inicio', thClass:'th_c200', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Estado Expediente',  field: 'estado_expediente', thClass:'th_c100', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Avance Expediente', field: 'avance_expediente', tdClass:'center', thClass:'th_c100', sortable: false, tdComp: require('../../globals/ProgressBar').default, thComp: require('../../globals/th-Filter').default},
+                  //  { title: 'Acciones', field: 'buttons', thClass:'th_c100', tdClass:'center',  tdComp: require('./partials/ActionButtons').default}
+                ],
+                data: [],
+                total: 0,
+                query: { scope:['proveedores'], include: ['empresa','tipo'], sort: 'razon_social', order: 'desc'},
+                estado: "",
+                cargando: false
+            }
+        },
+        mounted() {
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
+        },
+        methods: {
+            paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('padronProveedores/empresa/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('padronProveedores/empresa/SET_EMPRESAS', data.data);
+                        this.$store.commit('padronProveedores/empresa/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                        this.$data.query.mis_pendientes = null;
+                    })
+            },
+        },
+        computed: {
+            empresas(){
+                return this.$store.getters['padronProveedores/empresa/empresas'];
+            },
+            meta(){
+                return this.$store.getters['padronProveedores/empresa/meta'];
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
+        },
+        watch: {
+            empresas: {
+                handler(empresas) {
+                    let self = this;
+                    self.$data.data = [];
+                    empresas.forEach(function (empresa, i) {
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            razon_social: empresa.razon_social,
+                            tipo: empresa.tipo.descripcion,
+                            id: empresa.id,
+                            rfc: empresa.rfc,
+                            estado_expediente: empresa.estado_expediente,
+                            avance_expediente: $.extend({}, {
+                                porcentaje_avance: empresa.porcentaje_avance_expediente,
+                                divisor: empresa.archivos_cargados,
+                                dividendo: empresa.archivos_esperados,
+                                color: empresa.color_barra,
+                                pagina: self.query.offset,
+                            }),
+                            usuario_inicio: empresa.usuario_inicio,
+                            porcentaje_avance: empresa.porcentaje_avance_expediente,
+                            buttons: $.extend({}, {
+                                show: true,
+                                edit: self.$root.can('consultar_expediente_proveedor', true) ? true : false,
+                                descarga: empresa.archivos_cargados>0 && self.$root.can('consultar_expediente_proveedor', true)?  true : false,
+                                id: empresa.id,
+                                estado: empresa.estado,
+                                pagina: self.query.offset,
+                            })
+                        })
+                    });
+                },
+                deep: true
+            },
+
+            meta: {
+                handler(meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler(query) {
+                    this.paginate(query)
+                },
+                deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
+        }
+    }
+</script>
