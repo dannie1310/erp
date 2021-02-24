@@ -47,7 +47,8 @@ class PolizaService
 
     public function show(array $data, $id)
     {
-        $empresa = Empresa::find($data["id_empresa"]);
+        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
+        $empresa = Empresa::find($empresaLocal->IdEmpresaContpaq);
         DB::purge('cntpq');
         \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
         return $this->repository->show($id);
@@ -74,7 +75,8 @@ class PolizaService
     public function paginate($data)
     {
         try {
-            $empresa = Empresa::find($data["id_empresa"]);
+            $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
+            $empresa = Empresa::find($empresaLocal->IdEmpresaContpaq);
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
             $poliza = $this->repository;
