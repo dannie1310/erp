@@ -2,6 +2,11 @@
     <span>
         <div class="row">
             <div class="col-12">
+                <button @click="create" v-if="$root.can('registrar_comprobante_fondo')" class="btn btn-app btn-info pull-right">
+                    <i class="fa fa-plus"></i> Registrar
+                </button>
+            </div>
+            <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -54,6 +59,9 @@
                     .finally(() => {
                         this.cargando = false;
                     })
+            },
+            create() {
+                this.$router.push({name: 'comprobante-fondo-create'});
             },
         },
         computed: {
