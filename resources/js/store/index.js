@@ -111,6 +111,7 @@ import subcontrato from './modules/contratos/subcontrato';
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
 import ctgTipoFondo from './modules/finanzas/ctg-tipo-fondo';
+import comprobanteFondo from './modules/finanzas/comprobante-fondo';
 import cuentaBancariaEmpresa from './modules/finanzas/cuenta-bancaria-empresa';
 import datosEstimaciones from './modules/finanzas/estimacion';
 import distribuirRecursoRemesa from './modules/finanzas/distribuir-recurso-remesa';
@@ -254,6 +255,7 @@ export default new Vuex.Store({
         'contratos/subcontrato': subcontrato,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
+        'finanzas/comprobante-fondo' : comprobanteFondo,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,
         'finanzas/cuenta-bancaria-empresa': cuentaBancariaEmpresa,
         'finanzas/distribuir-recurso-remesa': distribuirRecursoRemesa,

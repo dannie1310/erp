@@ -19,4 +19,39 @@ class ComprobanteFondo extends Transaccion
             return $query->where('tipo_transaccion', self::TIPO)->where('opciones', self::OPCION);
         });
     }
+
+    /**
+     * Relaciones Eloquent
+     */
+    public function fondo()
+    {
+        return $this->belongsTo(Fondo::class, 'id_referente', 'id_fondo');
+    }
+
+    public function concepto()
+    {
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    /**
+     * Scopes
+     */
+
+
+    /**
+     * Attributes
+     */
+    public function getTotalAttribute()
+    {
+        return $this->monto + $this->impuesto;
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        return '$ ' . number_format($this->total, 2, '.', ',');
+    }
+
+    /**
+     * Métodos
+     */
 }
