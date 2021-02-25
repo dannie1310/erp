@@ -62,10 +62,10 @@
         methods: {
             paginate(){
                 this.cargando=true;
-                return this.$store.dispatch('fiscal/no-localizados/paginate', {params: this.query})
+                return this.$store.dispatch('fiscal/no-localizado/paginate', {params: this.query})
                     .then(data=>{
-                        this.$store.commit('fiscal/no-localizados/SET_NO_LOCALIZADOS', data.data);
-                        this.$store.commit('fiscal/no-localizados/SET_META',data.meta)
+                        this.$store.commit('fiscal/no-localizado/SET_NO_LOCALIZADOS', data.data);
+                        this.$store.commit('fiscal/no-localizado/SET_META',data.meta)
                     })
                     .finally(()=>{
                         this.cargando=false;
@@ -78,7 +78,7 @@
         },
         computed: {
             no_localizados(){
-                return this.$store.getters['fiscal/no-localizados/no_localizados'];
+                return this.$store.getters['fiscal/no-localizado/no_localizados'];
             },
             meta(){
                 return this.$store.getters['finanzas/factura/meta']

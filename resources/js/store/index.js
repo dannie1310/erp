@@ -159,6 +159,7 @@ import CFDSAT from './modules/fiscal/cfd-sat';
 import efos from './modules/fiscal/efos';
 import empresaFacturera from './modules/fiscal/empresa-facturera';
 import noDeducido from './modules/fiscal/no-deducido';
+import noLocalizado from './modules/fiscal/no-localizado';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -334,6 +335,7 @@ export default new Vuex.Store({
         'fiscal/cfd-sat': CFDSAT,
         'fiscal/efos' : efos,
         'fiscal/no-deducido' : noDeducido,
+        'fiscal/no-localizado' : noLocalizado,
 
         'padronProveedores/archivo' : archivoExpediente,
         'padronProveedores/archivo-prestadora' : archivoPrestadoraExpediente,
