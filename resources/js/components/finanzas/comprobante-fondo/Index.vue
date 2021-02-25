@@ -27,8 +27,8 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass:'th_index_corto', sortable: false },
-                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Número Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default, thClass: 'th_fecha'},
+                    { title: 'Número Folio', field: 'numero_folio',  tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Fondo', field: 'id_referente', tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Referencia',  field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Total', field: 'total', tdClass:'center', sortable: false},

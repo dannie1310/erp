@@ -25,28 +25,26 @@ class ComprobanteFondoService
 
     public function paginate($data)
     {
-        $comprobantes = $this->repository;
-
         if(isset($data['fecha']))
         {
-            $comprobantes = $comprobantes->where([['fecha', '=', $data['fecha']]]);
+            $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
         }
 
         if(isset($data['numero_folio']))
         {
-            $comprobantes = $comprobantes->where([['numero_folio','=', request( 'numero_folio' ) ]]);
+            $this->repository->where([['numero_folio','=', request( 'numero_folio' ) ]]);
         }
 
-        if(isset($data['fondo__descripcion']))
+        if(isset($data['id_referente']))
         {
-            $fondos = $this->repository->findFondo(request('fondo__descripcion'));
-            $comprobantes = $comprobantes->whereIn(['id_referente',$fondos]);
+            $fondos = $this->repository->findFondo(request('id_referente'));
+            $this->repository->whereIn(['id_referente',$fondos]);
         }
 
         if(isset($data['referencia']))
         {
-            $comprobantes = $comprobantes->where([['referencia','LIKE', '%' . request( 'referencia') . '%' ]]);
+            $this->repository->where([['referencia','LIKE', '%' . request( 'referencia') . '%' ]]);
         }
-        return $comprobantes->paginate($data);
+        return $this->repository->paginate($data);
     }
 }
