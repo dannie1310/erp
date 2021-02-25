@@ -59,7 +59,7 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
   min-width: 100px;
 }
 
-.th_money, th.money, .th_rfc, th.rfc, .th_c100, th.c100
+.th_rfc, th.rfc, .th_c100, th.c100
 {
   width: 100px;
   max-width: 100px;
@@ -175,6 +175,14 @@ th.money_input,.th_money_input
   max-width: 150px;
   min-width: 150px;
   text-align: center;
+}
+
+td.money_input, .td_money_input
+{
+    width: 150px;
+    max-width: 150px;
+    min-width: 150px;
+    text-align: right;
 }
 
 td.cantidad_input,.td_cantidad_input
