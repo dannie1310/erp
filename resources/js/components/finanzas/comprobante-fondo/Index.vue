@@ -27,11 +27,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass:'th_index_corto', sortable: false },
-                    { title: 'Fecha', field: 'fecha', thClass:'th_fecha', sortable: false },
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Número Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Fondo', field: 'fondo', tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Referencia',  field: 'referencia', sortable: false, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Total', field: 'total', tdClass:'center', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Fondo', field: 'id_referente', tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Referencia',  field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Total', field: 'total', tdClass:'center', sortable: false},
                   //  { title: 'Acciones', field: 'buttons', thClass:'th_c100', tdClass:'center',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
@@ -85,7 +85,7 @@
                             index: (i + 1) + self.query.offset,
                             fecha: fondo.fecha_format,
                             numero_folio: fondo.numero_folio_format,
-                            fondo: fondo.fondo.descripcion,
+                            id_referente: fondo.fondo.descripcion,
                             referencia: fondo.referencia,
                             total: fondo.total_format
                         })
