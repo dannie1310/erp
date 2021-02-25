@@ -76,6 +76,7 @@ class PolizaService
     {
         try {
             $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
+
             $empresa = Empresa::find($empresaLocal->IdEmpresaContpaq);
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);

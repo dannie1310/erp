@@ -1,38 +1,5 @@
 <template>
     <span>
-        <div class="row">
-            <div class="col-md-12">
-                <h6><i class="fa fa-plug" ></i>Datos de Conexión:</h6>
-            </div>
-        </div>
-        <div class="row col-md-12">
-            <div class="col-md-6">
-                <div class="form-group row error-content">
-                    <label for="id_empresa" class="col-md-2 col-form-label">Empresa:</label>
-                    <div class="col-md-10">
-                        <model-list-select
-                            :disabled="cargando"
-                            :onchange="changeSelect()"
-                            name="id_empresa"
-                            v-model="id_empresa"
-                            option-value="id"
-                            option-text="nombre"
-                            :list="empresas"
-                            :placeholder="!cargando?'Seleccionar o buscar empresa':'Cargando...'"
-                            :isError="errors.has(`id_empresa`)">
-                        </model-list-select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <button @click="conectar" class="btn btn-primary float-right">
-                    <i class="fa fa-plug"></i> Conectar
-                </button>
-            </div>
-            <div class="col-md-2">
-                
-            </div>
-        </div>
         <span v-if="encontradas">
             <div class="col-12">
                 <div class="card">
@@ -61,7 +28,7 @@
                             <h4 class="modal-title">Descargar ZIP Polizas</h4>
                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                         </div>
-                        
+
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-12">
@@ -129,13 +96,13 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="closeModal()" :disabled="procesando">Cerrar</button>
-                        
+
                     </div>
                 </div>
             </div>
         </div>
     </span>
-    
+
 </template>
 
 <script>
@@ -143,6 +110,7 @@
     export default {
         name: "index-poliza",
         components: {ModelListSelect},
+        props: ['id_empresa'],
         data() {
             return {
                 procesando:false,
@@ -151,9 +119,9 @@
                 conectado:false,
                 buscando:false,
                 encontradas:false,
-                id_empresa: '',
-                empresas: [],
-                empresa_seleccionada: [],
+                //id_empresa: '',
+                //empresas: [],
+                //empresa_seleccionada: [],
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
@@ -175,7 +143,7 @@
             }
         },
         mounted(){
-            this.getEmpresas();
+            this.getPolizas();
         },
         computed: {
             polizas(){
