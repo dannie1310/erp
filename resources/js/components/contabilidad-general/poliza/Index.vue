@@ -132,7 +132,7 @@
                     { title: 'Folio', field: 'folio', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Monto', field: 'monto', tdClass: 'td_money', thClass: 'th_money', sortable: true},
                     { title: 'Concepto', field: 'concepto',thComp: require('../../globals/th-Filter').default, sortable: false},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', tdClass: 'td_money_input',  thClass: 'th_money_input',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
