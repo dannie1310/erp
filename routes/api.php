@@ -337,6 +337,9 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@show')->where(['id' => '[0-9]+']);
         });
+        $api->group(['prefix' => 'no-localizado'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoLocalizadoController@paginate');
+        });
     });
 
     /**
