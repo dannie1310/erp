@@ -15,7 +15,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
-                        <router-link :to="{name: 'poliza-contpaq'}" class="nav-link" :class="{active: this.$route.name == 'poliza-contpaq'}">
+                        <router-link :to="{name: 'seleccionar-empresa'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-empresa'}">
                             <i class="fa fa-file-powerpoint nav-icon"></i>
                             <p>Pólizas</p>
                         </router-link>

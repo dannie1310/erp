@@ -2314,16 +2314,30 @@ export const routes = [
                 }
             },
             {
-                path: 'polizas',
+                path:"seleccionar-empresa",
+                name:"seleccionar-empresa",
+                component: require('./components/contabilidad-general/poliza/SeleccionarEmpresa.vue').default,
+                meta: {
+                    title: 'Seleccionar Empresa',
+                    breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
+                    middleware: [auth, permission],
+                    permission: ['editar_poliza','consultar_poliza'],
+                    general: true
+                }
+            },
+            {
+                path: ':id_empresa/polizas',
+                props: true,
                 component: require('./components/contabilidad-general/poliza/Layout.vue').default,
                 children:[
                     {
                         path:"/",
                         name:"poliza-contpaq",
+                        props: true,
                         component: require('./components/contabilidad-general/poliza/Index.vue').default,
                         meta: {
                             title: 'Pólizas',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'PÓLIZAS'},
+                            breadcrumb: {parent: 'seleccionar-empresa', name: 'PÓLIZAS'},
                             middleware: [auth, permission],
                             permission: ['editar_poliza','consultar_poliza'],
                             general: true
@@ -2331,6 +2345,19 @@ export const routes = [
                     },
                     {
                         path: ':id',
+                        name: 'poliza-contpaq-show',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/Show').default,
+                        meta: {
+                            title: 'Consultar Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'CONSULTAR'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/edit',
                         name: 'poliza-contpaq-edit',
                         props: true,
                         component: require('./components/contabilidad-general/poliza/Edit').default,
