@@ -5,6 +5,7 @@ namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal;
 
 
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
 use App\Services\SEGURIDAD_ERP\Fiscal\NoLocalizadoService;
@@ -42,5 +43,10 @@ class NoLocalizadoController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function cargarCsv(Request $request){
+        dd(1);
+        dd('Panda', $request->all());
     }
 }

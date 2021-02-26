@@ -31,6 +31,45 @@ export default {
                     })
             })
         },
+        cargarCsv(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar Csv Proveedores No Localizados",
+                    text: "¿Está seguro/a de que desea cargar el archivo?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cargar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'cargarCsv', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Carga registrada correctamente.", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+
+                                })
+                                .catch(error => {
+                                    reject('Archivo no procesable');
+                                })
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

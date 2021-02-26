@@ -339,6 +339,7 @@ $api->version('v1', function ($api) {
         });
         $api->group(['prefix' => 'no-localizado'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoLocalizadoController@paginate');
+            $api->post('cargarCsv', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoLocalizadoController@cargarCsv');
         });
     });
 

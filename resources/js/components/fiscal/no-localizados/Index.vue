@@ -1,6 +1,6 @@
 <template>
     <span>
-        <!-- <create @created="paginate()"></create> -->
+        <CargaCsv @created="paginate()" />
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -20,10 +20,10 @@
 </template>
 
 <script>
-    // import Create from "./Create";
+    import CargaCsv from "./CargaCsv";
     export default {
         name: "no-localizados-index",
-        // components: {Create},
+        components: {CargaCsv},
         data(){
             return{
                 HeaderSettings: false,
