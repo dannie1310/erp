@@ -2753,6 +2753,37 @@ export const routes = [
         ]
     },
     {
+        path: '/entrega-cfdi',
+        components:  {
+            default: require('./components/solicitud-recepcion-cfdi/Layout.vue').default,
+        },
+        children:[
+            {
+                path:'',
+                name: 'entrega-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/Index.vue').default,
+                    meta: {
+                    title: 'ENTREGA DE CFDI A REVISIÓN',
+                    middleware: [auth, permission],
+                    permission: ['consultar_solicitud_recepcion_cfdi'],
+                    general: true
+                }
+            },
+            {
+                path: 'create',
+                name: 'soliciitud-recepcion-cfdi-create',
+                component: require('./components/solicitud-recepcion-cfdi/Create.vue').default,
+                meta: {
+                    title: 'Registrar Solicitud de Recepción de CFDI',
+                    breadcrumb: {name: 'REGISTRAR', parent: 'entrega-cfdi'},
+                    middleware: [auth, permission],
+                    permission: ['registrar_solicitud_recepcion_cfdi'],
+                    general: true
+                }
+            }
+        ]
+    },
+    {
         path: '/fiscal',
         components:  {
             default: require('./components/fiscal/partials/Layout.vue').default,

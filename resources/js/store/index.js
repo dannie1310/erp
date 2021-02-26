@@ -107,6 +107,10 @@ import presupuesto from './modules/contratos/presupuesto';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
 
+//ENTREGA CFDI
+
+import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
+
 
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
@@ -334,6 +338,8 @@ export default new Vuex.Store({
         'fiscal/cfd-sat': CFDSAT,
         'fiscal/efos' : efos,
         'fiscal/no-deducido' : noDeducido,
+
+        'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
 
         'padronProveedores/archivo' : archivoExpediente,
         'padronProveedores/archivo-prestadora' : archivoPrestadoraExpediente,

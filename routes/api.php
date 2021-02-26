@@ -306,6 +306,15 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * ENTREGA DE CFDI
+     */
+
+    $api->group(['middleware' => 'api', 'prefix' => 'entrega-cfdi'], function ($api) {
+        $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@index');
+        $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@paginate');
+    });
+
+    /**
      * FISCAL
      */
     $api->group(['middleware' => 'api', 'prefix' => 'fiscal'], function ($api) {
