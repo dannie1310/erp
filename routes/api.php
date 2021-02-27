@@ -331,6 +331,8 @@ $api->version('v1', function ($api) {
             $api->get('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargar');
             $api->get('{id}/descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargarIndividual');
             $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
+            $api->post('cargar-xml-proveedor', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@cargaXMLProveedor');
+
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');

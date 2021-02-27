@@ -979,7 +979,6 @@ class CFDSATService
         $path = "downloads/fiscal/descarga/";
         $nombre_zip = $path.date("Ymd_his").".zip";
 
-
         $zipper = new Zipper;
         $zipper->make(public_path($nombre_zip))
             ->add(public_path($dir_descarga));
@@ -1009,4 +1008,23 @@ class CFDSATService
         return $pdf;
     }
 
+    public function cargaXMLProveedor(array $data)
+    {
+        $archivo_xml = $data["xml"];
+        $cfd = new CFD($archivo_xml);
+        $arreglo_cfd = $cfd->getArregloFactura();
+        if(auth()->user()->usuario != $arreglo_cfd["emisor"]["rfc"]){
+            abort(500, "El emisor de los CFDI no coincide con su usuario, favor de verificar");
+        }
+        $this->validaReceptor($arreglo_cfd);
+        return $arreglo_cfd;
+    }
+
+    private function validaReceptor($arreglo_cfd)
+    {
+        $rfc_receptoras = $this->repository->getRFCReceptoras();
+        if (!in_array( $arreglo_cfd["receptor"]["rfc"], $rfc_receptoras)) {
+            abort(500, "El RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ") no esta dado de alta en nuestros registros.");
+        }
+    }
 }

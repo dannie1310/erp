@@ -91,4 +91,9 @@ class CFDSATController extends Controller
         return $this->service->pdfCFDI($id)->create();
     }
 
+    public function cargaXMLProveedor(Request $request)
+    {
+        $respuesta = $this->service->cargaXMLProveedor($request->all());
+        return response()->json($respuesta, 200);
+    }
 }

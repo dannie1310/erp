@@ -44,7 +44,6 @@ class CFD
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($this->archivo_xml);
-
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;

@@ -2763,7 +2763,7 @@ export const routes = [
                 name: 'entrega-cfdi',
                 component: require('./components/solicitud-recepcion-cfdi/Index.vue').default,
                     meta: {
-                    title: 'ENTREGA DE CFDI A REVISIÓN',
+                    title: 'Solicitudes de Recepción de CFDI a Revisión',
                     middleware: [auth, permission],
                     permission: ['consultar_solicitud_recepcion_cfdi'],
                     general: true

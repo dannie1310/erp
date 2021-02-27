@@ -1,134 +1,171 @@
 <template>
     <span>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input button" id="con_nota_credito" v-model="dato.con_nota_credito" >
-                    <label class="custom-control-label" for="con_nota_credito">Aplicar Nota de Crédito</label>
+        <div class="card">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-2">
+                        <label for="archivo">Archivo del CFDI (XML):</label>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group error-content" >
+                            <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                                   row="3"
+                                   v-validate="{required: true,  ext: ['xml'], size: 3072}"
+                                   name="archivo"
+                                   data-vv-as="Archivo de Factura"
+                                   ref="archivo"
+                                   :class="{'is-invalid': errors.has('archivo')}"
+                            >
+                            <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="row" >
-            <div class="col-md-3">
-                <label for="archivo">Archivo de factura:</label>
+        <div class="card" v-if="cargado">
+            <div class="card-header">
+                <h5>Datos de CFDI</h5>
             </div>
-
-            <div class="col-md-9">
-                <div class="form-group error-content" >
-                    <input type="file" class="form-control" id="archivo" @change="onFileChange"
-                           row="3"
-                           v-validate="{required: true,  ext: ['xml'], size: 3072}"
-                           name="archivo"
-                           data-vv-as="Archivo de Factura"
-                           ref="archivo"
-                           :class="{'is-invalid': errors.has('archivo')}"
-                    >
-                    <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
-                </div>
-            </div>
-        </div>
-        <div class="row" v-if="dato.con_nota_credito">
-            <div class="col-md-3">
-                <label for="archivo">Archivo de nota de crédito:</label>
-            </div>
-
-            <div class="col-md-9">
-                <div class="form-group error-content" >
-
-                    <input type="file" class="form-control" id="archivo_nc" @change="onFileChangeNC"
-                           row="3"
-                           v-validate="{required: true,  ext: ['xml'], size: 3072}"
-                           name="archivo_nc"
-                           data-vv-as="Archivo Nota de Crédito"
-                           ref="archivo_nc"
-                           :class="{'is-invalid': errors.has('archivo_nc')}"
-                    >
-                    <div class="invalid-feedback" v-show="errors.has('archivo_nc')">{{ errors.first('archivo_nc') }} (xml)</div>
-                </div>
-            </div>
-        </div>
-        <hr />
-
-            <div class="row">
-                <div class="col-md-2">
-                    <div class="form-group error-content">
-                        <label for="fecha">Fecha:</label>
-                        <datepicker v-model = "dato.fecha"
-                                    name = "fecha"
-                                    :format = "formatoFecha"
-                                    :language = "es"
-                                    :bootstrap-styling = "true"
-                                    class = "form-control"
+            <div class="card-body">
+                <span>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                            <label >Emisión:</label>
+                                <input class="form-control" v-model="dato.fecha.date" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                            <label >Serie y Folio:</label>
+                                <input class="form-control" v-model="dato.referencia" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                            <label >Tipo:</label>
+                                <input class="form-control" v-model="dato.tipo_comprobante" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                            <label >UUID:</label>
+                                <input class="form-control" v-model="dato.uuid" readonly="readonly" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="form-group">
+                            <label >Empresa:</label>
+                                <input class="form-control" v-model="dato.empresa" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >RFC:</label>
+                                <input class="form-control" v-model="dato.rfc_empresa" readonly="readonly" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Impuestos Retenidos:</label>
+                                <input class="form-control" v-model="dato.total_impuestos_retenidos" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Impuestos Trasladados:</label>
+                                <input class="form-control" v-model="dato.total_impuestos_trasladados" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Total:</label>
+                                <input class="form-control" v-model="dato.total" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Moneda:</label>
+                                <input class="form-control" v-model="dato.moneda" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Tipo de Cambio:</label>
+                                <input class="form-control" v-model="dato.tipo_cambio" readonly="readonly" />
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="index_corto">#</th>
+                                        <th class="no_parte">Clave Producto / Servicio</th>
+                                        <th>Descripción</th>
+                                        <th>Clave Unidad</th>
+                                        <th>Unidad</th>
+                                        <th>Cantidad</th>
+                                        <th>Valor Unitario</th>
+                                        <th>Importe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <template v-for="(concepto, i) in dato.conceptos">
+                                    <tr >
+                                        <td>{{i+1}}</td>
+                                        <td>{{concepto.clave_prod_serv}}</td>
+                                        <td>{{concepto.descripcion}}</td>
+                                        <td>{{concepto.clave_unidad}}</td>
+                                        <td>{{concepto.unidad}}</td>
+                                        <td style="text-align: right">{{concepto.cantidad.formatMoney(2,".",",")}}</td>
+                                        <td style="text-align: right">${{concepto.valor_unitario.formatMoney(2,".",",")}}</td>
+                                        <td style="text-align: right">${{concepto.importe.formatMoney(2,".",",")}}</td>
+                                    </tr>
+                                </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group error-content">
+                                <label for="observaciones">Observaciones:</label>
+                                <textarea
+                                    name="observaciones"
+                                    id="observaciones"
+                                    class="form-control"
+                                    v-model="dato.observaciones"
                                     v-validate="{required: true}"
-                                    :disabled-dates="fechasDeshabilitadas"
-                                    :class="{'is-invalid': errors.has('fecha')}"
-                        ></datepicker>
-                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                    data-vv-as="Observaciones"
+                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                ></textarea>
+                                <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </span>
             </div>
-        <div class="row">
-            <div class="col-md-10">
-                <div class="form-group error-content">
-                    <label for="fecha">Empresa:</label>
-
-                </div>
-            </div>
-            <div class="col-md-2">
-                <!--Referencia-->
-                    <div class="form-group error-content">
-                        <label for="referencia">Folio:</label>
-
-                    </div>
-            </div>
-
-
-        </div>
-
-        <div class="row">
-            <div class="col-md-2">
-                <div class="form-group error-content">
-                    <label for="fecha">Emisión:</label>
-
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group error-content">
-                    <label for="fecha">Vencimiento:</label>
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group error-content">
-                    <label for="total">Total:</label>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group error-content">
-                    <label for="total">Moneda:</label>
-                </div>
+            <div class="card-footer">
+                <span class="pull-right">
+                    <button type="button" class="btn btn-secondary" >
+                        <i class="fa fa-angle-left"></i>Regresar
+                    </button>
+                    <button type="button" class="btn btn-primary" >
+                        Continuar <i class="fa fa-angle-right"></i>
+                    </button>
+                </span>
             </div>
         </div>
-        <hr>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group error-content">
-                    <label for="observaciones">Observaciones:</label>
-                    <textarea
-                        name="observaciones"
-                        id="observaciones"
-                        class="form-control"
-                        v-model="dato.observaciones"
-                        v-validate="{required: true}"
-                        data-vv-as="Observaciones"
-                        :class="{'is-invalid': errors.has('observaciones')}"
-                    ></textarea>
-                    <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
-                </div>
-            </div>
-        </div>
-        <hr>
     </span>
+
 
 </template>
 
@@ -139,6 +176,7 @@
         data() {
             return {
                 cargando:true,
+                cargado:false,
                 dato:{
                     con_nota_credito:0,
                     fecha:'',
@@ -174,6 +212,8 @@
                 this.dato.es_nacional = 1;
                 this.con_nota_credito = 0;
                 this.dato.total = 0;
+                this.dato.total_impuestos_retenidos = 0;
+                this.dato.total_impuestos_trasladados = 0;
                 this.dato.id_empresa = '';
                 this.dato.id_rubro = '';
                 this.$refs.archivo.value='';
@@ -246,8 +286,7 @@
                     formData.append('xml',  this.dato.archivo_nc);
                     formData.append('nombre_archivo',  this.dato.archivo_name_nc);
                 }
-
-                return this.$store.dispatch('finanzas/factura/cargarXML',
+                return this.$store.dispatch('fiscal/cfd-sat/cargarXMLProveedor',
                     {
                         data: formData,
                         config: {
@@ -258,24 +297,30 @@
                         var count = Object.keys(data).length;
 
                         if(count > 0 ){
-                            if(data.tipo_comprobante === "I"){
 
-                                this.dato.total = (parseFloat(this.dato.total) + parseFloat(data.total)).toFixed(2);
-                                this.dato.referencia = data.serie + data.folio;
-                                this.dato.emision = data.fecha;
-                                this.dato.id_empresa = data.empresa_bd.id_empresa;
-                                this.dato.id_moneda = data.moneda_bd.id_moneda;
-                                this.empresas.push({id:data.empresa_bd.id_empresa,razon_social:data.empresa_bd.razon_social,rfc:data.empresa_bd.rfc});
-                            } else if(data.tipo_comprobante === "E"){
-                                this.dato.total = (parseFloat(this.dato.total) - parseFloat(data.total)).toFixed(2);
-                            }
+                            this.dato.total = (parseFloat(this.dato.total) + parseFloat(data.total)).toFixed(2);
+                            this.dato.total_impuestos_retenidos = data.total_impuestos_retenidos;
+                            this.dato.total_impuestos_trasladados = data.total_impuestos_trasladados;
+                            this.dato.referencia = data.serie + data.folio;
+                            this.dato.emision = data.fecha;
+                            this.dato.rfc_empresa = data.receptor.rfc;
+                            this.dato.empresa = data.receptor.nombre;
+                            this.dato.moneda = data.moneda;
+                            this.dato.tipo_cambio = data.tipo_cambio;
+                            this.dato.folio = data.folio;
+                            this.dato.serie = data.serie;
+                            this.dato.fecha = data.fecha;
+                            this.dato.uuid = data.uuid;
+                            this.dato.conceptos = data.conceptos;
+                            this.dato.tipo_comprobante = data.tipo_comprobante;
 
-
+                            this.cargado = true;
                         }else{
                             if(this.$refs.archivo.value !== ''){
                                 this.$refs.archivo.value = '';
                                 this.dato.archivo = null;
                             }
+                            this.cargado = false;
                             this.cleanData();
                             swal('Carga con XML', 'Archivo sin datos válidos', 'warning')
                         }
@@ -299,13 +344,13 @@
             },
             store() {
                 return this.$store.dispatch('finanzas/factura/store', this.$data.dato)
-                    .then(data => {
-                        this.$emit('created', data);
-                        $(this.$refs.modal).modal('hide');
-                        this.cleanData();
-                    }).finally( ()=>{
-                        this.cargando = false;
-                    });
+                .then(data => {
+                    this.$emit('created', data);
+                    $(this.$refs.modal).modal('hide');
+                    this.cleanData();
+                }).finally( ()=>{
+                    this.cargando = false;
+                });
             },
         }
     }
