@@ -1,5 +1,27 @@
 <template>
     <span>
+        <div class="card">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-2">
+                        <label for="archivo">Archivo del CFDI (XML):</label>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group error-content" >
+                            <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                                   row="3"
+                                   v-validate="{required: true,  ext: ['xml'], size: 3072}"
+                                   name="archivo"
+                                   data-vv-as="Archivo de Factura"
+                                   ref="archivo"
+                                   :class="{'is-invalid': errors.has('archivo')}"
+                            >
+                            <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card" v-if="cargado">
             <div class="card-header">
                 <h5>Datos de CFDI</h5>
@@ -79,7 +101,38 @@
                         </div>
                     </div>
                     <hr>
-
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="index_corto">#</th>
+                                        <th class="no_parte">Clave Producto / Servicio</th>
+                                        <th>Descripción</th>
+                                        <th>Clave Unidad</th>
+                                        <th>Unidad</th>
+                                        <th>Cantidad</th>
+                                        <th>Valor Unitario</th>
+                                        <th>Importe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <template v-for="(concepto, i) in dato.conceptos">
+                                    <tr >
+                                        <td>{{i+1}}</td>
+                                        <td>{{concepto.clave_prod_serv}}</td>
+                                        <td>{{concepto.descripcion}}</td>
+                                        <td>{{concepto.clave_unidad}}</td>
+                                        <td>{{concepto.unidad}}</td>
+                                        <td style="text-align: right">{{concepto.cantidad.formatMoney(2,".",",")}}</td>
+                                        <td style="text-align: right">${{concepto.valor_unitario.formatMoney(2,".",",")}}</td>
+                                        <td style="text-align: right">${{concepto.importe.formatMoney(2,".",",")}}</td>
+                                    </tr>
+                                </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </span>
             </div>
             <div class="card-footer">
@@ -101,7 +154,7 @@
 <script>
 
     export default {
-        name: "solicitud-recepcion-cfdi-create",
+        name: "seleccionar-cfdi",
         data() {
             return {
                 cargando:true,
@@ -227,20 +280,20 @@
 
                         if(count > 0 ){
 
-                            this.dato.total = (parseFloat(this.dato.total) + parseFloat(data.total)).toFixed(2);
-                            this.dato.total_impuestos_retenidos = data.total_impuestos_retenidos;
-                            this.dato.total_impuestos_trasladados = data.total_impuestos_trasladados;
+                            this.dato.total = data.total_format;
+                            this.dato.total_impuestos_retenidos = data.impuestos_retenidos_format;
+                            this.dato.total_impuestos_trasladados = data.impuestos_trasladados_format;
                             this.dato.referencia = data.serie + data.folio;
                             this.dato.emision = data.fecha;
-                            this.dato.rfc_empresa = data.receptor.rfc;
-                            this.dato.empresa = data.receptor.nombre;
+                            this.dato.rfc_empresa = data.empresa.rfc;
+                            this.dato.empresa = data.empresa.razon_social;
                             this.dato.moneda = data.moneda;
                             this.dato.tipo_cambio = data.tipo_cambio;
                             this.dato.folio = data.folio;
                             this.dato.serie = data.serie;
                             this.dato.fecha = data.fecha;
                             this.dato.uuid = data.uuid;
-                            this.dato.conceptos = data.conceptos;
+                            this.dato.conceptos = data.conceptos.data;
                             this.dato.tipo_comprobante = data.tipo_comprobante;
 
                             this.cargado = true;

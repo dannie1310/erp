@@ -12,6 +12,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
@@ -49,6 +50,7 @@ class CFDSAT extends Model
         ,"estado_txt"
         ,"fecha_cancelacion"
         ,"tipo_cambio"
+        ,"id_solicitud_recepcion"
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
@@ -57,6 +59,11 @@ class CFDSAT extends Model
     public function carga()
     {
         return $this->belongsTo(CargaCFDSAT::class, 'id_carga_cfd_sat', 'id');
+    }
+
+    public function solicitudRecepcion()
+    {
+        return $this->belongsTo(SolicitudRecepcionCFDI::class, "id_solicitud_recepcion", "id");
     }
 
     public function conceptos()
@@ -160,7 +167,7 @@ class CFDSAT extends Model
             return $cfd;
 
         } catch (\Exception $e) {
-            dd($data);
+            dd($e->getMessage(),$data);
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
         }

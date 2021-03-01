@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-12">
-                <router-link :to="{name: 'soliciitud-recepcion-cfdi-create'}" v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)" class="btn btn-app float-right" :disabled="cargando">
+                <router-link :to="{name: 'seleccionar-cfdi'}" v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)" class="btn btn-app float-right" :disabled="cargando">
                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                     <i class="fa fa-plus" v-else></i>
                     Registrar

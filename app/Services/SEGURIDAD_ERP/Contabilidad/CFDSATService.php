@@ -1017,14 +1017,46 @@ class CFDSATService
             abort(500, "El emisor de los CFDI no coincide con su usuario, favor de verificar");
         }
         $this->validaReceptor($arreglo_cfd);
-        return $arreglo_cfd;
+
+        $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
+        $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
+        $arreglo_cfd["id_proveedor_sat"] = $proveedor["id_proveedor"];
+
+        $exp = explode("base64,", $data["xml"]);
+        $contenido_xml = base64_decode($exp[1]);
+        $arreglo_cfd["contenido_xml"] = $contenido_xml;
+        $cfd->validaCFDI33($contenido_xml);
+        $cfdi = $this->registraCFDI($arreglo_cfd);
+        return $cfdi;
     }
 
     private function validaReceptor($arreglo_cfd)
     {
         $rfc_receptoras = $this->repository->getRFCReceptoras();
         if (!in_array( $arreglo_cfd["receptor"]["rfc"], $rfc_receptoras)) {
-            abort(500, "El RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ") no esta dado de alta en nuestros registros.");
+            abort(500, "El RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ") no esta dado de alta en los registros de Hermes Infraestructura.");
         }
+    }
+
+    private function registraCFDI($arreglo_factura)
+    {
+        $contenido_archivo_xml = $arreglo_factura["contenido_xml"];
+        if (key_exists("uuid", $arreglo_factura)) {
+            $cfdi = $this->repository->validaExistencia($arreglo_factura["uuid"]);
+            if (!$cfdi) {
+                $arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
+                $cfdi = $this->store($arreglo_factura);
+                if ($cfdi) {
+                    Storage::disk('xml_sat')->put($arreglo_factura["uuid"].".xml", $contenido_archivo_xml);
+                }
+            } else {
+                if($cfdi->id_solicitud_recepcion>0)
+                {
+                    abort(500, "Este CFDI esta asociado a la solicitud de recepción folio: ". $cfdi->solicitudRecepcion->numero_folio);
+                }
+            }
+            return $cfdi;
+        }
+        return null;
     }
 }

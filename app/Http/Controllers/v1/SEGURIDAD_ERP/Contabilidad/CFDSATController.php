@@ -52,7 +52,6 @@ class CFDSATController extends Controller
     public function procesaDirectorioZIPCFD(Request $request)
     {
         $respuesta =$this->service->procesaDirectorioZIPCFD();
-        //$respuesta =$this->service->generaCarpeta();
         return response()->json($respuesta, 200);
     }
 
@@ -93,7 +92,7 @@ class CFDSATController extends Controller
 
     public function cargaXMLProveedor(Request $request)
     {
-        $respuesta = $this->service->cargaXMLProveedor($request->all());
-        return response()->json($respuesta, 200);
+        $item = $this->service->cargaXMLProveedor($request->all());
+        return $this->respondWithItem($item);
     }
 }

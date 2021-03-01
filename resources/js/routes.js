@@ -2770,12 +2770,12 @@ export const routes = [
                 }
             },
             {
-                path: 'create',
-                name: 'soliciitud-recepcion-cfdi-create',
-                component: require('./components/solicitud-recepcion-cfdi/Create.vue').default,
+                path: 'seleccionar-cfdi',
+                name: 'seleccionar-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/SeleccionarCFDI.vue').default,
                 meta: {
-                    title: 'Registrar Solicitud de Recepción de CFDI',
-                    breadcrumb: {name: 'REGISTRAR', parent: 'entrega-cfdi'},
+                    title: 'Seleccionar CFDI',
+                    breadcrumb: {name: 'SELECCIONAR CFDI', parent: 'entrega-cfdi'},
                     middleware: [auth, permission],
                     permission: ['registrar_solicitud_recepcion_cfdi'],
                     general: true
