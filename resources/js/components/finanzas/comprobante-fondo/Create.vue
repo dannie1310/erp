@@ -35,6 +35,7 @@
                                                    data-vv-as="Fondo"
                                                    v-model="id_fondo"
                                                    option-value="id"
+                                                   v-validate="{required: true}"
                                                    :custom-text="descripcionFondo"
                                                    :list="fondos"/>
                                             <div class="error-label" v-show="errors.has('id_fondo')">{{ errors.first('id_fondo') }}</div>
@@ -68,14 +69,14 @@
                                                 v-model="id_concepto"
                                                 :error="errors.has('id_concepto')"
                                                 ref="conceptoSelect"
-                                                :disableBranchNodes="true"
+                                                :disableBranchNodes="false"
                                             />
                                             <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
                                         </div>
                                     </div>
                                  </div>
                                  <hr />
-                                 <div class="row">
+                                 <div class="row" v-if="id_concepto">
                                      <div  class="col-md-12 table-responsive-xl">
                                          <div>
                                              <table class="table table-bordered">
@@ -87,7 +88,6 @@
                                                      <th class="cantidad_input">Precio</th>
                                                      <th class="unidad">Monto</th>
                                                      <th>Destino</th>
-                                                     <th class="icono"></th>
                                                      <th class="icono">
                                                          <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando..." :disabled="cargando">
                                                              <i class="fa fa-spin fa-spinner"></i>
@@ -135,25 +135,18 @@
                                                                v-model="partida.precio"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                      </td>
-                                                     <td>monto...</td>
-                                                     <td  v-if="partida.destino ===  ''" >
-                                                         <small class="badge badge-secondary">
-                                                            <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                        </small>
-                                                    </td>
-                                                    <td v-else>
-                                                        <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
-                                                            <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                        </small>
-                                                        <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
-                                                            <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                        </small>
-                                                        <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
-                                                        <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
-                                                    </td>
-                                                    <td class="icono">
-                                                        <i class="far fa-copy button" v-on:click="copiar_destino(partida)" title="Copiar" ></i>
-                                                        <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" title="Pegar"></i>
+                                                     <td>{{partida.monto = partida.precio * partida.cantidad}}</td>
+                                                     <td>
+                                                        <ConceptoSelectHijo
+                                                            name="id_concepto"
+                                                            data-vv-as="Concepto"
+                                                            id="id_concepto"
+                                                            v-model="partida.id_concepto"
+                                                            ref="conceptoSelectHijo"
+                                                            :disableBranchNodes="true"
+                                                            v-bind:nivel_id="id_concepto"
+                                                        ></ConceptoSelectHijo>
+                                                         <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
                                                     </td>
                                                     <td>
                                                         <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
@@ -188,15 +181,22 @@
                                                          <tbody>
                                                              <tr>
                                                                  <th>Subtotal:</th>
-                                                                 <td>34545354</td>
+                                                                 <td>$ {{(parseFloat(sumaMontos)).formatMoney(2,'.',',')}}</td>
                                                              </tr>
                                                              <tr>
                                                                  <th>IVA:</th>
-                                                                 <td>3</td>
+                                                                 <td>
+                                                                     <input type="number" min="0.01"
+                                                                            step=".01"   class="form-control"
+                                                                            :name="iva"  data-vv-as="IVA"
+                                                                            v-validate="{required: true}"
+                                                                            :class="{'is-invalid': errors.has(`iva`)}"
+                                                                            v-model="iva"/>
+                                                                 </td>
                                                              </tr>
                                                              <tr>
                                                                  <th>Total:</th>
-                                                                 <td>12345</td>
+                                                                  <td>$ {{(parseFloat(sumaTotal)).formatMoney(2,'.',',')}}</td>
                                                              </tr>
                                                          </tbody>
                                                      </table>
@@ -205,6 +205,10 @@
                                          </div>
                                      </div>
                                  </div>
+                             </div>
+                             <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
                              </div>
                          </form>
                      </div>
@@ -219,10 +223,10 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
     import ConceptoSelect from "../../cadeco/concepto/Select";
-    import MaterialSelect from '../../cadeco/material/SelectAutocomplete';
+    import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
     export default {
         name: "comprobante-fondo-create",
-        components: {ModelListSelect, Datepicker, es, ConceptoSelect, MaterialSelect},
+        components: {ModelListSelect, Datepicker, es, ConceptoSelect, ConceptoSelectHijo},
         data() {
             return {
                 cargando : false,
@@ -235,17 +239,25 @@
                 id_concepto : '',
                 fondos : [],
                 observaciones : '',
-                materiales : [],
-                partidas: [
-                    {
-                        i : 0,
-                        referencia : "",
-                        cantidad : "",
-                        precio : "",
-                        concepto_temporal : "",
-                        destino :  ""
-                    }
-                ],
+                concepto_copiado : '',
+                partidas: [],
+                subtotal : 0,
+                iva : 0,
+                total : 0
+            }
+        },
+        computed: {
+            sumaMontos() {
+                let result = 0;
+                this.partidas.forEach(function (doc, i) {
+                    result += parseFloat(doc.monto);
+                })
+                this.subtotal = result;
+                return result
+            },
+            sumaTotal() {
+                this.total = this.subtotal + this.iva
+                return this.total
             }
         },
         mounted() {
@@ -255,7 +267,6 @@
             this.fechasDeshabilitadas.from = new Date();
             this.id_fondo = ''
             this.getFondos();
-            this.getMateriales();
         },
         methods : {
             init() {
@@ -284,30 +295,39 @@
             addPartidas(){
                 this.partidas.splice(this.partidas.length + 1, 0, {
                     referencia : "",
-                    cantidad : "",
-                    precio : "",
-                    concepto_temporal : "",
-                    destino :  ""
+                    cantidad : 0,
+                    precio : 0,
+                    monto : 0,
+                    id_concepto : "",
                 });
                 this.index = this.index+1;
             },
             destroy(index){
                 this.partidas.splice(index, 1);
             },
-            getMateriales() {
-                this.materiales = [];
-                this.cargando = true;
-                return this.$store.dispatch('cadeco/material/index', {
-                    params: {
-                        scope: 'materialesParaCompras',
-                        sort: 'descripcion', order: 'asc', limit:100
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store();
                     }
-                })
-                    .then(data => {
-                        this.materiales = data.data;
-                        this.cargando = false;
-                    })
+                });
             },
+            store() {
+                return this.$store.dispatch('finanzas/comprobante-fondo/store', {
+                    data: this.data,
+                })
+                    .then((data) => {
+                        $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data)
+                    });
+            },
+        },
+        watch: {
+            subtotal(value){
+                if(value){
+                    this.iva = (value * 16) / 100
+                }
+            }
         }
     }
 </script>

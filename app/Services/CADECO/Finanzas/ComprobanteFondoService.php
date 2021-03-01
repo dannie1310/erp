@@ -47,4 +47,10 @@ class ComprobanteFondoService
         }
         return $this->repository->paginate($data);
     }
+
+    public function store($data)
+    {
+        dd($data);
+        return $this->repository->create($data);
+    }
 }

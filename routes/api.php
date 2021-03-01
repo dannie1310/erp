@@ -913,6 +913,7 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'comprobante-fondo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@store');
         });
 
         /**
