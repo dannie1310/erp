@@ -323,6 +323,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@paginate');
             $api->post('carga-zip', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@cargaZIP');
             $api->post('procesa-dir-zip-cfd', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@procesaDirectorioZIPCFD');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@update')->where(['id' => '[0-9]+']);
             $api->post('obtener-informe-empresa-mes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeEmpresaMes');
             $api->post('obtener-informe-completo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeCompleto');

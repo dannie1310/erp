@@ -21,13 +21,16 @@ class CFDSATConceptosTransformer extends TransformerAbstract
         return [
             'id' => (int) $model->id,
             'cantidad'=>$model->cantidad,
+            'cantidad_format'=>$model->cantidad_format,
             'clave_prod_serv'=>$model->clave_prod_serv,
             'clave_unidad'=>$model->clave_unidad,
             'descripcion'=>$model->descripcion,
             'descuento'=>$model->descuento,
             'importe'=>$model->importe,
+            'importe_format'=>$model->importe_format,
             'unidad'=>$model->unidad,
             'valor_unitario'=>$model->valor_unitario,
+            'valor_unitario_format'=>$model->valor_unitario_format,
         ];
     }
 }

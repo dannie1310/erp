@@ -32,7 +32,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                             <label >Emisión:</label>
-                                <input class="form-control" v-model="dato.fecha.date" readonly="readonly" />
+                                <input class="form-control" v-model="dato.fecha_format" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -58,13 +58,13 @@
                         <div class="col-md-10">
                             <div class="form-group">
                             <label >Empresa:</label>
-                                <input class="form-control" v-model="dato.empresa" readonly="readonly" />
+                                <input class="form-control" v-model="dato.empresa.razon_social" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >RFC:</label>
-                                <input class="form-control" v-model="dato.rfc_empresa" readonly="readonly" />
+                                <input class="form-control" v-model="dato.empresa.rfc" readonly="readonly" />
                             </div>
                         </div>
                     </div>
@@ -72,19 +72,19 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Impuestos Retenidos:</label>
-                                <input class="form-control" v-model="dato.total_impuestos_retenidos" readonly="readonly" />
+                                <input class="form-control" v-model="dato.impuestos_retenidos_format" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Impuestos Trasladados:</label>
-                                <input class="form-control" v-model="dato.total_impuestos_trasladados" readonly="readonly" />
+                                <input class="form-control" v-model="dato.impuestos_trasladados_format" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Total:</label>
-                                <input class="form-control" v-model="dato.total" readonly="readonly" />
+                                <input class="form-control" v-model="dato.total_format" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -117,16 +117,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <template v-for="(concepto, i) in dato.conceptos">
+                                <template v-for="(concepto, i) in dato.conceptos.data">
                                     <tr >
                                         <td>{{i+1}}</td>
                                         <td>{{concepto.clave_prod_serv}}</td>
                                         <td>{{concepto.descripcion}}</td>
                                         <td>{{concepto.clave_unidad}}</td>
                                         <td>{{concepto.unidad}}</td>
-                                        <td style="text-align: right">{{concepto.cantidad.formatMoney(2,".",",")}}</td>
-                                        <td style="text-align: right">${{concepto.valor_unitario.formatMoney(2,".",",")}}</td>
-                                        <td style="text-align: right">${{concepto.importe.formatMoney(2,".",",")}}</td>
+                                        <td style="text-align: right">{{concepto.cantidad_format}}</td>
+                                        <td style="text-align: right">{{concepto.valor_unitario_format}}</td>
+                                        <td style="text-align: right">{{concepto.importe_format}}</td>
                                     </tr>
                                 </template>
                                 </tbody>
@@ -140,7 +140,7 @@
                     <button type="button" class="btn btn-secondary" >
                         <i class="fa fa-angle-left"></i>Regresar
                     </button>
-                    <button type="button" class="btn btn-primary" >
+                    <button type="button" class="btn btn-primary" @click="continuar()" >
                         Continuar <i class="fa fa-angle-right"></i>
                     </button>
                 </span>
@@ -160,6 +160,7 @@
                 cargando:true,
                 cargado:false,
                 dato:{
+                    id_cfdi : '',
                     con_nota_credito:0,
                     fecha:'',
                     emision:'',
@@ -219,40 +220,12 @@
                 }
 
             },
-            onFileChangeNC(e){
-                this.dato.archivo_nc = null;
-                var files = e.target.files || e.dataTransfer.files;
-                if (!files.length)
-                    return;
-                this.dato.archivo_nc_name = files[0].name;
-                this.createImageNC(files[0], 1);
-
-                if(files[0].type == "text/xml")
-                {
-                    setTimeout(() => {
-                        this.cargarXML(2)
-                    }, 500);
-                } else {
-                    swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
-                }
-
-            },
-
             createImage(file) {
                 var reader = new FileReader();
                 var vm = this;
 
                 reader.onload = (e) => {
                     vm.dato.archivo = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            },
-            createImageNC(file) {
-                var reader = new FileReader();
-                var vm = this;
-
-                reader.onload = (e) => {
-                    vm.dato.archivo_nc = e.target.result;
                 };
                 reader.readAsDataURL(file);
             },
@@ -280,22 +253,8 @@
 
                         if(count > 0 ){
 
-                            this.dato.total = data.total_format;
-                            this.dato.total_impuestos_retenidos = data.impuestos_retenidos_format;
-                            this.dato.total_impuestos_trasladados = data.impuestos_trasladados_format;
-                            this.dato.referencia = data.serie + data.folio;
-                            this.dato.emision = data.fecha;
-                            this.dato.rfc_empresa = data.empresa.rfc;
-                            this.dato.empresa = data.empresa.razon_social;
-                            this.dato.moneda = data.moneda;
-                            this.dato.tipo_cambio = data.tipo_cambio;
-                            this.dato.folio = data.folio;
-                            this.dato.serie = data.serie;
-                            this.dato.fecha = data.fecha;
-                            this.dato.uuid = data.uuid;
-                            this.dato.conceptos = data.conceptos.data;
-                            this.dato.tipo_comprobante = data.tipo_comprobante;
-
+                            this.dato = data;
+                            this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', data);
                             this.cargado = true;
                         }else{
                             if(this.$refs.archivo.value !== ''){
@@ -324,15 +283,8 @@
                     }
                 });
             },
-            store() {
-                return this.$store.dispatch('finanzas/factura/store', this.$data.dato)
-                .then(data => {
-                    this.$emit('created', data);
-                    $(this.$refs.modal).modal('hide');
-                    this.cleanData();
-                }).finally( ()=>{
-                    this.cargando = false;
-                });
+            continuar() {
+                this.$router.push({name: 'solicitud-recepcion-cfdi', params: { id_cfdi: this.dato.id }});
             },
         }
     }

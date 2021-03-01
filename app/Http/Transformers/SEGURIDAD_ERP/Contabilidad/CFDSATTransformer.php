@@ -41,6 +41,7 @@ class CFDSATTransformer extends TransformerAbstract
             'id' => (int) $model->id,
             'serie'=>$model->serie,
             'folio'=>$model->folio,
+            'referencia'=>$model->serie." ".$model->folio,
             'fecha'=>$model->fecha,
             'fecha_format' => $model->fecha_format,
             'rfc_emisor' => $model->rfc_emisor,

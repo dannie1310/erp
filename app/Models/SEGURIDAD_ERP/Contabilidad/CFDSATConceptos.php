@@ -31,4 +31,19 @@ class CFDSATConceptos extends Model
     {
         return $this->belongsTo(CFDSAT::class, 'id_cfd_sat', 'id');
     }
+
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad,2);
+    }
+
+    public function getValorUnitarioFormatAttribute()
+    {
+        return "$".number_format($this->valor_unitario,2);
+    }
+
+    public function getImporteFormatAttribute()
+    {
+        return "$".number_format($this->importe,2);
+    }
 }

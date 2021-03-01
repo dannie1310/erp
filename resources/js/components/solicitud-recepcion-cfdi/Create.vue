@@ -10,25 +10,25 @@
                         <div class="col-md-2">
                             <div class="form-group">
                             <label >Emisión:</label>
-                                <input class="form-control" v-model="dato.fecha.date" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.fecha_format" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                             <label >Serie y Folio:</label>
-                                <input class="form-control" v-model="dato.referencia" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.referencia" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                             <label >Tipo:</label>
-                                <input class="form-control" v-model="dato.tipo_comprobante" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.tipo_comprobante" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                             <label >UUID:</label>
-                                <input class="form-control" v-model="dato.uuid" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.uuid" readonly="readonly" />
                             </div>
                         </div>
                     </div>
@@ -36,13 +36,13 @@
                         <div class="col-md-10">
                             <div class="form-group">
                             <label >Empresa:</label>
-                                <input class="form-control" v-model="dato.empresa" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.empresa.razon_social" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >RFC:</label>
-                                <input class="form-control" v-model="dato.rfc_empresa" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.empresa.rfc" readonly="readonly" />
                             </div>
                         </div>
                     </div>
@@ -50,36 +50,35 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Impuestos Retenidos:</label>
-                                <input class="form-control" v-model="dato.total_impuestos_retenidos" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.impuestos_retenidos_format" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Impuestos Trasladados:</label>
-                                <input class="form-control" v-model="dato.total_impuestos_trasladados" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.impuestos_trasladados_format" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Total:</label>
-                                <input class="form-control" v-model="dato.total" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.total_format" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Moneda:</label>
-                                <input class="form-control" v-model="dato.moneda" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.moneda" readonly="readonly" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Tipo de Cambio:</label>
-                                <input class="form-control" v-model="dato.tipo_cambio" readonly="readonly" />
+                                <input class="form-control" v-model="cfdi.tipo_cambio" readonly="readonly" />
                             </div>
                         </div>
                     </div>
                     <hr>
-
                 </span>
             </div>
             <div class="card-footer">
@@ -102,169 +101,41 @@
 
     export default {
         name: "solicitud-recepcion-cfdi-create",
+        props: ["id_cfdi"],
         data() {
             return {
                 cargando:true,
                 cargado:false,
-                dato:{
-                    con_nota_credito:0,
-                    fecha:'',
-                    emision:'',
-                    vencimiento:'',
-                    id_empresa:'',
-                    id_moneda:'',
-                    id_rubro:'',
-                    referencia:'',
-                    total:0,
-                    observaciones:'',
-                    archivo:null,
-                    archivo_name:null,
-                    archivo_nc:null,
-                    archivo_nc_name:null,
-                },
             }
         },
 
         mounted() {
+            this.find();
 
         },
+        computed: {
+            cfdi(){
+                return this.$store.getters['fiscal/cfd-sat/currentCFDSAT'];
+            },
+        },
         methods:{
-            cleanData(){
-                this.dato.id_moneda =1;
-                this.dato.fecha = new Date();
-                this.dato.emision = new Date();
-                this.dato.vencimiento = new Date();
-                this.dato.referencia = '';
-                this.dato.observaciones = '';
-                this.dato.archivo = '';
-                this.dato.es_deducible = 1;
-                this.dato.es_nacional = 1;
-                this.con_nota_credito = 0;
-                this.dato.total = 0;
-                this.dato.total_impuestos_retenidos = 0;
-                this.dato.total_impuestos_trasladados = 0;
-                this.dato.id_empresa = '';
-                this.dato.id_rubro = '';
-                this.$refs.archivo.value='';
-                this.$refs.archivo_nc.value='';
-            },
-            onFileChange(e){
-                this.dato.archivo = null;
-                var files = e.target.files || e.dataTransfer.files;
-                if (!files.length)
-                    return;
-                this.dato.archivo_name = files[0].name;
-                this.createImage(files[0], 1);
-
-                if(files[0].type == "text/xml")
-                {
-                    setTimeout(() => {
-                        this.cargarXML(1)
-                    }, 500);
-                } else {
-                    swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
-                }
-
-            },
-            onFileChangeNC(e){
-                this.dato.archivo_nc = null;
-                var files = e.target.files || e.dataTransfer.files;
-                if (!files.length)
-                    return;
-                this.dato.archivo_nc_name = files[0].name;
-                this.createImageNC(files[0], 1);
-
-                if(files[0].type == "text/xml")
-                {
-                    setTimeout(() => {
-                        this.cargarXML(2)
-                    }, 500);
-                } else {
-                    swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
-                }
-
-            },
-
-            createImage(file) {
-                var reader = new FileReader();
-                var vm = this;
-
-                reader.onload = (e) => {
-                    vm.dato.archivo = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            },
-            createImageNC(file) {
-                var reader = new FileReader();
-                var vm = this;
-
-                reader.onload = (e) => {
-                    vm.dato.archivo_nc = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            },
-            cargarXML(tipo){
-                this.cargando = true;
-                var formData = new FormData();
-                formData.append('tipo',  tipo);
-                formData.append('id_empresa',  this.dato.id_empresa);
-                if(tipo == 1){
-                    formData.append('xml',  this.dato.archivo);
-                    formData.append('nombre_archivo',  this.dato.archivo_name);
-                } else if(tipo == 2){
-                    formData.append('xml',  this.dato.archivo_nc);
-                    formData.append('nombre_archivo',  this.dato.archivo_name_nc);
-                }
-                return this.$store.dispatch('fiscal/cfd-sat/cargarXMLProveedor',
-                    {
-                        data: formData,
-                        config: {
-                            params: { _method: 'POST'}
-                        }
-                    })
-                    .then(data => {
-                        var count = Object.keys(data).length;
-
-                        if(count > 0 ){
-
-                            this.dato.total = (parseFloat(this.dato.total) + parseFloat(data.total)).toFixed(2);
-                            this.dato.total_impuestos_retenidos = data.total_impuestos_retenidos;
-                            this.dato.total_impuestos_trasladados = data.total_impuestos_trasladados;
-                            this.dato.referencia = data.serie + data.folio;
-                            this.dato.emision = data.fecha;
-                            this.dato.rfc_empresa = data.receptor.rfc;
-                            this.dato.empresa = data.receptor.nombre;
-                            this.dato.moneda = data.moneda;
-                            this.dato.tipo_cambio = data.tipo_cambio;
-                            this.dato.folio = data.folio;
-                            this.dato.serie = data.serie;
-                            this.dato.fecha = data.fecha;
-                            this.dato.uuid = data.uuid;
-                            this.dato.conceptos = data.conceptos;
-                            this.dato.tipo_comprobante = data.tipo_comprobante;
-
-                            this.cargado = true;
-                        }else{
-                            if(this.$refs.archivo.value !== ''){
-                                this.$refs.archivo.value = '';
-                                this.dato.archivo = null;
-                            }
-                            this.cargado = false;
-                            this.cleanData();
-                            swal('Carga con XML', 'Archivo sin datos válidos', 'warning')
-                        }
-                    }).finally(() => {
-                        this.cargando = false;
+            find(){
+                this.cargado = false;
+                if(this.$store.getters['fiscal/cfd-sat/currentCFDSAT'] == null){
+                    this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', null);
+                    return this.$store.dispatch('fiscal/cfd-sat/find', {
+                        id: this.id_cfdi,
+                        params:{}
+                    }).then(data => {
+                        this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', data);
+                    }).finally(()=>{
+                        this.cargado = true;
                     });
+                } else {
+                    this.cargado = true;
+                }
             },
             validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        this.store()
-                    }
-                });
-            },
-            validate_xml() {
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.store()
