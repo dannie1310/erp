@@ -244,6 +244,7 @@
                 return this.$store.dispatch('entrega-cfdi/solicitud-recepcion-cfdi/store', this.$data)
                 .then(data => {
                     this.$emit('created', data);
+                    this.$router.push({name: 'entrega-cfdi'});
                 }).finally( ()=>{
                     this.cargando = false;
                 });

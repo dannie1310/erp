@@ -44,6 +44,8 @@ export default {
                     .get(URI + 'paginate', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
+                        context.commit("SET_SOLICITUDES", data.data);
+                        context.commit("SET_META", data.meta);
                         resolve(data);
                     })
                     .catch(error => {

@@ -145,46 +145,14 @@ class CFDSAT extends Model
            ;
     }
 
-    public function registrar($data)
-    {
-        $factura = null;
-        try {
-            DB::connection('seguridad')->beginTransaction();
-
-            $cfd = $this->create($data);
-            if(key_exists("conceptos",$data)){
-                foreach($data["conceptos"] as $concepto){
-                    $cfd->conceptos()->create($concepto);
-                }
-            }
-
-            if(key_exists("traslados",$data)){
-                foreach($data["traslados"] as $traslado){
-                    $cfd->traslados()->create($traslado);
-                }
-            }
-            DB::connection('seguridad')->commit();
-            return $cfd;
-
-        } catch (\Exception $e) {
-            dd($e->getMessage(),$data);
-            DB::connection('seguridad')->rollBack();
-            abort(400, $e->getMessage());
-        }
-    }
-
-    public static function getFechaUltimoCFDTxt()
-    {
-        $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
-        $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
-        $mes = $meses[($ultimo_cfd->fecha->format('n')) - 1];
-        $fecha = "CFD cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
-        return $fecha;
-    }
-
     public function scopePorProveedor($query, $id_proveedor)
     {
         return $query->where('id_proveedor_sat', '=', $id_proveedor);
+    }
+
+    public function scopeEnSolicitud($query)
+    {
+        return $query->whereHas('solicitudRecepcion');
     }
 
     public function scopeBancoGlobal($query)
@@ -196,6 +164,15 @@ class CFDSAT extends Model
     {
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public static function getFechaUltimoCFDTxt()
+    {
+        $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
+        $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
+        $mes = $meses[($ultimo_cfd->fecha->format('n')) - 1];
+        $fecha = "CFD cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
+        return $fecha;
     }
 
     public function getTotalFormatAttribute()
@@ -230,5 +207,33 @@ class CFDSAT extends Model
             ->where("id",$this->id)
             ->first();
         return $xml->xml;
+    }
+
+    public function registrar($data)
+    {
+        $factura = null;
+        try {
+            DB::connection('seguridad')->beginTransaction();
+
+            $cfd = $this->create($data);
+            if(key_exists("conceptos",$data)){
+                foreach($data["conceptos"] as $concepto){
+                    $cfd->conceptos()->create($concepto);
+                }
+            }
+
+            if(key_exists("traslados",$data)){
+                foreach($data["traslados"] as $traslado){
+                    $cfd->traslados()->create($traslado);
+                }
+            }
+            DB::connection('seguridad')->commit();
+            return $cfd;
+
+        } catch (\Exception $e) {
+            dd($e->getMessage(),$data);
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 }
