@@ -19,16 +19,16 @@ class NoLocalizadoTransformer extends TransformerAbstract
     ];
 
     protected $availableIncludes = [
-        'ctg_no_localizados_registro',
+        'ctg_nolocalizados',
     ];
 
     public function transform(NoLocalizado $model)
     {
         return [
             'id' => $model->getKey(),
-            'rfc' => $model->fecha_hora_registro_format,
-            'razon_social' => $model->total_partidas,
-            'estado' => $model->cantidad_partidas
+            'rfc' => $model->rfc,
+            'razon_social' => $model->razon_social,
+            'estado' => $model->estado
         ];
     }
 
@@ -36,8 +36,9 @@ class NoLocalizadoTransformer extends TransformerAbstract
      * @param NoDeducido $model
      * @return \League\Fractal\Resource\Collection|null
      */
-    public function includeCtgNoLocalizadosRegistro(NoLocalizado $model)
+    public function includeCtgNoLocalizados(NoLocalizado $model)
     {
+        // dd($model->ctg_no_localizados_registro);
         if($partida = $model->ctg_no_localizados_registro)
         {
             return $this->item($partida, new CtgNoLocalizadoTransformer);

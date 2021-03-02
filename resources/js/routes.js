@@ -2753,8 +2753,8 @@ export const routes = [
                         meta: {
                             title: 'GESTIÓN NO LOCALIZADOS',
                             breadcrumb: {parent: 'fiscal', name: 'NO LOCALIZADOS SAT'},
-                            middleware: [auth],
-                            //permission: ['consultar_proveedores_no_localizados'],
+                            middleware: [auth,permission],
+                            permission: ['consultar_proveedores_no_localizados'],
                             general: true
                         }
                     },

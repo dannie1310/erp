@@ -32,21 +32,12 @@
                     { title: 'RFC', field: 'rfc', thClass:'th_rfc', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Razón Social', field: 'razon_social',thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Entidad Federativa', thClass:'th.c200', field: 'entidad_federativa',thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Fecha Última Publicación', field: 'fecha_primera_publicacion', tdClass: 'td_fecha', thComp: require('../../globals/th-Filter').default, sortable: true},
-
-                    // { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, sortable: true},
-                    // { title: 'Importe', field: 'monto', sortable: true},
-                    // { title: 'A Cta.', field: 'a_cuenta', sortable: false},
-                    // { title: 'Saldo', field: 'saldo', sortable: true},
-                    // { title: 'Estado', field: 'estado',thComp: require('../../globals/th-Filter').default, sortable: true},
-                    // { title: 'Tipo', field: 'opciones',thComp: require('../../globals/th-Filter').default, sortable: true},
-                    // { title: 'Observaciones Contrarecibo', field: 'observaciones',thComp: require('../../globals/th-Filter').default, sortable: false},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Primera Fecha Publicación', field: 'primera_fecha_publicacion', tdClass: 'td_fecha', thComp: require('../../globals/th-Filter').default, sortable: true},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: ['ctg_no_localizados_registro'], scope:['vigente'], sort: 'id_transaccion',  order: 'desc'
+                    include: ['ctg_nolocalizados'], scope:['vigente'], sort: 'id',  order: 'desc'
                 },
                 cargando: false
 
@@ -72,16 +63,13 @@
                     })
 
             },
-            create() {
-                // this.$router.push({name: 'factura-create'});
-            },
         },
         computed: {
             no_localizados(){
                 return this.$store.getters['fiscal/no-localizado/no_localizados'];
             },
             meta(){
-                return this.$store.getters['finanzas/factura/meta']
+                return this.$store.getters['fiscal/no-localizado/meta']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -97,8 +85,8 @@
                             index: (i + 1) + self.query.offset,
                             rfc: no_localizado.rfc,
                             razon_social: no_localizado.razon_social,
-                            entidad_federativa: no_localizado.ctg_no_localizados_registro.entidad_federativa,
-                            fecha_primera_publicacion: no_localizado.ctg_no_localizados_registro.fecha_primera_publicacion,
+                            entidad_federativa: no_localizado.ctg_nolocalizados.entidad_federativa,
+                            primera_fecha_publicacion: no_localizado.ctg_nolocalizados.primera_fecha_publicacion,
 
                         })
 

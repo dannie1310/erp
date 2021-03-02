@@ -2,13 +2,13 @@
     <span>
          <div class="row">
              <div class="col md 12">
-                 <button @click="init" class="btn btn-app btn-info pull-right" title="Cargar CSV">
+                 <button @click="init" class="btn btn-app btn-info pull-right" title="Cargar CSV" v-if="$root.can('registrar_proveedores_no_localizados', true)" >
                     <i class="fa fa-upload"></i>Cargar CSV
                 </button>
              </div>
          </div>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CARGAR CSV PROVEEDORES NO LOCALIZADOS</h5>
@@ -19,20 +19,19 @@
                      <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row justify-content-between">
-                                <div class="col-md-8">
+                                <div class="col-md-12">
                                      <label for="carga_layout" class="col-lg-12 col-form-label">Cargar Layout</label>
                                     <div class="col-lg-12">
                                         <input type="file" class="form-control" id="carga_layout"
-                                               accept=".csv"
                                                @change="onFileChange"
                                                row="3"
-                                               v-validate="{ ext: ['csv']}"
+                                               v-validate="{ ext: ['csv', 'zip'], size: 3072}"
                                                name="carga_layout"
                                                data-vv-as="Layout"
                                                ref="carga_layout"
                                                :class="{'is-invalid': errors.has('carga_layout')}"
                                         >
-                                        <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv)</div>
+                                        <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }}, Si el archivo es mayor al tamaño permitido deberá ser cargado como ZIP</div>
                                     </div>
                                 </div>
                             </div>
@@ -57,6 +56,7 @@ export default {
             cargando: false,
             data: null,
             file: null,
+            file_name: null,
         }
     },
     methods: {
@@ -91,7 +91,8 @@ export default {
         cargar(){
             var formData = new FormData();
             formData.append('file',  this.file);
-            return this.$store.dispatch('fiscal/no-localizado/cargarCsv',
+            formData.append('file_name',  this.file_name);
+            return this.$store.dispatch('fiscal/ctg-no-localizado/cargarCsv',
                 {
                     data: formData,
                     config: {
@@ -127,6 +128,8 @@ export default {
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
+            
+            this.file_name = files[0].name;
             if(e.target.id == 'carga_layout') {
                 this.createImage(files[0]);
             }

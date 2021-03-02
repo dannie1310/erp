@@ -1,20 +1,20 @@
-const URI = '/api/fiscal/no-localizado/';
+const URI = '/api/fiscal/ctg-no-localizado/';
 export default {
     namespaced: true,
     state: {
-        no_localizados: [],
-        currentNoLocalizado: null,
+        ctg_no_localizados: [],
+        currentCtgNoLocalizado: null,
         meta: {},
     },
     mutations: {
-        SET_NO_LOCALIZADOS(state, data) {
-            state.no_localizados = data;
+        SET_CTG_NO_LOCALIZADOS(state, data) {
+            state.ctg_no_localizados = data;
         },
         SET_META(state, data) {
             state.meta = data;
         },
-        SET_NO_LOCALIZADO(state, data) {
-            state.currentNoLocalizado = data;
+        SET_CTG_NO_LOCALIZADO(state, data) {
+            state.currentCtgNoLocalizado = data;
         },
     },
     actions: {
@@ -32,7 +32,6 @@ export default {
             })
         },
         cargarCsv(context, payload){
-            // console.log(payload);
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cargar Csv Proveedores No Localizados",
@@ -74,16 +73,16 @@ export default {
     },
 
     getters: {
-        no_localizados(state) {
-            return state.no_localizados
+        ctg_no_localizados(state) {
+            return state.ctg_no_localizados
         },
 
         meta(state) {
             return state.meta
         },
 
-        currentNoLocalizado(state) {
-            return state.currentNoLocalizado
+        currentCtgNoLocalizado(state) {
+            return state.currentCtgNoLocalizado
         }
     }
 }

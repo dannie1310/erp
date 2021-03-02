@@ -24,12 +24,12 @@ class CtgNoLocalizadoTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'rfc' => $model->fecha_hora_registro_format,
-            'razon_social' => $model->total_partidas,
+            'rfc' => $model->rfc,
+            'razon_social' => $model->razon_social,
             'tipo_persona_format' => $model->tipo_persona_format,
-            'fecha_primera_publicacion' => $model->fecha_primera_publicacion,
+            'primera_fecha_publicacion' => $model->primera_fecha_publicacion_format,
             'entidad_federativa' => $model->entidad_federativa,
-            'estado' => $model->cantidad_partidas
+            'estado' => $model->estado
         ];
     }
 }

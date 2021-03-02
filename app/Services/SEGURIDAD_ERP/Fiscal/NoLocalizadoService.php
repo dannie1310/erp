@@ -5,6 +5,7 @@ namespace App\Services\SEGURIDAD_ERP\Fiscal;
 
 
 use \App\Repositories\Repository; 
+use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoLocalizado;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 
@@ -26,24 +27,24 @@ class NoLocalizadoService
         $no_localizado = $this->repository;
 
         if(isset($data['rfc'])) {
-            $no_localizado = $no_localizado->where( [['rfc', '=', request( 'rfc' )]] );
+            $no_localizado = $no_localizado->where( [['rfc', 'like', '%' .request( 'rfc' ). '%']] );
         }
 
         if(isset($data['razon_social'])) {
-            $no_localizado = $no_localizado->where( [['razon_social', '=', request( 'razon_social' )]] );
+            $no_localizado = $no_localizado->where( [['razon_social', 'like', '%' .request( 'razon_social' ). '%']] );
         }
 
         if (isset($data['entidad_federativa'])) {
             $ctg_nolocalizados = CtgNoLocalizado::query()->where([['entidad_federativa', 'LIKE', '%' . $data['entidad_federativa'] . '%']])->get();
             foreach ($ctg_nolocalizados as $e) {
-                $no_localizado = $no_localizado->whereOr([['id_procesamiento_registro', '=', $e->id]]);
+                $no_localizado = $no_localizado->whereOr([['rfc', '=', $e->rfc]]);
             }
         }
 
-        if (isset($data['fecha_primera_publicacion'])) {
-            $ctg_nolocalizados = CtgNoLocalizado::query()->where([['fecha_primera_publicacion', 'LIKE', '%' . $data['fecha_primera_publicacion'] . '%']])->get();
+        if (isset($data['primera_fecha_publicacion'])) {
+            $ctg_nolocalizados = DB::connection('seguridad')->select(DB::raw("SELECT rfc FROM [SEGURIDAD_ERP].[Fiscal].[ctg_no_localizados] WHERE FORMAT (primera_fecha_publicacion, 'dd/MM/yyyy ') LIKE  '%" . $data['primera_fecha_publicacion'] . "%'"));
             foreach ($ctg_nolocalizados as $e) {
-                $no_localizado = $no_localizado->whereOr([['id_procesamiento_registro', '=', $e->id]]);
+                $no_localizado = $no_localizado->whereOr([['rfc', '=', $e->rfc]]);
             }
         }
 

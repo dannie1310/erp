@@ -156,6 +156,7 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 //SEGURIDAD/FISCAL
 import autocorreccion from './modules/fiscal/autocorreccion';
 import CFDSAT from './modules/fiscal/cfd-sat';
+import ctgNoLocalizado from './modules/fiscal/ctg-no-localizado';
 import efos from './modules/fiscal/efos';
 import empresaFacturera from './modules/fiscal/empresa-facturera';
 import noDeducido from './modules/fiscal/no-deducido';
@@ -333,6 +334,7 @@ export default new Vuex.Store({
         'fiscal/empresa-facturera': empresaFacturera,
         'fiscal/autocorreccion' : autocorreccion,
         'fiscal/cfd-sat': CFDSAT,
+        'fiscal/ctg-no-localizado': ctgNoLocalizado,
         'fiscal/efos' : efos,
         'fiscal/no-deducido' : noDeducido,
         'fiscal/no-localizado' : noLocalizado,

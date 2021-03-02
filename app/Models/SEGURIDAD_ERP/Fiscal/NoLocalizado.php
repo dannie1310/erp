@@ -25,26 +25,11 @@ class NoLocalizado extends Model
     public $timestamps = false;
 
     public function ctg_no_localizados_registro(){
-        return $this->belongsTo(CtgNoLocalizado::class, 'id_procesamiento_registro', 'id');
-    }
-
-    public function ctg_no_localizados_baja(){
-        return $this->belongsTo(CtgNoLocalizado::class, 'id_procesamiento_registro', 'id');
+        return $this->belongsTo(CtgNoLocalizado::class, 'rfc', 'rfc');
     }
 
     public function scopeVigente($query){
         return $query->where('estado', '=', 1);
     }
 
-    public function getTipoPersonaFormatAttribute(){
-        switch($this->tipo_persona){
-            case 'F':
-                return 'Física';
-                break;
-            case 'M':
-                return 'Moral';
-            break;
-        }
-        return '';
-    }
 }

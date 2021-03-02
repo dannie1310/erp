@@ -64,14 +64,14 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_proveedores_no_localizados',true) || true">
+            <li class="nav-item"  v-if="$root.can('consultar_proveedores_no_localizados',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-user-times nav-icon"></i>
                     <p>Gestión De No Localizados</p>
                     <i class="right fa fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item"  v-if="$root.can('consultar_proveedores_no_localizados',true) || true">
+                    <li class="nav-item"  v-if="$root.can('consultar_proveedores_no_localizados',true)">
                         <router-link :to="{name: 'no-localizados'}" class="nav-link" :class="{active: this.$route.name == 'no-localizados'}">
                             <i class="fa fa-file-alt nav-icon"></i>
                             <p>No Localizados SAT</p>
