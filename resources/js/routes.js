@@ -2756,6 +2756,7 @@ export const routes = [
         path: '/entrega-cfdi',
         components:  {
             default: require('./components/solicitud-recepcion-cfdi/Layout.vue').default,
+            menu: require('./components/solicitud-recepcion-cfdi/partials/Menu.vue').default
         },
         children:[
             {
