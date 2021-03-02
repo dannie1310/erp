@@ -14,6 +14,7 @@
 
                         </div>
                         <div class="modal-footer">
+                            <DescargaCFDI v-bind:id="value.id" v-bind:txt="1"></DescargaCFDI>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                 <i class="fa fa-times-circle"  ></i>
                                 Cerrar
@@ -26,8 +27,10 @@
 </template>
 
 <script>
+    import DescargaCFDI from "./DescargaCFDI";
     export default {
         name: "UUID",
+        components: {DescargaCFDI},
         props: ['value'],
         methods: {
             init() {
