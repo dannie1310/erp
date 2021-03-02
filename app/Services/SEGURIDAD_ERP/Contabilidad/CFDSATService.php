@@ -365,7 +365,7 @@ class CFDSATService
                                     if ($this->arreglo_factura["id_empresa_sat"] > 0) {
                                         $this->arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
                                         if ($this->store()) {
-                                            Storage::disk('xml_sat')->put($this->carga->id .'/'.$this->arreglo_factura["rfc_receptor"]. '/' . $current, fopen($ruta_archivo, "r"));
+                                            Storage::disk('xml_sat')->put($this->arreglo_factura["uuid"] . ".xml", fopen($ruta_archivo, "r"));
                                             unlink($ruta_archivo);
                                             $this->log["archivos_cargados"] += 1;
                                             $this->log["cfd_cargados"] += 1;
