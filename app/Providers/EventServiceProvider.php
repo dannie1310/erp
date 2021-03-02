@@ -30,6 +30,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendFinalizaCargaCFDNotification',
         ],
 
+        'App\Events\RegistroSolicitudRecepcionCFDI' => [
+            'App\Listeners\SendRegistroSolicitudRecepcionCFDINotification',
+        ],
+
         'App\Events\FinalizaProcesamientoAsociacion' => [
             'App\Listeners\SendFinalizaAsociacionPolizaCFDINotification',
         ],

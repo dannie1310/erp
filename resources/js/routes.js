@@ -2753,6 +2753,50 @@ export const routes = [
         ]
     },
     {
+        path: '/entrega-cfdi',
+        components:  {
+            default: require('./components/solicitud-recepcion-cfdi/Layout.vue').default,
+        },
+        children:[
+            {
+                path:'',
+                name: 'entrega-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/Index.vue').default,
+                    meta: {
+                    title: 'Solicitudes de Recepción de CFDI a Revisión',
+                    middleware: [auth, permission],
+                    permission: ['consultar_solicitud_recepcion_cfdi'],
+                    general: true
+                }
+            },
+            {
+                path: 'seleccionar-cfdi',
+                name: 'seleccionar-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/SeleccionarCFDI.vue').default,
+                meta: {
+                    title: 'Seleccionar CFDI',
+                    breadcrumb: {name: 'SELECCIONAR CFDI', parent: 'entrega-cfdi'},
+                    middleware: [auth, permission],
+                    permission: ['registrar_solicitud_recepcion_cfdi'],
+                    general: true
+                }
+            },
+            {
+                path: ':id_cfdi/create',
+                props : true,
+                name: 'solicitud-recepcion-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/Create.vue').default,
+                meta: {
+                    title: 'REGISTRAR SOLICITUD',
+                    breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'seleccionar-cfdi'},
+                    middleware: [auth, permission],
+                    permission: ['registrar_solicitud_recepcion_cfdi'],
+                    general: true
+                }
+            }
+        ]
+    },
+    {
         path: '/fiscal',
         components:  {
             default: require('./components/fiscal/partials/Layout.vue').default,

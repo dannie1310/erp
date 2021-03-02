@@ -27,4 +27,9 @@ class Proyecto extends Model
     {
         return $this->belongsTo(ConfiguracionObra::class, 'id_proyecto');
     }
+
+    public function obras()
+    {
+        return $this->hasMany(Obra::class, 'id_proyecto',"id");
+    }
 }

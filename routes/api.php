@@ -306,6 +306,16 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * ENTREGA DE CFDI
+     */
+
+    $api->group(['middleware' => 'api', 'prefix' => 'entrega-cfdi'], function ($api) {
+        $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@index');
+        $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@paginate');
+        $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@store');
+    });
+
+    /**
      * FISCAL
      */
     $api->group(['middleware' => 'api', 'prefix' => 'fiscal'], function ($api) {
@@ -314,6 +324,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@paginate');
             $api->post('carga-zip', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@cargaZIP');
             $api->post('procesa-dir-zip-cfd', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@procesaDirectorioZIPCFD');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@update')->where(['id' => '[0-9]+']);
             $api->post('obtener-informe-empresa-mes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeEmpresaMes');
             $api->post('obtener-informe-completo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeCompleto');
@@ -322,6 +333,8 @@ $api->version('v1', function ($api) {
             $api->get('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargar');
             $api->get('{id}/descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargarIndividual');
             $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
+            $api->post('cargar-xml-proveedor', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@cargaXMLProveedor');
+
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');
@@ -570,6 +583,10 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'unificacion-proveedores'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@store');
+        });
+        //PROYECTOS
+        $api->group(['prefix' => 'proyecto'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ProyectoController@index');
         });
     });
 
