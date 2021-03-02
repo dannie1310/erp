@@ -43,7 +43,7 @@
                     { title: 'Identificador', field: 'identificador', sortable: true},
                     { title: 'Folio', field: 'folio', sortable: true},
                     { title: 'Cliente', field: 'cliente'},
-                    { title: 'UUID', field: 'uuid'},
+                    { title: 'UUID', field: 'uuid', tdComp: require('../fiscal/cfd/cfd-sat/UUID').default},
                     { title: 'Moneda', field: 'moneda'},
                     { title: 'Monto', field: 'monto', tdClass: 'td_money'},
                 ],
@@ -99,10 +99,13 @@
                             fecha: solicitud.fecha_registro,
                             identificador: solicitud.id,
                             folio: solicitud.numero_folio,
-                            uuid: solicitud.cfdi.uuid,
                             cliente: solicitud.empresa.razon_social,
                             moneda: solicitud.cfdi.moneda,
                             monto: solicitud.cfdi.total_format,
+                            uuid: $.extend({}, {
+                                id: solicitud.cfdi.id,
+                                uuid: solicitud.cfdi.uuid,
+                            })
                         })
 
                     });
