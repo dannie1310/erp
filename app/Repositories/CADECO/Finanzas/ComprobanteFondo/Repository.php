@@ -33,4 +33,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $fondos = Fondo::orderBy($campo, $ordena)->pluck('id_fondo');
         return $fondos;
     }
+
+    public function registrar($data)
+    {
+        return $this->model->registrar($data);
+    }
 }

@@ -86,7 +86,7 @@
                                                      <th>Concepto</th>
                                                      <th class="cantidad_input">Cantidad</th>
                                                      <th class="cantidad_input">Precio</th>
-                                                     <th class="unidad">Monto</th>
+                                                     <th>Monto</th>
                                                      <th>Destino</th>
                                                      <th class="icono">
                                                          <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando..." :disabled="cargando">
@@ -100,8 +100,8 @@
                                                  </thead>
                                                  <tbody>
                                                  <tr v-for="(partida, i) in partidas">
-                                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                     <td>
+                                                     <td style="text-align:center; vertical-align:inherit; width: 3%">{{i+1}}</td>
+                                                     <td style="width: 37%">
                                                          <input type="text"
                                                                class="form-control"
                                                                :name="`referencia[${i}]`"
@@ -111,32 +111,34 @@
                                                                v-model="partida.referencia"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`referencia[${i}]`)">{{ errors.first(`referencia[${i}]`) }}</div>
                                                      </td>
-                                                     <td>
+                                                     <td style="width: 10%">
                                                          <input type="number"
                                                                min="0.01"
                                                                step=".01"
                                                                class="form-control"
                                                                :name="`cantidad[${i}]`"
                                                                data-vv-as="Cantidad"
+                                                               style="text-align:right;"
                                                                v-validate="{required: true}"
                                                                :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                                v-model="partida.cantidad"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                                      </td>
-                                                     <td>
+                                                     <td style="width: 10%">
                                                          <input type="number"
                                                                min="0.01"
                                                                step=".01"
                                                                class="form-control"
                                                                :name="`precio[${i}]`"
                                                                data-vv-as="Precio"
+                                                               style="text-align:right;"
                                                                v-validate="{required: true}"
                                                                :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                                v-model="partida.precio"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                      </td>
-                                                     <td>{{partida.monto = partida.precio * partida.cantidad}}</td>
-                                                     <td>
+                                                     <td align="right" style="width: 10%">{{partida.monto = partida.precio * partida.cantidad}}</td>
+                                                     <td style="width: 25%">
                                                         <ConceptoSelectHijo
                                                             name="id_concepto"
                                                             data-vv-as="Concepto"
@@ -148,7 +150,7 @@
                                                         ></ConceptoSelectHijo>
                                                          <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
                                                     </td>
-                                                    <td>
+                                                    <td style="width: 5%">
                                                         <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                     </td>
                                                  </tr>
@@ -181,20 +183,19 @@
                                                          <tbody>
                                                              <tr>
                                                                  <th>Subtotal:</th>
-                                                                 <td>$ {{(parseFloat(sumaMontos)).formatMoney(2,'.',',')}}</td>
+                                                                 <td align="right">$ {{(parseFloat(sumaMontos)).formatMoney(2,'.',',')}}</td>
                                                              </tr>
                                                              <tr>
                                                                  <th>IVA:</th>
-                                                                 <td>
-                                                                     <input type="number" min="0.01"
+                                                                 <td><input type="number" min="0.01"
                                                                             step=".01"   class="form-control"
-                                                                            :name="iva"  data-vv-as="IVA"
+                                                                            :name="iva"  data-vv-as="IVA" style="text-align:right;"
                                                                             v-validate="{required: true}"
                                                                             :class="{'is-invalid': errors.has(`iva`)}"
                                                                             v-model="iva"/>
                                                                  </td>
                                                              </tr>
-                                                             <tr>
+                                                             <tr align="right">
                                                                  <th>Total:</th>
                                                                   <td>$ {{(parseFloat(sumaTotal)).formatMoney(2,'.',',')}}</td>
                                                              </tr>
@@ -207,7 +208,7 @@
                                  </div>
                              </div>
                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
                                 <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
                              </div>
                          </form>
@@ -239,7 +240,6 @@
                 id_concepto : '',
                 fondos : [],
                 observaciones : '',
-                concepto_copiado : '',
                 partidas: [],
                 subtotal : 0,
                 iva : 0,
@@ -256,7 +256,7 @@
                 return result
             },
             sumaTotal() {
-                this.total = this.subtotal + this.iva
+                this.total = parseFloat(this.subtotal) + parseFloat(this.iva)
                 return this.total
             }
         },
@@ -313,19 +313,30 @@
                 });
             },
             store() {
-                return this.$store.dispatch('finanzas/comprobante-fondo/store', {
-                    data: this.data,
-                })
+                var datos = {};
+                datos["fecha"] = this.$data.fecha;
+                datos ["id_fondo"] = this.$data.id_fondo;
+                datos ["referencia"] = this.$data.referencia;
+                datos ["id_concepto"] = this.$data.id_concepto;
+                datos ["observaciones"] = this.$data.observaciones;
+                datos ["subtotal"] = this.$data.subtotal;
+                datos ["iva"] = this.$data.iva;
+                datos ["total"] = this.$data.total;
+                datos ["partidas"] = this.$data.partidas;
+                return this.$store.dispatch('finanzas/comprobante-fondo/store', datos)
                     .then((data) => {
-                        $(this.$refs.modal).modal('hide');
                         this.$emit('created', data)
+                        this.salir();
                     });
             },
+            salir(){
+                this.$router.push({name: 'comprobante-fondo'});
+            }
         },
         watch: {
             subtotal(value){
                 if(value){
-                    this.iva = (value * 16) / 100
+                    this.iva = (parseFloat(value) * 16) / 100
                 }
             }
         }

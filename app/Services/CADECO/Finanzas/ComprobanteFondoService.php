@@ -6,6 +6,8 @@ namespace App\Services\CADECO\Finanzas;
 
 use App\Models\CADECO\ComprobanteFondo;
 use App\Repositories\CADECO\Finanzas\ComprobanteFondo\Repository;
+use DateTime;
+use DateTimeZone;
 
 class ComprobanteFondoService
 {
@@ -50,7 +52,10 @@ class ComprobanteFondoService
 
     public function store($data)
     {
-        dd($data);
-        return $this->repository->create($data);
+        $fecha = New DateTime($data['fecha']);
+        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data['fecha'] = $fecha->format("Y-m-d H:i:s");
+        $data['cumplimiento'] = $fecha->format("Y-m-d");
+       return $this->repository->registrar($data);
     }
 }
