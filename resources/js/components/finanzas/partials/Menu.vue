@@ -19,7 +19,12 @@
                     <p>Gestión de Fondos</p>
                 </router-link>
             </li>
-
+            <li class="nav-item" v-if="$root.can('consultar_comprobante_fondo')">
+                <router-link :to="{name: 'comprobante-fondo'}" class="nav-link" :class="{active: this.$route.name == 'comprobante-fondo'}">
+                    <i class="fa fa-coins nav-icon"></i>
+                    <p>Comprobantes de Fondo</p>
+                </router-link>
+            </li>
             <li class="nav-item" v-if="cuenta_bancaria">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-money-check"></i>
