@@ -9,9 +9,9 @@
                 </router-link>
             </div>
         </div>
-        <div class="row" v-if="1==0">
-            <div class="card">
-
+        <div class="row" >
+            <div class="col-12">
+                <div class="card">
                 <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
@@ -21,6 +21,7 @@
                 <!-- /.card-body -->
                 </div>
             <!-- /.card -->
+            </div>
         </div>
             <!-- /.col -->
     </span>
@@ -38,12 +39,19 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Fecha', field: 'fecha', sortable: true},
+                    { title: 'Fecha de Registro', field: 'fecha', sortable: true},
+                    { title: 'Identificador', field: 'identificador', sortable: true},
+                    { title: 'Folio', field: 'folio', sortable: true},
+                    { title: 'Cliente', field: 'cliente'},
+                    { title: 'UUID', field: 'uuid'},
+                    { title: 'Moneda', field: 'moneda'},
+                    { title: 'Monto', field: 'monto', tdClass: 'td_money'},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: [],
+                    include: ['empresa','cfdi'],
+                    scope : ['porProveedorLogueado'],
                     sort: 'id',  order: 'desc'
                 },
                 daterange: null,
@@ -82,14 +90,19 @@
         },
         watch: {
             solicitudes: {
-                handler(cfdi) {
+                handler(solicitudes) {
                     let self = this
                     self.$data.data = []
-                    cfdi.forEach(function (solicitud, i) {
+                    solicitudes.forEach(function (solicitud, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            fecha: solicitud.fecha,
-
+                            fecha: solicitud.fecha_registro,
+                            identificador: solicitud.id,
+                            folio: solicitud.numero_folio,
+                            uuid: solicitud.cfdi.uuid,
+                            cliente: solicitud.empresa.razon_social,
+                            moneda: solicitud.cfdi.moneda,
+                            monto: solicitud.cfdi.total_format,
                         })
 
                     });

@@ -33,6 +33,38 @@ class SolicitudRecepcionCFDI extends Model
         'id_obra'
     ];
 
+    public function obra()
+    {
+        return $this->belongsTo(Obra::class, "id_proyecto_obra", "id");
+    }
+
+    public function cfdi()
+    {
+        return $this->belongsTo(CFDSAT::class, "id_cfdi", "id");
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(ProveedorSAT::class, 'id_empresa_emisora', 'id');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(EmpresaSAT::class, 'id_empresa_receptora', 'id');
+    }
+
+    public function scopePorProveedorLogueado($query)
+    {
+        $proveedor = ProveedorSAT::where("rfc","=",auth()->user()->usuario)->first();
+        return $query->where('id_empresa_emisora', '=', $proveedor->id);
+    }
+
+    public function getFechaHoraRegistroFormatAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"d/m/Y H:i");
+    }
+
     public function registrar($data)
     {
         DB::connection('seguridad')->beginTransaction();
@@ -60,30 +92,10 @@ class SolicitudRecepcionCFDI extends Model
         return $solicitud;
     }
 
-    public function obra()
-    {
-        return $this->belongsTo(Obra::class, "id_proyecto_obra", "id");
-    }
-
-    public function cfdi()
-    {
-        return $this->belongsTo(CFDSAT::class, "id_cfdi", "id");
-    }
-
     public static function calcularFolio($id_empresa_emisora)
     {
         $sol = SolicitudRecepcionCFDI::where('id_empresa_emisora', '=', $id_empresa_emisora)->orderBy('numero_folio', 'DESC')->first();
         return $sol ? $sol->numero_folio + 1 : 1;
-    }
-
-    public function proveedor()
-    {
-        return $this->belongsTo(ProveedorSAT::class, 'id_empresa_emisora', 'id');
-    }
-
-    public function empresa()
-    {
-        return $this->belongsTo(EmpresaSAT::class, 'id_empresa_receptora', 'id');
     }
 
 }
