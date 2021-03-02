@@ -67,7 +67,7 @@ class CtgNoLocalizadoService
             $resp = $this->getCatalogoCSVData($ruta_csv);
             $proc_ante = ProcesamientoListaNoLocalizados::where('hash_file', '=', $hash_file)->first();
             if($proc_ante){
-                //abort(403, "Archivo procesado previamente");
+                abort(403, "Archivo procesado previamente");
             }
             $procesamiento =  ProcesamientoListaNoLocalizados::create([
                 'id_usuario' => auth()->id(),
@@ -77,9 +77,6 @@ class CtgNoLocalizadoService
             ]);
             
             $ctg_vigente = $this->repository->actualizarEstado();
-            
-            $nl = NoLocalizado::where('estado', '=', 1);
-            $nl->update(array('estado' => 0));
             
             foreach($resp['data'] as $registro){
                 $registro['id_procesamiento'] = $procesamiento->id;

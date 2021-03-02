@@ -62,6 +62,7 @@ class CtgNoLocalizado extends Model
     }
 
     public function actualizarEstado(){
+        NoLocalizado::where('estado', '=', 1)->update(array('estado' => 2));
         $this->where('estado', '=', 1)->update(array('estado' => 0));
     }
 
