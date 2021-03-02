@@ -150,6 +150,11 @@ class CFDSAT extends Model
         return $query->where('id_proveedor_sat', '=', $id_proveedor);
     }
 
+    public function scopeEnSolicitud($query)
+    {
+        return $query->whereHas('solicitudRecepcion');
+    }
+
     public function scopeBancoGlobal($query)
     {
         return $query->where('id_ctg_bancos', '!=', null);

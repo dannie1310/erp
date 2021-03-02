@@ -39,10 +39,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Fecha de Registro', tdClass: 'fecha_hora', field: 'fecha', sortable: true},
-                    { title: 'Folio', field: 'folio', tdClass: 'td_numero_folio', sortable: true},
+                    { title: 'Fecha de Registro', tdClass: 'fecha_hora', field: 'fecha', sortable: true, thComp: require('../globals/th-Date').default},
+                    { title: 'Folio', field: 'folio', tdClass: 'td_numero_folio', sortable: true, thComp: require('../globals/th-Filter').default},
                     { title: 'Cliente', field: 'cliente'},
-                    { title: 'UUID', tdClass: 'td_c280', field: 'uuid', tdComp: require('../fiscal/cfd/cfd-sat/UUID').default},
+                    { title: 'UUID', tdClass: 'td_c280', field: 'uuid', tdComp: require('../fiscal/cfd/cfd-sat/UUID').default, thComp: require('../globals/th-Filter').default},
                     { title: 'Ti Com', field: 'tipo_comprobante'},
                     { title: 'Moneda', field: 'moneda'},
                     { title: 'TC', field: 'tipo_cambio'},
