@@ -155,7 +155,7 @@
                 </div>
                 <div class="card-footer">
                     <span class="pull-right">
-                        <button type="button" class="btn btn-secondary" >
+                        <button type="button" class="btn btn-secondary" v-on:click="regresar" >
                             <i class="fa fa-angle-left"></i>Regresar
                         </button>
                         <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 " >
@@ -247,6 +247,9 @@
                 }).finally( ()=>{
                     this.cargando = false;
                 });
+            },
+            regresar() {
+                this.$router.push({name: 'seleccionar-cfdi'});
             },
         }
     }
