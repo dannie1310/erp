@@ -45,6 +45,7 @@ import unidad from './modules/cadeco/unidad'
 
 //CATALOGOS
 import unificacionProveedores from './modules/catalogos/unificacion-proveedores';
+import proyecto from './modules/catalogos/proyecto';
 
 
 //COMPRAS
@@ -230,6 +231,7 @@ export default new Vuex.Store({
         'documentacion/archivo' : archivo,
 
         'catalogos/unificacion-proveedores' : unificacionProveedores,
+        'catalogos/proyecto' : proyecto,
 
         'compras/asignacion' : asignacion,
         'compras/cotizacion' : cotizacion,

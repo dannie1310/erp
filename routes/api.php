@@ -312,6 +312,7 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'entrega-cfdi'], function ($api) {
         $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@index');
         $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@paginate');
+        $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@store');
     });
 
     /**
@@ -582,6 +583,10 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'unificacion-proveedores'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@store');
+        });
+        //PROYECTOS
+        $api->group(['prefix' => 'proyecto'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ProyectoController@index');
         });
     });
 

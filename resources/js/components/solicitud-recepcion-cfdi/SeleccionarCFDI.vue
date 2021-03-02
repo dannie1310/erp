@@ -24,7 +24,7 @@
         </div>
         <div class="card" v-if="cargado">
             <div class="card-header">
-                <h5>Datos de CFDI</h5>
+                <h5>Datos del CFDI</h5>
             </div>
             <div class="card-body">
                 <span>

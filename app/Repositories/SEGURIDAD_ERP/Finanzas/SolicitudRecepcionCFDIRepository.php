@@ -16,4 +16,9 @@ class SolicitudRecepcionCFDIRepository extends Repository implements RepositoryI
         $this->model = $model;
     }
 
+    public function registrar($data)
+    {
+        return $this->model->registrar($data);
+    }
+
 }

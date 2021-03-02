@@ -44,7 +44,7 @@
                 total: 0,
                 query: {
                     include: [],
-                    sort: 'fecha',  order: 'desc'
+                    sort: 'id',  order: 'desc'
                 },
                 daterange: null,
             }

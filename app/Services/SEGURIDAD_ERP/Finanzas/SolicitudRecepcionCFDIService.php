@@ -26,4 +26,9 @@ class SolicitudRecepcionCFDIService
         return $this->repository->paginate();
     }
 
+    public function store(array $data)
+    {
+        return $this->repository->registrar($data);
+    }
+
 }

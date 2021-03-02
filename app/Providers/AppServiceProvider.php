@@ -333,6 +333,8 @@ use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionObserver;
 use App\Observers\CADECO\UnidadComplementoObserver;
 use App\Observers\CADECO\UnidadObserver;
 use Illuminate\Support\ServiceProvider;
+use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
+use App\Observers\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -364,6 +366,12 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
         \App\Models\CTPQ\PolizaMovimiento::observe(\App\Observers\CTPQ\PolizaMovimientoObserver::class);
         \App\Models\CTPQ\Cuenta::observe(\App\Observers\CTPQ\CuentaObserver::class);
+
+        /**
+        *RECEPCIÓN CFDI
+         */
+        SolicitudRecepcionCFDI::observe(SolicitudRecepcionCFDIObserver::class);
+
 
         /**
          * CADECO
