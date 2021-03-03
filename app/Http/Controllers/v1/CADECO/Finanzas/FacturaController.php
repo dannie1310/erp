@@ -88,4 +88,12 @@ class FacturaController extends Controller
     {
         return $this->service->pdfCFDI($id)->create();
     }
+
+    public function getDocumentos($id){
+        return $this->service->getDocumentos($id);
+    }
+
+    public function storeRevision(Request $request){
+        return $this->service->storeRevision($request->all());
+    }
 }
