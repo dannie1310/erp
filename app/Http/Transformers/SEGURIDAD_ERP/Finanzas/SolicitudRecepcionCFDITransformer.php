@@ -7,6 +7,7 @@ namespace App\Http\Transformers\SEGURIDAD_ERP\Finanzas;
 use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CFDSATTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\EmpresaSATTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\ObraTransformer;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use League\Fractal\TransformerAbstract;
@@ -15,7 +16,8 @@ class SolicitudRecepcionCFDITransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
         'empresa',
-        'cfdi'
+        'cfdi',
+        'obra'
     ];
 
     /**
@@ -27,7 +29,10 @@ class SolicitudRecepcionCFDITransformer extends TransformerAbstract
         return [
             'id' => (int) $model->getKey(),
             'numero_folio' => $model->numero_folio,
+            'contacto' => $model->contacto,
             'fecha_registro' => $model->fecha_hora_registro_format,
+            'observaciones' => $model->comentario,
+            'correo_notificaciones' => $model->correo_notificaciones,
         ];
     }
 
@@ -49,6 +54,15 @@ class SolicitudRecepcionCFDITransformer extends TransformerAbstract
         if($item = $model->cfdi)
         {
             return $this->item($item, new CFDSATTransformer);
+        }
+        return null;
+    }
+
+    public function includeObra(SolicitudRecepcionCFDI $model)
+    {
+        if($item = $model->obra)
+        {
+            return $this->item($item, new ObraTransformer());
         }
         return null;
     }

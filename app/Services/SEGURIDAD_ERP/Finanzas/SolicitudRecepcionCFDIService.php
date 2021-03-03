@@ -44,4 +44,9 @@ class SolicitudRecepcionCFDIService
         return $this->repository->registrar($data);
     }
 
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
 }
