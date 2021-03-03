@@ -26,6 +26,7 @@ class CFDSATConceptosTransformer extends TransformerAbstract
             'clave_unidad'=>$model->clave_unidad,
             'descripcion'=>$model->descripcion,
             'descuento'=>$model->descuento,
+            'descuento_format'=>$model->descuento_format,
             'importe'=>$model->importe,
             'importe_format'=>$model->importe_format,
             'unidad'=>$model->unidad,

@@ -2794,7 +2794,20 @@ export const routes = [
                     permission: ['registrar_solicitud_recepcion_cfdi'],
                     general: true
                 }
-            }
+            },
+            {
+                path: ':id',
+                name: 'solicitud-recepcion-cfdi-show',
+                component: require('./components/solicitud-recepcion-cfdi/Show').default,
+                props: true,
+                meta: {
+                    title: 'CONSULTAR SOLICITUD',
+                    breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
+                    middleware: [auth, permission],
+                    permission: 'consultar_solicitud_recepcion_cfdi',
+                    general: true
+                }
+            },
         ]
     },
     {

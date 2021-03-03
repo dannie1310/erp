@@ -112,6 +112,12 @@
                     <div class="row">
                         <div class="col-md-2">
                             <div class="form-group">
+                                <label >Descuento:</label>
+                                {{$solicitud->cfdi->descuento_format}}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
                                 <label >Impuestos Retenidos:</label>
                                 {{$solicitud->cfdi->total_impuestos_retenidos_format}}
                             </div>
@@ -154,6 +160,7 @@
                                         <th>Clave Unidad</th>
                                         <th>Unidad</th>
                                         <th>Cantidad</th>
+                                        <th>Descuento</th>
                                         <th>Valor Unitario</th>
                                         <th>Importe</th>
                                     </tr>
@@ -167,6 +174,7 @@
                                             <td>{{$concepto->clave_unidad}}</td>
                                             <td>{{$concepto->unidad}}</td>
                                             <td style="text-align: right">{{$concepto->cantidad_format}}</td>
+                                            <td style="text-align: right">{{$concepto->descuento_format}}</td>
                                             <td style="text-align: right">{{$concepto->valor_unitario_format}}</td>
                                             <td style="text-align: right">{{$concepto->importe_format}}</td>
                                         </tr>
