@@ -1,5 +1,18 @@
 <template>
     <span>
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div >
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <div class="spinner-border text-success" role="status">
+                               <span class="sr-only">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card" v-if="cargado">
             <div class="card-header">
                 <h5>Datos de la Solicitud de Recepción</h5>
@@ -125,20 +138,26 @@
                     <div class="row">
                         <div class="col-md-2">
                             <div class="form-group">
+                                <label >Descuento:</label>
+                                <input class="form-control" v-model="solicitud.cfdi.descuento_format" readonly="readonly" style="text-align: right" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
                                 <label >Impuestos Retenidos:</label>
-                                <input class="form-control" v-model="solicitud.cfdi.impuestos_retenidos_format" readonly="readonly" />
+                                <input class="form-control" v-model="solicitud.cfdi.impuestos_retenidos_format" readonly="readonly" style="text-align: right" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Impuestos Trasladados:</label>
-                                <input class="form-control" v-model="solicitud.cfdi.impuestos_trasladados_format" readonly="readonly" />
+                                <input class="form-control" v-model="solicitud.cfdi.impuestos_trasladados_format" readonly="readonly" style="text-align: right" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Total:</label>
-                                <input class="form-control" v-model="solicitud.cfdi.total_format" readonly="readonly" />
+                                <input class="form-control" v-model="solicitud.cfdi.total_format" readonly="readonly" style="text-align: right" />
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -150,7 +169,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Tipo de Cambio:</label>
-                                <input class="form-control" v-model="solicitud.cfdi.tipo_cambio" readonly="readonly" />
+                                <input class="form-control" v-model="solicitud.cfdi.tipo_cambio" readonly="readonly" style="text-align: right" />
                             </div>
                         </div>
                     </div>
@@ -167,6 +186,7 @@
                                     <th>Unidad</th>
                                     <th>Cantidad</th>
                                     <th>Valor Unitario</th>
+                                    <th>Descuento</th>
                                     <th>Importe</th>
                                 </tr>
                             </thead>
@@ -180,6 +200,7 @@
                                     <td>{{concepto.unidad}}</td>
                                     <td style="text-align: right">{{concepto.cantidad_format}}</td>
                                     <td style="text-align: right">{{concepto.valor_unitario_format}}</td>
+                                    <td style="text-align: right">{{concepto.descuento_format}}</td>
                                     <td style="text-align: right">{{concepto.importe_format}}</td>
                                 </tr>
                             </template>

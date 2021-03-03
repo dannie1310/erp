@@ -46,4 +46,9 @@ class CFDSATConceptos extends Model
     {
         return "$".number_format($this->importe,2);
     }
+
+    public function getDescuentoFormatAttribute()
+    {
+        return '$ ' . number_format(($this->descuento),2);
+    }
 }

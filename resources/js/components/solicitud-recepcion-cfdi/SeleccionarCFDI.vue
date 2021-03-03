@@ -71,36 +71,41 @@
                     <div class="row">
                         <div class="col-md-2">
                             <div class="form-group">
+                                <label >Descuento:</label>
+                                <input class="form-control" v-model="dato.descuento_format" readonly="readonly" style="text-align: right" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
                                 <label >Impuestos Retenidos:</label>
-                                <input class="form-control" v-model="dato.impuestos_retenidos_format" readonly="readonly" />
+                                <input class="form-control" v-model="dato.impuestos_retenidos_format" readonly="readonly" style="text-align: right" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Impuestos Trasladados:</label>
-                                <input class="form-control" v-model="dato.impuestos_trasladados_format" readonly="readonly" />
+                                <input class="form-control" v-model="dato.impuestos_trasladados_format" readonly="readonly" style="text-align: right" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Total:</label>
-                                <input class="form-control" v-model="dato.total_format" readonly="readonly" />
+                                <input class="form-control" v-model="dato.total_format" readonly="readonly" style="text-align: right" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Moneda:</label>
-                                <input class="form-control" v-model="dato.moneda" readonly="readonly" />
+                                <input class="form-control" v-model="dato.moneda" readonly="readonly"  />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Tipo de Cambio:</label>
-                                <input class="form-control" v-model="dato.tipo_cambio" readonly="readonly" />
+                                <input class="form-control" v-model="dato.tipo_cambio" readonly="readonly" style="text-align: right" />
                             </div>
                         </div>
                     </div>
-                    <hr>
                     <div class="row">
                         <div class="col-md-12">
                             <table class="table table-striped">
@@ -113,6 +118,7 @@
                                         <th>Unidad</th>
                                         <th>Cantidad</th>
                                         <th>Valor Unitario</th>
+                                        <th>Descuento</th>
                                         <th>Importe</th>
                                     </tr>
                                 </thead>
@@ -126,6 +132,7 @@
                                         <td>{{concepto.unidad}}</td>
                                         <td style="text-align: right">{{concepto.cantidad_format}}</td>
                                         <td style="text-align: right">{{concepto.valor_unitario_format}}</td>
+                                        <td style="text-align: right">{{concepto.descuento_format}}</td>
                                         <td style="text-align: right">{{concepto.importe_format}}</td>
                                     </tr>
                                 </template>
