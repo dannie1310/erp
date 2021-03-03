@@ -58,4 +58,9 @@ class ComprobanteFondoService
         $data['cumplimiento'] = $fecha->format("Y-m-d");
        return $this->repository->registrar($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }
