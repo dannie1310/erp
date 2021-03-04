@@ -63,6 +63,11 @@ class Poliza extends Model
         return $this->hasMany(LogEdicion::class, 'id_poliza', 'Id');
     }
 
+    public function asociacionCFDI()
+    {
+        return $this->hasMany(AsocCFDI::class, "GuidRef", "Guid");
+    }
+
     public function getCargosFormatAttribute()
     {
         return '$ ' . number_format(abs($this->Cargos), 2);
