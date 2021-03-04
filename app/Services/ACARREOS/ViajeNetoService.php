@@ -96,13 +96,19 @@ class ViajeNetoService
             if (is_null($telefono) || $telefono->imei != $data['IMEI']) {
                 return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
             }
-
+            $telefonos = array([
+                'id' => $telefono->impresora ? $telefono->impresora->id : null,
+                'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
+                'IMEI' => $telefono->imei
+            ]);
+        }else{
+            $telefonos = array([
+                'id' => $telefono->impresora ? $telefono->impresora->id : null,
+                'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
+                'IMEI' => "N/A"
+            ]);
         }
-        $telefonos = array([
-            'id' => $telefono->impresora ? $telefono->impresora->id : null,
-            'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
-            'IMEI' => $telefono->imei
-        ]);
+
         $configuracion_diaria = $usuario->first()->configuracionDiaria;
         $usuario = $usuario->first();
         $tiros = $this->repository->getCatalogoTiros();
