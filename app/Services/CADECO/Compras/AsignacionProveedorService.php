@@ -150,8 +150,9 @@ class AsignacionProveedorService
             $asignacion = $this->repository->show($data['id']);
             $partidas = $asignacion->partidas()->orderBy('id_transaccion_cotizacion')->get();
             $transaccion_cotizacion = '';
-            $orden_c = null;
+            
             foreach($partidas as $partida){
+                $orden_c = null;
                 $ordenes_c = OrdenCompra::where('id_antecedente', '=', $partida->cotizacionCompra->id_antecedente)
                                         ->where('id_referente', '=', $partida->cotizacionCompra->id_transaccion)
                                         ->where('id_empresa', '=', $partida->cotizacionCompra->id_empresa)
