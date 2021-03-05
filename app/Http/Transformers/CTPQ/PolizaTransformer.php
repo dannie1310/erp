@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CTPQ;
 
 
 use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\IncidenteIndividualConsolidadaTransformer;
+use App\Models\CTPQ\AsocCFDI;
 use App\Models\CTPQ\Poliza;
 use League\Fractal\TransformerAbstract;
 
@@ -23,7 +24,8 @@ class PolizaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'movimientos_poliza',
         'incidentes_activos',
-        'tipo'
+        'tipo',
+        'asociacion_cfdi'
     ];
 
     public function transform(Poliza $model) {
@@ -74,6 +76,14 @@ class PolizaTransformer extends TransformerAbstract
         if($tipo = $poliza->tipo_poliza)
         {
             return $this->item($tipo, new TipoPolizaTransformer);
+        }
+        return null;
+    }
+    public function includeAsociacionCFDI(Poliza $poliza)
+    {
+        if($items = $poliza->asociacionCFDI)
+        {
+            return $this->collection($items, new AsocCFDITransformer);
         }
         return null;
     }
