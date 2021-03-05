@@ -37,7 +37,7 @@
                 data: [],
                 total: 0,
                 query: {
-                    include: ['ctg_nolocalizados'], scope:['vigente'], sort: 'id',  order: 'desc'
+                    include: [], scope:['vigente'], sort: 'id',  order: 'desc'
                 },
                 cargando: false
 
@@ -53,10 +53,10 @@
         methods: {
             paginate(){
                 this.cargando=true;
-                return this.$store.dispatch('fiscal/no-localizado/paginate', {params: this.query})
+                return this.$store.dispatch('fiscal/ctg-no-localizado/paginate', {params: this.query})
                     .then(data=>{
-                        this.$store.commit('fiscal/no-localizado/SET_NO_LOCALIZADOS', data.data);
-                        this.$store.commit('fiscal/no-localizado/SET_META',data.meta)
+                        this.$store.commit('fiscal/ctg-no-localizado/SET_CTG_NO_LOCALIZADOS', data.data);
+                        this.$store.commit('fiscal/ctg-no-localizado/SET_META',data.meta)
                     })
                     .finally(()=>{
                         this.cargando=false;
@@ -66,10 +66,10 @@
         },
         computed: {
             no_localizados(){
-                return this.$store.getters['fiscal/no-localizado/no_localizados'];
+                return this.$store.getters['fiscal/ctg-no-localizado/ctg_no_localizados'];
             },
             meta(){
-                return this.$store.getters['fiscal/no-localizado/meta']
+                return this.$store.getters['fiscal/ctg-no-localizado/meta']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -85,8 +85,8 @@
                             index: (i + 1) + self.query.offset,
                             rfc: no_localizado.rfc,
                             razon_social: no_localizado.razon_social,
-                            entidad_federativa: no_localizado.ctg_nolocalizados.entidad_federativa,
-                            primera_fecha_publicacion: no_localizado.ctg_nolocalizados.primera_fecha_publicacion,
+                            entidad_federativa: no_localizado.entidad_federativa,
+                            primera_fecha_publicacion: no_localizado.primera_fecha_publicacion,
 
                         })
 
