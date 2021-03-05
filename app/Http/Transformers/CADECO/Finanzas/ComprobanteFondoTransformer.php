@@ -77,7 +77,7 @@ class ComprobanteFondoTransformer extends TransformerAbstract
      */
     public function includePartidas(ComprobanteFondo $model)
     {
-        if($partidas = $model->partidas)
+        if($partidas = $model->partidasOrdenadas)
         {
             return $this->collection($partidas, new ComprobanteFondoPartidaTransformer);
         }

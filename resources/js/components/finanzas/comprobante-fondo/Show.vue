@@ -78,11 +78,11 @@
                         <div class="row">
                             <div class="col-md-9">
                                 <label class="col-form-label">Observaciones: </label>
-                                    <input
-                                        type="text"
-                                        disabled="true"
-                                        v-model="fondo.observaciones"
-                                        class="form-control">
+                                <input
+                                    type="text"
+                                    disabled="true"
+                                    v-model="fondo.observaciones"
+                                    class="form-control">
                             </div>
                             <div class="col-md-3" align="left">
                                 <div class="table-responsive col-md-12">
@@ -92,7 +92,7 @@
                                                 <tbody>
                                                     <tr>
                                                         <th>Subtotal:</th>
-                                                        <td align="right">$ {{fondo.monto_format}}</td>
+                                                        <td align="right">{{fondo.monto_format}}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>IVA:</th>
@@ -137,7 +137,9 @@
                 this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', null);
                 return this.$store.dispatch('finanzas/comprobante-fondo/find', {
                     id: this.id,
-                    params:{include: ['fondo', 'partidas.concepto', 'concepto']}
+                    params:{
+                        include: ['fondo', 'partidas.concepto', 'concepto']
+                    }
                 }).then(data => {
                     this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', data);
                 })
