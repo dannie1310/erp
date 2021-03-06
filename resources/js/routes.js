@@ -125,8 +125,25 @@ export const routes = [
                 },
             },
             {
+                path: 'solicitud-recepcion-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'solicitud-recepcion-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/IndexProyecto').default,
+                        meta: {
+                            title: 'Solicitudes de Recepcion de CFDI',
+                            breadcrumb: {parent:'home', name: 'SOLICITUDES DE RECEPCIÓN DE CFDI'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_recepcion_cfdi_proyecto'
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'recepcion-cfdi',
-                component: require('./components/compras/partials/Layout.vue').default,
+                component: require('./components/solicitud-recepcion-cfdi/partials/Layout.vue').default,
                 children: [
                     {
                         path: '',
@@ -2833,7 +2850,7 @@ export const routes = [
                     title: 'CONSULTAR SOLICITUD',
                     breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
                     middleware: [auth, permission],
-                    permission: 'consultar_solicitud_recepcion_cfdi',
+                    permission: 'consultar_solicitud_recepcion_cfdi_proveedor',
                     general: true
                 }
             },

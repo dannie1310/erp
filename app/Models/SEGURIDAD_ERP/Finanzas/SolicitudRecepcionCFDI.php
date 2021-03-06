@@ -61,6 +61,12 @@ class SolicitudRecepcionCFDI extends Model
         return $query->where('id_empresa_emisora', '=', $proveedor->id);
     }
 
+    public function scopePorProyecto($query)
+    {
+        return $query->where('id_obra', '=', Context::getIdObra())
+            ->where("base_datos","=",Context::getDatabase());
+    }
+
     public function scopePendientesAprobacion($query)
     {
         return $query->where('id_obra', '=', Context::getIdObra())
@@ -72,6 +78,24 @@ class SolicitudRecepcionCFDI extends Model
     {
         $date = date_create($this->fecha_hora_registro);
         return date_format($date,"d/m/Y H:i");
+    }
+
+    public function getEstadoFormatAttribute()
+    {
+        switch ($this->estado){
+            case 0 :
+                return 'Registrada';
+                break;
+            case 1 :
+                return 'Aprobada';
+                break;
+            case -1 :
+                return 'Cancelada';
+                break;
+            case -2 :
+                return 'Rechazada';
+                break;
+        }
     }
 
     public function registrar($data)

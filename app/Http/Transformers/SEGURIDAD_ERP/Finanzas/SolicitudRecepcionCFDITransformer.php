@@ -33,6 +33,7 @@ class SolicitudRecepcionCFDITransformer extends TransformerAbstract
             'numero_folio' => $model->numero_folio,
             'contacto' => $model->contacto,
             'estado' => $model->estado,
+            'estado_format' => $model->estado_format,
             'fecha_registro' => $model->fecha_hora_registro_format,
             'observaciones' => $model->comentario,
             'correo_notificaciones' => $model->correo_notificaciones,

@@ -20,6 +20,12 @@
                     <p>Solicitudes de Recepción</p>
                 </router-link>
             </li>
+            <li class="nav-item"  v-if="$root.can('consultar_solicitud_recepcion_cfdi_proyecto',true)">
+                <router-link :to="{name: 'solicitud-recepcion-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-recepcion-cfdi'}">
+                    <i class="fa fa-copy nav-icon"></i>
+                    <p>Solicitudes de Recepción</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
 </template>
