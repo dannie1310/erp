@@ -6,29 +6,27 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-3">
-                                    <div class="form-group error-content">
-                                        <label for="fecha" class="col-form-label">Fecha:</label>
-                                        <datepicker v-model = "poliza.fecha_completa.date"
-                                                    name = "fecha"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :disabled-dates="fechasDeshabilitadas"
-                                                    :class="{'is-invalid': errors.has('fecha')}"
-                                        ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                <div class="col-md-2">
+                                    <div >
+                                        <div class="form-group error-content">
+                                            <label for="fecha" class="col-form-label">Fecha:</label>
+                                            <datepicker v-model = "poliza.fecha_completa.date"
+                                                        name = "fecha"
+                                                        :format = "formatoFecha"
+                                                        :language = "es"
+                                                        :bootstrap-styling = "true"
+                                                        class = "form-control"
+                                                        v-validate="{required: true}"
+                                                        :disabled-dates="fechasDeshabilitadas"
+                                                        :class="{'is-invalid': errors.has('fecha')}"
+                                            ></datepicker>
+                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                            <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <div class="form-group row error-content">
-                                        <label for="numero_poliza" class="col-form-label"># Poliza:</label>
+                                        <label for="numero_poliza" class="col-form-label">Folio de Poliza:</label>
                                         <input
                                             type="text"
                                             name="texto"
@@ -41,8 +39,6 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                </div>
-                                <div class="col-md-4">
                                     <div class="form-group error-content">
                                         <label for="tipo_poliza" class="col-form-label">Tipo de Poliza:</label>
                                         <select
@@ -60,7 +56,34 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-2" v-if="poliza.asociacion_cfdi">
+                                    <label for="uuid_poliza" class="col-form-label">UUID:</label>
+                                    <span v-if="poliza.asociacion_cfdi.data.length == 1">
+                                        <div class="form-group error-content">
+
+                                            <input
+                                                type="text"
+                                                name="texto"
+                                                class="form-control"
+                                                id="uuid_poliza"
+                                                v-model="poliza.asociacion_cfdi.data[0].uuid"
+                                                v-validate="{required: true}"
+                                                :class="{'is-invalid': errors.has('uuid_poliza')}">
+                                            <div class="invalid-feedback" v-show="errors.has('uuid_poliza')">
+                                                {{ errors.first('uuid_poliza') }}
+                                            </div>
+                                        </div>
+                                    </span>
+                                    <span v-if="poliza.asociacion_cfdi.data.length > 1">
+                                        <select multiple size="5" class="form-control">
+                                            <option v-for="(uuid, i) in poliza.asociacion_cfdi.data">{{uuid.uuid}}</option>
+                                        </select>
+
+                                    </span>
+
+                                </div>
                             </div>
+
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
@@ -109,6 +132,7 @@
                                 <th class="bg-gray-light">Abono</th>
                                 <th class="bg-gray-light">Referencia</th>
                                 <th class="bg-gray-light">Concepto</th>
+                                <th class="bg-gray-light">UUID</th>
                                 <th class="bg-gray-light icono">
                                     <button type="button" class="btn btn-sm btn-outline-success" @click="agregar" :disabled="cargando">
                                         <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
@@ -153,7 +177,7 @@
                                          v-show="errors.has(`id_tipo_movimiento_poliza[${i}]`)">{{ errors.first(`id_tipo_movimiento_poliza[${i}]`) }}
                                     </div>
                                 </td>
-                                <td class="money" v-if="movimiento.tipo == 0">
+                                <td class="money_input" v-if="movimiento.tipo == 0">
                                     <input
                                         type="number"
                                         step="any"
@@ -167,7 +191,7 @@
                                     <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                 </td>
                                 <td v-else></td>
-                                <td class="money" v-if="movimiento.tipo == 1">
+                                <td class="money_input" v-if="movimiento.tipo == 1">
                                     <input
                                         type="number"
                                         step="any"
@@ -208,6 +232,21 @@
                                         ></textarea>
                                         <div class="invalid-feedback" v-show="errors.has(`concepto_movto_edit[${i}]`)">{{ errors.first(`concepto_movto_edit[${i}]`) }}</div>
                                     </div>
+                                </td>
+                                <td class="referencia_input">
+                                    <div class="form-group error-content">
+                                        <input
+                                            v-if="movimiento.asociacion_cfdi"
+                                            type="text"
+                                            class="form-control"
+                                            v-model="movimiento.asociacion_cfdi.uuid"
+                                            v-validate="{required: true}"
+                                            :class="{'is-invalid': errors.has('uuid_poliza')}">
+                                        <div class="invalid-feedback" v-show="errors.has('uuid_poliza')">
+                                            {{ errors.first('uuid_poliza') }}
+                                        </div>
+                                    </div>
+
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-sm btn-outline-danger" @click="remove(movimiento)">
@@ -304,7 +343,7 @@
                 return this.$store.dispatch('contabilidadGeneral/poliza/find', {
                     id: this.id,
                     id_empresa: this.id_empresa,
-                    params: {include: ['movimientos_poliza', 'tipo'], id_empresa: this.id_empresa}
+                    params: {include: ['movimientos_poliza.asociacion_cfdi', 'tipo', 'asociacion_cfdi'], id_empresa: this.id_empresa}
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
                 })

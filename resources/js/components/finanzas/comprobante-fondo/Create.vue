@@ -56,7 +56,7 @@
                                             :class="{'is-invalid': errors.has('referencia')}">
                                         <div class="error-label" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                     </div>
-                                </div>
+                                     </div>
                                  </div>
                                  <div class="row">
                                      <div class="col-md-12">
@@ -68,8 +68,10 @@
                                                 id="id_concepto"
                                                 v-model="id_concepto"
                                                 :error="errors.has('id_concepto')"
+                                                v-validate="{required: true}"
                                                 ref="conceptoSelect"
                                                 :disableBranchNodes="false"
+                                                :class="{'is-invalid': errors.has('id_concepto')}"
                                             />
                                             <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
                                         </div>
@@ -137,18 +139,21 @@
                                                                v-model="partida.precio"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                      </td>
-                                                     <td align="right" style="width: 10%">{{partida.monto = partida.precio * partida.cantidad}}</td>
+                                                     <td align="right" style="width: 10%">$ {{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
                                                      <td style="width: 25%">
                                                         <ConceptoSelectHijo
-                                                            name="id_concepto"
+                                                            :name="`id_concepto[${i}]`"
                                                             data-vv-as="Concepto"
                                                             id="id_concepto"
                                                             v-model="partida.id_concepto"
                                                             ref="conceptoSelectHijo"
                                                             :disableBranchNodes="true"
                                                             v-bind:nivel_id="id_concepto"
+                                                            placeholder="--- Concepto ----"
+                                                            v-validate="{required: true}"
+                                                            :class="{'is-invalid': errors.has(`id_concepto[${i}]`)}"
                                                         ></ConceptoSelectHijo>
-                                                         <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                                         <div class="error-label" v-show="errors.has(`id_concepto[${i}]`)">{{ errors.first(`id_concepto[${i}]`) }}</div>
                                                     </td>
                                                     <td style="width: 5%">
                                                         <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
@@ -187,12 +192,14 @@
                                                              </tr>
                                                              <tr>
                                                                  <th>IVA:</th>
-                                                                 <td><input type="number" min="0.01"
+                                                                 <td>
+                                                                     <input type="number" min="0.01"
                                                                             step=".01"   class="form-control"
                                                                             :name="iva"  data-vv-as="IVA" style="text-align:right;"
                                                                             v-validate="{required: true}"
                                                                             :class="{'is-invalid': errors.has(`iva`)}"
                                                                             v-model="iva"/>
+                                                                     <div class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div>
                                                                  </td>
                                                              </tr>
                                                              <tr align="right">
@@ -305,9 +312,25 @@
             destroy(index){
                 this.partidas.splice(index, 1);
             },
+            monto(partida, key) {
+                var monto = 0;
+                if(partida.cantidad != 0 && partida.precio != 0) {
+                    monto = parseFloat(partida.cantidad * partida.precio)
+                    this.partidas[key]['monto'] = monto;
+                }
+                return monto;
+            },
             validate() {
                 this.$validator.validate().then(result => {
-                    if (result) {
+                    if(this.id_concepto == '')
+                    {
+                        swal('¡Error!', 'Debe seleccionar un concepto.', 'error')
+                    }
+                    else if(this.partidas.length <= 0)
+                    {
+                        swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
+                    }
+                    else {
                         this.store();
                     }
                 });
@@ -336,7 +359,7 @@
         watch: {
             subtotal(value){
                 if(value){
-                    this.iva = (parseFloat(value) * 16) / 100
+                    this.iva = parseFloat(((value) * 16) / 100).formatMoney(2,'.','')
                 }
             }
         }

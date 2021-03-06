@@ -22,4 +22,9 @@ class ComprobanteFondoObserver extends TransaccionObserver
         $comprobanteFondo->opciones = 0;
         $comprobanteFondo->id_moneda = 1;
     }
+
+    public function created(ComprobanteFondo $comprobanteFondo)
+    {
+        $comprobanteFondo->fondo->disminuyeSaldo($comprobanteFondo->total);
+    }
 }
