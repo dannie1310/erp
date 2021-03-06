@@ -2,6 +2,11 @@
     <span>
         <div class="row">
             <div class="col-12">
+                <button @click="create" v-if="$root.can('registrar_comprobante_fondo')" class="btn btn-app btn-info pull-right">
+                    <i class="fa fa-plus"></i> Registrar
+                </button>
+            </div>
+            <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -27,7 +32,7 @@
                     { title: 'Fondo', field: 'id_referente', tdClass:'center', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Referencia',  field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Total', field: 'total', tdClass:'center', sortable: false},
-                  //  { title: 'Acciones', field: 'buttons', thClass:'th_c100', tdClass:'center',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -55,6 +60,9 @@
                         this.cargando = false;
                     })
             },
+            create() {
+                this.$router.push({name: 'comprobante-fondo-create'});
+            },
         },
         computed: {
             fondos(){
@@ -79,7 +87,11 @@
                             numero_folio: fondo.numero_folio_format,
                             id_referente: fondo.fondo.descripcion,
                             referencia: fondo.referencia,
-                            total: fondo.total_format
+                            total: fondo.total_format,
+                            buttons: $.extend({}, {
+                                show : self.$root.can('consultar_comprobante_fondo') ? true : false,
+                                id: fondo.id,
+                            })
                         })
                     });
                 },

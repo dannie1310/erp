@@ -4,12 +4,33 @@
 namespace App\Models\CADECO;
 
 
+use Illuminate\Support\Facades\DB;
+
 class ComprobanteFondo extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
     public const TIPO = 101;
     public const OPCION = 0;
     public const NOMBRE = "Comprobante de Fondo";
+
+    protected $fillable = [
+        'id_transaccion',
+        'tipo_transaccion',
+        'opciones',
+        'id_moneda',
+        'fecha',
+        'id_referente',
+        'referencia',
+        'id_concepto',
+        'monto',
+        'impuesto',
+        'observaciones',
+        'comentario',
+        'FechaHoraRegistro',
+        'id_obra',
+        'id_usuario',
+        'cumplimiento'
+    ];
 
     protected static function boot()
     {
@@ -33,6 +54,11 @@ class ComprobanteFondo extends Transaccion
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 
+    public function partidas()
+    {
+        return $this->hasMany(ItemComprobanteFondo::class, 'id_transaccion', 'id_transaccion');
+    }
+
     /**
      * Scopes
      */
@@ -54,4 +80,42 @@ class ComprobanteFondo extends Transaccion
     /**
      * Métodos
      */
+    public function registrar($data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+            $comprobante = $this->create([
+                'fecha' => $data['fecha'],
+                'id_referente' => $data['id_fondo'],
+                'referencia' => $data['referencia'],
+                'id_concepto' => $data['id_concepto'],
+                'monto' => $data['subtotal'],
+                'impuesto' => $data['iva'],
+                'observaciones' => $data['observaciones'],
+                'cumplimiento' => $data['cumplimiento']
+            ]);
+
+            foreach ($data['partidas'] as $partida)
+            {
+                $comprobante->partidas()->create([
+                    'id_transaccion' => $comprobante->id_transaccion,
+                    'id_concepto' => $partida['id_concepto'],
+                    'importe' => $partida['precio'],
+                    'cantidad' => $partida['cantidad'],
+                    'referencia' => $partida['referencia']
+                ]);
+            }
+            DB::connection('cadeco')->commit();
+            return $comprobante;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function partidasOrdenadas()
+    {
+        return $this->partidas()->orderBy('id_item', 'asc');
+    }
 }

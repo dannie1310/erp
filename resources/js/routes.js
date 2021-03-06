@@ -1153,6 +1153,29 @@ export const routes = [
                                     permission: 'consultar_comprobante_fondo'
                                 }
                             },
+                            {
+                                path: 'create',
+                                name: 'comprobante-fondo-create',
+                                component: require('./components/finanzas/comprobante-fondo/Create').default,
+                                meta: {
+                                    title: 'Registrar Comprobantes de Fondo',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'comprobante-fondo'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_comprobante_fondo'
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'comprobante-fondo-show',
+                                props: true,
+                                component: require('./components/finanzas/comprobante-fondo/Show').default,
+                                meta: {
+                                    title: 'Consultar Comprobante de Fondo',
+                                    breadcrumb: {name: 'VER', parent: 'comprobante-fondo'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_comprobante_fondo'
+                                }
+                            },
                         ]
                     },
                     {
