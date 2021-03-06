@@ -322,16 +322,13 @@
             },
             validate() {
                 this.$validator.validate().then(result => {
-                    if(this.id_concepto == '')
+                    if (result)
                     {
-                        swal('¡Error!', 'Debe seleccionar un concepto.', 'error')
-                    }
-                    else if(this.partidas.length <= 0)
-                    {
-                        swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
-                    }
-                    else {
-                        this.store();
+                        if (this.partidas.length <= 0) {
+                            swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
+                        } else {
+                            this.store();
+                        }
                     }
                 });
             },
