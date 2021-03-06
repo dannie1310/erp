@@ -125,6 +125,35 @@ export const routes = [
                 },
             },
             {
+                path: 'recepcion-cfdi',
+                component: require('./components/compras/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'recepcion-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/BandejaEntrada').default,
+                        meta: {
+                            title: 'Recepción de CFDI',
+                            breadcrumb: {parent:'home', name: 'RECEPCIÓN DE CFDI'},
+                            middleware: [auth, context, permission],
+                            permission: 'aprobar_solicitud_recepcion_cfdi'
+                        }
+                    },
+                    {
+                        path: ':id/aprobar',
+                        name: 'solicitud-recepcion-cfdi-aprobar',
+                        component: require('./components/solicitud-recepcion-cfdi/Aprobar').default,
+                        props: true,
+                        meta: {
+                            title: 'Aprobar Recepci ón de CFDI',
+                            breadcrumb: { parent: 'recepcion-cfdi', name: 'APROBAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'aprobar_solicitud_recepcion_cfdi'
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'compras',
                 component: require('./components/compras/partials/Layout.vue').default,
                 children: [
@@ -2766,7 +2795,7 @@ export const routes = [
                     meta: {
                     title: 'Solicitudes de Recepción de CFDI a Revisión',
                     middleware: [auth, permission],
-                    permission: ['consultar_solicitud_recepcion_cfdi'],
+                    permission: ['consultar_solicitud_recepcion_cfdi_proveedor'],
                     general: true
                 }
             },
