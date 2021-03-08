@@ -9,6 +9,10 @@
                       type="button" class="btn btn-sm btn-outline-primary" title="Aprobar">
             <i class="fa fa-check"></i>
         </router-link>
+        <router-link  :to="{ name: 'solicitud-recepcion-cfdi-rechazar', params: {id: value.id}}" v-if="$root.can('rechazar_solicitud_recepcion_cfdi') && value.aprobar"
+                      type="button" class="btn btn-sm btn-outline-danger" title="Rechazar">
+            <i class="fa fa-times"></i>
+        </router-link>
     </div>
 </template>
 

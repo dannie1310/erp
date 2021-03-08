@@ -11,7 +11,7 @@
 
     </head>
     <div id="app">
-        Se le informa que {{$solicitud->usuarioAprobo->nombre_completo}} ha aprobado una solicitud de recepción de CFDI para su proyecto.
+        Se le informa que {{$solicitud->usuarioRechazo->nombre_completo}} ha rechazado una solicitud de recepción de CFDI para su proyecto.
         <div class="card" >
             <div class="card-header">
                 <h5>Datos de la Solicitud de Recepción</h5>
@@ -60,14 +60,20 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3">
-                            <label>Aprobó:</label>
-                            {{$solicitud->usuarioAprobo->nombre_completo}}
+                            <label>Rechazó:</label>
+                            {{$solicitud->usuarioRechazo->nombre_completo}}
                         </div>
                         <div class="col-md-3">
                             <label>
-                                Fecha / Hora Aprobación:
+                                Fecha / Hora Rechazo:
                             </label>
-                            {{$solicitud->fecha_hora_aprobacion_format}}
+                            {{$solicitud->fecha_hora_rechazo_format}}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                Motivo Rechazo:
+                            </label>
+                            {{$solicitud->motivo_rechazo}}
                         </div>
                     </div>
                 </span>

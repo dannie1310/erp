@@ -43,10 +43,13 @@ class SendRegistroSolicitudRecepcionCFDINotification
         $usuarios_interesados_permisos = usuario::usuarioRol(
             $roles
             , $event->solicitud->id_proyecto_obra)->get();
-        $usuario = Usuario::suscripcion($suscripciones, $event->solicitud->usuario_registro)->get();
+        $usuario = Usuario::suscripcion($suscripciones)->get();
 
         Notification::send($usuario, new NotificacionSolicitudRecepcionCFDI($event->solicitud));
         Notification::send($usuarios_interesados_permisos, new NotificacionSolicitudRecepcionCFDI($event->solicitud));
-        Notification::route("mail",$event->solicitud->correo_notificaciones)->notify(new NotificacionSolicitudRecepcionCFDIProveedor($event->solicitud));
+        Notification::send($event->solicitud->usuarioRegistro, new NotificacionSolicitudRecepcionCFDIProveedor($event->solicitud));
+        if($event->solicitud->usuarioRegistro->correo != $event->solicitud->correo_notificaciones){
+            Notification::route("mail",$event->solicitud->correo_notificaciones)->notify(new NotificacionSolicitudRecepcionCFDIProveedor($event->solicitud));
+        }
     }
 }

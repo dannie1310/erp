@@ -168,6 +168,18 @@ export const routes = [
                             permission: 'aprobar_solicitud_recepcion_cfdi'
                         }
                     },
+                    {
+                        path: ':id/rechazar',
+                        name: 'solicitud-recepcion-cfdi-rechazar',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Rechazar').default,
+                        props: true,
+                        meta: {
+                            title: 'Rechazar Recepción de CFDI',
+                            breadcrumb: { parent: 'recepcion-cfdi', name: 'RECHAZAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'rechazar_solicitud_recepcion_cfdi'
+                        }
+                    },
                 ]
             },
             {

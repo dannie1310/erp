@@ -3,6 +3,7 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 use App\Events\AprobacionSolicitudRecepcionCFDI;
+use App\Events\RechazoSolicitudRecepcionCFDI;
 use App\Events\RegistroSolicitudRecepcionCFDI;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
@@ -104,6 +105,12 @@ class SolicitudRecepcionCFDI extends Model
         return date_format($date,"d/m/Y H:i");
     }
 
+    public function getFechaHoraRechazoFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_rechazo);
+        return date_format($date,"d/m/Y H:i");
+    }
+
     public function getEstadoFormatAttribute()
     {
         switch ($this->estado){
@@ -192,14 +199,32 @@ class SolicitudRecepcionCFDI extends Model
             $this->save();
 
             DB::connection('cadeco')->commit();
-            event(new AprobacionSolicitudRecepcionCFDI($this));
             DB::connection('seguridad')->commit();
+            event(new AprobacionSolicitudRecepcionCFDI($this));
 
         } catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
             DB::connection('seguridad')->rollBack();
             abort(500, $e->getMessage());
         }
+    }
+
+    public function rechazar($motivo)
+    {
+        DB::connection('seguridad')->beginTransaction();
+        try{
+            $this->estado = -2;
+            $this->motivo_rechazo = $motivo;
+            $this->save();
+
+            DB::connection('seguridad')->commit();
+            event(new RechazoSolicitudRecepcionCFDI($this));
+
+        } catch (\Exception $e){
+            DB::connection('seguridad')->rollBack();
+            abort(500, $e->getMessage());
+        }
+        return $this;
     }
 
 }

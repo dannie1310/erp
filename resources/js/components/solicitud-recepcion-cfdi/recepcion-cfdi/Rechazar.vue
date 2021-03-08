@@ -208,14 +208,37 @@
                         </table>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Motivo de Rechazo: </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row error-content">
+                            <div class="col-md-12">
+                                <textarea
+                                    name="motivo"
+                                    id="motivo"
+                                    class="form-control"
+                                    v-model="motivo"
+                                    v-validate="{required: true}"
+                                    data-vv-as="Motivo de Rechazo"
+                                    :class="{'is-invalid': errors.has('motivo')}"
+                                ></textarea>
+                                <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-footer">
                 <span class="pull-right">
                     <button type="button" class="btn btn-secondary" v-on:click="regresar" >
                         <i class="fa fa-angle-left"></i>Regresar
                     </button>
-                    <button v-if="solicitud.estado==0" @click="aprobar" title="Aprobar" class="btn btn-primary">
-                        <i class="fa fa-check-circle"></i>Aprobar
+                    <button v-if="solicitud.estado==0" @click="rechazar" title="Rechazar" class="btn btn-danger">
+                        <i class="fa fa-times-circle"></i>Rechazar
                     </button>
                 </span>
             </div>
@@ -232,6 +255,7 @@
             return {
                 cargando:true,
                 cargado:false,
+                motivo:''
             }
         },
         mounted() {
@@ -258,12 +282,17 @@
                     this.cargado = true;
                 })
             },
-            aprobar() {
-                return this.$store.dispatch('recepcion-cfdi/solicitud-recepcion-cfdi/aprobar', {
-                    id: this.id
-                }).then(data => {
-                    this.$router.push({name: 'recepcion-cfdi'});
-                })
+            rechazar() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        return this.$store.dispatch('recepcion-cfdi/solicitud-recepcion-cfdi/rechazar', {
+                            id: this.id,
+                            motivo: this.motivo
+                        }).then(data => {
+                            this.$router.push({name: 'recepcion-cfdi'});
+                        })
+                    }
+                });
             },
             regresar() {
                 this.$router.push({name: 'recepcion-cfdi'});

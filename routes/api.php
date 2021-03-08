@@ -488,6 +488,7 @@ $api->version('v1', function ($api) {
         $api->get('paginate', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@paginate');
         $api->post('/', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@store');
         $api->post('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@aprobar');
+        $api->post('{id}/rechazar', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@rechazar');
         $api->get('{id}', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@show')->where(['id' => '[0-9]+']);
     });
 
