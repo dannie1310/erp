@@ -41,10 +41,7 @@ class CtgNoLocalizadoService
         }
 
         if (isset($data['primera_fecha_publicacion'])) {
-            $ctg_nolocalizados = DB::connection('seguridad')->select(DB::raw("SELECT rfc FROM [SEGURIDAD_ERP].[Fiscal].[ctg_no_localizados] WHERE FORMAT (primera_fecha_publicacion, 'dd/MM/yyyy ') LIKE  '%" . $data['primera_fecha_publicacion'] . "%'"));
-            foreach ($ctg_nolocalizados as $e) {
-                $no_localizado = $no_localizado->whereOr([['rfc', '=', $e->rfc]]);
-            }
+            $no_localizado = $no_localizado->where( [['primera_fecha_publicacion', '=', request( 'primera_fecha_publicacion' )]] );
         }
 
         return $no_localizado->paginate($data);
