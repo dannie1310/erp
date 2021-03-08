@@ -1,5 +1,14 @@
 <template>
     <span>
+        <div class="row">
+            <div class="col-12">
+                <router-link :to="{name: 'seleccionar-cfdi'}" v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)" class="btn btn-app float-right" :disabled="cargando">
+                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                    <i class="fa fa-plus" v-else></i>
+                    Registrar
+                </router-link>
+            </div>
+        </div>
         <div class="row" >
             <div class="col-12">
                 <div class="card">
@@ -30,27 +39,26 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Fecha de Registro', tdClass: 'fecha_hora', field: 'fecha', sortable: true, thComp: require('../globals/th-Date').default},
-                    { title: 'Identificador', field: 'identificador', tdClass: 'td_numero_folio', sortable: true, thComp: require('../globals/th-Filter').default},
-                    { title: 'Folio de Proveedor', field: 'folio', tdClass: 'td_numero_folio', sortable: true, thComp: require('../globals/th-Filter').default},
-                    { title: 'Proveedor', field: 'proveedor'},
+                    { title: 'Fecha de Registro', tdClass: 'fecha_hora', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Folio', field: 'folio', tdClass: 'td_numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Cliente', field: 'cliente'},
                     { title: 'Proyecto', field: 'proyecto', thClass: 'th_c150',},
-                    { title: 'UUID', tdClass: 'td_c280', field: 'uuid', tdComp: require('../fiscal/cfd/cfd-sat/UUID').default, thComp: require('../globals/th-Filter').default},
-                    { title: 'Tipo Comp.', field: 'tipo_comprobante'},
+                    { title: 'UUID', tdClass: 'td_c280', field: 'uuid', tdComp: require('../../fiscal/cfd/cfd-sat/UUID').default, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Ti Com', field: 'tipo_comprobante'},
                     { title: 'Moneda', field: 'moneda'},
                     { title: 'TC', field: 'tipo_cambio'},
                     /*{ title: 'Subtotal', field: 'subtotal', tdClass: 'td_money'},
                     { title: 'Impuestos Trasladados', field: 'impuestos_trasladados', tdClass: 'td_money'},
                     { title: 'Impuestos Retenidos', field: 'impuestos_retenidos', tdClass: 'td_money'},*/
                     { title: 'Monto', field: 'monto', tdClass: 'td_money'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Estado', field: 'estado', tdClass: 'td_money'},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('../partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    context : 1,
-                    include: ['proveedor','cfdi', 'obra'],
-                    scope : ['pendientesAprobacion'],
+                    include: ['empresa','cfdi', 'obra'],
+                    scope : ['porProveedorLogueado'],
                     sort: 'id',  order: 'desc'
                 },
                 daterange: null,
@@ -67,7 +75,7 @@
         methods: {
             paginate(){
                 this.cargando=true;
-                return this.$store.dispatch('recepcion-cfdi/solicitud-recepcion-cfdi/paginate', {params: this.query})
+                return this.$store.dispatch('entrega-cfdi/solicitud-recepcion-cfdi/paginate', {params: this.query})
                     .then(data=>{
 
                     })
@@ -78,10 +86,10 @@
         },
         computed: {
             solicitudes(){
-                return this.$store.getters['recepcion-cfdi/solicitud-recepcion-cfdi/solicitudes'];
+                return this.$store.getters['entrega-cfdi/solicitud-recepcion-cfdi/solicitudes'];
             },
             meta(){
-                return this.$store.getters['recepcion-cfdi/solicitud-recepcion-cfdi/meta']
+                return this.$store.getters['entrega-cfdi/solicitud-recepcion-cfdi/meta']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -97,8 +105,7 @@
                             index: (i + 1) + self.query.offset,
                             fecha: solicitud.fecha_registro,
                             folio: solicitud.numero_folio,
-                            identificador: solicitud.id,
-                            proveedor: solicitud.proveedor.razon_social,
+                            cliente: solicitud.empresa.razon_social,
                             proyecto: solicitud.obra.nombre,
                             moneda: solicitud.cfdi.moneda,
                             monto: solicitud.cfdi.total_format,
@@ -107,6 +114,7 @@
                             impuestos_retenidos: solicitud.cfdi.impuestos_retenidos_format,
                             tipo_cambio: solicitud.cfdi.tipo_cambio,
                             tipo_comprobante: solicitud.cfdi.tipo_comprobante,
+                            estado: solicitud.estado_format,
                             uuid: $.extend({}, {
                                 id: solicitud.cfdi.id,
                                 uuid: solicitud.cfdi.uuid,

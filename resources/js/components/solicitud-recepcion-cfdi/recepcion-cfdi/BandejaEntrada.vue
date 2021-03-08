@@ -30,26 +30,27 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Fecha de Registro', tdClass: 'fecha_hora', field: 'fecha', sortable: true, thComp: require('../globals/th-Date').default},
-                    { title: 'Folio', field: 'folio', tdClass: 'td_numero_folio', sortable: true, thComp: require('../globals/th-Filter').default},
-                    { title: 'Cliente', field: 'cliente'},
+                    { title: 'Fecha de Registro', tdClass: 'fecha_hora', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Identificador', field: 'identificador', tdClass: 'td_numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Folio de Proveedor', field: 'folio', tdClass: 'td_numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Proveedor', field: 'proveedor'},
                     { title: 'Proyecto', field: 'proyecto', thClass: 'th_c150',},
-                    { title: 'UUID', tdClass: 'td_c280', field: 'uuid', tdComp: require('../fiscal/cfd/cfd-sat/UUID').default, thComp: require('../globals/th-Filter').default},
-                    { title: 'Ti Com', field: 'tipo_comprobante'},
+                    { title: 'UUID', tdClass: 'td_c280', field: 'uuid', tdComp: require('../../fiscal/cfd/cfd-sat/UUID').default, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Tipo Comp.', field: 'tipo_comprobante'},
                     { title: 'Moneda', field: 'moneda'},
                     { title: 'TC', field: 'tipo_cambio'},
                     /*{ title: 'Subtotal', field: 'subtotal', tdClass: 'td_money'},
                     { title: 'Impuestos Trasladados', field: 'impuestos_trasladados', tdClass: 'td_money'},
                     { title: 'Impuestos Retenidos', field: 'impuestos_retenidos', tdClass: 'td_money'},*/
                     { title: 'Monto', field: 'monto', tdClass: 'td_money'},
-                    { title: 'Estado', field: 'estado', tdClass: 'td_money'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('../partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: ['empresa','cfdi', 'obra'],
-                    scope : ['porProyecto'],
+                    context : 1,
+                    include: ['proveedor','cfdi', 'obra'],
+                    scope : ['pendientesAprobacion'],
                     sort: 'id',  order: 'desc'
                 },
                 daterange: null,
@@ -96,7 +97,8 @@
                             index: (i + 1) + self.query.offset,
                             fecha: solicitud.fecha_registro,
                             folio: solicitud.numero_folio,
-                            cliente: solicitud.empresa.razon_social,
+                            identificador: solicitud.id,
+                            proveedor: solicitud.proveedor.razon_social,
                             proyecto: solicitud.obra.nombre,
                             moneda: solicitud.cfdi.moneda,
                             monto: solicitud.cfdi.total_format,
@@ -105,14 +107,12 @@
                             impuestos_retenidos: solicitud.cfdi.impuestos_retenidos_format,
                             tipo_cambio: solicitud.cfdi.tipo_cambio,
                             tipo_comprobante: solicitud.cfdi.tipo_comprobante,
-                            estado: solicitud.estado_format,
                             uuid: $.extend({}, {
                                 id: solicitud.cfdi.id,
                                 uuid: solicitud.cfdi.uuid,
                             }),
                             buttons: $.extend({}, {
                                 id: solicitud.id,
-                                aprobar : solicitud.estado == 0 ? true : false,
                             })
                         })
 
