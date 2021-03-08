@@ -183,6 +183,45 @@ export default {
                     });
             });
         },
+        rechazar(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Rechazar solicitud de recepción de CFDI",
+                    text: "¿Está seguro de que desea rechazar la recepción de este CFDI?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Rechazar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + '/rechazar', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Solicitud rechazada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

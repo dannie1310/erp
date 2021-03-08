@@ -25,5 +25,9 @@ class SolicitudRecepcionCFDIObserver
             $solicitud->fecha_hora_aprobacion = date('Y-m-d H:i:s');
             $solicitud->usuario_aprobo = auth()->id();
         }
+        if($solicitud->estado == -2){
+            $solicitud->fecha_hora_rechazo = date('Y-m-d H:i:s');
+            $solicitud->usuario_rechazo = auth()->id();
+        }
     }
 }
