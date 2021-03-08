@@ -6,6 +6,7 @@ use App\Events\AprobacionSolicitudRecepcionCFDI;
 use App\Events\FinalizaCargaCFD;
 use App\Events\FinalizaProcesamientoLoteBusquedas;
 use App\Events\IncidenciaCI;
+use App\Events\RechazoSolicitudRecepcionCFDI;
 use App\Events\RegistroSolicitudRecepcionCFDI;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
 use App\Models\SEGURIDAD_ERP\Obra;
@@ -14,6 +15,8 @@ use App\Notifications\NotificacionAprobacionSolicitudRecepcionCFDI;
 use App\Notifications\NotificacionAprobacionSolicitudRecepcionCFDIProveedor;
 use App\Notifications\NotificacionFinalizaCargaCFD;
 use App\Notifications\NotificacionFinalizaProcesoBusquedasDiferenciasPolizas;
+use App\Notifications\NotificacionRechazoSolicitudRecepcionCFDI;
+use App\Notifications\NotificacionRechazoSolicitudRecepcionCFDIProveedor;
 use App\Notifications\NotificacionSolicitudRecepcionCFDI;
 use App\Notifications\NotificacionSolicitudRecepcionCFDIProveedor;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,7 +26,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Notifications\NotificacionIncidenciasCI;
 
-class SendAprobacionSolicitudRecepcionCFDINotification
+class SendRechazoSolicitudRecepcionCFDINotification
 {
     /**
      * Create the event listener.
@@ -36,9 +39,9 @@ class SendAprobacionSolicitudRecepcionCFDINotification
     }
 
     /**
-     * @param AprobacionSolicitudRecepcionCFDI $event
+     * @param RechazoSolicitudRecepcionCFDI $event
      */
-    public function handle(AprobacionSolicitudRecepcionCFDI $event)
+    public function handle(RechazoSolicitudRecepcionCFDI $event)
     {
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
         $roles = ["contador","administrador_de_obra","comprador_compras","comprador_contratos","comprador_maquinaria","cuentas_por_pagar"];
@@ -48,11 +51,11 @@ class SendAprobacionSolicitudRecepcionCFDINotification
             , $event->solicitud->id_proyecto_obra)->get();
         $usuario = Usuario::suscripcion($suscripciones)->get();
 
-        Notification::send($usuario, new NotificacionAprobacionSolicitudRecepcionCFDI($event->solicitud));
-        Notification::send($usuarios_interesados_permisos, new NotificacionSolicitudRecepcionCFDI($event->solicitud));
-        Notification::send($event->solicitud->usuarioRegistro, new NotificacionAprobacionSolicitudRecepcionCFDIProveedor($event->solicitud));
+        Notification::send($usuario, new NotificacionRechazoSolicitudRecepcionCFDI($event->solicitud));
+        Notification::send($usuarios_interesados_permisos, new NotificacionRechazoSolicitudRecepcionCFDI($event->solicitud));
+        Notification::send($event->solicitud->usuarioRegistro, new NotificacionRechazoSolicitudRecepcionCFDIProveedor($event->solicitud));
         if($event->solicitud->usuarioRegistro->correo != $event->solicitud->correo_notificaciones){
-            Notification::route("mail",$event->solicitud->correo_notificaciones)->notify(new NotificacionAprobacionSolicitudRecepcionCFDIProveedor($event->solicitud));
+            Notification::route("mail",$event->solicitud->correo_notificaciones)->notify(new NotificacionRechazoSolicitudRecepcionCFDIProveedor($event->solicitud));
         }
     }
 }

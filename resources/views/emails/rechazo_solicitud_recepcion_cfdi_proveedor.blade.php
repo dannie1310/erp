@@ -11,7 +11,7 @@
 
     </head>
     <div id="app">
-        Se le informa que {{$solicitud->usuarioAprobo->nombre_completo}} ha aprobado una solicitud de recepción de CFDI para su proyecto.
+        Se le informa que su solicitud de recepción de CFDI ha sido rechazada para su revisión en el proyecto.
         <div class="card" >
             <div class="card-header">
                 <h5>Datos de la Solicitud de Recepción</h5>
@@ -60,14 +60,20 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3">
-                            <label>Aprobó:</label>
-                            {{$solicitud->usuarioAprobo->nombre_completo}}
+                            <label>Rechazó:</label>
+                            {{$solicitud->usuarioRechazo->nombre_completo}}
                         </div>
                         <div class="col-md-3">
                             <label>
-                                Fecha / Hora Aprobación:
+                                Fecha / Hora Rechazo:
                             </label>
-                            {{$solicitud->fecha_hora_aprobacion_format}}
+                            {{$solicitud->fecha_hora_rechazo_format}}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                Motivo Rechazo:
+                            </label>
+                            {{$solicitud->motivo_rechazo}}
                         </div>
                     </div>
                 </span>
@@ -195,6 +201,7 @@
                             </table>
                         </div>
                     </div>
+                    <b>Se le recuerda que la solicitud de recepción no representa un compromiso de pago por parte de Hermes Infraestructura.</b>
                 </span>
             </div>
         </div>
