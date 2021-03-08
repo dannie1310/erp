@@ -14,7 +14,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 
-class RegistroSolicitudRecepcionCFDI
+class AprobacionSolicitudRecepcionCFDI
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $solicitud;
@@ -23,7 +23,7 @@ class RegistroSolicitudRecepcionCFDI
     public function __construct(SolicitudRecepcionCFDI $solicitud)
     {
         $this->solicitud = $solicitud;
-        $this->tipo = 6;
+        $this->tipo = 7;
     }
 
     /**

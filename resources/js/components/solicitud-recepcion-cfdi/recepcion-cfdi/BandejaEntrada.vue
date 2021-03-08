@@ -113,6 +113,7 @@
                             }),
                             buttons: $.extend({}, {
                                 id: solicitud.id,
+                                aprobar : solicitud.estado == 0 ? true : false,
                             })
                         })
 

@@ -2,9 +2,11 @@
 
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
+use App\Events\AprobacionSolicitudRecepcionCFDI;
 use App\Events\RegistroSolicitudRecepcionCFDI;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
+use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
@@ -55,6 +57,22 @@ class SolicitudRecepcionCFDI extends Model
         return $this->belongsTo(EmpresaSAT::class, 'id_empresa_receptora', 'id');
     }
 
+    public function usuarioRegistro()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
+    }
+
+    public function usuarioAprobo()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_aprobo', 'idusuario');
+    }
+
+    public function usuarioRechazo()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_rechazo', 'idusuario');
+    }
+
+
     public function scopePorProveedorLogueado($query)
     {
         $proveedor = ProveedorSAT::where("rfc","=",auth()->user()->usuario)->first();
@@ -77,6 +95,12 @@ class SolicitudRecepcionCFDI extends Model
     public function getFechaHoraRegistroFormatAttribute()
     {
         $date = date_create($this->fecha_hora_registro);
+        return date_format($date,"d/m/Y H:i");
+    }
+
+    public function getFechaHoraAprobacionFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_aprobacion);
         return date_format($date,"d/m/Y H:i");
     }
 
@@ -168,6 +192,7 @@ class SolicitudRecepcionCFDI extends Model
             $this->save();
 
             DB::connection('cadeco')->commit();
+            event(new AprobacionSolicitudRecepcionCFDI($this));
             DB::connection('seguridad')->commit();
 
         } catch (\Exception $e){

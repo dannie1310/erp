@@ -18,4 +18,12 @@ class SolicitudRecepcionCFDIObserver
         $solicitud->usuario_registro = auth()->id();
         $solicitud->numero_folio = SolicitudRecepcionCFDI::calcularFolio($solicitud->id_empresa_emisora);
     }
+
+    public function updating(SolicitudRecepcionCFDI $solicitud)
+    {
+        if($solicitud->estado == 1){
+            $solicitud->fecha_hora_aprobacion = date('Y-m-d H:i:s');
+            $solicitud->usuario_aprobo = auth()->id();
+        }
+    }
 }
