@@ -112,6 +112,10 @@ import subcontrato from './modules/contratos/subcontrato';
 
 import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
 
+//RECEPCIÓN CFDI
+
+import solicitudRecepcionCFDIProyecto from './modules/recepcionCFDI/solicitud-recepcion-cfdi';
+
 
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
@@ -350,6 +354,8 @@ export default new Vuex.Store({
         'padronProveedores/empresa' : empresaProveedor,
         'padronProveedores/especialidad' : especialidad,
         'padronProveedores/giro' : giro,
+
+        'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

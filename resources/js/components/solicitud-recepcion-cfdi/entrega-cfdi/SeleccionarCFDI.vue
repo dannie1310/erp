@@ -291,7 +291,7 @@
                 });
             },
             continuar() {
-                this.$router.push({name: 'solicitud-recepcion-cfdi', params: { id_cfdi: this.dato.id }});
+                this.$router.push({name: 'solicitud-recepcion-cfdi-create', params: { id_cfdi: this.dato.id }});
             },
         }
     }

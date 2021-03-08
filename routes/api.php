@@ -480,6 +480,18 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * RECEPCION DE CFDI
+     */
+
+    $api->group(['middleware' => 'api', 'prefix' => 'recepcion-cfdi'], function ($api) {
+        $api->get('/', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@index');
+        $api->get('paginate', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@paginate');
+        $api->post('/', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@store');
+        $api->post('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@aprobar');
+        $api->get('{id}', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@show')->where(['id' => '[0-9]+']);
+    });
+
+    /**
      * ALMACENES
      */
     $api->group(['middleware' => 'api', 'prefix' => 'almacenes'], function ($api) {

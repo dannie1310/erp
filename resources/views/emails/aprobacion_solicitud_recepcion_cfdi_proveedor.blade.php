@@ -11,7 +11,7 @@
 
     </head>
     <div id="app">
-        Se le informa que hemos registrado su solicitud de recepción de CFDI  para su validación
+        Se le informa que su solicitud de recepción de CFDI ha sido aprobada para su revisión en el proyecto.
         <div class="card" >
             <div class="card-header">
                 <h5>Datos de la Solicitud de Recepción</h5>
@@ -56,6 +56,18 @@
                                 <label >Observaciones:</label>
                                 {{$solicitud->comentario}}
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Aprobó:</label>
+                            {{$solicitud->usuarioAprobo->nombre_completo}}
+                        </div>
+                        <div class="col-md-3">
+                            <label>
+                                Fecha / Hora Aprobación:
+                            </label>
+                            {{$solicitud->fecha_hora_aprobacion_format}}
                         </div>
                     </div>
                 </span>
@@ -119,13 +131,13 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Impuestos Retenidos:</label>
-                                {{$solicitud->cfdi->impuestos_retenidos_format}}
+                                {{$solicitud->cfdi->total_impuestos_retenidos_format}}
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Impuestos Trasladados:</label>
-                                {{$solicitud->cfdi->impuestos_trasladados_format}}
+                                {{$solicitud->cfdi->total_impuestos_trasladados_format}}
                             </div>
                         </div>
                         <div class="col-md-2">

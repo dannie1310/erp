@@ -39,11 +39,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Fecha de Registro', tdClass: 'fecha_hora', field: 'fecha', sortable: true, thComp: require('../globals/th-Date').default},
-                    { title: 'Folio', field: 'folio', tdClass: 'td_numero_folio', sortable: true, thComp: require('../globals/th-Filter').default},
+                    { title: 'Fecha de Registro', tdClass: 'fecha_hora', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Folio', field: 'folio', tdClass: 'td_numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Cliente', field: 'cliente'},
                     { title: 'Proyecto', field: 'proyecto', thClass: 'th_c150',},
-                    { title: 'UUID', tdClass: 'td_c280', field: 'uuid', tdComp: require('../fiscal/cfd/cfd-sat/UUID').default, thComp: require('../globals/th-Filter').default},
+                    { title: 'UUID', tdClass: 'td_c280', field: 'uuid', tdComp: require('../../fiscal/cfd/cfd-sat/UUID').default, thComp: require('../../globals/th-Filter').default},
                     { title: 'Ti Com', field: 'tipo_comprobante'},
                     { title: 'Moneda', field: 'moneda'},
                     { title: 'TC', field: 'tipo_cambio'},
@@ -51,7 +51,8 @@
                     { title: 'Impuestos Trasladados', field: 'impuestos_trasladados', tdClass: 'td_money'},
                     { title: 'Impuestos Retenidos', field: 'impuestos_retenidos', tdClass: 'td_money'},*/
                     { title: 'Monto', field: 'monto', tdClass: 'td_money'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Estado', field: 'estado', tdClass: 'td_money'},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('../partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -113,6 +114,7 @@
                             impuestos_retenidos: solicitud.cfdi.impuestos_retenidos_format,
                             tipo_cambio: solicitud.cfdi.tipo_cambio,
                             tipo_comprobante: solicitud.cfdi.tipo_comprobante,
+                            estado: solicitud.estado_format,
                             uuid: $.extend({}, {
                                 id: solicitud.cfdi.id,
                                 uuid: solicitud.cfdi.uuid,

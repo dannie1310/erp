@@ -38,6 +38,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendFinalizaAsociacionPolizaCFDINotification',
         ],
 
+        'App\Events\AprobacionSolicitudRecepcionCFDI' => [
+            'App\Listeners\SendAprobacionSolicitudRecepcionCFDINotification',
+        ],
+
             Registered::class => [
             SendEmailVerificationNotification::class,
         ],
