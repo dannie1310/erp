@@ -959,6 +959,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfCFDI')->where(['id' => '[0-9]+']);
             $api->get('{id}/getDocumentos', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@getDocumentos')->where(['id' => '[0-9]+']);
             $api->post('/storeRevision', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevision');
+            $api->post('/storeRevisionVarios', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevisionVarios');
             /**
              * FORMATO DE CONTRARECIBO
              */

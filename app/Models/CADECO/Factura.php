@@ -13,6 +13,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Item;
 use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Movimiento;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Transaccion;
 use Illuminate\Support\Facades\DB;
@@ -1132,6 +1133,69 @@ class Factura extends Transaccion
             abort(400, $e->getMessage());
         }
         
+    }
+
+    public function storeRevisionVarios($data){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $tipo_cambio = 1;
+            if($data['factura']['id_moneda'] != 1) $tipo_cambio = $this->moneda->cambio->cambio;
+            $retencion = $data['resumen']['ret_iva_4'] + $data['resumen']['ret_iva_6'] + $data['resumen']['ret_iva_2_3'] + $data['resumen']['ret_isr'];
+
+            $this->tipo_cambio = $tipo_cambio;
+            $this->estado = 1;
+            $this->id_concepto = $data['id_concepto'];
+            $data['factura']['id_costo'] > 0 ? $this->id_costo = $data['factura']['id_costo']:'';
+            $this->opciones = 1;
+            $this->impuesto = $data['resumen']['iva_subtotal'];
+            $this->retencion = $retencion;
+            $this->comentario = $this->comentario . 'M;'. date("d/m/Y") . " " . date("h:i:s") . ";SCR|". auth()->user()->usuario;
+            $this->observaciones = $data['factura']['observaciones'];
+            $this->save();
+
+            $this->complemento->iva = $data['resumen']['iva_subtotal'];
+            $this->complemento->ieps = $data['resumen']['ieps'];
+            $this->complemento->imp_hosp = $data['resumen']['imp_hosp'];
+            $this->complemento->ret_iva_4 = $data['resumen']['ret_iva_4'];
+            $this->complemento->ret_iva_6 = $data['resumen']['ret_iva_6'];
+            $this->complemento->ret_iva_10 = $data['resumen']['ret_iva_2_3'];
+            $this->complemento->ret_isr_10 = $data['resumen']['ret_isr'];
+            $this->complemento->save();
+
+            foreach($data['partidas'] as $partida){
+                dd($partida['concepto']);
+                $item = Item::create([
+                    "id_transaccion" => $this->id_transaccion,
+                    "referencia" => $partida['concepto'],
+                    "id_concepto" => $partida['destino']['id'],
+                    "cantidad" => $partida['cantidad'],
+                    "importe" => $partida['precio'],
+                    "saldo" => $partida['precio'],
+                    "numero" => 7,
+                ]);
+
+                $movimiento = Movimiento::create([
+                    "id_concepto" => $partida['destino']['id'],
+                    "id_item" => $item->id_item,
+                    "numero" => 0,
+                    "cantidad" => $partida['cantidad'],
+                    "monto_total" => $partida['precio'],
+                    "fecha_inicio" => date("Y-m-d h:i:s"),
+                    "fecha_fin" => date("Y-m-d h:i:s"),
+                ]);
+
+            }
+            
+
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+        
+
+        dd($this->moneda->cambio->cambio);
     }
 
 }

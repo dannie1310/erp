@@ -585,5 +585,9 @@ class FacturaService
     public function storeRevision($data){
         return $this->repository->show($data['factura']['id'])->storeRevision($data);
     }
+
+    public function storeRevisionVarios($data){
+        return $this->repository->show($data['factura']['id'])->storeRevisionVarios($data);
+    }
 }
 

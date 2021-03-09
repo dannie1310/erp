@@ -5,7 +5,7 @@
             <!-- <router-link  :to="{ name: 'factura-revisar', params: {id: value.id}}"  type="button" class="btn btn-sm btn-outline-dark" title="Revisar">
                 <i class="fa fa-tasks"></i>
             </router-link> -->
-            <button @click="modalRevision"  type="button" class="btn btn-sm btn-outline-secondary "><i class="fa fa-tasks"></i></button>
+            <button @click="modalRevision" v-if="value.revisar || value.revisar_varios"  type="button" class="btn btn-sm btn-outline-secondary "><i class="fa fa-tasks"></i></button>
             <PDF v-bind:id="value.id" @click="value.id" v-if="$root.can('consultar_factura')"></PDF>
             <CFDI v-bind:id="value.id" @click="value.id" ></CFDI>
             <Eliminar v-if="value.borrar" v-bind:id="value.id" v-bind:pagina="value.pagina" />
@@ -27,10 +27,10 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <router-link  :to="{ name: 'factura-varios-revisar', params: {id: value.id}}" type="button" data-dismiss="modal" class="btn btn-sm btn-outline-dark" title="Revisar">
+                                <router-link  :to="{ name: 'factura-varios-revisar', params: {id: value.id}}" type="button" data-dismiss="modal" class="btn btn-sm btn-outline-dark" title="Revisar" v-if="value.revisar_varios">
                                     <i class="fa fa-tasks"></i> Factura de Varios
                                 </router-link>
-                                <router-link  :to="{ name: 'factura-revisar', params: {id: value.id}}"  type="button" data-dismiss="modal" class="btn btn-sm btn-outline-dark" title="Revisar">
+                                <router-link  :to="{ name: 'factura-revisar', params: {id: value.id}}"  type="button" data-dismiss="modal" class="btn btn-sm btn-outline-dark" title="Revisar" v-if="value.revisar">
                                     <i class="fa fa-tasks"></i> Revisión de Facturas
                                 </router-link>
                             </div>
@@ -56,8 +56,11 @@
         props: ['value'],
         methods: {
            modalRevision(){
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show')
+               if(this.value.revisar_varios || this.value.revisar){
+                    $(this.$refs.modal).appendTo('body')
+                    $(this.$refs.modal).modal('show')
+               }
+                
            },
            cerrar(){
                $(this.$refs.modal).modal('hide')
