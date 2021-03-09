@@ -89,6 +89,11 @@ class Subcontrato extends Transaccion
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function contratoProyectado_sgc()
+    {
+        return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     public function clasificacionSubcontrato()
     {
         return $this->belongsTo(ClasificacionSubcontrato::class, 'id_transaccion');
@@ -348,6 +353,35 @@ class Subcontrato extends Transaccion
         }
 
         return $items;
+    }
+
+    public function getFolioRevisionFormatAttribute()
+    {
+        return 'SUB ' . $this->numero_folio_format;
+    }
+
+    public function getMontoRevisionAttribute()
+    {
+        return number_format($this->anticipo_saldo, 2, ".", "");
+    }
+
+    public function getMontoRevisionFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_revision, 2, ".", ",");
+    }
+
+    public function getTipoCambioAttribute(){
+        switch((int)$this->id_moneda){
+            case 1:
+                return 1;
+                break;
+            case 2:
+                return $this->TcUsd;
+                break;
+            case 3:
+                return $this->TcEuro;
+                break;
+        }
     }
 
     public function getImporteFondoGarantiaAttribute()

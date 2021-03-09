@@ -35,6 +35,8 @@ class Item extends Model
         'precio_unitario',
         'precio_material',
         'precio_mano_obra',
+        'numero',
+        'referencia'
     ];
 
     public function almacen()
