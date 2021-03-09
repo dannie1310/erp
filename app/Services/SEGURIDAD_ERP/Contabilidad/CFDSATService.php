@@ -1052,7 +1052,9 @@ class CFDSATService
             } else {
                 if($cfdi->id_solicitud_recepcion>0)
                 {
-                    abort(500, "Este CFDI esta asociado a la solicitud de recepción con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
+                    if($cfdi->solicitudRecepcion->estado>=0){
+                        abort(500, "Este CFDI esta asociado a la solicitud de recepción con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
+                    }
                 }
             }
             return $cfdi;

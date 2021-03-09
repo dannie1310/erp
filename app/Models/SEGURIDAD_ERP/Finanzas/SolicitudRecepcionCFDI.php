@@ -145,7 +145,9 @@ class SolicitudRecepcionCFDI extends Model
         DB::connection('seguridad')->beginTransaction();
         $cfdi = CFDSAT::find($data["id_cfdi_solicitar"]);
         if($cfdi->id_solicitud_recepcion>0){
-            abort(500, "El CFDI con UUID: ".$cfdi->uuid." esta asociado a la solicitud de recepción con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
+            if($cfdi->solicitudRecepcion->estado>=0){
+                abort(500, "El CFDI con UUID: ".$cfdi->uuid." esta asociado a la solicitud de recepción con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
+            }
         }
         if($cfdi->facturaRepositorio){
             if($cfdi->facturaRepositorio->id > 0){
@@ -192,7 +194,6 @@ class SolicitudRecepcionCFDI extends Model
                 "rfc_receptor" => $this->cfdi->rfc_receptor,
                 "tipo_comprobante" => $this->cfdi->tipo_comprobante,
             ];
-
 
             $factura_repositorio = FacturaRepositorio::create($datos_rfactura);
             $empresa = Empresa::where("rfc","=",$this->proveedor->rfc)->whereIn("tipo_empresa",[1,2,3])->first();
