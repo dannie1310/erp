@@ -215,14 +215,14 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="form-group">
-                            <label><b>Subtotal: </b></label>
+                        <div class="form-group row">
+                            <label class="col-sm-5"><b>Subtotal: </b></label>
                             {{getSubtotal()}}
                         </div>
                     </div>
                     <div class="col-md-4 offset-5">
-                        <div class="form-group">
-                            <label><b>Moneda: </b></label>
+                        <div class="form-group row">
+                            <label class="col-sm-3"><b>Moneda: </b></label>
                             {{factura.moneda}}
                         </div>
                     </div>
@@ -245,8 +245,8 @@
                         </div>
                     </div>
                     <div class="col-md-4 offset-5">
-                        <div class="form-group">
-                            <label><b>Monto Original: </b></label>
+                        <div class="form-group row">
+                            <label class="col-sm-3"><b>Monto Original: </b></label>
                             {{factura.monto_format}}
                         </div>
                     </div>
@@ -269,8 +269,8 @@
                         </div>
                     </div>
                     <div class="col-md-4 offset-5">
-                        <div class="form-group">
-                            <label><b>Diferencia: </b></label>
+                        <div class="form-group row">
+                            <label class="col-sm-3"><b>Diferencia: </b></label>
                             {{getDiferencia()}}
                         </div>
                     </div>
@@ -311,8 +311,8 @@
                         </div>
                     </div>
                     <div class="col-md-3 offset-9">
-                        <div class="form-group">
-                            <label><b>IVA A Pagar: </b></label>
+                        <div class="form-group row">
+                            <label class="col-sm-5"><b>IVA A Pagar: </b></label>
                             {{getIvaPagar()}}
                         </div>
                     </div>
@@ -372,8 +372,8 @@
                         </div>
                     </div>
                     <div class="col-md-3 offset-9">
-                        <div class="form-group">
-                            <label><b>Total: </b></label>
+                        <div class="form-group row">
+                            <label class="col-sm-5"><b>Total: </b></label>
                             {{getTotal()}}
                         </div>
                     </div>
