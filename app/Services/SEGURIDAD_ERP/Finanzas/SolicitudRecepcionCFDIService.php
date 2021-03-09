@@ -7,6 +7,7 @@ namespace App\Services\SEGURIDAD_ERP\Finanzas;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
+use App\PDF\SolicitudRecepcionCFDI\SolicitudRecepcionCFDIPDF;
 use App\Repositories\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIRepository as Repository;
 
 class SolicitudRecepcionCFDIService
@@ -52,6 +53,13 @@ class SolicitudRecepcionCFDIService
     public function cancelar($data, $id)
     {
         return $this->repository->show($id)->cancelar($data["motivo"]);
+    }
+
+    public function solicitudRecepcionPDF($id)
+    {
+        $solicitud = $this->show($id);
+        $pdf = new SolicitudRecepcionCFDIPDF($solicitud);
+        return $pdf->create();
     }
 
 }

@@ -315,6 +315,7 @@ $api->version('v1', function ($api) {
         $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@store');
         $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@show')->where(['id' => '[0-9]+']);
         $api->post('{id}/cancelar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@cancelar');
+        $api->get('{id}/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@pdfSolicitudRecepcion')->where(['id' => '[0-9]+']);
     });
 
     /**

@@ -30,4 +30,9 @@ class SolicitudRecepcionCFDIController extends Controller
         return $this->respondWithItem($item);
     }
 
+    public function pdfSolicitudRecepcion($id)
+    {
+        $this->service->solicitudRecepcionPDF($id)->create();
+    }
+
 }

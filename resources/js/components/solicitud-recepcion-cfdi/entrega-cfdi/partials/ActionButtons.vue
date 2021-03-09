@@ -10,13 +10,15 @@
                       type="button" class="btn btn-sm btn-outline-danger" title="Cancelar">
             <i class="fa fa-ban"></i>
         </router-link>
+        <FormatoSolicitudRecepcion v-bind:id="value.id"></FormatoSolicitudRecepcion>
     </div>
 </template>
 
 <script>
+    import FormatoSolicitudRecepcion from "../../FormatoSolicitudRecepcion";
     export default {
         name: "ActionButtons",
-        components: {},
+        components: {FormatoSolicitudRecepcion},
         props: ['value']
     }
 </script>
