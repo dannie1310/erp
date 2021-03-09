@@ -42,6 +42,7 @@ class ComprobanteFondoController extends Controller
 
         $this->middleware('permiso:consultar_comprobante_fondo')->only(['show','paginate','index','find']);
         $this->middleware('permiso:registrar_comprobante_fondo')->only(['store']);
+        $this->middleware('permiso:eliminar_comprobante_fondo')->only(['destroy']);
 
         $this->fractal = $fractal;
         $this->service = $service;
