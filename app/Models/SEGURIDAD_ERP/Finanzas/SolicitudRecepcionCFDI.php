@@ -3,6 +3,7 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 use App\Events\AprobacionSolicitudRecepcionCFDI;
+use App\Events\CancelacionSolicitudRecepcionCFDI;
 use App\Events\RechazoSolicitudRecepcionCFDI;
 use App\Events\RegistroSolicitudRecepcionCFDI;
 use App\Facades\Context;
@@ -73,6 +74,10 @@ class SolicitudRecepcionCFDI extends Model
         return $this->belongsTo(Usuario::class, 'usuario_rechazo', 'idusuario');
     }
 
+    public function usuarioCancelo()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_cancelo', 'idusuario');
+    }
 
     public function scopePorProveedorLogueado($query)
     {
@@ -111,6 +116,12 @@ class SolicitudRecepcionCFDI extends Model
         return date_format($date,"d/m/Y H:i");
     }
 
+    public function getFechaHoraCancelacionFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_cancelacion);
+        return date_format($date,"d/m/Y H:i");
+    }
+
     public function getEstadoFormatAttribute()
     {
         switch ($this->estado){
@@ -134,7 +145,9 @@ class SolicitudRecepcionCFDI extends Model
         DB::connection('seguridad')->beginTransaction();
         $cfdi = CFDSAT::find($data["id_cfdi_solicitar"]);
         if($cfdi->id_solicitud_recepcion>0){
-            abort(500, "El CFDI con UUID: ".$cfdi->uuid." esta asociado a la solicitud de recepción con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
+            if($cfdi->solicitudRecepcion->estado>=0){
+                abort(500, "El CFDI con UUID: ".$cfdi->uuid." esta asociado a la solicitud de recepción con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
+            }
         }
         if($cfdi->facturaRepositorio){
             if($cfdi->facturaRepositorio->id > 0){
@@ -182,7 +195,6 @@ class SolicitudRecepcionCFDI extends Model
                 "tipo_comprobante" => $this->cfdi->tipo_comprobante,
             ];
 
-
             $factura_repositorio = FacturaRepositorio::create($datos_rfactura);
             $empresa = Empresa::where("rfc","=",$this->proveedor->rfc)->whereIn("tipo_empresa",[1,2,3])->first();
             if(!$empresa){
@@ -220,6 +232,23 @@ class SolicitudRecepcionCFDI extends Model
             DB::connection('seguridad')->commit();
             event(new RechazoSolicitudRecepcionCFDI($this));
 
+        } catch (\Exception $e){
+            DB::connection('seguridad')->rollBack();
+            abort(500, $e->getMessage());
+        }
+        return $this;
+    }
+
+    public function cancelar($motivo)
+    {
+        DB::connection('seguridad')->beginTransaction();
+        try{
+            $this->estado = -1;
+            $this->motivo_cancelacion = $motivo;
+            $this->save();
+
+            DB::connection('seguridad')->commit();
+            event(new CancelacionSolicitudRecepcionCFDI($this));
         } catch (\Exception $e){
             DB::connection('seguridad')->rollBack();
             abort(500, $e->getMessage());

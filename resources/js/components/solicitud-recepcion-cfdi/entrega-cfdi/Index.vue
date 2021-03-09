@@ -52,7 +52,7 @@
                     { title: 'Impuestos Retenidos', field: 'impuestos_retenidos', tdClass: 'td_money'},*/
                     { title: 'Monto', field: 'monto', tdClass: 'td_money'},
                     { title: 'Estado', field: 'estado', tdClass: 'td_money'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('../partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -121,6 +121,7 @@
                             }),
                             buttons: $.extend({}, {
                                 id: solicitud.id,
+                                cancelar : solicitud.estado == 0 ? true : false,
                             })
                         })
 

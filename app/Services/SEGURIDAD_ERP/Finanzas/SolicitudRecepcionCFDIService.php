@@ -49,4 +49,9 @@ class SolicitudRecepcionCFDIService
         return $this->repository->show($id);
     }
 
+    public function cancelar($data, $id)
+    {
+        return $this->repository->show($id)->cancelar($data["motivo"]);
+    }
+
 }

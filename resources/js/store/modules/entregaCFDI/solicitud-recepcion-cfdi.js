@@ -66,38 +66,37 @@ export default {
                     })
             });
         },
-        cancel(context, payload) {
+        cancelar(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cancelar solicitud de recepción de CFDI",
-                    text: "¿Está seguro de que deseas cancelar esta solicitud?",
+                    text: "¿Está seguro de que desea cancelar la solicitud de recepción de este CFDI?",
                     icon: "warning",
                     buttons: {
                         cancel: {
-                            text: 'Cancelar',
+                            text: 'No, Regresar',
                             visible: true
                         },
                         confirm: {
                             text: 'Si, Cancelar',
                             closeModal: false,
                         }
-                    },
-                    dangerMode: true,
+                    }
                 })
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI+ payload.id +'/cancelar',{id:payload.id}, { params: payload.params })
+                                .post(URI + payload.id + '/cancelar', payload)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Solicitud cancelada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
-                                    }).then(() => {
-                                        context.commit('UPDATE_SOLICITUD', data);
-                                        resolve(data);
                                     })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
                                 })
                                 .catch(error => {
                                     reject(error);

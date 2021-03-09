@@ -249,7 +249,7 @@
 <script>
 
     export default {
-        name: "solicitud-recepcion-cfdi-show",
+        name: "solicitud-recepcion-cfdi-rechazar",
         props: ["id"],
         data() {
             return {

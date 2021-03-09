@@ -20,6 +20,7 @@ class SolicitudRecepcionCFDIController extends Controller
         $this->middleware('auth:api');
         $this->middleware("context");
         $this->middleware('permiso:aprobar_solicitud_recepcion_cfdi')->only('aprobar');
+        $this->middleware('permiso:rechazar_solicitud_recepcion_cfdi')->only('rechazar');
 
         $this->service = $service;
         $this->fractal = $fractal;

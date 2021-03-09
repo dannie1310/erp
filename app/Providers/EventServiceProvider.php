@@ -46,6 +46,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendRechazoSolicitudRecepcionCFDINotification',
         ],
 
+        'App\Events\CancelacionSolicitudRecepcionCFDI' => [
+            'App\Listeners\SendCancelacionSolicitudRecepcionCFDINotification',
+        ],
+
             Registered::class => [
             SendEmailVerificationNotification::class,
         ],
