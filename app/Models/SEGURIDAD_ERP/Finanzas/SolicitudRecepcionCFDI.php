@@ -227,4 +227,22 @@ class SolicitudRecepcionCFDI extends Model
         return $this;
     }
 
+    public function cancelar($motivo)
+    {
+        DB::connection('seguridad')->beginTransaction();
+        try{
+            $this->estado = -1;
+            $this->motivo_cancelacion = $motivo;
+            $this->save();
+
+            DB::connection('seguridad')->commit();
+            //event(new RechazoSolicitudRecepcionCFDI($this));
+
+        } catch (\Exception $e){
+            DB::connection('seguridad')->rollBack();
+            abort(500, $e->getMessage());
+        }
+        return $this;
+    }
+
 }

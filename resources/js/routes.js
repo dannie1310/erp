@@ -2866,6 +2866,19 @@ export const routes = [
                     general: true
                 }
             },
+            {
+                path: ':id/cancelar',
+                name: 'solicitud-recepcion-cfdi-cancelar',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Cancelar').default,
+                props: true,
+                meta: {
+                    title: 'CANCELAR SOLICITUD',
+                    breadcrumb: { parent: 'entrega-cfdi', name: 'CANCELAR'},
+                    middleware: [auth, permission],
+                    permission: 'cancelar_solicitud_recepcion_cfdi',
+                    general: true
+                }
+            },
         ]
     },
     {
