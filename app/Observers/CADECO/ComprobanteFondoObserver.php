@@ -27,4 +27,17 @@ class ComprobanteFondoObserver extends TransaccionObserver
     {
         $comprobanteFondo->fondo->disminuyeSaldo($comprobanteFondo->total);
     }
+
+    public function deleting(ComprobanteFondo $comprobanteFondo)
+    {
+        if($comprobanteFondo->comprobanteEliminado == null)
+        {
+            abort(400, "Error al eliminar, respaldo incorrecto.");
+        }
+    }
+
+    public function deleted(ComprobanteFondo $comprobanteFondo)
+    {
+        $comprobanteFondo->fondo->agregaSaldo($comprobanteFondo->total);
+    }
 }

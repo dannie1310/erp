@@ -30,6 +30,11 @@ export default {
             })
             state.currentFondo = data;
         },
+        DELETE_FONDO(state, id){
+            state.fondos = state.fondos.filter(fondo => {
+                return fondo.id != id
+            });
+        }
     },
     actions: {
         paginate (context, payload){

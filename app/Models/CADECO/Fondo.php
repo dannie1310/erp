@@ -92,4 +92,14 @@ class Fondo extends Model
         $this->saldo = $this->saldo - $cantidad;
         $this->save();
     }
+
+    /**
+     * Aumenta al saldo la cantidad enviada.
+     * @param $cantidad
+     */
+    public function agregaSaldo($cantidad)
+    {
+        $this->saldo = $this->saldo + $cantidad;
+        $this->save();
+    }
 }

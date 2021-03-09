@@ -13,9 +13,18 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row" v-if="fondo">
+                        <div class="row">
                             <div class="col-12">
-                                <div class="invoice p-3 mb-3">
+                                <div class="invoice p-3 mb-3" v-if="!fondo">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="spinner-border text-success" role="status">
+                                               <span class="sr-only">Cargando...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="invoice p-3 mb-3" v-else>
                                     <div class="row col-md-12">
                                         <div class="col-md-6">
                                             <h5>Folio: &nbsp; <b>{{fondo.numero_folio_format}}</b></h5>
@@ -157,7 +166,10 @@
         },
         methods: {
             find() {
+                this.motivo = ''
                 this.cargando = true;
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
                 this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', null);
                 return this.$store.dispatch('finanzas/comprobante-fondo/find', {
                     id: this.id,
@@ -166,8 +178,6 @@
                     }
                 }).then(data => {
                     this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', data);
-                    $(this.$refs.modal).appendTo('body')
-                    $(this.$refs.modal).modal('show');
                 })
                     .finally(()=> {
                         this.cargando = false;
@@ -182,7 +192,12 @@
                     params: {data: [this.$data.motivo]}
                 })
                     .then(data => {
-                        this.$store.commit('finanzas/comprobante-fondo/UPDATE_FONDO', data)
+                        this.$store.commit('finanzas/comprobante-fondo/DELETE_FONDO', {id: this.id})
+                        this.$store.dispatch('finanzas/comprobante-fondo/paginate', { params: {sort: 'numero_folio', order: 'desc'}})
+                            .then(data => {
+                                this.$store.commit('finanzas/comprobante-fondo/SET_FONDOS', data.data);
+                                this.$store.commit('finanzas/comprobante-fondo/SET_META', data.meta);
+                            })
                         this.salir();
                     })
                     .finally(() => {
