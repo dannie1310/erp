@@ -118,4 +118,18 @@ class ComprobanteFondo extends Transaccion
     {
         return $this->partidas()->orderBy('id_item', 'asc');
     }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+dd($this);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
 }

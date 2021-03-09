@@ -90,6 +90,7 @@
                             total: fondo.total_format,
                             buttons: $.extend({}, {
                                 show : self.$root.can('consultar_comprobante_fondo') ? true : false,
+                                eliminar : true,
                                 id: fondo.id,
                             })
                         })
