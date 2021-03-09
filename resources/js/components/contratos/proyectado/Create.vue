@@ -164,7 +164,7 @@
                                                             :class="{'is-invalid': errors.has(`descripcion[${i}]`)}"
                                                             :id="`descripcion[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
-                                                        <div class="error-label" v-show="partida.descripcion.length > 255">La longitud del campo Descripcion no debe ser mayor a 255 caracteres.</div>
+                                                        <div class="error-label" v-show="partida.descripcion.length > 255">La longitud del campo Descripción no debe ser mayor a 255 caracteres.</div>
                                                     </td>
                                                     <td>
                                                         <select
