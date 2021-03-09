@@ -663,7 +663,7 @@
                             }
                         });
                         if(tam_desc){
-                            swal('Atención', 'El tamaño de la descripción de una partida es mayor a al permitida de 255 caracteres.', 'warning');
+                            swal('Atención', 'La longitud de la descripción de una partida es mayor a la permitida de 255 caracteres.', 'warning');
                         }
                         else if(this.partidas.length === 0){
                             swal('Atención', 'Debe agregar al menos una partida', 'warning');
