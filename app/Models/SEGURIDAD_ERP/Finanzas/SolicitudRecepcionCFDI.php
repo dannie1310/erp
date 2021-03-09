@@ -3,6 +3,7 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 use App\Events\AprobacionSolicitudRecepcionCFDI;
+use App\Events\CancelacionSolicitudRecepcionCFDI;
 use App\Events\RechazoSolicitudRecepcionCFDI;
 use App\Events\RegistroSolicitudRecepcionCFDI;
 use App\Facades\Context;
@@ -73,6 +74,10 @@ class SolicitudRecepcionCFDI extends Model
         return $this->belongsTo(Usuario::class, 'usuario_rechazo', 'idusuario');
     }
 
+    public function usuarioCancelo()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_cancelo', 'idusuario');
+    }
 
     public function scopePorProveedorLogueado($query)
     {
@@ -108,6 +113,12 @@ class SolicitudRecepcionCFDI extends Model
     public function getFechaHoraRechazoFormatAttribute()
     {
         $date = date_create($this->fecha_hora_rechazo);
+        return date_format($date,"d/m/Y H:i");
+    }
+
+    public function getFechaHoraCancelacionFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_cancelacion);
         return date_format($date,"d/m/Y H:i");
     }
 
@@ -236,8 +247,7 @@ class SolicitudRecepcionCFDI extends Model
             $this->save();
 
             DB::connection('seguridad')->commit();
-            //event(new RechazoSolicitudRecepcionCFDI($this));
-
+            event(new CancelacionSolicitudRecepcionCFDI($this));
         } catch (\Exception $e){
             DB::connection('seguridad')->rollBack();
             abort(500, $e->getMessage());
