@@ -164,6 +164,7 @@
                                                             :class="{'is-invalid': errors.has(`descripcion[${i}]`)}"
                                                             :id="`descripcion[${i}]`">
                                                         <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
+                                                        <div class="error-label" v-show="partida.descripcion.length > 255">El campo Descripcion no debe ser major a 255 caracteres.</div>
                                                     </td>
                                                     <td>
                                                         <select
@@ -655,7 +656,16 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result){
-                        if(this.partidas.length === 0){
+                        let tam_desc = false;
+                        this.partidas.forEach(partida => {
+                            if(partida.descripcion.length > 255){
+                                tam_desc = true;
+                            }
+                        });
+                        if(tam_desc){
+                            swal('Atención', 'El tamaño de la descripción de una partida es mayor a al permitida de 255 caracteres.', 'warning');
+                        }
+                        else if(this.partidas.length === 0){
                             swal('Atención', 'Debe agregar al menos una partida', 'warning');
                         }else if(this.validarFechas()){
                             swal('Atención', 'La fecha de contratación no debe ser anterior a la fecha de cotización', 'warning');
