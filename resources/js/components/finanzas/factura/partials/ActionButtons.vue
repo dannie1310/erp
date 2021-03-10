@@ -5,7 +5,7 @@
             <!-- <router-link  :to="{ name: 'factura-revisar', params: {id: value.id}}"  type="button" class="btn btn-sm btn-outline-dark" title="Revisar">
                 <i class="fa fa-tasks"></i>
             </router-link> -->
-            <button @click="modalRevision" v-if="value.revisar || value.revisar_varios"  type="button" class="btn btn-sm btn-outline-secondary "><i class="fa fa-tasks"></i></button>
+            <button @click="modalRevision" v-if="value.revisar || value.revisar_varios"  type="button" class="btn btn-sm btn-outline-secondary" title="Revisar"><i class="fa fa-tasks"></i></button>
             <PDF v-bind:id="value.id" @click="value.id" v-if="$root.can('consultar_factura')"></PDF>
             <CFDI v-bind:id="value.id" @click="value.id" ></CFDI>
             <Eliminar v-if="value.borrar" v-bind:id="value.id" v-bind:pagina="value.pagina" />
