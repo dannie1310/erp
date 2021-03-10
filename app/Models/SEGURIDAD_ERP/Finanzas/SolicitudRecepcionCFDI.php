@@ -145,6 +145,11 @@ class SolicitudRecepcionCFDI extends Model
         return '# ' . sprintf("%05d", $this->numero_folio);
     }
 
+    public function getNumeroFolioGlobalFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->id);
+    }
+
     public function registrar($data)
     {
         DB::connection('seguridad')->beginTransaction();

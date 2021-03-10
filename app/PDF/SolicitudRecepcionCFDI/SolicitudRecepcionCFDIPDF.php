@@ -23,27 +23,37 @@ class SolicitudRecepcionCFDIPDF extends Rotation
         $this->SetMargins(1, 1, 1);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true,3.75);
+        $this->SetAutoPageBreak(true,1);
         $this->cfdi();
     }
     function Header()
     {
-        $this->SetFont('Arial', 'B', 12);
-        $this->Cell(13.5);
-        $this->Cell(3, .7, 'FOLIO: ', 'LT', 0, 'L');
-        $this->Cell(3, .7, $this->solicitud->numero_folio_format . ' ', 'RT', 0, 'L');
-        $this->Ln(.4);
-        $this->SetFont('Arial', 'B', 20);
-        $this->Cell(13.5, .7, utf8_decode('SOLICITUD DE RECEPCIÓN DE CFDI'), 0, 0, 'C', 0);
-        $this->SetFont('Arial', 'B', 10);
-        $this->Cell(3, .7, 'FECHA: ', 'LB', 0, 'L');
-        $this->Cell(3, .7, $this->solicitud->fecha_hora_registro_format . ' ', 'RB', 0, 'L');
-        $this->Ln(1);
 
+        $this->setY(1.5);
+        $this->SetFont('Arial', 'B', 18);
+        $this->Cell(13, .7, utf8_decode('SOLICITUD DE RECEPCIÓN DE CFDI'), 0, 1, 'C', 0);
+
+        $this->setY(1);
+
+        $this->SetFont('Arial', 'B', 9);
+        $this->Cell(13);
+        $this->Cell(3.5, .5, 'FOLIO: ', 'LT', 0, 'L');
+        $this->Cell(3, .5, $this->solicitud->numero_folio_global_format . ' ', 'RT', 1, 'L');
+
+        $this->Cell(13);
+        $this->Cell(3.5, .5, 'FOLIO PROVEEDOR: ', 'L', 0, 'L');
+        $this->Cell(3, .5, $this->solicitud->numero_folio_format . ' ', 'R', 1, 'L');
+
+        $this->Cell(13);
+        $this->Cell(3.5, .5, 'FECHA: ', 'LB', 0, 'L');
+        $this->Cell(3, .5, $this->solicitud->fecha_hora_registro_format . ' ', 'RB', 0, 'L');
+        $this->Ln(1);
 
         $this->SetFont('Arial', 'B', 13);
         $this->Cell(19.5, 0.7, 'Proyecto: '.$this->solicitud->obra->nombre . ' ', 1, 1, 'C');
         $this->Ln(0.5);
+    }
+    function cfdi(){
 
         $this->SetFont('Arial', '', 10);
         $this->Cell(19.5, .5, 'Recibimos de:', 0, 0, 'L');
@@ -51,82 +61,102 @@ class SolicitudRecepcionCFDIPDF extends Rotation
         $this->MultiCell(19.5, .5, $this->solicitud->proveedor->razon_social , 1, 'J',  0);
         $this->Ln(0.5);
 
-        $this->Cell(19.5, .5, utf8_decode('El siguiente CFDI para validar que esta relacionado con el proyecto indicado: '), 0, 0);
+        $this->Cell(19.5, .5, utf8_decode('El siguiente CFDI para revisar que esta relacionado con una transacción del proyecto indicado: '), 0, 0);
+        $this->Ln(1);
+
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(5, 0.5, utf8_decode('Emisión'), 1, 0, 'C',true);
+        $this->Cell(3, 0.5, 'Serie', 1, 0, 'C',true);
+        $this->Cell(3, 0.5, 'Folio', 1, 0, 'C',true);
+        $this->Cell(1, 0.5, 'Tipo', 1, 0, 'C',true);
+        $this->Cell(7.5, 0.5, 'UUID', 1, 1, 'C',true);
+
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(5, 0.5, $this->solicitud->cfdi->fecha_format . ' ', 1, 0, 'L');
+        $this->Cell(3, 0.5, $this->solicitud->cfdi->serie . ' ', 1, 0, 'L');
+        $this->Cell(3, 0.5, $this->solicitud->cfdi->folio . ' ', 1, 0, 'L');
+        $this->Cell(1, 0.5, $this->solicitud->cfdi->tipo_comprobante . ' ', 1, 0, 'L');
+        $this->Cell(7.5,0.5, $this->solicitud->cfdi->uuid . ' ', 1, 1, 'L');
+        $this->Ln(.5);
+
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(16.5, 0.5, 'Empresa', 1, 0, 'C',true);
+        $this->Cell(3, 0.5, 'RFC', 1, 1, 'C',true);
+
+        $this->SetFont('Arial', '', 8);
+        $this->CellFitScale(16.5, 0.5, utf8_decode($this->solicitud->cfdi->empresa->razon_social) . ' ', 1, 0, 'L');
+        $this->Cell(3, 0.5, $this->solicitud->cfdi->empresa->rfc . ' ', 1, 1, 'L');
+        $this->Ln(.5);
+
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(3, 0.5, 'Descuento', 1, 0, 'C',true);
+        $this->Cell(3, 0.5, 'Impuestos Ret.', 1, 0, 'C',true);
+        $this->Cell(3, 0.5, 'Impuestos Tras.', 1, 0, 'C',true);
+        $this->Cell(4.5, 0.5, 'Total', 1, 0, 'C',true);
+        $this->Cell(3, 0.5, 'Moneda', 1, 0, 'C',true);
+        $this->Cell(3, 0.5, 'Tipo de Cambio', 1, 1, 'C',true);
+
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(3, 0.5, $this->solicitud->cfdi->descuento_format . ' ', 1, 0, 'R');
+        $this->Cell(3, 0.5, $this->solicitud->cfdi->total_impuestos_retenidos_format . ' ', 1, 0, 'R');
+        $this->Cell(3, 0.5, $this->solicitud->cfdi->total_impuestos_trasladados_format . ' ', 1, 0, 'R');
+        $this->Cell(4.5, 0.5, $this->solicitud->cfdi->total_format . ' ', 1, 0, 'R');
+        $this->Cell(3, 0.5, $this->solicitud->cfdi->moneda . ' ', 1, 0, 'L');
+        $this->Cell(3,0.5, $this->solicitud->cfdi->tipo_cambio . ' ', 1, 1, 'R');
+        $this->Ln(.5);
+
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(9.75, 0.5, 'Contacto HI: ', 1, 0, 'C',true);
+        $this->Cell(9.75, 0.5, 'Correo para recibir notificaciones: ', 1, 1, 'C', true);
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(9.75, 0.5, $this->solicitud->contacto . ' ', 1, 0, 'L');
+        $this->Cell(9.75, 0.5, $this->solicitud->correo_notificaciones . ' ', 1, 1, 'L');
         $this->Ln(0.5);
 
-
-    }
-    function cfdi(){
-
-        /*$this->SetFont('Arial', '', 9);
-        $this->SetFillColor(180, 180, 180);
-        $this->SetWidths(array(0.60,  4.45, 3.15, 3.15, 5, 3.15));
-        $this->SetStyles(array('DF', 'DF', 'DF', 'FD', 'DF'));
-        $this->SetRounds(array('1', '', '', '', '', '2'));
-        $this->SetRadius(array(0.2, 0, 0,  0, 0, 0.2));
-        $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
-        $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+        $this->SetFont('Arial', 'B', 8);
+        $this->SetFillColor(213, 213, 213);
+        $this->SetWidths(array(0.60,  1.5, 6.5, 1.5,1.5, 2,2, 2, 2));
+        $this->SetStyles(array('DF', 'DF', 'DF', 'FD','DF', 'DF', 'FD', 'DF'));
+        $this->SetRounds(array('1', '', '', '', '','', '', '', '2'));
+        $this->SetRadius(array(0.2, 0, 0,  0, 0,0,  0, 0, 0.2));
+        $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180','180,180,180', '180,180,180', '180,180,180'));
+        $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C'));
-        $this->Row(array("#",  utf8_decode("Número"), "Fecha", "Vencimiento", "Importe", "Moneda"));
+        $this->SetAligns(array('C','C','C','C','C','C','C','C','C'));
+        $this->Row(array("#",  "Clave Producto / Servicio", utf8_decode("Descripción"), "Clave Unidad", "Unidad", "Cantidad", "Valor Unitario", "Descuento", "Importe"));
 
-        $this->SetWidths(array(0.60, 4.45, 3.15, 3.15, 5, 3.15));
-        $this->SetRounds(array('4', '', '', '', '', '3'));
-        $this->SetRadius(array(0.2, 0, 0, 0, 0, 0.2));
-        $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
-        $this->SetAligns(array('C', 'L', 'C', 'C', 'R', 'C'));
-        $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+        $this->SetFont('Arial', '', 8);
+        $this->SetWidths(array(0.60, 1.5, 6.5, 1.5, 1.5, 2, 2, 2, 2));
+        $this->SetRounds(array('4', '', '', '', '','', '', '', '3'));
+        $this->SetRadius(array(0.2, 0, 0, 0, 0,0, 0, 0, 0.2));
+        $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+        $this->SetAligns(array('C', 'L', 'L', 'L', 'L','R', 'R', 'R', 'R'));
+        $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0','0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
 
-        $this->Row(array(1, $this->factura->referencia, $this->factura->fecha_format, $this->factura->vencimiento_format, $this->factura->monto_format, $this->factura->moneda->nombre));
-*/
-        $this->SetFont('Arial', 'B', 10);
-        $this->Cell(5, 0.7, utf8_decode('Emisión:'), 1, 0, 'C',true);
-        $this->Cell(3, 0.7, 'Serie:', 1, 0, 'C',true);
-        $this->Cell(3, 0.7, 'Folio:', 1, 0, 'C',true);
-        $this->Cell(1, 0.7, 'Tipo:', 1, 0, 'C',true);
-        $this->Cell(7.5, 0.7, 'UUID:', 1, 1, 'C',true);
+        $i = 1;
+        foreach($this->solicitud->cfdi->conceptos as $partida)
+        {
+            $this->SetRounds(array('', '', '', '', '','', '', '', ''));
+            if($i == count($this->solicitud->cfdi->conceptos))
+            {
+                $this->SetRounds(array('4', '', '', '', '','', '', '', '3'));
+            }
+            $this->Row(
+                array($i, $partida->clave_prod_serv, $partida->descripcion, $partida->clave_unidad, $partida->unidad, $partida->cantidad_format,
+                    $partida->valor_unitario_format, $partida->descuento_format, $partida->importe_format)
+            );
 
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(5, 0.7, $this->solicitud->cfdi->fecha_format . ' ', 1, 0, 'L');
-        $this->Cell(3, 0.7, $this->solicitud->cfdi->serie . ' ', 1, 0, 'L');
-        $this->Cell(3, 0.7, $this->solicitud->cfdi->folio . ' ', 1, 0, 'L');
-        $this->Cell(1, 0.7, $this->solicitud->cfdi->tipo_comprobante . ' ', 1, 0, 'L');
-        $this->Cell(7.5,0.7, $this->solicitud->cfdi->uuid . ' ', 1, 1, 'L');
-        $this->Ln(.5);
-
-        $this->SetFont('Arial', 'B', 10);
-        $this->Cell(3, 0.7, utf8_decode('Descuento'), 1, 0, 'C',true);
-        $this->Cell(3, 0.7, 'Impuestos Ret.', 1, 0, 'C',true);
-        $this->Cell(3, 0.7, 'Impuestos Tras.', 1, 0, 'C',true);
-        $this->Cell(4.5, 0.7, 'Total', 1, 0, 'C',true);
-        $this->Cell(3, 0.7, 'Moneda', 1, 0, 'C',true);
-        $this->Cell(3, 0.7, 'Tipo de Cambio', 1, 1, 'C',true);
-
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(3, 0.7, $this->solicitud->cfdi->descuento_format . ' ', 1, 0, 'R');
-        $this->Cell(3, 0.7, $this->solicitud->cfdi->total_impuestos_retenidos_format . ' ', 1, 0, 'R');
-        $this->Cell(3, 0.7, $this->solicitud->cfdi->total_impuestos_trasladados_format . ' ', 1, 0, 'R');
-        $this->Cell(4.5, 0.7, $this->solicitud->cfdi->total_format . ' ', 1, 0, 'R');
-        $this->Cell(3, 0.7, $this->solicitud->cfdi->moneda . ' ', 1, 0, 'L');
-        $this->Cell(3,0.7, $this->solicitud->cfdi->tipo_cambio . ' ', 1, 1, 'R');
-        $this->Ln(.5);
-
-        $this->SetFont('Arial', 'B', 10);
-
-        $this->Cell(9.75, 0.7, 'Contacto HI: ', 1, 0, 'C',true);
-        $this->Cell(9.75, 0.7, 'Correo para recibir notificaciones: ', 1, 1, 'C', true);
-        $this->Cell(9.75, 0.7, $this->solicitud->contacto . ' ', 1, 0, 'L');
-        $this->Cell(9.75, 0.7, $this->solicitud->correo_notificaciones . ' ', 1, 1, 'L');
+            $i++;
+        }
 
         $this->Ln(0.5);
-
-        $this->SetFont('Arial', '', 10);
+        $this->SetFont('Arial', '', 8);
         $this->CellFitScale(19.5, .5, 'Observaciones:', 0, 0, 'L');
         $this->Ln(.5);
         $this->MultiCell(19.5, .5, $this->solicitud->comentario . ' ', 1, 'J',  0);
         $this->Ln(.5);
         $this->SetFont('Arial', 'B', 15);
-        $this->CellFitScale(19.5, .5, utf8_decode('El presente CFDI se toma a validación SIN originar obligación alguna para pago'), 0, 0, 'L');
+        $this->CellFitScale(19.5, .5, utf8_decode('El presente CFDI se toma a revisión SIN originar obligación alguna para pago'), 0, 0, 'L');
     }
 
     function Footer(){
