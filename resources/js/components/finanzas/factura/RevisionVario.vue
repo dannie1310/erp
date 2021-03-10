@@ -506,7 +506,7 @@ export default {
                     this.resumen.subtotal = parseFloat(this.resumen.subtotal + (partida.cantidad * partida.precio));
                     partida.monto = parseFloat(partida.cantidad * partida.precio);
                 });
-                self.resumen.iva_subtotal = parseFloat(self.resumen.subtotal * 0.16)
+                self.resumen.iva_subtotal = parseFloat(self.resumen.subtotal * 0.16).toFixed(2);
                 self.resumen.iva_pagar =  parseFloat(self.resumen.iva_subtotal - self.resumen.ret_iva_4 - self.resumen.ret_iva_6 - self.resumen.ret_iva_2_3);
                 self.resumen.total = parseFloat(self.resumen.subtotal + self.resumen.iva_pagar) + parseFloat(self.resumen.ieps) + parseFloat(self.resumen.imp_hosp) - parseFloat(self.resumen.ret_isr);
             }
