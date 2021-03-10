@@ -1163,7 +1163,6 @@ class Factura extends Transaccion
             $this->complemento->save();
 
             foreach($data['partidas'] as $partida){
-                dd($partida['concepto']);
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
                     "referencia" => $partida['concepto'],
@@ -1193,9 +1192,6 @@ class Factura extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
-        
-
-        dd($this->moneda->cambio->cambio);
     }
 
 }
