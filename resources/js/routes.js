@@ -180,6 +180,18 @@ export const routes = [
                             permission: 'rechazar_solicitud_recepcion_cfdi'
                         }
                     },
+                    {
+                        path: ':id',
+                        name: 'solicitud-recepcion-cfdi-show-proyecto',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'CONSULTAR SOLICITUD',
+                            breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_recepcion_cfdi_proyecto',
+                        }
+                    },
                 ]
             },
             {
@@ -2856,7 +2868,7 @@ export const routes = [
             {
                 path: ':id',
                 name: 'solicitud-recepcion-cfdi-show',
-                component: require('./components/solicitud-recepcion-cfdi/Show').default,
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Show').default,
                 props: true,
                 meta: {
                     title: 'CONSULTAR SOLICITUD',
