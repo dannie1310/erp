@@ -183,7 +183,7 @@
                             </table>
                         </div>
                     </div>
-                    <b>Se le recuerda que la solicitud de recepción no representa un compromiso de pago por parte de Hermes Infraestructura.</b>
+                    <b>Se le recuerda que la solicitud de recepción no representa un compromiso de pago por parte de {{$solicitud->empresa->razon_social}}, sólo se recibe a revisión.</b>
                 </span>
             </div>
         </div>

@@ -11,7 +11,7 @@
 
     </head>
     <div id="app">
-        Se le informa que {{$solicitud->usuarioCancela->nombre_completo}} ha cancelado una solicitud de recepción de CFDI para su proyecto.
+        Se le informa que {{$solicitud->usuarioCancelo->nombre_completo}} ha cancelado una solicitud de recepción de CFDI para su proyecto.
         <div class="card" >
             <div class="card-header">
                 <h5>Datos de la Solicitud de Recepción</h5>
