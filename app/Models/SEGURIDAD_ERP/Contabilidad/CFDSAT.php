@@ -51,6 +51,12 @@ class CFDSAT extends Model
         ,"fecha_cancelacion"
         ,"tipo_cambio"
         ,"id_solicitud_recepcion"
+        ,"ultima_verificacion"
+        ,"no_verificable"
+        ,"cancelado"
+        ,"metodo_pago"
+        ,"tipo_relacion"
+        ,"cfdi_relacionado"
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
@@ -89,6 +95,11 @@ class CFDSAT extends Model
     public function efo()
     {
         return $this->belongsTo(EFOS::class,"rfc_emisor","rfc");
+    }
+
+    public function asociado()
+    {
+        return $this->belongsTo(CFDSAT::class,"cfdi_relacionado","uuid");
     }
 
     public function autocorreccion()

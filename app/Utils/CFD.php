@@ -74,6 +74,7 @@ class CFD
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
             $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
             $this->arreglo_factura["tipo_cambio"] = (string)$factura_xml["TipoCambio"];
+            $this->arreglo_factura["metodo_pago"] = (string)$factura_xml["MetodoPago"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
@@ -89,6 +90,16 @@ class CFD
             $this->log["archivos_no_cargados_error_app"] += 1;
             $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
+        }
+
+        $this->arreglo_factura["tipo_relacion"] = '';
+        $this->arreglo_factura["cfdi_relacionado"]  ='';
+
+        $CFDIRelacionado = $factura_xml->xpath('//cfdi:Comprobante//cfdi:CfdiRelacionados');
+        if(count($CFDIRelacionado)>0){
+            $CFDIRelacionado = $factura_xml->xpath('//cfdi:Comprobante//cfdi:CfdiRelacionados')[0];
+            $this->arreglo_factura["tipo_relacion"] = (string)$CFDIRelacionado["TipoRelacion"][0];
+            $this->arreglo_factura["cfdi_relacionado"] = (string)$factura_xml->xpath('//cfdi:Comprobante//cfdi:CfdiRelacionados//cfdi:CfdiRelacionado')[0]["UUID"];
         }
 
         try {

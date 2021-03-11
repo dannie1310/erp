@@ -223,7 +223,6 @@ class Factura extends Transaccion
         if($factura_repositorio){
             $factura_repositorio->id_transaccion = $factura->id_transaccion;
             $factura_repositorio->save();
-
         } else {
             if($data){
                 $factura_repositorio = $factura->facturaRepositorio()->create($data);

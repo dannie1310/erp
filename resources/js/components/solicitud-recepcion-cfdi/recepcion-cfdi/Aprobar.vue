@@ -80,7 +80,6 @@
                                 <textarea class="form-control"
                                           v-model="solicitud.observaciones"
                                           name = "observaciones"
-                                          id = "observaciones"
                                           readonly="readonly"
                                 ></textarea>
                             </div>
@@ -209,6 +208,116 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="card" v-if="cargado && solicitud.cfdi.tipo_comprobante == 'I'">
+            <div class="card-header">
+                <h5>Datos del Contrarecibo</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <label for="rubro">Rubro de Factura:</label>
+                            <model-list-select
+                                name="id_rubro"
+                                id="id_rubro"
+                                placeholder="Seleccionar o buscar"
+                                data-vv-as="Rubro"
+                                v-validate="{required: true}"
+                                v-model="id_rubro"
+                                option-value="id"
+                                option-text="descripcion"
+                                :list="rubros"
+                                :isError="errors.has('id_rubro')">
+                            </model-list-select>
+                            <div class="invalid-feedback" v-show="errors.has('id_rubro')">{{ errors.first('id_rubro') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                            <div class="form-group error-content">
+                                <label for="id_moneda">Moneda:</label>
+                                <select
+                                    class="form-control"
+                                    name="id_moneda"
+                                    id="id_moneda"
+                                    data-vv-as="Moneda"
+                                    v-validate="{required: true}"
+                                    v-model="id_moneda"
+                                >
+                                    <option  v-for="(moneda, i) in monedas" :value="moneda.id" >
+                                        {{ moneda.nombre }}
+                                    </option>
+                                </select>
+
+                                <div class="invalid-feedback" v-show="errors.has('moneda')">{{ errors.first('moneda') }}</div>
+                            </div>
+                        </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content">
+                            <label for="vencimiento">Vencimiento:</label>
+                            <datepicker v-model = "vencimiento"
+                                        name = "vencimiento"
+                                        id = "vencimiento"
+                                        :format = "formatoFecha"
+                                        :language = "es"
+                                        :bootstrap-styling = "true"
+                                        class = "form-control"
+                                        v-validate="{required: true}"
+                                        :class="{'is-invalid': errors.has('vencimiento')}"
+                            ></datepicker>
+                            <div class="invalid-feedback" v-show="errors.has('vencimiento')">{{ errors.first('vencimiento') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                            <div class="form-group error-content">
+                                <label for="observaciones">Observaciones:</label>
+                                <textarea
+                                    name="observaciones"
+                                    id="observaciones"
+                                    class="form-control"
+                                    v-model="observaciones"
+                                    v-validate="{required: true}"
+                                    data-vv-as="Observaciones"
+                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                ></textarea>
+                                <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                            </div>
+                        </div>
+                </div>
+
+            </div>
+            <div class="card-footer">
+                <span class="pull-right">
+                    <button type="button" class="btn btn-secondary" v-on:click="regresar" >
+                        <i class="fa fa-angle-left"></i>Regresar
+                    </button>
+                    <button v-if="solicitud.estado==0" @click="aprobar" title="Aprobar" class="btn btn-primary">
+                        <i class="fa fa-check-circle"></i>Aprobar
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="card" v-else-if="cargado && solicitud.cfdi.tipo_comprobante == 'E'">
+            <div class="card-header">
+                <h5>Datos del Contrarecibo Existente</h5>
+            </div>
+            <div class="card-body">
+                <div class="row" v-if="solicitud.cfdi.cfdi_asociado">
+                    <div class="col-md-3">
+
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                    <div class="col-md-5">
+
+                    </div>
+
+                </div>
+            </div>
             <div class="card-footer">
                 <span class="pull-right">
                     <button type="button" class="btn btn-secondary" v-on:click="regresar" >
@@ -224,17 +333,29 @@
 </template>
 
 <script>
+    import datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
+    import {ModelListSelect} from "vue-search-select";
 
     export default {
         name: "solicitud-recepcion-cfdi-aprobar",
+        components: {datepicker, ModelListSelect},
         props: ["id"],
         data() {
             return {
+                es:es,
                 cargando:true,
                 cargado:false,
+                vencimiento:new Date(),
+                id_rubro:'',
+                id_moneda: 1,
+                observaciones:'',
+                rubros:[],
+                monedas:[]
             }
         },
         mounted() {
+            //this.vencimiento = new Date();
             this.find();
 
         },
@@ -250,23 +371,59 @@
                 this.$store.commit('recepcion-cfdi/solicitud-recepcion-cfdi/SET_SOLICITUD', null);
                 return this.$store.dispatch('recepcion-cfdi/solicitud-recepcion-cfdi/find', {
                     id: this.id,
-                    params: {include: ['cfdi.conceptos', 'empresa', 'obra']}
+                    params: {include: ['cfdi.conceptos', 'empresa', 'obra', 'cfdi.cfdi_asociado.factura_repositorio']}
                 }).then(data => {
                     this.$store.commit('recepcion-cfdi/solicitud-recepcion-cfdi/SET_SOLICITUD', data);
                 }).finally(() => {
-                    this.cargando = false;
-                    this.cargado = true;
+                    this.getRubros();
                 })
             },
             aprobar() {
-                return this.$store.dispatch('recepcion-cfdi/solicitud-recepcion-cfdi/aprobar', {
-                    id: this.id
-                }).then(data => {
-                    this.$router.push({name: 'recepcion-cfdi'});
-                })
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        return this.$store.dispatch('recepcion-cfdi/solicitud-recepcion-cfdi/aprobar', {
+                            id: this.id,
+                            id_rubro: this.id_rubro,
+                            id_moneda: this.id_moneda,
+                            observaciones: this.observaciones,
+                            vencimiento: this.vencimiento
+                        }).then(data => {
+                            this.$router.push({name: 'recepcion-cfdi'});
+                        })
+                    }
+                });
+
             },
             regresar() {
                 this.$router.push({name: 'recepcion-cfdi'});
+            },
+            getMonedas() {
+                this.cargando =true;
+                return this.$store.dispatch('cadeco/moneda/index', {
+                    params: {sort: 'nombre', order: 'desc' }
+                })
+                    .then(data => {
+                        this.monedas = data.data;
+                    })
+                    .finally(()=>{
+                        this.cargando = false;
+                        this.cargado = true;
+                    })
+            },
+            getRubros() {
+                this.cargado = true;
+                return this.$store.dispatch('finanzas/rubro/index', {
+                    params: {sort: 'descripcion', order: 'asc', scope:'paraFactura' }
+                })
+                .then(data => {
+                    this.rubros = data.data;
+                })
+                .finally(()=>{
+                    this.getMonedas();
+                })
+            },
+            formatoFecha(date){
+                return moment(date).format('DD/MM/YYYY');
             },
         }
     }

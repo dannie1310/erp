@@ -48,11 +48,12 @@ class SendAprobacionSolicitudRecepcionCFDINotification
             , $event->solicitud->id_proyecto_obra)->get();
         $usuario = Usuario::suscripcion($suscripciones)->get();
 
-        Notification::send($usuario, new NotificacionAprobacionSolicitudRecepcionCFDI($event->solicitud));
-        Notification::send($usuarios_interesados_permisos, new NotificacionSolicitudRecepcionCFDI($event->solicitud));
-        Notification::send($event->solicitud->usuarioRegistro, new NotificacionAprobacionSolicitudRecepcionCFDIProveedor($event->solicitud));
+        Notification::send($usuario, new NotificacionAprobacionSolicitudRecepcionCFDI($event->solicitud, $event->id_factura));
+        Notification::send($usuarios_interesados_permisos, new NotificacionSolicitudRecepcionCFDI($event->solicitud, $event->id_factura));
+        Notification::send($event->solicitud->usuarioRegistro, new NotificacionAprobacionSolicitudRecepcionCFDIProveedor($event->solicitud, $event->id_factura));
         if($event->solicitud->usuarioRegistro->correo != $event->solicitud->correo_notificaciones){
-            Notification::route("mail",$event->solicitud->correo_notificaciones)->notify(new NotificacionAprobacionSolicitudRecepcionCFDIProveedor($event->solicitud));
+            Notification::route("mail",$event->solicitud->correo_notificaciones)
+                ->notify(new NotificacionAprobacionSolicitudRecepcionCFDIProveedor($event->solicitud, $event->id_factura));
         }
     }
 }

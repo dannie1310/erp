@@ -153,7 +153,7 @@ class SolicitudRecepcionCFDIPDF extends Rotation
         $this->SetFont('Arial', '', 8);
         $this->CellFitScale(19.5, .5, 'Observaciones:', 0, 0, 'L');
         $this->Ln(.5);
-        $this->MultiCell(19.5, .5, $this->solicitud->comentario . ' ', 1, 'J',  0);
+        $this->MultiCell(19.5, .5, utf8_decode($this->solicitud->comentario) . ' ', 1, 'J',  0);
         $this->Ln(.5);
         $this->SetFont('Arial', 'B', 15);
         $this->CellFitScale(19.5, .5, utf8_decode('El presente CFDI se toma a revisión SIN originar obligación alguna para pago'), 0, 0, 'L');

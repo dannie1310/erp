@@ -24,7 +24,8 @@ class CFDSATTransformer extends TransformerAbstract
     protected $defaultIncludes = [
         'estatus',
         'conceptos',
-        'empresa'
+        'empresa',
+
     ];
 
     protected $availableIncludes = [
@@ -33,7 +34,8 @@ class CFDSATTransformer extends TransformerAbstract
         'estatus',
         'factura_repositorio',
         'poliza_cfdi',
-        'conceptos'
+        'conceptos',
+        'cfdi_asociado'
     ];
 
     public function transform(CFDSAT $model) {
@@ -128,6 +130,15 @@ class CFDSATTransformer extends TransformerAbstract
         if($items = $model->conceptos)
         {
             return $this->collection($items, new CFDSATConceptosTransformer);
+        }
+        return null;
+    }
+
+    public function includeCFDIAsociado(CFDSAT $model)
+    {
+        if($item = $model->asociado)
+        {
+            return $this->item($item, new CFDSATTransformer);
         }
         return null;
     }
