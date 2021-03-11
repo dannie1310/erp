@@ -19,10 +19,12 @@ class AprobacionSolicitudRecepcionCFDI
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $solicitud;
     public $tipo;
+    public $id_factura;
 
-    public function __construct(SolicitudRecepcionCFDI $solicitud)
+    public function __construct(SolicitudRecepcionCFDI $solicitud, $id_factura)
     {
         $this->solicitud = $solicitud;
+        $this->id_factura = $id_factura;
         $this->tipo = 7;
     }
 

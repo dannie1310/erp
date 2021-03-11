@@ -8,11 +8,13 @@ use App\Events\RechazoSolicitudRecepcionCFDI;
 use App\Events\RegistroSolicitudRecepcionCFDI;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Factura;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Obra;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\PDF\Fiscal\CFDI;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -191,30 +193,20 @@ class SolicitudRecepcionCFDI extends Model
         return $sol ? $sol->numero_folio + 1 : 1;
     }
 
-    public function aprobar()
+    public function aprobar($data)
     {
         DB::connection('seguridad')->beginTransaction();
         DB::connection('cadeco')->beginTransaction();
         try{
 
-            $datos_rfactura = [
-                "hash_file" => hash_file('md5',"uploads/contabilidad/XML_SAT/".$this->cfdi->uuid.".xml"),
-                "uuid" => $this->cfdi->uuid,
-                "rfc_emisor" => $this->cfdi->rfc_emisor,
-                "rfc_receptor" => $this->cfdi->rfc_receptor,
-                "tipo_comprobante" => $this->cfdi->tipo_comprobante,
-            ];
+            $objFactura = new Factura();
+            $factura = $objFactura->registrar($data);
 
-            $factura_repositorio = FacturaRepositorio::create($datos_rfactura);
-            $empresa = Empresa::where("rfc","=",$this->proveedor->rfc)->whereIn("tipo_empresa",[1,2,3])->first();
-            if(!$empresa){
-                Empresa::create(["razon_social"=>$this->proveedor->razon_social
-                    , "rfc"=>$this->proveedor->rfc
-                    , "tipo"=>3
-                ]);
-            }
+            $facturaRepositorio = FacturaRepositorio::where("id_transaccion", "=", $factura->id_transaccion)
+                ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
+                    ->first()->getKey())->first();
 
-            $this->cfdi->id_factura_repositorio = $factura_repositorio->id;
+            $this->cfdi->id_factura_repositorio = $facturaRepositorio->id;
             $this->cfdi->save();
 
             $this->estado = 1;
@@ -222,7 +214,7 @@ class SolicitudRecepcionCFDI extends Model
 
             DB::connection('cadeco')->commit();
             DB::connection('seguridad')->commit();
-            event(new AprobacionSolicitudRecepcionCFDI($this));
+            event(new AprobacionSolicitudRecepcionCFDI($this, $factura->id_transaccion));
 
         } catch (\Exception $e){
             DB::connection('cadeco')->rollBack();

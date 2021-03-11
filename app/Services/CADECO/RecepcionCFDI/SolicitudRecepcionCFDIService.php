@@ -10,6 +10,8 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Repositories\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIRepository as Repository;
+use DateTime;
+use DateTimeZone;
 
 class SolicitudRecepcionCFDIService
 {
@@ -51,7 +53,7 @@ class SolicitudRecepcionCFDIService
         return $this->repository->show($id);
     }
 
-    public function aprobar($id)
+    public function aprobar($data, $id)
     {
         $cfdi = $this->repository->show($id)->cfdi;
         $facturaRepositorio = $cfdi->facturaRepositorio;
@@ -63,8 +65,55 @@ class SolicitudRecepcionCFDIService
             }
         }
 
+        $fecha = New DateTime();
+        $emision = date_create($cfdi->fecha);
 
-        return $this->repository->show($id)->aprobar();
+        $vencimiento = New DateTime($data["vencimiento"]);
+        $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        if ($emision > $vencimiento) {
+            abort(500, "La fecha de emisión no puede ser mayor a la fecha de vencimiento");
+        }
+
+        $empresa = $this->repository->getEmpresa($cfdi->proveedor);
+
+        $datos_factura = [
+            'fecha' => $emision->format('Y-m-d'),
+            "id_empresa" => $empresa->id_empresa,
+            "id_moneda" => $data["id_moneda"],
+            "vencimiento" => $vencimiento->format('Y-m-d'),
+            'monto' => $cfdi->total,
+            "saldo" => $cfdi->total,
+            "referencia" => $cfdi->serie.$cfdi->folio,
+            "observaciones" => $data["observaciones"],
+        ];
+        $datos_rubro = [
+            'id_rubro' => $data["id_rubro"],
+        ];
+        $datos_cr = [
+            'fecha' => $fecha->format('Y-m-d'),
+            "id_empresa" => $empresa->id_empresa,
+            "id_moneda" => $data["id_moneda"],
+            'monto' => $cfdi->total,
+            "saldo" => $cfdi->total,
+            "observaciones" => $data["observaciones"],
+        ];
+
+        $datos_rfactura = [
+            "hash_file" => hash_file('md5',"uploads/contabilidad/XML_SAT/".$cfdi->uuid.".xml"),
+            "uuid" => $cfdi->uuid,
+            "rfc_emisor" => $cfdi->rfc_emisor,
+            "rfc_receptor" => $cfdi->rfc_receptor,
+            "tipo_comprobante" => $cfdi->tipo_comprobante,
+        ];
+
+        $datos["factura"] = $datos_factura;
+        $datos["rubro"] = $datos_rubro;
+        $datos["cr"] = $datos_cr;
+        $datos["factura_repositorio"] = $datos_rfactura;
+        $datos["nc_repositorio"] = null;
+
+        return $this->repository->show($id)->aprobar($datos);
     }
 
     public function rechazar($data, $id)

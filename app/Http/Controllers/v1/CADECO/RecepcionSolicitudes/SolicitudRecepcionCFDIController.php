@@ -27,9 +27,9 @@ class SolicitudRecepcionCFDIController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function aprobar($id)
+    public function aprobar(Request $request , $id)
     {
-        $this->service->aprobar($id);
+        $this->service->aprobar($request->all(),$id);
     }
 
     public function rechazar(Request $request , $id){
