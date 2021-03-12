@@ -26,7 +26,7 @@ class CFDSATTransformer extends TransformerAbstract
         'estatus',
         'conceptos',
         'empresa',
-
+        'proveedor'
     ];
 
     protected $availableIncludes = [

@@ -153,6 +153,33 @@ class SolicitudRecepcionCFDI extends Model
         return '# ' . sprintf("%05d", $this->id);
     }
 
+    public function getUsuarioAproboTxtAttribute()
+    {
+        try{
+            return $this->usuarioAprobo->nombre_completo;
+        }catch(\Exception $e){
+            return null;
+        }
+    }
+
+    public function getUsuarioCanceloTxtAttribute()
+    {
+        try{
+            return $this->usuarioCancelo->nombre_completo;
+        }catch(\Exception $e){
+            return null;
+        }
+    }
+
+    public function getUsuarioRechazoTxtAttribute()
+    {
+        try{
+            return $this->usuarioRechazo->nombre_completo;
+        }catch(\Exception $e){
+            return null;
+        }
+    }
+
     public function registrar($data)
     {
         DB::connection('seguridad')->beginTransaction();
