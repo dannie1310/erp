@@ -208,6 +208,16 @@
                     </div>
                 </div>
             </div>
+            <div class="card-footer" v-if="solicitud.cfdi.tipo_comprobante == 'P'">
+                <span class="pull-right">
+                    <button type="button" class="btn btn-secondary" v-on:click="regresar" >
+                        <i class="fa fa-angle-left"></i>Regresar
+                    </button>
+                    <button v-if="solicitud.estado==0" @click="aprobar" title="Aprobar" class="btn btn-primary">
+                        <i class="fa fa-check-circle"></i>Aprobar
+                    </button>
+                </span>
+            </div>
         </div>
         <div class="card" v-if="cargado && solicitud.cfdi.tipo_comprobante == 'I'">
             <div class="card-header">

@@ -290,6 +290,23 @@ class SolicitudRecepcionCFDI extends Model
         }
     }
 
+    public function aprobarTipoPago()
+    {
+        DB::connection('seguridad')->beginTransaction();
+        try{
+            $this->estado = 1;
+            $this->save();
+
+            DB::connection('seguridad')->commit();
+            event(new AprobacionSolicitudRecepcionCFDI($this));
+
+        } catch (\Exception $e){
+            DB::connection('seguridad')->rollBack();
+            abort(500, $e->getMessage());
+        }
+        return $this;
+    }
+
     public function rechazar($motivo)
     {
         DB::connection('seguridad')->beginTransaction();

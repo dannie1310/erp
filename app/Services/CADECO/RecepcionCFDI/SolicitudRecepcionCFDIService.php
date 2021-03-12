@@ -59,6 +59,9 @@ class SolicitudRecepcionCFDIService
         if($cfdi->tipo_comprobante == "I"){
             $this->aprobarTipoIngreso($data, $id);
         }
+        if($cfdi->tipo_comprobante == "P"){
+            $this->aprobarTipoPago($data, $id);
+        }
         if($cfdi->tipo_comprobante == "E" && key_exists("id_factura", $data)){
             if($data["id_factura"]>0){
                 $this->aprobarTipoEgresoEnCR($data, $id);
@@ -71,6 +74,11 @@ class SolicitudRecepcionCFDIService
     public function rechazar($data, $id)
     {
         return $this->repository->show($id)->rechazar($data["motivo"]);
+    }
+
+    private function aprobarTipoPago($data, $id)
+    {
+        return $this->repository->show($id)->aprobarTipoPago();
     }
 
     private function aprobarTipoEgresoEnCR($data, $id){
