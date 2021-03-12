@@ -4,6 +4,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Finanzas\ComprobanteFondoEliminado;
 use Illuminate\Support\Facades\DB;
 
 class ComprobanteFondo extends Transaccion
@@ -57,6 +58,11 @@ class ComprobanteFondo extends Transaccion
     public function partidas()
     {
         return $this->hasMany(ItemComprobanteFondo::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function comprobanteEliminado()
+    {
+        return $this->belongsTo(ComprobanteFondoEliminado::class, 'id_transaccion', 'id_transaccion');
     }
 
     /**
@@ -117,5 +123,50 @@ class ComprobanteFondo extends Transaccion
     public function partidasOrdenadas()
     {
         return $this->partidas()->orderBy('id_item', 'asc');
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            foreach ($this->partidas()->get() as $item) {
+                $item->delete();
+            }
+            $this->respaldar($motivo);
+            $this->delete();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function respaldar($motivo)
+    {
+        ComprobanteFondoEliminado::create([
+            'id_transaccion' => $this->getKey(),
+            'id_referente' => $this->id_referente,
+            'tipo_transaccion' => $this->tipo_transaccion,
+            'numero_folio' => $this->numero_folio,
+            'fecha' => $this->fecha,
+            'estado' => $this->estado,
+            'impreso' => $this->impreso,
+            'id_obra' => $this->id_obra,
+            'id_concepto' => $this->id_concepto,
+            'id_moneda' => $this->id_moneda,
+            'cumplimiento' => $this->cumplimiento,
+            'opciones' => $this->opciones,
+            'monto' => $this->monto,
+            'impuesto' => $this->impuesto,
+            'referencia' => $this->referencia,
+            'comentario' => $this->comentario,
+            'observaciones' => $this->observaciones,
+            'FechaHoraRegistro' => $this->FechaHoraRegistro,
+            'id_usuario' => $this->id_usuario,
+            'motivo' => $motivo,
+            'usuario_elimina' => auth()->id(),
+            'fecha_eliminacion' => date('Y-m-d H:i:s')
+        ]);
     }
 }

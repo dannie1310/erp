@@ -915,6 +915,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@destroy')->where(['id' => '[0-9]+']);
         });
 
         /**

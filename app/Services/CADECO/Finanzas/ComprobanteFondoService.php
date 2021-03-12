@@ -21,7 +21,8 @@ class ComprobanteFondoService
      * @param ComprobanteFondo $model
      */
 
-    public function  __construct(ComprobanteFondo $model){
+    public function  __construct(ComprobanteFondo $model)
+    {
         $this->repository = new Repository($model);
     }
 
@@ -62,5 +63,10 @@ class ComprobanteFondoService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data'][0]);
     }
 }
