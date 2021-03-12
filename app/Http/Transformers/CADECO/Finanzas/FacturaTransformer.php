@@ -72,6 +72,7 @@ class FacturaTransformer extends TransformerAbstract
             'a_cuenta' => $model->a_cuenta_format,
             'moneda' => $model->moneda->nombre,
             'id_moneda' => $model->id_moneda,
+            'id_costo' => $model->id_costo,
             'empresa' => $model->empresa->razon_social,
             'rubro' => $model->rubro,
             'datos_registro' => $model->datos_registro,

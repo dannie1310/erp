@@ -1245,6 +1245,21 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'revisar_factura'
                                 }
+                            },
+                            {
+                                path: ':id/varios',
+                                name: 'factura-varios-revisar',
+                                component: require('./components/finanzas/factura/RevisionVario').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_factura_varios'],
+                                }),
+                                meta: {
+                                    title: 'Factura de Varios',
+                                    breadcrumb: { parent: 'factura', name: 'FACTURA VARIOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_factura_varios'
+                                }
                             }
                         ]
                     },
