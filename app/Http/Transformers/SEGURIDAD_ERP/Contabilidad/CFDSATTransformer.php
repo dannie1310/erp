@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Http\Transformers\CADECO\Finanzas\FacturaTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\FacturaRepositorioTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Fiscal\CtgEstadosCFDTransformer;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
@@ -35,7 +36,8 @@ class CFDSATTransformer extends TransformerAbstract
         'factura_repositorio',
         'poliza_cfdi',
         'conceptos',
-        'cfdi_asociado'
+        'cfdi_asociado',
+        'transaccion_factura'
     ];
 
     public function transform(CFDSAT $model) {
@@ -64,6 +66,7 @@ class CFDSATTransformer extends TransformerAbstract
             'tipo_comprobante' => $model->tipo_comprobante,
             'moneda' => $model->moneda,
             'tipo_cambio' => $model->tipo_cambio,
+            'tipo_relacion' => $model->tipo_relacion,
             'estado' => $model->estado_txt
         ];
     }
@@ -141,5 +144,20 @@ class CFDSATTransformer extends TransformerAbstract
             return $this->item($item, new CFDSATTransformer);
         }
         return null;
+    }
+
+    public function includeTransaccionFactura(CFDSAT $model)
+    {
+        try{
+            if($item = $model->facturaRepositorio->transaccion_factura)
+            {
+                return $this->item($item, new FacturaTransformer);
+            }
+            return null;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+
     }
 }

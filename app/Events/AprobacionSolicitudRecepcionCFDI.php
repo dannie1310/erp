@@ -21,7 +21,7 @@ class AprobacionSolicitudRecepcionCFDI
     public $tipo;
     public $id_factura;
 
-    public function __construct(SolicitudRecepcionCFDI $solicitud, $id_factura)
+    public function __construct(SolicitudRecepcionCFDI $solicitud, $id_factura = null)
     {
         $this->solicitud = $solicitud;
         $this->id_factura = $id_factura;
