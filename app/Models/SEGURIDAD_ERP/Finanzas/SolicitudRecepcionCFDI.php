@@ -153,6 +153,33 @@ class SolicitudRecepcionCFDI extends Model
         return '# ' . sprintf("%05d", $this->id);
     }
 
+    public function getUsuarioAproboTxtAttribute()
+    {
+        try{
+            return $this->usuarioAprobo->nombre_completo;
+        }catch(\Exception $e){
+            return null;
+        }
+    }
+
+    public function getUsuarioCanceloTxtAttribute()
+    {
+        try{
+            return $this->usuarioCancelo->nombre_completo;
+        }catch(\Exception $e){
+            return null;
+        }
+    }
+
+    public function getUsuarioRechazoTxtAttribute()
+    {
+        try{
+            return $this->usuarioRechazo->nombre_completo;
+        }catch(\Exception $e){
+            return null;
+        }
+    }
+
     public function registrar($data)
     {
         DB::connection('seguridad')->beginTransaction();
@@ -288,6 +315,23 @@ class SolicitudRecepcionCFDI extends Model
             DB::connection('seguridad')->rollBack();
             abort(500, $e->getMessage());
         }
+    }
+
+    public function aprobarTipoPago()
+    {
+        DB::connection('seguridad')->beginTransaction();
+        try{
+            $this->estado = 1;
+            $this->save();
+
+            DB::connection('seguridad')->commit();
+            event(new AprobacionSolicitudRecepcionCFDI($this));
+
+        } catch (\Exception $e){
+            DB::connection('seguridad')->rollBack();
+            abort(500, $e->getMessage());
+        }
+        return $this;
     }
 
     public function rechazar($motivo)

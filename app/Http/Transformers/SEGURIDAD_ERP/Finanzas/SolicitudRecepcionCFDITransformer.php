@@ -35,6 +35,12 @@ class SolicitudRecepcionCFDITransformer extends TransformerAbstract
             'estado' => $model->estado,
             'estado_format' => $model->estado_format,
             'fecha_registro' => $model->fecha_hora_registro_format,
+            'fecha_aprobacion' => $model->fecha_hora_aprobacion_format,
+            'usuario_aprobo' => $model->usuario_aprobo_txt,
+            'fecha_cancelacion' => $model->fecha_hora_cancelacion_format,
+            'usuario_cancelo' => $model->usuario_cancelo_txt,
+            'fecha_rechazo' => $model->fecha_hora_rechazo_format,
+            'usuario_rechazo' => $model->usuario_rechazo_txt,
             'observaciones' => $model->comentario,
             'correo_notificaciones' => $model->correo_notificaciones,
         ];
