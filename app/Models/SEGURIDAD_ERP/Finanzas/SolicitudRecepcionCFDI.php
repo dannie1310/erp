@@ -193,12 +193,49 @@ class SolicitudRecepcionCFDI extends Model
         return $sol ? $sol->numero_folio + 1 : 1;
     }
 
+    public function aprobarIntegrarCF($data)
+    {
+        DB::connection('seguridad')->beginTransaction();
+        DB::connection('cadeco')->beginTransaction();
+        try{
+            $factura = Factura::find($data["id_factura"]);
+            $factura->asociarCFDRepositorio($data["nc_repositorio"]);
+            $factura->monto -= $this->cfdi->total;
+            $factura->saldo -= $this->cfdi->total;
+            $factura->save();
+            $factura->contra_recibo->monto -= $this->cfdi->total;
+            $factura->contra_recibo->saldo -= $this->cfdi->total;
+            $factura->contra_recibo->save();
+
+            $facturaRepositorio = FacturaRepositorio::where("id_transaccion", "=", $factura->id_transaccion)
+                ->where("uuid", "=", $this->cfdi->uuid)
+                ->where('id_proyecto', '=', Proyecto::query()
+                    ->where('base_datos', '=', Context::getDatabase())
+                    ->first()->getKey())
+                ->first();
+
+            $this->cfdi->id_factura_repositorio = $facturaRepositorio->id;
+            $this->cfdi->save();
+
+            $this->estado = 1;
+            $this->save();
+
+            DB::connection('cadeco')->commit();
+            DB::connection('seguridad')->commit();
+            event(new AprobacionSolicitudRecepcionCFDI($this));
+        }
+        catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            DB::connection('seguridad')->rollBack();
+            abort(500, $e->getMessage());
+        }
+    }
+
     public function aprobar($data)
     {
         DB::connection('seguridad')->beginTransaction();
         DB::connection('cadeco')->beginTransaction();
         try{
-
             $objFactura = new Factura();
             $factura = $objFactura->registrar($data);
 

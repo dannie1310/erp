@@ -43,6 +43,7 @@ class FacturaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'fecha_cr' => $model->contra_recibo->fecha_format,
             'numero_folio' => $model->numero_folio,
+            'numero_folio_format' => $model->numero_folio_format,
             'antecedente' => $model->id_antecedente,
             'subtotal'=>(float)$model->subtotal,
             'subtotal_format'=>(string) '$ '.number_format(($model->subtotal),2,".",","),

@@ -49,22 +49,21 @@ class NotificacionAprobacionSolicitudRecepcionCFDIProveedor extends Notification
     public function toMail($notifiable)
     {
         $path0 = "uploads/contabilidad/XML_SAT/".$this->solicitud->cfdi->uuid.".xml";
-        $pdf = new ContrareciboPDF($this->id_factura);
+        $pdf = null;
+        if($this->id_factura >0){
+            $pdf = new ContrareciboPDF($this->id_factura);
+        }
 
-        if(file_exists($path0)){
+        if($pdf){
             return (new MailMessage)
                 ->subject("Aprobación de Solicitud de Recepción de CFDI")
                 ->view('emails.aprobacion_solicitud_recepcion_cfdi_proveedor',["solicitud"=>$this->solicitud])
-                ->attach($path0)
                 ->attachData($pdf->Output("S","contrarecibo_".$this->id_factura.".pdf"), 'contrarecibo_'.$this->id_factura.'.pdf',['mime' => 'application/pdf']);
         } else {
             return (new MailMessage)
                 ->subject("Aprobación de Solicitud de Recepción de CFDI")
-                ->view('emails.aprobacion_solicitud_recepcion_cfdi_proveedor',["solicitud"=>$this->solicitud])
-                ->attachData($pdf->Output("S","contrarecibo_".$this->id_factura.".pdf"), 'contrarecibo_'.$this->id_factura.'.pdf',['mime' => 'application/pdf']);
+                ->view('emails.aprobacion_solicitud_recepcion_cfdi_proveedor',["solicitud"=>$this->solicitud]);
         }
-
-
     }
 
     /**

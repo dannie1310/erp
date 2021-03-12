@@ -297,38 +297,62 @@
                 </span>
             </div>
         </div>
-        <div class="card" v-else-if="cargado && solicitud.cfdi.tipo_comprobante == 'E'">
-            <div class="card-header">
-                <h5>Datos del Contrarecibo Existente</h5>
-            </div>
-            <div class="card-body">
-                <div class="row" v-if="solicitud.cfdi.cfdi_asociado">
-                    <div class="col-md-3">
-
+        <template v-else-if="cargado && solicitud.cfdi.tipo_comprobante == 'E' && solicitud.cfdi.cfdi_asociado">
+            <template v-if="solicitud.cfdi.cfdi_asociado.transaccion_factura && (solicitud.cfdi.tipo_relacion == 1 || solicitud.cfdi.tipo_relacion == 7)">
+                <div class="card" v-if="solicitud.cfdi.cfdi_asociado.transaccion_factura.estado==0">
+                    <div class="card-header">
+                        <h5>Datos del Contrarecibo del CFDI Asociado</h5>
                     </div>
-                    <div class="col-md-2">
-
+                    <div class="card-body">
+                        <div class="alert alert-warning" role="alert">
+                           <i class="fa fa-info-circle"></i> La nota de crédito se incorporará al contrarecibo restandose al monto de la factura
+                        </div>
+                        <div class="row" >
+                            <div class="col-md-2">
+                                <label >Folio CR:</label>
+                                <div>
+                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.contra_recibo.numero_folio_format}}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label >Folio Factura:</label>
+                                <div>
+                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.numero_folio_format}}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label >Fecha:</label>
+                                <div>
+                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.fecha_format}}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label >Monto:</label>
+                                <div>
+                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.monto_format}}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label >Observaciones:</label>
+                                <div>
+                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.observaciones}}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-
+                    <div class="card-footer">
+                        <span class="pull-right">
+                            <button type="button" class="btn btn-secondary" v-on:click="regresar" >
+                                <i class="fa fa-angle-left"></i>Regresar
+                            </button>
+                            <button v-if="solicitud.estado==0" @click="aprobar" title="Aprobar" class="btn btn-primary">
+                                <i class="fa fa-check-circle"></i>Aprobar
+                            </button>
+                        </span>
                     </div>
-                    <div class="col-md-5">
-
-                    </div>
-
                 </div>
-            </div>
-            <div class="card-footer">
-                <span class="pull-right">
-                    <button type="button" class="btn btn-secondary" v-on:click="regresar" >
-                        <i class="fa fa-angle-left"></i>Regresar
-                    </button>
-                    <button v-if="solicitud.estado==0" @click="aprobar" title="Aprobar" class="btn btn-primary">
-                        <i class="fa fa-check-circle"></i>Aprobar
-                    </button>
-                </span>
-            </div>
-        </div>
+            </template>
+        </template>
     </span>
 </template>
 
@@ -348,6 +372,7 @@
                 cargado:false,
                 vencimiento:new Date(),
                 id_rubro:'',
+                id_factura:'',
                 id_moneda: 1,
                 observaciones:'',
                 rubros:[],
@@ -355,9 +380,7 @@
             }
         },
         mounted() {
-            //this.vencimiento = new Date();
             this.find();
-
         },
         computed: {
             solicitud(){
@@ -371,9 +394,16 @@
                 this.$store.commit('recepcion-cfdi/solicitud-recepcion-cfdi/SET_SOLICITUD', null);
                 return this.$store.dispatch('recepcion-cfdi/solicitud-recepcion-cfdi/find', {
                     id: this.id,
-                    params: {include: ['cfdi.conceptos', 'empresa', 'obra', 'cfdi.cfdi_asociado.factura_repositorio']}
+                    params: {include: ['cfdi.conceptos', 'empresa', 'obra', 'cfdi.cfdi_asociado.transaccion_factura.contra_recibo']}
                 }).then(data => {
                     this.$store.commit('recepcion-cfdi/solicitud-recepcion-cfdi/SET_SOLICITUD', data);
+                    if(data.cfdi.tipo_comprobante == 'E' && data.cfdi.cfdi_asociado && (data.cfdi.tipo_relacion == 1 || data.cfdi.tipo_relacion == 7)){
+                        if(data.cfdi.cfdi_asociado.transaccion_factura){
+                            if(data.cfdi.cfdi_asociado.transaccion_factura.estado==0){
+                                this.id_factura = data.cfdi.cfdi_asociado.transaccion_factura.id;
+                            }
+                        }
+                    }
                 }).finally(() => {
                     this.getRubros();
                 })
@@ -381,9 +411,11 @@
             aprobar() {
                 this.$validator.validate().then(result => {
                     if (result) {
+
                         return this.$store.dispatch('recepcion-cfdi/solicitud-recepcion-cfdi/aprobar', {
                             id: this.id,
                             id_rubro: this.id_rubro,
+                            id_factura: this.id_factura,
                             id_moneda: this.id_moneda,
                             observaciones: this.observaciones,
                             vencimiento: this.vencimiento
@@ -392,7 +424,6 @@
                         })
                     }
                 });
-
             },
             regresar() {
                 this.$router.push({name: 'recepcion-cfdi'});

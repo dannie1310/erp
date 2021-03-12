@@ -56,11 +56,50 @@ class SolicitudRecepcionCFDIService
     public function aprobar($data, $id)
     {
         $cfdi = $this->repository->show($id)->cfdi;
+        if($cfdi->tipo_comprobante == "I"){
+            $this->aprobarTipoIngreso($data, $id);
+        }
+        if($cfdi->tipo_comprobante == "E" && key_exists("id_factura", $data)){
+            $this->aprobarTipoEgresoEnCR($data, $id);
+        }
+    }
+
+    public function rechazar($data, $id)
+    {
+        return $this->repository->show($id)->rechazar($data["motivo"]);
+    }
+
+    private function aprobarTipoEgresoEnCR($data, $id){
+        $cfdi = $this->repository->show($id)->cfdi;
+        $facturaRepositorio = $cfdi->facturaRepositorio;
+        if($facturaRepositorio){
+            if($facturaRepositorio->id_proyecto !=  Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey()
+                || $facturaRepositorio->id_obra != Context::getIdObra()){
+                abort(500, "El CFDI ".$cfdi->uuid." ya esta asociado al proyecto: [".$facturaRepositorio->proyecto->base_datos."] ".$facturaRepositorio->obra . " la solicitud se rechazará automáticamente");
+            }
+        }
+        $datos_rnc = [
+            "hash_file" => hash_file('md5',"uploads/contabilidad/XML_SAT/".$cfdi->uuid.".xml"),
+            "uuid" => $cfdi->uuid,
+            "rfc_emisor" => $cfdi->rfc_emisor,
+            "rfc_receptor" => $cfdi->rfc_receptor,
+            "tipo_comprobante" => $cfdi->tipo_comprobante,
+        ];
+        $datos = $data;
+        $datos["nc_repositorio"] = $datos_rnc;
+
+        return $this->repository->show($id)->aprobarIntegrarCF($datos);
+
+    }
+
+    private function aprobarTipoIngreso($data, $id)
+    {
+        $cfdi = $this->repository->show($id)->cfdi;
         $facturaRepositorio = $cfdi->facturaRepositorio;
 
         if($facturaRepositorio){
             if($facturaRepositorio->id_proyecto !=  Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey()
-            || $facturaRepositorio->id_obra != Context::getIdObra()){
+                || $facturaRepositorio->id_obra != Context::getIdObra()){
                 abort(500, "El CFDI ".$cfdi->uuid." ya esta asociado al proyecto: [".$facturaRepositorio->proyecto->base_datos."] ".$facturaRepositorio->obra . " la solicitud se rechazará automáticamente");
             }
         }
@@ -114,11 +153,6 @@ class SolicitudRecepcionCFDIService
         $datos["nc_repositorio"] = null;
 
         return $this->repository->show($id)->aprobar($datos);
-    }
-
-    public function rechazar($data, $id)
-    {
-        return $this->repository->show($id)->rechazar($data["motivo"]);
     }
 
 }
