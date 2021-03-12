@@ -9,6 +9,7 @@ use App\Events\RegistroSolicitudRecepcionCFDI;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
+use App\Models\CADECO\NotaCredito;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
@@ -252,6 +253,35 @@ class SolicitudRecepcionCFDI extends Model
             DB::connection('cadeco')->commit();
             DB::connection('seguridad')->commit();
             event(new AprobacionSolicitudRecepcionCFDI($this, $factura->id_transaccion));
+
+        } catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            DB::connection('seguridad')->rollBack();
+            abort(500, $e->getMessage());
+        }
+    }
+
+    public function aprobarTipoEgresoGeneraCR($data)
+    {
+        DB::connection('seguridad')->beginTransaction();
+        DB::connection('cadeco')->beginTransaction();
+        try{
+            $objNC = new NotaCredito();
+            $nota_credito = $objNC->registrar($data);
+
+            $facturaRepositorio = FacturaRepositorio::where("id_transaccion", "=", $nota_credito->id_transaccion)
+                ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
+                    ->first()->getKey())->first();
+
+            $this->cfdi->id_factura_repositorio = $facturaRepositorio->id;
+            $this->cfdi->save();
+
+            $this->estado = 1;
+            $this->save();
+
+            DB::connection('cadeco')->commit();
+            DB::connection('seguridad')->commit();
+            event(new AprobacionSolicitudRecepcionCFDI($this));
 
         } catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
