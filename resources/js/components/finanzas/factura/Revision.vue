@@ -90,7 +90,7 @@
                                             <td>{{item.cantidad}}</td>
                                             <td>$ {{item.precio}}</td>
                                             <td>$({{item.anticipo}})</td>
-                                            <td>{{total_pendiente(item)}}</td>
+                                            <td class="money">{{total_pendiente(item)}}</td>
                                             <td>$ {{item.id_moneda}}</td>
                                             <td> {{item.remision}}</td>
                                         
@@ -157,16 +157,16 @@
                                                 >
                                             <div class="invalid-feedback" v-show="errors.has('renta')">{{ errors.first('renta') }}</div>
                                         </td>
-                                        <td>{{item.importe_total}}</td>
+                                        <td class="money">$ {{parseFloat(item.precio_unitario).formatMoney(2)}}</td>
                                         <td></td>
-                                        <td>{{getTotalRentaFormato(item.importe_total_rentas)}}</td>
+                                        <td class="money">{{getTotalRentaFormato(item.importe_total_rentas)}}</td>
                                         <td>{{item.id_moneda}}</td>
                                         <td></td>
                                         <td></td>
                                     </tr>
                                     <tr v-for="item in items.lista" v-if="item.seleccionado">
                                         <td colspan="5">{{decode_utf8(item.referencia)}}</td>
-                                        <td v-if="item.tipo_transaccion == 99">{{item.importe_total}}</td>
+                                        <td class="money" v-if="item.tipo_transaccion == 99">{{item.importe_total}}</td>
                                         <td v-else>
                                             <input 
                                                 type="number"
@@ -646,7 +646,7 @@ export default {
                 });
                 this.items.renta.forEach(rent => {
                     if(rent.seleccionado){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.importe_total_rentas / this.tipo_cambio[this.factura.id_moneda]);
+                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(rent.importe_total_rentas / this.tipo_cambio[this.factura.id_moneda]);
                     }
                 });
                 this.items.lista.forEach(list => {
@@ -743,7 +743,7 @@ export default {
             });
             this.items.renta.forEach(rent => {
                 if(rent.seleccionado){
-                    this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.importe_total_rentas);
+                    this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(rent.importe_total_rentas);
                 }
             });
             this.items.lista.forEach(list => {
@@ -970,10 +970,11 @@ export default {
             return decodeURIComponent(escape(s));
         },
         actualizar_total_renta(item){
-            item.importe_total_rentas = parseFloat(item.rentas * item.importe_total_sf);
+            item.importe_total_rentas = parseFloat(item.rentas * item.precio_unitario);
+            this.actualizar_subtotal();
         },
         getTotalRentaFormato(importe){
-            return parseFloat(importe).formatMoney(2);
+            return '$ ' + parseFloat(importe).formatMoney(2);
         },
         getTipoCambioItem(item){
             return parseFloat(item.monto_revision / item.subtotal).toFixed(6)

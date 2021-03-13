@@ -787,6 +787,7 @@ class Factura extends Transaccion
                     [RentasPorFacturar].[id_item], 'false' as seleccionado
                 , [RentasPorFacturar].[descripcion] AS equipo  
                 , [RentasPorFacturar].[referencia] AS numero_serie
+                , [RentasPorFacturar].[precio_unitario] AS precio_unitario 
                 , [RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) AS importe_total_sf
                 , [RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) AS importe_total_rentas
                 , CONVERT(VARCHAR(100), CAST([RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) AS MONEY), 1) AS importe_total
@@ -1036,10 +1037,10 @@ class Factura extends Transaccion
                     "item_antecedente" =>  $renta['id_item'],
                     "id_material" => $item_renta->id_material,
                     "cantidad" => $renta['rentas'],
-                    "importe" => $item_renta->importe_total_sf * $renta['renta'],
+                    "importe" => $renta['precio_unitario'] * $renta['renta'],
                     "saldo" => 0,
                     "numero" => 3,
-                    "precio_unitario" => $item_renta->importe_total_sf,
+                    "precio_unitario" => $renta['precio_unitario'],
                 ]);
 
             }
