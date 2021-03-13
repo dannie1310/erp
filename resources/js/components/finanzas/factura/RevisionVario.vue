@@ -133,28 +133,30 @@
                                         </td>
                                         <td>
                                             <input type="number"
-                                                    min="0.01"
-                                                    step=".01"
-                                                    class="form-control"
-                                                    :name="`cantidad[${i}]`"
-                                                    data-vv-as="Cantidad"
-                                                    v-validate="{required: true}"
-                                                    v-on:keyup="actualizar_resumen()"
-                                                    :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
-                                                    v-model="partida.cantidad"/>
+                                                :disabled="partida.concepto == ''"
+                                                min="0.01"
+                                                step=".01"
+                                                class="form-control"
+                                                :name="`cantidad[${i}]`"
+                                                data-vv-as="Cantidad"
+                                                v-validate="{required: true}"
+                                                v-on:keyup="calcula_resumen()"
+                                                :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                v-model="partida.cantidad"/>
                                             <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                         </td>
                                         <td>
                                             <input type="number"
-                                                    min="0.01"
-                                                    step=".01"
-                                                    class="form-control"
-                                                    :name="`precio[${i}]`"
-                                                    data-vv-as="Precio"
-                                                    v-validate="{required: true}"
-                                                    v-on:keyup="actualizar_resumen()"
-                                                    :class="{'is-invalid': errors.has(`precio[${i}]`)}"
-                                                    v-model="partida.precio"/>
+                                                :disabled="partida.concepto == ''"
+                                                min="0.01"
+                                                step=".01"
+                                                class="form-control"
+                                                :name="`precio[${i}]`"
+                                                data-vv-as="Precio"
+                                                v-validate="{required: true}"
+                                                v-on:keyup="calcula_resumen()"
+                                                :class="{'is-invalid': errors.has(`precio[${i}]`)}"
+                                                v-model="partida.precio"/>
                                             <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                         </td>
                                         <td>{{getMonto(partida)}}</td>
@@ -498,7 +500,7 @@ export default {
         this.getTipoGasto();
     },
     methods : {
-        actualizar_resumen(){
+        calcula_resumen(){
             let self = this;
             if(this.partidas){
                 this.resumen.subtotal = 0;
@@ -507,6 +509,13 @@ export default {
                     partida.monto = parseFloat(partida.cantidad * partida.precio);
                 });
                 self.resumen.iva_subtotal = parseFloat(self.resumen.subtotal * 0.16).toFixed(2);
+                self.resumen.iva_pagar =  parseFloat(self.resumen.iva_subtotal - self.resumen.ret_iva_4 - self.resumen.ret_iva_6 - self.resumen.ret_iva_2_3);
+                self.resumen.total = parseFloat(self.resumen.subtotal + self.resumen.iva_pagar) + parseFloat(self.resumen.ieps) + parseFloat(self.resumen.imp_hosp) - parseFloat(self.resumen.ret_isr);
+            }
+        },
+        actualizar_resumen(){
+            let self = this;
+            if(this.partidas){
                 self.resumen.iva_pagar =  parseFloat(self.resumen.iva_subtotal - self.resumen.ret_iva_4 - self.resumen.ret_iva_6 - self.resumen.ret_iva_2_3);
                 self.resumen.total = parseFloat(self.resumen.subtotal + self.resumen.iva_pagar) + parseFloat(self.resumen.ieps) + parseFloat(self.resumen.imp_hosp) - parseFloat(self.resumen.ret_isr);
             }
