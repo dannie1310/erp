@@ -248,10 +248,25 @@ class Factura extends Transaccion
         if($factura_repositorio){
             $factura_repositorio->id_transaccion = $factura->id_transaccion;
             $factura_repositorio->save();
-
         } else {
             if($data){
                 $factura_repositorio = $factura->facturaRepositorio()->create($data);
+                if (!$factura_repositorio) {
+                    abort(400, "Hubo un error al registrar el CFD en el repositorio");
+                }
+            }
+        }
+    }
+
+    public function asociarCFDRepositorio($data)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
+        if($factura_repositorio){
+            $factura_repositorio->id_transaccion = $this->id_transaccion;
+            $factura_repositorio->save();
+        } else {
+            if($data){
+                $factura_repositorio = $this->facturaRepositorio()->create($data);
                 if (!$factura_repositorio) {
                     abort(400, "Hubo un error al registrar el CFD en el repositorio");
                 }

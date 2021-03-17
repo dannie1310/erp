@@ -125,6 +125,76 @@ export const routes = [
                 },
             },
             {
+                path: 'solicitud-recepcion-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'solicitud-recepcion-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Index').default,
+                        meta: {
+                            title: 'Solicitudes de Recepcion de CFDI',
+                            breadcrumb: {parent:'home', name: 'SOLICITUDES DE RECEPCIÓN DE CFDI'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_recepcion_cfdi_proyecto'
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'recepcion-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'recepcion-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/BandejaEntrada').default,
+                        meta: {
+                            title: 'Recepción de CFDI',
+                            breadcrumb: {parent:'home', name: 'RECEPCIÓN DE CFDI'},
+                            middleware: [auth, context, permission],
+                            permission: 'aprobar_solicitud_recepcion_cfdi'
+                        }
+                    },
+                    {
+                        path: ':id/aprobar',
+                        name: 'solicitud-recepcion-cfdi-aprobar',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Aprobar').default,
+                        props: true,
+                        meta: {
+                            title: 'Aprobar Recepción de CFDI',
+                            breadcrumb: { parent: 'recepcion-cfdi', name: 'APROBAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'aprobar_solicitud_recepcion_cfdi'
+                        }
+                    },
+                    {
+                        path: ':id/rechazar',
+                        name: 'solicitud-recepcion-cfdi-rechazar',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Rechazar').default,
+                        props: true,
+                        meta: {
+                            title: 'Rechazar Recepción de CFDI',
+                            breadcrumb: { parent: 'recepcion-cfdi', name: 'RECHAZAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'rechazar_solicitud_recepcion_cfdi'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'solicitud-recepcion-cfdi-show-proyecto',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'CONSULTAR SOLICITUD',
+                            breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_recepcion_cfdi_proyecto',
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'compras',
                 component: require('./components/compras/partials/Layout.vue').default,
                 children: [
@@ -2778,6 +2848,77 @@ export const routes = [
                     permission: 'consultar_incidencias',
                     general: true,
 
+                }
+            },
+        ]
+    },
+    {
+        path: '/entrega-cfdi',
+        components:  {
+            default: require('./components/solicitud-recepcion-cfdi/Layout.vue').default,
+            menu: require('./components/solicitud-recepcion-cfdi/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'entrega-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Index.vue').default,
+                    meta: {
+                    title: 'Solicitudes de Recepción de CFDI a Revisión',
+                    middleware: [auth, permission],
+                    permission: ['consultar_solicitud_recepcion_cfdi_proveedor'],
+                    general: true
+                }
+            },
+            {
+                path: 'seleccionar-cfdi',
+                name: 'seleccionar-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/SeleccionarCFDI.vue').default,
+                meta: {
+                    title: 'Seleccionar CFDI',
+                    breadcrumb: {name: 'SELECCIONAR CFDI', parent: 'entrega-cfdi'},
+                    middleware: [auth, permission],
+                    permission: ['registrar_solicitud_recepcion_cfdi'],
+                    general: true
+                }
+            },
+            {
+                path: ':id_cfdi/create',
+                props : true,
+                name: 'solicitud-recepcion-cfdi-create',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Create.vue').default,
+                meta: {
+                    title: 'REGISTRAR SOLICITUD',
+                    breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'seleccionar-cfdi'},
+                    middleware: [auth, permission],
+                    permission: ['registrar_solicitud_recepcion_cfdi'],
+                    general: true
+                }
+            },
+            {
+                path: ':id',
+                name: 'solicitud-recepcion-cfdi-show',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Show').default,
+                props: true,
+                meta: {
+                    title: 'CONSULTAR SOLICITUD',
+                    breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
+                    middleware: [auth, permission],
+                    permission: 'consultar_solicitud_recepcion_cfdi_proveedor',
+                    general: true
+                }
+            },
+            {
+                path: ':id/cancelar',
+                name: 'solicitud-recepcion-cfdi-cancelar',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Cancelar').default,
+                props: true,
+                meta: {
+                    title: 'CANCELAR SOLICITUD',
+                    breadcrumb: { parent: 'entrega-cfdi', name: 'CANCELAR'},
+                    middleware: [auth, permission],
+                    permission: 'cancelar_solicitud_recepcion_cfdi',
+                    general: true
                 }
             },
         ]

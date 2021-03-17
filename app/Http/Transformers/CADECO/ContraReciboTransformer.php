@@ -27,9 +27,8 @@ class ContraReciboTransformer extends TransformerAbstract
     {
         return [
             'numero_folio' => $model->numero_folio,
+            'observaciones' => $model->observaciones,
             'numero_folio_format' => $model->numero_folio_format,
-            'observaciones' => $model->observaciones
-
         ];
     }
 }
