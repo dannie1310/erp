@@ -1,86 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="cargado">
-            <div class="card-header">
-                <h5>Datos del CFDI</h5>
-            </div>
-            <div class="card-body">
-                <span>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                            <label >Emisión:</label>
-                                <input class="form-control" v-model="cfdi.fecha_format" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                            <label >Serie y Folio:</label>
-                                <input class="form-control" v-model="cfdi.referencia" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                            <label >Tipo:</label>
-                                <input class="form-control" v-model="cfdi.tipo_comprobante" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                            <label >UUID:</label>
-                                <input class="form-control" v-model="cfdi.uuid" readonly="readonly" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <div class="form-group">
-                            <label >Empresa:</label>
-                                <input class="form-control" v-model="cfdi.empresa.razon_social" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >RFC:</label>
-                                <input class="form-control" v-model="cfdi.empresa.rfc" readonly="readonly" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Impuestos Retenidos:</label>
-                                <input class="form-control" v-model="cfdi.impuestos_retenidos_format" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Impuestos Trasladados:</label>
-                                <input class="form-control" v-model="cfdi.impuestos_trasladados_format" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Total:</label>
-                                <input class="form-control" v-model="cfdi.total_format" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Moneda:</label>
-                                <input class="form-control" v-model="cfdi.moneda" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Tipo de Cambio:</label>
-                                <input class="form-control" v-model="cfdi.tipo_cambio" readonly="readonly" />
-                            </div>
-                        </div>
-                    </div>
-                </span>
-            </div>
-        </div>
+        <cfdi-show v-bind:cfdi="cfdi" v-if="cfdi"></cfdi-show>
         <form role="form" @submit.prevent="validate">
             <div class="card" v-if="cargado">
                 <div class="card-header">
@@ -172,8 +92,10 @@
 
 <script>
 
+    import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
     export default {
         name: "solicitud-recepcion-cfdi-create",
+        components: {CfdiShow},
         props: ["id_cfdi"],
         data() {
             return {
