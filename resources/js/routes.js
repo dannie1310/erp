@@ -1230,6 +1230,36 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_factura'
                                 }
+                            },
+                            {
+                                path: ':id/revisar',
+                                name: 'factura-revisar',
+                                component: require('./components/finanzas/factura/Revision').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['revisar_factura'],
+                                }),
+                                meta: {
+                                    title: 'Revisión de Factura',
+                                    breadcrumb: { parent: 'factura', name: 'REVISIÓN FACTURA'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'revisar_factura'
+                                }
+                            },
+                            {
+                                path: ':id/varios',
+                                name: 'factura-varios-revisar',
+                                component: require('./components/finanzas/factura/RevisionVario').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_factura_varios'],
+                                }),
+                                meta: {
+                                    title: 'Factura de Varios',
+                                    breadcrumb: { parent: 'factura', name: 'FACTURA VARIOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_factura_varios'
+                                }
                             }
                         ]
                     },
