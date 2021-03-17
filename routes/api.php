@@ -957,6 +957,8 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@paginate');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfCFDI')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@update')->where(['id' => '[0-9]+']);
+
             /**
              * FORMATO DE CONTRARECIBO
              */

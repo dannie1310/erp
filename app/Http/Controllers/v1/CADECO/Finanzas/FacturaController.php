@@ -47,6 +47,7 @@ class FacturaController extends Controller
         $this->middleware('permiso:consultar_factura')->only(['paginate']);
         $this->middleware('permiso:eliminar_factura')->only(['destroy']);
         $this->middleware('permiso:revertir_revision_factura')->only(['revertir']);
+        $this->middleware('permiso:editar_factura')->only(['update']);
 
         $this->fractal = $fractal;
         $this->service = $service;

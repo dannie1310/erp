@@ -577,5 +577,10 @@ class FacturaService
         $pdf = new CFDI($arreglo_cfd);
         return $pdf;
     }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->show($id)->editar($data);
+    }
 }
 
