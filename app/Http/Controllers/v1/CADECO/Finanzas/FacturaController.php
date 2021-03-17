@@ -47,6 +47,7 @@ class FacturaController extends Controller
         $this->middleware('permiso:consultar_factura')->only(['paginate']);
         $this->middleware('permiso:eliminar_factura')->only(['destroy']);
         $this->middleware('permiso:revertir_revision_factura')->only(['revertir']);
+        $this->middleware('permiso:registrar_factura_varios')->only(['storeRevisionVarios']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -87,5 +88,17 @@ class FacturaController extends Controller
     public function pdfCFDI($id)
     {
         return $this->service->pdfCFDI($id)->create();
+    }
+
+    public function getDocumentos($id){
+        return $this->service->getDocumentos($id);
+    }
+
+    public function storeRevision(Request $request){
+        return $this->service->storeRevision($request->all());
+    }
+
+    public function storeRevisionVarios(Request $request){
+        return $this->service->storeRevisionVarios($request->all());
     }
 }
