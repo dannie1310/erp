@@ -57,6 +57,8 @@ class CFDSAT extends Model
         ,"metodo_pago"
         ,"tipo_relacion"
         ,"cfdi_relacionado"
+        ,"forma_pago"
+        ,"fecha_pago"
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
@@ -120,6 +122,16 @@ class CFDSAT extends Model
     public function polizaCFDI()
     {
         return $this->hasOne(PolizaCFDI::class, "uuid", "uuid");
+    }
+
+    public function documentosPagados()
+    {
+        return $this->hasMany(CFDSATDocumentosPagados::class, "id_cfdi_pago", "id");
+    }
+
+    public function pagos()
+    {
+        return $this->hasMany(CFDSATDocumentosPagados::class, "id_cfdi_pagado", "id");
     }
 
     public function scopeDeEFO($query)
@@ -236,6 +248,16 @@ class CFDSAT extends Model
             if(key_exists("traslados",$data)){
                 foreach($data["traslados"] as $traslado){
                     $cfd->traslados()->create($traslado);
+                }
+            }
+
+            if(key_exists("documentos_pagados",$data)){
+                foreach($data["documentos_pagados"] as $documento_pagado){
+                    $cfdi_pagado = CFDSAT::where("uuid", $documento_pagado["uuid"])->first();
+                    if($cfdi_pagado){
+                        $documento_pagado["id_cfdi_pagado"] = $cfdi_pagado->id;
+                    }
+                    $cfd->documentosPagados()->create($documento_pagado);
                 }
             }
             DB::connection('seguridad')->commit();

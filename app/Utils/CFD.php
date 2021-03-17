@@ -61,6 +61,7 @@ class CFD
         }
         return $this->arreglo_factura;
     }
+
     private function setArreglo33($factura_xml)
     {
         try {
@@ -90,6 +91,10 @@ class CFD
             $this->log["archivos_no_cargados_error_app"] += 1;
             $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
+        }
+
+        if($this->arreglo_factura["tipo_comprobante"] == "P"){
+            $this->setDatosPago($factura_xml);
         }
 
         $this->arreglo_factura["tipo_relacion"] = '';
@@ -221,6 +226,38 @@ class CFD
             $this->log["proveedores_nuevos"] += 1;
         }*/
         //return 1;
+    }
+
+    private function setDatosPago($factura_xml)
+    {
+        $pagos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago');
+        $doctos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago//pago10:DoctoRelacionado');
+        $monto = 0 ;
+        foreach($pagos as $pago)
+        {
+            $monto += (float) $pago["Monto"];
+            $moneda = (string) $pago["MonedaP"];
+            $forma_pago = (string) $pago["FormaDePagoP"];
+            $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
+        }
+
+        $this->arreglo_factura["total"] = $monto;
+        $this->arreglo_factura["moneda"] = $moneda;
+        $this->arreglo_factura["forma_pago"] = $forma_pago;
+        $this->arreglo_factura["fecha_pago"] = $fecha_pago;
+
+        $id = 0;
+        foreach($doctos as $docto)
+        {
+            $this->arreglo_factura["documentos_pagados"][$id]["uuid"] = (string)$docto["IdDocumento"];
+            $this->arreglo_factura["documentos_pagados"][$id]["moneda"] = (string)$docto["MonedaDR"];
+            $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_insoluto"] = (float)$docto["ImpSaldoInsoluto"];
+            $this->arreglo_factura["documentos_pagados"][$id]["imp_pagado"] = (float)$docto["ImpPagado"];
+            $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_ant"] = (float)$docto["ImpSaldoAnt"];
+            $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
+            $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
+            $id++;
+        }
     }
 
     private function setArreglo32($factura_xml)
