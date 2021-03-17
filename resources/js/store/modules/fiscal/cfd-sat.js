@@ -72,7 +72,19 @@ export default {
                     })
             });
         },
-
+        cargarXMLProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'cargar-xml-proveedor', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         descargarIndividual(context, payload) {
 
             var urr = URI + payload.id +  '/descargar?access_token=' + this._vm.$session.get('jwt');
