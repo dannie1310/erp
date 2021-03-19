@@ -16,6 +16,12 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_tiro')">
+                        <router-link :to="{name: 'origen'}" class="nav-link" :class="{active: this.$route.name == 'origen'}">
+                            <i class="fa fa-layer-group"></i>
+                            <p> Origenes</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_tiro')">
                         <router-link :to="{name: 'tiro'}" class="nav-link" :class="{active: this.$route.name == 'tiro'}">
                             <i class="fa fa-layer-group"></i>
                             <p> Tiros</p>

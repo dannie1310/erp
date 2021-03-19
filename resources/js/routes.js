@@ -2300,6 +2300,20 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'origen',
+                                name: 'origen',
+                                component: require('./components/acarreos/catalogos/origen/Index').default,
+                                meta: {
+                                    title: 'Origenes',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'ORIGENES'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_tiro']
+                                }
+                            },
+                            {
                                 path: 'tiro',
                                 name: 'tiro',
                                 component: require('./components/acarreos/catalogos/tiro/Index').default,

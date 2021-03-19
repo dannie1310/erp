@@ -449,6 +449,11 @@ $api->version('v1', function ($api) {
             $api->post('/cargaImagenes', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cargaImagenes');
         });
 
+        //ORIGEN
+        $api->group(['prefix' => 'origen'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@paginate');
+        });
+
         //TIRO
         $api->group(['prefix' => 'tiro'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@paginate');

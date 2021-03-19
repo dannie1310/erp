@@ -15,7 +15,10 @@ class Origen extends Model
     /**
      * Relaciones Eloquent
      */
-
+    public function tipoOrigen()
+    {
+        return $this->belongsTo(TipoOrigen::class, 'IdTipoOrigen', 'IdTipoOrigen');
+    }
 
     /**
      * Scopes
@@ -28,8 +31,82 @@ class Origen extends Model
     /**
      * Attributes
      */
+    public function getClaveFormatAttribute()
+    {
+        return $this->Clave.$this->IdOrigen;
+    }
 
+    public function getEstadoFormatAttribute()
+    {
+        switch ($this->Estatus)
+        {
+            case 1:
+                return 'ACTIVO';
+                break;
+            case 0:
+                return 'INACTIVO';
+                break;
+            default:
+                return '';
+                break;
+        }
+    }
 
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->Estatus)
+        {
+            case 1:
+                return '#00a65a';
+                break;
+            case 0:
+                return '#706e70';
+                break;
+            default:
+                return '#d1cfd1';
+                break;
+        }
+    }
+
+    public function getTipoOrigenFormatAttribute()
+    {
+        switch ($this->interno)
+        {
+            case 1:
+                return 'INTERNO';
+                break;
+            case 0:
+                return 'EXTERNO';
+                break;
+            default:
+                return '';
+                break;
+        }
+    }
+
+    public function getFechaRegistroCompletaFormatAttribute()
+    {
+        $date = date_create($this->created_at);
+        return date_format($date,"d/m/Y H:i");
+    }
+
+    public function getNombreUsuarioAttribute()
+    {
+        try{
+            return $this->usuario->nombre_completo;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getTipoOrigenDescripcionAttribute()
+    {
+        try{
+            return $this->tipoOrigen->Descripcion;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
 
     /**
      * Métodos
