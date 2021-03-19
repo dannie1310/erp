@@ -4,12 +4,12 @@
 namespace App\Services\ACARREOS\Catalogos;
 
 
-use App\Models\ACARREOS\Origen;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
+use App\Models\ACARREOS\TipoOrigen;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 
-class OrigenService
+class TipoOrigenService
 {
     /**
      * @var Repository
@@ -17,24 +17,18 @@ class OrigenService
     protected $repository;
 
     /**
-     * OrigenService constructor.
-     * @param Origen $model
+     * TipoOrigenService constructor.
+     * @param TipoOrigen $model
      */
-    public function __construct(Origen $model)
+    public function __construct(TipoOrigen $model)
     {
         $this->repository = new Repository($model);
     }
 
-    public function paginate($data)
+    public function index($data)
     {
         $this->conexionAcarreos();
-        return  $this->repository->paginate($data);
-    }
-
-    public function store($data)
-    {
-        $this->conexionAcarreos();
-        return $this->repository->create($data);
+        return $this->repository->all($data);
     }
 
     private function conexionAcarreos()

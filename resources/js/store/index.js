@@ -4,6 +4,7 @@ import auth from './modules/auth';
 
 //ACARREOS
 import origen from './modules/acarreos/origen';
+import tipoOrigen from './modules/acarreos/tipo-origen';
 import tiro from './modules/acarreos/tiro';
 
 //ALMACENES
@@ -201,6 +202,7 @@ export default new Vuex.Store({
     modules: {
         auth,
         'acarreos/origen' : origen,
+        'acarreos/tipo-origen' : tipoOrigen,
         'acarreos/tiro' : tiro,
 
         'almacenes/conteo' : conteo,

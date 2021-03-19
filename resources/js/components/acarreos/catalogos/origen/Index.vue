@@ -1,8 +1,8 @@
 <template>
     <div class="row">
-        <!-- <div class="col-12">
+        <div class="col-12">
             <Create @created="paginate()" />
-        </div>-->
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -20,8 +20,10 @@
 </template>
 
 <script>
+    import Create from './Create'
     export default {
         name: "origen-index",
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,

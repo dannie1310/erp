@@ -2304,10 +2304,10 @@ export const routes = [
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,
                                 meta: {
-                                    title: 'Origenes',
+                                    title: 'Orígenes',
                                     breadcrumb: {
                                         parent: 'catalogo',
-                                        name: 'ORIGENES'
+                                        name: 'ORÍGENES'
                                     },
                                     middleware: [auth, context, permission],
                                     permission: ['consultar_tiro']

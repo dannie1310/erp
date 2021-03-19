@@ -452,6 +452,12 @@ $api->version('v1', function ($api) {
         //ORIGEN
         $api->group(['prefix' => 'origen'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@store');
+        });
+
+        //TIPOORIGEN
+        $api->group(['prefix' => 'tipo-origen'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TipoOrigenController@index');
         });
 
         //TIRO

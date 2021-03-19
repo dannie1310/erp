@@ -11,6 +11,17 @@ class Origen extends Model
     protected $connection = 'acarreos';
     protected $table = 'origenes';
     public $primaryKey = 'IdOrigen';
+    protected $fillable = [
+        'Clave',
+        'IdTipoOrigen',
+        'IdProyecto',
+        'Descripcion',
+        'FechaAlta',
+        'HoraAlta',
+        'usuario_registro',
+        'Estatus',
+        'interno',
+    ];
 
     /**
      * Relaciones Eloquent
@@ -111,4 +122,10 @@ class Origen extends Model
     /**
      * Métodos
      */
+    public function validarRegistro()
+    {
+        if (self::where('Descripcion', $this->Descripcion)->first()) {
+            abort(400, "El origen (" . $this->Descripcion . ") ya se encuentra registrado previamente.");
+        }
+    }
 }
