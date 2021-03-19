@@ -110,6 +110,8 @@
                                 show: self.$root.can('consultar_factura') ? true : false,
                                 factura: factura,
                                 borrar: self.$root.can('eliminar_factura') && factura.estado === 0 ? true : false,
+                                revisar: self.$root.can('revisar_factura') && factura.estado === 0 ? true : false,
+                                revisar_varios: self.$root.can('registrar_factura_varios') && factura.estado === 0 ? true : false,
                                 revertir: self.$root.can('revertir_revision_factura') && factura.estado === 1 ? true : false,
                                 transaccion: {id:factura.id, tipo:65},
                             })
