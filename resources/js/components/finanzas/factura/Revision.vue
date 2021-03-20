@@ -977,7 +977,12 @@ export default {
             return '$ ' + parseFloat(importe).formatMoney(2);
         },
         getTipoCambioItem(item){
-            return parseFloat(item.monto_revision / item.subtotal).toFixed(6)
+            if(item.tipo_transaccion == 52){
+                return parseFloat(item.monto_revision / item.subtotal).toFixed(6)
+            }else{
+                return parseFloat(item.monto_revision / item.anticipo_monto).toFixed(6)
+            }
+            
         },
     },
     computed:{
