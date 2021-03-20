@@ -37,6 +37,32 @@ class OrigenService
         return $this->repository->create($data);
     }
 
+    public function show($id)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->show($id);
+    }
+
+    public function activar($id)
+    {
+        $this->conexionAcarreos();
+        $origen = $this->show($id);
+        if ($origen->Estatus == 1) {
+            abort(400, "El origen se encuentra " . $origen->estado_format . " previamente.");
+        }
+        return $origen->activar();
+    }
+
+    public function desactivar(array  $data, $id)
+    {
+        $this->conexionAcarreos();
+        $origen = $this->show($id);
+        if ($origen->Estatus == 0) {
+            abort(400, "El origen se encuentra " . $origen->estado_format . " previamente.");
+        }
+        return $origen->desactivar($data['motivo']);
+    }
+
     private function conexionAcarreos()
     {
         try{

@@ -453,6 +453,9 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'origen'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@desactivar')->where(['id' => '[0-9]+']);
         });
 
         //TIPOORIGEN
