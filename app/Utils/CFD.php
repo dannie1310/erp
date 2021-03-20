@@ -41,10 +41,10 @@ class CFD
     public function getArregloFactura()
     {
         $this->arreglo_factura = [];
+        $this->arreglo_factura["xml"] = $this->archivo_xml;
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($this->archivo_xml);
-
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
@@ -61,6 +61,7 @@ class CFD
         }
         return $this->arreglo_factura;
     }
+
     private function setArreglo33($factura_xml)
     {
         try {
@@ -74,6 +75,7 @@ class CFD
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
             $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
             $this->arreglo_factura["tipo_cambio"] = (string)$factura_xml["TipoCambio"];
+            $this->arreglo_factura["metodo_pago"] = (string)$factura_xml["MetodoPago"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
@@ -89,6 +91,20 @@ class CFD
             $this->log["archivos_no_cargados_error_app"] += 1;
             $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
+        }
+
+        if($this->arreglo_factura["tipo_comprobante"] == "P"){
+            $this->setDatosPago($factura_xml);
+        }
+
+        $this->arreglo_factura["tipo_relacion"] = '';
+        $this->arreglo_factura["cfdi_relacionado"]  ='';
+
+        $CFDIRelacionado = $factura_xml->xpath('//cfdi:Comprobante//cfdi:CfdiRelacionados');
+        if(count($CFDIRelacionado)>0){
+            $CFDIRelacionado = $factura_xml->xpath('//cfdi:Comprobante//cfdi:CfdiRelacionados')[0];
+            $this->arreglo_factura["tipo_relacion"] = (string)$CFDIRelacionado["TipoRelacion"][0];
+            $this->arreglo_factura["cfdi_relacionado"] = (string)$factura_xml->xpath('//cfdi:Comprobante//cfdi:CfdiRelacionados//cfdi:CfdiRelacionado')[0]["UUID"];
         }
 
         try {
@@ -210,6 +226,38 @@ class CFD
             $this->log["proveedores_nuevos"] += 1;
         }*/
         //return 1;
+    }
+
+    private function setDatosPago($factura_xml)
+    {
+        $pagos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago');
+        $doctos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago//pago10:DoctoRelacionado');
+        $monto = 0 ;
+        foreach($pagos as $pago)
+        {
+            $monto += (float) $pago["Monto"];
+            $moneda = (string) $pago["MonedaP"];
+            $forma_pago = (string) $pago["FormaDePagoP"];
+            $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
+        }
+
+        $this->arreglo_factura["total"] = $monto;
+        $this->arreglo_factura["moneda"] = $moneda;
+        $this->arreglo_factura["forma_pago"] = $forma_pago;
+        $this->arreglo_factura["fecha_pago"] = $fecha_pago;
+
+        $id = 0;
+        foreach($doctos as $docto)
+        {
+            $this->arreglo_factura["documentos_pagados"][$id]["uuid"] = (string)$docto["IdDocumento"];
+            $this->arreglo_factura["documentos_pagados"][$id]["moneda"] = (string)$docto["MonedaDR"];
+            $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_insoluto"] = (float)$docto["ImpSaldoInsoluto"];
+            $this->arreglo_factura["documentos_pagados"][$id]["imp_pagado"] = (float)$docto["ImpPagado"];
+            $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_ant"] = (float)$docto["ImpSaldoAnt"];
+            $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
+            $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
+            $id++;
+        }
     }
 
     private function setArreglo32($factura_xml)
@@ -360,5 +408,80 @@ class CFD
             }
         }
         return $fecha_xml;
+    }
+
+    private function getValidacionCFDI33($xml)
+    {
+        $usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
+        if ($usa_servicio == 1) {
+            $client = new \GuzzleHttp\Client();
+            $url = config('app.env_variables.SERVICIO_CFDI_URL');
+            $token = config('app.env_variables.SERVICIO_CFDI_TOKEN');
+
+
+            $headers = [
+                'Authorization' => 'Bearer ' . $token,
+                'Accept' => 'application/json',
+            ];
+
+            $multipart = [[
+                'name' => 'xml',
+                //'contents' => fopen($xml, 'r'),
+                'contents' => $xml,
+                'filename' => 'custom_filename.xml'
+            ]];
+
+            $response = $client->request('POST', $url, [
+                'headers' => $headers,
+                'multipart' => $multipart,
+            ]);
+            return json_decode($response->getBody()->getContents(), true);
+        }
+    }
+
+    public function validaCFDI33($xml)
+    {
+        $respuesta = $this->getValidacionCFDI33($xml);
+        $estructura_correcta = $respuesta["detail"][0]["detail"][0]["message"];
+
+        if ($estructura_correcta !== "OK") {
+            abort(500, "Aviso SAT:\nError en la validación de la estructura del comprobante: " . $estructura_correcta);
+        }
+
+        $validaciones_proveedor_comprobante = $respuesta["detail"][1]["detail"][0]["message"];
+        if ($validaciones_proveedor_comprobante !== "OK") {
+            abort(500, "Aviso SAT:\nError en la validación del proveedor del comprobante: " . $validaciones_proveedor_comprobante);
+        }
+        $validaciones_proveedor_complemento = $respuesta["detail"][2]["detail"][0]["message"];
+        if ($validaciones_proveedor_complemento !== "OK") {
+            abort(500, "Aviso SAT:\nError en la validación del proveedor del timbre: " . $validaciones_proveedor_complemento);
+        }
+
+        $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
+
+        if ($env_servicio === "production") {
+            $validacion_status_sat = $respuesta["statusSat"];
+            $validacion_status_code_sat = $respuesta["statusCodeSat"];
+
+            if ($validacion_status_sat !== "Vigente") {
+                abort(500, "Aviso SAT:\n" . $validacion_status_sat . " -" . $validacion_status_code_sat . "");
+            }
+        }
+
+    }
+
+    public function validaVigente($xml)
+    {
+        $respuesta = $this->getValidacionCFDI33($xml);
+        $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
+
+        if ($env_servicio === "production") {
+            $validacion_status_sat = $respuesta["statusSat"];
+
+            if ($validacion_status_sat !== "Vigente") {
+                return false;
+            }
+            return true;
+        }
     }
 }

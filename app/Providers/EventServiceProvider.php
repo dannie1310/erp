@@ -30,8 +30,24 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendFinalizaCargaCFDNotification',
         ],
 
+        'App\Events\RegistroSolicitudRecepcionCFDI' => [
+            'App\Listeners\SendRegistroSolicitudRecepcionCFDINotification',
+        ],
+
         'App\Events\FinalizaProcesamientoAsociacion' => [
             'App\Listeners\SendFinalizaAsociacionPolizaCFDINotification',
+        ],
+
+        'App\Events\AprobacionSolicitudRecepcionCFDI' => [
+            'App\Listeners\SendAprobacionSolicitudRecepcionCFDINotification',
+        ],
+
+        'App\Events\RechazoSolicitudRecepcionCFDI' => [
+            'App\Listeners\SendRechazoSolicitudRecepcionCFDINotification',
+        ],
+
+        'App\Events\CancelacionSolicitudRecepcionCFDI' => [
+            'App\Listeners\SendCancelacionSolicitudRecepcionCFDINotification',
         ],
 
             Registered::class => [
