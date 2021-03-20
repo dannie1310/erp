@@ -22,7 +22,8 @@
                             <td>{{item.referencia_revision}}</td>
                             <td>{{item.fecha_inicial}}</td>
                             <td>{{item.fecha_final}}</td>
-                            <td>{{item.subtotal_format}}</td>
+                            <td v-if="item.tipo_transaccion == 52">{{item.subtotal_format}}</td>
+                            <td v-else>{{item.anticipo_monto_format}}</td>
                             <td>{{getMontoMoneda(item)}}</td>
                             <td><input type="checkbox" id="seguir" :value="item.seleccionado"  v-model="item.seleccionado"   ></td>
                         </tr>
@@ -49,11 +50,22 @@ export default {
         },
         getMontoMoneda(item){
             if(parseInt(this.id_moneda) === parseInt(item.id_moneda)){
-                item.monto_revision = parseFloat(item.subtotal).toFixed(2);
-                return item.subtotal_format;
+                if(item.tipo_transaccion == 52){
+                    item.monto_revision = parseFloat(item.subtotal).toFixed(2);
+                    return item.subtotal_format;
+                }else{
+                    item.monto_revision = parseFloat(item.anticipo_monto).toFixed(2);
+                    return item.anticipo_monto_format;
+                }
+                
             }
             else{
-                item.monto_revision = parseFloat(item.subtotal / this.cambios[this.id_moneda]).toFixed(2);
+                if(item.tipo_transaccion == 52){
+                    item.monto_revision = parseFloat(item.subtotal / this.cambios[this.id_moneda]).toFixed(2);
+                }else{
+                    item.monto_revision = parseFloat(item.anticipo_monto / this.cambios[this.id_moneda]).toFixed(2);
+                }
+                
                 return '$ ' + parseFloat(item.monto_revision).formatMoney(2);
             }
            
