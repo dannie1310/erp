@@ -101,6 +101,7 @@
                             id: origen.id,
                             activar: (origen.estado === 0 && self.$root.can('editar_tiro')) ? true : false,
                             desactivar: (origen.estado === 1 && self.$root.can('editar_tiro')) ? true : false,
+                            edit: self.$root.can('editar_estimacion_subcontrato') ? true : false,
                         })
                     }));
                 },

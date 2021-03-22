@@ -21,4 +21,9 @@ class OrigenObserver
         $origen->IdProyecto = 1;
         $origen->Estatus = 1;
     }
+
+    public function updating(Origen $origen)
+    {
+        $origen->usuario_edito = auth()->id();
+    }
 }

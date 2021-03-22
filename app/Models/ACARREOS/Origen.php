@@ -169,4 +169,18 @@ class Origen extends Model
             throw $e;
         }
     }
+
+    public function editar($datos)
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $this->update($datos);
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
 }

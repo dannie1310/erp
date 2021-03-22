@@ -30,6 +30,7 @@ class OrigenTransformer extends TransformerAbstract
             'estado_color' => $model->color_estado,
             'fecha_registro_format' => $model->fecha_registro_completa_format,
             'tipo_origen' => $model->tipo_origen_format,
+            'id_tipo' => $model->interno,
             'tipo' => $model->tipo_origen_descripcion
         ];
     }

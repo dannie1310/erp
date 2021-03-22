@@ -63,6 +63,12 @@ class OrigenService
         return $origen->desactivar($data['motivo']);
     }
 
+    public function update(array $data, $id)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->show($id)->editar($data);
+    }
+
     private function conexionAcarreos()
     {
         try{
